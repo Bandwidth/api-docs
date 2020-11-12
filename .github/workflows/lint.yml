@@ -1,0 +1,24 @@
+name: Lint
+on:
+  pull_request:
+    branches:
+    - 'main'
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      # Checkout devx-utils which may contain any custom Spectral rulesets.
+      - name: Checkout devx-utils
+        uses: actions/checkout@v2
+        with:
+          repository: Bandwidth/devx-utils
+          token: ${{ secrets.BW_GITHUB_PASSWORD }}
+          path: devx-utils
+      # Run the Spectral Linter on our OpenAPI specs using a custom ruleset.
+      - name: Run Spectral Linter
+        uses: stoplightio/spectral-action@v0.5.5
+        with:
+          file_glob: specs/**/*.{json,yml,yaml}
+        spectral_ruleset: devx-utils/lint/spectral/.spectral.custom.yml
