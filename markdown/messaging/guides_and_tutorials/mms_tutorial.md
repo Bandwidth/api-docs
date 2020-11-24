@@ -1,2 +1,2 @@
 # MMS Guide
-ayy lmao
+ayy
