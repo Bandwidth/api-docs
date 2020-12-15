@@ -1,5 +1,5 @@
-#Workflow that pushes OpenAPI specs and Postman collections to the Bandwidth Examples repo
-name: Push Specs
+#Workflow that pushes our resources (OpenAPI specs and Postman collections) to their public repos
+name: Publish Resources
 
 on:
   push:
@@ -10,22 +10,21 @@ on:
       - 'postman/**'
 
 jobs:
-  push-oas:
-    name: Pushes OpenAPI specs
+  publish-oas:
+    name: Publish OpenAPI Specs
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code into VM
       uses: actions/checkout@v2
     - name: Push openapi specs
-      uses: ./.github/actions/push-directory-to-examples
+      uses: ./.github/actions/publish-specs
       env:
         DX_GIT_USER: ${{ secrets.DX_GIT_USER }}
         DX_GIT_TOKEN: ${{ secrets.DX_GIT_TOKEN }}
         DX_GIT_EMAIL: ${{ secrets.DX_GIT_EMAIL }}
-        EXAMPLES_DIRECTORY: 'public-specs'
-        BANDWIDTH_SDKS_DIRECTORY: 'specs'
-  push-postman:
-    name: Pushes Postman Collection
+        SPECS_DIRECTORY: 'specs'
+  publish-postman:
+    name: Publish Postman Collection
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code into VM
@@ -34,11 +33,10 @@ jobs:
       run: 'npm install'
     - name: Generates the postman collection
       run: 'npm run postman'
-    - name: Push postman collections
-      uses: ./.github/actions/push-file-to-examples
+    - name: Push postman collection
+      uses: ./.github/actions/push-postman
       env:
         DX_GIT_USER: ${{ secrets.DX_GIT_USER }}
         DX_GIT_TOKEN: ${{ secrets.DX_GIT_TOKEN }}
         DX_GIT_EMAIL: ${{ secrets.DX_GIT_EMAIL }}
-        EXAMPLES_DIRECTORY: 'postman-collections'
-        BANDWIDTH_SDKS_FILE: 'postman/postman.json'
+        POSTMAN_FILE: 'postman/postman.json'
