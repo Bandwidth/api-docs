@@ -6,6 +6,7 @@ cd publish-specs
 git init
 git remote add origin https://$DX_GIT_USER:$DX_GIT_TOKEN@github.com/Bandwidth/openapi-specs.git
 git pull origin main
+git checkout main
 
 cp -R ../$SPECS_DIRECTORY/* .
 git add .
