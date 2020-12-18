@@ -5,3 +5,7 @@ Welcome to the home of Bandwidth's next generation of API docs! This repo serves
 ## How It Works
 
 The `./specs` directory contains all of the OpenAPI specs that our external customers will use. Updates to these specs trigger the pipeline that publishes new SDKs and docs. For the SDKs, the package version increase is based on the version increase of changed specs. For example, if a spec has a minor version bump, the new SDK will also have a minor version bump. New services added default to a minor version increase in the SDKs.
+
+Similarly, the `./postman` directory contains templates and fillers for our public facing postman collection. These are used to generate the full collection.
+
+Our automation exists within our Github Actions workflows. These can be found in the `.github/workflows` directory.
