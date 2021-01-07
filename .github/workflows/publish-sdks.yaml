@@ -1,0 +1,42 @@
+# Publishes SDK updates to the appropriate repos
+
+name: Publish SDKs
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'specs/**'
+strategy:
+  matrix:
+    
+jobs:
+  publish-sdks:
+    name: Publish sdks
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Generate Python SDK
+      run: 'npm run generate -- -l python'
+    - name: Push Python SDK
+      uses: ./.github/actions/push-to-sdk-repo
+      with:
+        repoName: "python-sdk"
+        ignoreFiles: "README.md"
+      env:
+        BW_GITHUB_USERNAME: ${{ secrets.DX_GIT_USER }}
+        BW_GITHUB_PASSWORD: ${{ secrets.DX_GIT_TOKEN }}
+        BW_GITHUB_EMAIL: ${{ secrets.DX_GIT_EMAIL }}
+    - name: Generate SDK
+      run: 'npm run generate -- -l ruby'
+    - name: Push SDK
+      uses: ./.github/actions/push-to-sdk-repo
+      with:
+        repoName: "ruby-sdk"
+        ignoreFiles: "README.md"
+      env:
+        BW_GITHUB_USERNAME: ${{ secrets.DX_GIT_USER }}
+        BW_GITHUB_PASSWORD: ${{ secrets.DX_GIT_TOKEN }}
+        BW_GITHUB_EMAIL: ${{ secrets.DX_GIT_EMAIL }}
