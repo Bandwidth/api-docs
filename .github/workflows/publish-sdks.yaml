@@ -18,40 +18,28 @@ jobs:
     name: Publish sdks
     runs-on: ubuntu-latest
     strategy:
+      max-parallel: 1
       matrix:
         include:
-        - sdkRepo: 'python-sdk'
-          run: 'echo python'
-          ignoreFiles: 'README.md asdf'
-        - sdkRepo: 'node-mfa'
-          run: 'echo node mfa'
+        - generateCommand: '-l python'
+          repoName: 'python-sdk'
+          ignoreFiles: 'README.md'
+        - generateCommand: '-l ruby'
+          repoName: 'ruby-sdk'
           ignoreFiles: 'README.md'
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-    - name: Run test
-      run: ${{ matrix.run }}
-    - name: Echo test
-      run: 'echo ${{ matrix.ignoreFiles }}'
-#    - name: Generate Python SDK
-#      run: 'npm run generate -- -l python'
-#    - name: Push Python SDK
-#      uses: ./.github/actions/push-to-sdk-repo
-#      with:
-#        repoName: "python-sdk"
-#        ignoreFiles: "README.md"
-#      env:
-#        BW_GITHUB_USERNAME: ${{ secrets.BW_GITHUB_USERNAME }}
-#        BW_GITHUB_PASSWORD: ${{ secrets.BW_GITHUB_PASSWORD }}
-#        BW_GITHUB_EMAIL: ${{ secrets.DX_GIT_EMAIL }}
-#    - name: Generate SDK
-#      run: 'npm run generate -- -l ruby'
-#    - name: Push SDK
-#      uses: ./.github/actions/push-to-sdk-repo
-#      with:
-#        repoName: "ruby-sdk"
-#        ignoreFiles: "README.md"
-#      env:
-#        BW_GITHUB_USERNAME: ${{ secrets.BW_GITHUB_USERNAME }}
-#        BW_GITHUB_PASSWORD: ${{ secrets.BW_GITHUB_PASSWORD }}
-#        BW_GITHUB_EMAIL: ${{ secrets.DX_GIT_EMAIL }}
+    - name: Generate SDK
+      run: 'npm run generate -- ${{ matrix.generateCommand }}'
+    - name: Push SDK
+      uses: ./.github/actions/push-to-sdk-repo
+      with:
+        repoName: ${{ matrix.repoName }}
+        ignoreFiles: ${{ matrix.ignoreFiles }}
+      env:
+        #BW_GITHUB_USERNAME: ${{ secrets.BW_GITHUB_USERNAME }}
+        #BW_GITHUB_PASSWORD: ${{ secrets.BW_GITHUB_PASSWORD }}
+        BW_GITHUB_EMAIL: ${{ secrets.DX_GIT_EMAIL }}
+        BW_GITHUB_USERNAME: 'no'
+        BW_GITHUB_PASSWORD: 'u' 
