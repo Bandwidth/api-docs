@@ -62,6 +62,26 @@ Each markdown file will be its own page on the docsite that sits underneath its 
 
 Any additional sub directories must follow the same format.
 
+#### Notes
+
+All directories and files are relative to `toc.yml`
+
+The left nav is based on the order of `toc.yml`
+
+#### Pictures
+
+Any pictures to be displayed in the docsite should be stored in `./static` in a resonable subdirectory, and referenced in the markdown directory with normal markdown reference syntax.
+
+Example
+
+```
+![Bandwidth-Callbacks](../../static/images/bandwidth_callbacks.png)
+```
+
+#### Relative Links
+
+TODO
+
 #### Language Specific Guides
 
 APIMatic has support for language specific guides that only render when certain languages are selected. However, we have not received this information yet, and we will fill in when we do.
