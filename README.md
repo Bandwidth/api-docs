@@ -12,6 +12,60 @@ The `./markdown` directory contains markdown files and config files used for non
 
 Our automation exists within our Github Actions workflows. These can be found in the `.github/workflows` directory. Updates to the markdown files, postman collections, and OpenAPI specs trigger these various workflows to keep our references up to date.
 
+### Markdown directory structure and table of content rules
+
+APIMatic provides support for a wide range of configuration for table of content (TOC) setup. However, we have come up with some rules to standardize how we use this feature
+
+#### Root Directory
+
+The first level TOC `./markdown/toc.yml` will be structured as follows
+
+```
+toc:
+- group: <Display Name>
+  dir: <directory>
+```
+
+Example:
+
+```
+toc:
+- group: Overview
+  dir: overview
+```
+
+Every sub directory (`<directory>`) will need its own TOC. There is no need to place individual markdown files in the root directory. All markdown files need to exist in a sub directory that is either 1) the relevant product vertical, or 2) a general guide bundled with the rest of the guides
+
+#### Sub Directories
+
+All sub directories TOC will be structured as follows
+
+```
+toc:
+- page: "<Page title>"
+  file: <file.md>
+- group: <Display Name> #Optional
+  dir: <directory> #Optional
+```
+
+Example:
+
+```
+toc:
+- page: "Overview"
+  file: overview.md
+- group: Guides & Tutorials
+  dir: guides_and_tutorials
+```
+
+Each markdown file will be its own page on the docsite that sits underneath its directory structure in the docsite's left navigation.
+
+Any additional sub directories must follow the same format.
+
+#### Language Specific Guides
+
+APIMatic has support for language specific guides that only render when certain languages are selected. However, we have not received this information yet, and we will fill in when we do.
+
 ## SDK Updates
 
 SDK updates _are not_ done automatically through this project. Please go to https://github.com/Bandwidth/bandwidth-sdks for SDK updates.
