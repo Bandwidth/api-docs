@@ -23,7 +23,7 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
-    - name: Generate Doc zip
+    - name: Generate Doc Portal
       run: |
         mkdir package
         mv specs package/
@@ -33,13 +33,15 @@ jobs:
         mv bw-portal.APIMATIC-BUILD.json package/bw-portal.APIMATIC-BUILD.json
         zip -r package.zip package
         curl titan.apimatic.io/api/build -F 'file=@package.zip' -o portal.zip
+        mkdir portal
+        unzip -o portal.zip -d portal
     - name: Create Bucket Name
       run: |
-        export BUCKET_NAME=${GITHUB_REF#refs/pull/*/}
+        export BUCKET_NAME=${GITHUB_HEAD_REF#refs/heads/}
     - name: Create Bucket
       run: |
         echo $BUCKET_NAME
-        aws s3 mb s3://$BUCKET_NAME
+        aws s3 mb s3://$BUCKET_NAME --region us-east-1
     - name: Sync zip to Bucket
       run: |
-        aws s3 sync ./out s3://$BUCKET_NAME
+        aws s3 sync ./portal s3://$BUCKET_NAME --acl public-read
