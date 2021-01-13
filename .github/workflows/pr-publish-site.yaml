@@ -1,0 +1,45 @@
+# Deploys the doc site to an S3 bucket
+
+name: PR Publish Site
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - 'specs/**'
+      - 'markdown/**'
+
+jobs:
+  publish:
+    name: Publish Temp Site
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repo Checkout
+        uses: actions/checkout@v2
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+    - name: Generate Doc zip
+      run: |
+        mkdir package
+        mv specs package/specs
+        mv markdown package/markdown
+        mv static package/static
+        mv bw-portal.APIMATIC-BUILD.json package/bw-portal.APIMATIC-BUILD.json
+        zip -r package package
+        curl titan.apimatic.io/api/build -F 'file=@package.zip' -o portal.zip
+    - name: Create Bucket Name
+      id: create_name
+      run: |
+        export BUCKET_NAME=${GITHUB_REF#refs/pull/*/}
+    - name: Create Bucket
+      run: |
+        echo $BUCKET_NAME
+        aws s3 mb s3://$BUCKET_NAME
+    - name: Sync zip to Bucket
+      run: |
+        aws s3 sync ./out s3://$BUCKET_NAME

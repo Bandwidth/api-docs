@@ -20,6 +20,11 @@ BRANCH=$(date +"expr "%Y-%m-%d-%H-%M-%S"" | sh)
 BRANCH="release/${BRANCH}"
 git checkout -b "$BRANCH"
 
+# Mark files in the .gitkeep file as "un-tracked".  Uses Git pathspec globbing
+# Then deletes the entire checked-out repo.
+git update-index --skip-worktree $(git ls-files $(cat .gitkeep))
+rm -rf
+
 #add files. cp -R forces overwites and preserves directory structure
 #mv does not do the same
 cp -R ../unzip-tmp/bandwidth/$3* .
