@@ -8,7 +8,7 @@ The `./specs` directory contains all of the OpenAPI specs that our external cust
 
 Similarly, the `./postman` directory contains templates and fillers for our public facing postman collection. These are used to generate the full collection.
 
-The `./markdown` directory contains markdown files and config files used for non API references on the docsite.
+The `./content` directory contains markdown files and config files used for non API references on the docsite.
 
 Our automation exists within our Github Actions workflows. These can be found in the `.github/workflows` directory. Updates to the markdown files, postman collections, and OpenAPI specs trigger these various workflows to keep our references up to date.
 
@@ -18,7 +18,7 @@ APIMatic provides support for a wide range of configuration for table of content
 
 #### Root Directory
 
-The first level TOC `./markdown/toc.yml` will be structured as follows
+The first level TOC `./content/toc.yml` will be structured as follows
 
 ```
 toc:
