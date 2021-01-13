@@ -28,7 +28,7 @@ rm -rf
 # mv sdk files into local git repo
 mv ../unzip-tmp/bandwidth/$2 .
 
-# Add to git and commit
+# Add to git config and commit
 git add .
 git config user.name $BW_GITHUB_USERNAME
 git config user.email $BW_GITHUB_EMAIL
