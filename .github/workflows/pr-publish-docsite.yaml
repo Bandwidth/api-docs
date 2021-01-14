@@ -1,22 +1,22 @@
 # Deploys the doc site to an S3 bucket
 
-name: PR Publish Site
+name: PR Publish Docsite
 
 on:
-  pull_request:
+  push:
     branches:
       - 'main'
     paths:
       - 'specs/**'
-      - 'markdown/**'
+      - 'content/**'
 
 jobs:
   publish:
-    name: Publish Temp Site
+    name: Publish Temp Docsite
     runs-on: ubuntu-latest
     steps:
-      - name: Repo Checkout
-        uses: actions/checkout@v2
+    - name: Repo Checkout
+      uses: actions/checkout@v2
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -35,13 +35,14 @@ jobs:
         curl titan.apimatic.io/api/build -F 'file=@package.zip' -o portal.zip
         mkdir portal
         unzip -o portal.zip -d portal
-    - name: Create Bucket Name
-      run: |
-        export BUCKET_NAME=${GITHUB_HEAD_REF#refs/heads/}
     - name: Create Bucket
       run: |
         echo $BUCKET_NAME
         aws s3 mb s3://$BUCKET_NAME --region us-east-1
+      env:
+        BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
     - name: Sync zip to Bucket
       run: |
         aws s3 sync ./portal s3://$BUCKET_NAME --acl public-read
+      env:
+        BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
