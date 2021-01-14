@@ -36,13 +36,19 @@ jobs:
         mkdir portal
         unzip -o portal.zip -d portal
     - name: Create Bucket Name
+      id: create_name
       run: |
-        export BUCKET_NAME=docsite-${GITHUB_HEAD_REF#refs/heads/}
+        BUCKET_NAME=docsite-bandwidth-${GITHUB_HEAD_REF#refs/heads/}
         echo $BUCKET_NAME
+        echo "::set-output name=bucket_name::$BUCKET_NAME"
     - name: Create Bucket
       run: |
         echo $BUCKET_NAME
         aws s3 mb s3://$BUCKET_NAME --region us-east-1
+      env:
+        BUCKET_NAME: ${{ steps.create_name.bucket_name }}
     - name: Sync zip to Bucket
       run: |
         aws s3 sync ./portal s3://$BUCKET_NAME --acl public-read
+      env:
+        BUCKET_NAME: ${{ steps.create_name.bucket_name }}
