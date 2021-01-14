@@ -8,6 +8,11 @@ on:
       - 'main'
     paths:
       - 'specs/**'
+  workflow_dispatch:
+    inputs:
+      sdk:
+        description:
+        default: 'all'
 
     
 jobs:
@@ -20,54 +25,46 @@ jobs:
         include:
         - generateCommand: '-l python'
           repoName: 'python-sdk'
-          ignoreFiles: 'README.md'
           unzipPathExtension: ""
         - generateCommand: '-l ruby'
           repoName: 'ruby-sdk'
-          ignoreFiles: 'README.md'
           unzipPathExtension: ""
         - generateCommand: '-l phpold'
           repoName: 'php-sdk'
-          ignoreFiles: 'README.md'
           unzipPathExtension: ""
         - generateCommand: '-l php'
           repoName: 'php-sdk'
-          ignoreFiles: 'README.md'
           unzipPathExtension: ""
         - generateCommand: '-l node -s WebRtc'
           repoName: 'node-webrtc'
-          ignoreFiles: 'README.md'
           unzipPathExtension: "WebRtc/"
         - generateCommand: '-l node -s Voice'
           repoName: 'node-voice'
-          ignoreFiles: 'README.md'
           unzipPathExtension: "Voice/"
         - generateCommand: '-l node -s TwoFactorAuth'
           repoName: 'node-mfa'
-          ignoreFiles: 'README.md'
           unzipPathExtension: "TwoFactorAuth/"
         - generateCommand: '-l node -s Messaging'
           repoName: 'node-messaging'
-          ignoreFiles: 'README.md'
           unzipPathExtension: "Messaging/"
-        - generateCommand: '-l node -s Iris'
-          repoName: 'node-numbers'
-          ignoreFiles: 'README.md'
-          unzipPathExtension: "Iris/"
+        #- generateCommand: '-l node -s Iris'
+        #  repoName: 'node-numbers'
+        #  unzipPathExtension: "Iris/"
         - generateCommand: '-l java'
           repoName: 'java-sdk'
-          ignoreFiles: 'README.md pom.xml'
           unzipPathExtension: ""
         - generateCommand: '-l csharp'
           repoName: 'csharp-sdk'
-          ignoreFiles: 'README.md'
           unzipPathExtension: ""
     steps:
     - name: Checkout
+      if: ${{ github.event.inputs.sdk == 'all' || github.event.inputs.sdk == matrix.repoName }}
       uses: actions/checkout@v2
     - name: Generate SDK
+      if: ${{ github.event.inputs.sdk == 'all' || github.event.inputs.sdk == matrix.repoName }}
       run: 'npm run generate -- ${{ matrix.generateCommand }}'
     - name: Push SDK
+      if: ${{ github.event.inputs.sdk == 'all' || github.event.inputs.sdk == matrix.repoName }}
       uses: ./.github/actions/push-to-sdk-repo
       with:
         repoName: ${{ matrix.repoName }}
