@@ -47,6 +47,31 @@ jobs:
         aws s3 mb s3://$BUCKET_NAME --region us-east-1
       env:
         BUCKET_NAME: ${{ steps.create_name.outputs.bucket_name }}
+    - name: Put Lifecycle
+      run: |
+           cat >lifecycle.json <<EOL
+          {
+            "Rules": [
+                {
+                    "Expiration": {
+                        "Days": 30
+                    },
+                    "ID": "ExpireOldObjects",
+                    "Filter": {},
+                    "Status": "Enabled",
+                    "NoncurrentVersionExpiration": {
+                        "NoncurrentDays": 30
+                    },
+                    "AbortIncompleteMultipartUpload": {
+                        "DaysAfterInitiation": 30
+                    }
+                }
+            ]
+        }
+        EOL
+        aws s3api put-bucket-lifecycle --bucket $BUCKET_NAME --lifecycle-configuration file://lifecycle.json
+      env:
+        BUCKET_NAME: ${{ steps.create_name.outputs.bucket_name }}
     - name: Sync zip to Bucket
       run: |
         aws s3 sync ./portal s3://$BUCKET_NAME --acl public-read
