@@ -23,7 +23,7 @@ git checkout -b "$BRANCH"
 # Ignore the files/folders in .gitkeep
 # Then remove folder contents
 git update-index --skip-worktree $(git ls-files $(cat .gitkeep))
-rm -rf .
+rm -rf *
 
 # mv sdk files into local git repo
 mv ../unzip-tmp/bandwidth/$2* .
