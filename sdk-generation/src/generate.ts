@@ -89,7 +89,11 @@ async function main() {
     // Write the zip file
     fs.writeFileSync(`./bandwidth.zip`, stream);
   } catch (e) {
-    throw new Error(e.message);
+      //for some reason, an uncaught error doesn't result in a
+      //non zero exit code. This forces a non zero exit code to
+      //end the github actions workflow
+      console.log(e.message)
+      process.exit(1)
   }
 }
 
