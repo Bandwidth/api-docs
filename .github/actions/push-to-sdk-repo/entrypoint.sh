@@ -20,22 +20,15 @@ BRANCH=$(date +"expr "%Y-%m-%d-%H-%M-%S"" | sh)
 BRANCH="release/${BRANCH}"
 git checkout -b "$BRANCH"
 
-#add files. cp -R forces overwites and preserves directory structure
-#mv does not do the same
-cp -R ../unzip-tmp/bandwidth/$3* .
-rm -rf ../unzip-tmp
+# Ignore the files/folders in .gitkeep
+# Then remove folder contents
+git update-index --skip-worktree $(git ls-files $(cat .gitkeep))
+rm -rf .
 
-#checkout files to ignore
-ignoreFileString=$2 #I don't know why the parameter needs to be reassigned, but
-#shell is unhappy with doing an if statement with the variable as $2
-if test ${#ignoreFileString} -gt 0; then
-    ignoreFileList=$(echo $ignoreFileString | tr " " "\n")
-    for ignoreFile in $ignoreFileList
-    do
-        git checkout $ignoreFile
-    done
-fi
+# mv sdk files into local git repo
+mv ../unzip-tmp/bandwidth/$2* .
 
+# Add to git config and commit
 git add .
 git config user.name $BW_GITHUB_USERNAME
 git config user.email $BW_GITHUB_EMAIL
