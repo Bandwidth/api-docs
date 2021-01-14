@@ -50,18 +50,24 @@ jobs:
     - name: Put Lifecycle
       run: |
         cat >lifecycle.xml <<EOL
-          <LifecycleConfiguration>
-            <Rule>
-                <ID>Expire Old Objects</ID>
-                <Filter>
-                    <Prefix></Prefix>
-                </Filter>
-                <Status>Enabled</Status>
-                <Expiration>
-                    <Days>30</Days>
-                </Expiration>
-            </Rule>
-        </LifecycleConfiguration>
+          {
+            "Rules": [
+                {
+                    "Expiration": {
+                        "Days": 30
+                    },
+                    "ID": "Expire Old Objects",
+                    "Prefix": "",
+                    "Status": "Enabled",
+                    "NoncurrentVersionExpiration": {
+                        "NoncurrentDays": 30
+                    },
+                    "AbortIncompleteMultipartUpload": {
+                        "DaysAfterInitiation": 30
+                    }
+                }
+            ]
+        }
         EOL
         aws s3api put-bucket-lifecycle --bucket $BUCKET_NAME --lifecycle-configuration file://lifecycle.xml
       env:
