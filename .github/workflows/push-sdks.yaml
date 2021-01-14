@@ -17,7 +17,6 @@ on:
     
 jobs:
   publish-sdks:
-    if: ${{ github.event.inputs.sdk == 'all' || github.event.inputs.sdk == matrix.repoName }}
     name: Push sdks
     runs-on: ubuntu-latest
     strategy:
@@ -59,10 +58,13 @@ jobs:
           unzipPathExtension: ""
     steps:
     - name: Checkout
+      if: ${{ github.event.inputs.sdk == 'all' || github.event.inputs.sdk == matrix.repoName }}
       uses: actions/checkout@v2
     - name: Generate SDK
+      if: ${{ !failure() }}
       run: 'npm run generate -- ${{ matrix.generateCommand }}'
     - name: Push SDK
+      if: ${{ !failure() }}
       uses: ./.github/actions/push-to-sdk-repo
       with:
         repoName: ${{ matrix.repoName }}
