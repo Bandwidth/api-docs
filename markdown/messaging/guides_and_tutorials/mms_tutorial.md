@@ -1,2 +1,0 @@
-# MMS Guide
-ayy
