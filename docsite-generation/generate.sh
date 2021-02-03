@@ -13,3 +13,7 @@ zip -r package.zip package
 curl titan.apimatic.io/api/build -F 'file=@package.zip' -o portal.zip
 mkdir portal
 unzip -o portal.zip -d portal
+if [ ! -f portal/index.html ]; then
+    echo "Docsite failed to generate"
+    exit 1
+fi
