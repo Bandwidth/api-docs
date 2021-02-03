@@ -17,3 +17,7 @@ if [ ! -f portal/index.html ]; then
     echo "Docsite failed to generate"
     exit 1
 fi
+
+if [ "$1" = "server" ]; then
+    http-server ./portal -c-1 #disable caching since this page will probably be reloaded frequently
+fi
