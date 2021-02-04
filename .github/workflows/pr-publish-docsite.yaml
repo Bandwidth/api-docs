@@ -1,0 +1,87 @@
+# Deploys the doc site to an S3 bucket
+
+name: PR Publish Docsite
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - 'specs/**'
+      - 'content/**'
+
+jobs:
+  publish:
+    name: Publish Temp Docsite
+    runs-on: ubuntu-latest
+    steps:
+    - name: Repo Checkout
+      uses: actions/checkout@v2
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+    - name: Generate Doc Portal
+      run: |
+        mkdir package
+        mv configuration/Global specs/
+        mv specs package/
+        mv package/specs package/spec
+        mv content package/
+        mv static package/
+        mv bw-portal.APIMATIC-BUILD.json package/bw-portal.APIMATIC-BUILD.json
+        zip -r package.zip package
+        curl titan.apimatic.io/api/build -F 'file=@package.zip' -o portal.zip
+        mkdir portal
+        unzip -o portal.zip -d portal
+    - name: Create Bucket Name
+      id: create_name
+      run: |
+        BUCKET_NAME=docsite-bandwidth-${GITHUB_HEAD_REF#refs/heads/}
+        BUCKET_NAME=$(echo "$BUCKET_NAME" | tr '[:upper:]' '[:lower:]') #convert to lowercase for AWS bucket (can't be uppercase)
+        echo $BUCKET_NAME
+        echo "::set-output name=bucket_name::$BUCKET_NAME"
+    - name: Create Bucket
+      run: |
+        echo $BUCKET_NAME
+        aws s3 mb s3://$BUCKET_NAME --region us-east-1
+      env:
+        BUCKET_NAME: ${{ steps.create_name.outputs.bucket_name }}
+    - name: Put Lifecycle
+      run: |
+        cat >lifecycle.xml <<EOL
+          {
+            "Rules": [
+                {
+                    "Expiration": {
+                        "Days": 30
+                    },
+                    "ID": "Expire Old Objects",
+                    "Prefix": "",
+                    "Status": "Enabled",
+                    "NoncurrentVersionExpiration": {
+                        "NoncurrentDays": 30
+                    },
+                    "AbortIncompleteMultipartUpload": {
+                        "DaysAfterInitiation": 30
+                    }
+                }
+            ]
+        }
+        EOL
+        aws s3api put-bucket-lifecycle --bucket $BUCKET_NAME --lifecycle-configuration file://lifecycle.xml
+      env:
+        BUCKET_NAME: ${{ steps.create_name.outputs.bucket_name }}
+    - name: Sync zip to Bucket
+      run: |
+        aws s3 sync ./portal s3://$BUCKET_NAME --acl public-read
+      env:
+        BUCKET_NAME: ${{ steps.create_name.outputs.bucket_name }}
+    - name: Comment on PR
+      uses: mshick/add-pr-comment@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        message: https://${{ steps.create_name.outputs.bucket_name }}.s3.amazonaws.com/index.html

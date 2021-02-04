@@ -1,0 +1,29 @@
+name: Clean S3 Buckets
+on:
+  schedule:
+  - cron: "0 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  clean:
+    name: Clean Empty Buckets
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Clean Empty Buckets
+        run: |
+          for bucket in $(aws s3 ls | awk '{print $3}' | grep docsite-bandwidth)
+          do
+            if [[ $(aws s3 ls "s3://${bucket}") ]]
+            then
+              echo "${bucket} is NOT empty"
+            else 
+              echo "${bucket} is empty Deleteing..."
+              aws s3 rb "s3://${bucket}" --force
+            fi
+          done
