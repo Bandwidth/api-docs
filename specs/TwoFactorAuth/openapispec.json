@@ -4,7 +4,7 @@
     "title": "TwoFactorAuth",
     "description": "Bandwidth's Two-Factor Authentication service",
     "contact": {},
-    "version": "2.0.0",
+    "version": "3.0.0",
     "x-server-configuration": {
         "default-environment": "production",
         "default-server": "default",
@@ -14,7 +14,7 @@
                 "servers": [
                    {
                       "name": "default",
-                      "url": "https://mfa.bandwidth.com/api/v1/"
+                      "url": "https://mfa.bandwidth.com/api/v1"
                    }
                 ]
              },
@@ -40,7 +40,7 @@
   },
   "servers": [
     {
-      "url": "https://mfa.bandwidth.com/api/v1/",
+      "url": "https://mfa.bandwidth.com/api/v1",
       "variables": {}
     }
   ],
@@ -48,6 +48,10 @@
     "/accounts/{accountId}/code/voice": {
       "post": {
         "summary": "Two-Factor authentication with Bandwidth Voice services",
+        "description": "Allows a user to send a MFA code through a phone call",
+        "tags": [
+          "MFA"
+        ],
         "operationId": "voiceTwoFactor",
         "parameters": [
           {
@@ -85,12 +89,45 @@
             }
           },
           "400": {
-            "description": "client request error",
+            "description": "If there is any issue with values passed in by the user",
             "headers": {},
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/InvalidRequest"
+                  "$ref": "#/components/schemas/ErrorWithRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication is either incorrect or not present",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedRequest"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The user is not authorized to access this resource",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenRequest"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "An internal server error occurred",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorWithRequest"
                 }
               }
             }
@@ -101,6 +138,10 @@
     "/accounts/{accountId}/code/messaging": {
       "post": {
         "summary": "Two-Factor authentication with Bandwidth messaging services",
+        "description": "Allows a user to send a MFA code through a text message (SMS)",
+        "tags": [
+          "MFA"
+        ],
         "operationId": "messagingTwoFactor",
         "parameters": [
           {
@@ -138,12 +179,45 @@
             }
           },
           "400": {
-            "description": "client request error",
+            "description": "If there is any issue with values passed in by the user",
             "headers": {},
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/InvalidRequest"
+                  "$ref": "#/components/schemas/ErrorWithRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication is either incorrect or not present",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedRequest"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The user is not authorized to access this resource",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenRequest"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "An internal server error occurred",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorWithRequest"
                 }
               }
             }
@@ -154,6 +228,10 @@
     "/accounts/{accountId}/code/verify": {
       "post": {
         "summary": "Verify a previously sent two-factor authentication code",
+        "description": "Allows a user to verify an MFA code",
+        "tags": [
+          "MFA"
+        ],
         "operationId": "verifyTwoFactor",
         "parameters": [
           {
@@ -191,12 +269,56 @@
             }
           },
           "400": {
-            "description": "client request error",
+            "description": "If there is any issue with values passed in by the user",
             "headers": {},
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/InvalidRequest"
+                  "$ref": "#/components/schemas/ErrorWithRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication is either incorrect or not present",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedRequest"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The user is not authorized to access this resource",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenRequest"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The user has made too many bad requests and is temporarily locked out",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorWithRequest"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "An internal server error occurred",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorWithRequest"
                 }
               }
             }
@@ -243,12 +365,34 @@
           "digits"
         ]
       },
-      "InvalidRequest": {
+      "ErrorWithRequest": {
         "type": "object",
         "properties": {
-          "result": {
+          "error": {
             "type": "string",
             "description": "An error message pertaining to what the issue could be"
+          },
+          "requestId": {
+            "type": "string",
+            "description": "The associated requestId from AWS"
+          }
+        }
+      },
+      "UnauthorizedRequest": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "The message containing the reason behind the request being unauthorized"
+          }
+        }
+      },
+      "ForbiddenRequest": {
+        "type": "object",
+        "properties": {
+          "Message": {
+            "type": "string",
+            "description": "The message containing the reason behind the request being forbidden"
           }
         }
       },
@@ -320,5 +464,9 @@
       "httpBasic": []
     }
   ],
-  "tags": []
+  "tags": [
+    {
+      "name": "MFA"
+    }
+  ]
 }
