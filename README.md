@@ -8,10 +8,20 @@ The `./specs` directory contains all of the OpenAPI specs that our external cust
 
 Similarly, the `./postman` directory contains templates and fillers for our public facing postman collection. These are used to generate the full collection.
 
-The `./markdown` directory contains markdown files and config files used for non API references on the docsite.
+The `./content` directory contains markdown files and config files used for non API references on the docsite.
 
 Our automation exists within our Github Actions workflows. These can be found in the `.github/workflows` directory. Updates to the markdown files, postman collections, and OpenAPI specs trigger these various workflows to keep our references up to date.
 
 ## SDK Updates
 
 SDK updates _are not_ done automatically through this project. Please go to https://github.com/Bandwidth/bandwidth-sdks for SDK updates.
+
+## PR Requirements
+
+### Staging Docsite
+
+Any changes to the `./specs` or `./content` directories triggers a PR docsite on build. This docsite should be validated.
+
+### Release Notes
+
+Any changes to the `./specs` or `./content` directories requires an update to `./content/release-notes.md`. If updating this isn't relevant, you should add the `no-release-notes` label to your PR.
