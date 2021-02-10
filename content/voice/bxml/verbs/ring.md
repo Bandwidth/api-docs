@@ -1,4 +1,4 @@
-{% method %}
+
 
 ## XML: `<Ring>`
 The Ring verb is used to play ringing audio on a call.
@@ -13,11 +13,11 @@ The Ring verb is used to play ringing audio on a call.
 
 None
 
-{% common %}
+
 #### Example 1 of 1:  Ring Verb
 This example shows how to use the Ring verb to play ringing audio on a call for 10 seconds.
 
-{% sample lang="http" %}
+
 
 
 ```XML
@@ -27,20 +27,20 @@ This example shows how to use the Ring verb to play ringing audio on a call for 
 </Response>
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 // Coming soon
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 // Coming soon
 ```
 
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 response = Bandwidth::Voice::Response.new()
@@ -52,7 +52,7 @@ response.push(ring)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
 
 ```python
 ring = Ring(
@@ -65,13 +65,13 @@ response.add_verb(ring)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 // Coming soon
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $ring = new BandwidthLib\Voice\Bxml\Ring();
@@ -83,4 +83,4 @@ $response->addVerb($ring);
 echo $response->toBxml();
 ```
 
-{% endmethod %}
+

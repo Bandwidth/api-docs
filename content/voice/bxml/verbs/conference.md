@@ -1,4 +1,4 @@
-{% method %}
+
 
 ## XML: `<Conference>`
 Used to join the current call into a conference.
@@ -63,12 +63,12 @@ BXML containing unsupported verbs will be rejected completely.
 | [Conference Member Exit](../callbacks/conferenceMemberExit.md) | Yes                 |
 | [Conference Completed](../callbacks/conferenceCompleted.md)    | No                  |
 
-{% common %}
+
 
 ### Example 1 of 2: Join Conference
 This shows how to use Bandwidth XML to add a call in a conference.
 
-{% sample lang="http" %}
+
 
 ```XML
 <?xml version="1.0" encoding="UTF-8"?>
@@ -78,7 +78,7 @@ This shows how to use Bandwidth XML to add a call in a conference.
 </Response>
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 SpeakSentence speakSentence = SpeakSentence.builder()
@@ -97,7 +97,7 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 SpeakSentence speakSentence = new SpeakSentence
@@ -117,7 +117,7 @@ response.Add(conference);
 Console.WriteLine(response.ToBXML());
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 speak_sentence = Bandwidth::Voice::SpeakSentence.new({
@@ -135,7 +135,7 @@ response.push(conference)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
 
 ```python
 speak_sentence = SpeakSentence("You will be added to your conference now.", gender="male")
@@ -148,7 +148,7 @@ response.add_verb(conference)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
@@ -165,7 +165,7 @@ response.addVerb(conference);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("You will be added to your conference now.");
@@ -181,12 +181,12 @@ echo $response->toBxml();
 echo "\n";
 ```
 
-{% common %}
+
 
 ### Example 2 of 2: Join Conference as Coach
 This shows how to add a coach in a conference.
 
-{% sample lang="http" %}
+
 
 ```XML
 <?xml version="1.0" encoding="UTF-8"?>
@@ -196,7 +196,7 @@ This shows how to add a coach in a conference.
 </Response>
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 SpeakSentence speakSentence = SpeakSentence.builder()
@@ -220,7 +220,7 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 SpeakSentence speakSentence = new SpeakSentence
@@ -241,7 +241,7 @@ response.Add(conference);
  Console.WriteLine(response.ToBXML());
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 speak_sentence = Bandwidth::Voice::SpeakSentence.new({
@@ -262,7 +262,7 @@ response.push(conference)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
 
 ```python
 speak_sentence = SpeakSentence("Welcome. You are going to coach 2 calls, please wait.", gender="male")
@@ -277,7 +277,7 @@ response.add_verb(conference)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
@@ -295,7 +295,7 @@ response.addVerb(conference);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Welcome. You are going to coach 2 calls, please wait.");
@@ -314,6 +314,6 @@ echo $response->toBxml();
 echo "\n";
 ```
 
-{% common %}
 
-{% endmethod %}
+
+

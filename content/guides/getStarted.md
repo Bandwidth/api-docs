@@ -1,6 +1,6 @@
-{% raw %}
+
 <section class="getStarted">
-{% endraw %}
+
 
 # Get Started with Bandwidth APIs
 

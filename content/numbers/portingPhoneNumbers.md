@@ -1,4 +1,4 @@
-# Porting-in Phone Numbers {#top}
+# Porting-in Phone Numbers 
 
 ## Overview
 
@@ -15,7 +15,7 @@
 * [Activating Ported Numbers](#activate-ported-numbers)
 
 
-## About Porting {#about-porting}
+## About Porting 
 
 The Bandwidth Phone Number API can be used to submit Port-In requests.  These requests to move phone numbers from a "losing carrier" to Bandwidth are part of the Local Number Portability (LNP) process.  These LNP requests are automatically validated and processed.  If the order fails during processing, it will be held for exception processing.  Customers can catch and fix exceptions 2 different ways:
 
@@ -23,7 +23,7 @@ The Bandwidth Phone Number API can be used to submit Port-In requests.  These re
 * The customer's LNP team can check the status of port-in orders, and re-submit or cancel them through the Bandwidth Dashboard.
 
 
-## Overview of the Port-in Process {#overview-of-porting}
+## Overview of the Port-in Process 
 
 The external events in the porting process are documented in the diagram below.
 
@@ -33,7 +33,7 @@ The Orders that are managed by the Bandwidth Phone Number API to implement the a
 
 ![Porting Diagram](../../images/portingDiagram.png)
 
-## Checking LNP Availability {#check-lnp}
+## Checking LNP Availability 
 
 A number or numbers can be checked to see if they can be ported into the Bandwidth Network using an LNPChecker API call.
 
@@ -56,17 +56,17 @@ The fullcheck query parameter values control the components of the response payl
 | -`SupportedRateCenters` <br> -`PartnerSupportedRateCenters` <br> -`UnsupportedRateCenters` | Rate Center information for the indicated set of ratecenters, containing City, State, LATA and the list of TNs for which that Rate Center applies.  <br> The Tier information is provided for offnet rate centers.                                      |
 | -`SupportedLosingCarriers` <br> -`UnsupportedLosingCarriers`                                | Details on the Losing Carrier including name, SPID, whether or not the carrier is a wireless carrier, whether or not account number is required as part of the CSR check, and the anticipated minimum number of days before a FoC date will be granted. |
 
-## Creating an LNP Order {#create-lnp}
+## Creating an LNP Order 
 
 The API allows a user to create a new LNP order. An order number will be auto-generated and provided to the customer. The order must pass synchronous and asynchronous validation. Synchronous validation will return validation failures immediately in the response. If synchronous validation passes, but asynchronous validation fails, the customer will not receive the error response until they check the order status.
 
 As in other asynchronous workflows, the request to port in a number is created by a <code class="post">POST</code> to a resource dedicated to the purpose to tracking requests – the `accounts/{accountId}/portins` resource
 
-## LOA Upload {#loa-upload}
+## LOA Upload 
 
 After successfully submitting the Create LNP Order request, an LOA may be uploaded using our LOA API.
 
-### Supported File Types {#supported-file-types}
+### Supported File Types 
 
 The following MIME types are supported for the LOA upload file:
 
@@ -79,7 +79,7 @@ The following MIME types are supported for the LOA upload file:
 * WAV(“audio/x-wav”)
 * ZIP(“application/zip”)
 
-### CURL Example {#curl-example}
+### CURL Example 
 
 Use the order-id returned in the Create LNP Order response.
 
@@ -93,7 +93,7 @@ curl -H 'Content-Type: <MIME Type>' --data-binary "@<Filename>" –iv <Base URL>
 curl -H 'Content-Type: application/pdf' --data-binary "@Test_LOA.pdf" -iv <BASE URL>/portins/<order-id>/loas
 ```
 
-### File Meta-Data {#file-meta-data}
+### File Meta-Data 
 
 It is often useful to attach additional data to an order in the form of an attached file, and so the existing LOA capability has been extended to optionally allow different file information to be included with a file, to describe type and purpose information.  The Meta-Data associated with a file includes a file document name and a document type, which is one of:
 
@@ -102,7 +102,7 @@ It is often useful to attach additional data to an order in the form of an attac
 * CSR
 * OTHER
 
-## Modifying an LNP Order (Supp LNP Order) {#modify-lnp}
+## Modifying an LNP Order (Supp LNP Order) 
 
 The API allows a user to modify an existing LNP order. To do so, the order Id that was generated in the create LNP order request must be provided. Modifications are only allowed for orders that are not yet complete or cancelled. LNP orders can be modified with a <code class="put">PUT</code> to `accounts/{accountId}/portins/{orderId}`. Since many of the entries in an LNP Order cannot be changed after the initial order is placed, the <code class="put">PUT</code> on a porting order-id does not require that the full order payload is included. Items that can be included in a SUPP request include:
 
@@ -156,11 +156,11 @@ The general approach to handling this API call is to replace the elements includ
 | TnAttributes elements                                    | Editable       | Editable      | Editable         | Editable          | Editable                  | Editable                   | Editable |
 | Immediately                                              | Disabled       | Disabled      | Disabled         | Disabled          | Disabled                  | Disabled                   | Editable |
 
-## Canceling LNP Order {#cancel-lnp}
+## Canceling LNP Order 
 
 The API allows a user to cancel an existing LNP order. The order number that was generated in the create request must be provided. The status of the order shall not be marked as `COMPLETE` i.e. you cannot cancel a completed order.  The <code class="delete">DEL </code> method is used for this purpose.
 
-## Activating Ported Numbers {#activate-ported-numbers}
+## Activating Ported Numbers 
 
 The by default the Bandwidth Phone Number API will activate ported wireline numbers shortly after 11:30 am on the FOC date.
 

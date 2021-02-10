@@ -1,4 +1,4 @@
-{% method %}
+
 ## XML: `<Redirect>`
 The Redirect verb is used to redirect the current XML execution to another URL.
 
@@ -29,11 +29,11 @@ The Redirect verb is used to redirect the current XML execution to another URL.
 | [Redirect](../callbacks/redirect.md) | Yes                      |
 
 
-{% common %}
+
 #### Example 1 of 1: Redirect Verb
 This shows how to use Bandwidth XML to redirect the response to a new url.
 
-{% sample lang="http" %}
+
 
 
 ```XML
@@ -44,7 +44,7 @@ This shows how to use Bandwidth XML to redirect the response to a new url.
 </Response>
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 Redirect redirect = Redirect.builder()
@@ -57,7 +57,7 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 Response response = new Response();
@@ -71,7 +71,7 @@ Console.WriteLine(response.ToBXML());
 ```
 
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 response = Bandwidth::Voice::Response.new()
@@ -83,7 +83,7 @@ response.push(redirect)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
 
 ```python
 response = Response()
@@ -95,7 +95,7 @@ response.add_verb(redirect)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 var redirect = new BandwidthBxml.Verbs.Redirect();
@@ -107,7 +107,7 @@ response.addVerb(redirect);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $redirect = new BandwidthLib\Voice\Bxml\Redirect();
@@ -120,4 +120,4 @@ echo $response->toBxml();
 echo "\n";
 ```
 
-{% endmethod %}
+

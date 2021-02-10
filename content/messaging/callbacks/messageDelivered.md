@@ -1,8 +1,8 @@
-{% method %}
+
 # Message Delivered Event
 In order to receive message events, you need to ensure you have set up your application to send callbacks to your server's URL.
 
-{% raw %}
+
 
 <aside class="alert general">
 <p><b>
@@ -11,7 +11,7 @@ IMPORTANT NOTE ABOUT MMS AND GROUP MESSAGES!
 MMS and Group messages do currently support delivery receipts. However, you will need to have this enabled. Without the delivery receipts enabled, you will still receive a message delivered event when the message is sent. The message delivered event will not represent true delivery for only MMS and Group Messages. This will mean your message has been handed off to the Bandwidth's MMSC network, but has not been confirmed at the downstream carrier.
 </aside>
 
-{% endraw %}
+
 
 ### Parameters
 | Parameter             | Type     | Description                                                                                                                                                                                                                                                                                                                                                         |
@@ -33,11 +33,11 @@ MMS and Group messages do currently support delivery receipts. However, you will
 | message.tag           | `string` | An custom String that you can use to track this particular message                                                                                                                                                                                                                                                                                                  |
 | message.segmentCount  | `int`    | This indicates the number of segments the original message from the user is broken into before sending over to career networks                                                                                                                                                                                                                                      |
 
-{% common %}
+
 
 ### Example 1 of 4: SMS Message delivered
 
-{% sample lang='http' %}
+
 
 ```http
 POST /your_url HTTP/1.1
@@ -65,7 +65,7 @@ User-Agent: BandwidthAPI/v2
 ]
 ```
 
-{% common %}
+
 
 ### Example 2 of 4: Toll-free Message delivered to handset
 
@@ -73,7 +73,7 @@ User-Agent: BandwidthAPI/v2
 * A [timeout response with error-code](messageFailed.md) : **9902 - Timed out waiting for delivery receipt. The reason a delivery receipt was not received is not known.** does **not** indicate that the message was not received. Only that the end-users' device did not communicate back to the network indicating the message was received during the DLR timeout window.
 * A DLR when the **from** number is **toll-free** and the **status** is **ok** indicates that the message was indeed delivered to the end users' device.
 
-{% sample lang='http' %}
+
 
 
 ```http
@@ -107,7 +107,7 @@ User-Agent: BandwidthAPI/v2
 
 ### Example 3 of 4: MMS Message delivered to carrier
 
-{% sample lang='http' %}
+
 
 ```http
 POST /your_url HTTP/1.1
@@ -136,13 +136,13 @@ User-Agent: BandwidthAPI/v2
 ]
 ```
 
-{% common %}
+
 
 ### Example 4 of 4: Group MMS Message delivered to carrier
 
 You will receive a unique callback per phonenumber sent in the group message. The example below shows **1 of the 2** callbacks that would be sent from Bandwidth.
 
-{% sample lang='http' %}
+
 
 ```http
 POST /your_url HTTP/1.1
@@ -173,4 +173,4 @@ User-Agent: BandwidthAPI/v2
 ]
 ```
 
-{% endmethod %}
+

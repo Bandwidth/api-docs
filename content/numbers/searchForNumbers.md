@@ -1,7 +1,7 @@
-{% multimethod %}
-{% endmultimethod %}
 
-# Searching for Phone Numbers {#top}
+
+
+# Searching for Phone Numbers 
 
 Searching for phone numbers can be performed through our Dashboard API. There are many ways to search for phone numbers and this guide covers the various methods and how you perform them.
 
@@ -61,7 +61,7 @@ The Numbers API resources are authenticated with your [API Credentials for "Numb
 | TollFree Vanity                    | tollFreeVanity          | orderBy                                                                                           | quantity                                     |
 | TollFree WildCard                  | tollFreeWildCardPattern | orderBy                                                                                           | quantity                                     |
 
-### Example 1 of 5: Search for 2 phone numbers by Area Code {#areacode}
+### Example 1 of 5: Search for 2 phone numbers by Area Code 
 
 #### Parameters:
 
@@ -89,7 +89,7 @@ Content-type: application/xml
 </SearchResult>
 ```
 
-### Example 2 of 5: Search for 2 toll-free numbers {#tollfree}
+### Example 2 of 5: Search for 2 toll-free numbers 
 
 #### Parameters:
 
@@ -117,7 +117,7 @@ Content-type: application/xml
 </SearchResult>
 ```
 
-### Example 3 of 5: Search for 2 phone numbers by localVanity {#localvanity}
+### Example 3 of 5: Search for 2 phone numbers by localVanity 
 
 #### Parameters:
 
@@ -147,7 +147,7 @@ Content-type: application/xml
 </SearchResult>
 ```
 
-### Example 4 of 5: Search for 2 phone numbers by NPANxxx with LCA False {#npanxxx}
+### Example 4 of 5: Search for 2 phone numbers by NPANxxx with LCA False 
 
 #### Parameters:
 
@@ -176,7 +176,7 @@ Content-type: application/xml
 </SearchResult>
 ```
 
-### Example 5 of 5: Search for 5 phone numbers by NPANxxx with LCA true {#npanxxxlca}
+### Example 5 of 5: Search for 5 phone numbers by NPANxxx with LCA true 
 
 Note the difference between example 4 of 5 with the resulting numbers not exactly matching the pattern sent
 
@@ -211,7 +211,7 @@ Content-type: application/xml
 </SearchResult>
 ```
 
-### NodeJS Example {#node}
+### NodeJS Example 
 
 ```js
 const numbers = require("@bandwidth/numbers");
@@ -238,7 +238,7 @@ console.log(JSON.stringify(availableNumbers, null, 2));
 }
 ```
 
-### C# Example {#csharp}
+### C# Example 
 
 ```csharp
 using Bandwidth.Iris;
@@ -262,7 +262,7 @@ Number: 9192760028
 Number: 9194954957
 ```
 
-### Ruby Example {#ruby}
+### Ruby Example 
 
 ```ruby
 require 'ruby-bandwidth-iris'
@@ -282,7 +282,7 @@ puts(numbers)
 9194954957
 ```
 
-### PHP Example {#php}
+### PHP Example 
 
 ```php
 $client = new \Iris\Client("userName", "password", ['url' => 'https://dashboard.bandwidth.com/api/']);
@@ -298,7 +298,7 @@ print_r(json_encode($numbers));
 [{"TelephoneNumber":["9192760028","9194954957"]}]
 ```
 
-### Java Example {#java}
+### Java Example 
 
 ```java
 import com.bandwidth.iris.sdk.IrisClient;

@@ -1,4 +1,4 @@
-{% method %}
+
 ##  Gather event
 
 The gather event is sent after a [`<Gather>`](../verbs/gather.md) verb is executed.  Its purpose is to report the gathered digits
@@ -36,7 +36,7 @@ Content-Type: application/xml; charset=utf-8
 | transferCallerId  | (optional) If the event is related to the B leg of a `<Transfer>`, the phone number used as the `from` field of the B-leg call, in E.164 format (e.g. +15555555555). Otherwise, this field will not be present. |
 | transferTo        | (optional) If the event is related to the B leg of a `<Transfer>`, the phone number used as the `to` field of the B-leg call in E.164 format (e.g. +15555555555). Otherwise, this field will not be present. |
 
-{% common %}
+
 
 #### Example: Gather event completed because the max-digits were reached
 
@@ -85,4 +85,4 @@ POST http://[External server URL]
 	"terminatingDigit" : "#"
 }
 ```
-{% endmethod %}
+

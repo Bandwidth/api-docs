@@ -1,4 +1,4 @@
-# Configuring Emergency Notifications {#top}
+# Configuring Emergency Notifications 
 
 This guide will walk through creating and associating Emergency Recipients & Groups with HTTP & SDK Examples
 
@@ -22,7 +22,7 @@ In order to configure emergency notifications in the Bandwidth Dashboard, the fo
 * [Updating Configuration](#updating-eng)
 * [Removing Configuration](#removing)
 
-## Create "emergency notification recipients" {#create-enr}
+## Create "emergency notification recipients" 
 
 This defines the details of a specific notification.
 
@@ -37,7 +37,7 @@ An emergency notification recipient has a:
 | SMS or TTS | telephone number           |
 | CALLBACK   | HTTPS URL and credentials. |
 
-{% extendmethod %}
+
 
 
 ### Request Information
@@ -86,11 +86,11 @@ Oneof the following must be provided to match the `Type` as specified.
 | Callback Url        | Callback URL as sent in the request                                                                                                                                                                                                                                                                                   |
 | Callback Username   | Callback Username as sent in the request. **Callback Password is ommitted for security**                                                                                                                                                                                                                              |
 
-{% common %}
+
 
 ### Example 1 of 1: Create a Callback Notification
 
-{% sample lang='http' %}
+
 
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/emergencyNotificationRecipients HTTP/1.1
@@ -135,7 +135,7 @@ Content-type: application/xml
 </EmergencyNotificationRecipientsResponse>
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $data = array(
@@ -159,7 +159,7 @@ $response = $account->createEmergencyNotificationRecipient($data);
 
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 data = {
@@ -184,7 +184,7 @@ puts enr
 
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 EmergencyNotificationRecipient enr = new EmergencyNotificationRecipient();
@@ -214,7 +214,7 @@ try {
 
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 try
@@ -246,7 +246,7 @@ catch (Exception ex)
 
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 var emergencyNotificationRecipient = {
@@ -270,7 +270,7 @@ var response = await EmergencyNotification.createRecipientAsync(helper.createCli
 
 ```
 
-{% sample lang="python" %}
+
 
 ```python
 print("");
@@ -282,9 +282,9 @@ print("");
 
 ```
 
-{% endextendmethod %}
 
-## Create "emergency notification groups" order {#create-eng}
+
+## Create "emergency notification groups" order 
 
 This allows you to create groups that should use the same set of emergency notification recipients.
 
@@ -294,7 +294,7 @@ A group has a:
 * Description
 * one to three notification recipients.
 
-{% extendmethod %}
+
 
 ### Request Information
 
@@ -345,11 +345,11 @@ The emergency notification groups resource is authenticated with your [API Crede
 | (emergency notification recipient) Identifier | The (emergency notification recipient) Identifier as specified in the Request.                                                                                                                                                                                                                                                              |
 
 
-{% common %}
+
 
 ### Example 1 of 1: Create a new Notification Group
 
-{% sample lang='http' %}
+
 
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/emergencyNotificationGroupOrders HTTP/1.1
@@ -405,7 +405,7 @@ Content-type: application/xml
 </EmergencyNotificationGroupOrderResponse>
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $data = array(
@@ -436,7 +436,7 @@ $response = $account->createEmergencyNotificationGroupOrder($data);
 
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 data = {
@@ -469,7 +469,7 @@ puts order
 
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 EmergencyNotificationGroupOrder engo = new EmergencyNotificationGroupOrder();
@@ -503,7 +503,7 @@ try {
 
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 try
@@ -544,7 +544,7 @@ catch (Exception ex)
 
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 var emergencyNotificationGroupOrder = {
@@ -580,7 +580,7 @@ var response = await EmergencyNotification.createGroupOrderAsync(client, emergen
 
 ```
 
-{% sample lang="python" %}
+
 
 ```python
 print("");
@@ -592,15 +592,15 @@ print("");
 
 ```
 
-{% endextendmethod %}
 
-## Associate "emergency endpoints" with "emergency notification groups". {#associate-eng-enr}
+
+## Associate "emergency endpoints" with "emergency notification groups". 
 
 This step allows you to assign emergency endpoints (either telephone numbers or alternate end-user identifiers - AEUIs) to a group.
 
 For example, if you want everyone in a given building to trigger the same set of notifications in the event that they place an emergency call, just add those callers to the group that has the desired notification recipients.
 
-{% extendmethod %}
+
 
 ### Request Information
 
@@ -648,11 +648,11 @@ The emergencyNotificationEndpointOrders resource is authenticated with your [API
 | Identifier                            | The Identifier, as specified in the request                                                                                                                                                                                                                                                                                                 |
 
 
-{% common %}
+
 
 ### Example 1 of 1: Create a new Association
 
-{% sample lang='http' %}
+
 
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/emergencyNotificationEndpointOrders HTTP/1.1
@@ -716,7 +716,7 @@ Content-type: application/xml
 ```
 
 
-{% sample lang="php" %}
+
 
 ```php
 $data = array(
@@ -746,7 +746,7 @@ $response = $account->createEmergencyNotificationEndpointOrder($data);
 
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 data = {
@@ -778,7 +778,7 @@ puts order
 
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 EmergencyNotificationEndpointOrder eneo = new EmergencyNotificationEndpointOrder();
@@ -809,7 +809,7 @@ try {
 
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 try
@@ -846,7 +846,7 @@ catch (Exception ex)
 
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 var emergencyNotificationEndpointOrder = {
@@ -879,7 +879,7 @@ var response = await EmergencyNotification.createEndpointOrderAsync(client, emer
 
 ```
 
-{% sample lang="python" %}
+
 
 ```python
 print("");
@@ -891,26 +891,26 @@ print("");
 
 ```
 
-{% endextendmethod %}
 
-## Updating Configuration {#updating-eng}
+
+## Updating Configuration 
 
 * Emergency notification groups may be updated by adding or removing recipients, provided that the group always has from one to three recipients.
 * Emergency notification recipients may be updated at any time.
 * Emergency endpoints may be added to or removed from an emergency notification group at any time.
 
-{% extendmethod %}
+
 
 ### Supported Parameters & Responses
 
 * When updating Emergency notification groups, see the [Supported Parameters](#create-eng)
 * When updating Emergency notification recipients, see the [Supported Parameters](#create-enr)
 
-{% common %}
+
 
 ### Example 1 of 2: Updating an emergency notification group by adding emergency notification recipients
 
-{% sample lang='http' %}
+
 
 
 ```http
@@ -953,7 +953,7 @@ Content-type: application/xml
 </EmergencyNotificationGroupOrderResponse>
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $data = array(
@@ -978,7 +978,7 @@ $response = $account->createEmergencyNotificationGroupOrder($data);
 
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 data = {
@@ -1004,7 +1004,7 @@ puts order
 
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 EmergencyNotificationGroupOrder engo = new EmergencyNotificationGroupOrder();
@@ -1033,7 +1033,7 @@ try {
 
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 try
@@ -1064,7 +1064,7 @@ catch (Exception ex)
 
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 var emergencyNotificationGroupOrder = {
@@ -1089,7 +1089,7 @@ var response = await EmergencyNotification.createGroupOrderAsync(client, emergen
 
 ```
 
-{% sample lang="python" %}
+
 
 ```python
 print("");
@@ -1101,11 +1101,11 @@ print("");
 
 ```
 
-{% common %}
+
 
 ### Example 2 of 2: Updating an emergency recipient ID to use SMS
 
-{% sample lang='http' %}
+
 
 ```http
 PUT https://dashboard.bandwidth.com/api/accounts/{{accountId}}/emergencyNotificationRecipients/{{enrId}} HTTP/1.1
@@ -1142,7 +1142,7 @@ Content-type: application/xml
 </EmergencyNotificationRecipientsResponse>
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $data = array(
@@ -1161,7 +1161,7 @@ $response = $account->replaceEmergencyNotificationRecipient("id", $data);
 
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 data = {
@@ -1182,7 +1182,7 @@ puts enr
 
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 EmergencyNotificationRecipient enr = new EmergencyNotificationRecipient();
@@ -1204,7 +1204,7 @@ try {
 
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 try
@@ -1230,7 +1230,7 @@ catch (Exception ex)
 
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 var emergencyNotificationRecipient = {
@@ -1253,7 +1253,7 @@ var response = await emergencyNotification.replaceRecipientAsync(client, emergen
 
 ```
 
-{% sample lang="python" %}
+
 
 ```python
 print("");
@@ -1266,27 +1266,27 @@ print("");
 ```
 
 
-{% endextendmethod %}
 
-## Removing Configuration {#removing}
+
+## Removing Configuration 
 
 Removal of configuration is essentially the reverse of the above:
 
 * An emergency notification group cannot be removed if at least one emergency endpoint is still associated with that group.
 * An emergency notification recipient cannot be removed if that recipient belongs to a group.
 
-{% extendmethod %}
+
 
 ### Supported Parameters & Responses
 
 * When updating Emergency notification groups, see the [Supported Parameters](#create-eng)
 * When updating Emergency notification recipients, see the [Supported Parameters](#create-enr)
 
-{% common %}
+
 
 ### Example 1 of 2: Delete an emergency notification recipient from a group
 
-{% sample lang='http' %}
+
 
 
 ```http
@@ -1329,7 +1329,7 @@ Content-type: application/xml
 </EmergencyNotificationGroupOrderResponse>
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $data = array(
@@ -1354,7 +1354,7 @@ $response = $account->createEmergencyNotificationGroupOrder($data);
 
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 data = {
@@ -1380,7 +1380,7 @@ puts order
 
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 EmergencyNotificationGroupOrder engo = new EmergencyNotificationGroupOrder();
@@ -1409,7 +1409,7 @@ try {
 
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 try
@@ -1441,7 +1441,7 @@ catch (Exception ex)
 
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 var emergencyNotificationGroupOrder = {
@@ -1469,7 +1469,7 @@ var response = await EmergencyNotification.createGroupOrderAsync(client, emergen
 
 ```
 
-{% sample lang="python" %}
+
 
 ```python
 print("");
@@ -1481,11 +1481,11 @@ print("");
 
 ```
 
-{% common %}
+
 
 ### Example 2 of 2: Delete an emergency notification recipient
 
-{% sample lang='http' %}
+
 
 ```http
 DELETE https://dashboard.bandwidth.com/api/accounts/{{accountId}}/emergencyNotificationRecipients/{{enrId}} HTTP/1.1
@@ -1497,7 +1497,7 @@ DELETE https://dashboard.bandwidth.com/api/accounts/{{accountId}}/emergencyNotif
 HTTP/1.1 200
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $account->deleteEmergencyNotificationRecipient("id");
@@ -1509,7 +1509,7 @@ $account->deleteEmergencyNotificationRecipient("id");
 
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 BandwidthIris::EmergencyNotificationRecipients.delete_emergency_notification_recipient("id")
@@ -1521,7 +1521,7 @@ BandwidthIris::EmergencyNotificationRecipients.delete_emergency_notification_rec
 
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 try {
@@ -1537,7 +1537,7 @@ try {
 
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 try
@@ -1556,7 +1556,7 @@ catch (Exception ex)
 
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 var emergencyNotification = new EmergencyNotification();
@@ -1571,7 +1571,7 @@ var response = await emergencyNotification.deleteRecipient(client);
 
 ```
 
-{% sample lang="python" %}
+
 
 ```python
 print("");
@@ -1583,4 +1583,4 @@ print("");
 
 ```
 
-{% endextendmethod %}
+

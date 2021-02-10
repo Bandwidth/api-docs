@@ -1,4 +1,4 @@
-{% method %}
+
 ## XML: `<SendDtmf>`
 The SendDtmf verb is used to play DTMF digits in the call.
 * The `,` and lowercase `w` characters introduce a half-second pause into the DTMF sequence.
@@ -24,12 +24,12 @@ All `w`, `,` and `W` chars replace `toneInterval`, so if a
 
 None
 
-{% common %}
+
 #### Example 1 of 1:  SendDtmf Verb
 
 This shows how to use Bandwidth XML to Send Dtmf during a call.
 
-{% sample lang="http" %}
+
 
 
 ```XML
@@ -39,7 +39,7 @@ This shows how to use Bandwidth XML to Send Dtmf during a call.
 </Response>
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 SendDtmf sendDtmf = SendDtmf.builder()
@@ -50,7 +50,7 @@ Response response = Response.builder().build()
         .add(sendDtmf);
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 Response response = new Response();
@@ -64,7 +64,7 @@ Console.WriteLine(response.ToBXML());
 ```
 
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 response = Bandwidth::Voice::Response.new()
@@ -76,7 +76,7 @@ response.push(send_dtmf)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
 
 ```python
 response = Response()
@@ -86,7 +86,7 @@ response.add_verb(send_dtmf)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 var sendDtmf = new BandwidthBxml.Verbs.SendDtmf();
@@ -98,7 +98,7 @@ response.addVerb(sendDtmf);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $sendDtmf = new BandwidthLib\Voice\Bxml\SendDtmf("12w34");
@@ -110,4 +110,4 @@ echo $response->toBxml();
 echo "\n";
 ```
 
-{% endmethod %}
+

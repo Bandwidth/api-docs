@@ -1,4 +1,4 @@
-{% method %}
+
 
 ## XML: `<Bridge>`
 The Bridge verb is used to bridge another party (target call) onto the current call.
@@ -47,12 +47,12 @@ In any of those cases a [Bridge Complete](../callbacks/bridgeComplete.md) event 
 | [Bridge Complete](../callbacks/bridgeComplete.md)              | Yes                      |
 | [Bridge Target Complete](../callbacks/bridgeTargetComplete.md) | Yes                      |
 
-{% common %}
+
 
 ### Example 1 of 1: Bridge calls
 This shows how to use Bandwidth XML to bridge phone calls.
 
-{% sample lang="http" %}
+
 
 First call (c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d):
 ```XML
@@ -74,7 +74,7 @@ Second call:
 </Response>
 ```
 
-{% sample lang="java" %}
+
 
 First call (c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d):
 ```java
@@ -109,7 +109,7 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
+
 
 First call (c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d):
 ```csharp
@@ -152,7 +152,7 @@ response.Add(bridge);
 Console.WriteLine(response.ToBXML());
 ```
 
-{% sample lang="ruby" %}
+
 
 First call (c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d):
 ```ruby
@@ -186,7 +186,7 @@ response.push(bridge)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
 
 First call (c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d):
 ```python
@@ -219,7 +219,7 @@ response.add_verb(bridge)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
 
 First call (c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d):
 ```js
@@ -251,7 +251,7 @@ response.addVerb(bridge);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
 
 First call (c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d):
 ```php
@@ -277,6 +277,6 @@ $response->addVerb($bridge);
 echo $response->toBxml();
 ```
 
-{% common %}
 
-{% endmethod %}
+
+

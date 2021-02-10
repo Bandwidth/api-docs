@@ -1,4 +1,4 @@
-{% method %}
+
 
 ## XML: `<Transfer>`
 The Transfer verb is used to bridge another party onto the current call.
@@ -20,7 +20,7 @@ The Transfer verb is used to bridge another party onto the current call.
 | diversionTreatment | (optional) Can be any of the following: <br> `none`: No diversion headers are sent on the outbound leg of the transferred call. <br>`propagate`: Copy the Diversion header from the inbound leg to the outbound leg. Ignored if there is no Diversion header present on the inbound leg. <br>`stack`: After propagating any Diversion header from the inbound leg to the outbound leg, stack on top another Diversion header based on the Request-URI of the inbound call. <br><br>Defaults to `none`.  If diversionTreatment is not specified, no diversion header will be included for the transfer even if one came with the inbound call. |
 | diversionReason | (optional) Can be any of the following values: <br>`unknown`<br>`user-busy`<br>`no-answer`<br>`unavailable`<br>`unconditional`<br>`time-of-day`<br>`do-not-disturb`<br>`deflection`<br>`follow-me`<br>`out-of-service`<br>`away` <br><br>This parameter is considered only when `diversionTreatment` is set to `stack`.  Defaults to `unknown`. |
 
-### {#transferCompleteUrl}
+### 
 When the called party hangs up, if the `transferCompleteUrl` attribute is specified, the [TransferComplete](../callbacks/transferComplete.md) callback is sent to the `transferCompleteUrl`,
 this callback is also sent if any problem occurs with the transfer, such as the callee is busy, doesn't answer, or the call gets [rate limited](../../rateLimits.md).
 The BXML returned by that callback is executed on the original call. Verbs following the `<Transfer>` will be ignored when the `transferCompleteUrl` attribute is specified.
@@ -86,12 +86,12 @@ When each leg of the transfer ends for any reason, if `transferDisconnectUrl` wa
 | [Transfer Complete](../callbacks/transferComplete.md) | Yes |
 | [Transfer Disconnect](../callbacks/transferDisconnect.md) | No |
 
-{% common %}
+
 
 ### Example 1 of 3: Simple Transfer
 This shows how to use Bandwidth XML to transfer a phone call.
 
-{% sample lang="http" %}
+
 
 
 ```XML
@@ -104,7 +104,7 @@ This shows how to use Bandwidth XML to transfer a phone call.
 </Response>
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 SpeakSentence speakSentence = SpeakSentence.builder()
@@ -128,7 +128,7 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 Response response = new Response();
@@ -146,7 +146,7 @@ Console.WriteLine(response.ToBXML());
 ```
 
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 response = Bandwidth::Voice::Response.new()
@@ -162,7 +162,7 @@ response.push(transfer)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
 
 ```python
 phone_number = PhoneNumber(
@@ -177,7 +177,7 @@ response.add_verb(transfer)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 var phone_number = new BandwidthBxml.Verbs.PhoneNumber();
@@ -193,7 +193,7 @@ response.addVerb(transfer);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $number = new BandwidthLib\Voice\Bxml\PhoneNumber("+17777777777");
@@ -209,13 +209,13 @@ echo $response->toBxml();
 echo "\n";
 ```
 
-{% common %}
+
 
 
 ### Example 2 of 3: Single Transfer with Announcement
 This shows how to use Bandwidth XML to transfer a phone call with a pre-bridge announcement.
 
-{% sample lang="http" %}
+
 
 
 ```XML
@@ -228,7 +228,7 @@ This shows how to use Bandwidth XML to transfer a phone call with a pre-bridge a
 </Response>
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 SpeakSentence speakSentence = SpeakSentence.builder()
@@ -253,7 +253,7 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 Response response = new Response();
@@ -276,7 +276,7 @@ Console.WriteLine(response.ToBXML());
 ```
 
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 response = Bandwidth::Voice::Response.new()
@@ -298,7 +298,7 @@ response.push(transfer)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
 
 ```python
 response = Response()
@@ -320,7 +320,7 @@ response.add_verb(transfer)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
@@ -341,7 +341,7 @@ response.addVerb(transfer);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Transferring your call, please wait.");
@@ -361,11 +361,11 @@ echo $response->toBxml();
 echo "\n";
 ```
 
-{% common %}
+
 
 > The announcement BXML at http://myapp.com/announcement is:
 
-{% sample lang="http" %}
+
 
 
 ```XML
@@ -375,7 +375,7 @@ echo "\n";
 </Response>
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 Response response = new Response();
@@ -389,7 +389,7 @@ Console.WriteLine(response.ToBXML());
 ```
 
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 speak_sentence = Bandwidth::Voice::SpeakSentence.new({
@@ -398,7 +398,7 @@ speak_sentence = Bandwidth::Voice::SpeakSentence.new({
 })
 ```
 
-{% sample lang="python" %}
+
 
 ```python
 speak_sentence = SpeakSentence(
@@ -407,7 +407,7 @@ speak_sentence = SpeakSentence(
 )
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
@@ -415,14 +415,14 @@ speakSentence.setSentence("Transferring your call, please wait.");
 speakSentence.setVoice("paul");
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Transferring your call, please wait.");
 $speakSentence->voice("paul");
 ```
 
-{% common %}
+
 
 
 ### Example 3 of 3: Multi transfer
@@ -430,7 +430,7 @@ $speakSentence->voice("paul");
 This example shows how to use Bandwidth XML in a multi transfer scenario.  All numbers ring simultaneously and the first
 to answer is bridged to the original call.
 
-{% sample lang="http" %}
+
 
 
 ```XML
@@ -444,7 +444,7 @@ to answer is bridged to the original call.
 
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 PhoneNumber phoneNumber1 = PhoneNumber.builder()
@@ -466,7 +466,7 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 Response response = new Response();
@@ -487,7 +487,7 @@ Console.WriteLine(response.ToBXML());
 ```
 
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 response = Bandwidth::Voice::Response.new()
@@ -506,7 +506,7 @@ response.push(transfer)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
 
 ```python
 phone_number_1 = PhoneNumber(
@@ -524,7 +524,7 @@ response.add_verb(transfer)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 var phone_number_1 = new BandwidthBxml.Verbs.PhoneNumber();
@@ -543,7 +543,7 @@ response.addVerb(transfer);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $number1 = new BandwidthLib\Voice\Bxml\PhoneNumber("+17777777777");
@@ -560,4 +560,4 @@ echo $response->toBxml();
 echo "\n";
 ```
 
-{% endmethod %}
+

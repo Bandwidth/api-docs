@@ -1,4 +1,4 @@
-{% method %}
+
 ## Conference Redirect Event
 The Conference Redirect event is fired whenever an existing [conference](../verbs/conference.md) is modified via a POST request made to the [/conferences/{conferenceId}](../../methods/conferences/postConferencesConferenceId.md) endpoint
 
@@ -34,7 +34,7 @@ Content-Type: application/xml; charset=utf-8
 | name              | The custom name used to reference this conference. This the name that you included inside the body of the [`<Conference>`](../verbs/conference.md) tag. |
 | tag               | (optional) The `tag` that was set at conference creation. If no `tag` was specified, this field will not be present. |
 
-{% common %}
+
 
 #### Example: Conference redirect
 
@@ -52,4 +52,4 @@ POST http://[External server URL]
 
 ```
 
-{% endmethod %}
+

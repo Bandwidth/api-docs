@@ -1,4 +1,4 @@
-{% method %}
+
 # Incoming Group Message Event
 
 In order to receive message events, you need to ensure you have set up your application to send callbacks to your server's URL.
@@ -29,10 +29,10 @@ You will need to break up the responses into separate messages to respond to mor
 | message.media         | `array`  | A list of URLs to include as media attachments as part of the message. <br> Using the [v2 media api](../methods/media/about.md) You can download the media **WITHIN 2 DAYS** <br><br> The URL will look something like: <br> `https://messaging.bandwidth.com/api/v2/users/{accountId}/media/{uploaded-file-name}` <br><br> Where `uploaded-file-name` is the original filename of your uploaded media. |
 | message.segmentCount  | `int`    | This indicates the number of segments the original message from the user is broken into before sending over to carrier networks. Segmentation of messages depends on the size and encoding. Bandwidth will segment the message if the character count is over the below limits: <br><br> - 160 for GSM-7 <br> - 70 for UCS-2 <br> <br> For MMS messages the segment count will always be set to 1       |
 
-{% common %}
+
 ### Example 1 of 2: Incoming group message with single media
 
-{% sample lang='http' %}
+
 
 ```http
 POST /your_url HTTP/1.1
@@ -66,11 +66,11 @@ User-Agent: BandwidthAPI/v2
 ]
 ```
 
-{% common %}
+
 
 ### Example 2 of 2: Incoming group message with multiple media
 
-{% sample lang='http' %}
+
 
 ```http
 POST /your_url HTTP/1.1
@@ -106,4 +106,4 @@ User-Agent: BandwidthAPI/v2
 ]
 ```
 
-{% endmethod %}
+

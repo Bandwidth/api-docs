@@ -1,4 +1,4 @@
-{% method %}
+
 ## XML: `<StartRecording>`
 The StartRecording verb allows a segment of a call or conference to be recorded while other verbs are executing.
 
@@ -47,11 +47,11 @@ During a [`<Transfer>`](transfer.md) the A-leg will be recorded in channel 0 (le
 | [Recording Available](../callbacks/recordingAvailable.md)         | No                       |
 | [Transcription Available](../callbacks/transcriptionAvailable.md) | No                       |
 
-{% common %}
+
 #### Example 1 of 1: Recording of a call
 This shows how to use Bandwidth XML to record a phone call.
 
-{% sample lang="http" %}
+
 
 
 ```XML
@@ -67,7 +67,7 @@ This shows how to use Bandwidth XML to record a phone call.
 </Response>
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 StartRecording startRecording = StartRecording.builder()
@@ -96,7 +96,7 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 SpeakSentence speakSentence = new SpeakSentence
@@ -136,7 +136,7 @@ response.Add(speakSentence1);
 Console.WriteLine(response.ToBXML());
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 speak_sentence_start = Bandwidth::Voice::SpeakSentence.new({
@@ -172,7 +172,7 @@ response.push(speak_sentence_end)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
 
 ```python
 speak_sentence_start = SpeakSentence(
@@ -208,7 +208,7 @@ response.add_verb(speak_sentence_end)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 var speakSentenceStart = new BandwidthBxml.Verbs.SpeakSentence();
@@ -239,7 +239,7 @@ response.addVerb(speakSentenceEnd);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $speakSentenceStart = new BandwidthLib\Voice\Bxml\SpeakSentence("This call is being recorded. Please wait while we transfer you.");
@@ -267,4 +267,4 @@ $response->addVerb($speakSentenceEnd);
 echo $response->toBxml();
 ```
 
-{% endmethod %}
+

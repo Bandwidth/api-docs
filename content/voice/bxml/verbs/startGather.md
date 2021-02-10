@@ -1,4 +1,4 @@
-{% method %}
+
 ## XML: `<StartGather>`
 The StartGather verb is used to get asynchronous notifications of DTMF digits collected in the call while other verbs are executed.
 
@@ -25,13 +25,13 @@ The StartGather verb can be cancelled by the [`<StopGather>`](stopGather.md) ver
 |:------------------------------|:-------------------------|
 | [dtmf](../callbacks/dtmf.md)  | No                       |
 
-{% common %}
+
 
 #### Example 1 of 1: Gather digits during a Conference
 This example shows how to use the StartGather verb to listen for digits pressed while the call is in a Conference.
 Whenever a digit is entered, a [dtmf](../callbacks/dtmf.md) event is sent with the detected digit.
 
-{% sample lang="http" %}
+
 
 ```XML
 <?xml version="1.0" encoding="UTF-8"?>
@@ -41,41 +41,41 @@ Whenever a digit is entered, a [dtmf](../callbacks/dtmf.md) event is sent with t
 </Response>
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 // TODO
 ```
 
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 // TODO
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 # TODO
 ```
 
-{% sample lang="python" %}
+
 
 ```python
 # TODO
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 // TODO
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 // TODO
 ```
 
-{% endmethod %}
+

@@ -1,4 +1,4 @@
-{% method %}
+
 # Message Failed Event
 In order to receive message events, you need to ensure you have set up your application to send callbacks to your server's URL.
 
@@ -25,10 +25,10 @@ For MMS and Group Messages, you will only receive this callback if you have enab
 | message.tag           | `string`  | An custom String that you can use to track this particular message                                                                                                                                                                                                                                                                                                  |
 | message.segmentCount  | `int`     | This indicates the number of segments the original message from the user is broken into before sending over to career networks                                                                                                                                                                                                                                      |
 
-{% common %}
+
 ### Example Error 1 of 2 (4432 - forbidden to country)
 
-{% sample lang='http' %}
+
 
 ```http
 POST /your_url HTTP/1.1
@@ -68,7 +68,7 @@ User-Agent: BandwidthAPI/v2
 * Timed out waiting for delivery receipt. The reason a delivery receipt was not received is not known.
 * A timeout response with error-code : **9902 - Timed out waiting for delivery receipt. The reason a delivery receipt was not received is not known.** does **not** indicate that the message was not received. Only that the end-users' device did not communicate back to the network or the carrier did not provide us with a delivery confirmation
 
-{% sample lang='http' %}
+
 
 ```http
 POST /your_url HTTP/1.1
@@ -99,4 +99,4 @@ User-Agent: BandwidthAPI/v2
 ]
 ```
 
-{% endmethod %}
+

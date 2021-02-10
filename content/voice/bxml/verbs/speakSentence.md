@@ -1,4 +1,4 @@
-{% method %}
+
 ## XML: `<SpeakSentence>`
 The SpeakSentence verb translates text to speech and plays the resulting audio on the call
 
@@ -153,12 +153,12 @@ Attributes:
 ### Callbacks Received
 None
 
-{% common %}
+
 
 ### Example 1 of 2:  SpeakSentence Verb
 This shows how to use Bandwidth XML to use text to speech to speak a sentence into a phone call.
 
-{% sample lang="http" %}
+
 
 
 ```XML
@@ -170,7 +170,7 @@ This shows how to use Bandwidth XML to use text to speech to speak a sentence in
 </Response>
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 SpeakSentence speakSentence = SpeakSentence.builder()
@@ -184,7 +184,7 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 Response response = new Response();
@@ -198,7 +198,7 @@ response.Add(speakSentence);
 Console.WriteLine(response.ToBXML());
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 response = Bandwidth::Voice::Response.new()
@@ -211,7 +211,7 @@ response.push(speak_sentence)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
 
 ```python
 response = Response()
@@ -224,7 +224,7 @@ response.add_verb(speak_sentence)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
@@ -237,7 +237,7 @@ response.addVerb(speakSentence);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("This is a test");
@@ -250,13 +250,13 @@ echo $response->toBxml();
 echo "\n";
 ```
 
-{% common %}
+
 
 ### Example 2 of 2: SpeakeSentence and SSML
 
 This shows how to use Bandwidth XML with SSML tags to modify the way the text sounds.
 
-{% sample lang="http" %}
+
 
 
 ```XML
@@ -269,7 +269,7 @@ This shows how to use Bandwidth XML with SSML tags to modify the way the text so
 </Response>
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 SpeakSentence speakSentence = SpeakSentence.builder()
@@ -283,7 +283,7 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 Response response = new Response();
@@ -298,7 +298,7 @@ Console.WriteLine(response.ToBXML());
 ```
 
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 response = Bandwidth::Voice::Response.new()
@@ -311,7 +311,7 @@ response.push(speak_sentence)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
 
 ```python
 response = Response()
@@ -324,7 +324,7 @@ response.add_verb(speak_sentence)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
@@ -337,7 +337,7 @@ response.addVerb(speakSentence);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence('Hello, you have reached the home of <lang xml:lang="es-MX">Antonio Mendoza</lang>.Please leave a message.');
@@ -347,4 +347,4 @@ $response->addVerb($speakSentence);
 echo $response->toBxml();
 ```
 
-{% endmethod %}
+

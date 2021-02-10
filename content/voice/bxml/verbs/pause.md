@@ -1,4 +1,4 @@
-{% method %}
+
 
 ## XML: `<Pause>`
 The Pause verb is used to delay verb execution for a period of time, during which the call will be silent.
@@ -14,11 +14,11 @@ The Pause verb is used to delay verb execution for a period of time, during whic
 
 None
 
-{% common %}
+
 #### Example 1 of 1:  Pause Verb
 This shows how to use Bandwidth XML to pause for 2 seconds.
 
-{% sample lang="http" %}
+
 
 
 ```XML
@@ -28,7 +28,7 @@ This shows how to use Bandwidth XML to pause for 2 seconds.
 </Response>
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 Pause pause = Pause.builder()
@@ -41,7 +41,7 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 Response response = new Response();
@@ -55,7 +55,7 @@ Console.WriteLine(response.ToBXML());
 ```
 
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 response = Bandwidth::Voice::Response.new()
@@ -67,7 +67,7 @@ response.push(pause)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
 
 ```python
 response = Response()
@@ -77,7 +77,7 @@ response.add_verb(pause)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 var pause = new BandwidthBxml.Verbs.Pause();
@@ -89,7 +89,7 @@ response.addVerb(pause);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $pause = new BandwidthLib\Voice\Bxml\Pause();
@@ -102,4 +102,4 @@ echo $response->toBxml();
 echo "\n";
 ```
 
-{% endmethod %}
+

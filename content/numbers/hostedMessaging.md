@@ -1,7 +1,7 @@
-{% multimethod %}
-{% endmultimethod %}
 
-# Bandwidth Hosted Messaging API Setup {#top}
+
+
+# Bandwidth Hosted Messaging API Setup 
 
 This walks through how to programmatically import Phone Numbers to your account for use with [Bandwidth's Messaging Products](../../messaging/about.md).
 
@@ -47,13 +47,13 @@ There are 3 different APIs that you will use to manage phone numbers for hosted 
 | `/removeImportedTnOrders` | Initiates the process of removing the numbers that were imported into your account for hosted messaging.  Removing an imported TN will restore it to it’s prior pre-imported state. |
 | `/importTnChecker`        | Preliminary check to make sure that a TN is “importable” by checking against our internal databases.                                                                                |
 
-## Create Subscription for `importtnorders` {#create-subscription}
+## Create Subscription for `importtnorders` 
 
 The [Subscription](../../account/subscriptions/methods/postSubscriptions.md) contains the HTTP URL to receive HTTP Callbacks/webhooks anytime there is an update to the `importTnOrder` status.
 
 Learn more about [subscriptions in the documentation](../../account/subscriptions/about.md).
 
-{% extendmethod %}
+
 
 #### Subscription Parameters
 
@@ -76,11 +76,11 @@ The [Subscriptions](../../account/subscriptions/about.md) resource is authentica
 | `Password`               | No, but highly recommended   | Basic auth `Password`                                                                                                                                                                                                                                                                                                                                                                                           |
 | `<PublicKey>`            | No                           | BASE64 encoded public key matching the notification receiving server                                                                                                                                                                                                                                                                                                                                            |
 
-{% common %}
+
 
 ### Create Subscription
 
-{% sample lang="http" %}
+
 
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/subscriptions HTTP/1.1
@@ -111,7 +111,7 @@ Content-Type: application/xml
 Location: https://dashboard.bandwidth.com/api/accounts/{{accountId}}/subscriptions/{{applicationID}}
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $subscription = $account->subscriptions()->create([
@@ -129,7 +129,7 @@ print_r($subscription->SubscriptionId);
 390-f-42-89-40
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 subscription = {
@@ -148,7 +148,7 @@ puts response.to_data()[:subscription_id]
 390-f-42-89-40
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 CallbackSubscription callbackSubscription = new callbackSubscription();
@@ -170,7 +170,7 @@ System.out.println(subscriptionCreated.getOrderId());
 390-f-42-89-40
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 var subscription = new Subscription {
@@ -191,7 +191,7 @@ Console.WriteLine(createdSubscription.Id);
 390-f-42-89-40
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 var subscription = {
@@ -211,15 +211,15 @@ numbers.Subscription.create(subscription, function(err, response) {
 390-f-42-89-40
 ```
 
-{% endextendmethod %}
+
 
 ---
 
-## Check the Phone Number for "importability" {#check-for-importability}
+## Check the Phone Number for "importability" 
 
 Before creating the order, to reduce failed or error statuses, create a <code class="post">POST</code> request to the `/importTnChecker` endpoint to check if the number can be brought in to your Bandwidth account. A non-errored response from the importTnChecker doesn't necessarily mean that the order will succeed, but is a good indicator of success.
 
-{% extendmethod %}
+
 
 #### importTnChecker Parameters
 
@@ -233,11 +233,11 @@ Before creating the order, to reduce failed or error statuses, create a <code cl
 | `<TelephoneNumbers>` | Yes       | Top level element containing a list of `<TelephoneNumber>` elements |
 | `<TelephoneNumber>`  | Yes       | Phone Number to check "importability"                               |
 
-{% common %}
+
 
 ### Check Importability
 
-{% sample lang="http" %}
+
 
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/importTnChecker HTTP/1.1
@@ -283,7 +283,7 @@ Location: https://dashboard.bandwidth.com/api/accounts/{{accountId}}/application
 </ImportTnCheckerResponse>
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $response = $account->checkTnsPortability(array("5554443333", "5553334444"));
@@ -306,7 +306,7 @@ Array
 )
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 response = BandwidthIris::ImportTnChecker.check_tns_portability({
@@ -328,7 +328,7 @@ Messaging route of External Third Party TNs is not configured.
 5553334444
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 TelephoneNumber number = new TelephoneNumber();
@@ -353,7 +353,7 @@ Messaging route of External Third Party TNs is not configured.
 5554443333
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 var payload = new ImportTnCheckerPayload{
@@ -378,7 +378,7 @@ Messaging route of External Third Party TNs is not configured.
 5554443333
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 const numbersToCheck = ["5554443333"];
@@ -402,15 +402,15 @@ Messaging route of External Third Party TNs is not configured.
 5554443333
 ```
 
-{% endextendmethod %}
+
 
 ---
 
-## Create importTNOrder {#create-importTN-order}
+## Create importTNOrder 
 
 After validating the numbers are able to be imported, create a POST request to create the order to import the phone numbers in to your Bandwidth account.
 
-{% extendmethod %}
+
 
 #### importTNOrder Parameters
 
@@ -431,11 +431,11 @@ After validating the numbers are able to be imported, create a POST request to c
 | `<SiteId>`               | Yes      | See section on Sites                                                                                                                      |
 | `<SipPeerId>`            | No       | See section on SIP Peers                                                                                                                  |
 
-{% common %}
+
 
 ### Create importTNOrder
 
-{% sample lang="http" %}
+
 
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/importTnOrders HTTP/1.1
@@ -505,7 +505,7 @@ Location: https://dashboard.bandwidth.com/api/accounts/{{accountId}}/importTnOrd
 </ImportTnOrderResponse>
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $importTnOrder = new \Iris\ImportTnOrder(array(
@@ -541,7 +541,7 @@ print_r($response->ImportTnOrder->ProcessingStatus);
 RECEIVED
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 import_tn_order = {
@@ -575,7 +575,7 @@ puts response[0][:import_tn_order][:processing_status]
 RECEIVED
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 ImportTnOrder importTnOrder = new ImportTnOrder();
@@ -598,7 +598,7 @@ System.out.println(response.getImportTnOrder()..getProcessingStatus());
 RECEIVED
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 var importTnOrder = new ImportTnOrder{
@@ -637,7 +637,7 @@ Console.WriteLine(response.ImportTnOrder.ProcessingStatus);
 RECEIVED
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 const numbersToCheck = ["5554443333", "5554442222"];
@@ -677,17 +677,17 @@ RECEIVED
 ```
 
 
-{% endextendmethod %}
+
 
 ---
 
-## Receive callback for the importTnOrders {#receive-callback}
+## Receive callback for the importTnOrders 
 
 Anytime the status of the order is updated (complete, error, etc...) Bandwidth will send an HTTP callback/webhook to the URL specified in the subscription.
 
 **Bandwidth expects an HTTP-2xx response to any callbacks.**
 
-{% extendmethod %}
+
 
 ### Callback Parameters
 
@@ -706,7 +706,7 @@ Anytime the status of the order is updated (complete, error, etc...) Bandwidth w
 | `<Note>`            | Custom note added when updating or creating the importTnOrder      |
 
 
-{% common %}
+
 
 ### Receive Callback to your server
 
@@ -727,7 +727,7 @@ Authorization: {subscription_user:subscription_password}
 </Notification>
 ```
 
-{% common %}
+
 
 ### Response as generated by **your** server
 
@@ -735,15 +735,15 @@ Authorization: {subscription_user:subscription_password}
 HTTP/1.1 200 OK
 ```
 
-{% endextendmethod %}
+
 
 ---
 
-## Fetch Order Status {#fetch-order-status}
+## Fetch Order Status 
 
 **Optional** At anytime, you're able to get the order status by creating a GET request to the order-id returned when creating the importTnOrder.
 
-{% extendmethod %}
+
 
 #### Request URL
 
@@ -767,11 +767,11 @@ HTTP/1.1 200 OK
 | `<ProcessingStatus>`     | The current status of the import TN order. The `LastModifiedDate` indicates when the status was updated |
 | `<Errors>`               | Any errors that occured during the request                                                              |
 
-{% common %}
+
 
 ### Fetch importTnOrder Status
 
-{% sample lang="http" %}
+
 
 ```http
 GET https://dashboard.../{{accountId}}/importTnOrders/{{orderId}} HTTP/1.1
@@ -815,7 +815,7 @@ Content-Type: application/xml; charset=utf-8
 </ImportTnOrder>
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $response = $account->getImportTnOrder("order_id");
@@ -828,7 +828,7 @@ print_r($response->ProcessingStatus);
 COMPLETE
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 response = BandwidthIris::ImportTnOrders.get_import_tn_order("id")
@@ -841,7 +841,7 @@ puts response[:processing_status]
 COMPLETE
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 ImportTnOrder importTnOrder = ImportTnOrder.Get(client, "id");
@@ -855,7 +855,7 @@ System.out.println(importTnOrder.getProcessingStatus());
 COMPLETE
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 var response = await ImportTnOrder.Get(client, "id");
@@ -869,7 +869,7 @@ Console.WriteLine(response.ProcessingStatus);
 COMPLETE
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 numbers.ImportTnOrder.get("id", function(err, response) {
@@ -883,17 +883,17 @@ numbers.ImportTnOrder.get("id", function(err, response) {
 COMPLETE
 ```
 
-{% endextendmethod %}
+
 
 ---
 
-## Upload Letter of Authorization (LOA) {#upload-loa}
+## Upload Letter of Authorization (LOA) 
 
 For **completed** orders, Bandwidth requires a completed Subscriber "Letter of Authorization" (LOA) from the phone number user.  The LOA file is used in the case there is a dispute to ensure the phone number had permission to be enabled for hosted messaging for Bandwidth.
 
 You are able to keep the LOA file within your own system, or upload the file to Bandwidth as part of the `importTnOrder` path.
 
-{% extendmethod %}
+
 
 #### Request URL
 
@@ -903,11 +903,11 @@ You are able to keep the LOA file within your own system, or upload the file to 
 
 A POST request to the /loas resource will upload the file. The key attribute to a successful upload is to ensure that the headers are set correctly to support the _type_ of the file upload.
 
-{% common %}
+
 
 ### Upload PDF for an importTnOrder
 
-{% sample lang="http" %}
+
 
 ```http
 POST https://dashboard.../{{accountId}}/importTnOrders/{{orderId}}/loas HTTP/1.1
@@ -937,7 +937,7 @@ Content-Type: application/xml; charset=utf-8
 </fileUploadResponse>
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 //coming soon
@@ -949,7 +949,7 @@ Content-Type: application/xml; charset=utf-8
 //coming soon
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 #coming soon
@@ -961,7 +961,7 @@ Content-Type: application/xml; charset=utf-8
 //coming soon
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 //TODO
@@ -973,7 +973,7 @@ Content-Type: application/xml; charset=utf-8
 //coming soon
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 //TODO
@@ -986,7 +986,7 @@ Content-Type: application/xml; charset=utf-8
 //coming soon
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 //TODO
@@ -998,17 +998,17 @@ Content-Type: application/xml; charset=utf-8
 //coming soon
 ```
 
-{% endextendmethod %}
+
 
 ---
 
-## Check in service numbers to ensure number imported {#check-inservice-numbers}
+## Check in service numbers to ensure number imported 
 
 Optional, but recommended. To finally confirm that the phone number was successfully imported into your Bandwidth account, create a <code class="get">GET</code>  request to the inserviceNumbers to list the numbers in your account.
 
 If everything was imported correctly, the recently imported number will appear in the returned payload.
 
-{% extendmethod %}
+
 
 ### Inservice Numbers Parameters
 
@@ -1024,11 +1024,11 @@ If everything was imported correctly, the recently imported number will appear i
 | `<Links>`            | Pagination parameters                                          |
 | `<TelephoneNumbers>` | List of In-service Numbers represented by `<TelephoneNumber>`s |
 
-{% common %}
+
 
 ### Fetch inServiceNumbers
 
-{% sample lang="http" %}
+
 
 ```http
 GET https://dashboard.../{{accountId}}/inserviceNumbers HTTP/1.1
@@ -1062,7 +1062,7 @@ Content-Type: application/xml; charset=utf-8
 </TNs>
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $response = $account->getInserviceNumbers();
@@ -1078,7 +1078,7 @@ Array
 )
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 response = BandwidthIris::InServiceNumber.list()
@@ -1091,7 +1091,7 @@ puts response[0][:telephone_numbers][:telephone_number]
 5554443333
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 TNss tns = InserviceNumber.list(client, new HashMap<>());
@@ -1105,7 +1105,7 @@ System.out.println(tns.getTelephoneNumbers().get(0))
 5554443333
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 var tns = await InServiceNumber.List(client);
@@ -1119,7 +1119,7 @@ Cosnole.WriteLine(tns[0]);
 5554443333
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 numbers.InServiceNumber.list({"page": 1, "size":5}, function(err, response) {
@@ -1134,6 +1134,6 @@ numbers.InServiceNumber.list({"page": 1, "size":5}, function(err, response) {
 ```
 
 
-{% endextendmethod %}
+
 
 ---

@@ -1,7 +1,7 @@
-{% multimethod %}
-{% endmultimethod %}
 
-# Bandwidth Customer Service Records (CSR) Lookup API {#top}
+
+
+# Bandwidth Customer Service Records (CSR) Lookup API 
 
 This walks through how to programmatically lookup Customer Service Records (CSRs for short) for Phone Numbers before porting into your Bandwidth account.
 
@@ -38,7 +38,7 @@ There are 3 different APIs that you will use to manage csr lookup orders:
 | `/csrs`           | Create the CSR lookup order.                                                |
 | `/csrs/{orderId}` | Fetch information about the CSR lookup and order status                     |
 
-## Create Subscription for `csrs` {#create-subscription}
+## Create Subscription for `csrs` 
 
 The [Subscription](../../account/subscriptions/methods/postSubscriptions.md) contains the HTTP URL to receive HTTP Callbacks/webhooks anytime there is an update to the `csrs` status.
 
@@ -46,7 +46,7 @@ Creating the subscription should _generally_ only be needed **once per account**
 
 Learn more about [subscriptions in the documentation](../../account/subscriptions/about.md).
 
-{% extendmethod %}
+
 
 #### Subscription Parameters
 
@@ -69,11 +69,11 @@ The [Subscriptions](../../account/subscriptions/about.md) resource is authentica
 | `Password`               | No, but highly recommended | Basic auth `Password`                                                                                                                                                                                                                                                                                                                                                                                           |
 | `<PublicKey>`            | No                         | BASE64 encoded public key matching the notification receiving server                                                                                                                                                                                                                                                                                                                                            |
 
-{% common %}
+
 
 ### Create Subscription
 
-{% sample lang="http" %}
+
 
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/subscriptions HTTP/1.1
@@ -104,7 +104,7 @@ Location: https://dashboard.bandwidth.com/api/accounts/{{accountId}}/subscriptio
 ```
 
 
-{% sample lang="php" %}
+
 
 ```php
 $subscription = $account->subscriptions()->create([
@@ -122,7 +122,7 @@ print_r($subscription->SubscriptionId);
 390-f-42-89-40
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 subscription = {
@@ -141,7 +141,7 @@ puts response.to_data()[:subscription_id]
 390-f-42-89-40
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 CallbackSubscription callbackSubscription = new CallbackSubscription();
@@ -162,7 +162,7 @@ System.out.println(newSubscription.getSubscriptionId());
 390-f-42-89-40
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 var subscription = new Subscription
@@ -185,7 +185,7 @@ Console.WriteLine(response.SubscriptionId);
 390-f-42-89-40
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 const subscriptionData = {
@@ -212,11 +212,11 @@ catch (e) {
 ```
 
 
-{% endextendmethod %}
+
 
 ---
 
-## Create a CSR Order {#create-csr-order}
+## Create a CSR Order 
 
 Before creating the order, be sure to collect any information from the end user to submit to the CSR API. Generally speaking, the more information provided, the better.
 
@@ -225,7 +225,7 @@ Before creating the order, be sure to collect any information from the end user 
 * PIN Numbers
 * More (see table below for options)
 
-{% extendmethod %}
+
 
 #### CSR Request Parameters
 
@@ -253,11 +253,11 @@ Before creating the order, be sure to collect any information from the end user 
 | TypeOfService                         | No        | The type of service identifying the end user account. Must be alphabetic characters only with a max length of 50 characters.                                                                                                                                |
 
 
-{% common %}
+
 
 ### Create CSR Order
 
-{% sample lang="http" %}
+
 
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/csrs HTTP/1.1
@@ -285,7 +285,7 @@ Location: https://dashboard.bandwidth.com/api/accounts/{{accountId}}/csrs/{{orde
 </CsrResponse>
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $csrOrder = new \Iris\Csr(array(
@@ -303,7 +303,7 @@ print_r($response->OrderId);
 18cee9d0-a5c5-4322-9a47-d04176bc924c
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 csr_data = {
@@ -321,7 +321,7 @@ puts response[0][:order_id]
 18cee9d0-a5c5-4322-9a47-d04176bc924c
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 Csr csr = new Csr();
@@ -339,7 +339,7 @@ System.out.println(response.getOrderId())
 18cee9d0-a5c5-4322-9a47-d04176bc924c
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 var csr = new Csr
@@ -359,7 +359,7 @@ Console.WriteLine(response.OrderId);
 18cee9d0-a5c5-4322-9a47-d04176bc924c
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 const data = {
@@ -386,17 +386,17 @@ catch (e) {
 ```
 
 
-{% endextendmethod %}
+
 
 ---
 
-## Receive callback for the CSR Order {#receive-callback}
+## Receive callback for the CSR Order 
 
 Anytime the status of the order is updated (`COMPLETE`, `FAILED`, `ACTION_REQUIRED` etc...) Bandwidth will send an HTTP callback/webhook to the URL specified in the subscription.
 
 **Bandwidth expects an HTTP-2xx response to any callbacks.**
 
-{% extendmethod %}
+
 
 ### Callback Parameters
 
@@ -415,9 +415,9 @@ Anytime the status of the order is updated (`COMPLETE`, `FAILED`, `ACTION_REQUIR
 | `<Note>`            | Custom note added when updating or creating the importTnOrder      |
 
 
-{% common %}
 
-{% sample lang="js" %}
+
+
 
 A small example leveraging [express](https://expressjs.com/) & [body-parser-xml](https://www.npmjs.com/package/body-parser-xml) to handle callbacks
 
@@ -435,11 +435,11 @@ require('body-parser-xml')(bodyParser);
 app.use(bodyParser.xml());
 ```
 
-{% common %}
+
 
 ### Example 1 of 2: Receive Successful Callback to your server
 
-{% sample lang="http" %}
+
 
 ```http
 POST https://your-callback-url_as-defined-in-the-subscription HTTP/1.1
@@ -456,45 +456,7 @@ Authorization: {subscription_user:subscription_password}
 </Notification>
 ```
 
-{% sample lang="php" %}
 
-```http
-POST https://your-callback-url_as-defined-in-the-subscription HTTP/1.1
-Content-Type: application/xml; charset=utf-8
-Authorization: {subscription_user:subscription_password}
-
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Notification>
-  <Status>COMPLETE</Status>
-  <SubscriptionId>bfdf89f4-8d0c-4415-a203-ceb7afe00f88</SubscriptionId>
-  <Message>The CSR request is complete.</Message>
-  <OrderId>20ba7d26-7fa0-4716-ab45-6c8e07d37862</OrderId>
-  <OrderType>csrs</OrderType>
-</Notification>
-```
-
-Your Server should respond with a 200-OK message
-
-{% sample lang="ruby" %}
-
-```http
-POST https://your-callback-url_as-defined-in-the-subscription HTTP/1.1
-Content-Type: application/xml; charset=utf-8
-Authorization: {subscription_user:subscription_password}
-
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Notification>
-  <Status>COMPLETE</Status>
-  <SubscriptionId>bfdf89f4-8d0c-4415-a203-ceb7afe00f88</SubscriptionId>
-  <Message>The CSR request is complete.</Message>
-  <OrderId>20ba7d26-7fa0-4716-ab45-6c8e07d37862</OrderId>
-  <OrderType>csrs</OrderType>
-</Notification>
-```
-
-Your Server should respond with a 200-OK message
-
-{% sample lang="java" %}
 
 ```http
 POST https://your-callback-url_as-defined-in-the-subscription HTTP/1.1
@@ -514,7 +476,6 @@ Authorization: {subscription_user:subscription_password}
 Your Server should respond with a 200-OK message
 
 
-{% sample lang="csharp" %}
 
 ```http
 POST https://your-callback-url_as-defined-in-the-subscription HTTP/1.1
@@ -533,7 +494,46 @@ Authorization: {subscription_user:subscription_password}
 
 Your Server should respond with a 200-OK message
 
-{% sample lang="js" %}
+
+
+```http
+POST https://your-callback-url_as-defined-in-the-subscription HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: {subscription_user:subscription_password}
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Notification>
+  <Status>COMPLETE</Status>
+  <SubscriptionId>bfdf89f4-8d0c-4415-a203-ceb7afe00f88</SubscriptionId>
+  <Message>The CSR request is complete.</Message>
+  <OrderId>20ba7d26-7fa0-4716-ab45-6c8e07d37862</OrderId>
+  <OrderType>csrs</OrderType>
+</Notification>
+```
+
+Your Server should respond with a 200-OK message
+
+
+
+
+```http
+POST https://your-callback-url_as-defined-in-the-subscription HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: {subscription_user:subscription_password}
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Notification>
+  <Status>COMPLETE</Status>
+  <SubscriptionId>bfdf89f4-8d0c-4415-a203-ceb7afe00f88</SubscriptionId>
+  <Message>The CSR request is complete.</Message>
+  <OrderId>20ba7d26-7fa0-4716-ab45-6c8e07d37862</OrderId>
+  <OrderType>csrs</OrderType>
+</Notification>
+```
+
+Your Server should respond with a 200-OK message
+
+
 
 ```js
 app.post('/csrUpdate', (req, res) => {
@@ -552,7 +552,7 @@ app.post('/csrUpdate', (req, res) => {
 });
 ```
 
-{% common %}
+
 
 #### Response as generated by **your** server
 
@@ -562,7 +562,7 @@ HTTP/1.1 200 OK
 
 ### Example 2 of 2: Receive Failed Callback to your server
 
-{% sample lang="http" %}
+
 
 ```http
 POST https://your-callback-url_as-defined-in-the-subscription HTTP/1.1
@@ -579,26 +579,7 @@ Authorization: {subscription_user:subscription_password}
 </Notification>
 ```
 
-{% sample lang="php" %}
 
-```http
-POST https://your-callback-url_as-defined-in-the-subscription HTTP/1.1
-Content-Type: application/xml; charset=utf-8
-Authorization: {subscription_user:subscription_password}
-
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Notification>
-  <Status>FAILED</Status>
-  <SubscriptionId>bfdf89f4-8d0c-4415-a203-ceb7afe00f88</SubscriptionId>
-  <Message>The CSR request has failed.</Message>
-  <OrderId>91e7298a-0942-47e4-996b-788da5544b6b</OrderId>
-  <OrderType>csrs</OrderType>
-</Notification>
-```
-
-Your Server should respond with a 200-OK message
-
-{% sample lang="ruby" %}
 
 ```http
 POST https://your-callback-url_as-defined-in-the-subscription HTTP/1.1
@@ -617,7 +598,7 @@ Authorization: {subscription_user:subscription_password}
 
 Your Server should respond with a 200-OK message
 
-{% sample lang="java" %}
+
 
 ```http
 POST https://your-callback-url_as-defined-in-the-subscription HTTP/1.1
@@ -636,7 +617,7 @@ Authorization: {subscription_user:subscription_password}
 
 Your Server should respond with a 200-OK message
 
-{% sample lang="csharp" %}
+
 
 ```http
 POST https://your-callback-url_as-defined-in-the-subscription HTTP/1.1
@@ -655,7 +636,26 @@ Authorization: {subscription_user:subscription_password}
 
 Your Server should respond with a 200-OK message
 
-{% sample lang="js" %}
+
+
+```http
+POST https://your-callback-url_as-defined-in-the-subscription HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: {subscription_user:subscription_password}
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Notification>
+  <Status>FAILED</Status>
+  <SubscriptionId>bfdf89f4-8d0c-4415-a203-ceb7afe00f88</SubscriptionId>
+  <Message>The CSR request has failed.</Message>
+  <OrderId>91e7298a-0942-47e4-996b-788da5544b6b</OrderId>
+  <OrderType>csrs</OrderType>
+</Notification>
+```
+
+Your Server should respond with a 200-OK message
+
+
 
 
 ```js
@@ -675,7 +675,7 @@ app.post('/csrUpdate', (req, res) => {
 });
 ```
 
-{% common %}
+
 
 #### Response as generated by **your** server
 
@@ -684,16 +684,16 @@ HTTP/1.1 200 OK
 ```
 
 
-{% endextendmethod %}
+
 
 ---
 
-## Fetch Order Status {#fetch-order-status}
+## Fetch Order Status 
 
 At anytime, you're able to get the order status by creating a GET request to the order-id returned when creating the CSR order.
 You'll need to fetch the order status for both `FAILED` and `COMPLETE` CSR order statuses for more detail on the CSR request.
 
-{% extendmethod %}
+
 
 #### Request URL
 
@@ -713,11 +713,11 @@ You'll need to fetch the order status for both `FAILED` and `COMPLETE` CSR order
 | `<CsrData>`          | The complete CSR data from the lookup request.  The element will contain sub-elements such as:<br><ul><li>CustomerName</li><li>ServiceAddress</li><li>WorkingTelephoneNumbersOnAccount</li><li>WorkingTelephoneNumber</li></ul> |
 | `<Errors>`           | Any errors that occured during the request                                                                                                                                                                                      |
 
-{% common %}
+
 
 ### Example 1 of 2: Fetch Successful CSR Order Status
 
-{% sample lang="http" %}
+
 
 ```http
 GET https://dashboard.../{{accountId}}/csrs/{{orderId}} HTTP/1.1
@@ -757,7 +757,7 @@ Content-Type: application/xml; charset=utf-8
 </CsrResponse>
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $response = $account->getCsrOrder("csr_id");
@@ -770,7 +770,7 @@ print_r($response->CsrData->CustomerName);
 House of Mouse
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 response = BandwidthIris::Csr.get("csr_id")
@@ -783,7 +783,7 @@ puts response[0][:csr_data][:customer_name]
 House of Mouse
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 CsrResponse response = Csr.Get(orderId);
@@ -796,7 +796,7 @@ System.out.println(response.getCustomerName());
 House of Mouse
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 var response = await Csr.Get(client, orderId);
@@ -809,7 +809,7 @@ Console.WriteLine(response.CustomerName);
 House of Mouse
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 const csrId = "csr_id"
@@ -828,11 +828,11 @@ catch (e) {
 House of Mouse
 ```
 
-{% common %}
+
 
 ### Example 2 of 2: Fetch Failed CSR Order Status
 
-{% sample lang="http" %}
+
 
 ```http
 GET https://dashboard.../{{accountId}}/csrs/{{orderId}} HTTP/1.1
@@ -866,7 +866,7 @@ Content-Type: application/xml; charset=utf-8
 ```
 
 
-{% sample lang="php" %}
+
 
 ```php
 $response = $account->getCsrOrder($bad_order_id);
@@ -879,7 +879,7 @@ print_r($response->Errors->Error->Description);
 CSR is not available for this TN
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 begin
@@ -896,7 +896,7 @@ end
 CSR is not available for this TN
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 CsrResponse response = Csr.Get(client, badOrderId);
@@ -909,7 +909,7 @@ System.out.println(response.getErrors()[0].getDescription());
 CSR is not available for this TN
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 CsrResponse result = null;
@@ -927,7 +927,7 @@ try {
 CSR is not available for this TN
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 const csrOrderId = "1234-abc"
@@ -952,4 +952,4 @@ catch (e) {
 }
 ```
 
-{% endextendmethod %}
+

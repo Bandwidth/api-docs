@@ -1,4 +1,4 @@
-{% method %}
+
 ## XML: `<PlayAudio>`
 The PlayAudio verb is used to play an audio file in the call. The URL of an audio file should be
 included in the body of the `<PlayAudio>` tag. If a relative URL is given, it is resolved relative to the endpoint that returned the BXML. To ensure playback quality Bandwidth recommends limiting audio files to less than 1 hour in length or 200 MB in size.
@@ -41,7 +41,7 @@ If the `Content-Type` is something other than the ones above or no `Content-Type
 
 None
 
-{% common %}
+
 
 #### Example 1 of 1:  PlayAudio Verb
 
@@ -49,7 +49,7 @@ This shows how to use Bandwidth XML to play two audio clips into a phone call.
 
 ⚠️ **ONLY** .wav and .mp3 files as described above are supported.
 
-{% sample lang="http" %}
+
 
 
 ```XML
@@ -60,7 +60,7 @@ This shows how to use Bandwidth XML to play two audio clips into a phone call.
 </Response>
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 PlayAudio playAudio1 = PlayAudio.builder()
@@ -78,7 +78,7 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 Response response = new Response();
@@ -96,7 +96,7 @@ Console.WriteLine(response.ToBXML());
 ```
 
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 response = Bandwidth::Voice::Response.new()
@@ -112,7 +112,7 @@ response.push(play_audio_2)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
 
 ```python
 response = Response()
@@ -128,7 +128,7 @@ response.add_verb(play_audio_2)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 var playAudio1 = new BandwidthBxml.Verbs.PlayAudio();
@@ -143,7 +143,7 @@ response.addVerb(playAudio2);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $playAudio1 = new BandwidthLib\Voice\Bxml\PlayAudio("https://audio.url/audio1.wav");
@@ -157,4 +157,4 @@ echo $response->toBxml();
 echo "\n";
 ```
 
-{% endmethod %}
+

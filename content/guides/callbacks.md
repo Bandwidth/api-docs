@@ -1,6 +1,6 @@
-{% raw %}
+
 <section class="callbacksOverview">
-{% endraw %}
+
 
 # Bandwidth Callbacks
 
@@ -38,7 +38,7 @@ Specifics for subscription callbacks for order notifications can be found on our
 
 <br>
 
-## Authenticated Callbacks {#authenticatedCallbacks}
+## Authenticated Callbacks 
 
 Bandwidth allows you to enable basic authentication on the webhooks received from the different services. For messaging and voice, credentials would be set on the messaging or voice application created in the Bandwidth Dashboard. In a subscription, the basic authentication credentials would be set in the <code class="post">POST</code> request to create each specific subscription type. To authenticate, Bandwidth follows the basic HTTP authentication framework outlined in [RFC 7235](https://tools.ietf.org/html/rfc7235).
 

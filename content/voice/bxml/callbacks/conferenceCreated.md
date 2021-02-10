@@ -1,4 +1,4 @@
-{% method %}
+
 ## Conference Created Event
 The Conference Created event is fired whenever a new [conference](../verbs/conference.md) that specified a `callbackUrl` is created.
 
@@ -38,7 +38,7 @@ Content-Type: application/xml; charset=utf-8
 | name             | The custom name used to reference this conference. This the name that you included inside the body of the [`<Conference>`](../verbs/conference.md) tag. |
 | tag              | (optional) The `tag` that was set at conference creation. If no `tag` was specified, this field will not be present. |
 
-{% common %}
+
 
 #### Example: Conference created 
 
@@ -56,4 +56,4 @@ POST http://[External server URL]
 }
 ```
 
-{% endmethod %}
+

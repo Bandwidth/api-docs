@@ -1,4 +1,4 @@
-# Ordering Numbers Advanced {#top}
+# Ordering Numbers Advanced 
 
 ## Overview
 
@@ -12,7 +12,7 @@
   * [Usage Recommendations:](#usage-recommendations)
 * [Updating a new-number order](#update-new-number-order)
 
-## Overview of Ordering {#ordering-overview}
+## Overview of Ordering 
 
 Orders placed with the Bandwidth Phone Number API are processed as a single-step activity when inventory is available to fulfill the request.  The numbers will be searched for according to the indicated criteria, and, if found, will be activated in the network without intermediate confirmation with the requestor.  Under most conditions, the time between the request for numbers, and the selection and activation of those numbers in the bandwidth network, happens in les than a second.   There are cases in the ordering of numbers where the completion and activation of the telephone numbers in the network is not near-real-time, such as in the case where the numbers are backordered for later completion.  These facts, coupled with the need to persist an order record beyond the activation period of the telephone numbers has motivated the use of an asynchronous model, where the response to the request is an interim response, and the final completion of the order happens at some later time.
 
@@ -32,7 +32,7 @@ The meaning of the states is provided in the following table.
 | `Backordered` | The Bandwidth Phone Number API may have activated some of the requested numbers in the network, but it is continuing to find and activate more numbers.  An order may remain in this state for a number of days.             |
 
 
-## Creating an Order {#creating-order}
+## Creating an Order 
 
 The user can order numbers to their account using the HTTP POST Request Format method. This can be done either through a search for available numbers or by passing a description of the specific numbers to be ordered.
 
@@ -41,7 +41,7 @@ As in other asynchronous workflows, the request to order a new telephone number 
 If the request is valid the Bandwidth Phone Number API will create an order resource, and will return an order ID which should be used in querying for the status for an order.  Success will be indicated by a `201 Created` return code, and will include a link to the Order resource in the Location header of the response.
 
 
-## New Number Order Request Format {#new-number-req}
+## New Number Order Request Format 
 
 All New Number orders are sent to the Bandwidth Phone Number API as requests to create a new number order record.  That new number order record is used to report the results of the order, as well as to track the status of the order if it remains open as a back-order for the numbers.
 
@@ -61,7 +61,7 @@ These different order types have different parameters that guide the ordering pr
 
 The order requests are communicated via a <code class="post">POST</code> API call with a payload that describes the order parameters.
 
-## New Number Order Response Format {#new-number-res}
+## New Number Order Response Format 
 
 The network APIs return an XML payload in response to a request. In addition, an HTTP 201 location header message is returned for all requests. Sample is shown here:
 
@@ -73,13 +73,13 @@ Location: https://dashboard.bandwidth.com/api/accounts/{accountId}/orders/{order
 The Location header represents the URL that can be fetched representing the current status of a new number order.
 
 
-## Backordering Numbers {#backorder-number}
+## Backordering Numbers 
 
 If not all of the requested telephone numbers are available at the time that the order is placed, the order can optionally be placed in a “Backordered” state, for subsequent completion by the Bandwidth Phone Number API.  The order will remain in this state until the order is filled, or until the order is closed.
 
 An order will be a candidate for backordering if the `<BackOrderRequested>` element is included in the request payload, with a value of “true”.
 
-### New Number Order States {#new-number-states}
+### New Number Order States 
 
 Orders placed for new numbers usually complete rapidly, returning either all, some or none of the numbers requested, based on the availability of numbers in the Bandwidth available inventory.  The final disposition of the order is reflected in the `<OrderStatus>` element:
 
@@ -92,7 +92,7 @@ Orders placed for new numbers usually complete rapidly, returning either all, so
 
 If a new number order has been tagged to indicate that telephone numbers are to be backordered and the indicated quantity is not immediately available, then the order will remain active, and the interim status of **BACKORDERED** will be indicated in the `<OrderStatus>` element when the order is examined with a <code class="get">GET</code>  referencing the `order-id`.
 
-### Requesting a backorder via the API {#backorder-api}.
+### Requesting a backorder via the API .
 
 If the API call has the `<BackOrderRequested>` element set to true, then the order will be retained by the Bandwidth Phone Number Phone Number API until it can be filled or until it is closed via an API call or GUI status update.
 
@@ -108,14 +108,14 @@ The `<BackOrderRequested>` element and the `< PartialAllowed>` element interact 
 | None Found                                     | see above           | see above       | Same as for "Less Than", except that the entire order goes into BackOrder status immediately                                                                                                                                       |
 
 
-### Usage Recommendations: {#usage-recommendations}
+### Usage Recommendations: 
 
 Although there are no restrictions on the order-types for which backorder requests can be submitted via the API, it is recommended to avoid submitting backorders for zipcode, npanxx and npanxxx order types, largely because of the difficulty of filling requests of those types if the inventory is not immediately available.
 
 In the case of npanxx and npanxxx order types, the specific dial plan elements are often no longer available, and in the case of zipcode orders there are cases where the relationship between zipcode and dial plan is not represented in the available data.
 
 
-## Updating a new-number order {#update-new-number-order}
+## Updating a new-number order 
 
 With the introduction of Backorder capabilities, new number orders may stay in backordered state for a period while the order is filled.   While in this state it is possible to update the modifiable fields in the record, as well as to request that backorder processing of the order be ended.
 

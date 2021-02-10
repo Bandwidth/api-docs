@@ -1,9 +1,9 @@
-{% multimethod %}
-{% endmultimethod %}
 
-# Search and order Phone Numbers with Callbacks {#top}
 
-## About {#about}
+
+# Search and order Phone Numbers with Callbacks 
+
+## About 
 
 This guide will walk through the recommended approach to searching and ordering phone numbers using the Bandwidth [Phone Number API](https://dashboard.bandwidth.com).  This will cover how to setup a subscription to manage phone number order alerts, how to search for available phone numbers, and finally how to order phone numbers.
 
@@ -26,7 +26,7 @@ In the case where a user would like to keep their existing phone number, follow 
 5. [Fetch information about order (_optional_)](#get-order-info)
 
 
-## Create Subscription for Orders {#create-subscription}
+## Create Subscription for Orders 
 
 The Bandwidth Phone Number API allows users to manage notifications on their account through the `/subscriptions` resource.  Subscriptions can be configured to send a HTTP Callback to a valid publicly addressable URL or send an email to a valid email address.
 
@@ -39,7 +39,7 @@ This guide _only_ covers creating a `<CallbackSubscription>`.  For more informat
 
 Bandwidth's Account API leverages Basic Authentication with your Dashboard API Credentials. Read more about how Bandwidth secures endpoints in the [Security & Credentials](../../guides/accountCredentials.md) document.
 
-{% extendmethod %}
+
 
 ### Basic Parameters
 
@@ -55,7 +55,7 @@ Bandwidth's Account API leverages Basic Authentication with your Dashboard API C
 | `<Password>`             | No       | Password for Basic Authentication scheme. <br> Encrypted at rest and never returned by the API <br><br> Part of the `<BasicAuthentication>` element.        |
 | `<PublicKey>`            | No       | A BASE64 encoded public key that matches the server specified in the `URL`  <br><br> Part of the `<BasicAuthentication>` element.                           |
 
-{% common %}
+
 
 ### Example XML to Create Subscription
 
@@ -81,9 +81,9 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 </Subscription>
 ```
 
-{% endextendmethod %}
 
-## Searching For Phone Numbers {#search-for-phone-numbers}
+
+## Searching For Phone Numbers 
 Finding numbers can be achieved by searching the Bandwidth inventory.
 
 This step is optional – the telephone numbers can be ordered directly using search criteria, but if there is need to examine the numbers before activating them on the account, the search can be used to return a list of available numbers. Searching **only** provides a list of available numbers that match the search criteria.
@@ -97,7 +97,7 @@ There are a number of search approaches that can be used; the NPA NXX search is 
 
 Bandwidth's Phone Number API leverages Basic Authentication with your Dashboard API Credentials. Read more about how Bandwidth secures endpoints in the [Security & Credentials](../../guides/accountCredentials.md) document.
 
-{% extendmethod %}
+
 
 ### Query Parameters
 
@@ -107,7 +107,7 @@ Bandwidth's Phone Number API leverages Basic Authentication with your Dashboard 
 
 This example only demonstrates searching by `NPA NXX` to learn about the different search types and filtering see the guide on [searching phone numbers](./searchForNumbers.md).
 
-{% common %}
+
 
 ### Example: Search by NPA NXX
 
@@ -138,9 +138,9 @@ Content-Type: application/xml; charset=utf-8
 </SearchResult>
 ```
 
-{% endextendmethod %}
 
-## Order Phone Numbers {#order-phone-numbers}
+
+## Order Phone Numbers 
 
 * To successfully order a Phone Number that was previously returned in a search on the `/availableNumbers` you will create a `<ExistingTelephoneNumberOrderType>` with a `<TelephoneNumberList>` containing at least 1 phone number.
 * There is no guarantee that the a telephone number appearing in search results will still be available by the time an order request is processed.
@@ -154,7 +154,7 @@ Content-Type: application/xml; charset=utf-8
 
 Bandwidth's Phone Number API leverages Basic Authentication with your Dashboard API Credentials. Read more about how Bandwidth secures endpoints in the [Security & Credentials](../../guides/accountCredentials.md) document.
 
-{% extendmethod %}
+
 
 ### Common Request Parameters
 
@@ -169,7 +169,7 @@ Bandwidth's Phone Number API leverages Basic Authentication with your Dashboard 
 | `<TelephoneNumberList>` | Yes      | A list of telephone numbers to order.                                                                                                                                                                                                                                                                                                                |
 | `<TelephoneNumber>`     | Yes      | `TelephoneNumberList` must have at least one `TelephoneNumber` to order  <br><br> Part of the `<TelephoneNumberList>` element.                                                                                                                                                                                                                       |
 
-{% common %}
+
 
 ### Example: Order 1 Number Returned in the Search above
 
@@ -217,15 +217,15 @@ Location: https://dashboard.bandwidth.com/api/accounts/{{accountId}}/orders/c9dg
 </OrderResponse>
 ```
 
-{% endextendmethod %}
 
-## Receive HTTP Callback with Order Status {#receive-callback}
+
+## Receive HTTP Callback with Order Status 
 
 The Bandwidth Phone Number API will send a HTTP Callback (webhook) to the URL specified in the `<URL>...</URL>` when [creating the subscription](#create-subscription).
 
 The HTTP Callback will contain information if the order was successful or failed.  For our example here, if status is **anything other than `COMPLETE`** the order has failed.  The most likely scenario is that another customer ordered the desired phone number between the time 'searched' and 'ordered'.  If the order is **not** `COMPLETE`, either try ordering a different phone number, or [search for more numbers](#search-for-phone-numbers).
 
-{% extendmethod %}
+
 
 ### Callback Request Parameters
 
@@ -239,7 +239,7 @@ The HTTP Callback will contain information if the order was successful or failed
 | `<CompletedTelephoneNumbers>` | Contains the list of Phone Numbers that were attempted to be ordered.                                                                                                                                                                                                                                                                                                                                                                                                   |
 | `<TelephoneNumber>`           | The actual Phone Number that was attempted to be ordered.  <br><br> Part of the `<CompletedTelephoneNumbers>` element.                                                                                                                                                                                                                                                                                                                                                  |
 
-{% common %}
+
 
 ### Example: Successful Phone Number Order
 
@@ -281,9 +281,9 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 </Notification>
 ```
 
-{% endextendmethod %}
 
-## Fetching Order Information {#get-order-info}
+
+## Fetching Order Information 
 
 A <code class="get">GET</code> Request to an existing order will return it's status as well as any information originally used to create the order.
 
@@ -296,13 +296,13 @@ In the example below the `orderId` is the `orderId` returned in the 'location' h
 
 Bandwidth's Phone Number API leverages Basic Authentication with your Dashboard API Credentials. Read more about how Bandwidth secures endpoints in the [Security & Credentials](../../guides/accountCredentials.md) document.
 
-{% extendmethod %}
+
 
 ### Query Parameters
 
 There are no query parameters for fetching information about an existing order.
 
-{% common %}
+
 
 ### Example: Fetch Order Information
 
@@ -398,4 +398,4 @@ Content-Type: application/xml; charset=utf-8
 </OrderResponse>
 ```
 
-{% endextendmethod %}
+

@@ -8,15 +8,15 @@
 * [Email Notifications](#email-notifications)
 * [Callback URL Notifications](#callback-notifications)
 
-## About {#about}
+## About 
 
 The Bandwidth Phone Number API uses an “order” model for tracking the changes requested to the provisioned information that controls our customer and end-user experiences.   Major changes to the configuration of the network such as Ordering numbers, Porting in numbers, Porting numbers out, Disconnecting numbers are tracked with work-orders that record the changes and track them through the related work-flow.
 
-## Associating Notes with Work Orders {#notes-with-orders}
+## Associating Notes with Work Orders 
 
 The following API calls are used to add notes to various types of work-orders, allowing events that involve the work-order to be tracked and reviewed.  The API can be used with users that have credentials to manage and modify the account that owns the work-order(s).
 
-## Order Change Notifications {#change}
+## Order Change Notifications 
 
 The Bandwidth Phone Number API has the capability to monitor portins and other work-order types for meaningful events and status changes, and notify one or more email addresses of those events.  The events that cause notification emails are state changes for all viable states for the applicable order-types, as well as for all events that add a Note to the order in question.
 
@@ -27,7 +27,7 @@ The Bandwidth Phone Number API has the capability to monitor portins and other w
 | Portouts            | `COMPLETE`                                                                                                                                                                                                                                                                                                                                              |
 | Disconnects         | `COMPLETE`                                                                                                                                                                                                                                                                                                                                              |
 
-### Email Notifications {#email-notifications}
+### Email Notifications 
 
 The email notification capability enables a user with permissions on an account to configure any email address for notifications.  This level of freedom was provided to allow credentialed users the flexibility to control the destination of the notifications, even if the destination does not share an email address with the account or user.
 
@@ -39,7 +39,7 @@ Subscriptions can apply to a specific `orderId`, or to all order-ids of a certai
 
 Deletion of subscriptions is supported on a one-by-one basis.  Deleting all subscriptions associated with an order requires a <code class="get">GET</code> request of all of those Subscriptions, and deleting them one by one.
 
-## Callback URL Notifications {#callback-notifications}
+## Callback URL Notifications 
 
 The Bandwidth Phone Number API also allows the establishment of a “callback” URL that can be used to monitor work-orders or changes.   Rather than receiving an email, the callback URL is invoked, allowing the monitoring system to be notified about the order changes in a machine-to-machine manner.
 

@@ -1,4 +1,4 @@
-# About Emergency Notifications {#top}
+# About Emergency Notifications 
 
 ## Table of Contents
 
@@ -8,7 +8,7 @@
 * [API Endpoint Overview](#api-overview)
 * [Key terminology](#key-terms)
 
-## Overview {#overview}
+## Overview 
 
 Emergency notifications are designed to support notification of front-desk personnel in the event that someone dials an emergency call from a multi-line telephone system (MLTS).
 
@@ -16,7 +16,7 @@ This facilitates:
 * Meeting & directing emergency responders to the location of the emergency
 * Dispatch of on-site emergency responders, who could be on-scene quicker than public responders.
 
-## Notification Types {#notification-types}
+## Notification Types 
 
 Notification Types supported (up to **3 notifications** to be sent for a single emergency call):
 
@@ -25,7 +25,7 @@ Notification Types supported (up to **3 notifications** to be sent for a single 
 * Email notification
 * HTTP Callback / Webhook
 
-## Relationships and constraints between emergency notification concepts {#relationships}
+## Relationships and constraints between emergency notification concepts 
 
 * An emergency notification group may have from 1 to 3 emergency notification recipients.
 * An emergency notification recipient may belong to at most 1 emergency notification group.
@@ -34,20 +34,20 @@ Notification Types supported (up to **3 notifications** to be sent for a single 
 * An emergency notification group may be associated with any number of emergency endpoints.
 
 
-## API Endpoint Overview {#api-overview}
+## API Endpoint Overview 
 
 **Endpoints are case-sensitive.**
 
 See full details in the [API Reference](../../numbers/apiReference.md)
 
-### Emergency notification recipients {#enrId}
+### Emergency notification recipients 
 
 | Endpoint                                                        | Description                                                                                                                                                                                                                                                                                                                 |
 |:----------------------------------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `/accounts/{accountId}/emergencyNotificationRecipients`         | Use the <code class="post">POST</code> operation to create an emergency notification recipient.<br>Use the <code class="get">GET</code> operation with optional query parameters to fetch emergency notifications associated with the account.                                                                              |
 | `/accounts/{accountId}/emergencyNotificationRecipients/{enrId}` | Use the <code class="get">GET</code> operation to fetch a specific emergency notification recipient by identifier.<br>Use the <code class="put">PUT</code> operation to replace an emergency notification recipient.<br>Use the <code class="delete">DELETE</code> operation to remove an emergency notification recipient. |
 
-### Emergency notification groups {#engId}
+### Emergency notification groups 
 
 | Endpoint                                                           | Description                                                                                                                                                                                                                                                                                  |
 |:-------------------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -56,7 +56,7 @@ See full details in the [API Reference](../../numbers/apiReference.md)
 | `/accounts/{accountId}/emergencyNotificationGroups/{engId}`        | Use the <code class="get">GET</code> operation to fetch a specific current emergency notification group by identifier.                                                                                                                                                                       |
 | `/accounts/{accountId}/emergencyNotificationGroups`                | Use the <code class="get">GET</code> operation with optional query parameters to fetch current emergency notification groups associated with the account.                                                                                                                                    |
 
-### Emergency endpoint Associations to Emergency notification groups {#api-association}
+### Emergency endpoint Associations to Emergency notification groups 
 
 | Endpoint                                                              | Description                                                                                                                                                                                                                                                                                                            |
 |:----------------------------------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -66,7 +66,7 @@ See full details in the [API Reference](../../numbers/apiReference.md)
 | `/accounts/{accountId}/aeuis`                                         | Use the <code class="get">GET</code> operation with optional query parameters to fetch information, including emergency endpoint associations to an emergency notification group for alternate caller identifiers associated with the account.                                                                         |
 | `/accounts/{accountId}/aeuis/{acid}`                                  | Use the <code class="get">GET</code> operation to fetch information, including emergency endpoint associations to an emergency notification group for a specified alternate caller identifier.                                                                                                                         |
 
-## Key terminology {#key-terms}
+## Key terminology 
 
 | Term                                  | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 |:--------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|

@@ -1,4 +1,4 @@
-{% method %}
+
 # Message Sending Event (MMS only)
 In order to receive message events, you need to ensure you have set up your application to send callbacks to your server's URL.
 
@@ -25,11 +25,11 @@ You will receive this callback between when the message is received by Bandwidth
 | message.tag           | `string` | An custom String that you can use to track this particular message                                                                                                                                                                                                                                                                                                  |
 | message.segmentCount  | `int`    | This indicates the number of segments the original message from the user is broken into before sending over to career networks                                                                                                                                                                                                                                      |
 
-{% common %}
+
 
 ## Example: MMS Sending
 
-{% sample lang='http' %}
+
 
 ```http
 [
@@ -56,4 +56,4 @@ You will receive this callback between when the message is received by Bandwidth
 ```
 
 
-{% endmethod %}
+

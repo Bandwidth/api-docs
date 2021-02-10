@@ -1,7 +1,7 @@
-{% multimethod %}
-{% endmultimethod %}
 
-# HTTP Errors when sending messages {#top}
+
+
+# HTTP Errors when sending messages 
 
 Bandwidth will respond with HTTP errors code when the message creation request fails. Any `4xx` or `5xx` HTTP response code will not be billed nor will the message be sent.
 
@@ -14,11 +14,11 @@ Bandwidth will respond with HTTP errors code when the message creation request f
 * [415 - Invalid Media-Type](#http-415)
 * [429 - Too Many Requests](#http-429)
 
-## 400 – BAD_REQUEST {#http-400}
+## 400 – BAD_REQUEST 
 
 Bandwidth will return a `HTTP-400` Error when the request is malformed or invalid.  See the message of the error for tips before trying again.
 
-{% extendmethod %}
+
 
 ### Parameters
 | Parameter               | Type     | Description                                      |
@@ -26,7 +26,7 @@ Bandwidth will return a `HTTP-400` Error when the request is malformed or invali
 | type                    | `string` | The Type of error.                               |
 | description             | `string` | A detailed description of why the error occurred |
 
-{% common %}
+
 
 ### Example: Invalid telephone numbers
 
@@ -56,14 +56,14 @@ Content-Type: application/json; charset=utf-8
 ```
 
 
-{% endextendmethod %}
 
 
-## 401 – UNAUTHORIZED {#http-401}
+
+## 401 – UNAUTHORIZED 
 
 Bandwidth returns a `HTTP-401` Error when the specified user does not have access to the account. Ensure the username and password are correct along with the correct account number. See the [security & credentials guide](../../guides/accountCredentials.md) for more information.
 
-{% extendmethod %}
+
 
 ### Parameters
 
@@ -72,7 +72,7 @@ Bandwidth returns a `HTTP-401` Error when the specified user does not have acces
 | type                    | `string` | The Type of error.                               |
 | description             | `string` | A detailed description of why the error occurred |
 
-{% common %}
+
 
 ### Example: Incorrect credentials sent
 
@@ -102,13 +102,13 @@ Content-Type: application/json; charset=utf-8
 }
 ```
 
-{% endextendmethod %}
 
-## 403 – FORBIDDEN {#http-403}
+
+## 403 – FORBIDDEN 
 
 Bandwidth returns a `HTTP-403` error when the user does not have access to the messaging API.
 
-{% extendmethod %}
+
 
 ### Parameters
 
@@ -117,7 +117,7 @@ Bandwidth returns a `HTTP-403` error when the user does not have access to the m
 | type                    | `string` | The Type of error.                               |
 | description             | `string` | A detailed description of why the error occurred |
 
-{% common %}
+
 
 ### Example: User does not have access
 
@@ -146,13 +146,13 @@ Content-Type: application/json; charset=utf-8
 }
 ```
 
-{% endextendmethod %}
 
-## 404 – NOT_FOUND {#http-404}
+
+## 404 – NOT_FOUND 
 
 Bandwidth returns a `HTTP-404` when the path is not found. Ensure the path of the request is correct and adjust accordingly.
 
-{% extendmethod %}
+
 
 
 ### Path nonexistent Error Schema
@@ -165,7 +165,7 @@ Bandwidth returns a `HTTP-404` when the path is not found. Ensure the path of th
 | message   | Any more information   | `no message found`             |
 | path      | Path that wasn't found | `/happy`                       |
 
-{% common %}
+
 
 ### Example: Path does not exist
 
@@ -197,13 +197,13 @@ Content-Type: application/json;charset=UTF-8
 }
 ```
 
-{% endextendmethod %}
 
-## 415 - UNSUPPORTED MEDIA TYPE {#http-415}
+
+## 415 - UNSUPPORTED MEDIA TYPE 
 
 Bandwidth returns a `HTTP-415` error when the content-type of the request is incorrect. Ensure the request header contains `Content-Type: application/json; charset=utf-8` and try again.
 
-{% extendmethod %}
+
 
 ### Parameters
 
@@ -212,7 +212,7 @@ Bandwidth returns a `HTTP-415` error when the content-type of the request is inc
 | type        | `string` | Type of Error                                    |
 | description | `string` | A detailed description of why the error occurred |
 
-{% common %}
+
 
 ### Example: Incorrect content-type sent
 
@@ -242,15 +242,15 @@ Content-Type: application/json; charset=utf-8
 ```
 
 
-{% endextendmethod %}
 
-## 429 - TOO MANY REQUESTS {#http-429}
+
+## 429 - TOO MANY REQUESTS 
 
 Bandwidth returns a `HTTP-429` error when the rate limit has been reached.
 
 For more information about rate limits and queue management, see the [rate limits](../ratelimits.md) document.
 
-{% extendmethod %}
+
 
 ### Parameters
 
@@ -259,7 +259,7 @@ For more information about rate limits and queue management, see the [rate limit
 | type                    | `string` | The Type of error.                               |
 | description             | `string` | A detailed description of why the error occurred |
 
-{% common %}
+
 
 ### Example: Too many requests
 
@@ -288,4 +288,4 @@ Content-Type: application/json; charset=utf-8
 }
 ```
 
-{% endextendmethod %}
+

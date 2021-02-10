@@ -1,4 +1,4 @@
-{% method %}
+
 ## XML: `<Gather>`
 The Gather verb is used to collect digits for some period of time.
 
@@ -46,13 +46,13 @@ The following verbs may be nested inside of a `<Gather>` tag.  If using a repeat
 |:---------------------------------|:-------------------------|
 | [Gather](../callbacks/gather.md) | Yes                      |
 
-{% common %}
+
 
 #### Example 1 of 3: Gather Verb
 This example shows how to use the Gather verb to speak a sentence, collect digits input from the phone, and send the
 results to https://gather.url/nextBXML
 
-{% sample lang="http" %}
+
 
 ```XML
 <?xml version="1.0" encoding="UTF-8"?>
@@ -63,7 +63,7 @@ results to https://gather.url/nextBXML
 </Response>
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 SpeakSentence speakSentence = SpeakSentence.builder()
@@ -85,7 +85,7 @@ System.out.println(response.toBXML());
 ```
 
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 Response response = new Response();
@@ -105,7 +105,7 @@ response.Add(gather);
 Console.WriteLine(response.ToBXML());
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 response = Bandwidth::Voice::Response.new()
@@ -124,7 +124,7 @@ response.push(gather)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
 
 ```python
 response = Response()
@@ -142,7 +142,7 @@ response.add_verb(gather)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
@@ -161,7 +161,7 @@ response.addVerb(gather);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Please press a digit.");
@@ -180,14 +180,14 @@ echo $response->toBxml();
 echo "\n";
 ```
 
-{% common %}
+
 
 #### Example 2 of 3: Gather With Repeated Audio Prompt
 This example shows the Gather verb being used to repeatedly prompt the user to press a digit. If the
 user presses nothing, the prompt will play five times. If the user presses a digit at any point, the
 Gather will end and send the result to the **gatherUrl**
 
-{% sample lang="http" %}
+
 
 
 ```XML
@@ -198,7 +198,7 @@ Gather will end and send the result to the **gatherUrl**
 </Response>
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 SpeakSentence speakSentence = SpeakSentence.builder()
@@ -218,7 +218,7 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
+
 
 
 ```csharp
@@ -239,7 +239,7 @@ Console.WriteLine(response.ToBXML());
 ```
 
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 response = Bandwidth::Voice::Response.new()
@@ -257,7 +257,7 @@ response.push(gather)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
 
 ```python
 response = Response()
@@ -274,7 +274,7 @@ response.add_verb(gather)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
@@ -292,7 +292,7 @@ response.addVerb(gather);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("I am going to keep asking you to press a digit");
@@ -310,12 +310,12 @@ echo $response->toBxml();
 echo "\n";
 ```
 
-{% common %}
+
 
 #### Example 3 of 3: Gather With Multiple Nested Verbs
 This example shows how to nest multiple PlayAudio and SpeakSentence verbs
 
-{% sample lang="http" %}
+
 
 ```XML
 <?xml version="1.0" encoding="UTF-8"?>
@@ -329,7 +329,7 @@ This example shows how to nest multiple PlayAudio and SpeakSentence verbs
 </Response>
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 List<AudioProducer> list = new ArrayList<>();
@@ -356,7 +356,7 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 Gather gather = new Gather
@@ -389,7 +389,7 @@ var output = response.ToBXML();
 Console.WriteLine(output);
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 speak_sentence_1 = Bandwidth::Voice::SpeakSentence.new({
@@ -415,7 +415,7 @@ response.push(gather)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
 
 ```python
 speak_sentence_1 = SpeakSentence(
@@ -441,13 +441,13 @@ response.add_verb(gather)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 //coming soon
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $speakSentence1 = new BandwidthLib\Voice\Bxml\SpeakSentence("First Sentence");
@@ -469,4 +469,4 @@ echo $response->toBxml();
 echo "\n";
 ```
 
-{% endmethod %}
+

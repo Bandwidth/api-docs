@@ -1,4 +1,4 @@
-{% method %}
+
 ## XML: `<Forward>`
 Forwards an unanswered incoming call to another number.  Unlike `<Transfer>`, once your call is forwarded, your application will not have any control over either leg of the call.  When either leg hangs up, a [Disconnect event](../callbacks/disconnect.md) will be sent to your Call status callback URL.  
 
@@ -16,12 +16,12 @@ Forwards an unanswered incoming call to another number.  Unlike `<Transfer>`, on
 
 None
 
-{% common %}
+
 ### Example 1 of 1: Simple Forward
 
 This shows how to use Bandwidth XML to forward a call from +11234567890 to +10987654321.
 
-{% sample lang="http" %}
+
 
 ```XML
 <?xml version="1.0" encoding="UTF-8"?>
@@ -30,7 +30,7 @@ This shows how to use Bandwidth XML to forward a call from +11234567890 to +1098
 </Response>
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 Forward forward = Forward.builder()
@@ -42,7 +42,7 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 Response response = new Response();
@@ -57,7 +57,7 @@ Console.WriteLine(response.ToBXML());
 ```
 
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 response = Bandwidth::Voice::Response.new()
@@ -70,7 +70,7 @@ response.push(forward)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
 
 ```python
 response = Response()
@@ -83,7 +83,7 @@ response.add_verb(forward)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 var forward = new BandwidthBxml.Verbs.Forward();
@@ -96,7 +96,7 @@ response.addVerb(forward);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $forward = new BandwidthLib\Voice\Bxml\Forward();
@@ -110,4 +110,4 @@ echo $response->toBxml();
 echo "\n";
 ```
 
-{% endmethod %}
+

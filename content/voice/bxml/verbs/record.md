@@ -1,4 +1,4 @@
-{% method %}
+
 ## XML: `<Record>`
 The Record verb allows a segment of audio to be recorded during a call. At the end of the recording, a [Record Complete](../callbacks/recordComplete.md) event is generated.
 
@@ -49,13 +49,13 @@ If the `transcriptionAvailableUrl` attribute is specified, then the [Transcripti
 | [Recording Available](../callbacks/recordingAvailable.md)         | No                       |
 | [Transcription Available](../callbacks/transcriptionAvailable.md) | No                       |
 
-{% common %}
+
 
 #### Example 1 of 2: Record Verb
 
 This shows how to use Bandwidth XML to record a phone call.
 
-{% sample lang="http" %}
+
 
 
 ```XML
@@ -68,7 +68,7 @@ This shows how to use Bandwidth XML to record a phone call.
 </Response>
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 SpeakSentence speakSentence = SpeakSentence.builder()
@@ -93,7 +93,7 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 SpeakSentence speakSentence = new SpeakSentence
@@ -121,7 +121,7 @@ response.Add(record);
 Console.WriteLine(response.ToBXML());
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 response = Bandwidth::Voice::Response.new()
@@ -143,7 +143,7 @@ response.push(record)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
 
 ```python
 response = Response()
@@ -165,7 +165,7 @@ response.add_verb(record)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
@@ -187,7 +187,7 @@ response.addVerb(record);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Please leave your message after the beep");
@@ -207,11 +207,11 @@ $response->addVerb($record);
 echo $response->toBxml();
 ```
 
-{% common %}
+
 
 #### Example 2 of 2: Record Verb with transcriptions
 
-{% sample lang="http" %}
+
 
 
 ```XML
@@ -222,7 +222,7 @@ echo $response->toBxml();
 </Response>
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 SpeakSentence speakSentence = SpeakSentence.builder()
@@ -242,7 +242,7 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 SpeakSentence speakSentence = new SpeakSentence
@@ -265,7 +265,7 @@ response.Add(record);
 Console.WriteLine(response.ToBXML());
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 response = Bandwidth::Voice::Response.new()
@@ -283,7 +283,7 @@ response.push(record)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
 
 ```python
 response = Response()
@@ -301,7 +301,7 @@ response.add_verb(record)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
 
 ```js
 var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
@@ -319,7 +319,7 @@ response.addVerb(record);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Please say your name");
@@ -336,4 +336,4 @@ $response->addVerb($record);
 echo $response->toBxml();
 ```
 
-{% endmethod %}
+

@@ -1,8 +1,8 @@
-{% raw %}
-<section class="accountCredentials">
-{% endraw %}
 
-# Account Credentials {#top}
+<section class="accountCredentials">
+
+
+# Account Credentials 
 
 This guide will cover the different credentials for interacting with Bandwidth's APIs, and how to authenticate on each API.
 
@@ -12,7 +12,7 @@ All of Bandwidth's APIs are protected with Basic Authorization over HTTPS. Basic
 
 ⚠️ Username and Passwords are **case sensitive**!
 
-### Credentials Snapshot {#snap-shot}
+### Credentials Snapshot 
 
 | Credential Name | Description                                                                                                                                                        | Example                                            |
 |:----------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------|

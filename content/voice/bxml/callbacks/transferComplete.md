@@ -1,4 +1,4 @@
-{% method %}
+
 ##  Transfer Complete Event – <Transfer> verb
 This event is sent to the `transferCompleteUrl` of the A-leg's `<Transfer>` verb when the transferred call (B-leg) completes.
 In a simultaneous ringing scenario, only one B-leg succeeds and this event corresponds to that successful leg.
@@ -52,7 +52,7 @@ Content-Type: application/xml; charset=utf-8
 | errorMessage      | Text explaining the reason that caused the call to be ended in case of errors. |
 | errorId           | Bandwidth internal id that references the error event. |
 
-{% common %}
+
 
 #### Example: Successful transfer to 1-555-666-7777
 
@@ -106,4 +106,4 @@ POST http://[External server URL]
 }
 ```
 
-{% endmethod %}
+

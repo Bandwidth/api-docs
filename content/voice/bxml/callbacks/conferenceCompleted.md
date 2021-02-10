@@ -1,4 +1,4 @@
-{% method %}
+
 ## Conference Completed Event
 The Conference Completed event is fired when the last member leaves the [conference](../verbs/conference.md).
 
@@ -20,7 +20,7 @@ HTTP/1.1 204
 | name             | The custom name used to reference this conference. This the name that you included inside the body of the [`<Conference>`](../verbs/conference.md) tag. |
 | tag              | (optional) The `tag` that was set at conference creation. If not `tag` was specified, this field will not be present. |
 
-{% common %}
+
 
 #### Example: The last member leaves the conference
 
@@ -38,4 +38,4 @@ POST http://[External server URL]
 }
 ```
 
-{% endmethod %}
+

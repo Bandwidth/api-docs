@@ -1,4 +1,4 @@
-{% method %}
+
 ## Conference Member Exit Event
 The Conference Member Exit event is fired whenever a caller exits a [conference](../verbs/conference.md) that specified a `callbackUrl`.  
 
@@ -41,7 +41,7 @@ Content-Type: application/xml; charset=utf-8
 | to               | The to number of the call that left the conference. |
 | tag              | (optional) The `tag` that was set at conference creation. If no `tag` was specified, this field will not be present. |
 
-{% common %}
+
 
 #### Example: Member exits the conference
 
@@ -62,4 +62,4 @@ POST http://[External server URL]
 }
 ```
 
-{% endmethod %}
+
