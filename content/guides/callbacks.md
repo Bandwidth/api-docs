@@ -1,5 +1,5 @@
 
-<section class="callbacksOverview">
+
 
 
 # Bandwidth Callbacks
@@ -8,7 +8,7 @@
 
 Bandwidth's APIs operate on a system of callbacks. Most API requests send callbacks, and notices of incoming events (phone call, text message) are sent via callbacks as well.
 
-<img src="../../images/bandwidth_callbacks.png" style="max-width:95%">
+
 
 ## How To Utilize Callbacks
 
@@ -36,11 +36,11 @@ Specifics for messaging callbacks can be found on our [messaging callbacks page]
 
 Specifics for subscription callbacks for order notifications can be found on our [subscriptions page](../../account/subscriptions/about,md).
 
-<br>
+
 
 ## Authenticated Callbacks 
 
-Bandwidth allows you to enable basic authentication on the webhooks received from the different services. For messaging and voice, credentials would be set on the messaging or voice application created in the Bandwidth Dashboard. In a subscription, the basic authentication credentials would be set in the <code class="post">POST</code> request to create each specific subscription type. To authenticate, Bandwidth follows the basic HTTP authentication framework outlined in [RFC 7235](https://tools.ietf.org/html/rfc7235).
+Bandwidth allows you to enable basic authentication on the webhooks received from the different services. For messaging and voice, credentials would be set on the messaging or voice application created in the Bandwidth Dashboard. In a subscription, the basic authentication credentials would be set in the POST request to create each specific subscription type. To authenticate, Bandwidth follows the basic HTTP authentication framework outlined in [RFC 7235](https://tools.ietf.org/html/rfc7235).
 
 Essentially, if you have basic authentication enabled for a webhook, Bandwidth will send a request with no authorization header attached and expect a 401 response that includes a `WWW-AUTHENTICATE` header containing a challenge. An example of that header could look like `WWW-AUTHENTICATE: Basic realm=""`.
 

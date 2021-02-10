@@ -43,7 +43,7 @@ An emergency notification recipient has a:
 ### Request Information
 
 #### Request URL
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/emergencyNotificationRecipients`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/emergencyNotificationRecipients`
 
 #### Request Authentication
 
@@ -299,7 +299,7 @@ A group has a:
 ### Request Information
 
 #### Request URL
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/emergencyNotificationGroupOrders`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/emergencyNotificationGroupOrders`
 
 #### Request Authentication
 
@@ -605,7 +605,7 @@ For example, if you want everyone in a given building to trigger the same set of
 ### Request Information
 
 #### Request URL
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/emergencyNotificationEndpointOrders`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/emergencyNotificationEndpointOrders`
 
 #### Request Authentication
 

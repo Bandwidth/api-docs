@@ -1,5 +1,5 @@
 
-<section class="accountCredentials">
+
 
 
 # Account Credentials 
@@ -18,7 +18,7 @@ All of Bandwidth's APIs are protected with Basic Authorization over HTTPS. Basic
 |:----------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------|
 | `username`      | The **username** of your **API Credentials** for the [Bandwidth Dashboard](https://dashboard.bandwidth.com)                                                        | `jdoe`                                             |
 | `password`      | The **password** of your **API Credentials** for the  [Bandwidth Dashboard](https://dashboard.bandwidth.com)                                                       | `correct-horse-battery-staple`                     |
-| `accountId`     | Your unique account **id**.  The `accountId` is used as part of the url to make API requests. <br> Ex: `https://dashboard.bandwidth.com/api/accounts/{accountId}/` | `920012`                                           |
+| `accountId`     | Your unique account **id**.  The `accountId` is used as part of the url to make API requests.  Ex: `https://dashboard.bandwidth.com/api/accounts/{accountId}/` | `920012`                                           |
 
 ## Creating the API Credentials
 
@@ -32,4 +32,4 @@ All of Bandwidth's APIs leverage your API Credentials created specifically for A
 
 ⚠️ The API Credential pair are generally separate from your **Login Username & Password** and **should not** be used to access the dashboard.  Further, your login username and password **should not** be used to access Bandwidth's APIs.
 
-<br>
+

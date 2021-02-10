@@ -15,9 +15,9 @@ To choose a specific voice by name, use the `voice` attribute.
 
 | Attribute | Description                                                                                                                                                                      |
 |:----------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| voice     | Selects the voice of the speaker. Consult the `voice` column in the below table for valid values.<br><br>If the `voice` attribute is present, `gender` and `locale` are ignored. |
-| gender    | Selects the gender of the speaker. Valid values are `"male"` or `"female"`.<br><br>Default `"female"`                                                                            |
-| locale    | Selects the locale of the speaker. Consult `locale` column in the below table for valid values.<br><br>Default `"en_US"`                                                         |
+| voice     | Selects the voice of the speaker. Consult the `voice` column in the below table for valid values.If the `voice` attribute is present, `gender` and `locale` are ignored. |
+| gender    | Selects the gender of the speaker. Valid values are `"male"` or `"female"`.Default `"female"`                                                                            |
+| locale    | Selects the locale of the speaker. Consult `locale` column in the below table for valid values.Default `"en_US"`                                                         |
 
 
 ### Text Content
@@ -121,7 +121,7 @@ Attributes:
 Adds a pause between lines or sentences.
 
 #### `<say-as>`
-Indicates how to interpret the text.<br>
+Indicates how to interpret the text.
 More information at: https://www.w3.org/TR/2005/NOTE-ssml-sayas-20050526/
 
 Attributes:

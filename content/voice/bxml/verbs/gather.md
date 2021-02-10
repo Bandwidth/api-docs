@@ -14,7 +14,7 @@ The Gather verb is used to collect digits for some period of time.
 | password             | (optional) The password to send in the HTTP request to `gatherUrl`. |
 | fallbackUsername     | (optional) The username to send in the HTTP request to `gatherFallbackUrl`. |
 | fallbackPassword     | (optional) The password to send in the HTTP request to `gatherFallbackUrl`. |
-| tag                  | (optional) A custom string that will be sent with this and all future callbacks unless overwritten by a future `tag` attribute or [`<Tag>`](tag.md) verb, or cleared.<br><br>May be cleared by setting `tag=""`<br><br>Max length 256 characters. |
+| tag                  | (optional) A custom string that will be sent with this and all future callbacks unless overwritten by a future `tag` attribute or [`<Tag>`](tag.md) verb, or cleared.May be cleared by setting `tag=""`Max length 256 characters. |
 | terminatingDigits    | (optional) When any of these digits are pressed, it will terminate the Gather. Default value is `""`, which disables this feature. |
 | maxDigits            | (optional) Max number of digits to collect. Default value is 50. Range: decimal values between 1 - 50. |
 | interDigitTimeout    | (optional) Time (in seconds) allowed between digit presses before automatically terminating the Gather. Default value is 5. Range: decimal values between 1 - 60. |

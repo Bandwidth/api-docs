@@ -32,7 +32,7 @@ The `/tnoptions` endpoint is an interface for adding/removing "options/features"
 #### TnOption Parameters for Portout Passcode protections
 
 #### Request URL
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/tnoptions`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/tnoptions`
 
 #### Request Authentication
 

@@ -27,7 +27,7 @@ This step is optional – the telephone numbers can be ordered directly using se
 There are a number of search approaches that can be used; the NPA NXX search is used for this example.  Please see the [API documentation](../apiReference.md) for the other applicable search types.
 
 ### Base URL
-<code class="get">GET</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/availableNumbers`
+GET`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/availableNumbers`
 
 #### Basic Authentication
 
@@ -40,7 +40,7 @@ Bandwidth's Phone Number API leverages Basic Authentication with your Dashboard 
 | Parameters                       | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 |:---------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `areaCode`                       | The allowed number ranges are [2-9] for the first digit and [0-9] for both the second and third digits.                                                                                                                                                                                                                                                                                                                                                                  |
-| `npaNxx`<br> -or- <br> `npaNxxx` | NPA NXX combination to be searched. <br> - Valid npa values:[2-9] for the first digit, and [0-9] for both the second and third digits. <br> - Valid Nxx values:[2-9] for the first digit, and [0-9] for both the second and third digits. <br> - Valid x values [0-9].                                                                                                                                                                                                   |
+| `npaNxx` -or-  `npaNxxx` | NPA NXX combination to be searched.  - Valid npa values:[2-9] for the first digit, and [0-9] for both the second and third digits.  - Valid Nxx values:[2-9] for the first digit, and [0-9] for both the second and third digits.  - Valid x values [0-9].                                                                                                                                                                                                   |
 | `rateCenter`                     | The abbreviation for the Rate Center                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | `state`                          | The two-letter abbreviation of the state the RateCenter is in.                                                                                                                                                                                                                                                                                                                                                                                                           |
 | `city`                           | The name of the city.                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
@@ -54,7 +54,7 @@ Bandwidth's Phone Number API leverages Basic Authentication with your Dashboard 
 | `LCA`                            | Local Calling Area. If this parameter is specified then Telephone Numbers that are likely in the Local Calling Area of the stated Rate Center, NPANXX or NPANNXX will be returned, in addition to those that *exactly* match the query will be returned. Since LCA logic is not always symmetric and not always inclusive of RC and NPANXX search criteria, this result reflects somewhat of an approximation. The parameter value is true or false. The default is true |
 | `endsIn`                         | Intended to use with localVanity only. The parameter value is true or false. If set to true, the search will look for only numbers which end in specified localVanity, otherwise localVanity sequence can be met anywhere in last 7 number digits. The default is false.                                                                                                                                                                                                 |
 | `orderBy`                        | The field by which the returned numbers will be sorted. Only supported if at least one of the following search criteria is specified: npaNxx or npaNxxx, rateCenter, city, zip, tollFreeVanity, tollFreeWildCardPattern. Allowed values are fullNumber, npaNxxx, npaNxx, and areaCode>                                                                                                                                                                                   |
-| `protected`                      | A query parameter, that governs, how the Protected status of numbers impacts the search results: <br> - `None` : The numbers returned in the payload will not contain any numbers that are tagged as Protected <br> - `ONLY` :The numbers returned in the payload will all be tagged as Protected. No "unProtected" numbers will be returned <br> - `MIXED` : The protected status of the numbers will be ignored in the search - all types of numbers will be returned  |
+| `protected`                      | A query parameter, that governs, how the Protected status of numbers impacts the search results:  - `None` : The numbers returned in the payload will not contain any numbers that are tagged as Protected  - `ONLY` :The numbers returned in the payload will all be tagged as Protected. No "unProtected" numbers will be returned  - `MIXED` : The protected status of the numbers will be ignored in the search - all types of numbers will be returned  |
 
 
 
@@ -97,7 +97,7 @@ Ordering Phone Numbers for use with the network uses requires you to order speci
 
 
 ### Base URL
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/orders`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/orders`
 
 #### Basic Authentication
 
@@ -111,13 +111,13 @@ Bandwidth's Phone Number API leverages Basic Authentication with your Dashboard 
 
 | Parameter            | Required | Description                                                                                                                                                                                                                                                                                                                                          |
 |:---------------------|:---------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `Quantity`           | No       | The desired quantity of requested numbers. values range from 1-5000. <br><br> Default: `5000`                                                                                                                                                                                                                                                        |
+| `Quantity`           | No       | The desired quantity of requested numbers. values range from 1-5000.  Default: `5000`                                                                                                                                                                                                                                                        |
 | `Name`               | Yes      | The name of the order. Max length restricted to 50 characters.                                                                                                                                                                                                                                                                                       |
 | `CustomerOrderId`    | No       | Optional value for Id set by customer                                                                                                                                                                                                                                                                                                                |
 | `SiteId`             | Yes      | The ID of the Site (_or sub-account_) that the SIP Peer is to be associated with.                                                                                                                                                                                                                                                                    |
-| `PeerId`             | No       | The ID of the SIP Peer (_or location_) that the telephone numbers are to be assigned to. <br> <br> ⚠️ The `PeerId` **MUST** already exist under the `Site` (_or sub-account_) EX: `/accounts/{accountId}/sites/{siteId}/sippeers/{PeerId}`                                                                                                           |
-| `PartialAllowed`     | No       | By default all order submissions are fulfilled partially. Setting the `PartialAllowed` to false would trigger the entire order to be fulfilled (any error encountered such as 1 TN not being available would fail all TNs in the order) <br><br> Default: `false`                                                                                    |
-| `BackOrderRequested` | No       | `BackOrderRequested` will indicate to the system that if the entire quantity of numbers is not available on the first attempt to fill the new number order, the request will be repeated periodically until the request is successful or canceled. <br> `true` - Backorder numbers if the entire quantity is not available <br><br> Default: `false` |
+| `PeerId`             | No       | The ID of the SIP Peer (_or location_) that the telephone numbers are to be assigned to.   ⚠️ The `PeerId` **MUST** already exist under the `Site` (_or sub-account_) EX: `/accounts/{accountId}/sites/{siteId}/sippeers/{PeerId}`                                                                                                           |
+| `PartialAllowed`     | No       | By default all order submissions are fulfilled partially. Setting the `PartialAllowed` to false would trigger the entire order to be fulfilled (any error encountered such as 1 TN not being available would fail all TNs in the order)  Default: `false`                                                                                    |
+| `BackOrderRequested` | No       | `BackOrderRequested` will indicate to the system that if the entire quantity of numbers is not available on the first attempt to fill the new number order, the request will be repeated periodically until the request is successful or canceled.  `true` - Backorder numbers if the entire quantity is not available  Default: `false` |
 
 ### Order Type Specific Request Parameters
 
@@ -132,10 +132,10 @@ These parameters _may or may not_ be required based on the type of order.  Check
 | `City`                                                                     | The name of the city that the Ordered telephone numbers should apply to                                                                                                                                                                                                                                                                                                                                     |
 | `Zip`                                                                      | A five-digit (XXXXX) or nine-digit (XXXXX-XXXX) format value.                                                                                                                                                                                                                                                                                                                                               |
 | `Lata`                                                                     | A maximum five-digit (XXXXX) numeric format.                                                                                                                                                                                                                                                                                                                                                                |
-| `EnableLCA`                                                                | If set to `true`, local calling access numbers will be returned for Rate Center, NPA-NXX and NPANXXX orders if numbers are not available for the given criteria. <br><br> Default: `true`.                                                                                                                                                                                                                  |
-| `Npa-Nxx` <br> -or- <br> `Npa-Nxxxx` <br><br> ⚠️ with `EnableLCA` : `true` | NpaNxx combination to be searched. <br> Valid Npa values: [2-9] for the first digit, and [0-9] for both the second and third digits. <br> Valid Nxx values: [2-9] for the first digit, and [0-9] for both the second and third digits. <br> Valid Xxvalues [0-9]. <br><br> ℹ️  If set to true, enables the ability to get local calling access numbers if numbers are not available for the given criteria. |
+| `EnableLCA`                                                                | If set to `true`, local calling access numbers will be returned for Rate Center, NPA-NXX and NPANXXX orders if numbers are not available for the given criteria.  Default: `true`.                                                                                                                                                                                                                  |
+| `Npa-Nxx`  -or-  `Npa-Nxxxx`  ⚠️ with `EnableLCA` : `true` | NpaNxx combination to be searched.  Valid Npa values: [2-9] for the first digit, and [0-9] for both the second and third digits.  Valid Nxx values: [2-9] for the first digit, and [0-9] for both the second and third digits.  Valid Xxvalues [0-9].  ℹ️  If set to true, enables the ability to get local calling access numbers if numbers are not available for the given criteria. |
 | `LocalVanity`                                                              | A text string used to request a regular vanity number. Valid range is between 4 and 7 alphanumeric characters.                                                                                                                                                                                                                                                                                              |
-| `EndsIn`                                                                   | Intended to use with `LocalVanity` only. <br> -`true` : the search will look for only numbers which end in specified `LocalVanity` <br> -`false`: `LocalVanity` sequence can be met anywhere in last 7 number digits. <br><br> Default: `false`                                                                                                                                                             |
+| `EndsIn`                                                                   | Intended to use with `LocalVanity` only.  -`true` : the search will look for only numbers which end in specified `LocalVanity`  -`false`: `LocalVanity` sequence can be met anywhere in last 7 number digits.  Default: `false`                                                                                                                                                             |
 | `TollFreeVanity`                                                           | A text string used to request a toll free vanity number. Valid range is between 4 and 7 alphanumeric characters.                                                                                                                                                                                                                                                                                            |
 | `TollFreeWildCardPattern`                                                  | A 3-digit wild card pattern for specifying toll free prefixes, comprised of 8 followed by two stars, a digit and a star or two digits                                                                                                                                                                                                                                                                       |
 | `ReservationIdList`                                                        | If a telephone number or numbers have been previously reserved, the ReservationIdList provides the IDs necessary to release the numbers. This only applies to reserved numbers - if no reservation has been placed on the numbers this list is not required.                                                                                                                                                |
@@ -188,10 +188,10 @@ Location: https://dashboard.bandwidth.com/api/accounts/{{accountId}}/orders/4795
 
 ## Fetching Order Information 
 
-A <code class="get">GET</code> Request to an existing order will return it's status as well as any information originally used to create the order.
+A GET Request to an existing order will return it's status as well as any information originally used to create the order.
 
 ### Base URL
-<code class="get">GET</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/orders/{{orderId}}`
+GET`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/orders/{{orderId}}`
 
 #### Basic Authentication
 
@@ -254,7 +254,7 @@ Content-Type: application/xml; charset=utf-8
 Disconnecting a phone number leaves it in all applicable inventories, but makes it available for activation with a new subscriber.
 
 ### Base URL
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/disconnects`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/disconnects`
 
 #### Basic Authentication
 
@@ -319,10 +319,10 @@ Location: https://dashboard.bandwidth.com/api/accounts/{{accountId}}/disconnects
 
 
 ## Fetching Disconnect Information 
-A <code class="get">GET</code> Request to an existing disconnect will return it's status as well as any information originally used to create the disconnect.
+A GET Request to an existing disconnect will return it's status as well as any information originally used to create the disconnect.
 
 ### Base URL
-<code class="get">GET</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/disconnects/{{disconnectId}}`
+GET`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/disconnects/{{disconnectId}}`
 
 #### Basic Authentication
 

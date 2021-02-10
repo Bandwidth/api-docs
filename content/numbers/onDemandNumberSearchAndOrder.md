@@ -33,7 +33,7 @@ The Bandwidth Phone Number API allows users to manage notifications on their acc
 This guide _only_ covers creating a `<CallbackSubscription>`.  For more information see the full guide on [managing subscriptions](../../account/subscriptions/about.md).
 
 ### Base URL
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/subscriptions`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/subscriptions`
 
 #### Basic Authentication
 
@@ -45,15 +45,15 @@ Bandwidth's Account API leverages Basic Authentication with your Dashboard API C
 
 | Parameter                | Required | Description                                                                                                                                                 |
 |:-------------------------|:---------|:------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `<OrderType>`            | Yes      | The Specific type of order in which to configure the subscription. <br> For this guide, the value is: `orders`                                              |
+| `<OrderType>`            | Yes      | The Specific type of order in which to configure the subscription.  For this guide, the value is: `orders`                                              |
 | `<CallbackSubscription>` | Yes      | Contains the information about the callback url                                                                                                             |
-| `<URL>`                  | Yes      | The URL to send the <code class="post">POST</code> request when order status changes. <br><br> Part of the `<CallbackSubscription>` element.                |
-| `<Expiry>`               | Yes      | How long to keep the subscription active. <br> Can be very large (100 years in seconds `3153600000`) <br><br> Part of the `<CallbackSubscription>` element. |
-| `<CallbackCredentials>`  | No       | Container for the authentication credentials for the specified `URL`  <br><br> Part of the `<CallbackSubscription>` element.                                |
+| `<URL>`                  | Yes      | The URL to send the POST request when order status changes.  Part of the `<CallbackSubscription>` element.                |
+| `<Expiry>`               | Yes      | How long to keep the subscription active.  Can be very large (100 years in seconds `3153600000`)  Part of the `<CallbackSubscription>` element. |
+| `<CallbackCredentials>`  | No       | Container for the authentication credentials for the specified `URL`   Part of the `<CallbackSubscription>` element.                                |
 | `<BasicAuthentication>`  | No       | Container for Basic Authentication credentials.                                                                                                             |
-| `<UserName>`             | No       | Username for Basic Authentication scheme. <br> Max 100 characters  <br><br> Part of the `<BasicAuthentication>` element.                                    |
-| `<Password>`             | No       | Password for Basic Authentication scheme. <br> Encrypted at rest and never returned by the API <br><br> Part of the `<BasicAuthentication>` element.        |
-| `<PublicKey>`            | No       | A BASE64 encoded public key that matches the server specified in the `URL`  <br><br> Part of the `<BasicAuthentication>` element.                           |
+| `<UserName>`             | No       | Username for Basic Authentication scheme.  Max 100 characters   Part of the `<BasicAuthentication>` element.                                    |
+| `<Password>`             | No       | Password for Basic Authentication scheme.  Encrypted at rest and never returned by the API  Part of the `<BasicAuthentication>` element.        |
+| `<PublicKey>`            | No       | A BASE64 encoded public key that matches the server specified in the `URL`   Part of the `<BasicAuthentication>` element.                           |
 
 
 
@@ -91,7 +91,7 @@ This step is optional – the telephone numbers can be ordered directly using se
 There are a number of search approaches that can be used; the NPA NXX search is used for this example.  Please see the [guide on [searching phone numbers](./searchForNumbers.md) for the other applicable search types.
 
 ### Base URL
-<code class="get">GET</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/availableNumbers`
+GET`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/availableNumbers`
 
 #### Basic Authentication
 
@@ -103,7 +103,7 @@ Bandwidth's Phone Number API leverages Basic Authentication with your Dashboard 
 
 | Parameters | Description                                                                                                                                                                                                                                                            |
 |:-----------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `npaNxx`   | NPA NXX combination to be searched. <br> - Valid npa values:[2-9] for the first digit, and [0-9] for both the second and third digits. <br> - Valid Nxx values:[2-9] for the first digit, and [0-9] for both the second and third digits. <br> - Valid x values [0-9]. |
+| `npaNxx`   | NPA NXX combination to be searched.  - Valid npa values:[2-9] for the first digit, and [0-9] for both the second and third digits.  - Valid Nxx values:[2-9] for the first digit, and [0-9] for both the second and third digits.  - Valid x values [0-9]. |
 
 This example only demonstrates searching by `NPA NXX` to learn about the different search types and filtering see the guide on [searching phone numbers](./searchForNumbers.md).
 
@@ -148,7 +148,7 @@ Content-Type: application/xml; charset=utf-8
 * It is worth noting that most orders complete very quickly (less than 1 second).
 
 ### Base URL
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/orders`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/orders`
 
 #### Basic Authentication
 
@@ -163,11 +163,11 @@ Bandwidth's Phone Number API leverages Basic Authentication with your Dashboard 
 | `<Name>`                | Yes      | The name of the order. Max length restricted to 50 characters.                                                                                                                                                                                                                                                                                       |
 | `<CustomerOrderId>`     | No       | Optional value for Id set by customer                                                                                                                                                                                                                                                                                                                |
 | `<SiteId>`              | Yes      | The ID of the Site (_or sub-account_) that the SIP Peer is to be associated with.                                                                                                                                                                                                                                                                    |
-| `<PeerId>`              | No       | The ID of the SIP Peer (_or location_) that the telephone numbers are to be assigned to. <br> <br> ⚠️ The `PeerId` **MUST** already exist under the `Site` (_or sub-account_) <br><br> EX: `/accounts/{accountId}/sites/{siteId}/sippeers/{PeerId}`                                                                                                           |
-| `<PartialAllowed>`      | No       | By default all order submissions are **not** fulfilled partially. Setting the `PartialAllowed` to false would trigger the entire order to be fulfilled (any error encountered such as 1 TN not being available would fail all TNs in the order) <br><br> Default: `false`                                                                            |
-| `<BackOrderRequested>`  | No       | `BackOrderRequested` will indicate to the system that if the entire quantity of numbers is not available on the first attempt to fill the new number order, the request will be repeated periodically until the request is successful or canceled. <br> `true` - Backorder numbers if the entire quantity is not available <br><br> Default: `false` |
+| `<PeerId>`              | No       | The ID of the SIP Peer (_or location_) that the telephone numbers are to be assigned to.   ⚠️ The `PeerId` **MUST** already exist under the `Site` (_or sub-account_)  EX: `/accounts/{accountId}/sites/{siteId}/sippeers/{PeerId}`                                                                                                           |
+| `<PartialAllowed>`      | No       | By default all order submissions are **not** fulfilled partially. Setting the `PartialAllowed` to false would trigger the entire order to be fulfilled (any error encountered such as 1 TN not being available would fail all TNs in the order)  Default: `false`                                                                            |
+| `<BackOrderRequested>`  | No       | `BackOrderRequested` will indicate to the system that if the entire quantity of numbers is not available on the first attempt to fill the new number order, the request will be repeated periodically until the request is successful or canceled.  `true` - Backorder numbers if the entire quantity is not available  Default: `false` |
 | `<TelephoneNumberList>` | Yes      | A list of telephone numbers to order.                                                                                                                                                                                                                                                                                                                |
-| `<TelephoneNumber>`     | Yes      | `TelephoneNumberList` must have at least one `TelephoneNumber` to order  <br><br> Part of the `<TelephoneNumberList>` element.                                                                                                                                                                                                                       |
+| `<TelephoneNumber>`     | Yes      | `TelephoneNumberList` must have at least one `TelephoneNumber` to order   Part of the `<TelephoneNumberList>` element.                                                                                                                                                                                                                       |
 
 
 
@@ -231,13 +231,13 @@ The HTTP Callback will contain information if the order was successful or failed
 
 | Parameter                     | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 |:------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `<Status>`                    | Following this tutorial should only yield two possible `Status` values: <br> - `COMPLETE` : The order succeeded and all phone numbers requested were ordered and will be sent in the `<CompletedTelephoneNumbers>` list. <br> - `FAILED` : The order _did not_ succeed (at least 1 phone number sent in the order was unable to be ordered). <br><br> To learn more about the order states, see the [Advanced Ordering Overview](advancedOrdering.md#ordering-overview) |
+| `<Status>`                    | Following this tutorial should only yield two possible `Status` values:  - `COMPLETE` : The order succeeded and all phone numbers requested were ordered and will be sent in the `<CompletedTelephoneNumbers>` list.  - `FAILED` : The order _did not_ succeed (at least 1 phone number sent in the order was unable to be ordered).  To learn more about the order states, see the [Advanced Ordering Overview](advancedOrdering.md#ordering-overview) |
 | `<SubscriptionId>`            | The unique Id associated with the subscription that was configured for `orders`. This is the same value that is returned in `Location` Header when [creating the subscription](#create-subscription).                                                                                                                                                                                                                                                                   |
 | `<Message>`                   | A specific message related to the order.                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | `<OrderId>`                   | The unique Id associated with the order. This is the same value that is returned in the `Location` Header when [creating the order](#order-phone-numbers)                                                                                                                                                                                                                                                                                                               |
-| `<OrderType>`                 | The specific type of order that was created. <br> For this example, the value will be `orders`. <br><br>For more information see [managing subscriptions](../../account/subscriptions/about.md)                                                                                                                                                                                                                                                                                    |
+| `<OrderType>`                 | The specific type of order that was created.  For this example, the value will be `orders`. For more information see [managing subscriptions](../../account/subscriptions/about.md)                                                                                                                                                                                                                                                                                    |
 | `<CompletedTelephoneNumbers>` | Contains the list of Phone Numbers that were attempted to be ordered.                                                                                                                                                                                                                                                                                                                                                                                                   |
-| `<TelephoneNumber>`           | The actual Phone Number that was attempted to be ordered.  <br><br> Part of the `<CompletedTelephoneNumbers>` element.                                                                                                                                                                                                                                                                                                                                                  |
+| `<TelephoneNumber>`           | The actual Phone Number that was attempted to be ordered.   Part of the `<CompletedTelephoneNumbers>` element.                                                                                                                                                                                                                                                                                                                                                  |
 
 
 
@@ -285,12 +285,12 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 
 ## Fetching Order Information 
 
-A <code class="get">GET</code> Request to an existing order will return it's status as well as any information originally used to create the order.
+A GET Request to an existing order will return it's status as well as any information originally used to create the order.
 
 In the example below the `orderId` is the `orderId` returned in the 'location' header of the [order phone numbers](#order-phone-numbers) response.
 
 ### Base URL
-<code class="get">GET</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/orders/{{orderId}}`
+GET`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/orders/{{orderId}}`
 
 #### Basic Authentication
 

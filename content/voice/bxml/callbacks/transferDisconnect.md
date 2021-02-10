@@ -1,5 +1,5 @@
 
-##  Transfer Disconnect Event – <Transfer> verb
+##  Transfer Disconnect Event –  verb
 This event is sent to the `transferDisconnectUrl` of each `<PhoneNumber>` tag when its respective call leg ends for any reason.
 The event is sent in the normal case, when the transferred leg is answered and later hung up, but is also sent if the new leg
 was never answered in the first place, if it was rejected, and if the original call leg hung up before the transferred leg.

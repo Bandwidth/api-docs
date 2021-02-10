@@ -58,7 +58,7 @@ Learn more about [subscriptions in the documentation](../../account/subscription
 #### Subscription Parameters
 
 #### Request URL
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/subscriptions`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/subscriptions`
 
 #### Request Authentication
 
@@ -68,7 +68,7 @@ The [Subscriptions](../../account/subscriptions/about.md) resource is authentica
 |:-------------------------|:-----------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `<OrderType>`            | Yes, set to `importtnorders` | The type of Order of the subscription, set to `importTnOrders` for this guide.                                                                                                                                                                                                                                                                                                                                  |
 | `<CallbackSubscription>` | Yes                          | Container for the callback details                                                                                                                                                                                                                                                                                                                                                                              |
-| `<Expiry>`               | Yes                          | The time **in seconds** to persist the subscription. Bandwidth recommends setting the `<Expiry>` value to a very large integer to prevent the subscription from expiring in the next decade or so.  <br> Example Times <ul> <li>99 years = `3122064000` seconds</li><li>2 weeks = `1209600` seconds</li><li>1 week = `604800` seconds</li><li>1 day = `86400` seconds</li><li>1 hour = `3600` seconds</li></ul> |
+| `<Expiry>`               | Yes                          | The time **in seconds** to persist the subscription. Bandwidth recommends setting the `<Expiry>` value to a very large integer to prevent the subscription from expiring in the next decade or so.   Example Times  99 years = `3122064000` seconds2 weeks = `1209600` seconds1 week = `604800` seconds1 day = `86400` seconds1 hour = `3600` seconds |
 | `<URL>`                  | Yes                          | Url to receive callbacks for the specified `orderId` or `orderType`                                                                                                                                                                                                                                                                                                                                             |
 | `<CallbackCredentials>`  | No, but highly recommended   | Container for the Auth                                                                                                                                                                                                                                                                                                                                                                                          |
 | `<BasicAuthentication>`  | -                            | Basic auth credentials to apply to your message & voice events                                                                                                                                                                                                                                                                                                                                                  |
@@ -217,7 +217,7 @@ numbers.Subscription.create(subscription, function(err, response) {
 
 ## Check the Phone Number for "importability" 
 
-Before creating the order, to reduce failed or error statuses, create a <code class="post">POST</code> request to the `/importTnChecker` endpoint to check if the number can be brought in to your Bandwidth account. A non-errored response from the importTnChecker doesn't necessarily mean that the order will succeed, but is a good indicator of success.
+Before creating the order, to reduce failed or error statuses, create a POST request to the `/importTnChecker` endpoint to check if the number can be brought in to your Bandwidth account. A non-errored response from the importTnChecker doesn't necessarily mean that the order will succeed, but is a good indicator of success.
 
 
 
@@ -225,7 +225,7 @@ Before creating the order, to reduce failed or error statuses, create a <code cl
 
 #### Request URL
 
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/importTnChecker`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/importTnChecker`
 
 
 | Parameters           | Mandatory | Description                                                         |
@@ -415,7 +415,7 @@ After validating the numbers are able to be imported, create a POST request to c
 #### importTNOrder Parameters
 
 #### Request URL
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/importTnOrders`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/importTnOrders`
 
 | Parameter                | Required | Description                                                                                                                               |
 |:-------------------------|:---------|:------------------------------------------------------------------------------------------------------------------------------------------|
@@ -693,7 +693,7 @@ Anytime the status of the order is updated (complete, error, etc...) Bandwidth w
 
 #### Request URL
 
-<code class="post">POST</code>`{{your-callback-url_as-defined-in-the-subscription}}`
+POST`{{your-callback-url_as-defined-in-the-subscription}}`
 
 | Parameter           | Description                                                        |
 |:--------------------|:-------------------------------------------------------------------|
@@ -747,7 +747,7 @@ HTTP/1.1 200 OK
 
 #### Request URL
 
-<code class="get">GET</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/importTnOrders/{{orderId}}`
+GET`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/importTnOrders/{{orderId}}`
 
 #### Response Parameters
 
@@ -897,7 +897,7 @@ You are able to keep the LOA file within your own system, or upload the file to 
 
 #### Request URL
 
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/importTnOrders/{{orderId}}/loas`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/importTnOrders/{{orderId}}/loas`
 
 #### Request Parameters
 
@@ -1004,7 +1004,7 @@ Content-Type: application/xml; charset=utf-8
 
 ## Check in service numbers to ensure number imported 
 
-Optional, but recommended. To finally confirm that the phone number was successfully imported into your Bandwidth account, create a <code class="get">GET</code>  request to the inserviceNumbers to list the numbers in your account.
+Optional, but recommended. To finally confirm that the phone number was successfully imported into your Bandwidth account, create a GET  request to the inserviceNumbers to list the numbers in your account.
 
 If everything was imported correctly, the recently imported number will appear in the returned payload.
 
@@ -1014,7 +1014,7 @@ If everything was imported correctly, the recently imported number will appear i
 
 #### Request URL
 
-<code class="get">GET</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/inserviceNumbers`
+GET`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/inserviceNumbers`
 
 #### Response Parameters
 

@@ -51,7 +51,7 @@ Learn more about [subscriptions in the documentation](../../account/subscription
 #### Subscription Parameters
 
 #### Request URL
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/subscriptions`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/subscriptions`
 
 #### Request Authentication
 
@@ -61,7 +61,7 @@ The [Subscriptions](../../account/subscriptions/about.md) resource is authentica
 |:-------------------------|:---------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `<OrderType>`            | Yes, set to `csrs`         | The type of Order of the subscription, set to `csrs` for this guide.                                                                                                                                                                                                                                                                                                                                            |
 | `<CallbackSubscription>` | Yes                        | Container for the callback details                                                                                                                                                                                                                                                                                                                                                                              |
-| `<Expiry>`               | Yes                        | The time **in seconds** to persist the subscription. Bandwidth recommends setting the `<Expiry>` value to a very large integer to prevent the subscription from expiring in the next decade or so.  <br> Example Times <ul> <li>99 years = `3122064000` seconds</li><li>2 weeks = `1209600` seconds</li><li>1 week = `604800` seconds</li><li>1 day = `86400` seconds</li><li>1 hour = `3600` seconds</li></ul> |
+| `<Expiry>`               | Yes                        | The time **in seconds** to persist the subscription. Bandwidth recommends setting the `<Expiry>` value to a very large integer to prevent the subscription from expiring in the next decade or so.   Example Times  99 years = `3122064000` seconds2 weeks = `1209600` seconds1 week = `604800` seconds1 day = `86400` seconds1 hour = `3600` seconds |
 | `<URL>`                  | Yes                        | Url to receive callbacks for the specified `orderId` or `orderType`                                                                                                                                                                                                                                                                                                                                             |
 | `<CallbackCredentials>`  | No, but highly recommended | Container for the Auth                                                                                                                                                                                                                                                                                                                                                                                          |
 | `<BasicAuthentication>`  | -                          | Basic auth credentials to apply to your message & voice events                                                                                                                                                                                                                                                                                                                                                  |
@@ -231,7 +231,7 @@ Before creating the order, be sure to collect any information from the end user 
 
 #### Request URL
 
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/csrs`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/csrs`
 
 
 | Parameter                             | Mandatory | Description                                                                                                                                                                                                                                                 |
@@ -402,7 +402,7 @@ Anytime the status of the order is updated (`COMPLETE`, `FAILED`, `ACTION_REQUIR
 
 #### Request URL
 
-<code class="post">POST</code>`{{your-callback-url_as-defined-in-the-subscription}}`
+POST`{{your-callback-url_as-defined-in-the-subscription}}`
 
 | Parameter           | Description                                                        |
 |:--------------------|:-------------------------------------------------------------------|
@@ -697,7 +697,7 @@ You'll need to fetch the order status for both `FAILED` and `COMPLETE` CSR order
 
 #### Request URL
 
-<code class="get">GET</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/csrs/{{orderId}}`
+GET`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/csrs/{{orderId}}`
 
 ##### Response Parameters
 
@@ -710,7 +710,7 @@ You'll need to fetch the order status for both `FAILED` and `COMPLETE` CSR order
 | `<OrderId>`          | Id of import TN order                                                                                                                                                                                                           |
 | `<LastModifiedDate>` | The last time the import TN order was updated                                                                                                                                                                                   |
 | `<Status>`           | The current status of the import TN order. The `LastModifiedDate` indicates when the status was updated                                                                                                                         |
-| `<CsrData>`          | The complete CSR data from the lookup request.  The element will contain sub-elements such as:<br><ul><li>CustomerName</li><li>ServiceAddress</li><li>WorkingTelephoneNumbersOnAccount</li><li>WorkingTelephoneNumber</li></ul> |
+| `<CsrData>`          | The complete CSR data from the lookup request.  The element will contain sub-elements such as:CustomerNameServiceAddressWorkingTelephoneNumbersOnAccountWorkingTelephoneNumber |
 | `<Errors>`           | Any errors that occured during the request                                                                                                                                                                                      |
 
 

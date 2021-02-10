@@ -60,7 +60,7 @@ For GET operations, the following headers must be passed.
 | Header name   | Header Value                     |
 | :-------------| :--------------------------------|
 | Accept        | application/json                 |
-| Authorization | Bearer <authentication_token> |
+| Authorization | Bearer  |
 
 **For POST Operations**
 
@@ -70,7 +70,7 @@ For POST operations, the following headers must be passed.
 | :-------------- | :---------------------------------|
 | Accept          | application/json                  |
 | Content-Type    | application/json                  |
-| Authorization   | Bearer <authentication_token>  |
+| Authorization   | Bearer   |
 
 ### Digital Connect Service URLs
 
@@ -100,13 +100,13 @@ Some other examples of service URLs are given in the following table:
 
 | Service Name          | Service URL                                 | Supported |    
 | :---------------------| :-------------------------------------------| :---------|
-| Search                | /products/air/search?jipcc=<storefront>   | POST      |    
-| Air (select Flights)  | /products/air?jipcc=<storefront>          | POST, GET |
-| Passengers            | /passengers?jipcc=<storefront>            | POST, GET |
-| Ancillaries           | /products/ancillaries?jipcc=<storefront>  | POST, GET |
-| Seats                 | /products/seats?jipcc=<storefront>        | POST, GET |
-| Products              | /products?jipcc=<storefront>              | GET       |
-| Purchase              | /purchase?jipcc=<storefront>              | POST      |
+| Search                | /products/air/search?jipcc=   | POST      |    
+| Air (select Flights)  | /products/air?jipcc=          | POST, GET |
+| Passengers            | /passengers?jipcc=            | POST, GET |
+| Ancillaries           | /products/ancillaries?jipcc=  | POST, GET |
+| Seats                 | /products/seats?jipcc=        | POST, GET |
+| Products              | /products?jipcc=              | GET       |
+| Purchase              | /purchase?jipcc=              | POST      |
 
 ### HTTP Methods
 

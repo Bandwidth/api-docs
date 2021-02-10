@@ -34,7 +34,7 @@ If the `Content-Type` is something other than the ones above or no `Content-Type
 ### Text Content
 | Name     | Description                                                                                                                                  |
 |:---------|:---------------------------------------------------------------------------------------------------------------------------------------------|
-| audioUri | The URL of the audio file to play. May be a relative URL. <br> ⚠️ **ONLY** `.wav` and `.mp3` files as described above are supported. |
+| audioUri | The URL of the audio file to play. May be a relative URL.  ⚠️ **ONLY** `.wav` and `.mp3` files as described above are supported. |
 
 
 ### Callbacks Received

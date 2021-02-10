@@ -1,5 +1,5 @@
 
-<section class="getStarted">
+
 
 
 # Get Started with Bandwidth APIs

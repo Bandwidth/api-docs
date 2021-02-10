@@ -14,13 +14,13 @@ The Redirect verb is used to redirect the current XML execution to another URL.
 | password               | (optional) The password to send in the HTTP request to `redirectUrl`. |
 | fallbackUsername       | (optional) The username to send in the HTTP request to `redirectFallbackUrl`. |
 | fallbackPassword       | (optional) The password to send in the HTTP request to `redirectFallbackUrl`. |
-| tag                    | (optional) A custom string that will be sent with this and all future callbacks unless overwritten by a future `tag` attribute or [`<Tag>`](tag.md) verb, or cleared.<br><br>May be cleared by setting `tag=""`<br><br>Max length 256 characters. |
+| tag                    | (optional) A custom string that will be sent with this and all future callbacks unless overwritten by a future `tag` attribute or [`<Tag>`](tag.md) verb, or cleared.May be cleared by setting `tag=""`Max length 256 characters. |
 
-<aside class="alert general small">
-<p>
+
+
 &lt;Redirect&gt should be the last verb in the BXML, as any verbs after &lt;Redirect&gt; will not be executed.
-<p>
-</aside>
+
+
 
 ### Callbacks Received
 

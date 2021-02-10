@@ -22,11 +22,11 @@ In any of those cases a [Bridge Complete](../callbacks/bridgeComplete.md) event 
 ### Attributes
 | Attribute                          | Description |
 |:-----------------------------------|:------------|
-| bridgeCompleteUrl                  | (optional) URL to send the [Bridge Complete](../callbacks/bridgeComplete.md) event to and request new BXML.<br/> If this attribute is specified, then Verbs following the `<Bridge>` verb will be ignored and the BXML returned in this callback is executed on the call.<br/> If this attribute is not specified then no callback will be sent, and execution of the verbs following the `<Bridge>` verb continues. May be a relative URL. |
+| bridgeCompleteUrl                  | (optional) URL to send the [Bridge Complete](../callbacks/bridgeComplete.md) event to and request new BXML. If this attribute is specified, then Verbs following the `<Bridge>` verb will be ignored and the BXML returned in this callback is executed on the call. If this attribute is not specified then no callback will be sent, and execution of the verbs following the `<Bridge>` verb continues. May be a relative URL. |
 | bridgeCompleteMethod               | (optional) The HTTP method to use for the request to `bridgeCompleteUrl`. GET or POST. Default value is POST. |
 | bridgeCompleteFallbackUrl          | (optional) A fallback url which, if provided, will be used to retry the [Bridge Complete](../callbacks/bridgeComplete.md) callback delivery in case `bridgeCompleteUrl` fails to respond. |
 | bridgeCompleteFallbackMethod       | (optional) The HTTP method to use to deliver the [Bridge Complete](../callbacks/bridgeComplete.md) callback to `bridgeCompleteFallbackUrl`. GET or POST. Default value is POST. |
-| bridgeTargetCompleteUrl            | (optional) URL to send the [Bridge Target Complete](../callbacks/bridgeTargetComplete.md) event to and request new BXML.<br/> If this attribute is specified, then the BXML returned in this callback is executed on the target call.<br/> If this attribute is not specified then no callback will be sent, and the target call will be hung up. May be a relative URL. |
+| bridgeTargetCompleteUrl            | (optional) URL to send the [Bridge Target Complete](../callbacks/bridgeTargetComplete.md) event to and request new BXML. If this attribute is specified, then the BXML returned in this callback is executed on the target call. If this attribute is not specified then no callback will be sent, and the target call will be hung up. May be a relative URL. |
 | bridgeTargetCompleteMethod         | (optional) The HTTP method to use for the request to `bridgeTargetCompleteUrl`. GET or POST. Default value is POST. |
 | bridgeTargetCompleteFallbackUrl    | (optional) A fallback url which, if provided, will be used to retry the [Bridge Target Complete](../callbacks/bridgeTargetComplete.md) callback delivery in case `bridgeTargetCompleteUrl` fails to respond. |
 | bridgeTargetCompleteFallbackMethod | (optional) The HTTP method to use to deliver the [Bridge Target Complete](../callbacks/bridgeTargetComplete.md) callback to `bridgeTargetCompleteFallbackUrl`. GET or POST. Default value is POST. |
@@ -34,7 +34,7 @@ In any of those cases a [Bridge Complete](../callbacks/bridgeComplete.md) event 
 | password                           | (optional) The password to send in the HTTP request to `bridgeCompleteUrl` and to `bridgeTargetCompleteUrl`. |
 | fallbackUsername                   | (optional) The username to send in the HTTP request to `bridgeCompleteFallbackUrl` and to `bridgeTargetCompleteFallbackUrl`. |
 | fallbackPassword                   | (optional) The password to send in the HTTP request to `bridgeCompleteFallbackUrl` and to `bridgeTargetCompleteFallbackUrl`. |
-| tag                                | (optional) A custom string that will be sent with the `bridgeComplete` callback and all future callbacks of the call unless overwritten by a future `tag` attribute or [`<Tag>`](tag.md) verb, or cleared.<br><br>May be cleared by setting `tag=""`<br><br>Max length 256 characters. |
+| tag                                | (optional) A custom string that will be sent with the `bridgeComplete` callback and all future callbacks of the call unless overwritten by a future `tag` attribute or [`<Tag>`](tag.md) verb, or cleared.May be cleared by setting `tag=""`Max length 256 characters. |
 
 ### Text Content
 | Name        | Description                                               |

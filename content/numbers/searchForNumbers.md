@@ -14,7 +14,7 @@ Bandwidth's available number searches with local calling enabled by default. The
 In certain cases where the **exact digits** are important (such as localVantiy, endsIn, npaNxxx) LCA should be disabled to filter out non-pattern matched phone numbers.
 
 ## Base URL
-<code class="get">GET</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/availableNumbers`
+GET`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/availableNumbers`
 
 ## API Authentication
 
@@ -37,7 +37,7 @@ The Numbers API resources are authenticated with your [API Credentials for "Numb
 | tollFreeWildCardPattern | A 3 alphanumeric character long string representing a wild card pattern for toll free numbers                                                                                                                | `8**`             |
 | quantity                | Number of phone numbers to return. Can be 1 to 5000. Defaults to 5000                                                                                                                                        | 5000              |
 | enableTNDetail          | Boolean value to include TN details. Defaults to false                                                                                                                                                       | `true`            |
-| LCA                     | Boolean value to include TNs in the local calling area.<br>⚠️Defaults to `true`                                                                                                                              | `true`            |
+| LCA                     | Boolean value to include TNs in the local calling area.⚠️Defaults to `true`                                                                                                                              | `true`            |
 | endsIn                  | Boolean value to include only numbers which end in the `localVanity`. Defaults to false                                                                                                                      | `true`            |
 | orderBy                 | The field to order the results by. Can be one of `fullNumber`, `npaNxx`, `npaNxxx`, or `areaCode`                                                                                                            | `areaCode`        |
 | protected               | Determines if the search should return only protected numbers (`ONLY`), only not protected numbers (`NONE`), or both protected and not protected numbers (`MIXED`). Can be one of `NONE`, `ONLY`, or `MIXED` | `NONE`            |

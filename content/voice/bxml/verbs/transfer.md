@@ -6,7 +6,7 @@ The Transfer verb is used to bridge another party onto the current call.
 ### Attributes
 | Attribute | Description |
 |:----------|:------------|
-| transferCallerId | (optional) The caller ID to use when the call is transferred, if different. Must be in E.164 format (e.g. +15555555555).<br><br> Note: Leave blank to pass along the number of the remote party. |
+| transferCallerId | (optional) The caller ID to use when the call is transferred, if different. Must be in E.164 format (e.g. +15555555555). Note: Leave blank to pass along the number of the remote party. |
 | callTimeout | (optional) This is the timeout (in seconds) for the callee to answer the call. Range: decimal values between 1 - 300.  Default value is 30 seconds. |
 | transferCompleteUrl | (optional) URL to send the [Transfer Complete](../callbacks/transferComplete.md) event to and request new BXML. Optional but recommended. [See below](#transferCompleteUrl) for further details. May be a relative URL. |
 | transferCompleteMethod | (optional) The HTTP method to use for the request to `transferCompleteUrl`. GET or POST. Default value is POST. |
@@ -16,9 +16,9 @@ The Transfer verb is used to bridge another party onto the current call.
 | password | (optional) The password to send in the HTTP request to `transferCompleteUrl`. |
 | fallbackUsername | (optional) The username to send in the HTTP request to `transferCompleteFallbackUrl`. |
 | fallbackPassword | (optional) The password to send in the HTTP request to `transferCompleteFallbackUrl`. |
-| tag | (optional) A custom string that will be sent with this and all future callbacks unless overwritten by a future `tag` attribute or cleared.<br><br>May be cleared by setting `tag=""`<br><br>Max length 256 characters. |
-| diversionTreatment | (optional) Can be any of the following: <br> `none`: No diversion headers are sent on the outbound leg of the transferred call. <br>`propagate`: Copy the Diversion header from the inbound leg to the outbound leg. Ignored if there is no Diversion header present on the inbound leg. <br>`stack`: After propagating any Diversion header from the inbound leg to the outbound leg, stack on top another Diversion header based on the Request-URI of the inbound call. <br><br>Defaults to `none`.  If diversionTreatment is not specified, no diversion header will be included for the transfer even if one came with the inbound call. |
-| diversionReason | (optional) Can be any of the following values: <br>`unknown`<br>`user-busy`<br>`no-answer`<br>`unavailable`<br>`unconditional`<br>`time-of-day`<br>`do-not-disturb`<br>`deflection`<br>`follow-me`<br>`out-of-service`<br>`away` <br><br>This parameter is considered only when `diversionTreatment` is set to `stack`.  Defaults to `unknown`. |
+| tag | (optional) A custom string that will be sent with this and all future callbacks unless overwritten by a future `tag` attribute or cleared.May be cleared by setting `tag=""`Max length 256 characters. |
+| diversionTreatment | (optional) Can be any of the following:  `none`: No diversion headers are sent on the outbound leg of the transferred call. `propagate`: Copy the Diversion header from the inbound leg to the outbound leg. Ignored if there is no Diversion header present on the inbound leg. `stack`: After propagating any Diversion header from the inbound leg to the outbound leg, stack on top another Diversion header based on the Request-URI of the inbound call. Defaults to `none`.  If diversionTreatment is not specified, no diversion header will be included for the transfer even if one came with the inbound call. |
+| diversionReason | (optional) Can be any of the following values: `unknown``user-busy``no-answer``unavailable``unconditional``time-of-day``do-not-disturb``deflection``follow-me``out-of-service``away` This parameter is considered only when `diversionTreatment` is set to `stack`.  Defaults to `unknown`. |
 
 ### 
 When the called party hangs up, if the `transferCompleteUrl` attribute is specified, the [TransferComplete](../callbacks/transferComplete.md) callback is sent to the `transferCompleteUrl`,
@@ -51,7 +51,7 @@ one destination is specified, called parties will ring simultaneously and the fi
 | password | (optional) The password to send in the HTTP request to `transferAnswerUrl` and `transferDisconnectUrl`. |
 | fallbackUsername | (optional) The username to send in the HTTP request to `transferAnswerFallbackUrl`. |
 | fallbackPassword | (optional) The password to send in the HTTP request to `transferAnswerFallbackUrl`. |
-| tag | (optional) A custom string that will be sent with these and all future callbacks unless overwritten by a future `tag` attribute or cleared.<br><br>May be cleared by setting `tag=""`<br><br>Max length 256 characters. |
+| tag | (optional) A custom string that will be sent with these and all future callbacks unless overwritten by a future `tag` attribute or cleared.May be cleared by setting `tag=""`Max length 256 characters. |
 
 #### SipUri attributes
 | Attribute | Description |
@@ -67,7 +67,7 @@ one destination is specified, called parties will ring simultaneously and the fi
 | password | (optional) The password to send in the HTTP request to `transferAnswerUrl` and `transferDisconnectUrl`. |
 | fallbackUsername | (optional) The username to send in the HTTP request to `transferAnswerFallbackUrl`. |
 | fallbackPassword | (optional) The password to send in the HTTP request to `transferAnswerFallbackUrl`. |
-| tag | (optional) A custom string that will be sent with these and all future callbacks unless overwritten by a future `tag` attribute or cleared.<br><br>May be cleared by setting `tag=""`<br><br>Max length 256 characters. |
+| tag | (optional) A custom string that will be sent with these and all future callbacks unless overwritten by a future `tag` attribute or cleared.May be cleared by setting `tag=""`Max length 256 characters. |
 
 When the called party answers, if the `transferAnswerUrl` is specified, the [Transfer Answer](../callbacks/transferAnswer.md) callback is sent to the `transferAnswerUrl` and
 the BXML returned by that callback is executed. That BXML is executed only for the called party.  At the conclusion
@@ -76,7 +76,7 @@ of that BXML, the calls are bridged.
 When each leg of the transfer ends for any reason, if `transferDisconnectUrl` was set for that phone number, the
 [Transfer Disconnect](../callbacks/transferDisconnect.md) event will be sent to that URL. This event may not be responded to with BXML.
 
-<aside class="alert general small"><p>There can be a maximum of 8 phone numbers to transfer to. </p></aside>
+There can be a maximum of 8 phone numbers to transfer to. 
 
 ### Callbacks Received
 

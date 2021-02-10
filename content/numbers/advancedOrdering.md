@@ -59,7 +59,7 @@ Existing Number orders, used if the numbers are known to be available based on a
 
 These different order types have different parameters that guide the ordering process, and thus have different parameters as part of their order requests.
 
-The order requests are communicated via a <code class="post">POST</code> API call with a payload that describes the order parameters.
+The order requests are communicated via a POST API call with a payload that describes the order parameters.
 
 ## New Number Order Response Format 
 
@@ -90,7 +90,7 @@ Orders placed for new numbers usually complete rapidly, returning either all, so
 | `COMPLETED` | All of the requested telephone numbers were provided                            |
 
 
-If a new number order has been tagged to indicate that telephone numbers are to be backordered and the indicated quantity is not immediately available, then the order will remain active, and the interim status of **BACKORDERED** will be indicated in the `<OrderStatus>` element when the order is examined with a <code class="get">GET</code>  referencing the `order-id`.
+If a new number order has been tagged to indicate that telephone numbers are to be backordered and the indicated quantity is not immediately available, then the order will remain active, and the interim status of **BACKORDERED** will be indicated in the `<OrderStatus>` element when the order is examined with a GET  referencing the `order-id`.
 
 ### Requesting a backorder via the API .
 
@@ -119,8 +119,8 @@ In the case of npanxx and npanxxx order types, the specific dial plan elements a
 
 With the introduction of Backorder capabilities, new number orders may stay in backordered state for a period while the order is filled.   While in this state it is possible to update the modifiable fields in the record, as well as to request that backorder processing of the order be ended.
 
-Those updates to incomplete orders are facilitated by a <code class="put">PUT</code> on the `order-id`.
+Those updates to incomplete orders are facilitated by a PUT on the `order-id`.
 
 Closing a backordered order retains any telephone numbers that have already been assigned to the account, and the order will typically convert its status to `PARTIAL` state, indicating that some requested numbers were not provided. If no numbers were provided the final state will be `FAILED`.
-<br>
-<br>
+
+

@@ -39,11 +39,11 @@ Once the account has been configured correctly for HTTP Services. See the guides
 
 ## Create **Messaging** Application 
 
-<aside class="alert general small">
-<p>
-Save the <code>Application Id</code> after creating the application.
-</p>
-</aside>
+
+
+Save the Application Id after creating the application.
+
+
 
 The [Application](../applications/about.md) contains the HTTP URL you want to use for both inbound and outbound messages.
 
@@ -54,7 +54,7 @@ Learn more about [applications in the documentation](../applications/about.md).
 #### Application Parameters
 
 #### Request URL
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/applications`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/applications`
 
 #### Request Authentication
 
@@ -144,11 +144,11 @@ Location: https://{baseurl}/accounts/{{accountId}}/applications/{{applicationID}
 
 ## Create **Voice** Application 
 
-<aside class="alert general small">
-<p>
-Save the <code>Application Id</code> after creating the application.
-</p>
-</aside>
+
+
+Save the Application Id after creating the application.
+
+
 
 The [Application](../applications/about.md) contains the HTTP URL you want to use for inbound calls.
 
@@ -159,7 +159,7 @@ Learn more about [applications in the documentation](../applications/about.md).
 #### Application Parameters
 
 #### Request URL
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/applications`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/applications`
 
 
 | Parameters                 | Mandatory | Description                                                                                                                |
@@ -256,7 +256,7 @@ This endpoint can be used to create a subaccount (AKA site) on your account
 #### Subaccount Parameters
 
 #### Request URL
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites`
 
 | Parameters                | Mandatory | Description                                                                                                                                                                                                                              |
 |:--------------------------|:----------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -378,11 +378,11 @@ Location: https://{baseurl}/accounts/{{accountId}}/sites/{{siteID}}
 
 ## Create location (_sippeer_) 
 
-<aside class="alert general small">
-<p>
-Save the <code>Location (sippeer) Id</code> After creating the application.
-</p>
-</aside>
+
+
+Save the Location (sippeer) Id After creating the application.
+
+
 
 The location (_sippeer_) is a logical grouping of numbers.
 
@@ -394,12 +394,12 @@ The location (_sippeer_) is a logical grouping of numbers.
 
 #### Request URL
 
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}/sippeers`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}/sippeers`
 
 | Parameters      | Mandatory | Description                                                                                                                                                                                                                                                                                     |
 |:----------------|:----------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `PeerName`      | Yes       | Plain text name of the Location (_sippeer_)                                                                                                                                                                                                                                                     |
-| `IsDefaultPeer` | No        | Boolean: <br> * `true` <br> * `false` <br> The Default SIP Peer is the default "destination" for any Telephone Numbers that are ordered for the Site in which the SIP Peer resides.  Each sub-account (_site_) can have only 1 default SIP Peer. You can configure multiple SIP Peers on a Site |
+| `IsDefaultPeer` | No        | Boolean:  * `true`  * `false`  The Default SIP Peer is the default "destination" for any Telephone Numbers that are ordered for the Site in which the SIP Peer resides.  Each sub-account (_site_) can have only 1 default SIP Peer. You can configure multiple SIP Peers on a Site |
 
 
 
@@ -467,12 +467,12 @@ In order to use HTTP messaging in your account, you need to enable SMS and MMS o
 
 #### Request URL
 
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}/sippeers/{{sippeerId}}/products/messaging/features/sms`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}/sippeers/{{sippeerId}}/products/messaging/features/sms`
 
 | Parameters  | Mandatory | Description                                                                                           |
 |:------------|:----------|:------------------------------------------------------------------------------------------------------|
-| `TollFree`  | Yes       | Will enable texting to and from _toll-free phone numbers_. <br> Boolean: <br> * `true` <br> * `false` |
-| `ShortCode` | Yes       | Will enable texting to and from _short codes_. <br> Boolean: <br> * `true` <br> * `false`             |
+| `TollFree`  | Yes       | Will enable texting to and from _toll-free phone numbers_.  Boolean:  * `true`  * `false` |
+| `ShortCode` | Yes       | Will enable texting to and from _short codes_.  Boolean:  * `true`  * `false`             |
 | `Protocol`  | Yes       | **MUST BE SET TO** `HTTP`                                                                             |
 | `Zone1`     | Yes       | **MUST BE SET TO**: `true`                                                                            |
 | `Zone2`     | Yes       | **MUST BE SET TO**: `false`                                                                           |
@@ -591,7 +591,7 @@ In addition to enabling SMS, you must also enable MMS to receive picture message
 
 #### Request URL
 
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}/sippeers/{{sippeerId}}/products/messaging/features/mms`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}/sippeers/{{sippeerId}}/products/messaging/features/mms`
 
 | Parameters | Mandatory | Description               |
 |:-----------|:----------|:--------------------------|
@@ -697,7 +697,7 @@ In order to use the messaging API, you need to assign the `application` created 
 
 #### Request URL
 
-<code class="put">PUT</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}/sippeers/{{sippeerId}}/products/messaging/applicationSettings`
+PUT`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}/sippeers/{{sippeerId}}/products/messaging/applicationSettings`
 
 | Parameters             | Mandatory | Description                                             |
 |:-----------------------|:----------|:--------------------------------------------------------|
@@ -778,7 +778,7 @@ It is only required to set **either** `termination/settings` or `origination/set
 
 #### Request URL
 
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}/sippeers/{{sippeerId}}/products/origination/settings`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}/sippeers/{{sippeerId}}/products/origination/settings`
 
 | Parameters | Mandatory | Description               |
 |:-----------|:----------|:--------------------------|

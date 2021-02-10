@@ -3,7 +3,7 @@
 The StopRecording verb is used to stop a recording that was previously started by a [`<StartRecording>`](startRecording.md) verb.
 
 If there is not an ongoing recording at the time of this verb's execution, it has no effect.
-If a previous recording was paused, <StopRecording> will end it.
+If a previous recording was paused,  will end it.
 
 ### Attributes
 | Attribute | Description |

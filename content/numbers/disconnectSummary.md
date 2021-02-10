@@ -19,7 +19,7 @@ Disconnecting a phone number leaves it in all applicable inventories, but makes 
 When a phone number is disconnected from your account it will remain available for you to reconnect to for a short period of time before being released back into Bandwidth's public inventory pool. You will not be charged for calls made to this number during the holding period. The duration of the holding period depends on demand for numbers from that area. 
 
 ### Base URL
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/disconnects`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/disconnects`
 
 #### Basic Authentication
 
@@ -84,10 +84,10 @@ Location: https://dashboard.bandwidth.com/api/accounts/{{accountId}}/disconnects
 
 
 ## Fetching Disconnect Information 
-A <code class="get">GET</code> Request to an existing disconnect will return it's status as well as any information originally used to create the disconnect.
+A GET Request to an existing disconnect will return it's status as well as any information originally used to create the disconnect.
 
 ### Base URL
-<code class="get">GET</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/disconnects/{{disconnectId}}`
+GET`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/disconnects/{{disconnectId}}`
 
 
 
