@@ -70,6 +70,8 @@ This shows how to use Bandwidth XML to record a phone call.
 
 
 
+#### Java
+
 ```java
 SpeakSentence speakSentence = SpeakSentence.builder()
         .voice("bridget")
@@ -94,6 +96,8 @@ System.out.println(response.toBXML());
 ```
 
 
+
+#### C-Sharp
 
 ```csharp
 SpeakSentence speakSentence = new SpeakSentence
@@ -123,6 +127,8 @@ Console.WriteLine(response.ToBXML());
 
 
 
+#### Ruby
+
 ```ruby
 response = Bandwidth::Voice::Response.new()
 speak_sentence = Bandwidth::Voice::SpeakSentence.new({
@@ -144,6 +150,8 @@ puts response.to_bxml()
 ```
 
 
+
+#### Python
 
 ```python
 response = Response()
@@ -167,6 +175,8 @@ print(response.to_bxml())
 
 
 
+#### NodeJS
+
 ```js
 var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
 speakSentence.setSentence("Please leave your message after the beep");
@@ -188,6 +198,8 @@ console.log(response.toBxml());
 ```
 
 
+
+#### PHP
 
 ```php
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Please leave your message after the beep");
@@ -224,6 +236,8 @@ echo $response->toBxml();
 
 
 
+#### Java
+
 ```java
 SpeakSentence speakSentence = SpeakSentence.builder()
         .text("Please say your name")
@@ -243,6 +257,8 @@ System.out.println(response.toBXML());
 ```
 
 
+
+#### C-Sharp
 
 ```csharp
 SpeakSentence speakSentence = new SpeakSentence
@@ -267,6 +283,8 @@ Console.WriteLine(response.ToBXML());
 
 
 
+#### Ruby
+
 ```ruby
 response = Bandwidth::Voice::Response.new()
 speak_sentence = Bandwidth::Voice::SpeakSentence.new({
@@ -284,6 +302,8 @@ puts response.to_bxml()
 ```
 
 
+
+#### Python
 
 ```python
 response = Response()
@@ -303,6 +323,8 @@ print(response.to_bxml())
 
 
 
+#### NodeJS
+
 ```js
 var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
 speakSentence.setSentence("Please say your name")
@@ -320,6 +342,8 @@ console.log(response.toBxml());
 ```
 
 
+
+#### PHP
 
 ```php
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Please say your name");

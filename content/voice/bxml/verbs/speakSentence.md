@@ -172,6 +172,8 @@ This shows how to use Bandwidth XML to use text to speech to speak a sentence in
 
 
 
+#### Java
+
 ```java
 SpeakSentence speakSentence = SpeakSentence.builder()
         .text("This is a test")
@@ -185,6 +187,8 @@ System.out.println(response.toBXML());
 ```
 
 
+
+#### C-Sharp
 
 ```csharp
 Response response = new Response();
@@ -200,6 +204,8 @@ Console.WriteLine(response.ToBXML());
 
 
 
+#### Ruby
+
 ```ruby
 response = Bandwidth::Voice::Response.new()
 speak_sentence = Bandwidth::Voice::SpeakSentence.new({
@@ -212,6 +218,8 @@ puts response.to_bxml()
 ```
 
 
+
+#### Python
 
 ```python
 response = Response()
@@ -226,6 +234,8 @@ print(response.to_bxml())
 
 
 
+#### NodeJS
+
 ```js
 var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
 speakSentence.setSentence("This is a test");
@@ -238,6 +248,8 @@ console.log(response.toBxml());
 ```
 
 
+
+#### PHP
 
 ```php
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("This is a test");
@@ -271,6 +283,8 @@ This shows how to use Bandwidth XML with SSML tags to modify the way the text so
 
 
 
+#### Java
+
 ```java
 SpeakSentence speakSentence = SpeakSentence.builder()
         .text("Hello, you have reached the home of <lang xml:lang=\"es - MX\">Antonio Mendoza</lang>.  Please leave a message.")
@@ -284,6 +298,8 @@ System.out.println(response.toBXML());
 ```
 
 
+
+#### C-Sharp
 
 ```csharp
 Response response = new Response();
@@ -300,6 +316,8 @@ Console.WriteLine(response.ToBXML());
 
 
 
+#### Ruby
+
 ```ruby
 response = Bandwidth::Voice::Response.new()
 speak_sentence = Bandwidth::Voice::SpeakSentence.new({
@@ -312,6 +330,8 @@ puts response.to_bxml()
 ```
 
 
+
+#### Python
 
 ```python
 response = Response()
@@ -326,6 +346,8 @@ print(response.to_bxml())
 
 
 
+#### NodeJS
+
 ```js
 var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
 speakSentence.setSentence('Hello, you have reached the home of <lang xml:lang="es-MX">Antonio Mendoza</lang>.Please leave a message');
@@ -338,6 +360,8 @@ console.log(response.toBxml());
 ```
 
 
+
+#### PHP
 
 ```php
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence('Hello, you have reached the home of <lang xml:lang="es-MX">Antonio Mendoza</lang>.Please leave a message.');

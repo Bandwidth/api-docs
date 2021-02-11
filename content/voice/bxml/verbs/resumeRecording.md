@@ -32,6 +32,8 @@ None
 
 
 
+#### Java
+
 ```java
 ResumeRecording resumeRecording = ResumeRecording.builder().build();
 
@@ -42,6 +44,8 @@ System.out.println(response.toBXML());
 ```
 
 
+
+#### C-Sharp
 
 ```csharp
 ResumeRecording resumeRecording = new ResumeRecording();
@@ -54,6 +58,8 @@ Console.WriteLine(response.ToBXML());
 
 
 
+#### Ruby
+
 ```ruby
 resume_recording = Bandwidth::Voice::ResumeRecording.new()
 
@@ -64,6 +70,8 @@ puts response.to_bxml()
 ```
 
 
+
+#### Python
 
 ```python
 resume_recording = ResumeRecording()
@@ -76,6 +84,8 @@ print(response.to_bxml())
 
 
 
+#### NodeJS
+
 ```js
 var resumeRecording = new BandwidthBxml.Verbs.ResumeRecording();
 
@@ -86,6 +96,8 @@ console.log(response.toBxml());
 ```
 
 
+
+#### PHP
 
 ```php
 $resumeRecording = new BandwidthLib\Voice\Bxml\ResumeRecording();
@@ -122,6 +134,8 @@ In this example, only the transfers themselves will be recorded, and the text-to
 ```
 
 
+
+#### Java
 
 ```java
 StartRecording startRecording = StartRecording.builder()
@@ -164,6 +178,8 @@ System.out.println(response.toBXML());
 ```
 
 
+
+#### C-Sharp
 
 ```csharp
 SpeakSentence speakSentence = new SpeakSentence
@@ -210,6 +226,8 @@ Console.WriteLine(response.ToBXML());
 
 
 
+#### Ruby
+
 ```ruby
 speak_sentence_start = Bandwidth::Voice::SpeakSentence.new({
     :sentence => "This call is being recorded. Please wait while we transfer you.",
@@ -251,6 +269,8 @@ puts response.to_bxml()
 ```
 
 
+
+#### Python
 
 ```python
 speak_sentence_start = SpeakSentence(
@@ -294,6 +314,8 @@ print(response.to_bxml())
 
 
 
+#### NodeJS
+
 ```js
 var speakSentenceStart = new BandwidthBxml.Verbs.SpeakSentence();
 speakSentenceStart.setSentence("This call is being recorded. Please wait while we transfer you.");
@@ -329,6 +351,8 @@ console.log(response.toBxml());
 ```
 
 
+
+#### PHP
 
 ```php
 $speakSentenceStart = new BandwidthLib\Voice\Bxml\SpeakSentence("This call is being recorded. Please wait while we transfer you.");
@@ -382,6 +406,8 @@ echo $response->toBxml();
 
 
 
+#### Java
+
 ```java
 ResumeRecording resumeRecording = ResumeRecording.builder().build();
 
@@ -405,6 +431,8 @@ System.out.println(response.toBXML());
 ```
 
 
+
+#### C-Sharp
 
 ```csharp
 ResumeRecording resumeRecording = new ResumeRecording();
@@ -432,6 +460,8 @@ Console.WriteLine(response.ToBXML());
 ```
 
 
+
+#### Ruby
 
 ```ruby
 resume_recording = Bandwidth::Voice::ResumeRecording.new()
@@ -461,6 +491,8 @@ puts response.to_bxml()
 
 
 
+#### Python
+
 ```python
 resume_recording = ResumeRecording()
 
@@ -489,6 +521,8 @@ print(response.to_bxml())
 
 
 
+#### NodeJS
+
 ```js
 var resumeRecording = new BandwidthBxml.Verbs.ResumeRecording();
 
@@ -513,6 +547,8 @@ console.log(response.toBxml());
 ```
 
 
+
+#### PHP
 
 ```php
 $resumeRecording = new BandwidthLib\Voice\Bxml\ResumeRecording();

@@ -69,6 +69,8 @@ This shows how to use Bandwidth XML to record a phone call.
 
 
 
+#### Java
+
 ```java
 StartRecording startRecording = StartRecording.builder()
         .recordingAvailableUrl("https://myapp.com/noBXML")
@@ -97,6 +99,8 @@ System.out.println(response.toBXML());
 ```
 
 
+
+#### C-Sharp
 
 ```csharp
 SpeakSentence speakSentence = new SpeakSentence
@@ -138,6 +142,8 @@ Console.WriteLine(response.ToBXML());
 
 
 
+#### Ruby
+
 ```ruby
 speak_sentence_start = Bandwidth::Voice::SpeakSentence.new({
     :sentence => "This call is being recorded. Please wait while we transfer you.",
@@ -173,6 +179,8 @@ puts response.to_bxml()
 ```
 
 
+
+#### Python
 
 ```python
 speak_sentence_start = SpeakSentence(
@@ -210,6 +218,8 @@ print(response.to_bxml())
 
 
 
+#### NodeJS
+
 ```js
 var speakSentenceStart = new BandwidthBxml.Verbs.SpeakSentence();
 speakSentenceStart.setSentence("This call is being recorded. Please wait while we transfer you.");
@@ -240,6 +250,8 @@ console.log(response.toBxml());
 ```
 
 
+
+#### PHP
 
 ```php
 $speakSentenceStart = new BandwidthLib\Voice\Bxml\SpeakSentence("This call is being recorded. Please wait while we transfer you.");

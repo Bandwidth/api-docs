@@ -41,6 +41,8 @@ This shows how to use Bandwidth XML to Send Dtmf during a call.
 
 
 
+#### Java
+
 ```java
 SendDtmf sendDtmf = SendDtmf.builder()
         .digits("12w34")
@@ -51,6 +53,8 @@ Response response = Response.builder().build()
 ```
 
 
+
+#### C-Sharp
 
 ```csharp
 Response response = new Response();
@@ -66,6 +70,8 @@ Console.WriteLine(response.ToBXML());
 
 
 
+#### Ruby
+
 ```ruby
 response = Bandwidth::Voice::Response.new()
 send_dtmf = Bandwidth::Voice::SendDtmf.new({
@@ -78,6 +84,8 @@ puts response.to_bxml()
 
 
 
+#### Python
+
 ```python
 response = Response()
 send_dtmf = SendDtmf("12w34")
@@ -87,6 +95,8 @@ print(response.to_bxml())
 ```
 
 
+
+#### NodeJS
 
 ```js
 var sendDtmf = new BandwidthBxml.Verbs.SendDtmf();
@@ -99,6 +109,8 @@ console.log(response.toBxml());
 ```
 
 
+
+#### PHP
 
 ```php
 $sendDtmf = new BandwidthLib\Voice\Bxml\SendDtmf("12w34");

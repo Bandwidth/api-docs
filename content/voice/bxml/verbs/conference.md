@@ -80,6 +80,8 @@ This shows how to use Bandwidth XML to add a call in a conference.
 
 
 
+#### Java
+
 ```java
 SpeakSentence speakSentence = SpeakSentence.builder()
     .gender("male")
@@ -98,6 +100,8 @@ System.out.println(response.toBXML());
 ```
 
 
+
+#### C-Sharp
 
 ```csharp
 SpeakSentence speakSentence = new SpeakSentence
@@ -119,6 +123,8 @@ Console.WriteLine(response.ToBXML());
 
 
 
+#### Ruby
+
 ```ruby
 speak_sentence = Bandwidth::Voice::SpeakSentence.new({
     :sentence => "You will be added to your conference now.",
@@ -137,6 +143,8 @@ puts response.to_bxml()
 
 
 
+#### Python
+
 ```python
 speak_sentence = SpeakSentence("You will be added to your conference now.", gender="male")
 conference = Conference("my-conference")
@@ -149,6 +157,8 @@ print(response.to_bxml())
 ```
 
 
+
+#### NodeJS
 
 ```js
 var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
@@ -166,6 +176,8 @@ console.log(response.toBxml());
 ```
 
 
+
+#### PHP
 
 ```php
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("You will be added to your conference now.");
@@ -198,6 +210,8 @@ This shows how to add a coach in a conference.
 
 
 
+#### Java
+
 ```java
 SpeakSentence speakSentence = SpeakSentence.builder()
     .gender("male")
@@ -222,6 +236,8 @@ System.out.println(response.toBXML());
 
 
 
+#### C-Sharp
+
 ```csharp
 SpeakSentence speakSentence = new SpeakSentence
 {
@@ -242,6 +258,8 @@ response.Add(conference);
 ```
 
 
+
+#### Ruby
 
 ```ruby
 speak_sentence = Bandwidth::Voice::SpeakSentence.new({
@@ -264,6 +282,8 @@ puts response.to_bxml()
 
 
 
+#### Python
+
 ```python
 speak_sentence = SpeakSentence("Welcome. You are going to coach 2 calls, please wait.", gender="male")
 conference = Conference("my-conference", call_ids_to_coach = "c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d,c-2a913f94-6a486f3a-3cae-4034-bcc3-f0c9fa77ca2f")
@@ -278,6 +298,8 @@ print(response.to_bxml())
 ```
 
 
+
+#### NodeJS
 
 ```js
 var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
@@ -296,6 +318,8 @@ console.log(response.toBxml());
 ```
 
 
+
+#### PHP
 
 ```php
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Welcome. You are going to coach 2 calls, please wait.");

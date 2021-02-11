@@ -65,6 +65,8 @@ results to https://gather.url/nextBXML
 
 
 
+#### Java
+
 ```java
 SpeakSentence speakSentence = SpeakSentence.builder()
         .text("Please press a digit.")
@@ -87,6 +89,8 @@ System.out.println(response.toBXML());
 
 
 
+#### C-Sharp
+
 ```csharp
 Response response = new Response();
 
@@ -107,6 +111,8 @@ Console.WriteLine(response.ToBXML());
 
 
 
+#### Ruby
+
 ```ruby
 response = Bandwidth::Voice::Response.new()
 speak_sentence = Bandwidth::Voice::SpeakSentence.new({
@@ -126,6 +132,8 @@ puts response.to_bxml()
 
 
 
+#### Python
+
 ```python
 response = Response()
 speak_sentence = SpeakSentence(
@@ -143,6 +151,8 @@ print(response.to_bxml())
 ```
 
 
+
+#### NodeJS
 
 ```js
 var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
@@ -162,6 +172,8 @@ console.log(response.toBxml());
 ```
 
 
+
+#### PHP
 
 ```php
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Please press a digit.");
@@ -200,6 +212,8 @@ Gather will end and send the result to the **gatherUrl**
 
 
 
+#### Java
+
 ```java
 SpeakSentence speakSentence = SpeakSentence.builder()
         .text("I am going to keep asking you to press a digit.")
@@ -221,6 +235,8 @@ System.out.println(response.toBXML());
 
 
 
+#### C-Sharp
+
 ```csharp
 Response response = new Response();
 
@@ -241,6 +257,8 @@ Console.WriteLine(response.ToBXML());
 
 
 
+#### Ruby
+
 ```ruby
 response = Bandwidth::Voice::Response.new()
 speak_sentence = Bandwidth::Voice::SpeakSentence.new({
@@ -259,6 +277,8 @@ puts response.to_bxml()
 
 
 
+#### Python
+
 ```python
 response = Response()
 speak_sentence = SpeakSentence(
@@ -275,6 +295,8 @@ print(response.to_bxml())
 ```
 
 
+
+#### NodeJS
 
 ```js
 var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
@@ -293,6 +315,8 @@ console.log(response.toBxml());
 ```
 
 
+
+#### PHP
 
 ```php
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("I am going to keep asking you to press a digit");
@@ -331,6 +355,8 @@ This example shows how to nest multiple PlayAudio and SpeakSentence verbs
 
 
 
+#### Java
+
 ```java
 List<AudioProducer> list = new ArrayList<>();
 list.add(SpeakSentence.builder()
@@ -357,6 +383,8 @@ System.out.println(response.toBXML());
 ```
 
 
+
+#### C-Sharp
 
 ```csharp
 Gather gather = new Gather
@@ -391,6 +419,8 @@ Console.WriteLine(output);
 
 
 
+#### Ruby
+
 ```ruby
 speak_sentence_1 = Bandwidth::Voice::SpeakSentence.new({
     :sentence => "First Sentence"
@@ -416,6 +446,8 @@ puts response.to_bxml()
 ```
 
 
+
+#### Python
 
 ```python
 speak_sentence_1 = SpeakSentence(
@@ -443,11 +475,15 @@ print(response.to_bxml())
 
 
 
+#### NodeJS
+
 ```js
 //coming soon
 ```
 
 
+
+#### PHP
 
 ```php
 $speakSentence1 = new BandwidthLib\Voice\Bxml\SpeakSentence("First Sentence");
