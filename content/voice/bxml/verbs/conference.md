@@ -52,7 +52,7 @@ BXML containing unsupported verbs will be rejected completely.
 | password                      | (optional) The password to send in the HTTP request to `conferenceEventUrl`. |
 | fallbackUsername              | (optional) The username to send in the HTTP request to `conferenceEventFallbackUrl`. |
 | fallbackPassword              | (optional) The password to send in the HTTP request to `conferenceEventFallbackUrl`. |
-| tag                           | (optional) A custom string that will be sent with these and all future callbacks unless overwritten by a future `tag` attribute or [`<Tag>`](tag.md) verb, or cleared.May be cleared by setting `tag=""`Max length 256 characters.The tag that is set for the call that creates the conference is the tag that will be sent with all callbacks related to the conference. For example, if the call that creates the conference has a tag set, and another call with a different tag joins the same conference, the first call's tag will be sent with both `conferenceMemberJoin` events. |
+| tag                           | (optional) A custom string that will be sent with these and all future callbacks unless overwritten by a future `tag` attribute or [`<Tag>`](tag.md) verb, or cleared. May be cleared by setting `tag=""`Max length 256 characters. The tag that is set for the call that creates the conference is the tag that will be sent with all callbacks related to the conference. For example, if the call that creates the conference has a tag set, and another call with a different tag joins the same conference, the first call's tag will be sent with both `conferenceMemberJoin` events. |
 | callbackTimeout               | (optional) This is the timeout (in seconds) to use when delivering callbacks for the conference. If not set, it will inherit the callback timeout from the call that creates the conference. Can be any numeric value (including decimals) between 1 and 25. |
 
 ### Callbacks Received
@@ -337,7 +337,6 @@ $response->addVerb($conference);
 echo $response->toBxml();
 echo "\n";
 ```
-
 
 
 
