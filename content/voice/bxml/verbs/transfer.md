@@ -67,7 +67,7 @@ one destination is specified, called parties will ring simultaneously and the fi
 | password | (optional) The password to send in the HTTP request to `transferAnswerUrl` and `transferDisconnectUrl`. |
 | fallbackUsername | (optional) The username to send in the HTTP request to `transferAnswerFallbackUrl`. |
 | fallbackPassword | (optional) The password to send in the HTTP request to `transferAnswerFallbackUrl`. |
-| tag | (optional) A custom string that will be sent with these and all future callbacks unless overwritten by a future `tag` attribute or cleared.May be cleared by setting `tag=""`Max length 256 characters. |
+| tag | (optional) A custom string that will be sent with these and all future callbacks unless overwritten by a future `tag` attribute or cleared. May be cleared by setting `tag=""`Max length 256 characters. |
 
 When the called party answers, if the `transferAnswerUrl` is specified, the [Transfer Answer](../callbacks/transferAnswer.md) callback is sent to the `transferAnswerUrl` and
 the BXML returned by that callback is executed. That BXML is executed only for the called party.  At the conclusion
@@ -605,5 +605,4 @@ $response->addVerb($transfer);
 echo $response->toBxml();
 echo "\n";
 ```
-
 
