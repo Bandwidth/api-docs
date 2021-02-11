@@ -22,7 +22,7 @@ The recording will continue until the call or conference ends, the [`<StopRecord
 | password                     | (optional) The password to send in the HTTP request to `recordingAvailableUrl` or `transcriptionAvailableUrl`. If specified, the URLs must be TLS-encrypted (i.e., `https`).                                           |
 | tag                          | (optional) A custom string that will be sent with this and all future callbacks unless overwritten by a future `tag` attribute or cleared.May be cleared by setting `tag=""`Max length 256 characters.Note: this option will be silently ignored if set on a conference recording, and the tag associated with the conference (if any) will be sent. |
 | fileFormat                   | (optional) The audio format that the recording will be saved as: `mp3` or `wav`.  Default value is `wav`.                                                                                                              |
-| multiChannel                 | (optional) A boolean value indicating whether or not the recording file should separate each side of the call into its own audio channel. Default value is `false`.Note: this option will be silently ignored if set on a conference recording; only single-channel recordings are allowed on conferences. |
+| multiChannel                 | (optional) A boolean value indicating whether or not the recording file should separate each side of the call into its own audio channel. Default value is `false`. Note: this option will be silently ignored if set on a conference recording; only single-channel recordings are allowed on conferences. |
 
 If the `recordingAvailableUrl` attribute is specified, then the [Recording Available](../callbacks/recordingAvailable.md)
 or [Conference Recording Available](../callbacks/conferenceRecordingAvailable.md) event is sent to the URL once the
@@ -278,5 +278,4 @@ $response->addVerb($speakSentenceEnd);
 
 echo $response->toBxml();
 ```
-
 
