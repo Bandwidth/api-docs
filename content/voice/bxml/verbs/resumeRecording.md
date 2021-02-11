@@ -1,4 +1,4 @@
-{% method %}
+
 ## XML: `<ResumeRecording>`
 The ResumeRecording verb is used to resume a recording that was previously paused by a [`<PauseRecording>`](pauseRecording.md) verb.
 
@@ -17,10 +17,10 @@ If there is not an ongoing recording at the time of this verb's execution, it ha
 None
 
 
-{% common %}
+
 #### Example 1 of 2: ResumeRecording verb
 
-{% sample lang="http" %}
+
 
 
 ```XML
@@ -30,7 +30,9 @@ None
 </Response>
 ```
 
-{% sample lang="java" %}
+
+
+#### Java
 
 ```java
 ResumeRecording resumeRecording = ResumeRecording.builder().build();
@@ -41,7 +43,9 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
+
+
+#### C-Sharp
 
 ```csharp
 ResumeRecording resumeRecording = new ResumeRecording();
@@ -52,7 +56,9 @@ response.Add(resumeRecording);
 Console.WriteLine(response.ToBXML());
 ```
 
-{% sample lang="ruby" %}
+
+
+#### Ruby
 
 ```ruby
 resume_recording = Bandwidth::Voice::ResumeRecording.new()
@@ -63,7 +69,9 @@ response.push(resume_recording)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
+
+#### Python
 
 ```python
 resume_recording = ResumeRecording()
@@ -74,7 +82,9 @@ response.add_verb(resume_recording)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
+
+#### NodeJS
 
 ```js
 var resumeRecording = new BandwidthBxml.Verbs.ResumeRecording();
@@ -85,7 +95,9 @@ response.addVerb(resumeRecording);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
+
+#### PHP
 
 ```php
 $resumeRecording = new BandwidthLib\Voice\Bxml\ResumeRecording();
@@ -97,13 +109,13 @@ echo $response->toBxml();
 ```
 
 
-{% common %}
+
 #### Example 2 of 2: Pausing a recording
 
 This shows how to use Bandwidth XML to pause a recording in a phone call.
 In this example, only the transfers themselves will be recorded, and the text-to-speech instructing the user will not be present in the recording.
 
-{% sample lang="http" %}
+
 
 
 ```XML
@@ -121,7 +133,9 @@ In this example, only the transfers themselves will be recorded, and the text-to
 </Response>
 ```
 
-{% sample lang="java" %}
+
+
+#### Java
 
 ```java
 StartRecording startRecording = StartRecording.builder()
@@ -163,7 +177,9 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
+
+
+#### C-Sharp
 
 ```csharp
 SpeakSentence speakSentence = new SpeakSentence
@@ -208,7 +224,9 @@ response.Add(gather);
 Console.WriteLine(response.ToBXML());
 ```
 
-{% sample lang="ruby" %}
+
+
+#### Ruby
 
 ```ruby
 speak_sentence_start = Bandwidth::Voice::SpeakSentence.new({
@@ -250,7 +268,9 @@ response.push(gather)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
+
+#### Python
 
 ```python
 speak_sentence_start = SpeakSentence(
@@ -292,7 +312,9 @@ response.add_verb(gather)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
+
+#### NodeJS
 
 ```js
 var speakSentenceStart = new BandwidthBxml.Verbs.SpeakSentence();
@@ -328,7 +350,9 @@ response.addVerb(gather);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
+
+#### PHP
 
 ```php
 $speakSentenceStart = new BandwidthLib\Voice\Bxml\SpeakSentence("This call is being recorded. Please wait while we transfer you.");
@@ -361,11 +385,11 @@ $response->addVerb($gather);
 echo $response->toBxml();
 ```
 
-{% common %}
+
 
 > Gather callback bxml:
 
-{% sample lang="http" %}
+
 
 
 ```XML
@@ -380,7 +404,9 @@ echo $response->toBxml();
 </Response>
 ```
 
-{% sample lang="java" %}
+
+
+#### Java
 
 ```java
 ResumeRecording resumeRecording = ResumeRecording.builder().build();
@@ -404,7 +430,9 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
+
+
+#### C-Sharp
 
 ```csharp
 ResumeRecording resumeRecording = new ResumeRecording();
@@ -431,7 +459,9 @@ response.Add(speakSentence);
 Console.WriteLine(response.ToBXML());
 ```
 
-{% sample lang="ruby" %}
+
+
+#### Ruby
 
 ```ruby
 resume_recording = Bandwidth::Voice::ResumeRecording.new()
@@ -459,7 +489,9 @@ response.push(speak_sentence_end)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
+
+#### Python
 
 ```python
 resume_recording = ResumeRecording()
@@ -487,7 +519,9 @@ response.add_verb(speak_sentence_end)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
+
+#### NodeJS
 
 ```js
 var resumeRecording = new BandwidthBxml.Verbs.ResumeRecording();
@@ -512,7 +546,9 @@ response.addVerb(speakSentenceEnd);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
+
+#### PHP
 
 ```php
 $resumeRecording = new BandwidthLib\Voice\Bxml\ResumeRecording();
@@ -536,4 +572,4 @@ echo $response->toBxml();
 ```
 
 
-{% endmethod %}
+

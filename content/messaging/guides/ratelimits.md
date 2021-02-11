@@ -1,6 +1,6 @@
-# Messaging Billing and MPS Guidelines {#top}
+# Messaging Billing and MPS Guidelines 
 
-## About {#about}
+## About 
 
 This guide will walk through the recommended approach to managing queues and rate limits for use with the Messaging API. Over the past years mobile telecom operators have begun to block what is deemed automated traffic (**A2P**) sent over standard local telephone numbers IE: (919)-430-5555. The amount of messages sent in this way have increased due to spreading automated traffic (A2P) across multiple local telephone numbers to bypass volumetric filters. This process is called "snowshoeing" and as a result, the mobile operators are not only blocking volumetrically, but are also finger-printing content and preemptively blocking messages even from a "fresh" phone number.
 
@@ -20,14 +20,14 @@ This guide will walk through the recommended approach to managing queues and rat
   * [CTIA Best Practices (PDF)](https://api.ctia.org/wp-content/uploads/2019/07/190719-CTIA-Messaging-Principles-and-Best-Practices-FINAL.pdf)
   * [The TCPA _Telephone Consumer Protection Act_](https://transition.fcc.gov/cgb/policy/TCPA-Rules.pdf)
 
-## Billing {#billing}
+## Billing 
 Sending SMS and single recipient MMS are billed and added to your MPS (message per second) limit. Sending group MMS is billed and added to your MPS limit **per recipient of the group MMS**.
 
 Billing/pricing information can be found at [Bandwidth's home page](https://www.bandwidth.com/pricing/).
 
 ---
 
-## How Bandwidth Helps {#how-bandwidth-helps}
+## How Bandwidth Helps 
 
 In response to the ever changing (& unregulated) landscape of telecommunications and text messaging, Bandwidth has implemented a new rate-limit process and look-ahead Spam filtering service to help our customers ensure deliver-ability of their messages.
 
@@ -41,7 +41,7 @@ At Bandwidth, we want to help our customers follow [best practices for toll-free
 
 ---
 
-## Default Messaging Rate Limits and Queues {#default-rate-limit}
+## Default Messaging Rate Limits and Queues 
 
 All Bandwidth messaging products are rate limited in some fashion and messages will be queued internally to send out.
 
@@ -74,16 +74,16 @@ Content-Type: application/json; charset=utf-8
 }
 ```
 
-## Managing Messages {#managing-messages}
+## Managing Messages 
 
 | Method             | Description                                                                                                                                                                 | Use-cases                                                                                                                                                       |
 |:-------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Back-off and Retry | Try to send messages as quickly as possible to Bandwidth. When you hit the rate limit, add a small delay and try again. If it fails, then add some more delay and try again | Works best for use-cases that need to send lots of messages with no priority:<br> - Day before appointment reminders <br> - Receipts <br> - Opted-in Promotions |
+| Back-off and Retry | Try to send messages as quickly as possible to Bandwidth. When you hit the rate limit, add a small delay and try again. If it fails, then add some more delay and try again | Works best for use-cases that need to send lots of messages with no priority: - Day before appointment reminders  - Receipts  - Opted-in Promotions |
 | Throttle           | Only send messages to Bandwidth as quickly as your dequeue rates                                                                                                            | Works best with any use case, but favors pure P2P                                                                                                               |
 | Queue Management   | Utilizing a queue system such as [RabbitMQ](https://www.rabbitmq.com/) or [Mosquitto](https://mosquitto.org/)                                                               | Works best for use-cases that intermingle massive campaigns with realtime traffic. Enables full control over message priority and time-to-live                  |
 
 
-### Back-off and Retry {#backoff-and-retry}
+### Back-off and Retry 
 
 Back-off and Retry adaptively increases delay to attempt to find the quickest possible call pacing without hitting rate limits. The pseudocode below shows a simple example using a linear coefficient to adjust delay. Introducing randomness or "jitter" into the delay can help reduce successive collisions.
 
@@ -104,7 +104,7 @@ END IF
 WHILE (retry AND (retries < MAX_RETRIES))
 ```
 
-### Throttling {#throttle}
+### Throttling 
 
 Throttling paces the asynchronous operations based on a specified time duration. Using a duration just longer than the rate limit will help ensure calls are completed as they are sent without having to resend due to rate limiting.
 
@@ -122,7 +122,7 @@ END IF
 WHILE (retry AND (retries < MAX_RETRIES))
 ```
 
-### Queue Management {#queue-management}
+### Queue Management 
 
 Queue Management requires configuring and maintaining a queue of asynchronous operations, http API calls for example, facilitating linear control over when the operation is executed. The pseudocode below shows a simple queuing solution. For complex queuing tasks, consider using a queue system such as [RabbitMQ](https://www.rabbitmq.com/) or [Mosquitto](https://mosquitto.org/).
 

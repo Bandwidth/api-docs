@@ -1,7 +1,7 @@
-{% multimethod %}
-{% endmultimethod %}
 
-# Searching Tns - All Accounts {#top}
+
+
+# Searching Tns - All Accounts 
 
 ## Overview
 
@@ -18,7 +18,7 @@
 * [Retrieving TN Reservation](#retrieving-tn-reservation)
 * [Retrieving TN Available Nn Routes](#retrieving-tn-availableNnRoutes)
 
-## About {#about}
+## About 
 
 The Bandwidth Telephone Numbers API allows you to search for telephone numbers across all of your accounts that your user credentials have access to.  You can then view detailed information about the telephone numbers on any of your accounts.
 
@@ -28,13 +28,13 @@ The Bandwidth Telephone Numbers API allows you to search for telephone numbers a
 ### Base URL
 `https://dashboard.bandwidth.com/api/tns`
 
-{% extendmethod %}
-## Searching For TNs {#searching-for-tns}
+
+## Searching For TNs 
 
 Retrieve information about one or more Telephone Numbers (TNs), where the TNs are chosen based on the search parameters provided in the API Call.  The results will be restricted to the account(s) that the requesting user has access to.
 
 ### URL
-<code class="get">GET</code>`https://dashboard.bandwidth.com/api/tns`
+GET`https://dashboard.bandwidth.com/api/tns`
 
 ### Query Parameters
 
@@ -54,7 +54,7 @@ Retrieve information about one or more Telephone Numbers (TNs), where the TNs ar
 | `state `      | No       | A 2 character State or Province designation - TX for Texas for example                                                                                                                                                                                        |
 | `tier `       | No       | A service tier indicating the the vendor class that the TN is associated with. Tier indicates whether the TN is on-net, domestic offnet, Canadian, etc.                                                                                                       |
 
-{% common %}
+
 ### Example XML to Create Subscription
 
 ```http
@@ -102,16 +102,16 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
     </TelephoneNumbers>
 </TelephoneNumbersResponse>
 ```
-{% endextendmethod %}
 
-{% extendmethod %}
-## Searching For Specific TNs {#searching-for-specific-tns}
+
+
+## Searching For Specific TNs 
 Retrieve information about one or more Telephone Numbers (TNs), where the TNs are specified in POST body.
 
 ### URL
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/tns`
+POST`https://dashboard.bandwidth.com/api/tns`
 
-{% common %}
+
 ### Example
 
 ```http
@@ -162,16 +162,16 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
     </TelephoneNumbers>
 </TelephoneNumbersResponse>
 ```
-{% endextendmethod %}
 
-{% extendmethod %}
-## Retrieving TN Information {#retrieving-tn-information}
+
+
+## Retrieving TN Information 
 Retrieves information about the specified telephone number. The information returned provides status and historic information about the Telephone Number, including the status, the order id and date associated with the last modification, and the account and site information associated with the TN. The request for more information can be made by requesting a number of specific derived sub-resources.
 
 ### Base URL
-<code class="get">GET</code>`https://dashboard.bandwidth.com/api/tns/{{tn}}`
+GET`https://dashboard.bandwidth.com/api/tns/{{tn}}`
 
-{% common %}
+
 ### Example
 ```http
 GET https://dashboard.bandwidth.com/api/tns/{{tn}} HTTP/1.1
@@ -192,17 +192,17 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
     <AccountId>8000273</AccountId>
 </TelephoneNumberResponse>
 ```
-{% endextendmethod %}
 
-{% extendmethod %}
-## Retrieving TN Details {#retrieving-tn-details}
+
+
+## Retrieving TN Details 
 
 Retrieves detailed information about the phone number. TnAttributes - Even if this telephone number is protected or not.
 
 ### Base URL
-<code class="get">GET</code>`https://dashboard.bandwidth.com/api/tns/{{tn}}/tndetails`
+GET`https://dashboard.bandwidth.com/api/tns/{{tn}}/tndetails`
 
-{% common %}
+
 ### Example
 
 ```http
@@ -251,17 +251,17 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
     </TelephoneNumberDetails>
 </TelephoneNumberResponse>
 ```
-{% endextendmethod %}
 
-{% extendmethod %}
-## Retrieving TN Sites {#retrieving-tn-sites}
+
+
+## Retrieving TN Sites 
 
 Retrieves the sites associated with that telephone number.
 
 ### Base URL
-<code class="get">GET</code>`https://dashboard.bandwidth.com/api/tns/{{tn}}/sites`
+GET`https://dashboard.bandwidth.com/api/tns/{{tn}}/sites`
 
-{% common %}
+
 ### Example
 
 ```http
@@ -277,17 +277,17 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
     <Name>siteName</Name>
 </Site>
 ```
-{% endextendmethod %}
 
-{% extendmethod %}
-## Retrieving TN SipPeers {#retrieving-tn-sippeers}
+
+
+## Retrieving TN SipPeers 
 
 Retrieves the sippeers associated with that telephone number.
 
 ### Base URL
-<code class="get">GET</code>`https://dashboard.bandwidth.com/api/tns/{{tn}}/sippeers`
+GET`https://dashboard.bandwidth.com/api/tns/{{tn}}/sippeers`
 
-{% common %}
+
 ### Example
 ```http
 GET https://dashboard.bandwidth.com/api/tns/{{tn}}/sippeers HTTP/1.1
@@ -301,17 +301,17 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
     <Name>PeerOneSiteThree</Name>
 </SipPeer>
 ```
-{% endextendmethod %}
 
-{% extendmethod %}
-## Retrieving TN Rate Center {#retrieving-tn-ratecenter}
+
+
+## Retrieving TN Rate Center 
 
 Retrieves the rate centers associated with that telephone number.
 
 ### Base URL
-<code class="get">GET</code>`https://dashboard.bandwidth.com/api/tns/{{tn}}/ratecenter`
+GET`https://dashboard.bandwidth.com/api/tns/{{tn}}/ratecenter`
 
-{% common %}
+
 ### Example
 ```http
 GET https://dashboard.bandwidth.com/api/tns/{{tn}}/ratecenter HTTP/1.1
@@ -327,19 +327,19 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
     </TelephoneNumberDetails>
 </TelephoneNumberResponse>
 ```
-{% endextendmethod %}
 
-{% extendmethod %}
-## Retrieving TN Lca {#retrieving-tn-lca}
+
+
+## Retrieving TN Lca 
 
 Retrieves the LCA information associated with that telephone number.
 This call will return the NPA-NXX pairs and the Rate Centers that are in the Local Calling Area of the Telephone Number in the API call.
 Due to the fact that not all LCA relationships are symmetrical, the telephone number may not be part of the LCAs centered on the provided NPA-NXX or Rate Center values
 
 ### Base URL
-<code class="get">GET</code>`https://dashboard.bandwidth.com/api/tns/{{tn}}/lca`
+GET`https://dashboard.bandwidth.com/api/tns/{{tn}}/lca`
 
-{% common %}
+
 ### Example
 ```http
 GET https://dashboard.bandwidth.com/api/tns/{{tn}}/lca HTTP/1.1
@@ -372,17 +372,17 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
     </Location>
 </SearchResult>
 ```
-{% endextendmethod %}
 
-{% extendmethod %}
-## Retrieving TN Lata {#retrieving-tn-lata}
+
+
+## Retrieving TN Lata 
 
 Retrieves the lata that contains the telephone number.
 
 ### Base URL
-<code class="get">GET</code>`https://dashboard.bandwidth.com/api/tns/{{tn}}/lata`
+GET`https://dashboard.bandwidth.com/api/tns/{{tn}}/lata`
 
-{% common %}
+
 ### Example
 ```http
 GET https://dashboard.bandwidth.com/api/tns/{{tn}}/lata HTTP/1.1
@@ -397,17 +397,17 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
     </TelephoneNumberDetails>
 </TelephoneNumberResponse>
 ```
-{% endextendmethod %}
 
-{% extendmethod %}
-## Retrieving TN Reservation {#retrieving-tn-reservation}
+
+
+## Retrieving TN Reservation 
 
 This API call retrieves any current reservation information associated with the Telephone Number, if a reservation is currently active on the indicated Telephone Number. The query is restricted to calls that do not exceed the account privileges of the calling user.
 
 ### Base URL
-<code class="get">GET</code>`https://dashboard.bandwidth.com/api/tns/{{tn}}/tnreservation`
+GET`https://dashboard.bandwidth.com/api/tns/{{tn}}/tnreservation`
 
-{% common %}
+
 ### Example
 ```http
 GET https://dashboard.bandwidth.com/api/tns/{{tn}}/tnreservation HTTP/1.1
@@ -423,17 +423,17 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
     <ReservedTN>6136211234</ReservedTN>
 </TNReservation>
 ```
-{% endextendmethod %}
 
-{% extendmethod %}
-## Retrieving TN Available Nn Routes {#retrieving-tn-availableNnRoutes}
+
+
+## Retrieving TN Available Nn Routes 
 
 The get method retrieves information about available NnRoutes for the phone number.
 
 ### Base URL
-<code class="get">GET</code>`https://dashboard.bandwidth.com/api/tns/{{tn}}/availableNnRoutes`
+GET`https://dashboard.bandwidth.com/api/tns/{{tn}}/availableNnRoutes`
 
-{% common %}
+
 ### Example
 
 ```http
@@ -454,4 +454,4 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
     </NNRoute>
 </AvailableNNRoutes>
 ```
-{% endextendmethod %}
+

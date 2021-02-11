@@ -1,4 +1,4 @@
-{% method %}
+
 ## XML: `<StartRecording>`
 The StartRecording verb allows a segment of a call or conference to be recorded while other verbs are executing.
 
@@ -15,14 +15,14 @@ The recording will continue until the call or conference ends, the [`<StopRecord
 |:-----------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | recordingAvailableUrl        | (optional) URL to send the [Recording Available](../callbacks/recordingAvailable.md) event (or [Conference Recording Available](../callbacks/conferenceRecordingAvailable.md) event if recording a conference) to once it has been processed. Does not accept BXML. May be a relative URL.|
 | recordingAvailableMethod     | (optional) The HTTP method to use for the request to `recordingAvailableUrl`. GET or POST. Default value is POST.                                                                                                      |
-| transcribe                   | (optional) A boolean value to indicate that recording should be transcribed. Transcription can succeed only for recordings of length greater than 500 milliseconds and less than 4 hours. Default is `false`.<br><br>Note: conferences may not be transcribed. This option will be silently ignored if set on a conference recording, and no callback will be sent.|
+| transcribe                   | (optional) A boolean value to indicate that recording should be transcribed. Transcription can succeed only for recordings of length greater than 500 milliseconds and less than 4 hours. Default is `false`.Note: conferences may not be transcribed. This option will be silently ignored if set on a conference recording, and no callback will be sent.|
 | transcriptionAvailableUrl    | (optional) URL to send the [Transcription Available](../callbacks/transcriptionAvailable.md) event to once it has been processed. Does not accept BXML. May be a relative URL.                                         |
 | transcriptionAvailableMethod | (optional) The HTTP method to use for the request to `transcriptionAvailableUrl`. GET or POST. Default value is POST.                                                                                                  |
 | username                     | (optional) The username to send in the HTTP request to `recordingAvailableUrl` or `transcriptionAvailableUrl`. If specified, the URLs must be TLS-encrypted (i.e., `https`).                                           |
 | password                     | (optional) The password to send in the HTTP request to `recordingAvailableUrl` or `transcriptionAvailableUrl`. If specified, the URLs must be TLS-encrypted (i.e., `https`).                                           |
-| tag                          | (optional) A custom string that will be sent with this and all future callbacks unless overwritten by a future `tag` attribute or cleared.<br><br>May be cleared by setting `tag=""`<br><br>Max length 256 characters.<br><br>Note: this option will be silently ignored if set on a conference recording, and the tag associated with the conference (if any) will be sent. |
+| tag                          | (optional) A custom string that will be sent with this and all future callbacks unless overwritten by a future `tag` attribute or cleared.May be cleared by setting `tag=""`Max length 256 characters.Note: this option will be silently ignored if set on a conference recording, and the tag associated with the conference (if any) will be sent. |
 | fileFormat                   | (optional) The audio format that the recording will be saved as: `mp3` or `wav`.  Default value is `wav`.                                                                                                              |
-| multiChannel                 | (optional) A boolean value indicating whether or not the recording file should separate each side of the call into its own audio channel. Default value is `false`.<br><br>Note: this option will be silently ignored if set on a conference recording; only single-channel recordings are allowed on conferences. |
+| multiChannel                 | (optional) A boolean value indicating whether or not the recording file should separate each side of the call into its own audio channel. Default value is `false`.Note: this option will be silently ignored if set on a conference recording; only single-channel recordings are allowed on conferences. |
 
 If the `recordingAvailableUrl` attribute is specified, then the [Recording Available](../callbacks/recordingAvailable.md)
 or [Conference Recording Available](../callbacks/conferenceRecordingAvailable.md) event is sent to the URL once the
@@ -33,11 +33,11 @@ If the `transcriptionAvailableUrl` attribute is specified for a call recording, 
 event is sent to the URL once the transcription is available for download.
 BXML returned in response to this callback will be ignored. Note that this attribute will be silently ignored if recording a conference.
 
-If the `multiChannel` attribute is `true` on a call recording, then the resulting recording will have 2 audio channels. Note that this option is ignored on conference recordings.<br>
-The caller/called party will be recorded in channel 0 (left channel) while [`<PlayAudio>`](playAudio.md) and [`<SpeakSentence>`](speakSentence.md) will be recorded in channel 1 (right channel).<br>
+If the `multiChannel` attribute is `true` on a call recording, then the resulting recording will have 2 audio channels. Note that this option is ignored on conference recordings.
+The caller/called party will be recorded in channel 0 (left channel) while [`<PlayAudio>`](playAudio.md) and [`<SpeakSentence>`](speakSentence.md) will be recorded in channel 1 (right channel).
 During a [`<Transfer>`](transfer.md) the A-leg will be recorded in channel 0 (left channel) while the B-leg will be recorded in channel 1 (right channel).
 
-<aside class="alert general small"><p>NOTE: Only one &lt;StartRecording&gt; verb may be active at a time. If a second &lt;StartRecording&gt; verb is used without first using a &lt;StopRecording&gt; verb, the second &lt;StartRecording&gt; will be ignored.</p></aside>
+NOTE: Only one &lt;StartRecording&gt; verb may be active at a time. If a second &lt;StartRecording&gt; verb is used without first using a &lt;StopRecording&gt; verb, the second &lt;StartRecording&gt; will be ignored.
 
 ### Callbacks Received
 
@@ -47,11 +47,11 @@ During a [`<Transfer>`](transfer.md) the A-leg will be recorded in channel 0 (le
 | [Recording Available](../callbacks/recordingAvailable.md)         | No                       |
 | [Transcription Available](../callbacks/transcriptionAvailable.md) | No                       |
 
-{% common %}
+
 #### Example 1 of 1: Recording of a call
 This shows how to use Bandwidth XML to record a phone call.
 
-{% sample lang="http" %}
+
 
 
 ```XML
@@ -67,7 +67,9 @@ This shows how to use Bandwidth XML to record a phone call.
 </Response>
 ```
 
-{% sample lang="java" %}
+
+
+#### Java
 
 ```java
 StartRecording startRecording = StartRecording.builder()
@@ -96,7 +98,9 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
+
+
+#### C-Sharp
 
 ```csharp
 SpeakSentence speakSentence = new SpeakSentence
@@ -136,7 +140,9 @@ response.Add(speakSentence1);
 Console.WriteLine(response.ToBXML());
 ```
 
-{% sample lang="ruby" %}
+
+
+#### Ruby
 
 ```ruby
 speak_sentence_start = Bandwidth::Voice::SpeakSentence.new({
@@ -172,7 +178,9 @@ response.push(speak_sentence_end)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
+
+#### Python
 
 ```python
 speak_sentence_start = SpeakSentence(
@@ -208,7 +216,9 @@ response.add_verb(speak_sentence_end)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
+
+#### NodeJS
 
 ```js
 var speakSentenceStart = new BandwidthBxml.Verbs.SpeakSentence();
@@ -239,7 +249,9 @@ response.addVerb(speakSentenceEnd);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
+
+#### PHP
 
 ```php
 $speakSentenceStart = new BandwidthLib\Voice\Bxml\SpeakSentence("This call is being recorded. Please wait while we transfer you.");
@@ -267,4 +279,4 @@ $response->addVerb($speakSentenceEnd);
 echo $response->toBxml();
 ```
 
-{% endmethod %}
+

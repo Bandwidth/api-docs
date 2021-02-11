@@ -1,4 +1,4 @@
-{% method %}
+
 ## XML: `<Redirect>`
 The Redirect verb is used to redirect the current XML execution to another URL.
 
@@ -14,13 +14,13 @@ The Redirect verb is used to redirect the current XML execution to another URL.
 | password               | (optional) The password to send in the HTTP request to `redirectUrl`. |
 | fallbackUsername       | (optional) The username to send in the HTTP request to `redirectFallbackUrl`. |
 | fallbackPassword       | (optional) The password to send in the HTTP request to `redirectFallbackUrl`. |
-| tag                    | (optional) A custom string that will be sent with this and all future callbacks unless overwritten by a future `tag` attribute or [`<Tag>`](tag.md) verb, or cleared.<br><br>May be cleared by setting `tag=""`<br><br>Max length 256 characters. |
+| tag                    | (optional) A custom string that will be sent with this and all future callbacks unless overwritten by a future `tag` attribute or [`<Tag>`](tag.md) verb, or cleared.May be cleared by setting `tag=""`Max length 256 characters. |
 
-<aside class="alert general small">
-<p>
+
+
 &lt;Redirect&gt should be the last verb in the BXML, as any verbs after &lt;Redirect&gt; will not be executed.
-<p>
-</aside>
+
+
 
 ### Callbacks Received
 
@@ -29,11 +29,11 @@ The Redirect verb is used to redirect the current XML execution to another URL.
 | [Redirect](../callbacks/redirect.md) | Yes                      |
 
 
-{% common %}
+
 #### Example 1 of 1: Redirect Verb
 This shows how to use Bandwidth XML to redirect the response to a new url.
 
-{% sample lang="http" %}
+
 
 
 ```XML
@@ -44,7 +44,9 @@ This shows how to use Bandwidth XML to redirect the response to a new url.
 </Response>
 ```
 
-{% sample lang="java" %}
+
+
+#### Java
 
 ```java
 Redirect redirect = Redirect.builder()
@@ -57,7 +59,9 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
+
+
+#### C-Sharp
 
 ```csharp
 Response response = new Response();
@@ -71,7 +75,9 @@ Console.WriteLine(response.ToBXML());
 ```
 
 
-{% sample lang="ruby" %}
+
+
+#### Ruby
 
 ```ruby
 response = Bandwidth::Voice::Response.new()
@@ -83,7 +89,9 @@ response.push(redirect)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
+
+#### Python
 
 ```python
 response = Response()
@@ -95,7 +103,9 @@ response.add_verb(redirect)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
+
+#### NodeJS
 
 ```js
 var redirect = new BandwidthBxml.Verbs.Redirect();
@@ -107,7 +117,9 @@ response.addVerb(redirect);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
+
+#### PHP
 
 ```php
 $redirect = new BandwidthLib\Voice\Bxml\Redirect();
@@ -120,4 +132,4 @@ echo $response->toBxml();
 echo "\n";
 ```
 
-{% endmethod %}
+

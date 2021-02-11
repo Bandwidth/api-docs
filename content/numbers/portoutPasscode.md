@@ -1,7 +1,7 @@
-{% multimethod %}
-{% endmultimethod %}
 
-# Bandwidth Portout Passcode Protection {#top}
+
+
+# Bandwidth Portout Passcode Protection 
 
 This walks through how to programmatically add a "Passcode" to protect phone numbers from unauthorized port outs.  When a phone number with a Passcode protection receives a port out request, the winning carrier (or customer) must provide a Passcode along with the port request. Bandwidth will then verify the Passcode provided by the winning carrier to the Passcode set on the phone number before allowing the port. Mis-matches will automatically fail to port and alert the winning carrier that the Passcode was incorrect and to please try again with an updated Passcode.
 
@@ -23,16 +23,16 @@ Portout PINs are set via the `tnoptions` API
 |:-------------|:--------------------------------------------------------------------|
 | `/tnoptions` | Set the Passcode code for an individual (or group) of phone Numbers |
 
-## Create tnoptions order {#create-tnoption}
+## Create tnoptions order 
 
 The `/tnoptions` endpoint is an interface for adding/removing "options/features" from specific (or groups) of phone numbers
 
-{% extendmethod %}
+
 
 #### TnOption Parameters for Portout Passcode protections
 
 #### Request URL
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/tnoptions`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/tnoptions`
 
 #### Request Authentication
 
@@ -50,11 +50,11 @@ There are more options unrelated to Portout Passcodes that are detailed in the [
 | `<TelephoneNumber>`  | Yes       | The individual number to apply the Passcode                                 |
 
 
-{% common %}
+
 
 ### Example 1 of 2: Set PortOutPasscode on a single Telephone Number
 
-{% sample lang="http" %}
+
 
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/tnoptions HTTP/1.1
@@ -104,7 +104,7 @@ Location: https://dashboard.bandwidth.com:443/v1.0/accounts/{{accountId}}/tnopti
 </TnOptionOrderResponse>
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $tnoptions = $account->tnoptions();
@@ -128,7 +128,7 @@ print_r($response->OrderCreateDate);
 2020-05-22T18:22:34.391Z
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 data = {
@@ -155,7 +155,7 @@ puts order[:order_create_date]
 2020-05-22T18:22:34.391Z
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 TnOptionOrder order = new TnOptionOrder();
@@ -178,7 +178,7 @@ TnOptionOrderResponse response = TnOptions.create(client, order);
 hello world
 ```
 
-{% sample lang="js" %}
+
 ```js
 const order = {
   customerOrderId: 'TnOptionOrder1',
@@ -206,7 +206,7 @@ RECEIVED
 ```
 
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 var order = new TnOptionOrder
@@ -235,11 +235,11 @@ Console.WriteLine(response.TnOptionOrder.OrderCreateDate);//"2016-01-15T12:01:14
 hello world
 ```
 
-{% common %}
+
 
 ### Example 2 of 2: Set same PortOutPasscode on a group of Telephone Numbers
 
-{% sample lang="http" %}
+
 
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/tnoptions HTTP/1.1
@@ -293,7 +293,7 @@ Location: https://dashboard.bandwidth.com:443/v1.0/accounts/{{accountId}}/tnopti
 </TnOptionOrderResponse>
 ```
 
-{% sample lang="php" %}
+
 
 ```php
 $tnoptions = $account->tnoptions();
@@ -321,7 +321,7 @@ print_r($response->OrderCreateDate);
 2020-05-22T18:22:34.391Z
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 data = {
@@ -348,7 +348,7 @@ puts order[:order_create_date]
 2020-05-22T18:22:34.391Z
 ```
 
-{% sample lang="java" %}
+
 
 ```java
 TnOptionOrder order = new TnOptionOrder();
@@ -373,7 +373,7 @@ TnOptionOrderResponse response = TnOptions.create(client, order);
 hello world
 ```
 
-{% sample lang="js" %}
+
 ```js
 const order = {
   customerOrderId: 'TnOptionOrder1',
@@ -401,7 +401,7 @@ RECEIVED
 ```
 
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 var order = new TnOptionOrder
@@ -432,4 +432,4 @@ Console.WriteLine(response.TnOptionOrder.OrderCreateDate);//"2016-01-15T12:01:14
 hello world
 ```
 
-{% endextendmethod %}
+

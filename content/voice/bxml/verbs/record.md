@@ -1,4 +1,4 @@
-{% method %}
+
 ## XML: `<Record>`
 The Record verb allows a segment of audio to be recorded during a call. At the end of the recording, a [Record Complete](../callbacks/recordComplete.md) event is generated.
 
@@ -25,7 +25,7 @@ For different use cases, you might want to take a look at [StartRecording](../ve
 | password                     | (optional) The password to send in the HTTP request to `recordCompleteUrl`, `recordingAvailableUrl` or `transcriptionAvailableUrl`. If specified, the URLs must be TLS-encrypted (i.e., `https`). |
 | fallbackUsername             | (optional) The username to send in the HTTP request to `recordCompleteFallbackUrl`. If specified, the URLs must be TLS-encrypted (i.e., `https`). |
 | fallbackPassword             | (optional) The password to send in the HTTP request to `recordCompleteFallbackUrl`. If specified, the URLs must be TLS-encrypted (i.e., `https`). |
-| tag                          | (optional) A custom string that will be sent with this and all future callbacks unless overwritten by a future `tag` attribute or [`<Tag>`](tag.md) verb, or cleared.<br><br>May be cleared by setting `tag=""`<br><br>Max length 256 characters. |
+| tag                          | (optional) A custom string that will be sent with this and all future callbacks unless overwritten by a future `tag` attribute or [`<Tag>`](tag.md) verb, or cleared.May be cleared by setting `tag=""`Max length 256 characters. |
 | terminatingDigits            | (optional) When pressed, this digit will terminate the recording. Default value is `“#”`. This feature can be disabed with `""`. |
 | maxDuration                  | (optional) Maximum length of recording (in seconds). Max 10800 (3 hours). Default value is 60. |
 | silenceTimeout               | (optional) Length of silence after which to end the recording (in seconds). Max is equivalent to the maximum `maxDuration` value. Default value is 0, which means no timeout. |
@@ -49,13 +49,13 @@ If the `transcriptionAvailableUrl` attribute is specified, then the [Transcripti
 | [Recording Available](../callbacks/recordingAvailable.md)         | No                       |
 | [Transcription Available](../callbacks/transcriptionAvailable.md) | No                       |
 
-{% common %}
+
 
 #### Example 1 of 2: Record Verb
 
 This shows how to use Bandwidth XML to record a phone call.
 
-{% sample lang="http" %}
+
 
 
 ```XML
@@ -68,7 +68,9 @@ This shows how to use Bandwidth XML to record a phone call.
 </Response>
 ```
 
-{% sample lang="java" %}
+
+
+#### Java
 
 ```java
 SpeakSentence speakSentence = SpeakSentence.builder()
@@ -93,7 +95,9 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
+
+
+#### C-Sharp
 
 ```csharp
 SpeakSentence speakSentence = new SpeakSentence
@@ -121,7 +125,9 @@ response.Add(record);
 Console.WriteLine(response.ToBXML());
 ```
 
-{% sample lang="ruby" %}
+
+
+#### Ruby
 
 ```ruby
 response = Bandwidth::Voice::Response.new()
@@ -143,7 +149,9 @@ response.push(record)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
+
+#### Python
 
 ```python
 response = Response()
@@ -165,7 +173,9 @@ response.add_verb(record)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
+
+#### NodeJS
 
 ```js
 var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
@@ -187,7 +197,9 @@ response.addVerb(record);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
+
+#### PHP
 
 ```php
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Please leave your message after the beep");
@@ -207,11 +219,11 @@ $response->addVerb($record);
 echo $response->toBxml();
 ```
 
-{% common %}
+
 
 #### Example 2 of 2: Record Verb with transcriptions
 
-{% sample lang="http" %}
+
 
 
 ```XML
@@ -222,7 +234,9 @@ echo $response->toBxml();
 </Response>
 ```
 
-{% sample lang="java" %}
+
+
+#### Java
 
 ```java
 SpeakSentence speakSentence = SpeakSentence.builder()
@@ -242,7 +256,9 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
+
+
+#### C-Sharp
 
 ```csharp
 SpeakSentence speakSentence = new SpeakSentence
@@ -265,7 +281,9 @@ response.Add(record);
 Console.WriteLine(response.ToBXML());
 ```
 
-{% sample lang="ruby" %}
+
+
+#### Ruby
 
 ```ruby
 response = Bandwidth::Voice::Response.new()
@@ -283,7 +301,9 @@ response.push(record)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
+
+#### Python
 
 ```python
 response = Response()
@@ -301,7 +321,9 @@ response.add_verb(record)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
+
+#### NodeJS
 
 ```js
 var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
@@ -319,7 +341,9 @@ response.addVerb(record);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
+
+#### PHP
 
 ```php
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Please say your name");
@@ -336,4 +360,4 @@ $response->addVerb($record);
 echo $response->toBxml();
 ```
 
-{% endmethod %}
+

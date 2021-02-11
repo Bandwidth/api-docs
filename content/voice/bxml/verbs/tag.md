@@ -1,4 +1,4 @@
-{% method %}
+
 ## XML: `<Tag>`
 The Tag verb is used to set a new tag value without executing a callback. This new tag will be sent with
 all future callbacks unless overwritten by a future `tag` attribute or `<Tag>` verb, or cleared.
@@ -13,13 +13,13 @@ all future callbacks unless overwritten by a future `tag` attribute or `<Tag>` v
 None
 
 
-{% common %}
+
 #### Example 1 of 1: Tag Verb
-This shows how to use the <Tag> verb and its effects on callback events. In this example, we only
+This shows how to use the  verb and its effects on callback events. In this example, we only
 affect the [disconnect event](../callbacks/disconnect.md), but if there were other callbacks, they
 would also be affected.
 
-{% sample lang="http" %}
+
 
 
 ```XML
@@ -33,41 +33,53 @@ would also be affected.
 </Response>
 ```
 
-{% sample lang="java" %}
+
+
+#### Java
 
 ```java
 // Coming soon
 ```
 
-{% sample lang="csharp" %}
+
+
+#### C-Sharp
 
 ```csharp
 // Coming soon
 ```
 
 
-{% sample lang="ruby" %}
+
+
+#### Ruby
 
 ```ruby
 // Coming soon
 ```
 
-{% sample lang="python" %}
+
+
+#### Python
 
 ```python
 # Coming soon
 ```
 
-{% sample lang="js" %}
+
+
+#### NodeJS
 
 ```js
 // Coming soon
 ```
 
-{% sample lang="php" %}
+
+
+#### PHP
 
 ```php
 // Coming soon
 ```
 
-{% endmethod %}
+

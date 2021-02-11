@@ -1,7 +1,7 @@
-{% multimethod %}
-{% endmultimethod %}
 
-# Bandwidth Account API Setup {#top}
+
+
+# Bandwidth Account API Setup 
 
 This walks through how to programmatically setup and configure your Bandwidth account _via APIs_ for use with [HTTP Voice](../../voice/about.md) and [HTTP Messaging](../../messaging/about.md)
 
@@ -37,24 +37,24 @@ Once the account has been configured correctly for HTTP Services. See the guides
 * [HTTP Messaging](../../messaging/about.md)
 * [HTTP Voice](../../voice/about.md)
 
-## Create **Messaging** Application {#create-messaging-application}
+## Create **Messaging** Application 
 
-<aside class="alert general small">
-<p>
-Save the <code>Application Id</code> after creating the application.
-</p>
-</aside>
+
+
+Save the Application Id after creating the application.
+
+
 
 The [Application](../applications/about.md) contains the HTTP URL you want to use for both inbound and outbound messages.
 
 Learn more about [applications in the documentation](../applications/about.md).
 
-{% extendmethod %}
+
 
 #### Application Parameters
 
 #### Request URL
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/applications`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/applications`
 
 #### Request Authentication
 
@@ -69,11 +69,11 @@ The [Applications](../applications/about.md) resource is authenticated with your
 | `CallbackCreds.UserId`   | No        | Basic auth `UserId`                                                                                  |
 | `CallbackCreds.Password` | No        | Basic auth `Password`                                                                                |
 
-{% common %}
+
 
 ### Create Application
 
-{% sample lang="http" %}
+
 
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/applications HTTP/1.1
@@ -91,7 +91,7 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 </Application>
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 var messageApplication = await Application.Create(client, new Application
@@ -102,7 +102,7 @@ var messageApplication = await Application.Create(client, new Application
 });
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 data = {
@@ -114,7 +114,7 @@ application = BandwidthIris::Applications.create_application(data)
 puts application
 ```
 
-{% common %}
+
 
 ### Response
 
@@ -138,28 +138,28 @@ Location: https://{baseurl}/accounts/{{accountId}}/applications/{{applicationID}
 </ApplicationProvisioningResponse>
 ```
 
-{% endextendmethod %}
+
 
 ---
 
-## Create **Voice** Application {#create-voice-application}
+## Create **Voice** Application 
 
-<aside class="alert general small">
-<p>
-Save the <code>Application Id</code> after creating the application.
-</p>
-</aside>
+
+
+Save the Application Id after creating the application.
+
+
 
 The [Application](../applications/about.md) contains the HTTP URL you want to use for inbound calls.
 
 Learn more about [applications in the documentation](../applications/about.md).
 
-{% extendmethod %}
+
 
 #### Application Parameters
 
 #### Request URL
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/applications`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/applications`
 
 
 | Parameters                 | Mandatory | Description                                                                                                                |
@@ -172,11 +172,11 @@ Learn more about [applications in the documentation](../applications/about.md).
 | `CallbackCreds.UserId`     | No        | Basic auth `UserId`                                                                                                        |
 | `CallbackCreds.Password`   | No        | Basic auth `Password`                                                                                                      |
 
-{% common %}
+
 
 ### Create Application
 
-{% sample lang="http" %}
+
 
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/applications HTTP/1.1
@@ -195,7 +195,7 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 </Application>
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 var voiceApplication = await Application.Create(client, new Application
@@ -206,7 +206,7 @@ var voiceApplication = await Application.Create(client, new Application
 });
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 data = {
@@ -218,7 +218,7 @@ application = BandwidthIris::Applications.create_application(data)
 puts application
 ```
 
-{% common %}
+
 
 ### Response
 
@@ -243,20 +243,20 @@ Location: https://{baseurl}/accounts/{{accountId}}/applications/{{voice-applicat
 </ApplicationProvisioningResponse>
 ```
 
-{% endextendmethod %}
+
 
 ---
 
-## Create Sub-Account (_site_) {#create-subaccount-site}
+## Create Sub-Account (_site_) 
 
 This endpoint can be used to create a subaccount (AKA site) on your account
 
-{% extendmethod %}
+
 
 #### Subaccount Parameters
 
 #### Request URL
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites`
 
 | Parameters                | Mandatory | Description                                                                                                                                                                                                                              |
 |:--------------------------|:----------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -284,11 +284,11 @@ This endpoint can be used to create a subaccount (AKA site) on your account
 | Country | String | The country of the address |
 | AddressType | String | The type of the address. Must be `Billing` or `Service` |
 
-{% common %}
+
 
 ### Create Sub-Account (site)
 
-{% sample lang="http" %}
+
 
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites HTTP/1.1
@@ -310,7 +310,7 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 </Site>
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 Site site = await Site.Create(client, new Site
@@ -329,7 +329,7 @@ Site site = await Site.Create(client, new Site
 });
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 site = {
@@ -347,7 +347,7 @@ site = {
 site = BandwidthIris::Site.create(site)
 ```
 
-{% common %}
+
 
 ### Response
 ```http
@@ -374,38 +374,38 @@ Location: https://{baseurl}/accounts/{{accountId}}/sites/{{siteID}}
 </SiteResponse>
 ```
 
-{% endextendmethod %}
 
-## Create location (_sippeer_) {#create-location}
 
-<aside class="alert general small">
-<p>
-Save the <code>Location (sippeer) Id</code> After creating the application.
-</p>
-</aside>
+## Create location (_sippeer_) 
+
+
+
+Save the Location (sippeer) Id After creating the application.
+
+
 
 The location (_sippeer_) is a logical grouping of numbers.
 
 * You'll need a location (_sippeer_) in order to group phone numbers.
 
-{% extendmethod %}
+
 
 ### Location Parameters
 
 #### Request URL
 
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}/sippeers`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}/sippeers`
 
 | Parameters      | Mandatory | Description                                                                                                                                                                                                                                                                                     |
 |:----------------|:----------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `PeerName`      | Yes       | Plain text name of the Location (_sippeer_)                                                                                                                                                                                                                                                     |
-| `IsDefaultPeer` | No        | Boolean: <br> * `true` <br> * `false` <br> The Default SIP Peer is the default "destination" for any Telephone Numbers that are ordered for the Site in which the SIP Peer resides.  Each sub-account (_site_) can have only 1 default SIP Peer. You can configure multiple SIP Peers on a Site |
+| `IsDefaultPeer` | No        | Boolean:  * `true`  * `false`  The Default SIP Peer is the default "destination" for any Telephone Numbers that are ordered for the Site in which the SIP Peer resides.  Each sub-account (_site_) can have only 1 default SIP Peer. You can configure multiple SIP Peers on a Site |
 
-{% common %}
+
 
 ### Create Location (_sippeer_)
 
-{% sample lang="http" %}
+
 
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}/sippeers HTTP/1.1
@@ -418,7 +418,7 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 </SipPeer>
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 SipPeer sipPeer = await SipPeer.Create(client, new SipPeer
@@ -429,7 +429,7 @@ SipPeer sipPeer = await SipPeer.Create(client, new SipPeer
 });
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 data = {
@@ -441,7 +441,7 @@ data = {
 BandwidthIris::SipPeer.create(data)
 ```
 
-{% common %}
+
 
 ### Response
 
@@ -453,26 +453,26 @@ Location: https://{baseurl}/accounts/{{accountId}}/sites/{{siteId}}/sippeers/{{s
 > Save the `{sippeerId}` from the `location` header!
 
 
-{% endextendmethod %}
+
 
 ---
 
-## Enable SMS on Location (_sippeer_) {#enable-sms-on-location}
+## Enable SMS on Location (_sippeer_) 
 
 In order to use HTTP messaging in your account, you need to enable SMS and MMS on each location after creating.
 
-{% extendmethod %}
+
 
 ### Enable SMS Parameters
 
 #### Request URL
 
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}/sippeers/{{sippeerId}}/products/messaging/features/sms`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}/sippeers/{{sippeerId}}/products/messaging/features/sms`
 
 | Parameters  | Mandatory | Description                                                                                           |
 |:------------|:----------|:------------------------------------------------------------------------------------------------------|
-| `TollFree`  | Yes       | Will enable texting to and from _toll-free phone numbers_. <br> Boolean: <br> * `true` <br> * `false` |
-| `ShortCode` | Yes       | Will enable texting to and from _short codes_. <br> Boolean: <br> * `true` <br> * `false`             |
+| `TollFree`  | Yes       | Will enable texting to and from _toll-free phone numbers_.  Boolean:  * `true`  * `false` |
+| `ShortCode` | Yes       | Will enable texting to and from _short codes_.  Boolean:  * `true`  * `false`             |
 | `Protocol`  | Yes       | **MUST BE SET TO** `HTTP`                                                                             |
 | `Zone1`     | Yes       | **MUST BE SET TO**: `true`                                                                            |
 | `Zone2`     | Yes       | **MUST BE SET TO**: `false`                                                                           |
@@ -480,11 +480,11 @@ In order to use HTTP messaging in your account, you need to enable SMS and MMS o
 | `Zone4`     | Yes       | **MUST BE SET TO**: `false`                                                                           |
 | `Zone5`     | Yes       | **MUST BE SET TO**: `false`                                                                           |
 
-{% common %}
+
 
 ### Enable SMS on Location (_sippeer_)
 
-{% sample lang="http" %}
+
 
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}/sippeers/{{sippeerId}}/products/messaging/features/sms HTTP/1.1
@@ -506,7 +506,7 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 </SipPeerSmsFeature>
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 var smsMessageFeature = await SipPeer.CreateSMSSettings(client, site.Id, sipPeer.Id, new SipPeerSmsFeature
@@ -528,7 +528,7 @@ var smsMessageFeature = await SipPeer.CreateSMSSettings(client, site.Id, sipPeer
 });
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 data = {
@@ -548,7 +548,7 @@ data = {
 puts BandwidthIris::SipPeerProducts.create_sms_feature_settings("site_id", "sippeer_id", data)
 ```
 
-{% common %}
+
 
 ### Response
 
@@ -577,31 +577,31 @@ Content-Type: application/xml; charset=utf-8
 ```
 
 
-{% endextendmethod %}
+
 
 ---
 
-## Enable MMS on Location (_sippeer_) {#enable-mms-on-location}
+## Enable MMS on Location (_sippeer_) 
 
 In addition to enabling SMS, you must also enable MMS to receive picture messages and other multi-media messages.
 
-{% extendmethod %}
+
 
 ### Enable MMS Parameters
 
 #### Request URL
 
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}/sippeers/{{sippeerId}}/products/messaging/features/mms`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}/sippeers/{{sippeerId}}/products/messaging/features/mms`
 
 | Parameters | Mandatory | Description               |
 |:-----------|:----------|:--------------------------|
 | `Protocol` | Yes       | **MUST BE SET TO** `HTTP` |
 
-{% common %}
+
 
 ### Enable MMS on Location (_sippeer_)
 
-{% sample lang="http" %}
+
 
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}/sippeers/{{sippeerId}}/products/messaging/features/mms HTTP/1.1
@@ -620,7 +620,7 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 </MmsFeature>
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 var mmsMessageFeature = await SipPeer.CreateMMSSettings(client, site.Id, sipPeer.Id, new MmsFeature
@@ -640,7 +640,7 @@ var mmsMessageFeature = await SipPeer.CreateMMSSettings(client, site.Id, sipPeer
 });
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 data = {
@@ -657,7 +657,7 @@ data = {
 puts BandwidthIris::SipPeerProducts.create_mms_feature_settings("site_id", "sippeer_id", data)
 ```
 
-{% common %}
+
 
 ### Response
 
@@ -683,32 +683,32 @@ Content-Type: application/xml; charset=utf-8
 ```
 
 
-{% endextendmethod %}
+
 
 ---
 
-## Assign Messaging Application to Location (_sippeer_) {#assign-messaging-application-to-location}
+## Assign Messaging Application to Location (_sippeer_) 
 
 In order to use the messaging API, you need to assign the `application` created above to the location (_sippeer_)
 
-{% extendmethod %}
+
 
 ### Assign Application Parameters
 
 #### Request URL
 
-<code class="put">PUT</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}/sippeers/{{sippeerId}}/products/messaging/applicationSettings`
+PUT`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}/sippeers/{{sippeerId}}/products/messaging/applicationSettings`
 
 | Parameters             | Mandatory | Description                                             |
 |:-----------------------|:----------|:--------------------------------------------------------|
 | `HttpMessagingV2AppId` | Yes       | The application ID from the `application` created above |
 
 
-{% common %}
+
 
 ### Assign Application to Location (_sippeer_)
 
-{% sample lang="http" %}
+
 
 ```http
 PUT https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}/sippeers/{{sippeerId}}/products/messaging/applicationSettings HTTP/1.1
@@ -720,7 +720,7 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 </ApplicationsSettings>
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 await SipPeer.UpdateApplicationSettings(client, site.Id, sipPeer.Id, new ApplicationsSettings
@@ -729,7 +729,7 @@ await SipPeer.UpdateApplicationSettings(client, site.Id, sipPeer.Id, new Applica
 });
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 data = {
@@ -739,7 +739,7 @@ data = {
 puts BandwidthIris::SipPeerProducts.update_messaging_application_settings("site_id", "sippeer_id", data)
 ```
 
-{% common %}
+
 
 ### Response
 
@@ -755,11 +755,11 @@ Content-Type: application/xml; charset=utf-8
 </ApplicationsSettingsResponse>
 ```
 
-{% endextendmethod %}
+
 
 ---
 
-## Assign Voice Application **AND** Enable HTTP Voice on Location (_sippeer_) {#assign-application-enable-voice-on-location}
+## Assign Voice Application **AND** Enable HTTP Voice on Location (_sippeer_) 
 
 In addition to enabling SMS & MMS, you must also enable HTTP Voice services on the location to send and receive phone calls.  This is done with a single API call to the voice settings endpoint of the location (sippeer).
 
@@ -772,13 +772,13 @@ Bandwidth requires that **both** origination (inbound calls) and termination (ou
 
 It is only required to set **either** `termination/settings` or `origination/settings` for configuring HTTP Voice (SIP customers may have different settings). Setting one or the other, will copy the settings to the other settings profile. This example adds and configures the `origination/settings`, however sending the same request body to the `termination/settings` will result in the same configuration.
 
-{% extendmethod %}
+
 
 ### Enable HTTP Voice Parameters
 
 #### Request URL
 
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}/sippeers/{{sippeerId}}/products/origination/settings`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}/sippeers/{{sippeerId}}/products/origination/settings`
 
 | Parameters | Mandatory | Description               |
 |:-----------|:----------|:--------------------------|
@@ -786,11 +786,11 @@ It is only required to set **either** `termination/settings` or `origination/set
 | `HttpSettings` | Yes | Parent element for HTTP settings |
 | `HttpVoiceV2AppId` | Yes | The applicationId of the **Voice** application created above |
 
-{% common %}
+
 
 ### Enable HTTP Voice on Location (via Origination Settings) (_sippeer_)
 
-{% sample lang="http" %}
+
 
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}/sippeers/{{sippeerId}}/products/origination/settings HTTP/1.1
@@ -805,7 +805,7 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 </SipPeerOriginationSettings>
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 var voiceFeature = await SipPeer.SetOriginationSettings(client, site.Id, sipPeer.Id, new SipPeerOriginationSettings
@@ -818,7 +818,7 @@ var voiceFeature = await SipPeer.SetOriginationSettings(client, site.Id, sipPeer
 });
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 data = {
@@ -830,7 +830,7 @@ data = {
 puts BandwidthIris::SipPeerProducts.create_origination_settings("site_id", "sippeer_id", data)
 ```
 
-{% common %}
+
 
 ### Response
 
@@ -852,7 +852,7 @@ Content-Type: application/xml; charset=utf-8
 ### Ensure HTTP Voice settings on Location (_sippeer_)
 
 
-{% sample lang="http" %}
+
 
 ```http
 GET https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}/sippeers/{{sippeerId}}/products/termination/settings HTTP/1.1
@@ -860,19 +860,19 @@ Content-Type: application/xml; charset=utf-8
 Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 ```
 
-{% sample lang="csharp" %}
+
 
 ```csharp
 var terminationSettings = await SipPeer.GetTerminationSetting(client, site.Id, sipPeer.Id);
 ```
 
-{% sample lang="ruby" %}
+
 
 ```ruby
 puts BandwidthIris::SipPeerProducts.get_termination_settings("site_id", "sippeer_id")
 ```
 
-{% common %}
+
 
 ### Response
 
@@ -891,6 +891,6 @@ Content-Type: application/xml; charset=utf-8
 </SipPeerOriginationSettingsResponse>
 ```
 
-{% endextendmethod %}
+
 
 ---

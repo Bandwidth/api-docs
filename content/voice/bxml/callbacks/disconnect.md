@@ -1,4 +1,4 @@
-{% method %}
+
 ## Disconnect Event
 
 The Disconnect event is fired when a call ends, for any reason. The `cause` for a disconnect event on a call can be:
@@ -43,7 +43,7 @@ HTTP/1.1 204
 | errorId           | (optional) Bandwidth internal id that references the error event. |
 | tag               | (optional) The `tag`  specified on call creation. If no `tag` was specified or it was previously cleared, this field will not be present. |
 
-{% common %}
+
 
 #### Example: Call ended due to a busy signal
 
@@ -70,4 +70,4 @@ POST http://[External server URL]
 }
 ```
 
-{% endmethod %}
+

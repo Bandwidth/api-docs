@@ -1,4 +1,4 @@
-{% method %}
+
 
 ## XML: `<Conference>`
 Used to join the current call into a conference.
@@ -43,7 +43,7 @@ BXML containing unsupported verbs will be rejected completely.
 |:------------------------------|:------------|
 | mute                          | (optional) A boolean value to indicate whether the member should be on mute in the conference. When muted, a member can hear others speak, but others cannot hear them speak. Defaults to false. |
 | hold                          | (optional) A boolean value to indicate whether the member should be on hold in the conference. When on hold, a member cannot hear others, and they cannot be heard. Defaults to false. |
-| callIdsToCoach                | (optional) A comma-separated list of call ids to coach. When a call joins a conference with this attribute set, it will coach the listed calls. Those calls will be able to hear and be heard by the coach, but other calls in the conference will not hear the coach.<br><br>Calls may be added to the conference in any order - if the matching calls are not already in the conference, then once the matching calls are added, the coach will be able to hear and speak to the matching calls. Note that this will not add the matching calls to the conference; each call must individually execute a `<Conference>` verb to join.<br><br>The coach can leave and rejoin the conference, but the conference may only have one coach at a time. |
+| callIdsToCoach                | (optional) A comma-separated list of call ids to coach. When a call joins a conference with this attribute set, it will coach the listed calls. Those calls will be able to hear and be heard by the coach, but other calls in the conference will not hear the coach.Calls may be added to the conference in any order - if the matching calls are not already in the conference, then once the matching calls are added, the coach will be able to hear and speak to the matching calls. Note that this will not add the matching calls to the conference; each call must individually execute a `<Conference>` verb to join.The coach can leave and rejoin the conference, but the conference may only have one coach at a time. |
 | conferenceEventUrl            | (optional) URL to send Conference events to. The URL, method, username, and password are set by the BXML document that creates the conference, and all events related to that conference will be delivered to that same endpoint. If more calls join afterwards and also have this property (or any other callback related properties like `username` and `password`), they will be ignored and the original callback information will be used. This URL may be a relative endpoint. |
 | conferenceEventMethod         | (optional) The HTTP method to use for the request to `conferenceEventUrl`. GET or POST. Default value is POST. |
 | conferenceEventFallbackUrl    | (optional) A fallback url which, if provided, will be used to retry the conference callback deliveries in case `conferenceEventUrl` fails to respond. |
@@ -52,7 +52,7 @@ BXML containing unsupported verbs will be rejected completely.
 | password                      | (optional) The password to send in the HTTP request to `conferenceEventUrl`. |
 | fallbackUsername              | (optional) The username to send in the HTTP request to `conferenceEventFallbackUrl`. |
 | fallbackPassword              | (optional) The password to send in the HTTP request to `conferenceEventFallbackUrl`. |
-| tag                           | (optional) A custom string that will be sent with these and all future callbacks unless overwritten by a future `tag` attribute or [`<Tag>`](tag.md) verb, or cleared.<br><br>May be cleared by setting `tag=""`<br><br>Max length 256 characters.<br><br>The tag that is set for the call that creates the conference is the tag that will be sent with all callbacks related to the conference. For example, if the call that creates the conference has a tag set, and another call with a different tag joins the same conference, the first call's tag will be sent with both `conferenceMemberJoin` events. |
+| tag                           | (optional) A custom string that will be sent with these and all future callbacks unless overwritten by a future `tag` attribute or [`<Tag>`](tag.md) verb, or cleared.May be cleared by setting `tag=""`Max length 256 characters.The tag that is set for the call that creates the conference is the tag that will be sent with all callbacks related to the conference. For example, if the call that creates the conference has a tag set, and another call with a different tag joins the same conference, the first call's tag will be sent with both `conferenceMemberJoin` events. |
 | callbackTimeout               | (optional) This is the timeout (in seconds) to use when delivering callbacks for the conference. If not set, it will inherit the callback timeout from the call that creates the conference. Can be any numeric value (including decimals) between 1 and 25. |
 
 ### Callbacks Received
@@ -63,12 +63,12 @@ BXML containing unsupported verbs will be rejected completely.
 | [Conference Member Exit](../callbacks/conferenceMemberExit.md) | Yes                 |
 | [Conference Completed](../callbacks/conferenceCompleted.md)    | No                  |
 
-{% common %}
+
 
 ### Example 1 of 2: Join Conference
 This shows how to use Bandwidth XML to add a call in a conference.
 
-{% sample lang="http" %}
+
 
 ```XML
 <?xml version="1.0" encoding="UTF-8"?>
@@ -78,7 +78,9 @@ This shows how to use Bandwidth XML to add a call in a conference.
 </Response>
 ```
 
-{% sample lang="java" %}
+
+
+#### Java
 
 ```java
 SpeakSentence speakSentence = SpeakSentence.builder()
@@ -97,7 +99,9 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
+
+
+#### C-Sharp
 
 ```csharp
 SpeakSentence speakSentence = new SpeakSentence
@@ -117,7 +121,9 @@ response.Add(conference);
 Console.WriteLine(response.ToBXML());
 ```
 
-{% sample lang="ruby" %}
+
+
+#### Ruby
 
 ```ruby
 speak_sentence = Bandwidth::Voice::SpeakSentence.new({
@@ -135,7 +141,9 @@ response.push(conference)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
+
+#### Python
 
 ```python
 speak_sentence = SpeakSentence("You will be added to your conference now.", gender="male")
@@ -148,7 +156,9 @@ response.add_verb(conference)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
+
+#### NodeJS
 
 ```js
 var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
@@ -165,7 +175,9 @@ response.addVerb(conference);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
+
+#### PHP
 
 ```php
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("You will be added to your conference now.");
@@ -181,12 +193,12 @@ echo $response->toBxml();
 echo "\n";
 ```
 
-{% common %}
+
 
 ### Example 2 of 2: Join Conference as Coach
 This shows how to add a coach in a conference.
 
-{% sample lang="http" %}
+
 
 ```XML
 <?xml version="1.0" encoding="UTF-8"?>
@@ -196,7 +208,9 @@ This shows how to add a coach in a conference.
 </Response>
 ```
 
-{% sample lang="java" %}
+
+
+#### Java
 
 ```java
 SpeakSentence speakSentence = SpeakSentence.builder()
@@ -220,7 +234,9 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
+
+
+#### C-Sharp
 
 ```csharp
 SpeakSentence speakSentence = new SpeakSentence
@@ -241,7 +257,9 @@ response.Add(conference);
  Console.WriteLine(response.ToBXML());
 ```
 
-{% sample lang="ruby" %}
+
+
+#### Ruby
 
 ```ruby
 speak_sentence = Bandwidth::Voice::SpeakSentence.new({
@@ -262,7 +280,9 @@ response.push(conference)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
+
+#### Python
 
 ```python
 speak_sentence = SpeakSentence("Welcome. You are going to coach 2 calls, please wait.", gender="male")
@@ -277,7 +297,9 @@ response.add_verb(conference)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
+
+#### NodeJS
 
 ```js
 var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
@@ -295,7 +317,9 @@ response.addVerb(conference);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
+
+#### PHP
 
 ```php
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Welcome. You are going to coach 2 calls, please wait.");
@@ -314,6 +338,6 @@ echo $response->toBxml();
 echo "\n";
 ```
 
-{% common %}
 
-{% endmethod %}
+
+

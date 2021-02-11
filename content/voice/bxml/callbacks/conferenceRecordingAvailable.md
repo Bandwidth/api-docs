@@ -1,4 +1,4 @@
-{% method %}
+
 ## Conference Recording Available event
 
 The Conference Recording Available event is sent after a conference recording has been processed.
@@ -28,7 +28,7 @@ HTTP/1.1 204
 | tag               | (optional) The `tag` that was set at conference creation. If no `tag` was specified, this field will not be present. |
 | status            | The state of the recording. Can be `complete`, `partial`, or `error`. A `partial` status indicates that, although the recording is available to be downloaded, parts of the recording are missing. |
 
-{% common %}
+
 
 #### Example: Conference Recording Available event
 
@@ -54,4 +54,4 @@ POST http://[External server URL]
 }
 ```
 
-{% endmethod %}
+

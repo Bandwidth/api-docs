@@ -1,7 +1,7 @@
-{% multimethod %}
-{% endmultimethod %}
 
-# Phone Number Disconnect Summary {#top}
+
+
+# Phone Number Disconnect Summary 
 
 Disconnecting a phone number leaves it in all applicable inventories, but makes it available for activation with a new subscriber.
 
@@ -14,18 +14,18 @@ Disconnecting a phone number leaves it in all applicable inventories, but makes 
 * [Disconnecting a Phone Number](#disconnect-phone-number)
 * [Fetching Disconnect Info](#get-disconnect-info)
 
-## Disconnecting a Phone Number {#disconnect-phone-number}
+## Disconnecting a Phone Number 
 
 When a phone number is disconnected from your account it will remain available for you to reconnect to for a short period of time before being released back into Bandwidth's public inventory pool. You will not be charged for calls made to this number during the holding period. The duration of the holding period depends on demand for numbers from that area. 
 
 ### Base URL
-<code class="post">POST</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/disconnects`
+POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/disconnects`
 
 #### Basic Authentication
 
 Bandwidth's Phone Number API leverages Basic Authentication with your Dashboard API Credentials. Read more about how Bandwidth secures endpoints in the [Security & Credentials](../../guides/accountCredentials.md) document.
 
-{% extendmethod %}
+
 
 ### Request Parameters
 
@@ -36,7 +36,7 @@ Bandwidth's Phone Number API leverages Basic Authentication with your Dashboard 
 | `DisconnectMode`      | No       | The severity of disconnect order. Typically `Normal`.                                                                             |
 | `Protected`           | No       | Change protected status of telephones during disconnection. Possible values: `TRUE`, `FALSE`, `UNCHANGED`. Typically `UNCHANGED`. |
 
-{% common %}
+
 
 ### Example: Create a disconnect request for 2 Phone Numbers
 
@@ -81,21 +81,21 @@ Location: https://dashboard.bandwidth.com/api/accounts/{{accountId}}/disconnects
 </DisconnectTelephoneNumberOrderResponse>
 ```
 
-{% endextendmethod %}
 
-## Fetching Disconnect Information {#get-disconnect-info}
-A <code class="get">GET</code> Request to an existing disconnect will return it's status as well as any information originally used to create the disconnect.
+
+## Fetching Disconnect Information 
+A GET Request to an existing disconnect will return it's status as well as any information originally used to create the disconnect.
 
 ### Base URL
-<code class="get">GET</code>`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/disconnects/{{disconnectId}}`
+GET`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/disconnects/{{disconnectId}}`
 
-{% extendmethod %}
+
 
 ### Query Parameters
 
 There are no query parameters for fetching information about an existing disconnect.
 
-{% common %}
+
 
 ### Example: Fetch Disconnect Information
 
@@ -134,4 +134,4 @@ Content-Type: application/xml; charset=utf-8
 
 ```
 
-{% endextendmethod %}
+

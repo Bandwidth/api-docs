@@ -1,4 +1,4 @@
-{% method %}
+
 ## XML: `<StartGather>`
 The StartGather verb is used to get asynchronous notifications of DTMF digits collected in the call while other verbs are executed.
 
@@ -18,20 +18,20 @@ The StartGather verb can be cancelled by the [`<StopGather>`](stopGather.md) ver
 | dtmfMethod          | (optional) The HTTP method to use for the request to `dtmfUrl`. GET or POST. Default value is POST. |
 | username            | (optional) The username to send in the HTTP request to `dtmfUrl`. |
 | password            | (optional) The password to send in the HTTP request to `dtmfUrl`. |
-| tag                 | (optional) A custom string that will be sent with this and all future callbacks unless overwritten by a future `tag` attribute or [`<Tag>`](tag.md) verb, or cleared.<br><br>May be cleared by setting `tag=""`<br><br>Max length 256 characters. |
+| tag                 | (optional) A custom string that will be sent with this and all future callbacks unless overwritten by a future `tag` attribute or [`<Tag>`](tag.md) verb, or cleared.May be cleared by setting `tag=""`Max length 256 characters. |
 
 ### Callbacks Received
 | Callback                      | Can reply with more BXML |
 |:------------------------------|:-------------------------|
 | [dtmf](../callbacks/dtmf.md)  | No                       |
 
-{% common %}
+
 
 #### Example 1 of 1: Gather digits during a Conference
 This example shows how to use the StartGather verb to listen for digits pressed while the call is in a Conference.
 Whenever a digit is entered, a [dtmf](../callbacks/dtmf.md) event is sent with the detected digit.
 
-{% sample lang="http" %}
+
 
 ```XML
 <?xml version="1.0" encoding="UTF-8"?>
@@ -41,41 +41,53 @@ Whenever a digit is entered, a [dtmf](../callbacks/dtmf.md) event is sent with t
 </Response>
 ```
 
-{% sample lang="java" %}
+
+
+#### Java
 
 ```java
 // TODO
 ```
 
 
-{% sample lang="csharp" %}
+
+
+#### C-Sharp
 
 ```csharp
 // TODO
 ```
 
-{% sample lang="ruby" %}
+
+
+#### Ruby
 
 ```ruby
 # TODO
 ```
 
-{% sample lang="python" %}
+
+
+#### Python
 
 ```python
 # TODO
 ```
 
-{% sample lang="js" %}
+
+
+#### NodeJS
 
 ```js
 // TODO
 ```
 
-{% sample lang="php" %}
+
+
+#### PHP
 
 ```php
 // TODO
 ```
 
-{% endmethod %}
+

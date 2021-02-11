@@ -1,4 +1,4 @@
-{% method %}
+
 ## XML: `<Forward>`
 Forwards an unanswered incoming call to another number.  Unlike `<Transfer>`, once your call is forwarded, your application will not have any control over either leg of the call.  When either leg hangs up, a [Disconnect event](../callbacks/disconnect.md) will be sent to your Call status callback URL.  
 
@@ -9,19 +9,19 @@ Forwards an unanswered incoming call to another number.  Unlike `<Transfer>`, on
 | to                 | Number to forward the call to. Must be in E.164 format (e.g. +15555555555)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | from               | (optional) Number to use for caller ID on the outgoing leg. Must be in E.164 format (e.g. +15555555555). If omitted, assumes the "to" number of the original leg.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | callTimeout        | (optional) Number of seconds to wait for an answer before abandoning the call. Range: decimal values between 1 - 300. Default: 30                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| diversionTreatment | (optional) Can be any of the following: <br> `none`: No diversion headers are sent on the outbound leg of the transferred call. <br>`propagate`: Copy the Diversion header from the inbound leg to the outbound leg. Ignored if there is no Diversion header present on the inbound leg. <br>`stack`: After propagating any Diversion header from the inbound leg to the outbound leg, stack on top another Diversion header based on the Request-URI of the inbound call. <br><br>Defaults to `none`.  If diversionTreatment is not specified, no diversion header will be included for the transfer even if one came with the inbound call. |
-| diversionReason    | (optional) Can be any of the following values: <br>`unknown`<br>`user-busy`<br>`no-answer`<br>`unavailable`<br>`unconditional`<br>`time-of-day`<br>`do-not-disturb`<br>`deflection`<br>`follow-me`<br>`out-of-service`<br>`away` <br><br>This parameter is considered only when `diversionTreatment` is set to `stack`.  Defaults to `unknown`.                                                                                                                                                                                                                                                                                               |
+| diversionTreatment | (optional) Can be any of the following:  `none`: No diversion headers are sent on the outbound leg of the transferred call. `propagate`: Copy the Diversion header from the inbound leg to the outbound leg. Ignored if there is no Diversion header present on the inbound leg. `stack`: After propagating any Diversion header from the inbound leg to the outbound leg, stack on top another Diversion header based on the Request-URI of the inbound call. Defaults to `none`.  If diversionTreatment is not specified, no diversion header will be included for the transfer even if one came with the inbound call. |
+| diversionReason    | (optional) Can be any of the following values: `unknown``user-busy``no-answer``unavailable``unconditional``time-of-day``do-not-disturb``deflection``follow-me``out-of-service``away` This parameter is considered only when `diversionTreatment` is set to `stack`.  Defaults to `unknown`.                                                                                                                                                                                                                                                                                               |
 
 ### Callbacks Received
 
 None
 
-{% common %}
+
 ### Example 1 of 1: Simple Forward
 
 This shows how to use Bandwidth XML to forward a call from +11234567890 to +10987654321.
 
-{% sample lang="http" %}
+
 
 ```XML
 <?xml version="1.0" encoding="UTF-8"?>
@@ -30,7 +30,9 @@ This shows how to use Bandwidth XML to forward a call from +11234567890 to +1098
 </Response>
 ```
 
-{% sample lang="java" %}
+
+
+#### Java
 
 ```java
 Forward forward = Forward.builder()
@@ -42,7 +44,9 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
+
+
+#### C-Sharp
 
 ```csharp
 Response response = new Response();
@@ -57,7 +61,9 @@ Console.WriteLine(response.ToBXML());
 ```
 
 
-{% sample lang="ruby" %}
+
+
+#### Ruby
 
 ```ruby
 response = Bandwidth::Voice::Response.new()
@@ -70,7 +76,9 @@ response.push(forward)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
+
+#### Python
 
 ```python
 response = Response()
@@ -83,7 +91,9 @@ response.add_verb(forward)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
+
+#### NodeJS
 
 ```js
 var forward = new BandwidthBxml.Verbs.Forward();
@@ -96,7 +106,9 @@ response.addVerb(forward);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
+
+#### PHP
 
 ```php
 $forward = new BandwidthLib\Voice\Bxml\Forward();
@@ -110,4 +122,4 @@ echo $response->toBxml();
 echo "\n";
 ```
 
-{% endmethod %}
+

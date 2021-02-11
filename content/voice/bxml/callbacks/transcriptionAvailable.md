@@ -1,4 +1,4 @@
-{% method %}
+
 ##  Transcription Available event
 
 The Transcription Available event is sent when the recording transcription is available to be downloaded.
@@ -41,7 +41,7 @@ HTTP/1.1 204
 | status        | The state of the transcription. Can be `available`, `error`, `timeout`, `file-size-too-big`, `file-size-too-small`. |
 | completedTime | Time the transcription was completed (in ISO8601 format). |
 
-{% common %}
+
 
 #### Example: Recording Available event
 
@@ -75,4 +75,4 @@ POST http://[External server URL]
 }
 ```
 
-{% endmethod %}
+

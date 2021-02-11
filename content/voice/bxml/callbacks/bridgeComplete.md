@@ -1,4 +1,4 @@
-{% method %}
+
 ##  Bridge Complete Event
 If the target call leaves the [&lt;Bridge&gt;](../verbs/bridge.md),
 then this callback is sent to the `bridgeCompleteUrl`,
@@ -35,7 +35,7 @@ Content-Type: application/xml; charset=utf-8
 | errorMessage     | Text explaining the reason that caused the bridge to fail in case of errors. |
 | errorId          | Bandwidth internal id that references the error event. |
 
-{% common %}
+
 
 #### Example: Successful bridge completion
 
@@ -86,4 +86,4 @@ POST http://[External server URL]
 }
 ```
 
-{% endmethod %}
+

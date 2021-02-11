@@ -1,9 +1,9 @@
-# Setup Your Dashboard Account For Network Bridge {#top}
+# Setup Your Dashboard Account For Network Bridge 
 This guide walks through the initial setup for Bandwidth's Network Bridge with Twilio. The network bridge allows you to use Bandwidth to create phone calls using our network from another authorized API provider.
 
 You must contact [Bandwidth Customer Support](http://support.bandwidth.com/) to get your SIP domain and port number.
 
-## Pre-Reqs {#pre-requs}
+## Pre-Reqs 
 * [Twilio Account](http://twilio.com/)
 * [Bandwidth Dashboard Account](http://bandwidth.com/)
 * Network Bridge activated: [_contact sales_](https://www.bandwidth.com/)
@@ -11,12 +11,12 @@ You must contact [Bandwidth Customer Support](http://support.bandwidth.com/) to 
   * This will be used as part of the `Realm` combined with `auth.bandwidth.com`
 * Your default port ex: `5006` [_contact support_](http://support.bandwidth.com/)
 
-## Steps {#steps}
+## Steps 
 1. [Create New SIP Credentials](#create-new-sip-credentials)
 1. [Create call via Twilio with new SIP Creds](#create-call)
 
 
-## Create New Sip Credentials {#create-new-sip-credentials}
+## Create New Sip Credentials 
 In order to route the outbound calls through Bandwidth, you'll need to create a new set of SIP credentials. To generate your own hash values, you can follow the instructions below, but if you would like Bandwidth to generate those hash values for you, you can skip ahead to the [Using the UI](#using-the-ui) section of this guide.
 
 | Value      | Required | Description |
@@ -28,7 +28,7 @@ In order to route the outbound calls through Bandwidth, you'll need to create a 
 
 The Twilio platform requires a `SIPAuthUsername` and a `SIPAuthPassword`. These examples assume that your `username=sipauthtest` and `password=password`.
 
-### Generate MD5 Hash {#generate-md5-hash}
+### Generate MD5 Hash 
 Either using the command line or an [online tool](http://www.miraclesalad.com/webtools/md5.php) generate the md5 hash from the username and desired password.
 
 Most *nix (mac, linux) come with MD5 hash built in. Check that MD5 is installed by opening up the terminal and typing:
@@ -79,15 +79,15 @@ md5 -s bob@somewhere.com:custxx.auth.bandwidth.com:custxx.auth.bandwidth.com:pas
 MD5 ("bob@somewhere.com:custxx.auth.bandwidth.com:custxx.auth.bandwidth.com:password") = 39679d2a73c2e1ea719621bc0d8fdac8
 ```
 
-### Add the Newly Created Hash to Sip Credentials {#add-new-credentials}
+### Add the Newly Created Hash to Sip Credentials 
 After generating the hash value, fill in the Hash1 and Hash2 values to create the SIP credentials.
 
-#### Using the UI  {#using-the-ui}
+#### Using the UI  
 Select `Sip Credentials` from the account overview page on the [Bandwidth Dashboard](dashboard.bandwidth.com)
 
-<img src="../../images/sip_credentials.png" style="max-width:95%">
 
-<img src="../../images/create_sip_credentials.png" style="max-width:95%">
+
+
 
 #### Using the API
 You can also use the API to create SIP credentials after generating the MD5 hash value. When using the API, Bandwidth will not generate the hashes for you - you must supply your own hash values. You can create multiple SIP credentials within one API call.
@@ -113,7 +113,7 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 </SipCredentials>
 ```
 
-## Create Call Using the Network Bridge {#create-call}
+## Create Call Using the Network Bridge 
 To create a call using the network bridge format:
 
 * `TO` field like `sip:{Desired_to_number}@custxx.auth.bandwidth.com:{Port}`

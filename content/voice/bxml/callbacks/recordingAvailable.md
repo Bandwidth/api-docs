@@ -1,4 +1,4 @@
-{% method %}
+
 ##  Recording Available event
 
 The Recording Available event is sent after a recording has been processed. It indicates that the recording is available for download.
@@ -34,7 +34,7 @@ HTTP/1.1 204
 | transferCallerId  | (optional) If the event is related to the B leg of a `<Transfer>`, the phone number used as the `from` field of the B-leg call, in E.164 format (e.g. +15555555555). Otherwise, this field will not be present. |
 | transferTo        | (optional) If the event is related to the B leg of a `<Transfer>`, the phone number used as the `to` field of the B-leg call in E.164 format (e.g. +15555555555). Otherwise, this field will not be present. |
 
-{% common %}
+
 
 #### Example: Recording Available event
 
@@ -64,4 +64,4 @@ POST http://[External server URL]
 }
 ```
 
-{% endmethod %}
+
