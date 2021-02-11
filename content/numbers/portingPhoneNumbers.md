@@ -158,7 +158,7 @@ The general approach to handling this API call is to replace the elements includ
 
 ## Canceling LNP Order 
 
-The API allows a user to cancel an existing LNP order. The order number that was generated in the create request must be provided. The status of the order shall not be marked as `COMPLETE` i.e. you cannot cancel a completed order.  The DEL  method is used for this purpose.
+The API allows a user to cancel an existing LNP order. The order number that was generated in the create request must be provided. The status of the order shall not be marked as `COMPLETE` i.e. you cannot cancel a completed order. The DEL method is used for this purpose.
 
 ## Activating Ported Numbers 
 
