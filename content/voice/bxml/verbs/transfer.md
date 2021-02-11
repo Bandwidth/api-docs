@@ -51,7 +51,7 @@ one destination is specified, called parties will ring simultaneously and the fi
 | password | (optional) The password to send in the HTTP request to `transferAnswerUrl` and `transferDisconnectUrl`. |
 | fallbackUsername | (optional) The username to send in the HTTP request to `transferAnswerFallbackUrl`. |
 | fallbackPassword | (optional) The password to send in the HTTP request to `transferAnswerFallbackUrl`. |
-| tag | (optional) A custom string that will be sent with these and all future callbacks unless overwritten by a future `tag` attribute or cleared.May be cleared by setting `tag=""`Max length 256 characters. |
+| tag | (optional) A custom string that will be sent with these and all future callbacks unless overwritten by a future `tag` attribute or cleared. May be cleared by setting `tag=""`Max length 256 characters. |
 
 #### SipUri attributes
 | Attribute | Description |
@@ -605,4 +605,3 @@ $response->addVerb($transfer);
 echo $response->toBxml();
 echo "\n";
 ```
-
