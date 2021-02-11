@@ -15,7 +15,7 @@ To choose a specific voice by name, use the `voice` attribute.
 
 | Attribute | Description                                                                                                                                                                      |
 |:----------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| voice     | Selects the voice of the speaker. Consult the `voice` column in the below table for valid values.If the `voice` attribute is present, `gender` and `locale` are ignored. |
+| voice     | Selects the voice of the speaker. Consult the `voice` column in the below table for valid values. If the `voice` attribute is present, `gender` and `locale` are ignored. |
 | gender    | Selects the gender of the speaker. Valid values are `"male"` or `"female"`.Default `"female"`                                                                            |
 | locale    | Selects the locale of the speaker. Consult `locale` column in the below table for valid values.Default `"en_US"`                                                         |
 
@@ -370,5 +370,4 @@ $response = new BandwidthLib\Voice\Bxml\Response();
 $response->addVerb($speakSentence);
 echo $response->toBxml();
 ```
-
 
