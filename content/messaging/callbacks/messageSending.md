@@ -14,7 +14,7 @@ You will receive this callback between when the message is received by Bandwidth
 | to                    | `string` | The destination number for an outbound message receipt                                                                                                                                                                                                                                                                                                              |
 | message               | `Object` | An object of message information                                                                                                                                                                                                                                                                                                                                    |
 | message.id            | `string` | The unique ID of this message                                                                                                                                                                                                                                                                                                                                       |
-| message.owner         | `string` | The phone number this particular message is associated with. For an outbound message, this is always the `from` number. For an inbound message, this will be (one of) the `to` number(s).For instance, if this is an inbound group message, the `owner` field will be set to the `to` number that this particular copy of the group message belongs to. |
+| message.owner         | `string` | The phone number this particular message is associated with. For an outbound message, this is always the `from` number. For an inbound message, this will be (one of) the `to` number(s). For instance, if this is an inbound group message, the `owner` field will be set to the `to` number that this particular copy of the group message belongs to. |
 | message.time          | `string` | The time stamp of when message was created                                                                                                                                                                                                                                                                                                                          |
 | message.direction     | `string` | The direction of the message relative to Bandwidth. Will only be `out` for this event |
 | message.to            | `array`  | The phone number (or numbers) the message the message is sent to. On a POST, this can be a String, or an array of one or more numbers. In all other places, this will be an array.                                                                                                                                                                                  |
@@ -54,6 +54,5 @@ You will receive this callback between when the message is received by Bandwidth
     }
 ]
 ```
-
 
 
