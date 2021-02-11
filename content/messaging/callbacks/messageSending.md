@@ -1,4 +1,4 @@
-{% method %}
+
 # Message Sending Event (MMS only)
 In order to receive message events, you need to ensure you have set up your application to send callbacks to your server's URL.
 
@@ -14,7 +14,7 @@ You will receive this callback between when the message is received by Bandwidth
 | to                    | `string` | The destination number for an outbound message receipt                                                                                                                                                                                                                                                                                                              |
 | message               | `Object` | An object of message information                                                                                                                                                                                                                                                                                                                                    |
 | message.id            | `string` | The unique ID of this message                                                                                                                                                                                                                                                                                                                                       |
-| message.owner         | `string` | The phone number this particular message is associated with.<br> For an outbound message, this is always the `from` number.<br> For an inbound message, this will be (one of) the `to` number(s).<br>For instance, if this is an inbound group message, the `owner` field will be set to the `to` number that this particular copy of the group message belongs to. |
+| message.owner         | `string` | The phone number this particular message is associated with. For an outbound message, this is always the `from` number. For an inbound message, this will be (one of) the `to` number(s). For instance, if this is an inbound group message, the `owner` field will be set to the `to` number that this particular copy of the group message belongs to. |
 | message.time          | `string` | The time stamp of when message was created                                                                                                                                                                                                                                                                                                                          |
 | message.direction     | `string` | The direction of the message relative to Bandwidth. Will only be `out` for this event |
 | message.to            | `array`  | The phone number (or numbers) the message the message is sent to. On a POST, this can be a String, or an array of one or more numbers. In all other places, this will be an array.                                                                                                                                                                                  |
@@ -25,11 +25,11 @@ You will receive this callback between when the message is received by Bandwidth
 | message.tag           | `string` | An custom String that you can use to track this particular message                                                                                                                                                                                                                                                                                                  |
 | message.segmentCount  | `int`    | This indicates the number of segments the original message from the user is broken into before sending over to career networks                                                                                                                                                                                                                                      |
 
-{% common %}
+
 
 ## Example: MMS Sending
 
-{% sample lang='http' %}
+
 
 ```http
 [
@@ -56,4 +56,3 @@ You will receive this callback between when the message is received by Bandwidth
 ```
 
 
-{% endmethod %}

@@ -1,4 +1,4 @@
-{% method %}
+
 ##  Bridge Target Complete Event
 If the originating call leaves the [&lt;Bridge&gt;](../verbs/bridge.md),
 then this callback is sent to the `bridgeTargetCompleteUrl`,
@@ -30,7 +30,7 @@ Content-Type: application/xml; charset=utf-8
 | answerTime       | Time the call was answered, in ISO 8601 format. |
 | tag              | The `tag` specified earlier in the call. If no `tag` was specified or it was previously cleared, this field will not be present. |
 
-{% common %}
+
 
 #### Example: Bridge completion
 
@@ -54,4 +54,4 @@ POST http://[External server URL]
 }
 ```
 
-{% endmethod %}
+

@@ -1,7 +1,7 @@
-{% multimethod %}
-{% endmultimethod %}
 
-# Portout Validation Event {#top}
+
+
+# Portout Validation Event 
 
 The port out validation API is used for portout management purposes and gives the losing side customer the possibility to validate the portout process. Please contact [support](https://support.bandwidth.com) to enable Portout Validation.
 
@@ -14,18 +14,18 @@ The port out validation API is used for portout management purposes and gives th
 * [Allow Portout](#allow-portout)
 * [Deny Portout](#deny-portout)
 
-## Configuration {#configuration}
+## Configuration 
 
 The configuration of the call-back API used for port-out validation is done by [Bandwidth development staff](https://support.bandwidth.com).  Configuration of this service is performed on the submission of a Ticket, and on completion of the required contract extensions.
 
 * The configured URL provided by the customer that will be invoked by Bandwidth in order to validate a port-out request.
 * The security of the exchange can be protected within an https exchange, and can be authenticated with userid / password credentials, or with certificates. The setup of the callback will be covered in the ticketing process.
 
-## Responsibilities {#responsibilities}
+## Responsibilities 
 
 Accounts using the Port-out verification API will likely be required to extend the contractual relationship with Bandwidth to ensure clarity around the responsibilities of our customers in the use of the API, and the rights of Bandwidth to withhold this capability if we believe that the capability is being used in contravention of FCC best practices, guidelines and recommendations. Please review these requirements with your Bandwidth representative.
 
-## Summary {#summary}
+## Summary 
 
 Validation of a Port-out request will begin with a submission from Bandwidth to our customer including information used to validate the correctness of the port-out request. The included information may include:
 
@@ -37,9 +37,9 @@ Validation of a Port-out request will begin with a submission from Bandwidth to 
 * Failure to return a valid response will be considered an **approval of the port-out request**.
 * Failure to return any response will be considered an **approval of the port-out request.**
 
-## Responding to Portout Event {#callback-request}
+## Responding to Portout Event 
 
-{% extendmethod %}
+
 
 ### Callback Request Parameters
 
@@ -52,7 +52,7 @@ Validation of a Port-out request will begin with a submission from Bandwidth to 
 | `SubscriberName`   | `string`                    | Subscriber name for information purposes. (optional)( 93 characters )                                |
 | `TelephoneNumbers` | List of `<TelephoneNumber>` | list of one or more telephone numbers (at least one telephone number will be provided) ( 10 digits ) |
 
-{% common %}
+
 
 ### Example 1 of 1: Incoming Portout Validation Request
 
@@ -75,23 +75,23 @@ Content-Type: application/xml; charset=utf-8
 
 ```
 
-{% endextendmethod %}
 
-## Allow Portout Response Parameters {#allow-portout}
+
+## Allow Portout Response Parameters 
 
 To validate the portout (IE positive validation of the port-out request), there is no additional information required. Reply with the `<Portable>true</Portable>` to approve the portout.
 
 * Failure to return a valid response will be considered an **approval of the port-out request**.
 * Failure to return any response will be considered an **approval of the port-out request.**
 
-{% extendmethod %}
+
 
 | Parameter  | Type      | Description                                                               |
 |:-----------|:----------|:--------------------------------------------------------------------------|
 | `Portable` | `boolean` | Must be `true`                                                            |
 | `PON`      | `string`  | PON for information and correlation purposes. (optional)( 25 characters ) |
 
-{% common %}
+
 
 ### Example 1 of 1: Allow Portout Response
 
@@ -105,9 +105,9 @@ Content-Type: application/xml
 </PortOutValidationResponse>
 ```
 
-{% endextendmethod %}
 
-### Deny Portout Response {#deny-portout}
+
+### Deny Portout Response 
 
 To deny the portout (IE a negative response indicating that the port-out request is considered to be invalid, based on the information received). The response **must** contain error response codes that will support updating of the request with valid data. **This information will be passed back to the requesting party to allow them to attempt to improve the request.**
 
@@ -148,7 +148,7 @@ The error codes and error explanation payloads below are the ones that we expect
 | nnnn | Anything Else                                               | Request succeeds            |
 
 
-{% extendmethod %}
+
 
 
 | Parameter           | Type                        | Description                                                                                                                                                                       |
@@ -165,7 +165,7 @@ The error codes and error explanation payloads below are the ones that we expect
 | `SubscriberName`    | `string`                    | Subscriber name for information purposes. (optional)( 93 characters )                                                                                                             |
 | `TelephoneNumbers`  | List of `<TelephoneNumber>` | Contains the telephone numbers considered valid                                                                                                                                   |
 
-{% common %}
+
 
 ### Example 1 of 1: Deny Portout Response
 
@@ -197,5 +197,5 @@ Content-Type: application/xml
 </PortOutValidationResponse>
 ```
 
-{% endextendmethod %}
+
 

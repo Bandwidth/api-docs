@@ -1,4 +1,4 @@
-{% method %}
+
 # Message Failed Event
 In order to receive message events, you need to ensure you have set up your application to send callbacks to your server's URL.
 
@@ -14,7 +14,7 @@ For MMS and Group Messages, you will only receive this callback if you have enab
 | to                    | `string`  | The destination number for an outbound message receipt                                                                                                                                                                                                                                                                                                              |
 | message               | `Object`  | An object of message information                                                                                                                                                                                                                                                                                                                                    |
 | message.id            | `string`  | The unique ID of this message                                                                                                                                                                                                                                                                                                                                       |
-| message.owner         | `string`  | The phone number this particular message is associated with.<br> For an outbound message, this is always the `from` number.<br> For an inbound message, this will be (one of) the `to` number(s).<br>For instance, if this is an inbound group message, the `owner` field will be set to the `to` number that this particular copy of the group message belongs to. |
+| message.owner         | `string`  | The phone number this particular message is associated with. For an outbound message, this is always the `from` number. For an inbound message, this will be (one of) the `to` number(s). For instance, if this is an inbound group message, the `owner` field will be set to the `to` number that this particular copy of the group message belongs to. |
 | message.time          | `string`  | The time stamp of when message was created                                                                                                                                                                                                                                                                                                                          |
 | message.direction     | `string`  | Whether the message was sent from Bandwidth, or received by a Bandwidth number                                                                                                                                                                                                                                                                                      |
 | message.to            | `array`   | The phone number (or numbers) the message the message is sent to. On a POST, this can be a String, or an array of one or more numbers. In all other places, this will be an array.                                                                                                                                                                                  |
@@ -25,10 +25,10 @@ For MMS and Group Messages, you will only receive this callback if you have enab
 | message.tag           | `string`  | An custom String that you can use to track this particular message                                                                                                                                                                                                                                                                                                  |
 | message.segmentCount  | `int`     | This indicates the number of segments the original message from the user is broken into before sending over to career networks                                                                                                                                                                                                                                      |
 
-{% common %}
+
 ### Example Error 1 of 2 (4432 - forbidden to country)
 
-{% sample lang='http' %}
+
 
 ```http
 POST /your_url HTTP/1.1
@@ -68,7 +68,7 @@ User-Agent: BandwidthAPI/v2
 * Timed out waiting for delivery receipt. The reason a delivery receipt was not received is not known.
 * A timeout response with error-code : **9902 - Timed out waiting for delivery receipt. The reason a delivery receipt was not received is not known.** does **not** indicate that the message was not received. Only that the end-users' device did not communicate back to the network or the carrier did not provide us with a delivery confirmation
 
-{% sample lang='http' %}
+
 
 ```http
 POST /your_url HTTP/1.1
@@ -99,4 +99,3 @@ User-Agent: BandwidthAPI/v2
 ]
 ```
 
-{% endmethod %}

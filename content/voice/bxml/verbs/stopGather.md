@@ -1,4 +1,4 @@
-{% method %}
+
 ## XML: `<StopGather>`
 The StopGather verb is used to stop the DTMF detection that was previously started by a [`<StartGather>`](startGather.md) verb.
 
@@ -10,12 +10,12 @@ The StopGather verb is used to stop the DTMF detection that was previously start
 ### Callbacks Received
 None
 
-{% common %}
+
 
 #### Example 1 of 1: Stop gathering digits after a Transfer
 This example shows how to use the StartGather verb to listen for digits pressed during a Transfer and stop after the Transfer ends.
 
-{% sample lang="http" %}
+
 
 ```XML
 <?xml version="1.0" encoding="UTF-8"?>
@@ -32,40 +32,52 @@ This example shows how to use the StartGather verb to listen for digits pressed 
 </Response>
 ```
 
-{% sample lang="java" %}
+
+
+#### Java
 
 ```java
 // TODO
 ```
 
-{% sample lang="csharp" %}
+
+
+#### C-Sharp
 
 ```csharp
 // TODO
 ```
 
-{% sample lang="ruby" %}
+
+
+#### Ruby
 
 ```ruby
 # TODO
 ```
 
-{% sample lang="python" %}
+
+
+#### Python
 
 ```python
 # TODO
 ```
 
-{% sample lang="js" %}
+
+
+#### NodeJS
 
 ```js
 // TODO
 ```
 
-{% sample lang="php" %}
+
+
+#### PHP
 
 ```php
 // TODO
 ```
 
-{% endmethod %}
+

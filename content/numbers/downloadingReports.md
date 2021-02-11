@@ -1,5 +1,5 @@
-{% multimethod %}
-{% endmultimethod %}
+
+
 
 # Downloading Reports
 
@@ -15,10 +15,10 @@
   * [Query Report Status](#status-billing-report)
   * [Download the Report](#download-billing-report)
 
-## About {#about}
+## About 
 The Bandwidth numbers API allows you to automate the creation and download of certain reports related to account usage. This is handled through various requests to our `/reports` and `/billingReports` endpoints. The available reports for each endpoint are detailed in their respective sections.
 
-## Account Reports (`/reports`) {#account-reports}
+## Account Reports (`/reports`) 
 
 | Report Name                                     | ID | Description                                                                                                                                    |
 |-------------------------------------------------|----|------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -41,13 +41,13 @@ The Bandwidth numbers API allows you to automate the creation and download of ce
 | International TN Inventory Summary              | 64 | Summary of international telephone numbers                                                                                                     |
 | Telephone Number Route Plan Report              | 65 | This report lists all of the route plans that are active for the indicated account                                                             |
 
-A <code class="get">GET</code> request to `https://dashboard.bandwidth.com/api/accounts/{accountId}/reports` will return an XML list of the available report types, their ID number, and a description of each. The report ID needs to be passed in to the URL of the API request to indicate which type of report we want to create. A <code class="get">GET</code> request to `https://dashboard.bandwidth.com/api/accounts/{accountId}/reports/{reportId}` will return details for a specific report, like a description and the parameters needed to define boundaries for the report.
+A GET request to `https://dashboard.bandwidth.com/api/accounts/{accountId}/reports` will return an XML list of the available report types, their ID number, and a description of each. The report ID needs to be passed in to the URL of the API request to indicate which type of report we want to create. A GET request to `https://dashboard.bandwidth.com/api/accounts/{accountId}/reports/{reportId}` will return details for a specific report, like a description and the parameters needed to define boundaries for the report.
 
-{% extendmethod %}
-### Request a Report {#request-account-report}
-Once the ID of the report you are looking to generate is ascertained, A <code class="post">POST</code> request to `https://dashboard.bandwidth.com/api/accounts/{accountId}/reports/{reportId}/instances` will trigger the generation of a new report and return a `201` response with a location header containing a URL used to query the status of the report.
 
-{% common %}
+### Request a Report 
+Once the ID of the report you are looking to generate is ascertained, A POST request to `https://dashboard.bandwidth.com/api/accounts/{accountId}/reports/{reportId}/instances` will trigger the generation of a new report and return a `201` response with a location header containing a URL used to query the status of the report.
+
+
 #### Request
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{accountId}/reports/{reportId}/instancess HTTP/1.1
@@ -82,13 +82,13 @@ HTTP/1.1 201 Created
 Content-Type: application/xml; charset=utf-8
 Location: https://dashboard.bandwidth.com/api/accounts/{accountId}/reports/{reportId}/instances/789
 ```
-{% endextendmethod %}
 
-{% extendmethod %}
-### Query Report Status {#status-account-report}
-Using the URL received in the HTTP response from our first <code class="post">POST</code> request, we can make a request to query the API for the status of our report's generation.
 
-{% common %}
+
+### Query Report Status 
+Using the URL received in the HTTP response from our first POST request, we can make a request to query the API for the status of our report's generation.
+
+
 #### Request
 ```http
 GET https://dashboard.bandwidth.com/api/accounts/{accountId}/reports/{reportId}/instances/789 HTTP/1.1
@@ -120,14 +120,14 @@ Content-Type: application/xml; charset=utf-8
     </Instance>
 </ReportInstanceResponse>
 ```
-{% endextendmethod %}
-
-{% extendmethod %}
-### Download the Report {#download-account-report}
-Once the report status query returns `Ready`, we are ready to download the requested report. This can be done by making a <code class="get">GET</code> request to the URI received in the location header of the response to our original <code class="post">POST</code> request, and appending it with `/file` . The 200 response will include a `Content-Disposition` header indicating the filename, and a download of the file will begin.
 
 
-{% common %}
+
+### Download the Report 
+Once the report status query returns `Ready`, we are ready to download the requested report. This can be done by making a GET request to the URI received in the location header of the response to our original POST request, and appending it with `/file` . The 200 response will include a `Content-Disposition` header indicating the filename, and a download of the file will begin.
+
+
+
 #### Request
 ```http
 GET https://dashboard.bandwidth.com/api/accounts/{accountId}/reports/{reportId}/instances/789/file HTTP/1.1
@@ -139,10 +139,10 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 HTTP/1.1 200 OK
 Content-Disposition: attachment; filename=output.pdf
 ```
-{% endextendmethod %}
 
 
-## Billing Reports (`/billingReports`) {#billing-reports}
+
+## Billing Reports (`/billingReports`) 
 
 | Report Type          | Description                                                                                                                                          |
 |----------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -161,11 +161,11 @@ Content-Disposition: attachment; filename=output.pdf
 | CONFBDR              | Billing Detail Records for Transcription Services - per conference information, available on day to day basis                                        |
 | CONFSTMTBDR          | BDR records that are aligned with the invoice for Conferencing Services                                                                              |
 
-{% extendmethod %}
-### Request a Report {#request-billing-report}
-Creating a report starts with a <code class="post">POST</code> request to `https://dashboard.bandwidth.com/api/accounts/{accountId}/billingReports`, detailing the date range for the report as well as type of report you wish to download. A successful response will include a body and location header, which contains a URI with the report ID to be used in later requests.
 
-{% common %}
+### Request a Report 
+Creating a report starts with a POST request to `https://dashboard.bandwidth.com/api/accounts/{accountId}/billingReports`, detailing the date range for the report as well as type of report you wish to download. A successful response will include a body and location header, which contains a URI with the report ID to be used in later requests.
+
+
 #### Request
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{accountId}/billingReports HTTP/1.1
@@ -192,14 +192,14 @@ Location: https://dashboard.bandwidth.com/api/accounts/{accountId}/billingreport
     <Description>The report archive is currently being constructed.</Description>
 </BillingReportCreationResponse>
 ```
-{% endextendmethod %}
 
 
-{% extendmethod %}
-### Query Report Status {#status-billing-report}
-Because of the asynchronous nature of the `/billingReports` endpoint, a <code class="post">POST</code> request does not necessarily mean the report is ready to be consumed. A <code class="get">GET</code> request to the URI received in the location header will return the report status, letting us know if it is ready to be downloaded or not. Expected responses in the `<ReportStatus>` element are `PROCESSING` and `COMPLETED`.
 
-{% common %}
+
+### Query Report Status 
+Because of the asynchronous nature of the `/billingReports` endpoint, a POST request does not necessarily mean the report is ready to be consumed. A GET request to the URI received in the location header will return the report status, letting us know if it is ready to be downloaded or not. Expected responses in the `<ReportStatus>` element are `PROCESSING` and `COMPLETED`.
+
+
 #### Request
 ```http
 GET https://dashboard.bandwidth.com/api/accounts/{accountId}/billingreports/a12b456c8-abcd-1a3b-a1b2-0a2b4c6d8e0f2 HTTP/1.1
@@ -216,13 +216,13 @@ Content-Type: application/xml; charset=utf-8
     <Description>The report archive is constructed.</Description>
 </BillingReportRetrievalResponse>
 ```
-{% endextendmethod %}
 
-{% extendmethod %}
-### Download the Report {#download-billing-report}
-Once the report status query returns `COMPLETED`, we are ready to download the requested report. This can be done by making a <code class="get">GET</code> request to the URI received in the location header of the response to our original <code class="post">POST</code> request, and appending it with `/file` . The 200 response will include a `Content-Disposition` header indicating the filename, and a download of the .zip file will begin.
 
-{% common %}
+
+### Download the Report 
+Once the report status query returns `COMPLETED`, we are ready to download the requested report. This can be done by making a GET request to the URI received in the location header of the response to our original POST request, and appending it with `/file` . The 200 response will include a `Content-Disposition` header indicating the filename, and a download of the .zip file will begin.
+
+
 #### Request
 ```http
 GET https://dashboard.bandwidth.com/api/accounts/{accountId}/billingreports/a12b456c8-abcd-1a3b-a1b2-0a2b4c6d8e0f2/file HTTP/1.1
@@ -234,4 +234,4 @@ HTTP/1.1 200 OK
 Content-Type: application/xml; charset=utf-8
 Content-Disposition: attachment; filename=bdrs_2020-05-21_2020-05-29.zip
 ```
-{% endextendmethod %}
+

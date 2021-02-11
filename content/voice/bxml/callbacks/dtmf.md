@@ -1,4 +1,4 @@
-{% method %}
+
 ## DTMF Event
 
 The DTMF event is sent for every digit detected after a [`<StartGather>`](../verbs/startGather.md) verb is executed.
@@ -31,7 +31,7 @@ HTTP/1.1 204
 | transferTo       | (optional) If the event is related to the B leg of a `<Transfer>`, the phone number used as the `to` field of the B-leg call in E.164 format (e.g. +15555555555). Otherwise, this field will not be present. |
 | tag              | (optional) The `tag` specified earlier in the call. If no `tag` was specified or it was previously cleared, this field will not be present. |
 
-{% common %}
+
 
 #### Example: DTMF event
 
@@ -56,4 +56,4 @@ POST http://[External server URL]
 }
 ```
 
-{% endmethod %}
+

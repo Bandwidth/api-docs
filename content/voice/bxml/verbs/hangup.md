@@ -1,4 +1,4 @@
-{% method %}
+
 ## XML: `<Hangup>`
 The Hangup verb is used to hang up the current call.
 
@@ -19,13 +19,13 @@ You will not be charged for rejected calls.
 |:---------------------------------|:-------------------------|
 | [CallComplete](../callbacks/disconnect.md) | No                      |
 
-{% common %}
+
 
 
 #### Example 1 of 1: Hangup Verb
 This shows how to use Bandwidth XML to hang up an existing call.
 
-{% sample lang="http" %}
+
 
 
 ```XML
@@ -35,7 +35,9 @@ This shows how to use Bandwidth XML to hang up an existing call.
 </Response>
 ```
 
-{% sample lang="java" %}
+
+
+#### Java
 
 ```java
 Hangup hangup = Hangup.builder().build();
@@ -46,7 +48,9 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
+
+
+#### C-Sharp
 
 ```csharp
 Response response = new Response();
@@ -59,7 +63,9 @@ Console.WriteLine(response.ToBXML());
 ```
 
 
-{% sample lang="ruby" %}
+
+
+#### Ruby
 
 ```ruby
 response = Bandwidth::Voice::Response.new()
@@ -69,7 +75,9 @@ response.push(hangup)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
+
+#### Python
 
 ```python
 response = Response()
@@ -79,7 +87,9 @@ response.add_verb(hangup)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
+
+#### NodeJS
 
 ```js
 var hangup = new BandwidthBxml.Verbs.Hangup();
@@ -90,7 +100,9 @@ response.addVerb(hangup);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
+
+#### PHP
 
 ```php
 $hangup = new BandwidthLib\Voice\Bxml\Hangup();
@@ -101,4 +113,4 @@ echo $response->toBxml();
 echo "\n";
 ```
 
-{% endmethod %}
+

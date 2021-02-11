@@ -1,4 +1,4 @@
-{% method %}
+
 ## Answer Event
 
 The Answer event is fired when an outbound call is answered.
@@ -29,7 +29,7 @@ Content-Type: application/xml; charset=utf-8
 | answerTime    | Time the call was answered, in ISO 8601 format. |
 | tag           | (optional) The `tag`  specified on call creation. If no `tag` was specified or it was previously cleared, this field will not be present. |
 
-{% common %}
+
 #### Example: Basic answer event
 
 ```
@@ -74,4 +74,4 @@ POST http://[External server URL]
 }
 ```
 
-{% endmethod %}
+

@@ -1,4 +1,4 @@
-{% method %}
+
 ## Redirect Event
 
 The Redirect event is fired when a `<Redirect>` verb is executed.  Its purpose is to get the next
@@ -33,7 +33,7 @@ Content-Type: application/xml; charset=utf-8
 | transferCallerId | (optional) If the event is related to the B leg of a `<Transfer>`, the phone number used as the `from` field of the B-leg call, in E.164 format (e.g. +15555555555). Otherwise, this field will not be present. |
 | transferTo       | (optional) If the event is related to the B leg of a `<Transfer>`, the phone number used as the `to` field of the B-leg call in E.164 format (e.g. +15555555555). Otherwise, this field will not be present. |
 
-{% common %}
+
 
 #### Example: Basic redirect event
 
@@ -78,4 +78,4 @@ POST http://[External server URL]
 }
 ```
 
-{% endmethod %}
+

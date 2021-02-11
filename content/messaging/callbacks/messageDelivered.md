@@ -1,17 +1,17 @@
-{% method %}
+
 # Message Delivered Event
 In order to receive message events, you need to ensure you have set up your application to send callbacks to your server's URL.
 
-{% raw %}
 
-<aside class="alert general">
-<p><b>
+
+
+
 IMPORTANT NOTE ABOUT MMS AND GROUP MESSAGES!
-</p></b>
-MMS and Group messages do currently support delivery receipts. However, you will need to have this enabled. Without the delivery receipts enabled, you will still receive a message delivered event when the message is sent. The message delivered event will not represent true delivery for only MMS and Group Messages. This will mean your message has been handed off to the Bandwidth's MMSC network, but has not been confirmed at the downstream carrier.
-</aside>
 
-{% endraw %}
+MMS and Group messages do currently support delivery receipts. However, you will need to have this enabled. Without the delivery receipts enabled, you will still receive a message delivered event when the message is sent. The message delivered event will not represent true delivery for only MMS and Group Messages. This will mean your message has been handed off to the Bandwidth's MMSC network, but has not been confirmed at the downstream carrier.
+
+
+
 
 ### Parameters
 | Parameter             | Type     | Description                                                                                                                                                                                                                                                                                                                                                         |
@@ -22,10 +22,10 @@ MMS and Group messages do currently support delivery receipts. However, you will
 | to                    | `string` | The destination number for an outbound message receipt                                                                                                                                                                                                                                                                                                              |
 | message               | `Object` | An object of message information                                                                                                                                                                                                                                                                                                                                    |
 | message.id            | `string` | The unique ID of this message                                                                                                                                                                                                                                                                                                                                       |
-| message.owner         | `string` | The phone number this particular message is associated with.<br> For an outbound message, this is always the `from` number.<br> For an inbound message, this will be (one of) the `to` number(s).<br>For instance, if this is an inbound group message, the `owner` field will be set to the `to` number that this particular copy of the group message belongs to. |
+| message.owner         | `string` | The phone number this particular message is associated with. For an outbound message, this is always the `from` number. For an inbound message, this will be (one of) the `to` number(s).For instance, if this is an inbound group message, the `owner` field will be set to the `to` number that this particular copy of the group message belongs to. |
 | message.time          | `string` | The time stamp of when message was created                                                                                                                                                                                                                                                                                                                          |
 | message.direction     | `string` | Whether the message was sent from Bandwidth, or received by a Bandwidth number                                                                                                                                                                                                                                                                                      |
-| message.to            | `array`  | The phone number (or numbers) the message the message was sent to. This will always be formatted as an array in the callback.<br><br>Note: On a POST request to create a message, this can be a String comprising a single number, or an array of one or more numbers. Bandwidth will always return the message.to value as an array in callbacks.                                                                                                                                                                         |
+| message.to            | `array`  | The phone number (or numbers) the message the message was sent to. This will always be formatted as an array in the callback.Note: On a POST request to create a message, this can be a String comprising a single number, or an array of one or more numbers. Bandwidth will always return the message.to value as an array in callbacks.                                                                                                                                                                         |
 | message.from          | `string` | The phone number the message was sent from                                                                                                                                                                                                                                                                                                                          |
 | message.text          | `string` | Empty text/string. Message text content will not be sent in callback.                                                                                                                                                                                                                                                                                               |
 | message.applicationId | `string` | The ID of the Application your `from` number is associated with in the Bandwidth Phone Number Dashboard.                                                                                                                                                                                                                                                            |
@@ -33,11 +33,11 @@ MMS and Group messages do currently support delivery receipts. However, you will
 | message.tag           | `string` | An custom String that you can use to track this particular message                                                                                                                                                                                                                                                                                                  |
 | message.segmentCount  | `int`    | This indicates the number of segments the original message from the user is broken into before sending over to career networks                                                                                                                                                                                                                                      |
 
-{% common %}
+
 
 ### Example 1 of 4: SMS Message delivered
 
-{% sample lang='http' %}
+
 
 ```http
 POST /your_url HTTP/1.1
@@ -65,7 +65,7 @@ User-Agent: BandwidthAPI/v2
 ]
 ```
 
-{% common %}
+
 
 ### Example 2 of 4: Toll-free Message delivered to handset
 
@@ -73,7 +73,7 @@ User-Agent: BandwidthAPI/v2
 * A [timeout response with error-code](messageFailed.md) : **9902 - Timed out waiting for delivery receipt. The reason a delivery receipt was not received is not known.** does **not** indicate that the message was not received. Only that the end-users' device did not communicate back to the network indicating the message was received during the DLR timeout window.
 * A DLR when the **from** number is **toll-free** and the **status** is **ok** indicates that the message was indeed delivered to the end users' device.
 
-{% sample lang='http' %}
+
 
 
 ```http
@@ -107,7 +107,7 @@ User-Agent: BandwidthAPI/v2
 
 ### Example 3 of 4: MMS Message delivered to carrier
 
-{% sample lang='http' %}
+
 
 ```http
 POST /your_url HTTP/1.1
@@ -136,13 +136,13 @@ User-Agent: BandwidthAPI/v2
 ]
 ```
 
-{% common %}
+
 
 ### Example 4 of 4: Group MMS Message delivered to carrier
 
 You will receive a unique callback per phonenumber sent in the group message. The example below shows **1 of the 2** callbacks that would be sent from Bandwidth.
 
-{% sample lang='http' %}
+
 
 ```http
 POST /your_url HTTP/1.1
@@ -173,4 +173,4 @@ User-Agent: BandwidthAPI/v2
 ]
 ```
 
-{% endmethod %}
+

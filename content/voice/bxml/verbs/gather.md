@@ -1,4 +1,4 @@
-{% method %}
+
 ## XML: `<Gather>`
 The Gather verb is used to collect digits for some period of time.
 
@@ -14,7 +14,7 @@ The Gather verb is used to collect digits for some period of time.
 | password             | (optional) The password to send in the HTTP request to `gatherUrl`. |
 | fallbackUsername     | (optional) The username to send in the HTTP request to `gatherFallbackUrl`. |
 | fallbackPassword     | (optional) The password to send in the HTTP request to `gatherFallbackUrl`. |
-| tag                  | (optional) A custom string that will be sent with this and all future callbacks unless overwritten by a future `tag` attribute or [`<Tag>`](tag.md) verb, or cleared.<br><br>May be cleared by setting `tag=""`<br><br>Max length 256 characters. |
+| tag                  | (optional) A custom string that will be sent with this and all future callbacks unless overwritten by a future `tag` attribute or [`<Tag>`](tag.md) verb, or cleared. May be cleared by setting `tag=""`Max length 256 characters. |
 | terminatingDigits    | (optional) When any of these digits are pressed, it will terminate the Gather. Default value is `""`, which disables this feature. |
 | maxDigits            | (optional) Max number of digits to collect. Default value is 50. Range: decimal values between 1 - 50. |
 | interDigitTimeout    | (optional) Time (in seconds) allowed between digit presses before automatically terminating the Gather. Default value is 5. Range: decimal values between 1 - 60. |
@@ -46,13 +46,13 @@ The following verbs may be nested inside of a `<Gather>` tag.  If using a repeat
 |:---------------------------------|:-------------------------|
 | [Gather](../callbacks/gather.md) | Yes                      |
 
-{% common %}
+
 
 #### Example 1 of 3: Gather Verb
 This example shows how to use the Gather verb to speak a sentence, collect digits input from the phone, and send the
 results to https://gather.url/nextBXML
 
-{% sample lang="http" %}
+
 
 ```XML
 <?xml version="1.0" encoding="UTF-8"?>
@@ -63,7 +63,9 @@ results to https://gather.url/nextBXML
 </Response>
 ```
 
-{% sample lang="java" %}
+
+
+#### Java
 
 ```java
 SpeakSentence speakSentence = SpeakSentence.builder()
@@ -85,7 +87,9 @@ System.out.println(response.toBXML());
 ```
 
 
-{% sample lang="csharp" %}
+
+
+#### C-Sharp
 
 ```csharp
 Response response = new Response();
@@ -105,7 +109,9 @@ response.Add(gather);
 Console.WriteLine(response.ToBXML());
 ```
 
-{% sample lang="ruby" %}
+
+
+#### Ruby
 
 ```ruby
 response = Bandwidth::Voice::Response.new()
@@ -124,7 +130,9 @@ response.push(gather)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
+
+#### Python
 
 ```python
 response = Response()
@@ -142,7 +150,9 @@ response.add_verb(gather)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
+
+#### NodeJS
 
 ```js
 var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
@@ -161,7 +171,9 @@ response.addVerb(gather);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
+
+#### PHP
 
 ```php
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Please press a digit.");
@@ -180,14 +192,14 @@ echo $response->toBxml();
 echo "\n";
 ```
 
-{% common %}
+
 
 #### Example 2 of 3: Gather With Repeated Audio Prompt
 This example shows the Gather verb being used to repeatedly prompt the user to press a digit. If the
 user presses nothing, the prompt will play five times. If the user presses a digit at any point, the
 Gather will end and send the result to the **gatherUrl**
 
-{% sample lang="http" %}
+
 
 
 ```XML
@@ -198,7 +210,9 @@ Gather will end and send the result to the **gatherUrl**
 </Response>
 ```
 
-{% sample lang="java" %}
+
+
+#### Java
 
 ```java
 SpeakSentence speakSentence = SpeakSentence.builder()
@@ -218,8 +232,10 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
 
+
+
+#### C-Sharp
 
 ```csharp
 Response response = new Response();
@@ -239,7 +255,9 @@ Console.WriteLine(response.ToBXML());
 ```
 
 
-{% sample lang="ruby" %}
+
+
+#### Ruby
 
 ```ruby
 response = Bandwidth::Voice::Response.new()
@@ -257,7 +275,9 @@ response.push(gather)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
+
+#### Python
 
 ```python
 response = Response()
@@ -274,7 +294,9 @@ response.add_verb(gather)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
+
+#### NodeJS
 
 ```js
 var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
@@ -292,7 +314,9 @@ response.addVerb(gather);
 console.log(response.toBxml());
 ```
 
-{% sample lang="php" %}
+
+
+#### PHP
 
 ```php
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("I am going to keep asking you to press a digit");
@@ -310,12 +334,12 @@ echo $response->toBxml();
 echo "\n";
 ```
 
-{% common %}
+
 
 #### Example 3 of 3: Gather With Multiple Nested Verbs
 This example shows how to nest multiple PlayAudio and SpeakSentence verbs
 
-{% sample lang="http" %}
+
 
 ```XML
 <?xml version="1.0" encoding="UTF-8"?>
@@ -329,7 +353,9 @@ This example shows how to nest multiple PlayAudio and SpeakSentence verbs
 </Response>
 ```
 
-{% sample lang="java" %}
+
+
+#### Java
 
 ```java
 List<AudioProducer> list = new ArrayList<>();
@@ -356,7 +382,9 @@ Response response = Response.builder().build()
 System.out.println(response.toBXML());
 ```
 
-{% sample lang="csharp" %}
+
+
+#### C-Sharp
 
 ```csharp
 Gather gather = new Gather
@@ -389,7 +417,9 @@ var output = response.ToBXML();
 Console.WriteLine(output);
 ```
 
-{% sample lang="ruby" %}
+
+
+#### Ruby
 
 ```ruby
 speak_sentence_1 = Bandwidth::Voice::SpeakSentence.new({
@@ -415,7 +445,9 @@ response.push(gather)
 puts response.to_bxml()
 ```
 
-{% sample lang="python" %}
+
+
+#### Python
 
 ```python
 speak_sentence_1 = SpeakSentence(
@@ -441,13 +473,17 @@ response.add_verb(gather)
 print(response.to_bxml())
 ```
 
-{% sample lang="js" %}
+
+
+#### NodeJS
 
 ```js
 //coming soon
 ```
 
-{% sample lang="php" %}
+
+
+#### PHP
 
 ```php
 $speakSentence1 = new BandwidthLib\Voice\Bxml\SpeakSentence("First Sentence");
@@ -469,4 +505,3 @@ echo $response->toBxml();
 echo "\n";
 ```
 
-{% endmethod %}

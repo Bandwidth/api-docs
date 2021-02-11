@@ -1,4 +1,4 @@
-# Managing Line Options and Features {#top}
+# Managing Line Options and Features 
 
 ## Overview
 
@@ -14,7 +14,7 @@
 * [Setting a Failover URI](#set-failover)
 
 
-## About {#about}
+## About 
 The Bandwidth Phone Number Phone Number API allows the association of a number of “Option” or “Feature” characteristics with a Telephone Number.
 
 Initially this capability is restricted to the management of Calling Name Display and Call Forwarding for the TN, but will be expanded to additional “Line Features” with subsequent releases.
@@ -25,7 +25,7 @@ In addition to the configuration of Calling Name information, other per-TN capab
 
 Line Options feature management is **NOT** available for Phone numbers that have been [imported for use with Hosted Messaging](hostedMessaging.md).
 
-## Single TN Option Assignment {#single-tn}
+## Single TN Option Assignment 
 
 There are a number of TN capabilities that can be easily assigned directly to the Telephone Number(TN) on a per-TN basis.   This set of Per-TN Options includes:
 
@@ -36,11 +36,11 @@ There are a number of TN capabilities that can be easily assigned directly to th
 
 The path for managing these options is: `/accounts/{accountId>/sites/{siteId}/sippeers/{sippeerId}/tns/{tn#}`
 
-## Calling Name Display {#calling-name-display}
+## Calling Name Display 
 
 In addition to setting Calling Name Display information on a per-TN basis as described above, the Bandwidth Phone Number Phone Number API allows the establishment of Calling Name Display settings for a collection of TNs at a time.  Bandwidth provides this API as a convenience to enable provisioning collections of TNs.  It can support the configuration of up to 1000 TNs in a single call.
 
-The Calling Line Display is associated with TNs using a <code class="post">POST</code> to the `tnOptions` resource with a payload that describes the option and its disposition.
+The Calling Line Display is associated with TNs using a POST to the `tnOptions` resource with a payload that describes the option and its disposition.
 
 The key elements of the XML payload are:
 
@@ -49,15 +49,15 @@ The key elements of the XML payload are:
 
 The Bandwidth Phone Number API allows the updating of CNAM Display (LIDB) information in the network for Bandwidth TNs managed within the customer’s account.  This capability works within the same asynchronous work-order mechanism as is used for managing other delay-prone system interactions, where a “work-order” is created by the initial API call, and used as a reference for tracking and confirming the subsequent states, and the ultimate success and failure of the result.
 
-### Calling Name Display Update (LIDB) {#libd}
+### Calling Name Display Update (LIDB) 
 
-The Request to add LIDB information to the TNs in an account is made by a <code class="post">POST</code> request to the `/lidbs` resource associated with an account.  This request contains a set of requests, each one specific to an individual TN on the account.
+The Request to add LIDB information to the TNs in an account is made by a POST request to the `/lidbs` resource associated with an account.  This request contains a set of requests, each one specific to an individual TN on the account.
 
-## Directory Listing and Directory Assistance (DLDA) {#dlda}
+## Directory Listing and Directory Assistance (DLDA) 
 
 The DLDA service allows the association of a name and address listing with a Telephone Number or Telephone Numbers in the Bandwidth Phone Number Phone Number system.  The DLDA API follows the asynchronous order processing request model described elsewhere in this document, where a request is submitted, an order ID is returned as an ID of that request or order, and then the request is fulfilled in the background.  The status of the request is reflected in the status of the order, and can be queried at any time.
 
-### DLDA Fields {#dlda-fields}
+### DLDA Fields 
 
 There are a number of fields involved in submitting a DLDA order, summarized in the table below:
 
@@ -91,21 +91,21 @@ There are a number of fields involved in submitting a DLDA order, summarized in 
 | Listed Address Zip Code                  | Valid USPS Zip Code, zip plus code or international zip code                                                                                                                                                                                                                                                                                                                                                    | `<Zip>`                  | y        |
 
 
-## Creating and Managing a DLDA Order {#create-dlda}
+## Creating and Managing a DLDA Order 
 
-A DLDA order is created with a <code class="post">POST</code> to the `/dldas` resource of the account. The dldas resource represents the requests made to the Bandwidth Phone Number API to add or otherwise manage a request to associate a name and street address with the telephone number. This API allows the creation and observation of a DLDA work order that causes the update of name and address information in a network Database.
+A DLDA order is created with a POST to the `/dldas` resource of the account. The dldas resource represents the requests made to the Bandwidth Phone Number API to add or otherwise manage a request to associate a name and street address with the telephone number. This API allows the creation and observation of a DLDA work order that causes the update of name and address information in a network Database.
 
-## Retrieving the history of a DLDA order {#get-dlda}
+## Retrieving the history of a DLDA order 
 
-The history of a DLDA order can be retrieved with a <code class="get">GET</code> on the `/history` resource, using the API signature: `/accounts/{accountId}/dldas/{orderid}/history`
+The history of a DLDA order can be retrieved with a GET on the `/history` resource, using the API signature: `/accounts/{accountId}/dldas/{orderid}/history`
 
-## Checking DLDA information associated with a TN {#check-dlda}
+## Checking DLDA information associated with a TN 
 
-The <code class="get">GET</code> method retrieves detailed information about the phone number.
+The GET method retrieves detailed information about the phone number.
 
-<code class="get">GET</code> `/tns/{tn}/tndetails`  retrieves detailed information about the phone number.
+GET `/tns/{tn}/tndetails`  retrieves detailed information about the phone number.
 
-In addition to the name and address information inherent in a DLDA update, the DLDA information associated with the TN includes a <Status> value that indicates whether the DLDA information has been successfully registered with the Listing provider, or is in some other state.  Valid values for the `<Status>` element are:
+In addition to the name and address information inherent in a DLDA update, the DLDA information associated with the TN includes a  value that indicates whether the DLDA information has been successfully registered with the Listing provider, or is in some other state.  Valid values for the `<Status>` element are:
 
 | Status             | Description                                                                                                                                                                                                                                                                                               |
 |:-------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -116,7 +116,7 @@ In addition to the name and address information inherent in a DLDA update, the D
 
 If the `<Status>` of the DLDA order impacting the TN is transient, indicating that there is an order in process and the outcome is inconclusive, the DLDA information will be replaced with a link to the order currently processing a DLDA change for that TN.  This will be the case if the status is `Pending-Editable` or `Pending-Locked`.
 
-## Set a Failover URI {#set-failover}
+## Set a Failover URI 
 **Please Note that the Failover URI functionality is only available for SIP Voice users at this time.**
 
 Setting a failover URI (Final Destination URI) allows Bandwidth to forward voice traffic to an alternate number in the event of a delivery failure to your original call route.
@@ -166,5 +166,5 @@ Content-Type: application/xml
     </TnOptionGroups>
 </TnOptionOrder>
 ```
-<br>
-<br>
+
+

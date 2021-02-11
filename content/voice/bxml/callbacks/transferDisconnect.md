@@ -1,5 +1,5 @@
-{% method %}
-##  Transfer Disconnect Event – <Transfer> verb
+
+##  Transfer Disconnect Event –  verb
 This event is sent to the `transferDisconnectUrl` of each `<PhoneNumber>` tag when its respective call leg ends for any reason.
 The event is sent in the normal case, when the transferred leg is answered and later hung up, but is also sent if the new leg
 was never answered in the first place, if it was rejected, and if the original call leg hung up before the transferred leg.
@@ -46,7 +46,7 @@ HTTP/1.1 204
 | errorMessage     | Text explaining the reason that caused the transferred leg to be ended in case of errors. |
 | errorId          | Bandwidth internal id that references the error event. |
 
-{% common %}
+
 
 #### Example: Successful transfer to 1-555-666-7777
 
@@ -99,4 +99,4 @@ POST http://[External server URL]
 }
 ```
 
-{% endmethod %}
+

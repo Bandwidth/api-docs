@@ -1,5 +1,5 @@
-{% method %}
-##  Transfer Answer Event – <Transfer> verb
+
+##  Transfer Answer Event –  verb
 When processing a [`<Transfer>`](../verbs/transfer.md) verb, this event is sent when a called party (B-leg) answers.  The event is sent to
   the endpoint specified in the `transferAnswerUrl` attribute of the `<PhoneNumber>` tag that answered. BXML returned by this callback will be executed for the called party only. After all BXML has been executed, the called party will be bridged to the original
   call. 
@@ -58,7 +58,7 @@ Content-Type: application/xml; charset=utf-8
 | transferCallerId  | The phone number used as the `from` field of the B-leg call, in E.164 format (e.g. +15555555555). |
 | transferTo        | The phone number used as the `to` field of the B-leg call, in E.164 format (e.g. +15555555555). |
 
-{% common %}
+
 
 #### Example: Successful transfer to 1-555-666-7777
 
@@ -85,4 +85,4 @@ POST http://[External server URL]
 }
 ```
 
-{% endmethod %}
+
