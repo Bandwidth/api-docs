@@ -25,7 +25,7 @@ For different use cases, you might want to take a look at [StartRecording](../ve
 | password                     | (optional) The password to send in the HTTP request to `recordCompleteUrl`, `recordingAvailableUrl` or `transcriptionAvailableUrl`. If specified, the URLs must be TLS-encrypted (i.e., `https`). |
 | fallbackUsername             | (optional) The username to send in the HTTP request to `recordCompleteFallbackUrl`. If specified, the URLs must be TLS-encrypted (i.e., `https`). |
 | fallbackPassword             | (optional) The password to send in the HTTP request to `recordCompleteFallbackUrl`. If specified, the URLs must be TLS-encrypted (i.e., `https`). |
-| tag                          | (optional) A custom string that will be sent with this and all future callbacks unless overwritten by a future `tag` attribute or [`<Tag>`](tag.md) verb, or cleared.May be cleared by setting `tag=""`Max length 256 characters. |
+| tag                          | (optional) A custom string that will be sent with this and all future callbacks unless overwritten by a future `tag` attribute or [`<Tag>`](tag.md) verb, or cleared. May be cleared by setting `tag=""`Max length 256 characters. |
 | terminatingDigits            | (optional) When pressed, this digit will terminate the recording. Default value is `“#”`. This feature can be disabed with `""`. |
 | maxDuration                  | (optional) Maximum length of recording (in seconds). Max 10800 (3 hours). Default value is 60. |
 | silenceTimeout               | (optional) Length of silence after which to end the recording (in seconds). Max is equivalent to the maximum `maxDuration` value. Default value is 0, which means no timeout. |
@@ -359,5 +359,4 @@ $response->addVerb($record);
 
 echo $response->toBxml();
 ```
-
 
