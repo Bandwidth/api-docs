@@ -2,16 +2,9 @@
 # Message Delivered Event
 In order to receive message events, you need to ensure you have set up your application to send callbacks to your server's URL.
 
-
-
-
-
-IMPORTANT NOTE ABOUT MMS AND GROUP MESSAGES!
+## IMPORTANT NOTE ABOUT MMS AND GROUP MESSAGES!
 
 MMS and Group messages do currently support delivery receipts. However, you will need to have this enabled. Without the delivery receipts enabled, you will still receive a message delivered event when the message is sent. The message delivered event will not represent true delivery for only MMS and Group Messages. This will mean your message has been handed off to the Bandwidth's MMSC network, but has not been confirmed at the downstream carrier.
-
-
-
 
 ### Parameters
 | Parameter             | Type     | Description                                                                                                                                                                                                                                                                                                                                                         |
