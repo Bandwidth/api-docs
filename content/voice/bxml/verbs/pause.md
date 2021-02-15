@@ -112,6 +112,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $pause = new BandwidthLib\Voice\Bxml\Pause();
 $pause->duration(2);
 

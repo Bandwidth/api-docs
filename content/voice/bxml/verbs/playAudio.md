@@ -166,6 +166,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $playAudio1 = new BandwidthLib\Voice\Bxml\PlayAudio("https://audio.url/audio1.wav");
 $playAudio2 = new BandwidthLib\Voice\Bxml\PlayAudio("https://audio.url/audio2.mp3");
 

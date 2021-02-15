@@ -121,6 +121,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $sendDtmf = new BandwidthLib\Voice\Bxml\SendDtmf("12w34");
 
 $response = new BandwidthLib\Voice\Bxml\Response();
