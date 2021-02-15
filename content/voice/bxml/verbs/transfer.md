@@ -1,5 +1,4 @@
 
-
 ## XML: `<Transfer>`
 The Transfer verb is used to bridge another party onto the current call.
 
