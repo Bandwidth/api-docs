@@ -128,7 +128,7 @@ function addOpenApiSpecs(formData: FormData) {
     for (const apiNamespace of specs) {
       const apiSpecPath = `${masterConfig.apiSpecRoot}/${apiNamespace}/${masterConfig.apiSpecFile}`;
 
-      if (targetLang !== "phpold" || apiNamespace !== "Iris") {
+      if (targetLang !== "phpold" || apiNamespace !== "Dashboard") {
         let stream;
         if (masterConfig.wrappedRef.includes(apiNamespace)) {
           const apiSpec = readJSONSync(apiSpecPath);
