@@ -277,7 +277,7 @@ puts response.to_bxml()
 
 ```python
 from bandwidth.voice.bxml.response import Response
-from bandwidth.voice.bxml.verbs import *
+from bandwidth.voice.bxml.verbs import SpeakSentence, StartRecording, PhoneNumber, Transfer, PauseRecording, Gather
 
 speak_sentence_start = SpeakSentence(
     sentence="This call is being recorded. Please wait while we transfer you.",
@@ -501,7 +501,7 @@ puts response.to_bxml()
 
 ```python
 from bandwidth.voice.bxml.response import Response
-from bandwidth.voice.bxml.verbs import *
+from bandwidth.voice.bxml.verbs import ResumeRecording, PhoneNumber, Transfer, StopRecording, SpeakSentence
 
 resume_recording = ResumeRecording()
 

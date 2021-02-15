@@ -293,7 +293,7 @@ speak_sentence = SpeakSentence(
 gather = Gather(
     gather_url="https://gather.url/nextBXML",
     max_digits=1,
-    repeat_count=5
+    repeat_count=5,
     speak_sentence=speak_sentence
 )
 response.add_verb(gather)

@@ -580,6 +580,7 @@ transfer = Transfer(
     phone_numbers=[phone_number_1, phone_number_2]
 )
 
+response = Response()
 response.add_verb(transfer)
 print(response.to_bxml())
 ```
