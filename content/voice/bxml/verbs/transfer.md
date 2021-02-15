@@ -173,6 +173,9 @@ puts response.to_bxml()
 #### Python
 
 ```python
+from bandwidth.voice.bxml.response import Response
+from bandwidth.voice.bxml.verbs import PhoneNumber, Transfer
+
 phone_number = PhoneNumber(
     number="+11234567892"
 )
@@ -180,6 +183,8 @@ transfer = Transfer(
     transfer_caller_id="+11234567891",
     phone_numbers=[phone_number]
 )
+
+response = Response()
 
 response.add_verb(transfer)
 print(response.to_bxml())
@@ -321,6 +326,9 @@ puts response.to_bxml()
 #### Python
 
 ```python
+from bandwidth.voice.bxml.response import Response
+from bandwidth.voice.bxml.verbs import SpeakSentence, PhoneNumber, Transfer
+
 response = Response()
 speak_sentence = SpeakSentence(
     sentence="Transferring your call, please wait.",
@@ -431,10 +439,17 @@ speak_sentence = Bandwidth::Voice::SpeakSentence.new({
 #### Python
 
 ```python
+from bandwidth.voice.bxml.response import Response
+from bandwidth.voice.bxml.verbs import SpeakSentence
+
 speak_sentence = SpeakSentence(
     sentence="Transferring your call, please wait.",
     voice="paul"
 )
+response = Response()
+
+response.add_verb(speak_sentence)
+print(response.to_bxml())
 ```
 
 
@@ -551,6 +566,9 @@ puts response.to_bxml()
 #### Python
 
 ```python
+from bandwidth.voice.bxml.response import Response
+from bandwidth.voice.bxml.verbs import PhoneNumber, Transfer
+
 phone_number_1 = PhoneNumber(
     number="+15552221234"
 )

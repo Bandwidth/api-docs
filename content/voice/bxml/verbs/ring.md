@@ -63,6 +63,9 @@ puts response.to_bxml()
 #### Python
 
 ```python
+from bandwidth.voice.bxml.response import Response
+from bandwidth.voice.bxml.verbs import Ring
+
 ring = Ring(
     duration=10
 )

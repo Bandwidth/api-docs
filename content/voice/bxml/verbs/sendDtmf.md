@@ -87,6 +87,9 @@ puts response.to_bxml()
 #### Python
 
 ```python
+from bandwidth.voice.bxml.response import Response
+from bandwidth.voice.bxml.verbs import SendDtmf
+
 response = Response()
 send_dtmf = SendDtmf("12w34")
 

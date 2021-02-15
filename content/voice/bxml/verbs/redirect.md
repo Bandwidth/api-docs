@@ -94,6 +94,9 @@ puts response.to_bxml()
 #### Python
 
 ```python
+from bandwidth.voice.bxml.response import Response
+from bandwidth.voice.bxml.verbs import Redirect
+
 response = Response()
 redirect = Redirect(
     redirect_url="http://flow.url/newFlow"

@@ -146,6 +146,9 @@ puts response.to_bxml()
 #### Python
 
 ```python
+from bandwidth.voice.bxml.response import Response
+from bandwidth.voice.bxml.verbs import SpeakSentence, Conference
+
 speak_sentence = SpeakSentence("You will be added to your conference now.", gender="male")
 conference = Conference("my-conference")
 
@@ -285,6 +288,9 @@ puts response.to_bxml()
 #### Python
 
 ```python
+from bandwidth.voice.bxml.response import Response
+from bandwidth.voice.bxml.verbs import SpeakSentence, Conference
+
 speak_sentence = SpeakSentence("Welcome. You are going to coach 2 calls, please wait.", gender="male")
 conference = Conference("my-conference", call_ids_to_coach = "c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d,c-2a913f94-6a486f3a-3cae-4034-bcc3-f0c9fa77ca2f")
 #or

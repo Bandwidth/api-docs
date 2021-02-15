@@ -154,6 +154,9 @@ puts response.to_bxml()
 #### Python
 
 ```python
+from bandwidth.voice.bxml.response import Response
+from bandwidth.voice.bxml.verbs import SpeakSentence, PlayAudio, Record
+
 response = Response()
 speak_sentence = SpeakSentence(
     sentence="Please leave your message after the beep",
@@ -306,6 +309,9 @@ puts response.to_bxml()
 #### Python
 
 ```python
+from bandwidth.voice.bxml.response import Response
+from bandwidth.voice.bxml.verbs import SpeakSentence, Record
+
 response = Response()
 speak_sentence = SpeakSentence(
     sentence="Please say your name"

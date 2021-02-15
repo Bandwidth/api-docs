@@ -123,6 +123,9 @@ puts response.to_bxml()
 #### Python
 
 ```python
+from bandwidth.voice.bxml.response import Response
+from bandwidth.voice.bxml.verbs import PlayAudio
+
 response = Response()
 play_audio_1 = PlayAudio(
     url="https://audio.url/audio1.wav"
