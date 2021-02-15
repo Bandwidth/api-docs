@@ -126,6 +126,11 @@ Console.WriteLine(response.ToBXML());
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 speak_sentence = Bandwidth::Voice::SpeakSentence.new({
     :sentence => "You will be added to your conference now.",
     :gender => "male"
@@ -265,6 +270,11 @@ response.Add(conference);
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 speak_sentence = Bandwidth::Voice::SpeakSentence.new({
     :sentence => "Welcome. You are going to coach 2 calls, please wait.",
     :gender => "male"

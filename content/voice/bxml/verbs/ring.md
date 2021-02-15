@@ -49,6 +49,11 @@ This example shows how to use the Ring verb to play ringing audio on a call for 
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 response = Bandwidth::Voice::Response.new()
 ring = Bandwidth::Voice::Ring.new({
     :duration => 10

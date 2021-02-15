@@ -155,6 +155,11 @@ Console.WriteLine(response.ToBXML());
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 response = Bandwidth::Voice::Response.new()
 phone_number = Bandwidth::Voice::PhoneNumber.new({
     :number => "+11234567892"
@@ -302,6 +307,11 @@ Console.WriteLine(response.ToBXML());
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 response = Bandwidth::Voice::Response.new()
 speak_sentence = Bandwidth::Voice::SpeakSentence.new({
     :sentence => "Transferring your call, please wait.",
@@ -428,6 +438,11 @@ Console.WriteLine(response.ToBXML());
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 speak_sentence = Bandwidth::Voice::SpeakSentence.new({
     :sentence => "Transferring your call, please wait.",
     :voice => "paul"
@@ -545,6 +560,11 @@ Console.WriteLine(response.ToBXML());
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 response = Bandwidth::Voice::Response.new()
 phone_number_1 = Bandwidth::Voice::PhoneNumber.new({
     :number => "+15552221234"

@@ -80,6 +80,11 @@ Console.WriteLine(response.ToBXML());
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 response = Bandwidth::Voice::Response.new()
 redirect = Bandwidth::Voice::Redirect.new({
     :redirect_url => "http://flow.url/newFlow"

@@ -66,6 +66,11 @@ Console.WriteLine(response.ToBXML());
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 response = Bandwidth::Voice::Response.new()
 forward = Bandwidth::Voice::Forward.new({
     :to => "+10987654321",

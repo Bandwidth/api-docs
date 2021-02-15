@@ -105,6 +105,11 @@ Console.WriteLine(response.ToBXML());
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 response = Bandwidth::Voice::Response.new()
 play_audio_1 = Bandwidth::Voice::PlayAudio.new({
     :url => "https://audio.url/audio1.wav"

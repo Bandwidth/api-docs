@@ -61,6 +61,11 @@ Console.WriteLine(response.ToBXML());
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 stop_recording = Bandwidth::Voice::StopRecording.new()
 
 response = Bandwidth::Voice::Response.new()
@@ -210,6 +215,11 @@ Console.WriteLine(response.ToBXML());
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 speak_sentence_start = Bandwidth::Voice::SpeakSentence.new({
     :sentence => "This call is being recorded. Please wait while we transfer you.",
     :voice => "bridget"

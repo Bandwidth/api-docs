@@ -114,6 +114,11 @@ Console.WriteLine(response.ToBXML());
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 response = Bandwidth::Voice::Response.new()
 speak_sentence = Bandwidth::Voice::SpeakSentence.new({
     :sentence => "Please press a digit.",
@@ -263,6 +268,11 @@ Console.WriteLine(response.ToBXML());
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 response = Bandwidth::Voice::Response.new()
 speak_sentence = Bandwidth::Voice::SpeakSentence.new({
     :sentence => "I am going to keep asking you to press a digit"
@@ -428,6 +438,11 @@ Console.WriteLine(output);
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 speak_sentence_1 = Bandwidth::Voice::SpeakSentence.new({
     :sentence => "First Sentence"
 })

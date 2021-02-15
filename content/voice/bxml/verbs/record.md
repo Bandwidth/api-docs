@@ -130,6 +130,11 @@ Console.WriteLine(response.ToBXML());
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 response = Bandwidth::Voice::Response.new()
 speak_sentence = Bandwidth::Voice::SpeakSentence.new({
     :sentence => "Please leave your message after the beep",
@@ -289,6 +294,11 @@ Console.WriteLine(response.ToBXML());
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 response = Bandwidth::Voice::Response.new()
 speak_sentence = Bandwidth::Voice::SpeakSentence.new({
     :sentence => "Please say your name"
