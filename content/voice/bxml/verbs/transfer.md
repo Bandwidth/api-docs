@@ -134,6 +134,8 @@ System.out.println(response.toBXML());
 #### C-Sharp
 
 ```csharp
+using Bandwidth.Standard.Voice.Bxml;
+
 Response response = new Response();
 
 PhoneNumber phoneNumber1 = new PhoneNumber();
@@ -285,6 +287,8 @@ System.out.println(response.toBXML());
 #### C-Sharp
 
 ```csharp
+using Bandwidth.Standard.Voice.Bxml;
+
 Response response = new Response();
 
 SpeakSentence speakSentence = new SpeakSentence();
@@ -429,6 +433,8 @@ echo "\n";
 #### C-Sharp
 
 ```csharp
+using Bandwidth.Standard.Voice.Bxml;
+
 Response response = new Response();
 
 SpeakSentence speakSentence = new SpeakSentence();
@@ -548,6 +554,8 @@ System.out.println(response.toBXML());
 #### C-Sharp
 
 ```csharp
+using Bandwidth.Standard.Voice.Bxml;
+
 Response response = new Response();
            
 PhoneNumber phoneNumber1 = new PhoneNumber();

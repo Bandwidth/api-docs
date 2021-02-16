@@ -48,6 +48,8 @@ System.out.println(response.toBXML());
 #### C-Sharp
 
 ```csharp
+using Bandwidth.Standard.Voice.Bxml;
+
 ResumeRecording resumeRecording = new ResumeRecording();
 
 Response response = new Response();
@@ -194,6 +196,8 @@ System.out.println(response.toBXML());
 #### C-Sharp
 
 ```csharp
+using Bandwidth.Standard.Voice.Bxml;
+
 SpeakSentence speakSentence = new SpeakSentence
 {
     Voice = "bridget",
@@ -459,6 +463,8 @@ System.out.println(response.toBXML());
 #### C-Sharp
 
 ```csharp
+using Bandwidth.Standard.Voice.Bxml;
+
 ResumeRecording resumeRecording = new ResumeRecording();
 
 Transfer transfer = new Transfer

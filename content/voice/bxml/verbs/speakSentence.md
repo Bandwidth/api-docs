@@ -191,6 +191,8 @@ System.out.println(response.toBXML());
 #### C-Sharp
 
 ```csharp
+using Bandwidth.Standard.Voice.Bxml;
+
 Response response = new Response();
 
 SpeakSentence speakSentence = new SpeakSentence();
@@ -314,6 +316,8 @@ System.out.println(response.toBXML());
 #### C-Sharp
 
 ```csharp
+using Bandwidth.Standard.Voice.Bxml;
+
 Response response = new Response();
 
 SpeakSentence speakSentence = new SpeakSentence();
