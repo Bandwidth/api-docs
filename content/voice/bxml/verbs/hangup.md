@@ -40,6 +40,9 @@ This shows how to use Bandwidth XML to hang up an existing call.
 #### Java
 
 ```java
+import com.bandwidth.voice.bxml.verbs.Hangup;
+import com.bandwidth.voice.bxml.verbs.Response;
+
 Hangup hangup = Hangup.builder().build();
 
 Response response = Response.builder().build()
