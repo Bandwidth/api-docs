@@ -61,6 +61,11 @@ Console.WriteLine(response.ToBXML());
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 resume_recording = Bandwidth::Voice::ResumeRecording.new()
 
 response = Bandwidth::Voice::Response.new()
@@ -74,6 +79,9 @@ puts response.to_bxml()
 #### Python
 
 ```python
+from bandwidth.voice.bxml.response import Response
+from bandwidth.voice.bxml.verbs import ResumeRecording
+
 resume_recording = ResumeRecording()
 
 response = Response()
@@ -229,6 +237,11 @@ Console.WriteLine(response.ToBXML());
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 speak_sentence_start = Bandwidth::Voice::SpeakSentence.new({
     :sentence => "This call is being recorded. Please wait while we transfer you.",
     :voice => "bridget"
@@ -273,6 +286,9 @@ puts response.to_bxml()
 #### Python
 
 ```python
+from bandwidth.voice.bxml.response import Response
+from bandwidth.voice.bxml.verbs import SpeakSentence, StartRecording, PhoneNumber, Transfer, PauseRecording, Gather
+
 speak_sentence_start = SpeakSentence(
     sentence="This call is being recorded. Please wait while we transfer you.",
     voice="bridget"
@@ -464,6 +480,11 @@ Console.WriteLine(response.ToBXML());
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 resume_recording = Bandwidth::Voice::ResumeRecording.new()
 
 phone_number = Bandwidth::Voice::PhoneNumber.new({
@@ -494,6 +515,9 @@ puts response.to_bxml()
 #### Python
 
 ```python
+from bandwidth.voice.bxml.response import Response
+from bandwidth.voice.bxml.verbs import ResumeRecording, PhoneNumber, Transfer, StopRecording, SpeakSentence
+
 resume_recording = ResumeRecording()
 
 phone_number = PhoneNumber(

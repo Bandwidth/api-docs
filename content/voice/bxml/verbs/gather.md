@@ -114,6 +114,11 @@ Console.WriteLine(response.ToBXML());
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 response = Bandwidth::Voice::Response.new()
 speak_sentence = Bandwidth::Voice::SpeakSentence.new({
     :sentence => "Please press a digit.",
@@ -135,6 +140,9 @@ puts response.to_bxml()
 #### Python
 
 ```python
+from bandwidth.voice.bxml.response import Response
+from bandwidth.voice.bxml.verbs import SpeakSentence, Gather
+
 response = Response()
 speak_sentence = SpeakSentence(
     sentence="Please press a digit.",
@@ -260,6 +268,11 @@ Console.WriteLine(response.ToBXML());
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 response = Bandwidth::Voice::Response.new()
 speak_sentence = Bandwidth::Voice::SpeakSentence.new({
     :sentence => "I am going to keep asking you to press a digit"
@@ -280,6 +293,9 @@ puts response.to_bxml()
 #### Python
 
 ```python
+from bandwidth.voice.bxml.response import Response
+from bandwidth.voice.bxml.verbs import SpeakSentence, Gather
+
 response = Response()
 speak_sentence = SpeakSentence(
     sentence="I am going to keep asking you to press a digit"
@@ -287,7 +303,7 @@ speak_sentence = SpeakSentence(
 gather = Gather(
     gather_url="https://gather.url/nextBXML",
     max_digits=1,
-    repeat_count=5
+    repeat_count=5,
     speak_sentence=speak_sentence
 )
 response.add_verb(gather)
@@ -422,6 +438,11 @@ Console.WriteLine(output);
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 speak_sentence_1 = Bandwidth::Voice::SpeakSentence.new({
     :sentence => "First Sentence"
 })
@@ -450,6 +471,9 @@ puts response.to_bxml()
 #### Python
 
 ```python
+from bandwidth.voice.bxml.response import Response
+from bandwidth.voice.bxml.verbs import SpeakSentence, Gather, PlayAudio
+
 speak_sentence_1 = SpeakSentence(
     sentence="First Sentence"
 )

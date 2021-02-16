@@ -68,6 +68,11 @@ Console.WriteLine(response.ToBXML());
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 response = Bandwidth::Voice::Response.new()
 hangup = Bandwidth::Voice::Hangup.new()
 
@@ -80,6 +85,9 @@ puts response.to_bxml()
 #### Python
 
 ```python
+from bandwidth.voice.bxml.response import Response
+from bandwidth.voice.bxml.verbs import Hangup
+
 response = Response()
 hangup = Hangup()
 

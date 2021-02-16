@@ -49,6 +49,11 @@ This example shows how to use the Ring verb to play ringing audio on a call for 
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 response = Bandwidth::Voice::Response.new()
 ring = Bandwidth::Voice::Ring.new({
     :duration => 10
@@ -63,6 +68,9 @@ puts response.to_bxml()
 #### Python
 
 ```python
+from bandwidth.voice.bxml.response import Response
+from bandwidth.voice.bxml.verbs import Ring
+
 ring = Ring(
     duration=10
 )

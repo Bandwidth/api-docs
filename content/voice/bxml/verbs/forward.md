@@ -66,6 +66,11 @@ Console.WriteLine(response.ToBXML());
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 response = Bandwidth::Voice::Response.new()
 forward = Bandwidth::Voice::Forward.new({
     :to => "+10987654321",
@@ -81,6 +86,9 @@ puts response.to_bxml()
 #### Python
 
 ```python
+from bandwidth.voice.bxml.response import Response
+from bandwidth.voice.bxml.verbs import Forward
+
 response = Response()
 forward = Forward(
     to="+10987654321",

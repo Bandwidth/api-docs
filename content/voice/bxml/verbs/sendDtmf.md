@@ -73,6 +73,11 @@ Console.WriteLine(response.ToBXML());
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 response = Bandwidth::Voice::Response.new()
 send_dtmf = Bandwidth::Voice::SendDtmf.new({
     :dtmf => "12w34"
@@ -87,6 +92,9 @@ puts response.to_bxml()
 #### Python
 
 ```python
+from bandwidth.voice.bxml.response import Response
+from bandwidth.voice.bxml.verbs import SendDtmf
+
 response = Response()
 send_dtmf = SendDtmf("12w34")
 

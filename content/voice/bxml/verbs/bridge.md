@@ -166,6 +166,11 @@ First call (c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d):
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 speak_sentence = Bandwidth::Voice::SpeakSentence.new({
     :sentence => "Wait until the second call answers"
 })
@@ -183,6 +188,11 @@ Second call:
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 speak_sentence = Bandwidth::Voice::SpeakSentence.new({
     :sentence => "The bridge will start now"
 })
@@ -204,6 +214,9 @@ First call (c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d):
 #### Python
 
 ```python
+from bandwidth.voice.bxml.response import Response
+from bandwidth.voice.bxml.verbs import SpeakSentence, Pause
+
 speak_sentence = SpeakSentence(
     sentence="Wait until the second call answers"
 )
@@ -221,6 +234,9 @@ Second call:
 #### Python
 
 ```python
+from bandwidth.voice.bxml.response import Response
+from bandwidth.voice.bxml.verbs import SpeakSentence, Bridge
+
 speak_sentence = SpeakSentence(
     sentence="The bridge will start now"
 )
