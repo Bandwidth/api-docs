@@ -132,6 +132,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $redirect = new BandwidthLib\Voice\Bxml\Redirect();
 $redirect->redirectUrl("https://flow.url/newFlow");
 

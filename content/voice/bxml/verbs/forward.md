@@ -121,6 +121,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $forward = new BandwidthLib\Voice\Bxml\Forward();
 $forward->to("+18888888888");
 $forward->from("+18889999999");

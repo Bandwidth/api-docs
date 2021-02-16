@@ -186,6 +186,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Please press a digit.");
 $speakSentence->voice("kate");
 
@@ -339,6 +343,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("I am going to keep asking you to press a digit");
 
 $gather = new BandwidthLib\Voice\Bxml\Gather();
@@ -516,6 +524,10 @@ print(response.to_bxml())
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $speakSentence1 = new BandwidthLib\Voice\Bxml\SpeakSentence("First Sentence");
 $playAudio1 = new BandwidthLib\Voice\Bxml\PlayAudio("https://audio1.com");
 $playAudio2 = new BandwidthLib\Voice\Bxml\PlayAudio("https://audio2.com");

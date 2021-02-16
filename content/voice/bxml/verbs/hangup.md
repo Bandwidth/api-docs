@@ -115,6 +115,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $hangup = new BandwidthLib\Voice\Bxml\Hangup();
 $response = new BandwidthLib\Voice\Bxml\Response();
 $response->addVerb($hangup);

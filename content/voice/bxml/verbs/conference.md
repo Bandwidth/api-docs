@@ -190,6 +190,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("You will be added to your conference now.");
 $speakSentence->gender("male");
 
@@ -342,6 +346,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Welcome. You are going to coach 2 calls, please wait.");
 $speakSentence->gender("male");
 
