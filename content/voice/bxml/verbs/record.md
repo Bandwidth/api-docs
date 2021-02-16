@@ -210,6 +210,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Please leave your message after the beep");
 $speakSentence->voice("bridget");
 
@@ -362,6 +366,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Please say your name");
 
 $record = new BandwidthLib\Voice\Bxml\Record();

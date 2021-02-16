@@ -108,6 +108,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $resumeRecording = new BandwidthLib\Voice\Bxml\ResumeRecording();
 
 $response = new BandwidthLib\Voice\Bxml\Response();
@@ -371,6 +375,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $speakSentenceStart = new BandwidthLib\Voice\Bxml\SpeakSentence("This call is being recorded. Please wait while we transfer you.");
 $speakSentenceStart->voice("bridget");
 
@@ -575,6 +583,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $resumeRecording = new BandwidthLib\Voice\Bxml\ResumeRecording();
 
 $phoneNumber = new BandwidthLib\Voice\Bxml\PhoneNumber("+15554567893");

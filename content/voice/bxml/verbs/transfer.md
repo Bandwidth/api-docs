@@ -217,6 +217,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $number = new BandwidthLib\Voice\Bxml\PhoneNumber("+17777777777");
 
 $transfer = new BandwidthLib\Voice\Bxml\Transfer();
@@ -385,6 +389,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Transferring your call, please wait.");
 $speakSentence->voice("paul");
 
@@ -481,6 +489,10 @@ speakSentence.setVoice("paul");
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Transferring your call, please wait.");
 $speakSentence->voice("paul");
 ```
@@ -630,6 +642,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $number1 = new BandwidthLib\Voice\Bxml\PhoneNumber("+17777777777");
 $number2 = new BandwidthLib\Voice\Bxml\PhoneNumber("+15555555555");
 
