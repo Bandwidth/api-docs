@@ -94,6 +94,10 @@ print(response.to_bxml())
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $ring = new BandwidthLib\Voice\Bxml\Ring();
 $ring->duration(10);
 

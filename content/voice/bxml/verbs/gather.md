@@ -92,6 +92,8 @@ System.out.println(response.toBXML());
 #### C-Sharp
 
 ```csharp
+using Bandwidth.Standard.Voice.Bxml;
+
 Response response = new Response();
 
 SpeakSentence speakSentence = new SpeakSentence();
@@ -184,6 +186,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Please press a digit.");
 $speakSentence->voice("kate");
 
@@ -246,6 +252,8 @@ System.out.println(response.toBXML());
 #### C-Sharp
 
 ```csharp
+using Bandwidth.Standard.Voice.Bxml;
+
 Response response = new Response();
 
 SpeakSentence speakSentence = new SpeakSentence();
@@ -335,6 +343,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("I am going to keep asking you to press a digit");
 
 $gather = new BandwidthLib\Voice\Bxml\Gather();
@@ -403,6 +415,8 @@ System.out.println(response.toBXML());
 #### C-Sharp
 
 ```csharp
+using Bandwidth.Standard.Voice.Bxml;
+
 Gather gather = new Gather
 {
     audioProducer = new List<IAudioProducer>(){ 
@@ -510,6 +524,10 @@ print(response.to_bxml())
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $speakSentence1 = new BandwidthLib\Voice\Bxml\SpeakSentence("First Sentence");
 $playAudio1 = new BandwidthLib\Voice\Bxml\PlayAudio("https://audio1.com");
 $playAudio2 = new BandwidthLib\Voice\Bxml\PlayAudio("https://audio2.com");

@@ -48,6 +48,8 @@ System.out.println(response.toBXML());
 #### C-Sharp
 
 ```csharp
+using Bandwidth.Standard.Voice.Bxml;
+
 Response response = new Response();
 
 Pause pause = new Pause();
@@ -112,6 +114,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $pause = new BandwidthLib\Voice\Bxml\Pause();
 $pause->duration(2);
 
