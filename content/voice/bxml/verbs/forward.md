@@ -49,6 +49,8 @@ System.out.println(response.toBXML());
 #### C-Sharp
 
 ```csharp
+using Bandwidth.Standard.Voice.Bxml;
+
 Response response = new Response();
 
 Forward forward = new Forward();

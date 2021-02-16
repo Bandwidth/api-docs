@@ -119,6 +119,8 @@ First call (c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d):
 #### C-Sharp
 
 ```csharp
+using Bandwidth.Standard.Voice.Bxml;
+
 SpeakSentence speakSentence = new SpeakSentence
 {
     Sentence = "Wait until the second call answers"
@@ -140,6 +142,8 @@ Second call:
 #### C-Sharp
 
 ```csharp
+using Bandwidth.Standard.Voice.Bxml;
+
 SpeakSentence speakSentence = new SpeakSentence
 {
     Sentence = "The bridge will start now"
