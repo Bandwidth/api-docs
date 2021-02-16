@@ -64,6 +64,11 @@ Console.WriteLine(response.ToBXML());
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 response = Bandwidth::Voice::Response.new()
 pause = Bandwidth::Voice::Pause.new({
     :duration => 2
@@ -78,6 +83,9 @@ puts response.to_bxml()
 #### Python
 
 ```python
+from bandwidth.voice.bxml.response import Response
+from bandwidth.voice.bxml.verbs import Pause
+
 response = Response()
 pause = Pause(duration=2)
 

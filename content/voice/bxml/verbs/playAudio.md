@@ -105,6 +105,11 @@ Console.WriteLine(response.ToBXML());
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 response = Bandwidth::Voice::Response.new()
 play_audio_1 = Bandwidth::Voice::PlayAudio.new({
     :url => "https://audio.url/audio1.wav"
@@ -123,6 +128,9 @@ puts response.to_bxml()
 #### Python
 
 ```python
+from bandwidth.voice.bxml.response import Response
+from bandwidth.voice.bxml.verbs import PlayAudio
+
 response = Response()
 play_audio_1 = PlayAudio(
     url="https://audio.url/audio1.wav"

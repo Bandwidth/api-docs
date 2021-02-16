@@ -80,6 +80,11 @@ Console.WriteLine(response.ToBXML());
 #### Ruby
 
 ```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
 response = Bandwidth::Voice::Response.new()
 redirect = Bandwidth::Voice::Redirect.new({
     :redirect_url => "http://flow.url/newFlow"
@@ -94,6 +99,9 @@ puts response.to_bxml()
 #### Python
 
 ```python
+from bandwidth.voice.bxml.response import Response
+from bandwidth.voice.bxml.verbs import Redirect
+
 response = Response()
 redirect = Redirect(
     redirect_url="http://flow.url/newFlow"
