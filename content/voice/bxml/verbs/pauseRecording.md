@@ -34,6 +34,9 @@ None
 #### Java
 
 ```java
+import com.bandwidth.voice.bxml.verbs.PauseRecording;
+import com.bandwidth.voice.bxml.verbs.Response;
+
 PauseRecording pauseRecording = PauseRecording.builder().build();
 
 Response response = Response.builder().build()
@@ -152,6 +155,14 @@ In this example, only the transfers themselves will be recorded, and the text-to
 #### Java
 
 ```java
+import com.bandwidth.voice.bxml.verbs.Gather;
+import com.bandwidth.voice.bxml.verbs.PauseRecording;
+import com.bandwidth.voice.bxml.verbs.PhoneNumber;
+import com.bandwidth.voice.bxml.verbs.Response;
+import com.bandwidth.voice.bxml.verbs.SpeakSentence;
+import com.bandwidth.voice.bxml.verbs.StartRecording;
+import com.bandwidth.voice.bxml.verbs.Transfer;
+
 StartRecording startRecording = StartRecording.builder()
         .recordingAvailableUrl("https://myapp.com/noBXML")
         .build();
@@ -437,6 +448,12 @@ echo $response->toBxml();
 #### Java
 
 ```java
+import com.bandwidth.voice.bxml.verbs.PhoneNumber;
+import com.bandwidth.voice.bxml.verbs.Response;
+import com.bandwidth.voice.bxml.verbs.ResumeRecording;
+import com.bandwidth.voice.bxml.verbs.SpeakSentence;
+import com.bandwidth.voice.bxml.verbs.Transfer;
+
 ResumeRecording resumeRecording = ResumeRecording.builder().build();
 
 Transfer transfer = Transfer.builder()

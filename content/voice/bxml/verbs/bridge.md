@@ -80,6 +80,10 @@ First call (c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d):
 #### Java
 
 ```java
+import com.bandwidth.voice.bxml.verbs.Pause;
+import com.bandwidth.voice.bxml.verbs.Response;
+import com.bandwidth.voice.bxml.verbs.SpeakSentence;
+
 SpeakSentence speakSentence = SpeakSentence.builder()
         .text("Wait until the second call answers").build();
 
@@ -97,6 +101,10 @@ Second call:
 #### Java
 
 ```java
+import com.bandwidth.voice.bxml.verbs.Bridge;
+import com.bandwidth.voice.bxml.verbs.Response;
+import com.bandwidth.voice.bxml.verbs.SpeakSentence;
+
 SpeakSentence speakSentence = SpeakSentence.builder()
         .text("The bridge will start now").build();
 

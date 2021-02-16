@@ -35,6 +35,9 @@ This shows how to use Bandwidth XML to forward a call from +11234567890 to +1098
 #### Java
 
 ```java
+import com.bandwidth.voice.bxml.verbs.Forward;
+import com.bandwidth.voice.bxml.verbs.Response;
+
 Forward forward = Forward.builder()
         .to("+10987654321")
         .from("+11234567890")

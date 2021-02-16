@@ -175,6 +175,9 @@ This shows how to use Bandwidth XML to use text to speech to speak a sentence in
 #### Java
 
 ```java
+import com.bandwidth.voice.bxml.verbs.Response;
+import com.bandwidth.voice.bxml.verbs.SpeakSentence;
+
 SpeakSentence speakSentence = SpeakSentence.builder()
         .text("This is a test")
         .voice("julie")
@@ -300,6 +303,9 @@ This shows how to use Bandwidth XML with SSML tags to modify the way the text so
 #### Java
 
 ```java
+import com.bandwidth.voice.bxml.verbs.Response;
+import com.bandwidth.voice.bxml.verbs.SpeakSentence;
+
 SpeakSentence speakSentence = SpeakSentence.builder()
         .text("Hello, you have reached the home of <lang xml:lang=\"es - MX\">Antonio Mendoza</lang>.  Please leave a message.")
         .voice("jorge")
