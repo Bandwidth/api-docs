@@ -1,6 +1,4 @@
-## BXML Callbacks
-
-###  Understanding BXML Callback Events
+## BXML Callbacks Overview
 
 BXML callbacks are HTTP requests made by the Bandwidth platform to endpoints specified by you in your HTTP requests, BXML and in your Voice application. Their purpose is to:
 1. inform you of events that have happened in the call flow
