@@ -49,6 +49,8 @@ System.out.println(response.toBXML());
 #### C-Sharp
 
 ```csharp
+using Bandwidth.Standard.Voice.Bxml;
+
 Response response = new Response();
 
 Forward forward = new Forward();
@@ -119,6 +121,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $forward = new BandwidthLib\Voice\Bxml\Forward();
 $forward->to("+18888888888");
 $forward->from("+18889999999");

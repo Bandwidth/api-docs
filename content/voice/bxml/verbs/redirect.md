@@ -64,6 +64,8 @@ System.out.println(response.toBXML());
 #### C-Sharp
 
 ```csharp
+using Bandwidth.Standard.Voice.Bxml;
+
 Response response = new Response();
 
 Redirect redirect = new Redirect();
@@ -130,6 +132,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $redirect = new BandwidthLib\Voice\Bxml\Redirect();
 $redirect->redirectUrl("https://flow.url/newFlow");
 

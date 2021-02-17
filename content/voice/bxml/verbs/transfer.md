@@ -134,6 +134,8 @@ System.out.println(response.toBXML());
 #### C-Sharp
 
 ```csharp
+using Bandwidth.Standard.Voice.Bxml;
+
 Response response = new Response();
 
 PhoneNumber phoneNumber1 = new PhoneNumber();
@@ -217,6 +219,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $number = new BandwidthLib\Voice\Bxml\PhoneNumber("+17777777777");
 
 $transfer = new BandwidthLib\Voice\Bxml\Transfer();
@@ -281,6 +287,8 @@ System.out.println(response.toBXML());
 #### C-Sharp
 
 ```csharp
+using Bandwidth.Standard.Voice.Bxml;
+
 Response response = new Response();
 
 SpeakSentence speakSentence = new SpeakSentence();
@@ -385,6 +393,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Transferring your call, please wait.");
 $speakSentence->voice("paul");
 
@@ -421,6 +433,8 @@ echo "\n";
 #### C-Sharp
 
 ```csharp
+using Bandwidth.Standard.Voice.Bxml;
+
 Response response = new Response();
 
 SpeakSentence speakSentence = new SpeakSentence();
@@ -481,6 +495,10 @@ speakSentence.setVoice("paul");
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Transferring your call, please wait.");
 $speakSentence->voice("paul");
 ```
@@ -536,6 +554,8 @@ System.out.println(response.toBXML());
 #### C-Sharp
 
 ```csharp
+using Bandwidth.Standard.Voice.Bxml;
+
 Response response = new Response();
            
 PhoneNumber phoneNumber1 = new PhoneNumber();
@@ -630,6 +650,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $number1 = new BandwidthLib\Voice\Bxml\PhoneNumber("+17777777777");
 $number2 = new BandwidthLib\Voice\Bxml\PhoneNumber("+15555555555");
 

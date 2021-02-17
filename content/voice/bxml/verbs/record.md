@@ -100,6 +100,8 @@ System.out.println(response.toBXML());
 #### C-Sharp
 
 ```csharp
+using Bandwidth.Standard.Voice.Bxml;
+
 SpeakSentence speakSentence = new SpeakSentence
 {
     Voice = "bridget",
@@ -210,6 +212,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Please leave your message after the beep");
 $speakSentence->voice("bridget");
 
@@ -269,6 +275,8 @@ System.out.println(response.toBXML());
 #### C-Sharp
 
 ```csharp
+using Bandwidth.Standard.Voice.Bxml;
+
 SpeakSentence speakSentence = new SpeakSentence
 {
     Sentence = "Please say your name"
@@ -362,6 +370,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Please say your name");
 
 $record = new BandwidthLib\Voice\Bxml\Record();

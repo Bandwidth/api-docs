@@ -48,6 +48,8 @@ System.out.println(response.toBXML());
 #### C-Sharp
 
 ```csharp
+using Bandwidth.Standard.Voice.Bxml;
+
 StopRecording stopRecording = new StopRecording();
 
 Response response = new Response();
@@ -108,6 +110,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $stopRecording = new BandwidthLib\Voice\Bxml\StopRecording();
 
 $response = new BandwidthLib\Voice\Bxml\Response();
@@ -173,6 +179,8 @@ System.out.println(response.toBXML());
 #### C-Sharp
 
 ```csharp
+using Bandwidth.Standard.Voice.Bxml;
+
 SpeakSentence speakSentence = new SpeakSentence
 {
     Voice = "bridget",
@@ -332,6 +340,10 @@ console.log(response.toBxml());
 #### PHP
 
 ```php
+<?php
+
+require "vendor/autoload.php";
+
 $speakSentenceStart = new BandwidthLib\Voice\Bxml\SpeakSentence("This call is being recorded. Please wait while we transfer you.");
 $speakSentenceStart->voice("bridget");
 
