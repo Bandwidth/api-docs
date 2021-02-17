@@ -35,6 +35,9 @@ If a previous recording was paused,  will end it.
 #### Java
 
 ```java
+import com.bandwidth.voice.bxml.verbs.Response;
+import com.bandwidth.voice.bxml.verbs.StopRecording;
+
 StopRecording stopRecording = StopRecording.builder().build();
 
 Response response = Response.builder().build()
@@ -148,6 +151,12 @@ This shows how to use Bandwidth XML to record a phone call.
 #### Java
 
 ```java
+import com.bandwidth.voice.bxml.verbs.Response;
+import com.bandwidth.voice.bxml.verbs.SpeakSentence;
+import com.bandwidth.voice.bxml.verbs.StartRecording;
+import com.bandwidth.voice.bxml.verbs.StopRecording;
+import com.bandwidth.voice.bxml.verbs.Transfer;
+
 StartRecording startRecording = StartRecording.builder()
         .recordingAvailableUrl("https://myapp.com/noBXML")
         .build();

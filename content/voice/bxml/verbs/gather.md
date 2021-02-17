@@ -68,6 +68,10 @@ results to https://gather.url/nextBXML
 #### Java
 
 ```java
+import com.bandwidth.voice.bxml.verbs.Gather;
+import com.bandwidth.voice.bxml.verbs.Response;
+import com.bandwidth.voice.bxml.verbs.SpeakSentence;
+
 SpeakSentence speakSentence = SpeakSentence.builder()
         .text("Please press a digit.")
         .voice("kate")
@@ -229,6 +233,10 @@ Gather will end and send the result to the **gatherUrl**
 #### Java
 
 ```java
+import com.bandwidth.voice.bxml.verbs.Gather;
+import com.bandwidth.voice.bxml.verbs.Response;
+import com.bandwidth.voice.bxml.verbs.SpeakSentence;
+
 SpeakSentence speakSentence = SpeakSentence.builder()
         .text("I am going to keep asking you to press a digit.")
         .build();
@@ -386,6 +394,11 @@ This example shows how to nest multiple PlayAudio and SpeakSentence verbs
 #### Java
 
 ```java
+import com.bandwidth.voice.bxml.verbs.Gather;
+import com.bandwidth.voice.bxml.verbs.PlayAudio;
+import com.bandwidth.voice.bxml.verbs.Response;
+import com.bandwidth.voice.bxml.verbs.SpeakSentence;
+
 List<AudioProducer> list = new ArrayList<>();
 list.add(SpeakSentence.builder()
         .text("First Sentence")

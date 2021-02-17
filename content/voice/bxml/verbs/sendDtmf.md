@@ -44,6 +44,9 @@ This shows how to use Bandwidth XML to Send Dtmf during a call.
 #### Java
 
 ```java
+import com.bandwidth.voice.bxml.verbs.Response;
+import com.bandwidth.voice.bxml.verbs.SendDtmf;
+
 SendDtmf sendDtmf = SendDtmf.builder()
         .digits("12w34")
         .build();

@@ -108,6 +108,11 @@ This shows how to use Bandwidth XML to transfer a phone call.
 #### Java
 
 ```java
+import com.bandwidth.voice.bxml.verbs.PhoneNumber;
+import com.bandwidth.voice.bxml.verbs.Response;
+import com.bandwidth.voice.bxml.verbs.SpeakSentence;
+import com.bandwidth.voice.bxml.verbs.Transfer;
+
 SpeakSentence speakSentence = SpeakSentence.builder()
         .text("Transferring your call, please wait.")
         .gender("male")
@@ -260,6 +265,11 @@ This shows how to use Bandwidth XML to transfer a phone call with a pre-bridge a
 #### Java
 
 ```java
+import com.bandwidth.voice.bxml.verbs.PhoneNumber;
+import com.bandwidth.voice.bxml.verbs.Response;
+import com.bandwidth.voice.bxml.verbs.SpeakSentence;
+import com.bandwidth.voice.bxml.verbs.Transfer;
+
 SpeakSentence speakSentence = SpeakSentence.builder()
         .text("Transferring your call, please wait.")
         .voice("paul")
@@ -530,6 +540,10 @@ to answer is bridged to the original call.
 #### Java
 
 ```java
+import com.bandwidth.voice.bxml.verbs.PhoneNumber;
+import com.bandwidth.voice.bxml.verbs.Response;
+import com.bandwidth.voice.bxml.verbs.Transfer;
+
 PhoneNumber phoneNumber1 = PhoneNumber.builder()
         .phoneNumber("+11234567892")
         .build();

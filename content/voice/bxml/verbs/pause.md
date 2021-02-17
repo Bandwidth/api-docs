@@ -33,6 +33,9 @@ This shows how to use Bandwidth XML to pause for 2 seconds.
 #### Java
 
 ```java
+import com.bandwidth.voice.bxml.verbs.Pause;
+import com.bandwidth.voice.bxml.verbs.Response;
+
 Pause pause = Pause.builder()
         .duration(2.0)
         .build();

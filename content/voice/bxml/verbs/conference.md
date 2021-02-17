@@ -83,6 +83,10 @@ This shows how to use Bandwidth XML to add a call in a conference.
 #### Java
 
 ```java
+import com.bandwidth.voice.bxml.verbs.Conference;
+import com.bandwidth.voice.bxml.verbs.Response;
+import com.bandwidth.voice.bxml.verbs.SpeakSentence;
+
 SpeakSentence speakSentence = SpeakSentence.builder()
     .gender("male")
     .text("You will be added to your conference now.")
@@ -227,6 +231,10 @@ This shows how to add a coach in a conference.
 #### Java
 
 ```java
+import com.bandwidth.voice.bxml.verbs.Conference;
+import com.bandwidth.voice.bxml.verbs.Response;
+import com.bandwidth.voice.bxml.verbs.SpeakSentence;
+
 SpeakSentence speakSentence = SpeakSentence.builder()
     .gender("male")
     .text("Welcome. You are going to coach 2 calls, please wait.")

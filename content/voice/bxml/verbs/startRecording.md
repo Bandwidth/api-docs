@@ -72,6 +72,12 @@ This shows how to use Bandwidth XML to record a phone call.
 #### Java
 
 ```java
+import com.bandwidth.voice.bxml.verbs.Response;
+import com.bandwidth.voice.bxml.verbs.SpeakSentence;
+import com.bandwidth.voice.bxml.verbs.StartRecording;
+import com.bandwidth.voice.bxml.verbs.StopRecording;
+import com.bandwidth.voice.bxml.verbs.Transfer;
+
 StartRecording startRecording = StartRecording.builder()
         .recordingAvailableUrl("https://myapp.com/noBXML")
         .build();
