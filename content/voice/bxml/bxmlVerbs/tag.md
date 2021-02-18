@@ -16,7 +16,7 @@ None
 
 #### Example 1 of 1: Tag Verb
 This shows how to use the  verb and its effects on callback events. In this example, we only
-affect the [disconnect event](../callbacks/disconnect.md), but if there were other callbacks, they
+affect the [disconnect event](../bxmlCallbacks/disconnect.md), but if there were other callbacks, they
 would also be affected.
 
 

@@ -1,6 +1,6 @@
 
 ## XML: `<Forward>`
-Forwards an unanswered incoming call to another number.  Unlike `<Transfer>`, once your call is forwarded, your application will not have any control over either leg of the call.  When either leg hangs up, a [Disconnect event](../callbacks/disconnect.md) will be sent to your Call status callback URL.  
+Forwards an unanswered incoming call to another number.  Unlike `<Transfer>`, once your call is forwarded, your application will not have any control over either leg of the call.  When either leg hangs up, a [Disconnect event](../bxmlCallbacks/disconnect.md) will be sent to your Call status callback URL.  
 
 ### Attributes
 

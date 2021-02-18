@@ -6,10 +6,10 @@ The Redirect verb is used to redirect the current XML execution to another URL.
 
 | Attribute              | Description |
 |:-----------------------|:------------|
-| redirectUrl            | (required) URL to request new BXML from. A [Redirect](../callbacks/redirect.md) event will be sent to this endpoint. May be a relative URL. |
+| redirectUrl            | (required) URL to request new BXML from. A [Redirect](../bxmlCallbacks/redirect.md) event will be sent to this endpoint. May be a relative URL. |
 | redirectMethod         | (optional) The HTTP method to use for the request to `redirectUrl`. GET or POST. Default Value is POST. |
-| redirectFallbackUrl    | (optional) A fallback url which, if provided, will be used to retry the [Redirect](../callbacks/redirect.md) callback delivery in case `redirectUrl` fails to respond. |
-| redirectFallbackMethod | (optional) The HTTP method to use to deliver the [Redirect](../callbacks/redirect.md) callback to `redirectFallbackUrl`. GET or POST. Default value is POST. |
+| redirectFallbackUrl    | (optional) A fallback url which, if provided, will be used to retry the [Redirect](../bxmlCallbacks/redirect.md) callback delivery in case `redirectUrl` fails to respond. |
+| redirectFallbackMethod | (optional) The HTTP method to use to deliver the [Redirect](../bxmlCallbacks/redirect.md) callback to `redirectFallbackUrl`. GET or POST. Default value is POST. |
 | username               | (optional) The username to send in the HTTP request to `redirectUrl`. |
 | password               | (optional) The password to send in the HTTP request to `redirectUrl`. |
 | fallbackUsername       | (optional) The username to send in the HTTP request to `redirectFallbackUrl`. |
@@ -26,7 +26,7 @@ The Redirect verb is used to redirect the current XML execution to another URL.
 
 | Callbacks                            | Can reply with more BXML |
 |:-------------------------------------|:-------------------------|
-| [Redirect](../callbacks/redirect.md) | Yes                      |
+| [Redirect](../bxmlCallbacks/redirect.md) | Yes                      |
 
 
 

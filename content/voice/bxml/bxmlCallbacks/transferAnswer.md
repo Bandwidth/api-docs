@@ -1,6 +1,6 @@
 
 ##  Transfer Answer Event –  verb
-When processing a [`<Transfer>`](../verbs/transfer.md) verb, this event is sent when a called party (B-leg) answers.  The event is sent to
+When processing a [`<Transfer>`](../bxmlVerbs/transfer.md) verb, this event is sent when a called party (B-leg) answers.  The event is sent to
   the endpoint specified in the `transferAnswerUrl` attribute of the `<PhoneNumber>` tag that answered. BXML returned by this callback will be executed for the called party only. After all BXML has been executed, the called party will be bridged to the original
   call. 
   
@@ -8,26 +8,26 @@ Most BXML verbs are allowed in response to a `transferAnswer` event, but some ar
 
 | Verb                                              | Allowed       |
 |---------------------------------------------------|---------------|
-| [Bridge](../verbs/bridge.md)                      | No            |
-| [Conference](../verbs/conference.md)              | No            |
-| [Forward](../verbs/forward.md)                    | No            |
-| [Gather](../verbs/gather.md)                      | Yes           |
-| [Hangup](../verbs/hangup.md)                      | Yes           |
-| [Pause](../verbs/pause.md)                        | Yes           |
-| [PauseRecording](../verbs/pauseRecording.md)      | Yes           |
-| [PlayAudio](../verbs/playAudio.md)                | Yes           |
-| [Record](../verbs/record.md)                      | Yes           |
-| [Redirect](../verbs/redirect.md)                  | Yes           |
-| [ResumeRecording](../verbs/resumeRecording.md)    | Yes           |
-| [Ring](../verbs/ring.md)                          | Yes           |
-| [SendDtmf](../verbs/sendDtmf.md)                  | Yes           |
-| [SpeakSentence](../verbs/speakSentence.md)        | Yes           |
-| [StartGather](../verbs/startGather.md)            | Yes           |
-| [StartRecording](../verbs/startRecording.md)      | Yes           |
-| [StopGather](../verbs/stopGather.md)              | Yes           |
-| [StopRecording](../verbs/stopRecording.md)        | Yes           |
-| [Tag](../verbs/tag.md)                            | Yes           |
-| [Transfer](../verbs/transfer.md)                  | No            |
+| [Bridge](../bxmlVerbs/bridge.md)                      | No            |
+| [Conference](../bxmlVerbs/conference.md)              | No            |
+| [Forward](../bxmlVerbs/forward.md)                    | No            |
+| [Gather](../bxmlVerbs/gather.md)                      | Yes           |
+| [Hangup](../bxmlVerbs/hangup.md)                      | Yes           |
+| [Pause](../bxmlVerbs/pause.md)                        | Yes           |
+| [PauseRecording](../bxmlVerbs/pauseRecording.md)      | Yes           |
+| [PlayAudio](../bxmlVerbs/playAudio.md)                | Yes           |
+| [Record](../bxmlVerbs/record.md)                      | Yes           |
+| [Redirect](../bxmlVerbs/redirect.md)                  | Yes           |
+| [ResumeRecording](../bxmlVerbs/resumeRecording.md)    | Yes           |
+| [Ring](../bxmlVerbs/ring.md)                          | Yes           |
+| [SendDtmf](../bxmlVerbs/sendDtmf.md)                  | Yes           |
+| [SpeakSentence](../bxmlVerbs/speakSentence.md)        | Yes           |
+| [StartGather](../bxmlVerbs/startGather.md)            | Yes           |
+| [StartRecording](../bxmlVerbs/startRecording.md)      | Yes           |
+| [StopGather](../bxmlVerbs/stopGather.md)              | Yes           |
+| [StopRecording](../bxmlVerbs/stopRecording.md)        | Yes           |
+| [Tag](../bxmlVerbs/tag.md)                            | Yes           |
+| [Transfer](../bxmlVerbs/transfer.md)                  | No            |
 
 ### Expected response
 ```http

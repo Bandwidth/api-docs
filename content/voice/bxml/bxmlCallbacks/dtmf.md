@@ -1,7 +1,7 @@
 
 ## DTMF Event
 
-The DTMF event is sent for every digit detected after a [`<StartGather>`](../verbs/startGather.md) verb is executed.
+The DTMF event is sent for every digit detected after a [`<StartGather>`](../bxmlVerbs/startGather.md) verb is executed.
 
 You may not respond to this event with BXML.
 

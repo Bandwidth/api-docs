@@ -1,6 +1,6 @@
 
 ##  Bridge Target Complete Event
-If the originating call leaves the [&lt;Bridge&gt;](../verbs/bridge.md),
+If the originating call leaves the [&lt;Bridge&gt;](../bxmlVerbs/bridge.md),
 then this callback is sent to the `bridgeTargetCompleteUrl`,
 and the BXML returned in it is executed on the target call.
 

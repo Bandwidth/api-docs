@@ -6,10 +6,10 @@ The Gather verb is used to collect digits for some period of time.
 
 | Attribute            | Description |
 |:---------------------|:------------|
-| gatherUrl            | (optional) URL to send [Gather event](../callbacks/gather.md) to and request new BXML. May be a relative URL. |
+| gatherUrl            | (optional) URL to send [Gather event](../bxmlCallbacks/gather.md) to and request new BXML. May be a relative URL. |
 | gatherMethod         | (optional) The HTTP method to use for the request to `gatherUrl`. GET or POST. Default value is POST. |
-| gatherFallbackUrl    | (optional) A fallback url which, if provided, will be used to retry the [Gather event](../callbacks/gather.md) callback delivery in case `gatherUrl` fails to respond. |
-| gatherFallbackMethod | (optional) The HTTP method to use to deliver the [Gather event](../callbacks/gather.md) callback to `gatherFallbackUrl`. GET or POST. Default value is POST. |
+| gatherFallbackUrl    | (optional) A fallback url which, if provided, will be used to retry the [Gather event](../bxmlCallbacks/gather.md) callback delivery in case `gatherUrl` fails to respond. |
+| gatherFallbackMethod | (optional) The HTTP method to use to deliver the [Gather event](../bxmlCallbacks/gather.md) callback to `gatherFallbackUrl`. GET or POST. Default value is POST. |
 | username             | (optional) The username to send in the HTTP request to `gatherUrl`. |
 | password             | (optional) The password to send in the HTTP request to `gatherUrl`. |
 | fallbackUsername     | (optional) The username to send in the HTTP request to `gatherFallbackUrl`. |
@@ -27,7 +27,7 @@ The gather is terminated when one of these conditions is met:
  * Any nested audio has ended and `firstDigitTimeout` seconds have elapsed without the user pressing any digits
  * The user presses `maxDigits` digits
 
-If the `gatherUrl` attribute is specified, the [Gather event](../callbacks/gather.md) is sent to the `gatherUrl` upon
+If the `gatherUrl` attribute is specified, the [Gather event](../bxmlCallbacks/gather.md) is sent to the `gatherUrl` upon
 completion of the gather. BXML returned by that callback are then executed. If `gatherUrl` is specified, verbs following the `<Gather>` will be ignored.
 
 If no `gatherUrl` attribute is specified, the gathered digits are discarded and execution of verbs following the `<Gather>` continues.
@@ -44,7 +44,7 @@ The following verbs may be nested inside of a `<Gather>` tag.  If using a repeat
 
 | Callback                         | Can reply with more BXML |
 |:---------------------------------|:-------------------------|
-| [Gather](../callbacks/gather.md) | Yes                      |
+| [Gather](../bxmlCallbacks/gather.md) | Yes                      |
 
 
 

@@ -58,10 +58,10 @@ BXML containing unsupported verbs will be rejected completely.
 ### Callbacks Received
 | Callbacks                                                      | Can reply with BXML |
 |:---------------------------------------------------------------|:--------------------|
-| [Conference Created](../callbacks/conferenceCreated.md)        | Yes                 |
-| [Conference Member Join](../callbacks/conferenceMemberJoin.md) | Yes                 |
-| [Conference Member Exit](../callbacks/conferenceMemberExit.md) | Yes                 |
-| [Conference Completed](../callbacks/conferenceCompleted.md)    | No                  |
+| [Conference Created](../bxmlCallbacks/conferenceCreated.md)        | Yes                 |
+| [Conference Member Join](../bxmlCallbacks/conferenceMemberJoin.md) | Yes                 |
+| [Conference Member Exit](../bxmlCallbacks/conferenceMemberExit.md) | Yes                 |
+| [Conference Completed](../bxmlCallbacks/conferenceCompleted.md)    | No                  |
 
 
 

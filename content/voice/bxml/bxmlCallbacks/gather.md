@@ -1,7 +1,7 @@
 
 ##  Gather event
 
-The gather event is sent after a [`<Gather>`](../verbs/gather.md) verb is executed.  Its purpose is to report the gathered digits
+The gather event is sent after a [`<Gather>`](../bxmlVerbs/gather.md) verb is executed.  Its purpose is to report the gathered digits
 to the calling application.
 
 ### Expected response
