@@ -1,32 +1,16 @@
-
-
-
 # HTTP Errors when sending messages 
 
 Bandwidth will respond with HTTP errors code when the message creation request fails. Any `4xx` or `5xx` HTTP response code will not be billed nor will the message be sent.
 
-## Overview
-
-* [400 - Bad Request](#http-400)
-* [401 - Unauthorized](#http-401)
-* [403 - Forbidden](#http-403)
-* [404 - Not Found](#http-404)
-* [415 - Invalid Media-Type](#http-415)
-* [429 - Too Many Requests](#http-429)
-
 ## 400 – BAD_REQUEST 
 
 Bandwidth will return a `HTTP-400` Error when the request is malformed or invalid.  See the message of the error for tips before trying again.
-
-
 
 ### Parameters
 | Parameter               | Type     | Description                                      |
 |:------------------------|:---------|:-------------------------------------------------|
 | type                    | `string` | The Type of error.                               |
 | description             | `string` | A detailed description of why the error occurred |
-
-
 
 ### Example: Invalid telephone numbers
 
@@ -55,15 +39,9 @@ Content-Type: application/json; charset=utf-8
 }
 ```
 
-
-
-
-
 ## 401 – UNAUTHORIZED 
 
 Bandwidth returns a `HTTP-401` Error when the specified user does not have access to the account. Ensure the username and password are correct along with the correct account number. See the [security & credentials guide](../../guides/accountCredentials.md) for more information.
-
-
 
 ### Parameters
 
@@ -71,8 +49,6 @@ Bandwidth returns a `HTTP-401` Error when the specified user does not have acces
 |:----------|:---------------------|:---------------------------------------|
 | type                    | `string` | The Type of error.                               |
 | description             | `string` | A detailed description of why the error occurred |
-
-
 
 ### Example: Incorrect credentials sent
 
@@ -102,13 +78,9 @@ Content-Type: application/json; charset=utf-8
 }
 ```
 
-
-
 ## 403 – FORBIDDEN 
 
 Bandwidth returns a `HTTP-403` error when the user does not have access to the messaging API.
-
-
 
 ### Parameters
 
@@ -116,8 +88,6 @@ Bandwidth returns a `HTTP-403` error when the user does not have access to the m
 |:----------|:---------------------|:---------------------------------------|
 | type                    | `string` | The Type of error.                               |
 | description             | `string` | A detailed description of why the error occurred |
-
-
 
 ### Example: User does not have access
 
@@ -146,14 +116,9 @@ Content-Type: application/json; charset=utf-8
 }
 ```
 
-
-
 ## 404 – NOT_FOUND 
 
 Bandwidth returns a `HTTP-404` when the path is not found. Ensure the path of the request is correct and adjust accordingly.
-
-
-
 
 ### Path nonexistent Error Schema
 
@@ -164,8 +129,6 @@ Bandwidth returns a `HTTP-404` when the path is not found. Ensure the path of th
 | error     | Description of error   | `Not found`                    |
 | message   | Any more information   | `no message found`             |
 | path      | Path that wasn't found | `/happy`                       |
-
-
 
 ### Example: Path does not exist
 
@@ -197,13 +160,9 @@ Content-Type: application/json;charset=UTF-8
 }
 ```
 
-
-
 ## 415 - UNSUPPORTED MEDIA TYPE 
 
 Bandwidth returns a `HTTP-415` error when the content-type of the request is incorrect. Ensure the request header contains `Content-Type: application/json; charset=utf-8` and try again.
-
-
 
 ### Parameters
 
@@ -211,8 +170,6 @@ Bandwidth returns a `HTTP-415` error when the content-type of the request is inc
 |:------------|:---------|:-------------------------------------------------|
 | type        | `string` | Type of Error                                    |
 | description | `string` | A detailed description of why the error occurred |
-
-
 
 ### Example: Incorrect content-type sent
 
@@ -241,16 +198,11 @@ Content-Type: application/json; charset=utf-8
 }
 ```
 
-
-
-
 ## 429 - TOO MANY REQUESTS 
 
 Bandwidth returns a `HTTP-429` error when the rate limit has been reached.
 
 For more information about rate limits and queue management, see the [rate limits](../ratelimits.md) document.
-
-
 
 ### Parameters
 
@@ -258,8 +210,6 @@ For more information about rate limits and queue management, see the [rate limit
 |:------------------------|:---------|:-------------------------------------------------|
 | type                    | `string` | The Type of error.                               |
 | description             | `string` | A detailed description of why the error occurred |
-
-
 
 ### Example: Too many requests
 
@@ -287,5 +237,3 @@ Content-Type: application/json; charset=utf-8
   "description": "The SMS queue for your account is full and cannot accept more messages right now. Your allowed rate is 60 messages per minute. The capacity of this queue is 900 messages (15 minutes). Reduce your message sending rate, or contact support to increase your allowed rate."
 }
 ```
-
-

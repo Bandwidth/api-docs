@@ -4,7 +4,7 @@ Click and play around to learn more about Bandwidth's APIs
 
 ## Messaging
 
-Communication at its most basic. Adding SMS or MMS is a snap with [Bandwidth Messaging](../messaging/messaging-home-page.md)
+Communication at its most basic. Adding SMS or MMS is a snap with [Bandwidth Messaging](../messaging/MessagingHomePage.md)
 
 ## Voice
 

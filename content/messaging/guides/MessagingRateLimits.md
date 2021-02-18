@@ -4,17 +4,6 @@
 
 This guide will walk through the recommended approach to managing queues and rate limits for use with the Messaging API. Over the past years mobile telecom operators have begun to block what is deemed automated traffic (**A2P**) sent over standard local telephone numbers IE: (919)-430-5555. The amount of messages sent in this way have increased due to spreading automated traffic (A2P) across multiple local telephone numbers to bypass volumetric filters. This process is called "snowshoeing" and as a result, the mobile operators are not only blocking volumetrically, but are also finger-printing content and preemptively blocking messages even from a "fresh" phone number.
 
-## Overview
-
-* [Billing information](#billing)
-* [How Bandwidth Helps](#how-bandwidth-helps)
-    * [A2P Best Practices](#a2p-best-practices)
-* [Default Rate Limits](#default-rate-limit)
-* [Managing Messages](#managing-messages)
-    * [Back-off and Retry](#backoff-and-retry)
-    * [Throttling](#throttle)
-    * [Queue Management](#queue-management)
-
 ## Assumptions
 * You are familiar with:
   * [CTIA Best Practices (PDF)](https://api.ctia.org/wp-content/uploads/2019/07/190719-CTIA-Messaging-Principles-and-Best-Practices-FINAL.pdf)
@@ -35,7 +24,7 @@ More information about the types of messaging Bandwidth supports can be found in
 
 ### Spam filtering and A2P Best Practice
 
-Bandwidth uses the same network protection technology as the mobile telco operators. This allows us to screen messages before they're sent to the downstream carrier. By checking before Bandwidth passes the message along, we're able to work with you to understand and fix any potential issues with the message. This maintains your telephone number deliverability reputation and helps build predictable traffic patterns. If the message is marked as Spam we will send a notification to the `application` specified in the [create message](./methods/messages/createMessage.md) request.
+Bandwidth uses the same network protection technology as the mobile telco operators. This allows us to screen messages before they're sent to the downstream carrier. By checking before Bandwidth passes the message along, we're able to work with you to understand and fix any potential issues with the message. This maintains your telephone number deliverability reputation and helps build predictable traffic patterns. If the message is marked as Spam we will send a notification to the `application` specified in the create message request.
 
 At Bandwidth, we want to help our customers follow [best practices for toll-free (A2P) messaging](https://support.bandwidth.com/hc/en-us/articles/360005440954-Toll-Free-A2P-Use-Case-Best-Practices). All messaging traffic is required to comply with relevant laws and regulations, including (but not limited to) the [Telephone Consumer Protection Act (TCPA)](https://transition.fcc.gov/cgb/policy/TCPA-Rules.pdf).  Please note, this article does not constitute legal advice.
 
@@ -54,7 +43,7 @@ For more information about rate limits and queues, please visit the links below:
 
 ### 429 – Too Many Requests
 
-It is important to note, when you max out your account level rate limit and your queue size has been exceeded, you will receive a [429 - Too Many Requests error.](errors/httpErrors.md#http-429)
+It is important to note, when you max out your account level rate limit and your queue size has been exceeded, you will receive a `429 - Too Many Requests` error.
 
 ### Sample Message Rate Limit Response
 

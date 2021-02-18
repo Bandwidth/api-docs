@@ -6,8 +6,8 @@ In order to receive message events, you need to ensure you have set up your appl
 When sending to Group Messages, there is a maximum of 10 participants in a Group.
 
 **For inbound messages**, we do not limit the amount of recipients. We will pass along any messages we receive, **even if there are more than 10 recipients**.
-If you wanted to reply to all `9+{n}` recipients using V2 APIs, Bandwidth will reply with a [400 error (as you are limited to 10 recipients when sending outbound)](../errors/httpErrors.md#http-400)
-You will need to break up the responses into separate messages to respond to more than `9+{n}` participants
+If you wanted to reply to all `9+{n}` recipients using V2 APIs, Bandwidth will reply with a 400 error (as you are limited to 10 recipients when sending outbound).
+You will need to break up the responses into separate messages to respond to more than `9+{n}` participants.
 
 ### Parameters
 

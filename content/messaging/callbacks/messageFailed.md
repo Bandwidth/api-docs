@@ -1,4 +1,3 @@
-
 # Message Failed Event
 In order to receive message events, you need to ensure you have set up your application to send callbacks to your server's URL.
 
@@ -9,7 +8,7 @@ For MMS and Group Messages, you will only receive this callback if you have enab
 |:----------------------|:----------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | type                  | `string`  | The Event type                                                                                                                                                                                                                                                                                                                                                      |
 | time                  | `array`   | The time of the event described in the receipt                                                                                                                                                                                                                                                                                                                      |
-| errorCode             | `integer` | The error code (if any). See the [error docs](../errors/codes.md) for a detailed list                                                                                                                                                                                                                                                                               |
+| errorCode             | `integer` | The error code (if any)                                                                                                                                                                                                                                                                                |
 | description           | `string`  | A detailed description of the event described by the receipt                                                                                                                                                                                                                                                                                                        |
 | to                    | `string`  | The destination number for an outbound message receipt                                                                                                                                                                                                                                                                                                              |
 | message               | `Object`  | An object of message information                                                                                                                                                                                                                                                                                                                                    |
@@ -25,6 +24,9 @@ For MMS and Group Messages, you will only receive this callback if you have enab
 | message.tag           | `string`  | An custom String that you can use to track this particular message                                                                                                                                                                                                                                                                                                  |
 | message.segmentCount  | `int`     | This indicates the number of segments the original message from the user is broken into before sending over to career networks                                                                                                                                                                                                                                      |
 
+#### Message Error Codes
+
+Please reference our [message error codes page](../errors/errorCodes.md) for a list of possible errors and error codes.
 
 ### Example Error 1 of 2 (4432 - forbidden to country)
 
@@ -98,4 +100,3 @@ User-Agent: BandwidthAPI/v2
   }
 ]
 ```
-
