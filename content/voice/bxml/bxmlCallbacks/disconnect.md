@@ -2,7 +2,7 @@
 ## Disconnect Event
 
 The Disconnect event is fired when a call ends, for any reason. The `cause` for a disconnect event on a call can be:
-- `hangup`: one party hung up the call, a [`<Hangup>`](../../bx../bxmlVerbs/hangup.md) verb was executed, or there was no more BXML to execute; it indicates that the call ended normally.
+- `hangup`: one party hung up the call, a [`<Hangup>`](../bxmlVerbs/hangup.md) verb was executed, or there was no more BXML to execute; it indicates that the call ended normally.
 - `busy`: the callee was busy.
 - `timeout`: the call wasn't answered before the `callTimeout` was reached.
 - `cancel`: the call was cancelled by its originator while it was ringing.

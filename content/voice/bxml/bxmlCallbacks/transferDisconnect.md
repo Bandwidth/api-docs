@@ -5,7 +5,7 @@ The event is sent in the normal case, when the transferred leg is answered and l
 was never answered in the first place, if it was rejected, and if the original call leg hung up before the transferred leg.
 
 The `cause` for a `transferDisconnect` event on a call can be:
-- `hangup`: one party hung up the call, a [`<Hangup>`](../../bx../bxmlVerbs/hangup.md) verb was executed, or there was no more BXML to execute; it indicates that the call ended normally.
+- `hangup`: one party hung up the call, a [`<Hangup>`](../bxmlVerbs/hangup.md) verb was executed, or there was no more BXML to execute; it indicates that the call ended normally.
 - `busy`: the callee was busy.
 - `timeout`: the call wasn't answered before the `callTimeout` was reached.
 - `cancel`: the call was cancelled by its originator while it was ringing.
