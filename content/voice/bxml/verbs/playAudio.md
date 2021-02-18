@@ -65,6 +65,9 @@ This shows how to use Bandwidth XML to play two audio clips into a phone call.
 #### Java
 
 ```java
+import com.bandwidth.voice.bxml.verbs.PlayAudio;
+import com.bandwidth.voice.bxml.verbs.Response;
+
 PlayAudio playAudio1 = PlayAudio.builder()
         .audioUri("https;//audio.url/audio1.wav")
         .build();

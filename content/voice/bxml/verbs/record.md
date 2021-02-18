@@ -73,6 +73,11 @@ This shows how to use Bandwidth XML to record a phone call.
 #### Java
 
 ```java
+import com.bandwidth.voice.bxml.verbs.PlayAudio;
+import com.bandwidth.voice.bxml.verbs.Record;
+import com.bandwidth.voice.bxml.verbs.Response;
+import com.bandwidth.voice.bxml.verbs.SpeakSentence;
+
 SpeakSentence speakSentence = SpeakSentence.builder()
         .voice("bridget")
         .text("Please leave your message after the beep")
@@ -253,6 +258,10 @@ echo $response->toBxml();
 #### Java
 
 ```java
+import com.bandwidth.voice.bxml.verbs.Record;
+import com.bandwidth.voice.bxml.verbs.Response;
+import com.bandwidth.voice.bxml.verbs.SpeakSentence;
+
 SpeakSentence speakSentence = SpeakSentence.builder()
         .text("Please say your name")
         .build();
