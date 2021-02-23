@@ -4,5 +4,5 @@
 |--|
 | [Messaging](../messaging/MessagingHomePage.md) |
 | [Voice](../voice/VoiceOverview.md) |
-| [Dashboard](../numbers/numbers-home-page.md) |
+| [Dashboard](../dashboard/DashboardOverview.md) |
 | [MFA](../mfa/MfaOverview.md) |
