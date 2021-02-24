@@ -106,15 +106,18 @@ print(response.to_bxml())
 
 
 
-#### NodeJS
+#### Node.js
 
 ```js
-var forward = new BandwidthBxml.Verbs.Forward();
-forward.setTo("+18888888888");
-forward.setFrom("+19999999999");
+import { Forward, Response } from '@bandwidth/voice';
 
-var response = new BandwidthBxml.Response();
-response.addVerb(forward);
+const forward = new Forward({
+    to: '+18888888888',
+    from: '+19999999999'
+});
+
+const response = new Response();
+response.add(forward);
 
 console.log(response.toBxml());
 ```

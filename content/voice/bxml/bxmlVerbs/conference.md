@@ -187,7 +187,6 @@ const conference = new Conference({
 });
 
 const response = new Response();
-
 response.add(speakSentence);
 response.add(conference);
 
@@ -352,7 +351,6 @@ const conference = new Conference({
 });
 
 const response = new Response();
-
 response.add(speakSentence);
 response.add(conference);
 

@@ -280,7 +280,6 @@ const pause = new Pause({
 });
 
 const response = new Response();
-
 response.add(speakSentence);
 response.add(pause);
 
