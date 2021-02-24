@@ -272,7 +272,7 @@ First call (c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d):
 import { SpeakSentence, Pause, Response } from '@bandwidth/voice';
 
 const speakSentence = new SpeakSentence({
-    sentence: 'Wait until the second call answers'
+    sentence: 'Wait until the second call answers.'
 });
 
 const pause = new Pause({
@@ -294,7 +294,7 @@ Second call:
 import { SpeakSentence, Bridge, Response } from '@bandwidth/voice';
 
 const speakSentence = new SpeakSentence({
-    sentence: 'The bridge will start now'
+    sentence: 'The bridge will start now.'
 });
 
 const bridge = new Bridge({
