@@ -190,24 +190,26 @@ print(response.to_bxml())
 
 
 
-#### NodeJS
+#### Node.js
 
 ```js
-var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
-speakSentence.setSentence("Please leave your message after the beep");
-speakSentence.setVoice("bridget");
+import { SpeakSentence, PlayAudio, Record, Response } from '@bandwidth/voice';
 
-var playAudio = new BandwidthBxml.Verbs.PlayAudio();
-playAudio.setUrl("https://audio.url/beep.wav");
+const speakSentence = new SpeakSentence({
+    sentence: 'Please leave your message after the beep.',
+    voice: 'bridget'
+});
 
-var record = new BandwidthBxml.Verbs.Record();
-record.setRecordCompleteUrl("https://myapp.com/nextBXML");
-record.setMaxDuration(10);
+const playAudio = new PlayAudio({
+    url: 'https://audio.url/beep.wav'
+});
 
-var response = new BandwidthBxml.Response();
-response.addVerb(speakSentence);
-response.addVerb(playAudio);
-response.addVerb(record);
+const record = new Record({
+    recordCompleteUrl: 'https://myapp.com/nextBXML',
+    maxDuration: 10
+});
+
+const response = new Response(speakSentence, playAudio, record);
 
 console.log(response.toBxml());
 ```
@@ -356,20 +358,22 @@ print(response.to_bxml())
 
 
 
-#### NodeJS
+#### Node.js
 
 ```js
-var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
-speakSentence.setSentence("Please say your name")
+import { SpeakSentence, Record, Response } from '@bandwidth/voice';
 
-var record = new BandwidthBxml.Verbs.Record();
-record.setTranscribe(true);
-record.setTranscriptionAvailableUrl("https://transcription.url.server/transcribe/");
-record.setRecordCompleteUrl("https://record.url.server/record");
+const speakSentence = new SpeakSentence({
+    sentence: 'Please say your name.'
+});
 
-var response = new BandwidthBxml.Response();
-response.addVerb(speakSentence);
-response.addVerb(record);
+const record = new Record({
+    transcribe: true,
+    transcriptionAvailableUrl: 'https://transcription.url.server/transcribe/',
+    recordCompleteUrl: 'https://record.url.server/record'
+});
+
+const response = new Response(speakSentence, record);
 
 console.log(response.toBxml());
 ```
