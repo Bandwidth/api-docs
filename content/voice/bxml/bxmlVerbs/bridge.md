@@ -266,35 +266,46 @@ print(response.to_bxml())
 
 
 First call (c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d):
-#### NodeJS
+#### Node.js
 
 ```js
-var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
-speakSentence.setSentence("Wait until the second call answers");
-var pause = new BandwidthBxml.Verbs.Pause();
-pause.setDuration(60);
+import { SpeakSentence, Pause, Response } from '@bandwidth/voice';
 
-var response = new BandwidthBxml.Response();
-response.addVerb(speakSentence);
-response.addVerb(pause);
+const speakSentence = new SpeakSentence({
+    sentence: 'Wait until the second call answers'
+});
+
+const pause = new Pause({
+    duration: 60
+});
+
+const response = new Response();
+
+response.add(speakSentence);
+response.add(pause);
 
 console.log(response.toBxml());
 ```
 
 Second call:
-#### NodeJS
+#### Node.js
 
 ```js
-var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
-speakSentence.setSentence("The bridge will start now");
-var bridge = new BandwidthBxml.Verbs.Bridge();
-bridge.setCallId("c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d");
-bridge.setBridgeCompleteUrl("https://bridge.url/nextBXMLForSecondCall");
-bridge.setBridgeTargetCompleteUrl("https://bridge.url/nextBXMLForFirstCall");
+import { SpeakSentence, Bridge, Response } from '@bandwidth/voice';
 
-var response = new BandwidthBxml.Response();
-response.addVerb(speakSentence);
-response.addVerb(bridge);
+const speakSentence = new SpeakSentence({
+    sentence: 'The bridge will start now'
+});
+
+const bridge = new Bridge({
+    callId: 'c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d',
+    bridgeCompleteUrl: 'https://bridge.url/nextBXMLForSecondCall',
+    bridgeTargetCompleteUrl: 'https://bridge.url/nextBXMLForFirstCall'
+});
+
+const response = new Response();
+response.add(speakSentence);
+response.add(bridge);
 
 console.log(response.toBxml());
 ```
