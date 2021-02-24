@@ -107,9 +107,9 @@ print(response.to_bxml())
 ```js
 import { Hangup, Response } from '@bandwidth/voice';
 
-var hangup = new Hangup();
+const hangup = new Hangup();
 
-var response = new Response(hangup);
+const response = new Response(hangup);
 
 console.log(response.toBxml());
 ```
