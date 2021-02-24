@@ -1,1 +1,1 @@
-hello world
+BXML verbs are XML documents that tell Bandwidth what to do with the phone call. This can range from speaking text, playing audio, forwarding the call, or ending the call. All BXML verbs are wrapped with a `<Response>` tag.
