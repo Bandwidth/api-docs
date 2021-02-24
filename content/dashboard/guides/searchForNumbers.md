@@ -1,6 +1,3 @@
-
-
-
 # Searching for Phone Numbers 
 
 Searching for phone numbers can be performed through our Dashboard API. There are many ways to search for phone numbers and this guide covers the various methods and how you perform them.
@@ -14,11 +11,7 @@ Bandwidth's available number searches with local calling enabled by default. The
 In certain cases where the **exact digits** are important (such as localVantiy, endsIn, npaNxxx) LCA should be disabled to filter out non-pattern matched phone numbers.
 
 ## Base URL
-GET`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/availableNumbers`
-
-## API Authentication
-
-The Numbers API resources are authenticated with your [API Credentials for "Number & Account Management"](../../guides/accountCredentials.md#number-account-creds).
+GET `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/availableNumbers`
 
 ## Query Parameters
 

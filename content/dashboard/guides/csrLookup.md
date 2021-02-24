@@ -51,7 +51,7 @@ Learn more about [subscriptions in the documentation](../../account/subscription
 #### Subscription Parameters
 
 #### Request URL
-POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/subscriptions`
+POST `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/subscriptions`
 
 #### Request Authentication
 
@@ -231,7 +231,7 @@ Before creating the order, be sure to collect any information from the end user 
 
 #### Request URL
 
-POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/csrs`
+POST `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/csrs`
 
 
 | Parameter                             | Mandatory | Description                                                                                                                                                                                                                                                 |
@@ -402,7 +402,7 @@ Anytime the status of the order is updated (`COMPLETE`, `FAILED`, `ACTION_REQUIR
 
 #### Request URL
 
-POST`{{your-callback-url_as-defined-in-the-subscription}}`
+POST `{{your-callback-url_as-defined-in-the-subscription}}`
 
 | Parameter           | Description                                                        |
 |:--------------------|:-------------------------------------------------------------------|
@@ -697,7 +697,7 @@ You'll need to fetch the order status for both `FAILED` and `COMPLETE` CSR order
 
 #### Request URL
 
-GET`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/csrs/{{orderId}}`
+GET `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/csrs/{{orderId}}`
 
 ##### Response Parameters
 

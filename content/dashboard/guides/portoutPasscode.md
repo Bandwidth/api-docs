@@ -1,19 +1,6 @@
-
-
-
 # Bandwidth Portout Passcode Protection 
 
 This walks through how to programmatically add a "Passcode" to protect phone numbers from unauthorized port outs.  When a phone number with a Passcode protection receives a port out request, the winning carrier (or customer) must provide a Passcode along with the port request. Bandwidth will then verify the Passcode provided by the winning carrier to the Passcode set on the phone number before allowing the port. Mis-matches will automatically fail to port and alert the winning carrier that the Passcode was incorrect and to please try again with an updated Passcode.
-
-## Assumptions
-
-* Familiarity with [Account API Credentials](../../guides/accountCredentials.md)
-* Created an [API Credential Pair within the UI](https://support.bandwidth.com/hc/en-us/articles/360039065753-Classic-How-to-Create-New-Users-in-the-Bandwidth-Dashboard)
-* Account enabled for portout pin protection for your Phone Number.
-
-## API Authentication
-
-The Numbers API resources are authenticated with your [API Credentials for "Number & Account Management"](../../guides/accountCredentials.md#number-account-creds).
 
 ## Setting Portout Passcode on Numbers
 
@@ -27,18 +14,10 @@ Portout PINs are set via the `tnoptions` API
 
 The `/tnoptions` endpoint is an interface for adding/removing "options/features" from specific (or groups) of phone numbers
 
-
-
 #### TnOption Parameters for Portout Passcode protections
 
 #### Request URL
-POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/tnoptions`
-
-#### Request Authentication
-
-The tnoptions resource is authenticated with your [API Credentials for "Number & Account Management"](../../guides/accountCredentials.md#number-account-creds)
-
-There are more options unrelated to Portout Passcodes that are detailed in the [API Reference](../apiReference.md)
+POST `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/tnoptions`
 
 | Parameters           | Mandatory | Description                                                                 |
 |:---------------------|:----------|:----------------------------------------------------------------------------|
@@ -49,12 +28,7 @@ There are more options unrelated to Portout Passcodes that are detailed in the [
 | `<TelephoneNumbers>` | Yes       | list of `<TelephoneNumber>`s                                                |
 | `<TelephoneNumber>`  | Yes       | The individual number to apply the Passcode                                 |
 
-
-
-
 ### Example 1 of 2: Set PortOutPasscode on a single Telephone Number
-
-
 
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/tnoptions HTTP/1.1
@@ -103,8 +77,6 @@ Location: https://dashboard.bandwidth.com:443/v1.0/accounts/{{accountId}}/tnopti
     </TnOptionOrder>
 </TnOptionOrderResponse>
 ```
-
-
 
 ```php
 $tnoptions = $account->tnoptions();

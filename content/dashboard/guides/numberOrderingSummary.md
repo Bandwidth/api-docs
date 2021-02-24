@@ -1,39 +1,20 @@
-
-
-
 # Search And Order Phone Numbers by Polling 
 
 This guide will take you through the _basics_ of searching and ordering phone numbers with the Bandwidth Phone Number API.
 
 ## Differences between Polling & Callbacks
 
-Phone number ordering in the Bandwidth Dashboard is asyncronous through creating an "order". The orders are then processed and the order status is updated asyncronously.  Bandwidth recommends configuring your account with a [subscription](../../account/subscriptions/about.md) and following the [Order Phone Number with Callbacks guide](onDemandNumberSearchAndOrder.md) instead of polling the order status for the `<OrderStatus>`.
-
-## Assumptions
-* You have a [Bandwidth](https://dashboard.bandwidth.com) account
-
-## Overview
-* [Searching for new Phone Numbers](#search-for-phone-numbers)
-* [Ordering Phone Numbers](#order-phone-numbers)
-* [Fetching Order Info](#get-order-info)
-* [Disconnecting a Phone Number](#disconnect-phone-number)
-* [Fetching Disconnect Info](#get-disconnect-info)
+Phone number ordering in the Bandwidth Dashboard is asyncronous through creating an "order". The orders are then processed and the order status is updated asyncronously.  Bandwidth recommends configuring your account with a [subscription](../webhooks/WebhooksOverview.md) and following the [Order Phone Number with Callbacks guide](onDemandNumberSearchAndOrder.md) instead of polling the order status for the `<OrderStatus>`.
 
 ## Searching For Phone Numbers 
 Finding numbers can be achieved by searching the Bandwidth inventory.
 
 This step is optional – the telephone numbers can be ordered directly using search criteria, but if there is need to examine the numbers before activating them on the account, the search can be used to return a list of available numbers.
 
-There are a number of search approaches that can be used; the NPA NXX search is used for this example.  Please see the [API documentation](../apiReference.md) for the other applicable search types.
+There are a number of search approaches that can be used; the NPA NXX search is used for this example.
 
 ### Base URL
-GET`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/availableNumbers`
-
-#### Basic Authentication
-
-Bandwidth's Phone Number API leverages Basic Authentication with your Dashboard API Credentials. Read more about how Bandwidth secures endpoints in the [Security & Credentials](../../guides/accountCredentials.md) document.
-
-
+GET `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/availableNumbers`
 
 ### Query Parameters
 
@@ -55,8 +36,6 @@ Bandwidth's Phone Number API leverages Basic Authentication with your Dashboard 
 | `endsIn`                         | Intended to use with localVanity only. The parameter value is true or false. If set to true, the search will look for only numbers which end in specified localVanity, otherwise localVanity sequence can be met anywhere in last 7 number digits. The default is false.                                                                                                                                                                                                 |
 | `orderBy`                        | The field by which the returned numbers will be sorted. Only supported if at least one of the following search criteria is specified: npaNxx or npaNxxx, rateCenter, city, zip, tollFreeVanity, tollFreeWildCardPattern. Allowed values are fullNumber, npaNxxx, npaNxx, and areaCode>                                                                                                                                                                                   |
 | `protected`                      | A query parameter, that governs, how the Protected status of numbers impacts the search results:  - `None` : The numbers returned in the payload will not contain any numbers that are tagged as Protected  - `ONLY` :The numbers returned in the payload will all be tagged as Protected. No "unProtected" numbers will be returned  - `MIXED` : The protected status of the numbers will be ignored in the search - all types of numbers will be returned  |
-
-
 
 ### Example: Search by NPA NXX
 
@@ -89,21 +68,12 @@ Content-Type: application/xml; charset=utf-8
 
 >  ℹ️  Notice that only 7 of 10 were returned = that is all that were currently available in that npanxx combination.  Any of these numbers can be reserved or immediately ordered
 
-
-
 ## Order Phone Numbers 
 
 Ordering Phone Numbers for use with the network uses requires you to order specific phone numbers that have been discovered in a search.   This is only **one** of a number of ways to acquire and activate phone numbers.
 
-
 ### Base URL
-POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/orders`
-
-#### Basic Authentication
-
-Bandwidth's Phone Number API leverages Basic Authentication with your Dashboard API Credentials. Read more about how Bandwidth secures endpoints in the [Security & Credentials](../../guides/accountCredentials.md) document.
-
-
+POST `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/orders`
 
 ### Common Request Parameters
 
@@ -140,8 +110,6 @@ These parameters _may or may not_ be required based on the type of order.  Check
 | `TollFreeWildCardPattern`                                                  | A 3-digit wild card pattern for specifying toll free prefixes, comprised of 8 followed by two stars, a digit and a star or two digits                                                                                                                                                                                                                                                                       |
 | `ReservationIdList`                                                        | If a telephone number or numbers have been previously reserved, the ReservationIdList provides the IDs necessary to release the numbers. This only applies to reserved numbers - if no reservation has been placed on the numbers this list is not required.                                                                                                                                                |
 | `TnAttributes`                                                             | Attributes to be assigned to the telephone number. Optional parameter. Possible values: `Protected`                                                                                                                                                                                                                                                                                                         |
-
-
 
 ### Example: Search **AND** Order 1 Number in Area Code
 
@@ -183,27 +151,12 @@ Location: https://dashboard.bandwidth.com/api/accounts/{{accountId}}/orders/4795
 </OrderResponse>
 ```
 
-
-
-
 ## Fetching Order Information 
 
 A GET Request to an existing order will return it's status as well as any information originally used to create the order.
 
 ### Base URL
-GET`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/orders/{{orderId}}`
-
-#### Basic Authentication
-
-Bandwidth's Phone Number API leverages Basic Authentication with your Dashboard API Credentials. Read more about how Bandwidth secures endpoints in the [Security & Credentials](../../guides/accountCredentials.md) document.
-
-
-
-### Query Parameters
-
-There are no query parameters for fetching information about an existing order.
-
-
+GET `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/orders/{{orderId}}`
 
 ### Example: Fetch Order Information
 
@@ -247,20 +200,12 @@ Content-Type: application/xml; charset=utf-8
 </OrderResponse>
 ```
 
-
-
 ## Disconnecting a Phone Number 
 
 Disconnecting a phone number leaves it in all applicable inventories, but makes it available for activation with a new subscriber.
 
 ### Base URL
-POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/disconnects`
-
-#### Basic Authentication
-
-Bandwidth's Phone Number API leverages Basic Authentication with your Dashboard API Credentials. Read more about how Bandwidth secures endpoints in the [Security & Credentials](../../guides/accountCredentials.md) document.
-
-
+POST `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/disconnects`
 
 ### Request Parameters
 
@@ -270,8 +215,6 @@ Bandwidth's Phone Number API leverages Basic Authentication with your Dashboard 
 | `TelephoneNumberList` | Yes      | A list of telephone numbers to disconnect.                                                                                        |
 | `DisconnectMode`      | No       | The severity of disconnect order. Typically `Normal`.                                                                             |
 | `Protected`           | No       | Change protected status of telephones during disconnection. Possible values: `TRUE`, `FALSE`, `UNCHANGED`. Typically `UNCHANGED`. |
-
-
 
 ### Example: Create a disconnect request for 2 Phone Numbers
 
@@ -316,25 +259,11 @@ Location: https://dashboard.bandwidth.com/api/accounts/{{accountId}}/disconnects
 </DisconnectTelephoneNumberOrderResponse>
 ```
 
-
-
 ## Fetching Disconnect Information 
 A GET Request to an existing disconnect will return it's status as well as any information originally used to create the disconnect.
 
 ### Base URL
-GET`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/disconnects/{{disconnectId}}`
-
-#### Basic Authentication
-
-Bandwidth's Phone Number API leverages Basic Authentication with your Dashboard API Credentials. Read more about how Bandwidth secures endpoints in the [Security & Credentials](../../guides/accountCredentials.md) document.
-
-
-
-### Query Parameters
-
-There are no query parameters for fetching information about an existing disconnect.
-
-
+GET `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/disconnects/{{disconnectId}}`
 
 ### Example: Fetch Disconnect Information
 
@@ -372,4 +301,3 @@ Content-Type: application/xml; charset=utf-8
 </DisconnectTelephoneNumberOrderResponse>
 
 ```
-

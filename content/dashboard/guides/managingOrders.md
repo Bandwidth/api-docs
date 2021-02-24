@@ -1,13 +1,5 @@
 # Managing Orders
 
-## Overview
-
-* [About](#about)
-* [Associating Notes with Work Orders](#notes-with-orders)
-* [Order Change Notifications](#change)
-* [Email Notifications](#email-notifications)
-* [Callback URL Notifications](#callback-notifications)
-
 ## About 
 
 The Bandwidth Phone Number API uses an “order” model for tracking the changes requested to the provisioned information that controls our customer and end-user experiences.   Major changes to the configuration of the network such as Ordering numbers, Porting in numbers, Porting numbers out, Disconnecting numbers are tracked with work-orders that record the changes and track them through the related work-flow.
@@ -56,4 +48,3 @@ Note that the initial state changes for an order may happen very quickly, so sub
 It is possible to remove specific subscriptions by ID.
 
 Once a subscription with a callback URL is active, changes to the works-orders that are part of the active subscription will be notified by a POST to the provided URL
-

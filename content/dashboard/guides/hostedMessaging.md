@@ -1,43 +1,18 @@
-
-
-
 # Bandwidth Hosted Messaging API Setup 
 
-This walks through how to programmatically import Phone Numbers to your account for use with [Bandwidth's Messaging Products](../../messaging/about.md).
+This walks through how to programmatically import Phone Numbers to your account for use with Bandwidth's Messaging Products.
 
 ### Important note about imported Phone Numbers and Line Features.
 
 Line Options feature management is **NOT** available for Phone numbers that have been imported for use with Hosted Messaging.
 
-## Assumptions
+## Before Getting Started...
 
-* Familiarity with [Account API Credentials](../../guides/accountCredentials.md)
-* Created an [API Credential Pair within the UI](https://support.bandwidth.com/hc/en-us/articles/360039065753-Classic-How-to-Create-New-Users-in-the-Bandwidth-Dashboard)
-* Account enabled for importing Phone Numbers for use with Hosted Messaging (please contact support@bandwidth.com)
-
-## API Authentication
-
-The Numbers API resources are authenticated with your [API Credentials for "Number & Account Management"](../../guides/accountCredentials.md#number-account-creds).
-
-## Table of Contents
-
-* [Create Subscription for `importtnorders`](#create-subscription)
-* [Check the Phone Number for "importability"](#check-for-importability)
-* [Create importTNOrder](#create-importTN-order)
-* [Receive callback for the importTnOrders](#receive-callback)
-* [Fetch Order Status](#fetch-order-status)
-* [Upload Letter of Authorization (loa)](#upload-loa)
-* [Check in service numbers to ensure number imported](#check-inservice-numbers)
-
-## Next Steps
-
-Once the phone numbers have been successfully imported into Bandwidth, see the guides for:
-
-* [HTTP Messaging](../../messaging/about.md)
+Please make sure your account is enabled for importing Phone Numbers for use with Hosted Messaging. Reach out to support@bandwidth.com to get setup.
 
 ## Importing Phone Numbers Overview
 
-![import_remove_tns](../../images/import_tn_flow.png)
+![import_remove_tns](static/images/hosted-messaging.png)
 
 There are 3 different APIs that you will use to manage phone numbers for hosted messaging:
 
@@ -49,20 +24,13 @@ There are 3 different APIs that you will use to manage phone numbers for hosted 
 
 ## Create Subscription for `importtnorders` 
 
-The [Subscription](../../account/subscriptions/methods/postSubscriptions.md) contains the HTTP URL to receive HTTP Callbacks/webhooks anytime there is an update to the `importTnOrder` status.
-
-Learn more about [subscriptions in the documentation](../../account/subscriptions/about.md).
-
-
+The Subscription contains the HTTP URL to receive HTTP Callbacks/webhooks anytime there is an update to the `importTnOrder` status.
 
 #### Subscription Parameters
 
 #### Request URL
-POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/subscriptions`
 
-#### Request Authentication
-
-The [Subscriptions](../../account/subscriptions/about.md) resource is authenticated with your [API Credentials for "Number & Account Management"](../../guides/accountCredentials.md#number-account-creds)
+POST `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/subscriptions`
 
 | Parameters               | Mandatory                    | Description                                                                                                                                                                                                                                                                                                                                                                                                     |
 |:-------------------------|:-----------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -76,11 +44,7 @@ The [Subscriptions](../../account/subscriptions/about.md) resource is authentica
 | `Password`               | No, but highly recommended   | Basic auth `Password`                                                                                                                                                                                                                                                                                                                                                                                           |
 | `<PublicKey>`            | No                           | BASE64 encoded public key matching the notification receiving server                                                                                                                                                                                                                                                                                                                                            |
 
-
-
 ### Create Subscription
-
-
 
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/subscriptions HTTP/1.1
@@ -111,8 +75,6 @@ Content-Type: application/xml
 Location: https://dashboard.bandwidth.com/api/accounts/{{accountId}}/subscriptions/{{applicationID}}
 ```
 
-
-
 ```php
 $subscription = $account->subscriptions()->create([
     "OrderType" => "importtnorders",
@@ -128,8 +90,6 @@ print_r($subscription->SubscriptionId);
 ```
 390-f-42-89-40
 ```
-
-
 
 ```ruby
 subscription = {
@@ -147,8 +107,6 @@ puts response.to_data()[:subscription_id]
 ```
 390-f-42-89-40
 ```
-
-
 
 ```java
 CallbackSubscription callbackSubscription = new callbackSubscription();
@@ -170,8 +128,6 @@ System.out.println(subscriptionCreated.getOrderId());
 390-f-42-89-40
 ```
 
-
-
 ```csharp
 var subscription = new Subscription {
     CallbackSubscription = new CallbackSubscription{
@@ -191,8 +147,6 @@ Console.WriteLine(createdSubscription.Id);
 390-f-42-89-40
 ```
 
-
-
 ```js
 var subscription = {
   orderType:"importtnorders",
@@ -211,33 +165,24 @@ numbers.Subscription.create(subscription, function(err, response) {
 390-f-42-89-40
 ```
 
-
-
 ---
 
 ## Check the Phone Number for "importability" 
 
 Before creating the order, to reduce failed or error statuses, create a POST request to the `/importTnChecker` endpoint to check if the number can be brought in to your Bandwidth account. A non-errored response from the importTnChecker doesn't necessarily mean that the order will succeed, but is a good indicator of success.
 
-
-
 #### importTnChecker Parameters
 
 #### Request URL
 
-POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/importTnChecker`
-
+POST `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/importTnChecker`
 
 | Parameters           | Mandatory | Description                                                         |
 |:---------------------|:----------|:--------------------------------------------------------------------|
 | `<TelephoneNumbers>` | Yes       | Top level element containing a list of `<TelephoneNumber>` elements |
 | `<TelephoneNumber>`  | Yes       | Phone Number to check "importability"                               |
 
-
-
 ### Check Importability
-
-
 
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/importTnChecker HTTP/1.1
@@ -283,8 +228,6 @@ Location: https://dashboard.bandwidth.com/api/accounts/{{accountId}}/application
 </ImportTnCheckerResponse>
 ```
 
-
-
 ```php
 $response = $account->checkTnsPortability(array("5554443333", "5553334444"));
 print_r($response->ImportTnCheckerPayload->ImportTnErrors->ImportTnError->Code);
@@ -306,8 +249,6 @@ Array
 )
 ```
 
-
-
 ```ruby
 response = BandwidthIris::ImportTnChecker.check_tns_portability({
     :telephone_numbers => {
@@ -328,15 +269,12 @@ Messaging route of External Third Party TNs is not configured.
 5553334444
 ```
 
-
-
 ```java
 TelephoneNumber number = new TelephoneNumber();
 number.setFullNumber("5554443333");
 
 ImportTnCheckerPayload payload = new ImportTnCheckerPayload();
 payload.setTelephoneNumberList( Arrays.asList( new TelephoneNumber[] {number} ) );
-
 
 ImportTnCheckerResponse response = ImportTnChecker.Check(client, payload);
 
@@ -352,8 +290,6 @@ System.out.println(response.getImportTnCheckerPayload().getImportTnErrorList().g
 Messaging route of External Third Party TNs is not configured.
 5554443333
 ```
-
-
 
 ```csharp
 var payload = new ImportTnCheckerPayload{
@@ -378,8 +314,6 @@ Messaging route of External Third Party TNs is not configured.
 5554443333
 ```
 
-
-
 ```js
 const numbersToCheck = ["5554443333"];
 
@@ -402,20 +336,16 @@ Messaging route of External Third Party TNs is not configured.
 5554443333
 ```
 
-
-
 ---
 
 ## Create importTNOrder 
 
 After validating the numbers are able to be imported, create a POST request to create the order to import the phone numbers in to your Bandwidth account.
 
-
-
 #### importTNOrder Parameters
 
 #### Request URL
-POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/importTnOrders`
+POST `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/importTnOrders`
 
 | Parameter                | Required | Description                                                                                                                               |
 |:-------------------------|:---------|:------------------------------------------------------------------------------------------------------------------------------------------|
@@ -431,11 +361,7 @@ POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/importTnOrders`
 | `<SiteId>`               | Yes      | See section on Sites                                                                                                                      |
 | `<SipPeerId>`            | No       | See section on SIP Peers                                                                                                                  |
 
-
-
 ### Create importTNOrder
-
-
 
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/importTnOrders HTTP/1.1
@@ -505,8 +431,6 @@ Location: https://dashboard.bandwidth.com/api/accounts/{{accountId}}/importTnOrd
 </ImportTnOrderResponse>
 ```
 
-
-
 ```php
 $importTnOrder = new \Iris\ImportTnOrder(array(
     "CustomerOrderId" => "id",
@@ -541,8 +465,6 @@ print_r($response->ImportTnOrder->ProcessingStatus);
 RECEIVED
 ```
 
-
-
 ```ruby
 import_tn_order = {
     :customer_order_id => "id",
@@ -575,8 +497,6 @@ puts response[0][:import_tn_order][:processing_status]
 RECEIVED
 ```
 
-
-
 ```java
 ImportTnOrder importTnOrder = new ImportTnOrder();
 importTnOrder.setCustomerOrderId("id");
@@ -597,8 +517,6 @@ System.out.println(response.getImportTnOrder()..getProcessingStatus());
 8-3-4-9-a
 RECEIVED
 ```
-
-
 
 ```csharp
 var importTnOrder = new ImportTnOrder{
@@ -693,7 +611,7 @@ Anytime the status of the order is updated (complete, error, etc...) Bandwidth w
 
 #### Request URL
 
-POST`{{your-callback-url_as-defined-in-the-subscription}}`
+POST `{{your-callback-url_as-defined-in-the-subscription}}`
 
 | Parameter           | Description                                                        |
 |:--------------------|:-------------------------------------------------------------------|
@@ -747,7 +665,7 @@ HTTP/1.1 200 OK
 
 #### Request URL
 
-GET`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/importTnOrders/{{orderId}}`
+GET `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/importTnOrders/{{orderId}}`
 
 #### Response Parameters
 
@@ -841,8 +759,6 @@ puts response[:processing_status]
 COMPLETE
 ```
 
-
-
 ```java
 ImportTnOrder importTnOrder = ImportTnOrder.Get(client, "id");
 
@@ -854,8 +770,6 @@ System.out.println(importTnOrder.getProcessingStatus());
 ```
 COMPLETE
 ```
-
-
 
 ```csharp
 var response = await ImportTnOrder.Get(client, "id");
@@ -869,8 +783,6 @@ Console.WriteLine(response.ProcessingStatus);
 COMPLETE
 ```
 
-
-
 ```js
 numbers.ImportTnOrder.get("id", function(err, response) {
     console.log(response.processingStatus);
@@ -883,8 +795,6 @@ numbers.ImportTnOrder.get("id", function(err, response) {
 COMPLETE
 ```
 
-
-
 ---
 
 ## Upload Letter of Authorization (LOA) 
@@ -893,21 +803,15 @@ For **completed** orders, Bandwidth requires a completed Subscriber "Letter of A
 
 You are able to keep the LOA file within your own system, or upload the file to Bandwidth as part of the `importTnOrder` path.
 
-
-
 #### Request URL
 
-POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/importTnOrders/{{orderId}}/loas`
+POST `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/importTnOrders/{{orderId}}/loas`
 
 #### Request Parameters
 
 A POST request to the /loas resource will upload the file. The key attribute to a successful upload is to ensure that the headers are set correctly to support the _type_ of the file upload.
 
-
-
 ### Upload PDF for an importTnOrder
-
-
 
 ```http
 POST https://dashboard.../{{accountId}}/importTnOrders/{{orderId}}/loas HTTP/1.1
@@ -937,8 +841,6 @@ Content-Type: application/xml; charset=utf-8
 </fileUploadResponse>
 ```
 
-
-
 ```php
 //coming soon
 ```
@@ -948,8 +850,6 @@ Content-Type: application/xml; charset=utf-8
 ```
 //coming soon
 ```
-
-
 
 ```ruby
 #coming soon
@@ -961,8 +861,6 @@ Content-Type: application/xml; charset=utf-8
 //coming soon
 ```
 
-
-
 ```java
 //TODO
 ```
@@ -972,8 +870,6 @@ Content-Type: application/xml; charset=utf-8
 ```
 //coming soon
 ```
-
-
 
 ```csharp
 //TODO
@@ -986,8 +882,6 @@ Content-Type: application/xml; charset=utf-8
 //coming soon
 ```
 
-
-
 ```js
 //TODO
 ```
@@ -998,8 +892,6 @@ Content-Type: application/xml; charset=utf-8
 //coming soon
 ```
 
-
-
 ---
 
 ## Check in service numbers to ensure number imported 
@@ -1008,13 +900,11 @@ Optional, but recommended. To finally confirm that the phone number was successf
 
 If everything was imported correctly, the recently imported number will appear in the returned payload.
 
-
-
 ### Inservice Numbers Parameters
 
 #### Request URL
 
-GET`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/inserviceNumbers`
+GET `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/inserviceNumbers`
 
 #### Response Parameters
 
@@ -1024,11 +914,7 @@ GET`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/inserviceNumbers`
 | `<Links>`            | Pagination parameters                                          |
 | `<TelephoneNumbers>` | List of In-service Numbers represented by `<TelephoneNumber>`s |
 
-
-
 ### Fetch inServiceNumbers
-
-
 
 ```http
 GET https://dashboard.../{{accountId}}/inserviceNumbers HTTP/1.1
@@ -1062,8 +948,6 @@ Content-Type: application/xml; charset=utf-8
 </TNs>
 ```
 
-
-
 ```php
 $response = $account->getInserviceNumbers();
 print_r($response->TelephoneNumbers->TelephoneNumber);
@@ -1078,8 +962,6 @@ Array
 )
 ```
 
-
-
 ```ruby
 response = BandwidthIris::InServiceNumber.list()
 puts response[0][:telephone_numbers][:telephone_number]
@@ -1090,8 +972,6 @@ puts response[0][:telephone_numbers][:telephone_number]
 ```
 5554443333
 ```
-
-
 
 ```java
 TNss tns = InserviceNumber.list(client, new HashMap<>());
@@ -1105,8 +985,6 @@ System.out.println(tns.getTelephoneNumbers().get(0))
 5554443333
 ```
 
-
-
 ```csharp
 var tns = await InServiceNumber.List(client);
 
@@ -1119,8 +997,6 @@ Cosnole.WriteLine(tns[0]);
 5554443333
 ```
 
-
-
 ```js
 numbers.InServiceNumber.list({"page": 1, "size":5}, function(err, response) {
     console.log(response.telephoneNumbers.telephoneNumber[0]);
@@ -1132,8 +1008,4 @@ numbers.InServiceNumber.list({"page": 1, "size":5}, function(err, response) {
 ```
 5554443333
 ```
-
-
-
-
 ---

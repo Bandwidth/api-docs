@@ -4,7 +4,7 @@ This guide is for using the Bandwidth Phone Number API  to assign numbers.
 
 ### Bulk assigning up to 5000 TNs with an active end-user
 
-The Bandwidth Phone Number API Documentation can be found [here](../apiReference.md). The API endpoint for using the Number Utilization Review is ```/accounts /{accountId} /numbersAssignment```.
+The API endpoint for using the Number Utilization Review is `https://dashboard.bandwidth.com/api/accounts/{accountId}/numbersAssignment`.
 
 The POST method on this endpoint is used to bulk assign and unassign your owned phone numbers. After retrieving and auditing your phone numbers, you can use this endpoint to bulk assign and unassign your phone numbers.
 
@@ -46,7 +46,7 @@ If successful, the Number Utilization Review endpoint returns an xml response wi
 * FailedQauntity: Number of phone numbers in the request that failed the requested Action
 * TelephoneNumbersAssignmentOrder: The XML from the request
 * Errors: List of Error objects from the request
-    * Error.Code: The error code. A list of all error codes can be found [here](../error.md)
+    * Error.Code: The error code
     * Error.Description: The error's description
     * Error.TelephoneNumbers: List of TelephoneNumber fields that caused this error
 
