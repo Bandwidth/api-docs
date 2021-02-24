@@ -14,7 +14,7 @@ The StartGather verb can be cancelled by the [`<StopGather>`](stopGather.md) ver
 ### Attributes
 | Attribute           | Description |
 |:--------------------|:------------|
-| dtmfUrl             | URL to send the [DTMF](../bxmlCallbacks/dtmf.md) event to. May be a relative URL. |
+| dtmfUrl             | URL to send the [DTMF](../bxmlAsyncCallbacks/dtmf.md) event to. May be a relative URL. |
 | dtmfMethod          | (optional) The HTTP method to use for the request to `dtmfUrl`. GET or POST. Default value is POST. |
 | username            | (optional) The username to send in the HTTP request to `dtmfUrl`. |
 | password            | (optional) The password to send in the HTTP request to `dtmfUrl`. |
@@ -23,13 +23,13 @@ The StartGather verb can be cancelled by the [`<StopGather>`](stopGather.md) ver
 ### Callbacks Received
 | Callback                      | Can reply with more BXML |
 |:------------------------------|:-------------------------|
-| [dtmf](../bxmlCallbacks/dtmf.md)  | No                       |
+| [dtmf](../bxmlAsyncCallbacks/dtmf.md)  | No                       |
 
 
 
 #### Example 1 of 1: Gather digits during a Conference
 This example shows how to use the StartGather verb to listen for digits pressed while the call is in a Conference.
-Whenever a digit is entered, a [dtmf](../bxmlCallbacks/dtmf.md) event is sent with the detected digit.
+Whenever a digit is entered, a [dtmf](../bxmlAsyncCallbacks/dtmf.md) event is sent with the detected digit.
 
 
 

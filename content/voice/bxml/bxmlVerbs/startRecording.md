@@ -13,10 +13,10 @@ The recording will continue until the call or conference ends, the [`<StopRecord
 ### Attributes
 | Attribute                    | Description                                                                                                                                                                                                            |
 |:-----------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| recordingAvailableUrl        | (optional) URL to send the [Recording Available](../bxmlCallbacks/recordingAvailable.md) event (or [Conference Recording Available](../bxmlCallbacks/conferenceRecordingAvailable.md) event if recording a conference) to once it has been processed. Does not accept BXML. May be a relative URL.|
+| recordingAvailableUrl        | (optional) URL to send the [Recording Available](../bxmlAsyncCallbacks/recordingAvailable.md) event (or [Conference Recording Available](../bxmlAsyncCallbacks/conferenceRecordingAvailable.md) event if recording a conference) to once it has been processed. Does not accept BXML. May be a relative URL.|
 | recordingAvailableMethod     | (optional) The HTTP method to use for the request to `recordingAvailableUrl`. GET or POST. Default value is POST.                                                                                                      |
 | transcribe                   | (optional) A boolean value to indicate that recording should be transcribed. Transcription can succeed only for recordings of length greater than 500 milliseconds and less than 4 hours. Default is `false`. Note: conferences may not be transcribed. This option will be silently ignored if set on a conference recording, and no callback will be sent.|
-| transcriptionAvailableUrl    | (optional) URL to send the [Transcription Available](../bxmlCallbacks/transcriptionAvailable.md) event to once it has been processed. Does not accept BXML. May be a relative URL.                                         |
+| transcriptionAvailableUrl    | (optional) URL to send the [Transcription Available](../bxmlAsyncCallbacks/transcriptionAvailable.md) event to once it has been processed. Does not accept BXML. May be a relative URL.                                         |
 | transcriptionAvailableMethod | (optional) The HTTP method to use for the request to `transcriptionAvailableUrl`. GET or POST. Default value is POST.                                                                                                  |
 | username                     | (optional) The username to send in the HTTP request to `recordingAvailableUrl` or `transcriptionAvailableUrl`. If specified, the URLs must be TLS-encrypted (i.e., `https`).                                           |
 | password                     | (optional) The password to send in the HTTP request to `recordingAvailableUrl` or `transcriptionAvailableUrl`. If specified, the URLs must be TLS-encrypted (i.e., `https`).                                           |
@@ -24,12 +24,12 @@ The recording will continue until the call or conference ends, the [`<StopRecord
 | fileFormat                   | (optional) The audio format that the recording will be saved as: `mp3` or `wav`.  Default value is `wav`.                                                                                                              |
 | multiChannel                 | (optional) A boolean value indicating whether or not the recording file should separate each side of the call into its own audio channel. Default value is `false`. Note: this option will be silently ignored if set on a conference recording; only single-channel recordings are allowed on conferences. |
 
-If the `recordingAvailableUrl` attribute is specified, then the [Recording Available](../bxmlCallbacks/recordingAvailable.md)
-or [Conference Recording Available](../bxmlCallbacks/conferenceRecordingAvailable.md) event is sent to the URL once the
+If the `recordingAvailableUrl` attribute is specified, then the [Recording Available](../bxmlAsyncCallbacks/recordingAvailable.md)
+or [Conference Recording Available](../bxmlAsyncCallbacks/conferenceRecordingAvailable.md) event is sent to the URL once the
 recording is available for download, indicating the `mediaUrl` and if there was any issue processing the recording.
 BXML returned in response to this callback will be ignored.
 
-If the `transcriptionAvailableUrl` attribute is specified for a call recording, then the [Transcription Available](../bxmlCallbacks/transcriptionAvailable.md)
+If the `transcriptionAvailableUrl` attribute is specified for a call recording, then the [Transcription Available](../bxmlAsyncCallbacks/transcriptionAvailable.md)
 event is sent to the URL once the transcription is available for download.
 BXML returned in response to this callback will be ignored. Note that this attribute will be silently ignored if recording a conference.
 
@@ -43,9 +43,9 @@ NOTE: Only one &lt;StartRecording&gt; verb may be active at a time. If a second 
 
 | Callbacks                                                         | Can reply with more BXML |
 |:------------------------------------------------------------------|:-------------------------|
-| [Conference Recording Available](../bxmlCallbacks/conferenceRecordingAvailable.md) | No          |
-| [Recording Available](../bxmlCallbacks/recordingAvailable.md)         | No                       |
-| [Transcription Available](../bxmlCallbacks/transcriptionAvailable.md) | No                       |
+| [Conference Recording Available](../bxmlAsyncCallbacks/conferenceRecordingAvailable.md) | No          |
+| [Recording Available](../bxmlAsyncCallbacks/recordingAvailable.md)         | No                       |
+| [Transcription Available](../bxmlAsyncCallbacks/transcriptionAvailable.md) | No                       |
 
 
 #### Example 1 of 1: Recording of a call

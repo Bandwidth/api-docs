@@ -17,7 +17,7 @@ You will not be charged for rejected calls.
 
 | Callback                         | Can reply with more BXML |
 |:---------------------------------|:-------------------------|
-| [CallComplete](../bxmlCallbacks/disconnect.md) | No                      |
+| [CallComplete](../bxmlAsyncCallbacks/disconnect.md) | No                      |
 
 
 

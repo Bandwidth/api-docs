@@ -61,7 +61,7 @@ BXML containing unsupported verbs will be rejected completely.
 | [Conference Created](../bxmlCallbacks/conferenceCreated.md)        | Yes                 |
 | [Conference Member Join](../bxmlCallbacks/conferenceMemberJoin.md) | Yes                 |
 | [Conference Member Exit](../bxmlCallbacks/conferenceMemberExit.md) | Yes                 |
-| [Conference Completed](../bxmlCallbacks/conferenceCompleted.md)    | No                  |
+| [Conference Completed](../bxmlAsyncCallbacks/conferenceCompleted.md)    | No                  |
 
 
 
