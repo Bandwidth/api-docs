@@ -102,13 +102,14 @@ print(response.to_bxml())
 
 
 
-#### NodeJS
+#### Node.js
 
 ```js
-var hangup = new BandwidthBxml.Verbs.Hangup();
+import { Hangup, Response } from '@bandwidth/voice';
 
-var response = new BandwidthBxml.Response();
-response.addVerb(hangup);
+var hangup = new Hangup();
+
+var response = new Response(hangup);
 
 console.log(response.toBxml());
 ```
