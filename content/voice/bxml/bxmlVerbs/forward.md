@@ -116,8 +116,7 @@ const forward = new Forward({
     from: '+19999999999'
 });
 
-const response = new Response();
-response.add(forward);
+const response = new Response(forward);
 
 console.log(response.toBxml());
 ```

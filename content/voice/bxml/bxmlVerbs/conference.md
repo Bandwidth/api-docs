@@ -186,9 +186,7 @@ const conference = new Conference({
     name: 'my-conference'
 });
 
-const response = new Response();
-response.add(speakSentence);
-response.add(conference);
+const response = new Response(speakSentence, conference);
 
 console.log(response.toBxml());
 ```
@@ -350,9 +348,7 @@ const conference = new Conference({
     callIdsToCoach: ['c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d', 'c-2a913f94-6a486f3a-3cae-4034-bcc3-f0c9fa77ca2f']
 });
 
-const response = new Response();
-response.add(speakSentence);
-response.add(conference);
+const response = new Response(speakSentence, conference);
 
 console.log(response.toBxml());
 ```

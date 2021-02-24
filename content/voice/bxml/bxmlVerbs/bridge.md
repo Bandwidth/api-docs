@@ -279,9 +279,7 @@ const pause = new Pause({
     duration: 60
 });
 
-const response = new Response();
-response.add(speakSentence);
-response.add(pause);
+const response = new Response(speakSentence, pause);
 
 console.log(response.toBxml());
 ```
@@ -302,9 +300,7 @@ const bridge = new Bridge({
     bridgeTargetCompleteUrl: 'https://bridge.url/nextBXMLForFirstCall'
 });
 
-const response = new Response();
-response.add(speakSentence);
-response.add(bridge);
+const response = new Response(speakSentence, bridge);
 
 console.log(response.toBxml());
 ```
