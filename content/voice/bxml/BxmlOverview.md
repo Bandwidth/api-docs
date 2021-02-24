@@ -10,16 +10,12 @@ Before we begin creating a new BXML application you’ll need two things initial
 
 The maximum size of a BXML document is 64 KB.
 
-###  Understanding BXML Callback Events
-BXML callbacks are HTTP requests made by the Bandwidth platform to endpoints specified by you in your HTTP requests and BXML. Their purpose
-is to 1) inform you of events that have happened in the call flow and 2) receive instructions from your
-application on what to do next.
+![BXML Image](static/images/bxml-overview.png)
 
-BXML callbacks are HTTP POST requests by default.  The request will have a JSON body that describes the event.  It
-expects an XML response consisting of BXML verbs.
+## BXML Components
 
-The first BXML callback is made when the call is created with POST /calls as
-the `answerUrl` field.  Subsequent callbacks are made by specifying event-specific `*Url` attributes on the appropriate verbs.  If a
-relative URL is provided in BXML, it is resolved relative to the request that retrieved that BXML.
-
-If BXML execution ends without performing a callback, there is an implicit `<Hangup>` at the end of the document.
+| Component | Description |
+|--|--|
+| [Verbs](./bxmlVerbs/BxmlVerbsOverview.md) | BXML verbs tells Bandwidth what to do with the phone call |
+| [BXML Callbacks](./bxmlCallbacks/BxmlCallbacksOverview.md) | BXML callbacks are sent to your server on completion of a BXML verb in order to receive the next BXML verb |
+| [BXML Asynchronous Callbacks](./bxmlAsyncCallbacks/BxmlAsyncCallbacksOverview.md) | BXML asynchronous callbacks are sent to your server on completion of a background process triggered by a BXML verb. These callbacks are not directly linked to a callflow, and therefore do not expect BXML |
