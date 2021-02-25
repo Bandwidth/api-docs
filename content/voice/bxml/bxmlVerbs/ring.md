@@ -83,7 +83,7 @@ print(response.to_bxml())
 
 
 
-#### NodeJS
+#### Node.js
 
 ```js
 // Coming soon

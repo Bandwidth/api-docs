@@ -166,21 +166,24 @@ print(response.to_bxml())
 
 
 
-#### NodeJS
+#### Node.js
 
 ```js
-var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
-speakSentence.setSentence("Please press a digit.");
-speakSentence.setVoice("kate");
+import { SpeakSentence, Gather, Response } from '@bandwidth/voice';
 
-var gather = new BandwidthBxml.Verbs.Gather();
-gather.setGatherUrl("https://gather.url/nextBXML");
-gather.setTerminatingDigits("#");
-gather.setFirstDigitTimeout(10);
-gather.setSpeakSentence(speakSentence);
+const speakSentence = new SpeakSentence({
+    sentence: 'Please press a digit.',
+    voice: 'kate'
+});
 
-var response = new BandwidthBxml.Response();
-response.addVerb(gather);
+const gather = new Gather({
+    gatherUrl: 'https://gather.url/nextBXML',
+    terminatingDigits: '#',
+    firstDigitTimeout: 10,
+    audioProducers: [speakSentence]
+});
+
+const response = new Response(gather);
 
 console.log(response.toBxml());
 ```
@@ -328,20 +331,23 @@ print(response.to_bxml())
 
 
 
-#### NodeJS
+#### Node.js
 
 ```js
-var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
-speakSentence.setSentence("I am going to keep asking you to press a digit");
+import { SpeakSentence, Gather, Response } from '@bandwidth/voice';
 
-var gather = new BandwidthBxml.Verbs.Gather();
-gather.setGatherUrl("https://gather.url/nextBXML");
-gather.setMaxDigits(1);
-gather.setRepeatCount(5);
-gather.setSpeakSentence(speakSentence);
+const speakSentence = new SpeakSentence({
+    sentence: 'I am going to keep asking you to press a digit.'
+});
 
-var response = new BandwidthBxml.Response();
-response.addVerb(gather);
+const gather = new Gather({
+    gatherUrl: 'https://gather.url/nextBXML',
+    maxDigits: 1,
+    repeatCount: 5,
+    audioProducers: [speakSentence]
+});
+
+const response = new Response(gather);
 
 console.log(response.toBxml());
 ```

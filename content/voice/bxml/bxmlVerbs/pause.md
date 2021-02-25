@@ -103,11 +103,13 @@ print(response.to_bxml())
 #### NodeJS
 
 ```js
-var pause = new BandwidthBxml.Verbs.Pause();
-pause.setDuration(2);
+import { Pause, Response } from '@bandwidth/voice';
 
-var response = new BandwidthBxml.Response();
-response.addVerb(pause);
+const pause = new Pause({
+    duration: 2
+});
+
+const response = new Response(pause);
 
 console.log(response.toBxml());
 ```

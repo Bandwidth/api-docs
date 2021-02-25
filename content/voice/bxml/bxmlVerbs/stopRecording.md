@@ -97,13 +97,14 @@ print(response.to_bxml())
 
 
 
-#### NodeJS
+#### Node.js
 
 ```js
-var stopRecording = new BandwidthBxml.Verbs.StopRecording();
+import { StopRecording, Response } from '@bandwidth/voice';
 
-var response = new BandwidthBxml.Response();
-response.addVerb(stopRecording);
+const stopRecording = new StopRecording();
+
+const response = new Response(stopRecording);
 
 console.log(response.toBxml());
 ```
@@ -313,33 +314,36 @@ print(response.to_bxml())
 
 
 
-#### NodeJS
+#### Node.js
 
 ```js
-var speakSentenceStart = new BandwidthBxml.Verbs.SpeakSentence();
-speakSentenceStart.setSentence("This call is being recorded. Please wait while we transfer you.");
-speakSentenceStart.setVoice("bridget");
+import { SpeakSentence, StartRecording, PhoneNumber, Transfer, StopRecording, Response } from '@bandwidth/voice';
 
-var startRecording = new BandwidthBxml.Verbs.StartRecording();
-startRecording.setRecordingAvailableUrl("https://myapp.com/noBXML");
+const speakSentenceStart = new SpeakSentence({
+    sentence: 'This call is being recorded. Please wait while we transfer you.',
+    voice: 'bridget'
+});
 
-var phoneNumber = new BandwidthBxml.Verbs.PhoneNumber();
-phoneNumber.setNumber("+15554567892");
-var transfer = new BandwidthBxml.Verbs.Transfer();
-transfer.addPhoneNumber(phoneNumber);
+const startRecording = new StartRecording({
+    recordingAvailableUrl: 'https://myapp.com/noBXML'
+});
 
-var stopRecording = new BandwidthBxml.Verbs.StopRecording();
+const phoneNumber = new PhoneNumber({
+    number: '+15554567892'
+});
 
-var speakSentenceEnd = new BandwidthBxml.Verbs.SpeakSentence();
-speakSentenceEnd.setSentence("Thanks for your call. Have a nice day!");
-speakSentenceEnd.setVoice("bridget");
+const transfer = new Transfer({
+    phoneNumbers: [phoneNumber]
+});
 
-var response = new BandwidthBxml.Response();
-response.addVerb(speakSentenceStart);
-response.addVerb(startRecording);
-response.addVerb(transfer);
-response.addVerb(stopRecording);
-response.addVerb(speakSentenceEnd);
+const stopRecording = new StopRecording();
+
+const speakSentenceEnd = new SpeakSentence({
+    sentence: 'Thanks for your call. Have a nice day!',
+    voice: 'bridget'
+});
+
+const response = new Response(speakSentenceStart, startRecording, transfer, stopRecording, speakSentenceEnd);
 
 console.log(response.toBxml());
 ```

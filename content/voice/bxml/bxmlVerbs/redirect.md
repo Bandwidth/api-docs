@@ -118,14 +118,16 @@ print(response.to_bxml())
 
 
 
-#### NodeJS
+#### Node.js
 
 ```js
-var redirect = new BandwidthBxml.Verbs.Redirect();
-redirect.setRedirectUrl("https://flow.url/nextFlow");
+import { Redirect, Response } from '@bandwidth/voice';
 
-var response = new BandwidthBxml.Response();
-response.addVerb(redirect);
+const redirect = new Redirect({
+    redirectUrl: 'https://flow.url/nextFlow'
+});
+
+const response = new Response(redirect);
 
 console.log(response.toBxml());
 ```
