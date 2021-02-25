@@ -154,14 +154,17 @@ print(response.to_bxml())
 #### NodeJS
 
 ```js
-var playAudio1 = new BandwidthBxml.Verbs.PlayAudio();
-playAudio1.setUrl("https://audio.url/audio1.wav");
-var playAudio2 = new BandwidthBxml.Verbs.PlayAudio();
-playAudio2.setUrl("https://audio.url/audio2.mp3");
+import { PlayAudio, Response } from '@bandwidth/voice';
 
-var response = new BandwidthBxml.Response();
-response.addVerb(playAudio1);
-response.addVerb(playAudio2);
+const playAudio1 = new PlayAudio({
+    url: 'https://audio.url/audio1.wav'
+});
+
+const playAudio2 = new PlayAudio({
+    url: 'https://audio.url/audio2.mp3'
+});
+
+const response = new Response(playAudio1, playAudio2);
 
 console.log(response.toBxml());
 ```

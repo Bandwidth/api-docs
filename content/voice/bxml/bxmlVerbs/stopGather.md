@@ -66,7 +66,7 @@ This example shows how to use the StartGather verb to listen for digits pressed 
 
 
 
-#### NodeJS
+#### Node.js
 
 ```js
 // TODO

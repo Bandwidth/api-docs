@@ -109,14 +109,16 @@ print(response.to_bxml())
 
 
 
-#### NodeJS
+#### Node.js
 
 ```js
-var sendDtmf = new BandwidthBxml.Verbs.SendDtmf();
-sendDtmf.setDtmf("12w34");
+import { SendDtmf, Response } from '@bandwidth/voice';
 
-var response = new BandwidthBxml.Response();
-response.addVerb(sendDtmf);
+const sendDtmf = new SendDtmf({
+    dtmf: '12w34'
+});
+
+const response = new Response(sendDtmf);
 
 console.log(response.toBxml());
 ```

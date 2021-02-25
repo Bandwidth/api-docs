@@ -247,15 +247,17 @@ print(response.to_bxml())
 
 
 
-#### NodeJS
+#### Node.js
 
 ```js
-var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
-speakSentence.setSentence("This is a test");
-speakSentence.setVoice("julie");
+import { SpeakSentence, Response } from '@bandwidth/voice';
 
-var response = new BandwidthBxml.Response();
-response.addVerb(speakSentence);
+const speakSentence = new SpeakSentence({
+    sentence: 'This is a test.',
+    voice: 'julie'
+});
+
+const response = new Response(speakSentence);
 
 console.log(response.toBxml());
 ```
@@ -376,15 +378,17 @@ print(response.to_bxml())
 
 
 
-#### NodeJS
+#### Node.js
 
 ```js
-var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
-speakSentence.setSentence('Hello, you have reached the home of <lang xml:lang="es-MX">Antonio Mendoza</lang>.Please leave a message');
-speakSentence.setVoice("julie");
+import { SpeakSentence, Response } from '@bandwidth/voice';
 
-var response = new BandwidthBxml.Response();
-response.addVerb(speakSentence);
+const speakSentence = new SpeakSentence({
+    sentence: 'Hello, you have reached the home of <lang xml:lang="es-MX">Antonio Mendoza</lang>.Please leave a message.',
+    voice: 'julie'
+});
+
+const response = new Response(speakSentence);
 
 console.log(response.toBxml());
 ```
