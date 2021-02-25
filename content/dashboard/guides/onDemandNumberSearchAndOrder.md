@@ -1,6 +1,3 @@
-
-
-
 # Search and order Phone Numbers with Callbacks 
 
 ## About 
@@ -9,7 +6,7 @@ This guide will walk through the recommended approach to searching and ordering 
 
 ## Differences between Polling & Callbacks
 
-Phone number ordering in the Bandwidth Dashboard is asyncronous through creating an "order". The orders are then processed and the order status is updated asyncronously.  Bandwidth recommends configuring your account with a [subscription](../../account/subscriptions/about.md) and following this guide for the most performant integration.
+Phone number ordering in the Bandwidth Dashboard is asyncronous through creating an "order". The orders are then processed and the order status is updated asyncronously.  Bandwidth recommends configuring your account with a [subscription](../webhooks/WebhooksOverview.md) and following this guide for the most performant integration.
 
 ### Use-cases
 
@@ -17,29 +14,14 @@ This guide is best suited for use-cases where an end-user is assigned a **new** 
 
 In the case where a user would like to keep their existing phone number, follow the [porting guide](./portingPhoneNumbers.md).
 
-## Steps
-
-1. [Create Subscription](#create-subscription)
-2. [Search for Phone Numbers](#search-for-phone-numbers)
-3. [Create order for Phone Numbers](#order-phone-numbers)
-4. [Receive HTTP Callback with order status](#receive-callback)
-5. [Fetch information about order (_optional_)](#get-order-info)
-
-
 ## Create Subscription for Orders 
 
 The Bandwidth Phone Number API allows users to manage notifications on their account through the `/subscriptions` resource.  Subscriptions can be configured to send a HTTP Callback to a valid publicly addressable URL or send an email to a valid email address.
 
-This guide _only_ covers creating a `<CallbackSubscription>`.  For more information see the full guide on [managing subscriptions](../../account/subscriptions/about.md).
+This guide _only_ covers creating a `<CallbackSubscription>`.  For more information see the full guide on [managing subscriptions](../webhooks/WebhooksOverview.md).
 
 ### Base URL
-POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/subscriptions`
-
-#### Basic Authentication
-
-Bandwidth's Account API leverages Basic Authentication with your Dashboard API Credentials. Read more about how Bandwidth secures endpoints in the [Security & Credentials](../../guides/accountCredentials.md) document.
-
-
+POST `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/subscriptions`
 
 ### Basic Parameters
 
@@ -55,8 +37,6 @@ Bandwidth's Account API leverages Basic Authentication with your Dashboard API C
 | `<Password>`             | No       | Password for Basic Authentication scheme.  Encrypted at rest and never returned by the API  Part of the `<BasicAuthentication>` element.        |
 | `<PublicKey>`            | No       | A BASE64 encoded public key that matches the server specified in the `URL`   Part of the `<BasicAuthentication>` element.                           |
 
-
-
 ### Example XML to Create Subscription
 
 ```http
@@ -64,6 +44,7 @@ POST https://dashboard.../{{accountId}}/subscriptions HTTP/1.1
 Content-Type: application/xml; charset=utf-8
 Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 ```
+
 ```xml
 <Subscription>
     <OrderType>orders</OrderType>
@@ -81,23 +62,15 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 </Subscription>
 ```
 
-
-
 ## Searching For Phone Numbers 
 Finding numbers can be achieved by searching the Bandwidth inventory.
 
 This step is optional – the telephone numbers can be ordered directly using search criteria, but if there is need to examine the numbers before activating them on the account, the search can be used to return a list of available numbers. Searching **only** provides a list of available numbers that match the search criteria.
 
-There are a number of search approaches that can be used; the NPA NXX search is used for this example.  Please see the [guide on [searching phone numbers](./searchForNumbers.md) for the other applicable search types.
+There are a number of search approaches that can be used; the NPA NXX search is used for this example.  Please see the [guide on searching phone numbers](./searchForNumbers.md) for the other applicable search types.
 
 ### Base URL
-GET`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/availableNumbers`
-
-#### Basic Authentication
-
-Bandwidth's Phone Number API leverages Basic Authentication with your Dashboard API Credentials. Read more about how Bandwidth secures endpoints in the [Security & Credentials](../../guides/accountCredentials.md) document.
-
-
+GET `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/availableNumbers`
 
 ### Query Parameters
 
@@ -106,8 +79,6 @@ Bandwidth's Phone Number API leverages Basic Authentication with your Dashboard 
 | `npaNxx`   | NPA NXX combination to be searched.  - Valid npa values:[2-9] for the first digit, and [0-9] for both the second and third digits.  - Valid Nxx values:[2-9] for the first digit, and [0-9] for both the second and third digits.  - Valid x values [0-9]. |
 
 This example only demonstrates searching by `NPA NXX` to learn about the different search types and filtering see the guide on [searching phone numbers](./searchForNumbers.md).
-
-
 
 ### Example: Search by NPA NXX
 
@@ -138,8 +109,6 @@ Content-Type: application/xml; charset=utf-8
 </SearchResult>
 ```
 
-
-
 ## Order Phone Numbers 
 
 * To successfully order a Phone Number that was previously returned in a search on the `/availableNumbers` you will create a `<ExistingTelephoneNumberOrderType>` with a `<TelephoneNumberList>` containing at least 1 phone number.
@@ -148,13 +117,7 @@ Content-Type: application/xml; charset=utf-8
 * It is worth noting that most orders complete very quickly (less than 1 second).
 
 ### Base URL
-POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/orders`
-
-#### Basic Authentication
-
-Bandwidth's Phone Number API leverages Basic Authentication with your Dashboard API Credentials. Read more about how Bandwidth secures endpoints in the [Security & Credentials](../../guides/accountCredentials.md) document.
-
-
+POST `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/orders`
 
 ### Common Request Parameters
 
@@ -168,8 +131,6 @@ Bandwidth's Phone Number API leverages Basic Authentication with your Dashboard 
 | `<BackOrderRequested>`  | No       | `BackOrderRequested` will indicate to the system that if the entire quantity of numbers is not available on the first attempt to fill the new number order, the request will be repeated periodically until the request is successful or canceled.  `true` - Backorder numbers if the entire quantity is not available  Default: `false` |
 | `<TelephoneNumberList>` | Yes      | A list of telephone numbers to order.                                                                                                                                                                                                                                                                                                                |
 | `<TelephoneNumber>`     | Yes      | `TelephoneNumberList` must have at least one `TelephoneNumber` to order   Part of the `<TelephoneNumberList>` element.                                                                                                                                                                                                                       |
-
-
 
 ### Example: Order 1 Number Returned in the Search above
 
@@ -217,29 +178,23 @@ Location: https://dashboard.bandwidth.com/api/accounts/{{accountId}}/orders/c9dg
 </OrderResponse>
 ```
 
-
-
 ## Receive HTTP Callback with Order Status 
 
-The Bandwidth Phone Number API will send a HTTP Callback (webhook) to the URL specified in the `<URL>...</URL>` when [creating the subscription](#create-subscription).
+The Bandwidth Phone Number API will send a HTTP Callback (webhook) to the URL specified in the `<URL>...</URL>` when creating the subscription.
 
-The HTTP Callback will contain information if the order was successful or failed.  For our example here, if status is **anything other than `COMPLETE`** the order has failed.  The most likely scenario is that another customer ordered the desired phone number between the time 'searched' and 'ordered'.  If the order is **not** `COMPLETE`, either try ordering a different phone number, or [search for more numbers](#search-for-phone-numbers).
-
-
+The HTTP Callback will contain information if the order was successful or failed.  For our example here, if status is **anything other than `COMPLETE`** the order has failed.  The most likely scenario is that another customer ordered the desired phone number between the time 'searched' and 'ordered'.  If the order is **not** `COMPLETE`, either try ordering a different phone number, or search for more numbers.
 
 ### Callback Request Parameters
 
 | Parameter                     | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 |:------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `<Status>`                    | Following this tutorial should only yield two possible `Status` values:  - `COMPLETE` : The order succeeded and all phone numbers requested were ordered and will be sent in the `<CompletedTelephoneNumbers>` list.  - `FAILED` : The order _did not_ succeed (at least 1 phone number sent in the order was unable to be ordered).  To learn more about the order states, see the [Advanced Ordering Overview](advancedOrdering.md#ordering-overview) |
-| `<SubscriptionId>`            | The unique Id associated with the subscription that was configured for `orders`. This is the same value that is returned in `Location` Header when [creating the subscription](#create-subscription).                                                                                                                                                                                                                                                                   |
+| `<Status>`                    | Following this tutorial should only yield two possible `Status` values:  - `COMPLETE` : The order succeeded and all phone numbers requested were ordered and will be sent in the `<CompletedTelephoneNumbers>` list.  - `FAILED` : The order _did not_ succeed (at least 1 phone number sent in the order was unable to be ordered). |
+| `<SubscriptionId>`            | The unique Id associated with the subscription that was configured for `orders`. This is the same value that is returned in `Location` Header when creating the subscription.                                                                                                                                                                                                                                                                   |
 | `<Message>`                   | A specific message related to the order.                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| `<OrderId>`                   | The unique Id associated with the order. This is the same value that is returned in the `Location` Header when [creating the order](#order-phone-numbers)                                                                                                                                                                                                                                                                                                               |
-| `<OrderType>`                 | The specific type of order that was created.  For this example, the value will be `orders`. For more information see [managing subscriptions](../../account/subscriptions/about.md)                                                                                                                                                                                                                                                                                    |
+| `<OrderId>`                   | The unique Id associated with the order. This is the same value that is returned in the `Location` Header when creating the order                                                                                                                                                                                                                                                                                                              |
+| `<OrderType>`                 | The specific type of order that was created.  For this example, the value will be `orders`.                                                                                                                                                                                                                                                                                 |
 | `<CompletedTelephoneNumbers>` | Contains the list of Phone Numbers that were attempted to be ordered.                                                                                                                                                                                                                                                                                                                                                                                                   |
 | `<TelephoneNumber>`           | The actual Phone Number that was attempted to be ordered.   Part of the `<CompletedTelephoneNumbers>` element.                                                                                                                                                                                                                                                                                                                                                  |
-
-
 
 ### Example: Successful Phone Number Order
 
@@ -281,28 +236,18 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 </Notification>
 ```
 
-
-
 ## Fetching Order Information 
 
 A GET Request to an existing order will return it's status as well as any information originally used to create the order.
 
-In the example below the `orderId` is the `orderId` returned in the 'location' header of the [order phone numbers](#order-phone-numbers) response.
+In the example below the `orderId` is the `orderId` returned in the 'location' header of the order phone numbers response.
 
 ### Base URL
-GET`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/orders/{{orderId}}`
-
-#### Basic Authentication
-
-Bandwidth's Phone Number API leverages Basic Authentication with your Dashboard API Credentials. Read more about how Bandwidth secures endpoints in the [Security & Credentials](../../guides/accountCredentials.md) document.
-
-
+GET `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/orders/{{orderId}}`
 
 ### Query Parameters
 
 There are no query parameters for fetching information about an existing order.
-
-
 
 ### Example: Fetch Order Information
 
@@ -397,5 +342,3 @@ Content-Type: application/xml; charset=utf-8
     <FailedQuantity>1</FailedQuantity>
 </OrderResponse>
 ```
-
-

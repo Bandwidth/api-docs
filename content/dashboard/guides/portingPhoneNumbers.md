@@ -1,27 +1,11 @@
 # Porting-in Phone Numbers 
 
-## Overview
-
-* [About Porting](#about-porting)
-* [Overview of the Port-in Process](#overview-of-porting)
-* [Checking LNP Availability](#check-lnp)
-* [Creating an LNP Order](#create-lnp)
-* [LOA Upload](#loa-upload)
-  * [Supported File Types](#supported-file-types)
-  * [CURL Example](#curl-example)
-  * [File Meta-Data](#file-meta-data)
-* [Modifying an LNP Order (Supp LNP Order)](#modify-lnp)
-* [Canceling LNP Order](#cancel-lnp)
-* [Activating Ported Numbers](#activate-ported-numbers)
-
-
 ## About Porting 
 
 The Bandwidth Phone Number API can be used to submit Port-In requests.  These requests to move phone numbers from a "losing carrier" to Bandwidth are part of the Local Number Portability (LNP) process.  These LNP requests are automatically validated and processed.  If the order fails during processing, it will be held for exception processing.  Customers can catch and fix exceptions 2 different ways:
 
 * The customer's application can check the status of port-in orders, and re-submit or cancel them through the API.
 * The customer's LNP team can check the status of port-in orders, and re-submit or cancel them through the Bandwidth Dashboard.
-
 
 ## Overview of the Port-in Process 
 
@@ -31,7 +15,7 @@ NOTE: Exceptions are outlined as synchronous and asynchronous in the Appendix A:
 
 The Orders that are managed by the Bandwidth Phone Number API to implement the above workflow are reported in the order records that are reported through the API calls below.  These “order states” comply with the state transitions captured in the following diagram:
 
-![Porting Diagram](../../images/portingDiagram.png)
+![Porting Diagram](static/images/portingDiagram.png)
 
 ## Checking LNP Availability 
 
@@ -49,7 +33,6 @@ The fullcheck query parameter values control the components of the response payl
 | `offnetportabilty` | In addition to on-net information return off-net port information in `<PartnerSupportedRateCenters>` element with Partner/Vendor that the port will be supported on. Contains a list of the TNs that are supported in partner rate centers, and for which we will manually execute a port if requested for help. |
 
 ### Response Description
-
 
 | Element                                                                                       | Description                                                                                                                                                                                                                                             |
 |:----------------------------------------------------------------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|

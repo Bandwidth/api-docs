@@ -1,20 +1,7 @@
 # Managing Line Options and Features 
 
-## Overview
-
-* [About](#about)
-* [Single TN Option Assignment](#single-tn)
-* [Calling Name Display](#calling-name-display)
-  * [Calling Name Display Update (LIDB)](#libd)
-* [Directory Listing and Directory Assistance (DLDA)](#dlda)
-  * [DLDA Fields](#dlda-fields)
-* [Creating and Managing a DLDA Order](#create-dlda)
-* [Retrieving the history of a DLDA order](#get-dlda)
-* [Checking DLDA information associated with a TN](#check-dlda)
-* [Setting a Failover URI](#set-failover)
-
-
 ## About 
+
 The Bandwidth Phone Number Phone Number API allows the association of a number of “Option” or “Feature” characteristics with a Telephone Number.
 
 Initially this capability is restricted to the management of Calling Name Display and Call Forwarding for the TN, but will be expanded to additional “Line Features” with subsequent releases.
@@ -45,7 +32,7 @@ The Calling Line Display is associated with TNs using a POST to the `tnOptions` 
 The key elements of the XML payload are:
 
 * `TelephoneNumber`: The TN that Calling Name Display will be activated on
-* `CallingNameDisplay`: [`on` | `off` | `systemdefault` ] where `systemdefault` will result in causing the TN to display the network default behavior.
+* `CallingNameDisplay`: | `on` | `off` | `systemdefault` |  where `systemdefault` will result in causing the TN to display the network default behavior.
 
 The Bandwidth Phone Number API allows the updating of CNAM Display (LIDB) information in the network for Bandwidth TNs managed within the customer’s account.  This capability works within the same asynchronous work-order mechanism as is used for managing other delay-prone system interactions, where a “work-order” is created by the initial API call, and used as a reference for tracking and confirming the subsequent states, and the ultimate success and failure of the result.
 
@@ -117,6 +104,7 @@ In addition to the name and address information inherent in a DLDA update, the D
 If the `<Status>` of the DLDA order impacting the TN is transient, indicating that there is an order in process and the outcome is inconclusive, the DLDA information will be replaced with a link to the order currently processing a DLDA change for that TN.  This will be the case if the status is `Pending-Editable` or `Pending-Locked`.
 
 ## Set a Failover URI 
+
 **Please Note that the Failover URI functionality is only available for SIP Voice users at this time.**
 
 Setting a failover URI (Final Destination URI) allows Bandwidth to forward voice traffic to an alternate number in the event of a delivery failure to your original call route.
@@ -166,5 +154,3 @@ Content-Type: application/xml
     </TnOptionGroups>
 </TnOptionOrder>
 ```
-
-

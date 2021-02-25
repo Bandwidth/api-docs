@@ -1,7 +1,4 @@
-
-
-
-# Phone Number Disconnect Summary 
+# Phone Number Disconnect
 
 Disconnecting a phone number leaves it in all applicable inventories, but makes it available for activation with a new subscriber.
 
@@ -9,23 +6,12 @@ Disconnecting a phone number leaves it in all applicable inventories, but makes 
 * You have a [Bandwidth](https://dashboard.bandwidth.com) account
 * You have at least one Phone Number to disconnect.
 
-## Overview
-
-* [Disconnecting a Phone Number](#disconnect-phone-number)
-* [Fetching Disconnect Info](#get-disconnect-info)
-
 ## Disconnecting a Phone Number 
 
 When a phone number is disconnected from your account it will remain available for you to reconnect to for a short period of time before being released back into Bandwidth's public inventory pool. You will not be charged for calls made to this number during the holding period. The duration of the holding period depends on demand for numbers from that area. 
 
 ### Base URL
-POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/disconnects`
-
-#### Basic Authentication
-
-Bandwidth's Phone Number API leverages Basic Authentication with your Dashboard API Credentials. Read more about how Bandwidth secures endpoints in the [Security & Credentials](../../guides/accountCredentials.md) document.
-
-
+POST `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/disconnects`
 
 ### Request Parameters
 
@@ -35,8 +21,6 @@ Bandwidth's Phone Number API leverages Basic Authentication with your Dashboard 
 | `TelephoneNumberList` | Yes      | A list of telephone numbers to disconnect.                                                                                        |
 | `DisconnectMode`      | No       | The severity of disconnect order. Typically `Normal`.                                                                             |
 | `Protected`           | No       | Change protected status of telephones during disconnection. Possible values: `TRUE`, `FALSE`, `UNCHANGED`. Typically `UNCHANGED`. |
-
-
 
 ### Example: Create a disconnect request for 2 Phone Numbers
 
@@ -87,7 +71,7 @@ Location: https://dashboard.bandwidth.com/api/accounts/{{accountId}}/disconnects
 A GET Request to an existing disconnect will return it's status as well as any information originally used to create the disconnect.
 
 ### Base URL
-GET`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/disconnects/{{disconnectId}}`
+GET `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/disconnects/{{disconnectId}}`
 
 
 

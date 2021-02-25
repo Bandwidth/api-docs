@@ -1,11 +1,8 @@
-
-
-
 # Order Notification Event
 
 The notification callback API is used to notify customers of events and changes that occur with various feature and service orders that are being processed by the Bandwidth Numbers API on their behalf. In general this notification callback will be called whenever an order that is in-scope changes state or has a note added to it. Alternatively, notification callback will be called whenever a subscribed event occurs
 
-When an order changes OR when numbers in customer account are impacted due to orders placed outside of their account the Bandwidth Dashboard API will POST a pre-defined payload to our customer at the URL that they have defined by use of the `/accounts/{{accountId}}/subscriptions` API call. Please see the [subscription documentation](../../account/subscriptions/about.md) to understand how to register the notification callback API with the Bandwidth Numbers API.
+When an order changes OR when numbers in customer account are impacted due to orders placed outside of their account the Bandwidth Dashboard API will POST a pre-defined payload to our customer at the URL that they have defined by use of the `/accounts/{{accountId}}/subscriptions` API call. 
 
 ### Order Types
 
@@ -26,9 +23,6 @@ When an order changes OR when numbers in customer account are impacted due to or
 | `removeImportedTnOrders` | `PROCESSING`, `COMPLETE`, `PARTIAL`, `FAILED`                                                                       |
 | `emergencyNotificationGroup` | `COMPLETE`, `FAILED` |
 | `emergencyEndpointGroup` | `COMPLETE`, `FAILED` |
-
-
-
 
 ### Parameters
 
@@ -61,5 +55,3 @@ Content-Type: application/xml; charset=utf-8
     </CompletedTelephoneNumbers>
 </Notification>
 ```
-
-

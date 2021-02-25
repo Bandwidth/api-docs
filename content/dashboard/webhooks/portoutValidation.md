@@ -1,18 +1,6 @@
-
-
-
 # Portout Validation Event 
 
 The port out validation API is used for portout management purposes and gives the losing side customer the possibility to validate the portout process. Please contact [support](https://support.bandwidth.com) to enable Portout Validation.
-
-### Table of Contents
-
-* [Configuration](#configuration)
-* [Responsibilities](#responsibilities)
-* [Summary](#summary)
-* [Callback Request](#callback-request)
-* [Allow Portout](#allow-portout)
-* [Deny Portout](#deny-portout)
 
 ## Configuration 
 
@@ -39,8 +27,6 @@ Validation of a Port-out request will begin with a submission from Bandwidth to 
 
 ## Responding to Portout Event 
 
-
-
 ### Callback Request Parameters
 
 | Parameter          | Type                        | Description                                                                                          |
@@ -51,8 +37,6 @@ Validation of a Port-out request will begin with a submission from Bandwidth to 
 | `ZipCode`          | `string`                    | Zipcode (optional) ( 15 characters )                                                                 |
 | `SubscriberName`   | `string`                    | Subscriber name for information purposes. (optional)( 93 characters )                                |
 | `TelephoneNumbers` | List of `<TelephoneNumber>` | list of one or more telephone numbers (at least one telephone number will be provided) ( 10 digits ) |
-
-
 
 ### Example 1 of 1: Incoming Portout Validation Request
 
@@ -75,8 +59,6 @@ Content-Type: application/xml; charset=utf-8
 
 ```
 
-
-
 ## Allow Portout Response Parameters 
 
 To validate the portout (IE positive validation of the port-out request), there is no additional information required. Reply with the `<Portable>true</Portable>` to approve the portout.
@@ -84,14 +66,10 @@ To validate the portout (IE positive validation of the port-out request), there 
 * Failure to return a valid response will be considered an **approval of the port-out request**.
 * Failure to return any response will be considered an **approval of the port-out request.**
 
-
-
 | Parameter  | Type      | Description                                                               |
 |:-----------|:----------|:--------------------------------------------------------------------------|
 | `Portable` | `boolean` | Must be `true`                                                            |
 | `PON`      | `string`  | PON for information and correlation purposes. (optional)( 25 characters ) |
-
-
 
 ### Example 1 of 1: Allow Portout Response
 
@@ -104,8 +82,6 @@ Content-Type: application/xml
     <PON>some_pon</PON>
 </PortOutValidationResponse>
 ```
-
-
 
 ### Deny Portout Response 
 
@@ -147,10 +123,6 @@ The error codes and error explanation payloads below are the ones that we expect
 | 7599 | Fatal Error in Processing                                   | Request succeeds            |
 | nnnn | Anything Else                                               | Request succeeds            |
 
-
-
-
-
 | Parameter           | Type                        | Description                                                                                                                                                                       |
 |:--------------------|:----------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `Portable`          | `boolean`                   | Must be `false`                                                                                                                                                                   |
@@ -164,8 +136,6 @@ The error codes and error explanation payloads below are the ones that we expect
 | `ZipCode`           | `string`                    | Zipcode (optional) ( 15 characters )                                                                                                                                              |
 | `SubscriberName`    | `string`                    | Subscriber name for information purposes. (optional)( 93 characters )                                                                                                             |
 | `TelephoneNumbers`  | List of `<TelephoneNumber>` | Contains the telephone numbers considered valid                                                                                                                                   |
-
-
 
 ### Example 1 of 1: Deny Portout Response
 
@@ -196,6 +166,3 @@ Content-Type: application/xml
   </AcceptableValues>
 </PortOutValidationResponse>
 ```
-
-
-
