@@ -203,18 +203,21 @@ print(response.to_bxml())
 
 
 
-#### NodeJS
+#### Node.js
 
 ```js
-var phone_number = new BandwidthBxml.Verbs.PhoneNumber();
-phone_number.setNumber("+17777777777");
+import { PhoneNumber, Transfer, Response } from '@bandwidth/voice';
 
-var transfer = new BandwidthBxml.Verbs.Transfer();
-transfer.setTransferCallerId("+18888888888");
-transfer.addPhoneNumber(phone_number);
+const phoneNumber = new PhoneNumber({
+    number: '+17777777777'
+});
 
-var response = new BandwidthBxml.Response();
-response.addVerb(transfer);
+const transfer = new Transfer({
+    transferCallerId: '+18888888888',
+    phoneNumbers: [phoneNumber]
+});
+
+const response = new Response(transfer);
 
 console.log(response.toBxml());
 ```
@@ -377,23 +380,26 @@ print(response.to_bxml())
 
 
 
-#### NodeJS
+#### Node.js
 
 ```js
-var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
-speakSentence.setSentence("Transferring your call, please wait.");
-speakSentence.setVoice("paul");
+import { SpeakSentence, PhoneNumber, Transfer, Response } from '@bandwidth/voice';
 
-var phone_number = new BandwidthBxml.Verbs.PhoneNumber();
-phone_number.setNumber("+17777777777");
+const speakSentence = new SpeakSentence({
+    sentence: 'Transferring your call, please wait.',
+    voice: 'paul'
+});
 
-var transfer = new BandwidthBxml.Verbs.Transfer();
-transfer.setTransferCallerId("+18888888888");
-transfer.addPhoneNumber(phone_number);
+const phoneNumber = new PhoneNumber({
+    number: '+17777777777'
+});
 
-var response = new BandwidthBxml.Response();
-response.addVerb(speakSentence);
-response.addVerb(transfer);
+const transfer = new Transfer({
+    transferCallerId: '+18888888888',
+    phoneNumbers: [phoneNumber]
+});
+
+const response = new Response(speakSentence, transfer);
 
 console.log(response.toBxml());
 ```
@@ -492,12 +498,15 @@ print(response.to_bxml())
 
 
 
-#### NodeJS
+#### Node.js
 
 ```js
-var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
-speakSentence.setSentence("Transferring your call, please wait.");
-speakSentence.setVoice("paul");
+import { SpeakSentence } from '@bandwidth/voice';
+
+const speakSentence = new SpeakSentence({
+    sentence: 'Transferring your call, please wait.',
+    voice: 'paul'
+});
 ```
 
 
@@ -640,21 +649,25 @@ print(response.to_bxml())
 
 
 
-#### NodeJS
+#### Node.js
 
 ```js
-var phone_number_1 = new BandwidthBxml.Verbs.PhoneNumber();
-phone_number_1.setNumber("+17777777777");
-var phone_number_2 = new BandwidthBxml.Verbs.PhoneNumber();
-phone_number_2.setNumber("+18888888888");
+import { PhoneNumber, Transfer, Response } from '@bandwidth/voice';
 
-var transfer = new BandwidthBxml.Verbs.Transfer();
-transfer.setTransferCallerId("+19999999999");
-transfer.addPhoneNumber(phone_number_1);
-transfer.addPhoneNumber(phone_number_2);
+const phoneNumber1 = new PhoneNumber({
+    number: '+17777777777'
+});
 
-var response = new BandwidthBxml.Response();
-response.addVerb(transfer);
+const phoneNumber2 = new PhoneNumber({
+    number: '+18888888888'
+});
+
+const transfer = new Transfer({
+    transferCallerId: '+19999999999',
+    phoneNumbers: [phoneNumber1, phoneNumber2]
+});
+
+const response = new Response(transfer);
 
 console.log(response.toBxml());
 ```
