@@ -1,5 +1,3 @@
-
-
 ## XML: `<Conference>`
 Used to join the current call into a conference.
 
@@ -10,12 +8,12 @@ names can be whatever you want. If the conference ends and then you later use th
 name, a new unique ID will be created.
 
 To programmatically end a conference and immediately remove all members, use the
-[update conference](../../methods/conferences/postConferencesConferenceId.md) endpoint. If a
+update conference endpoint. If a
 conference is ended this way, removed members will continue executing their current BXML document,
 starting with the verb right after the `<Conference>`, if any.
 
 To programmatically remove a call from a conference while leaving other conference members in the
-conference, use the [update call](../../methods/calls/postCallsCallId.md) endpoint.
+conference, use the update call endpoint.
 
 A maximum of 20 calls may be in a particular conference.
 
@@ -61,7 +59,7 @@ BXML containing unsupported verbs will be rejected completely.
 | [Conference Created](../bxmlCallbacks/conferenceCreated.md)        | Yes                 |
 | [Conference Member Join](../bxmlCallbacks/conferenceMemberJoin.md) | Yes                 |
 | [Conference Member Exit](../bxmlCallbacks/conferenceMemberExit.md) | Yes                 |
-| [Conference Completed](../bxmlCallbacks/conferenceCompleted.md)    | No                  |
+| [Conference Completed](../bxmlAsyncCallbacks/conferenceCompleted.md)    | No                  |
 
 
 

@@ -7,7 +7,7 @@ The Transfer verb is used to bridge another party onto the current call.
 |:----------|:------------|
 | transferCallerId | (optional) The caller ID to use when the call is transferred, if different. Must be in E.164 format (e.g. +15555555555). Note: Leave blank to pass along the number of the remote party. |
 | callTimeout | (optional) This is the timeout (in seconds) for the callee to answer the call. Range: decimal values between 1 - 300.  Default value is 30 seconds. |
-| transferCompleteUrl | (optional) URL to send the [Transfer Complete](../bxmlCallbacks/transferComplete.md) event to and request new BXML. Optional but recommended. [See below](#transferCompleteUrl) for further details. May be a relative URL. |
+| transferCompleteUrl | (optional) URL to send the [Transfer Complete](../bxmlCallbacks/transferComplete.md) event to and request new BXML. Optional but recommended. May be a relative URL. |
 | transferCompleteMethod | (optional) The HTTP method to use for the request to `transferCompleteUrl`. GET or POST. Default value is POST. |
 | transferCompleteFallbackUrl | (optional) A fallback url which, if provided, will be used to retry the [Transfer Complete](../bxmlCallbacks/transferComplete.md) callback delivery in case `transferCompleteUrl` fails to respond. |
 | transferCompleteFallbackMethod | (optional) The HTTP method to use to deliver the [Transfer Complete](../bxmlCallbacks/transferComplete.md) callback to `transferCompleteFallbackUrl`. GET or POST. Default value is POST. |
@@ -21,12 +21,12 @@ The Transfer verb is used to bridge another party onto the current call.
 
 ### 
 When the called party hangs up, if the `transferCompleteUrl` attribute is specified, the [TransferComplete](../bxmlCallbacks/transferComplete.md) callback is sent to the `transferCompleteUrl`,
-this callback is also sent if any problem occurs with the transfer, such as the callee is busy, doesn't answer, or the call gets [rate limited](../../rateLimits.md).
+this callback is also sent if any problem occurs with the transfer, such as the callee is busy, doesn't answer, or the call gets [rate limited](../../guides/rateLimits.md).
 The BXML returned by that callback is executed on the original call. Verbs following the `<Transfer>` will be ignored when the `transferCompleteUrl` attribute is specified.
 
 If no `transferCompleteUrl` is specified, no event will be sent, and execution of verbs following the `<Transfer>` tag continues when the called party hangs up.
 
-Note that the [TransferComplete](../bxmlCallbacks/transferComplete.md) callback is only sent if the call is still active after the `<Transfer>` completes. If you need an event delivered for every `<Transfer>` regardless of how it ends, see the [Transfer Disconnect](../bxmlCallbacks/transferDisconnect.md) event below. 
+Note that the [TransferComplete](../bxmlCallbacks/transferComplete.md) callback is only sent if the call is still active after the `<Transfer>` completes. If you need an event delivered for every `<Transfer>` regardless of how it ends, see the [Transfer Disconnect](../bxmlAsyncCallbacks/transferDisconnect.md) event below. 
 
 ### Nested Tags
 Between 1 and 8 `<PhoneNumber>` or `<SipUri>` tags must be nested within the `<Transfer>` tag to define the called parties. If more than
@@ -44,7 +44,7 @@ one destination is specified, called parties will ring simultaneously and the fi
 | transferAnswerMethod | (optional) The HTTP method to use for the request to `transferAnswerUrl`. GET or POST. Default value is POST. |
 | transferAnswerFallbackUrl | (optional) A fallback url which, if provided, will be used to retry the [Transfer Answer](../bxmlCallbacks/transferAnswer.md) callback delivery in case `transferAnswerUrl` fails to respond. |
 | transferAnswerFallbackMethod | (optional) The HTTP method to use to deliver the [Transfer Answer](../bxmlCallbacks/transferAnswer.md) callback to `transferAnswerFallbackUrl`. GET or POST. Default value is POST. |
-| transferDisconnectUrl | (optional) URL, if any, to send the [Transfer Disconnect](../bxmlCallbacks/transferDisconnect.md) event to. This event will be sent regardless of how the transfer ends and may not be responded to with BXML. May be a relative URL.|
+| transferDisconnectUrl | (optional) URL, if any, to send the [Transfer Disconnect](../bxmlAsyncCallbacks/transferDisconnect.md) event to. This event will be sent regardless of how the transfer ends and may not be responded to with BXML. May be a relative URL.|
 | transferDisconnectMethod | (optional) The HTTP method to use for the request to `transferDisconnectUrl`. GET or POST. Default value is POST. |
 | username | (optional) The username to send in the HTTP request to `transferAnswerUrl` and `transferDisconnectUrl`. |
 | password | (optional) The password to send in the HTTP request to `transferAnswerUrl` and `transferDisconnectUrl`. |
@@ -60,7 +60,7 @@ one destination is specified, called parties will ring simultaneously and the fi
 | transferAnswerMethod | (optional) The HTTP method to use for the request to `transferAnswerUrl`. GET or POST. Default value is POST. |
 | transferAnswerFallbackUrl | (optional) A fallback url which, if provided, will be used to retry the [Transfer Answer](../bxmlCallbacks/transferAnswer.md) callback delivery in case `transferAnswerUrl` fails to respond. |
 | transferAnswerFallbackMethod | (optional) The HTTP method to use to deliver the [Transfer Answer](../bxmlCallbacks/transferAnswer.md) callback to `transferAnswerFallbackUrl`. GET or POST. Default value is POST. |
-| transferDisconnectUrl | (optional) URL, if any, to send the [Transfer Disconnect](../bxmlCallbacks/transferDisconnect.md) event to. This event will be sent regardless of how the transfer ends and may not be responded to with BXML. May be a relative URL.|
+| transferDisconnectUrl | (optional) URL, if any, to send the [Transfer Disconnect](../bxmlAsyncCallbacks/transferDisconnect.md) event to. This event will be sent regardless of how the transfer ends and may not be responded to with BXML. May be a relative URL.|
 | transferDisconnectMethod | (optional) The HTTP method to use for the request to `transferDisconnectUrl`. GET or POST. Default value is POST. |
 | username | (optional) The username to send in the HTTP request to `transferAnswerUrl` and `transferDisconnectUrl`. |
 | password | (optional) The password to send in the HTTP request to `transferAnswerUrl` and `transferDisconnectUrl`. |
@@ -73,7 +73,7 @@ the BXML returned by that callback is executed. That BXML is executed only for t
 of that BXML, the calls are bridged.
 
 When each leg of the transfer ends for any reason, if `transferDisconnectUrl` was set for that phone number, the
-[Transfer Disconnect](../bxmlCallbacks/transferDisconnect.md) event will be sent to that URL. This event may not be responded to with BXML.
+[Transfer Disconnect](../bxmlAsyncCallbacks/transferDisconnect.md) event will be sent to that URL. This event may not be responded to with BXML.
 
 There can be a maximum of 8 phone numbers to transfer to. 
 
@@ -83,7 +83,7 @@ There can be a maximum of 8 phone numbers to transfer to.
 |:----------|:-------------------------|
 | [Transfer Answer](../bxmlCallbacks/transferAnswer.md) | Yes |
 | [Transfer Complete](../bxmlCallbacks/transferComplete.md) | Yes |
-| [Transfer Disconnect](../bxmlCallbacks/transferDisconnect.md) | No |
+| [Transfer Disconnect](../bxmlAsyncCallbacks/transferDisconnect.md) | No |
 
 
 

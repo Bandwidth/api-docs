@@ -6,8 +6,8 @@ Bandwidth will keep recordings for up to 30 days. After 30 days the recordings w
 
 ##### Links
 * This verb should probably be used if you are building a voice mail system or conference member introduction.
-For different use cases, you might want to take a look at [StartRecording](../verbs/startRecording.md). 
-* For a more detailed view of Recording, check the [Recording Guide](../../guides/bxmlRecording.md).
+For different use cases, you might want to take a look at [StartRecording](startRecording.md). 
+* For a more detailed view of Recording, check the [Recording Guide](../../guides/BxmlRecording.md).
 
 ### Attributes
 | Attribute                    | Description |
@@ -16,10 +16,10 @@ For different use cases, you might want to take a look at [StartRecording](../ve
 | recordCompleteMethod         | (optional) The HTTP method to use for the request to `recordCompleteUrl`. GET or POST. Default value is POST. |
 | recordCompleteFallbackUrl    | (optional) A fallback url which, if provided, will be used to retry the [Record Complete](../bxmlCallbacks/recordComplete.md) callback delivery in case `recordCompleteUrl` fails to respond. |
 | recordCompleteFallbackMethod | (optional) The HTTP method to use to deliver the [Record Complete](../bxmlCallbacks/recordComplete.md) callback to `recordCompleteFallbackUrl`. GET or POST. Default value is POST. |
-| recordingAvailableUrl        | (optional) URL to send the [Recording Available](../bxmlCallbacks/recordingAvailable.md) event to once it has been processed. Does not accept BXML. May be a relative URL. |
+| recordingAvailableUrl        | (optional) URL to send the [Recording Available](../bxmlAsyncCallbacks/recordingAvailable.md) event to once it has been processed. Does not accept BXML. May be a relative URL. |
 | recordingAvailableMethod     | (optional) The HTTP method to use for the request to `recordingAvailableUrl`. GET or POST. Default value is POST. |
 | transcribe                   | (optional) A boolean value to indicate that recording should be transcribed. Transcription can succeed only for recordings of length greater than 500 milliseconds and less than 4 hours. Default is `false`. |
-| transcriptionAvailableUrl    | (optional) URL to send the [Transcription Available](../bxmlCallbacks/transcriptionAvailable.md) event to once it has been processed. Does not accept BXML. May be a relative URL. |
+| transcriptionAvailableUrl    | (optional) URL to send the [Transcription Available](../bxmlAsyncCallbacks/transcriptionAvailable.md) event to once it has been processed. Does not accept BXML. May be a relative URL. |
 | transcriptionAvailableMethod | (optional) The HTTP method to use for the request to `transcriptionAvailableUrl`. GET or POST. Default value is POST. |
 | username                     | (optional) The username to send in the HTTP request to `recordCompleteUrl`, `recordingAvailableUrl` or `transcriptionAvailableUrl`. If specified, the URLs must be TLS-encrypted (i.e., `https`). |
 | password                     | (optional) The password to send in the HTTP request to `recordCompleteUrl`, `recordingAvailableUrl` or `transcriptionAvailableUrl`. If specified, the URLs must be TLS-encrypted (i.e., `https`). |
@@ -37,17 +37,17 @@ A `maxDuration` can be specified to stop recording after a specified period of t
 
 If the `recordCompleteUrl` attribute is specified, then the [Recording Complete](../bxmlCallbacks/recordComplete.md) event is sent to the `recordCompleteUrl` and the BXML returned by that callback is executed next and all verbs following the `<Record>` tag will be ignored. If no `recordCompleteUrl` is specified, execution of verbs following the `<Record>` tag continues. The recording will still be available on the server.
 
-If the `recordingAvailableUrl` attribute is specified, then the [Recording Available](../bxmlCallbacks/recordingAvailable.md) event is sent to the URL once the recording is available for download. BXML returned in response to this callback will be ignored.
+If the `recordingAvailableUrl` attribute is specified, then the [Recording Available](../bxmlAsyncCallbacks/recordingAvailable.md) event is sent to the URL once the recording is available for download. BXML returned in response to this callback will be ignored.
 
-If the `transcriptionAvailableUrl` attribute is specified, then the [Transcription Available](../bxmlCallbacks/transcriptionAvailable.md) event is sent to the URL once the transcription is available for download. BXML returned in response to this callback will be ignored.
+If the `transcriptionAvailableUrl` attribute is specified, then the [Transcription Available](../bxmlAsyncCallbacks/transcriptionAvailable.md) event is sent to the URL once the transcription is available for download. BXML returned in response to this callback will be ignored.
 
 ### Callbacks Received
 
 | Callbacks                                                         | Can reply with more BXML |
 |:------------------------------------------------------------------|:-------------------------|
 | [Record Complete](../bxmlCallbacks/recordComplete.md)                 | Yes                      |
-| [Recording Available](../bxmlCallbacks/recordingAvailable.md)         | No                       |
-| [Transcription Available](../bxmlCallbacks/transcriptionAvailable.md) | No                       |
+| [Recording Available](../bxmlAsyncCallbacks/recordingAvailable.md)         | No                       |
+| [Transcription Available](../bxmlAsyncCallbacks/transcriptionAvailable.md) | No                       |
 
 
 
