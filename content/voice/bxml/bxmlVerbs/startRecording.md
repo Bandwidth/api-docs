@@ -7,8 +7,8 @@ When used on a conference, all members who are not on mute or hold will be recor
 The recording will continue until the call or conference ends, the [`<StopRecording>`](stopRecording.md) verb is used, or the [`<PauseRecording>`](pauseRecording.md) verb is used.
 
 ##### Links
-* For use cases like voice mail system and conference member introduction, you might want to take a look at [Record](../verbs/record.md).
-* For a more detailed view of Recording, check the [Recording Guide](../../guides/bxmlRecording.md).
+* For use cases like voice mail system and conference member introduction, you might want to take a look at [Record](record.md).
+* For a more detailed view of Recording, check the [Recording Guide](../../guides/BxmlRecording.md).
 
 ### Attributes
 | Attribute                    | Description                                                                                                                                                                                                            |

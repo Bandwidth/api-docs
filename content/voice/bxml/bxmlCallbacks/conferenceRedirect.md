@@ -1,6 +1,6 @@
 
 ## Conference Redirect Event
-The Conference Redirect event is fired whenever an existing [conference](../bxmlVerbs/conference.md) is modified via a POST request made to the [/conferences/{conferenceId}](../../methods/conferences/postConferencesConferenceId.md) endpoint
+The Conference Redirect event is fired whenever an existing [conference](../bxmlVerbs/conference.md) is modified via a POST request made to the `/conferences/{conferenceId}` endpoint
 
 The response may be either empty or a BXML document. Only the following verbs are valid for conferences:
 * [`PlayAudio`](../bxmlVerbs/playAudio.md)

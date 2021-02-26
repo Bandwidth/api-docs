@@ -7,7 +7,7 @@ The Transfer verb is used to bridge another party onto the current call.
 |:----------|:------------|
 | transferCallerId | (optional) The caller ID to use when the call is transferred, if different. Must be in E.164 format (e.g. +15555555555). Note: Leave blank to pass along the number of the remote party. |
 | callTimeout | (optional) This is the timeout (in seconds) for the callee to answer the call. Range: decimal values between 1 - 300.  Default value is 30 seconds. |
-| transferCompleteUrl | (optional) URL to send the [Transfer Complete](../bxmlCallbacks/transferComplete.md) event to and request new BXML. Optional but recommended. [See below](#transferCompleteUrl) for further details. May be a relative URL. |
+| transferCompleteUrl | (optional) URL to send the [Transfer Complete](../bxmlCallbacks/transferComplete.md) event to and request new BXML. Optional but recommended. May be a relative URL. |
 | transferCompleteMethod | (optional) The HTTP method to use for the request to `transferCompleteUrl`. GET or POST. Default value is POST. |
 | transferCompleteFallbackUrl | (optional) A fallback url which, if provided, will be used to retry the [Transfer Complete](../bxmlCallbacks/transferComplete.md) callback delivery in case `transferCompleteUrl` fails to respond. |
 | transferCompleteFallbackMethod | (optional) The HTTP method to use to deliver the [Transfer Complete](../bxmlCallbacks/transferComplete.md) callback to `transferCompleteFallbackUrl`. GET or POST. Default value is POST. |
@@ -21,7 +21,7 @@ The Transfer verb is used to bridge another party onto the current call.
 
 ### 
 When the called party hangs up, if the `transferCompleteUrl` attribute is specified, the [TransferComplete](../bxmlCallbacks/transferComplete.md) callback is sent to the `transferCompleteUrl`,
-this callback is also sent if any problem occurs with the transfer, such as the callee is busy, doesn't answer, or the call gets [rate limited](../../rateLimits.md).
+this callback is also sent if any problem occurs with the transfer, such as the callee is busy, doesn't answer, or the call gets [rate limited](../../guides/rateLimits.md).
 The BXML returned by that callback is executed on the original call. Verbs following the `<Transfer>` will be ignored when the `transferCompleteUrl` attribute is specified.
 
 If no `transferCompleteUrl` is specified, no event will be sent, and execution of verbs following the `<Transfer>` tag continues when the called party hangs up.

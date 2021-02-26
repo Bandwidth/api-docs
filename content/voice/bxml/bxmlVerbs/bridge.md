@@ -6,7 +6,7 @@ The Bridge verb is used to bridge another party (target call) onto the current c
 When the target call is bridged, any BXML being executed in it will be cancelled. 
 
 The bridge ends when one of the calls leaves the bridge.
-A call leaves the bridge when it is hung up or when it gets [redirected](../../methods/calls/postCallsCallId.md) to another BXML.
+A call leaves the bridge when it is hung up or when it gets redirected to another BXML.
 
 The [Bridge Complete](../bxmlCallbacks/bridgeComplete.md) and [Bridge Target Complete](../bxmlCallbacks/bridgeTargetComplete.md)
 callbacks are sent when the bridge ends, to allow the call that remained in the bridge to execute new BXML.
