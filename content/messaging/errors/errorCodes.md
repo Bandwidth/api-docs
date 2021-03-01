@@ -66,7 +66,7 @@ A 5xx code indicates that either Bandwidth or the downstream carrier has reporte
 
 | Code | Description | Friendly Description | Explanation Of Error | Billable |
 |:--|:--|:--|:--|:--|
-| 5100 | temporary-app-error | Application Error | An application within the Bandwidth service is experiencing a temporary error that is preventing the message from being processed | NO |
+| 5100 | temporary-app-error | Application Error | An application within the Bandwidth service is experiencing a temporary error that is preventing the message from being processed. | NO |
 | 5101 | temporary-app-shutdown | Application Error | App going down. Message not received. Sender should send this messages later or to other host. | NO |
 | 5106 | impossible-to-route | Impossible to route / Attempt to deliver through retries has failed. | Impossible to route / Attempt to deliver through retries has failed. | NO |
 | 5111 | temporary-app-connection-closed | Application Error | Received messaged for connection which is already removed. | NO |
