@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd ..
+cd ../external
 
 #Setup package for generation
 rm -rf package/
@@ -8,9 +8,9 @@ mkdir package
 mkdir package/spec
 cp -R specs/* package/spec/
 cp -R configuration/Global package/spec
-cp -R content package/
+cp -R markdown package/content
 cp -R static package/
-cp bw-portal.APIMATIC-BUILD.json package/bw-portal.APIMATIC-BUILD.json
+cp configuration/bw-portal.APIMATIC-BUILD.json package/bw-portal.APIMATIC-BUILD.json
 zip -r package.zip package
 
 #Generate package
