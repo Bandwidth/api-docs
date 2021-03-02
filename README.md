@@ -88,7 +88,7 @@ This directory contains code and config for our SDK generation. Much like the do
 
 ####
 | Language | Notes |
-|--|
+|--|--|
 | python | |
 | ruby | |
 | csharp | |
