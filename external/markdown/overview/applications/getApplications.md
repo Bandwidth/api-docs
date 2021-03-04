@@ -4,7 +4,7 @@ List all applications on your account
 
 ### Request URL
 
-`GET https://dashboard.bandwidth.com/api/accounts/{{account}}/applications`
+`GET https://dashboard.bandwidth.com/api/accounts/{{accountId}}/applications`
 
 #### Basic Authentication
 

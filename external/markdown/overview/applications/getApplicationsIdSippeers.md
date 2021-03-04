@@ -4,7 +4,7 @@ List all associated Sippeers (_locations_) for an Application
 
 ### Request URL
 
-GET `https://dashboard.bandwidth.com/api/accounts/{{account}}/applications/{{applicationId}}/associatedsippeers`
+GET `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/applications/{{applicationId}}/associatedsippeers`
 
 #### Basic Authentication
 

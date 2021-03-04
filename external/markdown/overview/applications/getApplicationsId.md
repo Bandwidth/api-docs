@@ -4,7 +4,7 @@ Get information about an existing Application
 
 ### Request URL
 
-GET `https://dashboard.bandwidth.com/api/accounts/{{account}}/applications/{{applicationId}}`
+GET `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/applications/{{applicationId}}`
 
 #### Basic Authentication
 

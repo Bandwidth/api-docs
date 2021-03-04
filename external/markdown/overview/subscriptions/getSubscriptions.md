@@ -3,7 +3,7 @@
 List all subscriptions on your account
 
 ### Request URL
-GET `https://dashboard.bandwidth.com/api/accounts/{{account}}/subscriptions`
+GET `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/subscriptions`
 
 #### Basic Authentication
 Bandwidth's Account API leverages Basic Authentication with your Dashboard API Credentials. Read more about how Bandwidth secures endpoints in the [Security & Credentials](../account/bandwidthAccountCredentials.md) document.

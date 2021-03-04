@@ -2,7 +2,7 @@
 Get information about an existing Subscription
 
 ### Request URL
-GET `https://dashboard.bandwidth.com/api/accounts/{{account}}/subscriptions/{{subscriptionId}}`
+GET `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/subscriptions/{{subscriptionId}}`
 
 #### Basic Authentication
 Bandwidth's Account API leverages Basic Authentication with your Dashboard API Credentials. Read more about how Bandwidth secures endpoints in the [Security & Credentials](../account/bandwidthAccountCredentials.md) document.

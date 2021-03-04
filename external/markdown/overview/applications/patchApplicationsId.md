@@ -4,7 +4,7 @@ PATCH will only update the specified field(s)
 
 ### Request URL
 
-PATCH `https://dashboard.bandwidth.com/api/accounts/{{account}}/applications/{{applicationId}}`
+PATCH `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/applications/{{applicationId}}`
 
 #### Basic Authentication
 

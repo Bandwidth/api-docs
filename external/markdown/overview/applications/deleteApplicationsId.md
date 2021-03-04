@@ -4,7 +4,7 @@ Delete an existing application
 
 ### Request URL
 
-DELETE `https://dashboard.bandwidth.com/api/accounts/{{account}}/applications/{{applicationId}}`
+DELETE `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/applications/{{applicationId}}`
 
 #### Basic Authentication
 

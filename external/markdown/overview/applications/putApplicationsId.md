@@ -4,7 +4,7 @@ PUT update will replace **ALL** existing fields.
 
 ### Request URL
 
-PUT `https://dashboard.bandwidth.com/api/accounts/{{account}}/applications/{{applicationId}}`
+PUT `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/applications/{{applicationId}}`
 
 #### Basic Authentication
 

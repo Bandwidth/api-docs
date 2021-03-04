@@ -3,7 +3,7 @@
 Create a new [application](about.md)
 
 ### Request URL
-POST `https://dashboard.bandwidth.com/api/accounts/{{account}}/applications`
+POST `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/applications`
 
 #### Basic Authentication
 
