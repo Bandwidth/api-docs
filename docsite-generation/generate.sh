@@ -4,6 +4,7 @@ cd ../external
 
 #Setup package for generation
 rm -rf package/
+rm -rf portal/
 mkdir package
 mkdir package/spec
 cp -R specs/* package/spec/

@@ -1,7 +1,3 @@
-
-
-
-
 # Account Credentials 
 
 This guide will cover the different credentials for interacting with Bandwidth's APIs, and how to authenticate on each API.
@@ -12,7 +8,7 @@ All of Bandwidth's APIs are protected with Basic Authorization over HTTPS. Basic
 
 ⚠️ Username and Passwords are **case sensitive**!
 
-### Credentials Snapshot 
+### Credentials Snapshot
 
 | Credential Name | Description                                                                                                                                                        | Example                                            |
 |:----------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------|
@@ -26,9 +22,8 @@ Bandwidth provides a 'user-based' permission and authentication scheme. It's rec
 
 It's worth noting the other user types besides API are forced to update password every 90 days.
 
-## API Credentials 
+## API Credentials
 
 All of Bandwidth's APIs leverage your API Credentials created specifically for API access.  The API Credential pair must be created as a unique set within Dashboard. Learn more about creating your API Credentials in the [support article](https://support.bandwidth.com/hc/en-us/articles/115007187088-How-to-Create-New-Users-in-the-Bandwidth-Dashboard).
 
 ⚠️ The API Credential pair are generally separate from your **Login Username & Password** and **should not** be used to access the dashboard.  Further, your login username and password **should not** be used to access Bandwidth's APIs.
-
