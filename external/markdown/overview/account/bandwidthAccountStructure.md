@@ -2,14 +2,14 @@
 
 ![account-structure](static/images/account-structure.png)
 
-This guide serves to explain the hierarchical structure of your Bandwidth Dashboard Account. It covers Sub-accounts (Sites), Locations (Sip-Peers), and Applications, how they are used, and some cases for creating one or multiples of each.
+This guide serves to explain the hierarchical structure of your Bandwidth Dashboard Account. It covers Sub-accounts (Sites), Locations (SIP Peers), and Applications, how they are used, and some cases for creating one or multiples of each.
 
 Bandwidth recommends that all new users complete their account set-up using the Bandwidth Dashboard User Interface in order to best get acquainted with your account structure.
 
 ## Components
 1. [Account](#account)
 1. [Sub-account (Site)](#Sub-account-site)
-1. [Location (Sip-Peer)](#Location-sip-peer)
+1. [Location (SIP Peer)](#Location-sip-peer)
 1. [Application](#application)
 
 ## Account
@@ -29,11 +29,11 @@ Metaphorically speaking, if you were to look at the Account as a filing cabinet 
 
 Some use cases may call for you to create individual Sub-accounts for each of your users. It is important to note that there is a maximum of 50 Sub-accounts allowed per Account.
 
-## Location (Sippeer)
+## Location (SIP Peer)
 
-Each Sub-account is required to have at least one default Location, also known as a Sippeer. As with Sub-accounts, these terms are interchangeable, and the API mainly refers to Locations as a `SIPPEER`. A Location can best be thought of as a logical grouping of phone numbers, or a folder in the drawer of the Account filing cabinet, with the individual files being telephone numbers.
+Each Sub-account is required to have at least one default Location, also known as a SIP Peer. As with Sub-accounts, these terms are interchangeable, and the API mainly refers to Locations as a `SIPPEER`. A Location can best be thought of as a logical grouping of phone numbers, or a folder in the drawer of the Account filing cabinet, with the individual files being telephone numbers.
 
-When a telephone number is added to a Location, it will inherit the settings and properties of that Location. When you order or port new phone numbers to your Bandwidth Account, you are required to specify a Sub-account and Sippeer for those numbers to live in. A use case for having more than one Location in a Sub-account would be for easy configuration of messaging settings.
+When a telephone number is added to a Location, it will inherit the settings and properties of that Location. When you order or port new phone numbers to your Bandwidth Account, you are required to specify a Sub-account (Site) and Location (SIP Peer) for those numbers to live in. A use case for having more than one Location in a Sub-account would be for easy configuration of messaging settings.
 
 Bandwidth recommends the use of a production and development Location for each Sub-account to ensure the ability to safely test modifications to your code base before deploying to your production environment.
 
