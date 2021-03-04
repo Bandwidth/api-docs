@@ -1,6 +1,3 @@
-
-
-
 # Bandwidth Account API Setup 
 
 This walks through how to programmatically setup and configure your Bandwidth account _via APIs_ for use with [HTTP Voice](../../voice/about.md) and [HTTP Messaging](../../messaging/about.md)
@@ -37,7 +34,7 @@ Once the account has been configured correctly for HTTP Services. See the guides
 * [HTTP Messaging](../../messaging/about.md)
 * [HTTP Voice](../../voice/about.md)
 
-## Create **Messaging** Application 
+## Create **Messaging** Application
 
 
 
@@ -142,7 +139,7 @@ Location: https://{baseurl}/accounts/{{accountId}}/applications/{{applicationID}
 
 ---
 
-## Create **Voice** Application 
+## Create **Voice** Application
 
 
 
@@ -247,7 +244,7 @@ Location: https://{baseurl}/accounts/{{accountId}}/applications/{{voice-applicat
 
 ---
 
-## Create Sub-Account (_site_) 
+## Create Sub-Account (_site_)
 
 This endpoint can be used to create a subaccount (AKA site) on your account
 
@@ -376,7 +373,7 @@ Location: https://{baseurl}/accounts/{{accountId}}/sites/{{siteID}}
 
 
 
-## Create location (_sippeer_) 
+## Create location (_sippeer_)
 
 
 
@@ -457,7 +454,7 @@ Location: https://{baseurl}/accounts/{{accountId}}/sites/{{siteId}}/sippeers/{{s
 
 ---
 
-## Enable SMS on Location (_sippeer_) 
+## Enable SMS on Location (_sippeer_)
 
 In order to use HTTP messaging in your account, you need to enable SMS and MMS on each location after creating.
 
@@ -581,7 +578,7 @@ Content-Type: application/xml; charset=utf-8
 
 ---
 
-## Enable MMS on Location (_sippeer_) 
+## Enable MMS on Location (_sippeer_)
 
 In addition to enabling SMS, you must also enable MMS to receive picture messages and other multi-media messages.
 
@@ -687,7 +684,7 @@ Content-Type: application/xml; charset=utf-8
 
 ---
 
-## Assign Messaging Application to Location (_sippeer_) 
+## Assign Messaging Application to Location (_sippeer_)
 
 In order to use the messaging API, you need to assign the `application` created above to the location (_sippeer_)
 
@@ -759,7 +756,7 @@ Content-Type: application/xml; charset=utf-8
 
 ---
 
-## Assign Voice Application **AND** Enable HTTP Voice on Location (_sippeer_) 
+## Assign Voice Application **AND** Enable HTTP Voice on Location (_sippeer_)
 
 In addition to enabling SMS & MMS, you must also enable HTTP Voice services on the location to send and receive phone calls.  This is done with a single API call to the voice settings endpoint of the location (sippeer).
 

@@ -1,8 +1,6 @@
-{% raw %}
-<section class="accountManagementGuides">
-{% endraw %}
+# Bandwidth Account Structure
 
-# Bandwidth Account Structure {#top}
+![account-structure](static/images/account-structure.png)
 
 This guide serves to explain the hierarchical structure of your Bandwidth Dashboard Account. It covers Sub-accounts (Sites), Locations (Sip-Peers), and Applications, how they are used, and some cases for creating one or multiples of each.
 

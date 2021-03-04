@@ -1,16 +1,11 @@
-{% raw %}
-<section class="accountManagementGuides">
-{% endraw %}
-
 # Bandwidth Account Setup Guide {#top}
-
-This walks through how to setup and configure your Bandwidth account through the [Bandwidth Dashboard](dashboard.bandwidth.com) for use with our [Number Management](../../numbers/about.md), [HTTP Voice](../../voice/about.md), and [HTTP Messaging](../../messaging/about.md) API's.
+This walks through how to setup and configure your Bandwidth account through the [Bandwidth Dashboard](dashboard.bandwidth.com) for use with our [Number Management](../../numbers/numbers-home-page.md), [HTTP Voice](../../voice/voice-home-page.md), and [HTTP Messaging](../../messaging/messaging-home-page.md) API's.
 
 Now that we’ve covered the [hierarchical structure](./bandwidthAccountStructure.md) of your Bandwidth Dashboard account, let’s talk about how to complete your set-up.
 
 Bandwidth recommends that all new users complete their account set-up using the Bandwidth Dashboard user interface to best get acquainted with our unique account structure.
 
-After you’ve familiarized yourself with these concepts, you may want to [automate your set-up](./programaticApplicationSetup.md) and programmatically configure your Sub-Accounts, Locations & Applications.
+After you’ve familiarized yourself with these concepts, you may want to [automate your set-up](./programmaticApplicationSetup.md) and programmatically configure your Sub-Accounts, Locations & Applications.
 
 ## Assumptions
 * You have been contracted and given access to your Bandwidth Dashboard Account
@@ -18,18 +13,18 @@ After you’ve familiarized yourself with these concepts, you may want to [autom
 * You have administrator access on the account to create users and change roles
 
 ## Steps
-1. [Create a Sub-Account](#create-a-sub-account)
+1. [Create a Sub-Account](#create-a-sub-account-site)
 1. [Create an Application](#creating-applications)
     * [Create a Voice Application](#create-a-voice-application)
     * [Create a Messaging Application](#create-a-messaging-application)
-1. [Create a Location](#create-a-location)
+1. [Create a Location](#create-a-location-sip-peer)
 1. [Order a Phone Number](#order-a-phone-number)
 1. [Next steps](#next-steps)
     * [Create an API-only user](#create-an-api-only-user)
     * [Start Developing to Our Voice and Messaging APIs](#start-developing-to-our-voice-and-messaging-apis)
 
 ## Create a Sub-Account (Site)
-<img src="../../images/account-setup-1.png" style="max-width:95%">
+![account-setup-1](static/images/account-setup-1.png)
 
 Once you log into the Bandwidth Dashboard, the first thing you need to do is set up your initial Sub-account. Metaphorically speaking, if you were to look at the Account as a filing cabinet - the Sub-accounts can be best visualized as the drawers.
 
@@ -41,7 +36,7 @@ _Note: Many users choose to just keep a single Sub-Account. Whereas others creat
 _Note: Your Sub-account contains a unique Site ID, you will need to reference this for our Number Management API requests._
 
 ##### Sub-Account Fields
-<img src="../../images/account-setup-subaccount-fields.png" style="max-width:95%">
+![account-setup-subaccount-fields](static/images/account-setup-subaccount-fields.png)
 
 | Field Name      | Mandatory | Description                                                                |
 |:----------------|:---------:|:---------------------------------------------------------------------------|
@@ -61,7 +56,8 @@ _Note: Your Sub-account contains a unique Site ID, you will need to reference th
 _Note: For a self-guided training tutorial, click on **Learning Lab & Support** in the Bandwidth Dashboard and take a look at the **Onboarding Guides**!_
 
 ## Creating Applications
-<img src="../../images/account-setup-2.png" style="max-width:95%">
+![account-setup-2](static/images/account-setup-2.png)
+
 ### Create a Voice Application
 To begin using your Bandwidth Dashboard phone numbers for Voice APIs, create a Voice application and then associate it with your phone number’s Location:
 
@@ -73,7 +69,7 @@ To begin using your Bandwidth Dashboard phone numbers for Voice APIs, create a V
   1. Click **Create Application**
 
 ##### Voice Application Fields
-<img src="../../images/account-setup-voice-application-fields.png" style="max-width:95%">
+![account-setup-voice-application-fields](static/images/account-setup-voice-application-fields.png)
 
 | Field Name                     | Mandatory | Description                                                                                                                        |
 |:-------------------------------|:---------:|:-----------------------------------------------------------------------------------------------------------------------------------|
@@ -106,7 +102,7 @@ To begin using your Bandwidth Dashboard numbers for Messaging APIs, create a Mes
 
 
 ##### Messaging Application Fields
-<img src="../../images/account-setup-messaging-application-fields.png" style="max-width:95%">
+![account-setup-messaging-application-fields](static/images/account-setup-messaging-application-fields.png)
 
 | Field Name                         | Mandatory | Description                                                                                                      |
 |:-----------------------------------|:---------:|:-----------------------------------------------------------------------------------------------------------------|
@@ -125,7 +121,7 @@ To begin using your Bandwidth Dashboard numbers for Messaging APIs, create a Mes
 | Send `message-sending` Callbacks   | No        | Optional toggle to turn on/off [`message-sending`](../../messaging/callbacks/messageSending.md) callbacks events |
 
 ## Create a Location (Sip-Peer)
-<img src="../../images/account-setup-3.png" style="max-width:95%">
+![account-setup-3](static/images/account-setup-3.png)
 
 A Location is where you’ll link your Application and provision other routing settings. When a telephone number is added to a Location, it will inherit the settings and properties of that Location.
 
@@ -146,7 +142,7 @@ Link your Application with a Location:
       1. Associate the proper Messaging Application
 
 ##### Location Fields
-<img src="../../images/account-setup-location-fields.png" style="max-width:95%">
+![account-setup-location-fields](static/images/account-setup-location-fields.png)
 
 | Field Name                | Mandatory            | Description                                                                                                      |
 |:--------------------------|:--------------------:|:-----------------------------------------------------------------------------------------------------------------|
@@ -168,7 +164,7 @@ Link your Application with a Location:
 
 
 ## Order a Phone Number
-<img src="../../images/account-setup-4.png" style="max-width:95%">
+![account-setup-4](static/images/account-setup-4.png)
 
 Now that your account is set up - you are ready to order a phone number and begin communicating with Bandwidth!
 
@@ -176,7 +172,7 @@ For a guide on ordering phone numbers in the Bandwidth Dashboard, [click here](h
 
 ## Next steps
 ### Create an API-only User
-Create an [API-only user](../../guides/accountCredentials.md) to validate your API calls. Unlike user accounts that can access the Bandwidth Dashboard User Interface, users restricted to API only access will not require periodic password resets.
+Create an [API-only user](bandwidthAccountCredentials.md) to validate your API calls. Unlike user accounts that can access the Bandwidth Dashboard User Interface, users restricted to API only access will not require periodic password resets.
 
 ### Start Developing to Our Voice and Messaging APIs
 After you've completed your account set-up tasks, explore our inventory and order a phone number to your account. Once you have a phone number, you are ready to [send your first text message](../../messaging/methods/messages/createMessage.md) or [create your first phone call](../../voice/methods/calls/postCalls.md). For help, check out our [SDK’s and Postman Collection](../../sdks/about.md).
