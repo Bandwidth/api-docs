@@ -3,13 +3,7 @@
 Delete an existing application
 
 ### Request URL
-
 DELETE `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/applications/{{applicationId}}`
-
-#### Basic Authentication
-
-Bandwidth's Account API leverages Basic Authentication with your Dashboard API Credentials. Read more about how Bandwidth secures endpoints in the [Security & Credentials](../../../guides/accountCredentials.md) document.
-
 
 ### HTTP Example: Delete an application
 #### Request

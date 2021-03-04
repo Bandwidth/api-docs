@@ -5,10 +5,6 @@ Create a new [application](about.md)
 ### Request URL
 POST `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/applications`
 
-#### Basic Authentication
-
-Bandwidth's Account API leverages Basic Authentication with your Dashboard API Credentials. Read more about how Bandwidth secures endpoints in the [Security & Credentials](../account/bandwidthAccountCredentials.md) document.
-
 ### Supported Parameters
 
 | Parameters                            | Service   | Mandatory                  | Description |

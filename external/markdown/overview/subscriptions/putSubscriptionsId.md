@@ -4,9 +4,6 @@ PUT method will replace **ALL** existing fields.
 ### Request URL
 PUT `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/subscriptions/{{subscriptionId}}`
 
-#### Basic Authentication
-Bandwidth's Account API leverages Basic Authentication with your Dashboard API Credentials. Read more about how Bandwidth secures endpoints in the [Security & Credentials](../account/bandwidthAccountCredentials.md) document.
-
 ### Supported Parameters
 | Parameters                     | Mandatory                                               | Description                                                                                                                                                                                                                                                       |
 |:-------------------------------|:--------------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|

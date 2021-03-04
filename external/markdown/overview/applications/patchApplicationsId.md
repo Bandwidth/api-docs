@@ -3,12 +3,7 @@
 PATCH will only update the specified field(s)
 
 ### Request URL
-
 PATCH `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/applications/{{applicationId}}`
-
-#### Basic Authentication
-
-Bandwidth's Account API leverages Basic Authentication with your Dashboard API Credentials. Read more about how Bandwidth secures endpoints in the [Security & Credentials](../../../guides/accountCredentials.md) document.
 
 ### Supported Parameters
 | Parameters                            | Service   | Mandatory                  | Description |

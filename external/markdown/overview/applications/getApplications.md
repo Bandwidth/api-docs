@@ -3,13 +3,7 @@
 List all applications on your account
 
 ### Request URL
-
 `GET https://dashboard.bandwidth.com/api/accounts/{{accountId}}/applications`
-
-#### Basic Authentication
-
-Bandwidth's Account API leverages Basic Authentication with your Dashboard API Credentials. Read more about how Bandwidth secures endpoints in the [Security & Credentials](../../../overview/account/bandwidthAccountCredentials.md) document.
-
 
 ### HTTP Example: List all applications
 

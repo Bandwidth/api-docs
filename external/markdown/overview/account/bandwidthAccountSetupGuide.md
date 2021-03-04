@@ -1,9 +1,9 @@
-# Bandwidth Account Setup Guide {#top}
-This walks through how to setup and configure your Bandwidth account through the [Bandwidth Dashboard](dashboard.bandwidth.com) for use with our [Number Management](../../numbers/numbers-home-page.md), [HTTP Voice](../../voice/voice-home-page.md), and [HTTP Messaging](../../messaging/messaging-home-page.md) API's.
+# Bandwidth Account Setup Guide
+This walks through how to setup and configure your Bandwidth account through the [Bandwidth Dashboard](https://dashboard.bandwidth.com) for use with our [Number Management](../../numbers/numbers-home-page.md), [HTTP Voice](../../voice/voice-home-page.md), and [HTTP Messaging](../../messaging/messaging-home-page.md) API's.
 
-Now that we’ve covered the [hierarchical structure](./bandwidthAccountStructure.md) of your Bandwidth Dashboard account, let’s talk about how to complete your set-up.
+Now that we’ve covered the [hierarchical structure](./bandwidthAccountStructure.md) of your [Bandwidth Dashboard](https://dashboard.bandwidth.com) account, let’s talk about how to complete your set-up.
 
-Bandwidth recommends that all new users complete their account set-up using the Bandwidth Dashboard user interface to best get acquainted with our unique account structure.
+Bandwidth recommends that all new users complete their account set-up using the [Bandwidth Dashboard](https://dashboard.bandwidth.com) user interface to best get acquainted with our unique account structure.
 
 After you’ve familiarized yourself with these concepts, you may want to [automate your set-up](./programmaticApplicationSetup.md) and programmatically configure your Sub-Accounts, Locations & Applications.
 
@@ -13,15 +13,15 @@ After you’ve familiarized yourself with these concepts, you may want to [autom
 * You have administrator access on the account to create users and change roles
 
 ## Steps
-1. [Create a Sub-Account](#create-a-sub-account-site)
-1. [Create an Application](#creating-applications)
-    * [Create a Voice Application](#create-a-voice-application)
-    * [Create a Messaging Application](#create-a-messaging-application)
-1. [Create a Location](#create-a-location-sip-peer)
-1. [Order a Phone Number](#order-a-phone-number)
-1. [Next steps](#next-steps)
-    * [Create an API-only user](#create-an-api-only-user)
-    * [Start Developing to Our Voice and Messaging APIs](#start-developing-to-our-voice-and-messaging-apis)
+1. Create a Sub-Account
+1. Create an Application
+    * Create a Voice Application
+    * Create a Messaging Application
+1. Create a Location
+1. Order a Phone Number
+1. Next steps
+    * [Create an API-only user
+    * [Start Developing to Our Voice and Messaging APIs
 
 ## Create a Sub-Account (Site)
 ![account-setup-1](static/images/account-setup-1.png)
@@ -155,7 +155,7 @@ Link your Application with a Location:
 | SMS Enabled               | No                   | Toggle to enable/disable messaging capabilities for all telephone numbers in the location |
 | Toll Free SMS             | No                   | Toggle to enable/disable messaging capabilities for toll-free numbers in the location |
 | Short Code SMS            | No                   | Toggle to enable/disable messaging capabilities for short codes in the location |
-| Geographic Reach          | Yes (if SMS enabled) | Toggle capabilities to certian geographical areas. Check our [Messaging Reach Matrix](https://support.bandwidth.com/hc/en-us/articles/360003705673) to see which zones coorespond to different countries |
+| Geographic Reach          | Yes (if SMS enabled) | Toggle capabilities to certain geographical areas. Check our [Messaging Reach Matrix](https://support.bandwidth.com/hc/en-us/articles/360003705673) to see which zones correspond to different countries |
 | SMS Protocol              | Yes (if SMS enabled) | SMPP or HTTP - determines what protocol is used for messages to/from the telephone numbers in the location |
 | V2 Messaging              | Yes (if HTTP SMS)    | Required if using the current V2 messaging API |
 | Applications (Messaging)  | Yes (if HTTP SMS)    | If using HTTP messaging, the application you wish to associate. When messages are sent to/from the numbers on this location, Bandwidth sends a webhook to the callback URL(s) of the associated application |
@@ -168,11 +168,11 @@ Link your Application with a Location:
 
 Now that your account is set up - you are ready to order a phone number and begin communicating with Bandwidth!
 
-For a guide on ordering phone numbers in the Bandwidth Dashboard, [click here](https://support.bandwidth.com/hc/en-us/articles/360011094753-How-do-I-search-and-order-phone-numbers-), for a guide on ordering phone numbers via the Bandwidth Dashboard API, [click here](../../numbers/guides/onDemandNumberSearchAndOrder.md#top)!
+For a guide on ordering phone numbers in the Bandwidth Dashboard, [click here](https://support.bandwidth.com/hc/en-us/articles/360011094753-How-do-I-search-and-order-phone-numbers-), for a guide on ordering phone numbers via the Bandwidth Dashboard API, [click here](../../dashboard/guides/onDemandNumberSearchAndOrder.md)!
 
 ## Next steps
 ### Create an API-only User
 Create an [API-only user](bandwidthAccountCredentials.md) to validate your API calls. Unlike user accounts that can access the Bandwidth Dashboard User Interface, users restricted to API only access will not require periodic password resets.
 
 ### Start Developing to Our Voice and Messaging APIs
-After you've completed your account set-up tasks, explore our inventory and order a phone number to your account. Once you have a phone number, you are ready to [send your first text message](../../messaging/methods/messages/createMessage.md) or [create your first phone call](../../voice/methods/calls/postCalls.md). For help, check out our [SDK’s and Postman Collection](../../sdks/about.md).
+After you've completed your account set-up tasks, explore our inventory and order a phone number to your account. Once you have a phone number, you are ready to send your first text message or create your first phone call. For help, check out our [SDK’s and Postman Collection](../.developerTools.md).

@@ -1,32 +1,27 @@
-# Bandwidth Account API Setup 
-
+# Bandwidth Account API Setup
 This walks through how to programmatically setup and configure your Bandwidth account _via APIs_ for use with [HTTP Voice](../../voice/about.md) and [HTTP Messaging](../../messaging/about.md)
 
 The full API reference for these endpoints can be found at [our Numbers API reference](../../numbers/apiReference.md)
 
 ## Assumptions
-
 * Familiarity with [Account API Credentials](../../guides/accountCredentials.md)
 * Created an [API Credential Pair within the UI](https://support.bandwidth.com/hc/en-us/articles/360039065753-Classic-How-to-Create-New-Users-in-the-Bandwidth-Dashboard)
 * Account enabled for HTTP Voice & HTTP Messaging (please contact support@bandwidth.com)
 
 ## API Authentication
-
 The Account Management API resources are authenticated with your [API Credentials for "Number & Account Management"](../../guides/accountCredentials.md#number-account-creds).
 
 ## Getting Started
-
-* [Create **messaging** application](#create-messaging-application)
-* [Create **voice** application](#create-voice-application)
-* [Create subaccount (_site_)](#create-subaccount-site)
-* [Create location (_sippeer_)](#create-location)
-* [Enable **SMS** on Location (_sippeer_)](#enable-sms-on-location)
-* [Enable **MMS** on Location (_sippeer_)](#enable-mms-on-location)
-* [Assign Application to Location (_sippeer_)](#assign-messaging-application-to-location)
-* [Enable HTTP Voice **and** assign Application on Location (_sippeer_)](#assign-application-enable-voice-on-location)
+* Create **messaging** application
+* Create **voice** application
+* Create subaccount (_site_)
+* Create location (_sippeer_)
+* Enable **SMS** on Location (_sippeer_)
+* Enable **MMS** on Location (_sippeer_)
+* Assign Application to Location (_sippeer_)
+* Enable HTTP Voice **and** assign Application on Location (_sippeer_)
 
 ## Next Steps
-
 Once the account has been configured correctly for HTTP Services. See the guides for:
 
 * [Ordering Phone Numbers with a Callback](../../numbers/guides/onDemandNumberSearchAndOrder.md)
@@ -35,12 +30,7 @@ Once the account has been configured correctly for HTTP Services. See the guides
 * [HTTP Voice](../../voice/about.md)
 
 ## Create **Messaging** Application
-
-
-
 Save the Application Id after creating the application.
-
-
 
 The [Application](../applications/about.md) contains the HTTP URL you want to use for both inbound and outbound messages.
 
@@ -69,9 +59,6 @@ The [Applications](../applications/about.md) resource is authenticated with your
 
 
 ### Create Application
-
-
-
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/applications HTTP/1.1
 Content-Type: application/xml; charset=utf-8
@@ -114,7 +101,6 @@ puts application
 
 
 ### Response
-
 ```http
 HTTP/1.1 201 Created
 Content-Type: application/xml
@@ -140,11 +126,7 @@ Location: https://{baseurl}/accounts/{{accountId}}/applications/{{applicationID}
 ---
 
 ## Create **Voice** Application
-
-
-
 Save the Application Id after creating the application.
-
 
 
 The [Application](../applications/about.md) contains the HTTP URL you want to use for inbound calls.
@@ -172,9 +154,6 @@ POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/applications`
 
 
 ### Create Application
-
-
-
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/applications HTTP/1.1
 Content-Type: application/xml; charset=utf-8
@@ -218,7 +197,6 @@ puts application
 
 
 ### Response
-
 ```http
 HTTP/1.1 201 Created
 Content-Type: application/xml
@@ -245,7 +223,6 @@ Location: https://{baseurl}/accounts/{{accountId}}/applications/{{voice-applicat
 ---
 
 ## Create Sub-Account (_site_)
-
 This endpoint can be used to create a subaccount (AKA site) on your account
 
 
@@ -264,7 +241,6 @@ POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites`
 | `CustomerName`            | No        | Optional custom name to assign to your application. Max length of 50 characters                                                                                                                                                          |
 
 #### Address Object Values
-
 | Name | Type | Description |
 |:--|:--|:--|
 | HouseNumber | String | The number of the house |
@@ -284,9 +260,6 @@ POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites`
 
 
 ### Create Sub-Account (site)
-
-
-
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites HTTP/1.1
 Content-Type: application/xml; charset=utf-8
@@ -374,9 +347,6 @@ Location: https://{baseurl}/accounts/{{accountId}}/sites/{{siteID}}
 
 
 ## Create location (_sippeer_)
-
-
-
 Save the Location (sippeer) Id After creating the application.
 
 
@@ -390,7 +360,6 @@ The location (_sippeer_) is a logical grouping of numbers.
 ### Location Parameters
 
 #### Request URL
-
 POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}/sippeers`
 
 | Parameters      | Mandatory | Description                                                                                                                                                                                                                                                                                     |
@@ -401,9 +370,6 @@ POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}
 
 
 ### Create Location (_sippeer_)
-
-
-
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}/sippeers HTTP/1.1
 Content-Type: application/xml; charset=utf-8
@@ -441,7 +407,6 @@ BandwidthIris::SipPeer.create(data)
 
 
 ### Response
-
 ```http
 HTTP/1.1 201 Created
 Location: https://{baseurl}/accounts/{{accountId}}/sites/{{siteId}}/sippeers/{{sippeerId}}
@@ -455,7 +420,6 @@ Location: https://{baseurl}/accounts/{{accountId}}/sites/{{siteId}}/sippeers/{{s
 ---
 
 ## Enable SMS on Location (_sippeer_)
-
 In order to use HTTP messaging in your account, you need to enable SMS and MMS on each location after creating.
 
 
@@ -463,7 +427,6 @@ In order to use HTTP messaging in your account, you need to enable SMS and MMS o
 ### Enable SMS Parameters
 
 #### Request URL
-
 POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/sites/{{siteId}}/sippeers/{{sippeerId}}/products/messaging/features/sms`
 
 | Parameters  | Mandatory | Description                                                                                           |
