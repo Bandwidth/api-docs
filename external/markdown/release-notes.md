@@ -2,6 +2,7 @@
 
 | Date | Notes |
 |--|--|
+| March 5th, 2021 | Remove messaging's explicit declaration of `Content-Length` in `uploadMedia`. |
 | March 4th, 2021 | Update messaging's `Media` object's `contentLength` type from `string` to `integer`. |
 | March 3rd, 2021 | Removed extraneous properties from messaging's `Media` object. |
 | February 26th, 2021 | Added the "pai" and "identity" fields to Voice API callbacks that contain Stir/Shaken data  |
