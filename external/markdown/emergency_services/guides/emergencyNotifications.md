@@ -1,13 +1,5 @@
 # About Emergency Notifications 
 
-## Table of Contents
-
-* [Overview](#overview)
-* [Notification Types](#notification-types)
-* [Relationships and constraints](#relationships)
-* [API Endpoint Overview](#api-overview)
-* [Key terminology](#key-terms)
-
 ## Overview 
 
 Emergency notifications are designed to support notification of front-desk personnel in the event that someone dials an emergency call from a multi-line telephone system (MLTS).
@@ -38,7 +30,7 @@ Notification Types supported (up to **3 notifications** to be sent for a single 
 
 **Endpoints are case-sensitive.**
 
-See full details in the [API Reference](../../numbers/apiReference.md)
+See full details in the [API Reference](https://dev.bandwidth.com/numbers/apiReference.html)
 
 ### Emergency notification recipients 
 
@@ -88,6 +80,3 @@ See full details in the [API Reference](../../numbers/apiReference.md)
 | Notification Type                     | The mechanism used to deliver a emergency notification.  Emergency notifications may be delivered by email, text, voice call (using text-to- speech), or a web callback.  See Emergency Notification Recipient for more details.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | Short Message Service (SMS)           | A means of delivering text messages to an SMS enabled device like a smart phone.  An emergency notification recipient can have a type of SMS, meaning that a text should be sent to the configured telephone number if an emergency call is placed by an emergency endpoint associated with the emergency notification group that uses that recipient.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | Text To Speech (TTS)                  | A means of delivering a voice call to notify a recipient of an emergency call.  An emergency notification recipient can have a type of TTS, meaning that a text-to - speech voice call should be placed to the configured telephone number if an emergency call is placed by an emergency endpoint associated with the emergency notification group that uses that recipient.                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-
-
-

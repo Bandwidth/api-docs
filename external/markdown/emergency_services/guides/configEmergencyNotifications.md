@@ -8,20 +8,6 @@ This guide will walk through creating and associating Emergency Recipients & Gro
 * Created an [API Credential Pair within the UI](https://support.bandwidth.com/hc/en-us/articles/360039065753-Classic-How-to-Create-New-Users-in-the-Bandwidth-Dashboard)
 * Account enabled for Emergency Notifications (contact [support](https://support.bandwidth.com) for more information)
 
-## API Authentication
-
-The Emergency Notifications API resources are authenticated with your [API Credentials for "Number & Account Management"](../../guides/accountCredentials.md#number-account-creds).
-
-## Table of Contents
-
-In order to configure emergency notifications in the Bandwidth Dashboard, the following steps must be performed:
-
-* [Create "emergency notification recipients"](#create-enr)
-* [Create "emergency notification groups"](#create-eng)
-* [Associate "emergency endpoints" with "emergency notification groups"](#associate-eng-enr)
-* [Updating Configuration](#updating-eng)
-* [Removing Configuration](#removing)
-
 ## Create "emergency notification recipients" 
 
 This defines the details of a specific notification.
@@ -37,17 +23,10 @@ An emergency notification recipient has a:
 | SMS or TTS | telephone number           |
 | CALLBACK   | HTTPS URL and credentials. |
 
-
-
-
 ### Request Information
 
 #### Request URL
-POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/emergencyNotificationRecipients`
-
-#### Request Authentication
-
-The emergency notification recipients resource is authenticated with your [API Credentials](../../guides/accountCredentials.md#number-account-creds)
+POST `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/emergencyNotificationRecipients`
 
 ##### Note
 
@@ -86,11 +65,7 @@ Oneof the following must be provided to match the `Type` as specified.
 | Callback Url        | Callback URL as sent in the request                                                                                                                                                                                                                                                                                   |
 | Callback Username   | Callback Username as sent in the request. **Callback Password is ommitted for security**                                                                                                                                                                                                                              |
 
-
-
 ### Example 1 of 1: Create a Callback Notification
-
-
 
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/emergencyNotificationRecipients HTTP/1.1
@@ -135,7 +110,7 @@ Content-type: application/xml
 </EmergencyNotificationRecipientsResponse>
 ```
 
-
+PHP
 
 ```php
 $data = array(
@@ -159,7 +134,7 @@ $response = $account->createEmergencyNotificationRecipient($data);
 
 ```
 
-
+Ruby
 
 ```ruby
 data = {
@@ -184,7 +159,7 @@ puts enr
 
 ```
 
-
+Java
 
 ```java
 EmergencyNotificationRecipient enr = new EmergencyNotificationRecipient();
@@ -214,7 +189,7 @@ try {
 
 ```
 
-
+C-Sharp
 
 ```csharp
 try
@@ -246,7 +221,7 @@ catch (Exception ex)
 
 ```
 
-
+NodeJS
 
 ```js
 var emergencyNotificationRecipient = {
@@ -271,19 +246,6 @@ var response = await EmergencyNotification.createRecipientAsync(helper.createCli
 ```
 
 
-
-```python
-print("");
-```
-
-> Output
-
-```
-
-```
-
-
-
 ## Create "emergency notification groups" order 
 
 This allows you to create groups that should use the same set of emergency notification recipients.
@@ -294,16 +256,10 @@ A group has a:
 * Description
 * one to three notification recipients.
 
-
-
 ### Request Information
 
 #### Request URL
-POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/emergencyNotificationGroupOrders`
-
-#### Request Authentication
-
-The emergency notification groups resource is authenticated with your [API Credentials](../../guides/accountCredentials.md#number-account-creds)
+POST `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/emergencyNotificationGroupOrders`
 
 #### Request Parameters
 
@@ -345,11 +301,7 @@ The emergency notification groups resource is authenticated with your [API Crede
 | (emergency notification recipient) Identifier | The (emergency notification recipient) Identifier as specified in the Request.                                                                                                                                                                                                                                                              |
 
 
-
-
 ### Example 1 of 1: Create a new Notification Group
-
-
 
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/emergencyNotificationGroupOrders HTTP/1.1
@@ -407,6 +359,8 @@ Content-type: application/xml
 
 
 
+PHP
+
 ```php
 $data = array(
   "CustomerOrderId" => "UbOxhMnp",
@@ -437,6 +391,8 @@ $response = $account->createEmergencyNotificationGroupOrder($data);
 ```
 
 
+
+Ruby
 
 ```ruby
 data = {
@@ -471,6 +427,8 @@ puts order
 
 
 
+Java
+
 ```java
 EmergencyNotificationGroupOrder engo = new EmergencyNotificationGroupOrder();
 engo.setCustomerOrderId("UBOxhMnp");
@@ -504,6 +462,8 @@ try {
 ```
 
 
+
+C-Sharp
 
 ```csharp
 try
@@ -546,6 +506,8 @@ catch (Exception ex)
 
 
 
+NodeJS
+
 ```js
 var emergencyNotificationGroupOrder = {
     customerOrderid: "UbOxhMnp",
@@ -580,36 +542,16 @@ var response = await EmergencyNotification.createGroupOrderAsync(client, emergen
 
 ```
 
-
-
-```python
-print("");
-```
-
-> Output
-
-```
-
-```
-
-
-
 ## Associate "emergency endpoints" with "emergency notification groups". 
 
 This step allows you to assign emergency endpoints (either telephone numbers or alternate end-user identifiers - AEUIs) to a group.
 
 For example, if you want everyone in a given building to trigger the same set of notifications in the event that they place an emergency call, just add those callers to the group that has the desired notification recipients.
 
-
-
 ### Request Information
 
 #### Request URL
-POST`https://dashboard.bandwidth.com/api/accounts/{{accountId}}/emergencyNotificationEndpointOrders`
-
-#### Request Authentication
-
-The emergencyNotificationEndpointOrders resource is authenticated with your [API Credentials](../../guides/accountCredentials.md#number-account-creds)
+POST `https://dashboard.bandwidth.com/api/accounts/{{accountId}}/emergencyNotificationEndpointOrders`
 
 #### Request Parameters
 
@@ -718,6 +660,8 @@ Content-type: application/xml
 
 
 
+PHP
+
 ```php
 $data = array(
   "CustomerOrderId" => "ALG-31233884",
@@ -747,6 +691,8 @@ $response = $account->createEmergencyNotificationEndpointOrder($data);
 ```
 
 
+
+Ruby
 
 ```ruby
 data = {
@@ -780,6 +726,8 @@ puts order
 
 
 
+Java
+
 ```java
 EmergencyNotificationEndpointOrder eneo = new EmergencyNotificationEndpointOrder();
 eneo.setCustomerOrderId("ALG-31233884");
@@ -810,6 +758,8 @@ try {
 ```
 
 
+
+C-Sharp
 
 ```csharp
 try
@@ -848,6 +798,8 @@ catch (Exception ex)
 
 
 
+NodeJS
+
 ```js
 var emergencyNotificationEndpointOrder = {
     customerOrderId: "ALG-31233884",
@@ -879,20 +831,6 @@ var response = await EmergencyNotification.createEndpointOrderAsync(client, emer
 
 ```
 
-
-
-```python
-print("");
-```
-
-> Output
-
-```
-
-```
-
-
-
 ## Updating Configuration 
 
 * Emergency notification groups may be updated by adding or removing recipients, provided that the group always has from one to three recipients.
@@ -906,12 +844,7 @@ print("");
 * When updating Emergency notification groups, see the [Supported Parameters](#create-eng)
 * When updating Emergency notification recipients, see the [Supported Parameters](#create-enr)
 
-
-
 ### Example 1 of 2: Updating an emergency notification group by adding emergency notification recipients
-
-
-
 
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/emergencyNotificationGroupOrders HTTP/1.1
@@ -955,6 +888,8 @@ Content-type: application/xml
 
 
 
+PHP
+
 ```php
 $data = array(
   "ModifiedEmergenyNotificationGroup" => array(
@@ -979,6 +914,8 @@ $response = $account->createEmergencyNotificationGroupOrder($data);
 ```
 
 
+
+Ruby
 
 ```ruby
 data = {
@@ -1005,6 +942,8 @@ puts order
 ```
 
 
+
+Java
 
 ```java
 EmergencyNotificationGroupOrder engo = new EmergencyNotificationGroupOrder();
@@ -1034,6 +973,8 @@ try {
 ```
 
 
+
+C-Sharp
 
 ```csharp
 try
@@ -1066,6 +1007,8 @@ catch (Exception ex)
 
 
 
+NodeJS
+
 ```js
 var emergencyNotificationGroupOrder = {
     modifiedEmergencyNotificationGroup: {
@@ -1088,20 +1031,6 @@ var response = await EmergencyNotification.createGroupOrderAsync(client, emergen
 ```
 
 ```
-
-
-
-```python
-print("");
-```
-
-> Output
-
-```
-
-```
-
-
 
 ### Example 2 of 2: Updating an emergency recipient ID to use SMS
 
@@ -1144,6 +1073,8 @@ Content-type: application/xml
 
 
 
+PHP
+
 ```php
 $data = array(
   "Description" => "Text message to guard shack",
@@ -1162,6 +1093,8 @@ $response = $account->replaceEmergencyNotificationRecipient("id", $data);
 ```
 
 
+
+Ruby
 
 ```ruby
 data = {
@@ -1184,6 +1117,8 @@ puts enr
 
 
 
+Java
+
 ```java
 EmergencyNotificationRecipient enr = new EmergencyNotificationRecipient();
 enr.setDescription(" Text message to guard shack ");
@@ -1205,6 +1140,8 @@ try {
 ```
 
 
+
+C-Sharp
 
 ```csharp
 try
@@ -1232,6 +1169,8 @@ catch (Exception ex)
 
 
 
+NodeJS
+
 ```js
 var emergencyNotificationRecipient = {
     description: "Text message to guard shack",
@@ -1253,21 +1192,6 @@ var response = await emergencyNotification.replaceRecipientAsync(client, emergen
 
 ```
 
-
-
-```python
-print("");
-```
-
-> Output
-
-```
-
-```
-
-
-
-
 ## Removing Configuration 
 
 Removal of configuration is essentially the reverse of the above:
@@ -1275,19 +1199,12 @@ Removal of configuration is essentially the reverse of the above:
 * An emergency notification group cannot be removed if at least one emergency endpoint is still associated with that group.
 * An emergency notification recipient cannot be removed if that recipient belongs to a group.
 
-
-
 ### Supported Parameters & Responses
 
 * When updating Emergency notification groups, see the [Supported Parameters](#create-eng)
 * When updating Emergency notification recipients, see the [Supported Parameters](#create-enr)
 
-
-
 ### Example 1 of 2: Delete an emergency notification recipient from a group
-
-
-
 
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/emergencyNotificationGroupOrders HTTP/1.1
@@ -1331,6 +1248,8 @@ Content-type: application/xml
 
 
 
+PHP
+
 ```php
 $data = array(
   "ModifiedEmergenyNotificationGroup" => array(
@@ -1355,6 +1274,8 @@ $response = $account->createEmergencyNotificationGroupOrder($data);
 ```
 
 
+
+Ruby
 
 ```ruby
 data = {
@@ -1381,6 +1302,8 @@ puts order
 ```
 
 
+
+Java
 
 ```java
 EmergencyNotificationGroupOrder engo = new EmergencyNotificationGroupOrder();
@@ -1410,6 +1333,8 @@ try {
 ```
 
 
+
+C-Sharp
 
 ```csharp
 try
@@ -1443,6 +1368,8 @@ catch (Exception ex)
 
 
 
+NodeJS
+
 ```js
 var emergencyNotificationGroupOrder = {
     modifiedEmergencyNotificationGroup: {
@@ -1469,20 +1396,6 @@ var response = await EmergencyNotification.createGroupOrderAsync(client, emergen
 
 ```
 
-
-
-```python
-print("");
-```
-
-> Output
-
-```
-
-```
-
-
-
 ### Example 2 of 2: Delete an emergency notification recipient
 
 
@@ -1499,6 +1412,8 @@ HTTP/1.1 200
 
 
 
+PHP
+
 ```php
 $account->deleteEmergencyNotificationRecipient("id");
 ```
@@ -1511,6 +1426,8 @@ $account->deleteEmergencyNotificationRecipient("id");
 
 
 
+Ruby
+
 ```ruby
 BandwidthIris::EmergencyNotificationRecipients.delete_emergency_notification_recipient("id")
 ```
@@ -1522,6 +1439,8 @@ BandwidthIris::EmergencyNotificationRecipients.delete_emergency_notification_rec
 ```
 
 
+
+Java
 
 ```java
 try {
@@ -1538,6 +1457,8 @@ try {
 ```
 
 
+
+C-Sharp
 
 ```csharp
 try
@@ -1558,6 +1479,8 @@ catch (Exception ex)
 
 
 
+NodeJS
+
 ```js
 var emergencyNotification = new EmergencyNotification();
 emergencyNotification.enrid = "enrId";
@@ -1570,17 +1493,3 @@ var response = await emergencyNotification.deleteRecipient(client);
 ```
 
 ```
-
-
-
-```python
-print("");
-```
-
-> Output
-
-```
-
-```
-
-
