@@ -2,6 +2,7 @@
 
 | Date | Notes |
 |--|--|
+| March 9th, 2021 | Added `media` and `messages` tags to the Messaging OpenAPI spec. |
 | March 8th, 2021 | Add optional `deviceApiVersion` parameter to WebRTC `Participant` schema in preparation for the upcoming "Unified Plan" conversion. |
 | March 5th, 2021 | Remove messaging's explicit declaration of `Content-Length` in `uploadMedia`. |
 | March 4th, 2021 | Update messaging's `Media` object's `contentLength` type from `string` to `integer`. |
