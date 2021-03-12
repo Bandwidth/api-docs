@@ -128,21 +128,19 @@ function addOpenApiSpecs(formData: FormData) {
     for (const apiNamespace of specs) {
       const apiSpecPath = `${masterConfig.apiSpecRoot}/${apiNamespace}/${masterConfig.apiSpecFile}`;
 
-      if (targetLang !== "phpold" || apiNamespace !== "Dashboard") {
-        let stream;
-        if (masterConfig.wrappedRef.includes(apiNamespace)) {
-          const apiSpec = readJSONSync(apiSpecPath);
-          const wrappedSpec = wrapRef(apiSpec);
-          stream = JSON.stringify(wrappedSpec);
-        } else {
-          stream = JSON.stringify(readJSONSync(apiSpecPath));
-        }
-
-        formData.append("apiDescriptions", stream, {
-          contentType: "application/octet-stream",
-          filename: "api.json",
-        });
+      let stream;
+      if (masterConfig.wrappedRef.includes(apiNamespace)) {
+        const apiSpec = readJSONSync(apiSpecPath);
+        const wrappedSpec = wrapRef(apiSpec);
+        stream = JSON.stringify(wrappedSpec);
+      } else {
+        stream = JSON.stringify(readJSONSync(apiSpecPath));
       }
+
+      formData.append("apiDescriptions", stream, {
+        contentType: "application/octet-stream",
+        filename: "api.json",
+      });
     }
   } else {
     // Add only the one spec to the form data
