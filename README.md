@@ -106,4 +106,3 @@ Any changes to the `./external/specs` or `./external/content` directories trigge
 ### Changelog 
 
 Any changes to the `./external/specs` or `./external/content` directories requires an update to `./external/content/changelog.md`. If updating this isn't relevant, you must add the `no-changelog` label to your PR.
-
