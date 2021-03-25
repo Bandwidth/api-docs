@@ -995,7 +995,7 @@ APIs constantly evolve and require lifecycle management. There are two key conce
 
 The phases of API lifecycle management are illustrated in the timeline.
 
-<IMAGE GOES HERE>
+![](./api-lifecycle.png)
 
 ### Guidelines on When to Deprecate an Endpoint
 Throughout the lifecycle of an API, all efforts should be made to not introduce breaking changes. When it is necessary to introduce breaking changes, then endpoint(s) should be sunsetted to coincide with a new version being released. This allows clients time to transition to the new version as both new and old are available during the Sunset Period. The other scenario to sunset an endpoint is when there is no replacement but it is still desirable to decommission due to an end-of-life of the resource or area of the product.
@@ -1016,7 +1016,7 @@ The specification in Sunset RFC 8594 should be followed during the sunset period
 * It is not appropriate to use the Sunset header prior to deprecation as the API is still the recommended API
 * It is not appropriate to ONLY use the Sunset header to announce deprecation. Product teams must make an announcement to customers via the Service Experience team.
 
-##Versioning
+## Versioning
 As stated in the base URLs section of these standards, all URLs should follow a `https://<product>.bandwidth.com/api/v<number>/<path>/` format. The `<number>` value should be a single number representing the major version of the API (ex: 1, 2, etc). Minor and patch versions of the API are not allowed in the URL, and other versioning schemas like date-time objects are also not allowed in the URL.
 
 A version number must be incremented when a breaking change has been made. Non-breaking changes do not result in an increment of the version number.
