@@ -1,0 +1,322 @@
+openapi: 3.0.3
+info:
+  title: one-identity IdP API
+  version: 0.1.0
+paths:
+  "/api/v1/idps":
+    get:
+      summary: Returns all the IdPs that the requesting user has access to.
+      operationId: getIdps
+      parameters:
+        - name: accountId
+          in: query
+          description: Filter results by this accountId.
+          required: false
+          schema:
+            type: string
+        - name: active
+          in: query
+          description: Filter results by the IdP active status.
+          required: false
+          schema:
+            type: boolean
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Successful response. A list of IdPs is returned. If there are no IdPs to return, an empty list is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListOfIdps'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: An internal error occurred attempting to process a request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      summary: Creates a new IdP.
+      operationId: postIdps
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewIdP'
+      responses:
+        201:
+          description: Successful Response. Returns the newly created IdP resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdP'
+        400:
+          description: Invalid Request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: An internal error occurred attempting to process a request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  '/api/v1/idps/{IdpId}':
+    parameters:
+      - name: IdpId
+        in: path
+        required: true
+        style: simple
+        description: The IdP id.
+        schema:
+          type: string
+    put:
+      summary: Modifies an IdP.
+      operationId: putIdp
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewIdP'
+      responses:
+        200:
+          description: Successful Response. Returns the modified IdP resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdP'
+        400:
+          description: Invalid Request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        404:
+          description: IdP not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: An internal error occurred attempting to process a request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      summary: Returns the IdP with the given id.
+      operationId: getIdp
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Successful response. The IdP resource, if it exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdP'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        404:
+          description: IdP not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: An internal error occurred attempting to process a request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Deletes the IdP with the given id.
+      operationId: deleteIdp
+      security:
+        - bearerAuth: []
+      responses:
+        204:
+          description: Successful response. The IdP resource was deleted.
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        404:
+          description: IdP not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: An internal error occurred attempting to process a request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    NewIdP:
+      title: New IdP
+      type: object
+      oneOf:
+        - $ref: '#/components/schemas/NewSamlIdP'
+      discriminator:
+        propertyName: protocol
+        mapping:
+          SAML: '#/components/schemas/NewSamlIdP'
+    NewSamlIdP:
+      title: NewSAMLIdP
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/NewProperties'
+        - $ref: '#/components/schemas/SamlProperties'
+    IdP:
+      title: IdP
+      type: object
+      oneOf:
+        - $ref: '#/components/schemas/SamlIdP'
+      discriminator:
+        propertyName: protocol
+        mapping:
+          SAML: '#/components/schemas/SamlIdP'
+    SamlIdP:
+      title: SAML IdP
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/NewProperties'
+        - $ref: '#/components/schemas/GeneralProperties'
+        - $ref: '#/components/schemas/SamlProperties'
+    NewProperties:
+      type: object
+      properties:
+        accountId:
+          description: The Bandwidth account id that will use this Identity Provider.
+          type: string
+          readOnly: false
+        protocol:
+          description: The protocol used by this Identity Provider. Only SAML is supported for now.
+          type: string
+          enum:
+            - SAML
+          default: SAML
+        active:
+          description: Whether this IdP is active or not. Only one IdP can be active for a given accountId.
+          type: boolean
+          readOnly: false
+          default: false
+      required:
+        - accountId
+        - protocol
+        - active
+    GeneralProperties:
+      type: object
+      properties:
+        id:
+          description: The identifier for this Identity Provider.
+          type: string
+          readOnly: true
+        entityId:
+          description: |
+            The IdP entity id. This should be used as input to configure the
+            source provider.
+          type: string
+          readOnly: true
+        acsUrl:
+          description: |
+            The consumer assertion URL. This should be used as input to configure
+            the source provider.
+          type: string
+          readOnly: true
+      required:
+        - id
+        - entityId
+        - acsUrl
+    SamlProperties:
+      type: object
+      properties:
+        usernameField:
+          description: The field in the SAML assertion that container the username
+          type: string
+          readOnly: false
+        issuerUri:
+          # TODO: description copied directly from Okta
+          description: URI of the Identity Provider. This value is usually the SAML Metadata EntityID of the IdP EntityDescriptor.
+          type: string
+          format: uri
+          readOnly: false
+        singleSignOnUrl:
+          # TODO: description copied directly from Okta
+          description: The binding-specific IdP Authentication Request Protocol endpoint that receives SAML AuthnRequest messages.
+          type: string
+          format: uri
+          readOnly: false
+        signatureCertificate:
+          # TODO: description copied directly from Okta
+          description: The PEM or DER encoded public key certificate of the Identity Provider used to verify SAML message and assertion signatures.
+          type: string
+          readOnly: false
+    ListOfIdps:
+      title: ListOfIdps
+      type: array
+      items:
+        $ref: '#/components/schemas/IdP'
+    ErrorResponse:
+      title: ErrorResponse
+      type: object
+      properties:
+        timestamp:
+          description: The timestamp in ISO 8601 format of when the error was encountered
+          type: string
+          format: date-time
+          readOnly: true
+        httpStatus:
+          description: The HTTP status code returned by the server for the error encountered
+          type: number
+          format: int32
+          readOnly: true
+          example: 401
+        message:
+          description: A short description about the error encountered
+          type: string
+          readOnly: true
+        traceId:
+          description: A unique trace ID used to identify the request and response.
+          type: string
+          readOnly: true
+          example: "b77a5ea79036d5b9"

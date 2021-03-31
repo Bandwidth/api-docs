@@ -5,3 +5,4 @@
 | [Dashboard](../dashboard/DashboardOverview.md) |
 | [MFA](../mfa/MfaOverview.md) |
 | [Emergency Services](../emergency_services/emergencyServicesOverview.md) |
+| [Identity Management](../identity/IdentityManagementOverview.md) |
