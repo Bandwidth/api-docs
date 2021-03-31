@@ -2,9 +2,11 @@
 
 | Date | Notes |
 |--|--|
+| April 9th, 2021 | Added initial identity management API |
 | April 6th, 2021 | Update messaging's `createMessage` and `uploadMedia` successful response status code. |
 | March 25th, 2021 | Updated portal config to use a local js script. |
 | March 17th, 2021 | Added `campaignClass` to the message search API response. |
+| March 31st, 2021 | Added initial identity management API |
 | March 16th, 2021 | Added 4 fields `messageSize`, `messageLength`, `attachmentCount`, and `recipientCount` to the message search API response. |
 | March 10th, 2021 | Added `participants` and `sessions` to the WebRtc spec. |
 | March 10th, 2021 | Added `Continuation-Token` as a possible response header for `listMedia`. |
