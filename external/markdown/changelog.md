@@ -2,6 +2,7 @@
 
 | Date | Notes |
 |--|--|
+| March 17th, 2021 | Added `campaignClass` to the message search API response.
 | March 16th, 2021 | Added 4 fields `messageSize`, `messageLength`, `attachmentCount`, and `recipientCount` to the message search API response. |
 | March 10th, 2021 | Added `participants` and `sessions` to the WebRtc spec. |
 | March 10th, 2021 | Added `Continuation-Token` as a possible response header for `listMedia`. |
