@@ -19,7 +19,6 @@ The Transfer verb is used to bridge another party onto the current call.
 | diversionTreatment | (optional) Can be any of the following:  `none`: No diversion headers are sent on the outbound leg of the transferred call. `propagate`: Copy the Diversion header from the inbound leg to the outbound leg. Ignored if there is no Diversion header present on the inbound leg. `stack`: After propagating any Diversion header from the inbound leg to the outbound leg, stack on top another Diversion header based on the Request-URI of the inbound call. Defaults to `none`.  If diversionTreatment is not specified, no diversion header will be included for the transfer even if one came with the inbound call. |
 | diversionReason | (optional) Can be any of the following values: `unknown``user-busy``no-answer``unavailable``unconditional``time-of-day``do-not-disturb``deflection``follow-me``out-of-service``away` This parameter is considered only when `diversionTreatment` is set to `stack`.  Defaults to `unknown`. |
 
-### 
 When the called party hangs up, if the `transferCompleteUrl` attribute is specified, the [TransferComplete](../bxmlCallbacks/transferComplete.md) callback is sent to the `transferCompleteUrl`,
 this callback is also sent if any problem occurs with the transfer, such as the callee is busy, doesn't answer, or the call gets [rate limited](../../guides/rateLimits.md).
 The BXML returned by that callback is executed on the original call. Verbs following the `<Transfer>` will be ignored when the `transferCompleteUrl` attribute is specified.
