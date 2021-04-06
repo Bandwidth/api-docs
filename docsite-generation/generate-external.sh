@@ -16,6 +16,7 @@ zip -r package.zip package
 
 #Generate package
 curl titan.apimatic.io/api/build -F 'file=@package.zip' -o portal.zip
+rm -rf portal
 mkdir portal
 unzip -o portal.zip -d portal
 
