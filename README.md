@@ -1,22 +1,26 @@
-# external-api-docs
+# api-docs
 
-Welcome to the home of Bandwidth's next generation of API docs! This repo serves as a mono repo that contains multiple OpenAPI specs that powers Bandwidth's external API references and SDKs, and will eventually replace https://github.com/bandwidth/bandwidth.github.io.
+Welcome to the home of Bandwidth's next generation of API docs! This repo serves as a mono repo that contains multiple OpenAPI specs that powers Bandwidth's external and internal API references and SDKs, and will eventually replace https://github.com/bandwidth/bandwidth.github.io and https://github.com/bandwidth/internal-api-docs.
 
 ## Components
 
-### External Docsite Source Of Truth
+### External Docsite
 
-The sources of truth for our APIs are found under the `./external` directory. Each directory contains different pieces that build our docsite and SDKs.
+The `./external` directory contains all of the configuration and information for the external docsite and SDKs.
 
 #### Configuration
 
-This directory contains APIMatic configuration files. Typically the files in this directory will be updated by the DevX team only.
+The `./external/configuration` directory contains APIMatic configuration files. Typically the files in this directory will be updated by the DevX team only.
 
 `configuration/bw-portal.APIMATIC-BUILD.json` is probably the only file that could be updated by an API team, and that would be adding a new API to the `apiSpecs` list.
 
+#### Specs
+
+The `./external/specs` directory contains our OpenAPI specs. The specs are all defined as `<SpecTitle>/openapi.json`. Please use this format for adding new specs.
+
 #### Markdown
 
-This directory contains the markdown files and table of contents (toc.yml) files for the docsite.
+The `./external/markdown` directory contains the markdown files and table of contents (toc.yml) files for the docsite.
 
 ##### toc.yml
 
@@ -68,25 +72,26 @@ toc:
 
 Good examples of rules 4 and 5 can be found in the `./external/markdown/voice` and `./external/markdown/voice/bxml` directories respectively.
 
-### Docsite Generation
+### Internal Docsite
 
-This directory contains a simple script to generate the docsite and host a local docsite server. Typically you'll interface with this through NPM commands.
+The `./internal` directory contains all of the configuration and information for the internal docsite.
 
-`npm run generate-docsite` will generate static HTML files to serve the docsite.
-
-`npm run docsite-server` will run a local server to view the docsite. It is highly recommended to view the docsite in an incognito window since it is aggressively cached.
+This directory contains the exact same structre as the `./external` directory, but has slightly different configuration.
 
 ### Postman
 
-This directory contains code and templates to generate our Postman collection. The majority of the collection is generated from our OpenAPI specs, but `resources/postman_scaffold_collection.json` contains templates for Postman tutorials if someone wants to create one.
+The `./postman` directory contains code and templates to generate our public facing Postman collection. The majority of the collection is generated from our OpenAPI specs, but `resources/postman_scaffold_collection.json` contains templates for Postman tutorials if someone wants to create one.
+
+### Docsite Generation
+
+The `./docsite-generation` directory contains simple shell scripts that generate the docsites, and let you run the docsite servers locally. Typically you'll interface with these through NPM commands.
 
 ### SDK Generation
 
-This directory contains code and config for our SDK generation. Much like the docsite generation, typically you'll interface with this through NPM commands.
+The `./sdk-generation` directory contains code and config for our SDK generation that supports our public SDKs. Much like the docsite generation, typically you'll interface with this through NPM commands.
 
 `npm run generate -- -l <LANGUAGE> -s <SPEC>` is the command to generate an SDK. The `-s` flag is optional; not including it will default to the SDK with all APIs. The file `./sdk-generation/bandwidth.zip` will contain the generated code.
 
-####
 | Language | Notes |
 |--|--|
 | python | |
