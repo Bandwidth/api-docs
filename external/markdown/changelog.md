@@ -2,7 +2,7 @@
 
 | Date | Notes |
 |--|--|
-| April 6th, 2021 | Update messaging's `createMessage` successful response status code. |
+| April 6th, 2021 | Update messaging's `createMessage` and `uploadMedia` successful response status code. |
 | March 25th, 2021 | Updated portal config to use a local js script. |
 | March 17th, 2021 | Added `campaignClass` to the message search API response. |
 | March 16th, 2021 | Added 4 fields `messageSize`, `messageLength`, `attachmentCount`, and `recipientCount` to the message search API response. |
