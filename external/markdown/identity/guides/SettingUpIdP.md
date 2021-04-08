@@ -13,3 +13,18 @@ Some SSO or Federated Authentication services don't make this information easy t
 - `acsUrl` - the URL where your provider will send signed tokens back to be consumed by Bandwidth
 
 To make the back-and-forth easier, we allow you to create an IdP with "dummy" values to get back the `entityId` and `acsUrl` to configure in your applications. You can update configuration values using `PUT` requests using the `Location` supplied when the IdP was initially created. Only when you send a `PUT` request to activate the IdP (`active: true`) will we validate the fields you have provided. If the values do not pass validation, the IdP will not be activated.
+
+## FAQs
+<summary> 
+If I update an IdP to be active (`active:true`), what happens to other IdPs?
+<details>
+There can only be one active IdP per account. Therefore, if another IdP is already active when attempting to activate a different IdP, the initially active IdP will be set to inactive.
+</details>
+</summary>
+
+<summary> 
+Can I delete an IdP while it is still active? 
+<details>
+You can delete an IdP if it is active or not. Deleting an active IdP **will** change how your users authenticate just like if you were to deactivate an IdP or make a different IdP active.
+</details>
+</summary>
