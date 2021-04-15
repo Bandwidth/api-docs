@@ -55,7 +55,7 @@ User-Agent: BandwidthAPI/v2
       "text"          : "",
       "applicationId" : "93de2206-9669-4e07-948d-329f4b722ee2",
       "media"         : [
-          "https://s3.amazonaws.com/bw-v2-api/demo.jpg"
+          "https://dev.bandwidth.com/images/bandwidth-logo.png"
         ],
       "owner"         : "+12345678901",
       "direction"     : "out",
