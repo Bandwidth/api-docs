@@ -36,19 +36,19 @@ You will receive this callback between when the message is received by Bandwidth
     {
         "time": "2020-06-25T18:42:36.979Z",
         "type": "message-sending",
-        "to": "+19842397270",
+        "to": "+15554443333",
         "description": "Message is sending to carrier",
         "message": {
             "id": "1593110555875xo7watq5px6rbe5d",
-            "owner": "+19196494865",
+            "owner": "+15552221111",
             "applicationId": "cfd4fb83-7531-4acc-b471-42d0bb76a65c",
             "time": "2020-06-25T18:42:35.876Z",
             "segmentCount": 1,
             "direction": "out",
-            "to": ["+19842397270"],
-            "from": "+19196494865",
+            "to": ["+15554443333"],
+            "from": "+15552221111",
             "text": "",
-            "media": ["https://s3.amazonaws.com/tpensyl/catapult.jpg"],
+            "media": ["https://dev.bandwidth.com/images/bandwidth-logo.png"],
             "tag": "v2 lab"
         }
     }
