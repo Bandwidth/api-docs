@@ -2,7 +2,7 @@
 
 | Date | Notes |
 |--|--|
-| April 14th, 2021 | Updated API credentials to use user/password instead of token/secret; applied anonymization changes from DX-1909 & DX-1910 (see legacy repo PRs #629 and #637). |
+| April 14th, 2021 | Updated API credentials to use user/password instead of token/secret; applied anonymization changes from DX-1909 & DX-1910 (see legacy repo PRs [#629](https://github.com/Bandwidth/bandwidth.github.io/pull/629) and [#637](https://github.com/Bandwidth/bandwidth.github.io/pull/637)). |
 | April 6th, 2021 | Update messaging's `createMessage` and `uploadMedia` successful response status code. |
 | March 25th, 2021 | Updated portal config to use a local js script. |
 | March 17th, 2021 | Added `campaignClass` to the message search API response. |
