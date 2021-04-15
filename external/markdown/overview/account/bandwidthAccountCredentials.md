@@ -10,11 +10,11 @@ All of Bandwidth's APIs are protected with Basic Authorization over HTTPS. Basic
 
 ### Credentials Snapshot
 
-| Credential Name | Description                                                                                                                                                         | Example                                            |
-|:----------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------|
-| `username`      | Your API user's **username**                                                                                                                                        | `jdoe`                                             |
-| `password`      | Your API user's **password**                                                                                                                                        | `correct-horse-battery-staple`                     |
-| `accountId`     | Your unique **account id**.  The `accountId` is used as part of the url to make API requests. <br> e.g. `https://dashboard.bandwidth.com/api/accounts/{accountId}/` | `920012`                                           |
+| Credential Name | Description                                                                                                                                                   | Example                                            |
+|:----------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------|
+| `username`      | Your API user's **username**                                                                                                                                  | `jdoe`                                             |
+| `password`      | Your API user's **password**                                                                                                                                  | `correct-horse-battery-staple`                     |
+| `accountId`     | Your unique **account id**. The `accountId` is used as part of the url to make API requests, e.g. `https://dashboard.bandwidth.com/api/accounts/{accountId}/` | `920012`                                           |
 
 ## Creating an API User
 
