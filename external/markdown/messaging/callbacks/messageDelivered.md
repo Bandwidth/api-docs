@@ -123,7 +123,7 @@ User-Agent: BandwidthAPI/v2
       "owner"        : "+12345678902",
       "direction"    : "out",
       "segmentCount" : 1,
-      "media"        : [""https://s3.amazonaws.com/bw-v2-api/demo.jpg""]
+      "media"        : ["https://dev.bandwidth.com/images/bandwidth-logo.png"]
     }
   }
 ]
@@ -133,7 +133,7 @@ User-Agent: BandwidthAPI/v2
 
 ### Example 4 of 4: Group MMS Message delivered to carrier
 
-You will receive a unique callback per phonenumber sent in the group message. The example below shows **1 of the 2** callbacks that would be sent from Bandwidth.
+You will receive a unique callback per phone number sent in the group message. The example below shows **1 of the 2** callbacks that would be sent from Bandwidth.
 
 
 

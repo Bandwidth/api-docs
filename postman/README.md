@@ -13,7 +13,7 @@ To execute a built project run
 <br/>
 `npm run start -- -c path/to/postman_collection -s path/to/open_api_spec_folder`
 
-*Note the `--` in the above command is necessary to pass arguments to the the script and not to npm.*
+*Note the `--` in the above command is necessary to pass arguments to the script and not to npm.*
 
 | Options              | Short Code | Usage                                                                                                       |
 |----------------------|------------|-------------------------------------------------------------------------------------------------------------|

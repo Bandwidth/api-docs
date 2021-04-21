@@ -2,6 +2,13 @@
 
 Welcome to the home of Bandwidth's next generation of API docs! This repo serves as a mono repo that contains multiple OpenAPI specs that powers Bandwidth's external and internal API references and SDKs, and will eventually replace https://github.com/bandwidth/bandwidth.github.io and https://github.com/bandwidth/internal-api-docs.
 
+## Contribution Guidelines Overview
+
+1) If you're updating a currently existing markdown file or OpenAPI spec, you most likely will not need to update any other files.
+2) If you're adding a new OpenAPI spec, make sure the directory name matches the spec title, and make sure to update the APIMatic config file.
+3) If you're adding a new markdown file and/or markdown directory, make sure to update the root `toc.yml` file (if needed), and make sure to include `toc.yml` files in the new directories (if needed).
+4) If your changes should come with a changelog update, make sure to update the changelog file. Otherwise, include the `no-changelog` tag on your PR.
+
 ## Components
 
 ### External Docsite
@@ -24,9 +31,9 @@ The `./external/markdown` directory contains the markdown files and table of con
 
 ##### toc.yml
 
-The toc.yml file allows you to define navigation dropdown items, and rendered markdown files.
+The `toc.yml` file allows you to define navigation dropdown items, and rendered markdown files.
 
-toc.yml example
+`toc.yml` example
 
 ```
 toc:
@@ -36,7 +43,7 @@ toc:
   file: "release-notes.md"
 ```
 
-toc.yml files can be nested. Continuing the above example, we can include a myNewApi/toc.yml file
+`toc.yml` files can also be nested, and should be included on any sub-directory. Continuing the above example, we will include a `myNewApi/toc.yml` file to make the pages render.
 
 ```
 toc:
