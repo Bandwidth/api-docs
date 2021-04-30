@@ -1,0 +1,6 @@
+---
+id: changelog
+slug: /
+---
+
+# Changelog

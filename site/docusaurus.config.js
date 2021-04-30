@@ -55,6 +55,16 @@ module.exports = {
         href: 'https://github.com/Bandwidth-Samples',
         label: 'Sample Apps',
         position: 'left',
+      }, {
+        to: 'changelog',
+        activeBasePath: 'changelog',
+        label: 'Changelog',
+        position: 'left'
+      }, {
+        to: 'api-design-standards',
+        activeBasePath: 'api-design-standards',
+        label: 'API Design Standards',
+        position: 'left'
       }]
     },
     footer: {
@@ -102,15 +112,13 @@ module.exports = {
       {
         docs: {
           sidebarPath: require.resolve('./sidebar.js'),
-          // Please change this to your repo.
           editUrl:
-            'https://github.com/facebook/docusaurus/edit/master/website/',
+            'https://github.com/bandwidth/api-docs/edit/master/external/docs/',
         },
         blog: {
           showReadingTime: true,
-          // Please change this to your repo.
           editUrl:
-            'https://github.com/facebook/docusaurus/edit/master/website/blog/',
+            'https://github.com/facebook/api-docs/edit/master/external/blog/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
