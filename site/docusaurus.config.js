@@ -17,10 +17,10 @@ module.exports = {
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
   organizationName: 'bandwidth', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
+  projectName: 'api-docs', // Usually your repo name.
   themeConfig: {
     navbar: {
-      title: 'My Site',
+      title: 'Bandwidth',
       logo: {
         alt: 'My Site Logo',
         src: 'img/logo.svg',
@@ -54,7 +54,7 @@ module.exports = {
       }, {
         href: 'https://github.com/Bandwidth-Samples',
         label: 'Sample Apps',
-        position: 'right',
+        position: 'left',
       }]
     },
     footer: {
@@ -73,29 +73,22 @@ module.exports = {
           title: 'Community',
           items: [
             {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-            },
-            {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
-            },
-            {
-              label: 'Twitter',
-              href: 'https://twitter.com/docusaurus',
+              label: 'Developer Forum',
+              href: 'http://bandwidthdashboard.discussion.community/',
             },
           ],
         },
         {
           title: 'More',
           items: [
+            // 'Blog' 404's with no md files in the blog folder
             // {
             //   label: 'Blog',
             //   to: '/blog',
             // },
             {
               label: 'GitHub',
-              href: 'https://github.com/Bandwidth-Samples',
+              href: 'https://github.com/Bandwidth',
             },
           ],
         },
@@ -108,7 +101,7 @@ module.exports = {
       '@docusaurus/preset-classic',
       {
         docs: {
-          sidebarPath: require.resolve('./sidebars.js'),
+          sidebarPath: require.resolve('./sidebar.js'),
           // Please change this to your repo.
           editUrl:
             'https://github.com/facebook/docusaurus/edit/master/website/',
