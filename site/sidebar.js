@@ -8,7 +8,10 @@ module.exports = {
     {
       type: 'category',
       label: 'Account',
-      items: ['account/structure', 'account/credentials' ],
+      items: [
+        'account/structure',
+        'account/credentials'
+      ],
     },
     {
       type: 'category',
