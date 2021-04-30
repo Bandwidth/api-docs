@@ -113,12 +113,12 @@ module.exports = {
         docs: {
           sidebarPath: require.resolve('./sidebar.js'),
           editUrl:
-            'https://github.com/bandwidth/api-docs/edit/master/external/docs/',
+            'https://github.com/bandwidth/api-docs/edit/master/site/',
         },
         blog: {
           showReadingTime: true,
           editUrl:
-            'https://github.com/facebook/api-docs/edit/master/external/blog/',
+            'https://github.com/facebook/api-docs/edit/master/site/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),

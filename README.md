@@ -1,6 +1,6 @@
 # API-Docs
 
-Welcome to the home of Bandwidth's next generation of API docs! This repo serves as a mono repo that contains multiple OpenAPI specs that powers Bandwidth's external and internal API references and SDKs, and will eventually replace https://github.com/bandwidth/bandwidth.github.io and https://github.com/bandwidth/internal-api-docs.
+Welcome to the home of Bandwidth's API documentation! This repo contains the OpenAPI specifications that power Bandwidth's API references and SDKs, and will eventually replace https://github.com/bandwidth/bandwidth.github.io.
 
 ## Contribution Guidelines Overview
 
