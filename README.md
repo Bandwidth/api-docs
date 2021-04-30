@@ -28,20 +28,24 @@ nmp run serve    # host the static site in the /site/build folder
 ├── .github
 │   ├── actions
 │   └── workflows
-├── markdown    # to be migrated into the site/docs folder
 ├── postman
+├── site
+│   ├── docusaurus.config.js    # config file for the docusaurus site
+│   ├── sidebar.js    # TOC for the docs directory
+│   ├── blog    # contains markdown blog articles
+│   ├── build    # where the static site is generated and served from
+│   ├── docs    # contains the API Guides and tutorials
+│   ├── redoc-plugin    # the needed index.js file for the redoc-plugin
+│   ├── specs    # Bandwidth's OpenAPI specs in .json format
+│   ├── src    # home for individual pages as well as react component and css settings
+│   ├── static    # Static files needed for the docsite (images, etc.)
+│   └── templates    # any helpful templates for new content
+│
+│ # Below this comment to be eventually removed from the repo
+├── markdown    # to be migrated into the site/docs folder
 ├── sdk-generation
-└── site
-    ├── docusaurus.config.js    # config file for the docusaurus site
-    ├── sidebar.js    # TOC for the docs directory
-    ├── blog    # contains markdown blog articles
-    ├── build    # where the static site is generated and served from
-    ├── docs    # contains the API Guides and tutorials
-    ├── redoc-plugin    # the needed index.js file for the redoc-plugin
-    ├── specs    # Bandwidth's OpenAPI specs in .json format
-    ├── src    # home for individual pages as well as react component and css settings
-    ├── static    # Static files needed for the docsite (images, etc.)
-    └── templates    # any helpful templates for new content
+├── external
+└── internal
 ```
 
 ### site
