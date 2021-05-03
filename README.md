@@ -16,11 +16,10 @@ The `package.json` file contains node scripts that let you run dynamic docsite s
 cd site
 yarn install
 
-# run from the root api-docs directory
 npm run start   # run a dynamic site locally
 
+# or
 npm run build    # build a static site to the /site/build folder
-
 nmp run serve    # host the static site in the /site/build folder
 ```
 
