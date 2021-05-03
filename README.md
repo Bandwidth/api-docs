@@ -13,10 +13,13 @@ Welcome to the home of Bandwidth's API documentation! This repo contains the Ope
 The `package.json` file contains node scripts that let you run dynamic docsite servers locally, as well as build and serve static versions of the site. The commands are as follows:
 
 ```sh
-# run from the root api-docs directory
-npm run docsite-server   # run a dynamic site locally
+cd site
+yarn install
 
-npm run generate-dociste    # build a static site to the /site/build folder
+# run from the root api-docs directory
+npm run start   # run a dynamic site locally
+
+npm run build    # build a static site to the /site/build folder
 
 nmp run serve    # host the static site in the /site/build folder
 ```
