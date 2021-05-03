@@ -1,0 +1,472 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "MultiFactorAuth",
+    "description": "Bandwidth's Two-Factor Authentication service",
+    "contact": {},
+    "version": "3.0.0",
+    "x-server-configuration": {
+        "default-environment": "production",
+        "default-server": "default",
+        "environments": [
+            {
+                "name": "production",
+                "servers": [
+                   {
+                      "name": "default",
+                      "url": "https://mfa.bandwidth.com/api/v1"
+                   }
+                ]
+             },
+             {
+                "name": "custom",
+                "servers": [
+                   {
+                      "name": "default",
+                      "url": "{base_url}"
+                   }
+                ]
+             }
+        ],
+        "parameters": [
+            {
+                "name": "base_url",
+                "description": "",
+                "type": "string",
+                "example": "https://www.example.com"
+            }
+        ]
+    }
+  },
+  "servers": [
+    {
+      "url": "https://mfa.bandwidth.com/api/v1",
+      "variables": {}
+    }
+  ],
+  "paths": {
+    "/accounts/{accountId}/code/voice": {
+      "post": {
+        "summary": "Two-Factor authentication with Bandwidth Voice services",
+        "description": "Allows a user to send a MFA code through a phone call",
+        "tags": [
+          "MFA"
+        ],
+        "operationId": "voiceTwoFactor",
+        "parameters": [
+          {
+            "name": "accountId",
+            "description": "Bandwidth Account ID with Voice service enabled",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TwoFactorCodeRequestSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TwoFactorVoiceResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "If there is any issue with values passed in by the user",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorWithRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication is either incorrect or not present",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedRequest"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The user is not authorized to access this resource",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenRequest"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "An internal server error occurred",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorWithRequest"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/{accountId}/code/messaging": {
+      "post": {
+        "summary": "Two-Factor authentication with Bandwidth messaging services",
+        "description": "Allows a user to send a MFA code through a text message (SMS)",
+        "tags": [
+          "MFA"
+        ],
+        "operationId": "messagingTwoFactor",
+        "parameters": [
+          {
+            "name": "accountId",
+            "description": "Bandwidth Account ID with Messaging service enabled",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TwoFactorCodeRequestSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TwoFactorMessagingResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "If there is any issue with values passed in by the user",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorWithRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication is either incorrect or not present",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedRequest"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The user is not authorized to access this resource",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenRequest"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "An internal server error occurred",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorWithRequest"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/{accountId}/code/verify": {
+      "post": {
+        "summary": "Verify a previously sent two-factor authentication code",
+        "description": "Allows a user to verify an MFA code",
+        "tags": [
+          "MFA"
+        ],
+        "operationId": "verifyTwoFactor",
+        "parameters": [
+          {
+            "name": "accountId",
+            "description": "Bandwidth Account ID with Two-Factor enabled",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TwoFactorVerifyRequestSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TwoFactorVerifyCodeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "If there is any issue with values passed in by the user",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorWithRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication is either incorrect or not present",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedRequest"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The user is not authorized to access this resource",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForbiddenRequest"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "The user has made too many bad requests and is temporarily locked out",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorWithRequest"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "An internal server error occurred",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorWithRequest"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "TwoFactorCodeRequestSchema": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "The phone number to send the 2fa code to."
+          },
+          "from": {
+            "type": "string",
+            "description": "The application phone number, the sender of the 2fa code."
+          },
+          "applicationId": {
+            "type": "string",
+            "description": "The application unique ID, obtained from Bandwidth."
+          },
+          "scope": {
+            "type": "string",
+            "description": "An optional field to denote what scope or action the 2fa code is addressing.  If not supplied, defaults to \"2FA\"."
+          },
+          "message": {
+            "type": "string",
+            "description": "The message format of the 2fa code.  There are three values that the system will replace \"{CODE}\", \"{NAME}\", \"{SCOPE}\".  The \"{SCOPE}\" and \"{NAME} value template are optional, while \"{CODE}\" must be supplied.  As the name would suggest, code will be replace with the actual 2fa code.  Name is replaced with the application name, configured during provisioning of 2fa.  The scope value is the same value sent during the call and partitioned by the server."
+          },
+          "digits": {
+            "type": "number",
+            "description": "The number of digits for your 2fa code.  The valid number ranges from 2 to 8, inclusively."
+          }
+        },
+        "required": [
+          "to",
+          "from",
+          "applicationId",
+          "message",
+          "digits"
+        ]
+      },
+      "ErrorWithRequest": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "An error message pertaining to what the issue could be"
+          },
+          "requestId": {
+            "type": "string",
+            "description": "The associated requestId from AWS"
+          }
+        }
+      },
+      "UnauthorizedRequest": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "The message containing the reason behind the request being unauthorized"
+          }
+        }
+      },
+      "ForbiddenRequest": {
+        "type": "object",
+        "properties": {
+          "Message": {
+            "type": "string",
+            "description": "The message containing the reason behind the request being forbidden"
+          }
+        }
+      },
+      "TwoFactorVoiceResponse": {
+        "type": "object",
+        "properties": {
+          "callId": {
+            "type": "string"
+          }
+        }
+      },
+      "TwoFactorMessagingResponse": {
+        "type": "object",
+        "properties": {
+          "messageId": {
+            "type": "string"
+          }
+        }
+      },
+      "TwoFactorVerifyRequestSchema": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "description": "The phone number to send the 2fa code to."
+          },
+          "applicationId": {
+            "type": "string",
+            "description": "The application unique ID, obtained from Bandwidth."
+          },
+          "scope": {
+            "type": "string",
+            "description": "An optional field to denote what scope or action the 2fa code is addressing.  If not supplied, defaults to \"2FA\"."
+          },
+          "expirationTimeInMinutes": {
+            "type": "number",
+            "description": "The time period, in minutes, to validate the 2fa code.  By setting this to 3 minutes, it will mean any code generated within the last 3 minutes are still valid.  The valid range for expiration time is between 0 and 15 minutes, exclusively and inclusively, respectively."
+          },
+          "code": {
+            "type": "string",
+            "description": "The generated 2fa code to check if valid"
+          }
+        },
+        "required": [
+          "to",
+          "applicationId",
+          "expirationTimeInMinutes",
+          "code"
+        ]
+      },
+      "TwoFactorVerifyCodeResponse": {
+        "type": "object",
+        "properties": {
+          "valid": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "httpBasic": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    }
+  },
+  "security": [
+    {
+      "httpBasic": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "MFA"
+    }
+  ]
+}
