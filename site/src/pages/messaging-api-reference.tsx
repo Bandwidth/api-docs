@@ -31,8 +31,14 @@ export default function ApiReference() {
                             }
                         },
                         sidebar: {
-                            width: '300px' // about the same as the sidebar in the docs area, for consistency
-                        }
+                            width: '300px', // about the same as the sidebar in the docs area, for consistency
+                            backgroundColor: '#FFFFFF'
+                        },
+                        rightPanel: {
+                          backgroundColor: '#263238',
+                          textColor: '#FFFFFF',
+                          width: '40%'
+                        },
                     }
                 }}/>
             </main>

@@ -1,8 +1,8 @@
 import React from 'react';
 import clsx from 'clsx';
-import styles from './HomepageFeatures.module.css';
+import styles from './HomepageProducts.module.css';
 
-const FeatureList = [
+const ProductList = [
   {
     title: 'Numbers',
     Svg: require('../../static/img/icon-numbers.svg').default,
@@ -41,11 +41,11 @@ const FeatureList = [
   },
 ];
 
-function Feature({Svg, title, description}) {
+function Product({Svg, title, description}) {
   return (
     <div className={clsx('col col--3')}>
       <div className="text--center">
-        <Svg className={styles.featureSvg} alt={title} />
+        <Svg className={styles.ProductSvg} alt={title} />
       </div>
       <div className="text--center padding-horiz--md">
         <h3>{title}</h3>
@@ -55,13 +55,13 @@ function Feature({Svg, title, description}) {
   );
 }
 
-export default function HomepageFeatures() {
+export default function HomepageProducts() {
   return (
-    <section className={styles.features}>
+    <section className={styles.Products}>
       <div className="container">
         <div className="row">
-          {FeatureList.map((props, idx) => (
-            <Feature key={idx} {...props} />
+          {ProductList.map((props, idx) => (
+            <Product key={idx} {...props} />
           ))}
         </div>
       </div>

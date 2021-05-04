@@ -4,7 +4,7 @@ import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import styles from './index.module.css';
-import HomepageFeatures from '../components/HomepageFeatures';
+import HomepageProducts from '../components/HomepageProducts';
 
 function HomepageHeader() {
   const {siteConfig} = useDocusaurusContext();
@@ -16,8 +16,8 @@ function HomepageHeader() {
         <div className={styles.buttons}>
           <Link
             className="button button--secondary button--lg"
-            to="/docs/">
-            Docusaurus Tutorial - 5min ⏱️
+            to="https://dashboard.bandwidth.com/portal/r/">
+            Dashboard Login
           </Link>
         </div>
       </div>
@@ -33,7 +33,7 @@ export default function Home() {
       description="Bandwidth API Reference, documentation, SDKs, guides, examples and more. Get everything you need to build with Bandwidth.">
       <HomepageHeader />
       <main>
-        <HomepageFeatures />
+        <HomepageProducts />
       </main>
     </Layout>
   );
