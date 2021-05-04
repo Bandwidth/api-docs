@@ -11,7 +11,6 @@ module.exports = {
       items: [
         'account/structure',
         'account/credentials',
-        'account/sample'
       ],
     },
     {
