@@ -1,5 +1,5 @@
 # Bandwidth API Design Standards
- 
+
 ## Overview
 Welcome to the Bandwidth API Design Requirements! This document aims to provide an easily accessible set of requirements for developers building internal and external APIs for Bandwidth. Following these requirements will allow Bandwidth to develop consistent and higher quality APIs.
 These requirements are for future API development and are not intended to impact currently used APIs.
@@ -7,11 +7,11 @@ These requirements are for future API development and are not intended to impact
 ## What’s the purpose?
 There is a level of comfort that comes with familiarity, that just about nothing else can beat. Humans are pattern seeking, so the best, often, most simple products, are rooted in a sense of familiarity. The nature of telecom is unfamiliar, even for developers that work closely with the concepts, so to develop a sense of familiarity in our customers, it is essential that we provide them with consistency.  
 
-Many of our customers experience Bandwidth solely through interacting with our APIs. This means that customer experience manifests as developer experience for these users, and Bandwidth's users interact indirectly with Bandwidth's developers, through our APIs. Without regular interaction with customers, it is easily forgotten that (we/you), Bandwidth’s developers, have the most immediate and direct impact on our customer’s experience. 
+Many of our customers experience Bandwidth solely through interacting with our APIs. This means that customer experience manifests as developer experience for these users, and Bandwidth's users interact indirectly with Bandwidth's developers, through our APIs. Without regular interaction with customers, it is easily forgotten that (we/you), Bandwidth’s developers, have the most immediate and direct impact on our customer’s experience.
 
 The quality of an API that is great on its own can be easily lost on customers if it is unlike the experience they expect from Bandwidth APIs, and that expectation cannot be met, let alone set, without consistency. Without consistency, we limit our users’ potential to develop an affinity for Bandwidth’s products, and our customers cannot fully appreciate the capabilities of our APIs when they are unpredictable.
 
-Developer experience does not begin, or end, with the DevX team at Bandwidth. Our goal is to become internal champions who promote the truth that a company-wide, great developer experience, is the cornerstone of helping our products realize their full potential. No one can know how any user experiences our products without asking them. Regular communication with the customer and internal teams throughout discovery and implementation will help us ensure that our great ideas translate into a great developer experience. 
+Developer experience does not begin, or end, with the DevX team at Bandwidth. Our goal is to become internal champions who promote the truth that a company-wide, great developer experience, is the cornerstone of helping our products realize their full potential. No one can know how any user experiences our products without asking them. Regular communication with the customer and internal teams throughout discovery and implementation will help us ensure that our great ideas translate into a great developer experience.
 
 ## Model Based API Approach
 Bandwidth APIs should be designed through the model based API approach. The model based API approach is centered around having CRUD operations for every endpoint, and each endpoint representing a related object in the backend.
@@ -39,7 +39,7 @@ Retrieve operations shouldcan also follow the `/<resource>` URL format in order 
 
 Sub-resources should continually follow the same pattern ex: `/<resource>/<identifier>/<sub-resource>/<identifier>`
 
-Letter case for resource names should be lower camel case, meaning the first letter is lowercase, including acronyms. 
+Letter case for resource names should be lower camel case, meaning the first letter is lowercase, including acronyms.
 
 Examples:
 * /resourceOne
@@ -47,7 +47,7 @@ Examples:
 * /helloWorldHttp
 * /httpHelloWorld
 * /availableNpaNxx
- 
+
 ### Side Effects
 Operations, specifically create, may have side effects. Generally these side effects are operations Bandwidth performs in the backend.
 
@@ -77,7 +77,7 @@ POST /messages
     "text": "Hello from sample api!"
 }
 ```
- 
+
 Response
 
 ```
@@ -110,7 +110,7 @@ Response
     "status": "queued"
 }
 ```
- 
+
 Request
 
 ```
@@ -121,19 +121,19 @@ PUT /messages/100
     "text": "I need to send a different message!"
 }
 ```
- 
+
 Response
 
 ```
 204 No content
-``` 
+```
 
 Request
 
 ```
 DELETE /messages/100
 ```
- 
+
 Response
 
 ```
@@ -199,7 +199,7 @@ Response
     "status": "queued"
 }
 ```
- 
+
 ## Breaking Changes
 Breaking changes are defined as "API changes that require customers to make changes to their code". Breaking changes can range from URL updates, required parameter changes, or parameter name changes. Breaking changes to our APIs cannot be made without at least 90 days of customer notice, and should be avoided whenever possible.
 
@@ -231,12 +231,12 @@ HTTP status codes should follow the standard defined at https://httpstatuses.com
 
 ### Specific Rules For Status Codes
 The following table clarifies some specific rules for Bandwidth HTTP status codes.
- 
+
 |Status Code|Rules|
 |--|--|
 |404|404s should not be returned on a search that produces no results|
 
- 
+
 ### Common 4xx Error Standardization
 This section shows what response body should be returned on common 4xx errors. Services should not deviate from these responses without explicit approval
 
@@ -296,15 +296,15 @@ This section shows what response body should be returned on common 4xx errors. S
 ```
 
 If possible, include a Retry-After header on 429 errors.
- 
+
 ### Required HTTP Status Codes
- 
+
 |Status Code|HTTP Method(s)|Reason|
 |--|--|--|
 |400|POST, PUT|All methods that have a request body should return a 400 if the request body is bad (ex: malformed, missing fields)|
 |401|All|All endpoints should be protected by basic auth and return a 401 on bad credentials|
 |403|All|All endpoints should return a 403 if the user does not have permissions to use the endpoint*|
-|404|All|All URLs that don’t map to a valid endpoint should return a 404. Any request in the format /resource/<id> where the id does not map to an existing object should return a 404*|
+|404|All|All URLs that don’t map to a valid endpoint should return a 404. Any request in the format `/resource/<id>` where the id does not map to an existing object should return a 404*|
 |405|All invalid methods|All URLs that only accept a subset of HTTP methods should return a 405 on an unallowed method|
 
 
@@ -315,7 +315,7 @@ For the most part, a user accessing a resource guarded by permissions should rec
 |--|--|--|
 |A user tries to access a protected resource without proper permissions. This resource is visible publicly on the docsite, and is clearly stated that it is only accessible to users with proper permissions.|403|The resource is known to the public for some reason, so a 403 response is valid and properly communicates the issue with the user’s request.
 |A user tries to access a protected resource without proper permissions. This user should have no knowledge of this resource’s existence, and potentially should never know of this resource’s existence.|404|This resource is not known to the user (and by extension, most likely the public as well) and should remain that way. A 404 response keeps the user ignorant of this resource’s existence.|
- 
+
 ## Base URLs
 Base URLs should follow the `https://<product>.bandwidth.com/api/v<number>/<path>/` format defined in this presentation.
 
@@ -371,7 +371,7 @@ Empty lists should always be included in the response body, assuming that a list
 ```
 
 #### Bad examples
- 
+
 No wrapper tag:
 ```
 <Object>
@@ -487,7 +487,7 @@ The POST method is neither idempotent nor safe. A POST request will create a new
 ### PUT
 The PUT method is idempotent, but unsafe. A PUT request to a resource should replace the entire resource with each request. Two or more identical subsequent PUT requests to the same resource will result in a modification of the resource on the first request and leave it unchanged, unless the request body is modified.
 
-In certain cases, the PUT method can be used to create a new, named resource. Ex. a PUT to `/resource/<id>` where `<id>` does not yet exist would create a new resource, identifiable by the `<id>` value in the URL string. If the PUT were to be made using an existing `<id>`, idempotency rules would apply and the existing resource would be replaced by the new request. 
+In certain cases, the PUT method can be used to create a new, named resource. Ex. a PUT to `/resource/<id>` where `<id>` does not yet exist would create a new resource, identifiable by the `<id>` value in the URL string. If the PUT were to be made using an existing `<id>`, idempotency rules would apply and the existing resource would be replaced by the new request.
 
 It is important to note that if the entire resource can not be modified, a PATCH method should be used.
 
@@ -611,7 +611,7 @@ Request validation may or may not be a cheap operation, so it’s best to do thi
 The only exception to this rule could be for endpoints that fit both of these criteria: the endpoint is rate limited via a hard count over a time period, and request validation on the endpoint is an expensive operation. In this situation, a 429 being returned on an invalid request before request validation is perfectly reasonable. This is feasible due to the fact that authentication and authorization have already passed, so the expensive request validation can still be counted to the user’s rate limit even if the request is invalid. Placing the cheap rate limit validation before the expensive request validation also serves the purpose of rate limits.
 
 Rate limit validation should always be a cheap operation. An expensive rate limit validation defeats the purpose of rate limiting.
- 
+
 ## Nested Resources
 The pattern of `/resource1/<identifier>/resource2/<identifier>` should be used if and only if the existence of `resource2` instances is dependent on the existence of an instance of `resource1`. If this is not the case, `resource2` should exist as its own path, and any relationship between `resource1` and `resource2` should be identified by proper attributes on those resources.
 
@@ -653,7 +653,7 @@ In the event of a failure on every single piece of the request, the API should r
 
 ### Complete Success
 In the event of a success on every single piece of the request, the API should return an appropriate 2XX response, and the response body should not contain the errors section.
- 
+
 ### Batch Example
 Request
 
@@ -750,7 +750,7 @@ This section defines how Bandwidth's APIs should use HTTP verbs.
 * PUT: Updating all of the attributes of an already existing resource (complete replacement).
   * If a resource element is missing from a PUT request, that element should revert to a reasonable, default value, which may include being removed from the resource entirely if the element is not required.
   * If a required resource element is missing from a PUT request, the API should return an appropriate 4xx error.
-* PUT can also be used for resource creation in situations where the user can control the resource ID. In this event, PUT /resource/<id> will create a resource.
+* PUT can also be used for resource creation in situations where the user can control the resource ID. In this event, PUT `/resource/<id>` will create a resource.
 * DELETE: Complete removal of a resource. Does not take a request body.
 
 > Why? These are HTTP standards
@@ -933,8 +933,8 @@ The callback object should include the following fields
 |--|--|
 |type|A unique identifier for what initiated the callback|
 |description|A human readable description of what initiated the callback|
-|<object>|The named object affected by the callback event. This can be any reasonable value to identify the object|
- 
+|`<object>`|The named object affected by the callback event. This can be any reasonable value to identify the object|
+
 Example for a callback for a message delivery:
 
 ```
@@ -995,7 +995,7 @@ APIs constantly evolve and require lifecycle management. There are two key conce
 
 The phases of API lifecycle management are illustrated in the timeline.
 
-![](./api-lifecycle.png)
+![](../../static/img/api-lifecycle.png)
 
 ### Guidelines on When to Deprecate an Endpoint
 Throughout the lifecycle of an API, all efforts should be made to not introduce breaking changes. When it is necessary to introduce breaking changes, then endpoint(s) should be sunsetted to coincide with a new version being released. This allows clients time to transition to the new version as both new and old are available during the Sunset Period. The other scenario to sunset an endpoint is when there is no replacement but it is still desirable to decommission due to an end-of-life of the resource or area of the product.
@@ -1024,7 +1024,7 @@ A version number must be incremented when a breaking change has been made. Non-b
 Deprecation of API versions should be considered a breaking change, and should follow the same standards for other breaking changes. API lifecycle management is driven through versioning and deprecation. Refer to the API Lifecycle Management section for the approach and phases of API lifecycle management.  
 
 ### Versioning Of APIs vs SDKs
-Bandwidth’s SDKs and APIs are versioned independently, but may have some correlation. 
+Bandwidth’s SDKs and APIs are versioned independently, but may have some correlation.
 
 Typically, minor updates on APIs will also lead to minor updates on the SDKs. This is due to the new feature(s) on the APIs simultaneously being added to the SDKs.
 

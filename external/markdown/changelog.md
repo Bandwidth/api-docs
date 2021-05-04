@@ -2,6 +2,7 @@
 
 | Date | Notes |
 |--|--|
+| April 30th, 2021 | Update WebRTC's `deviceApiVersion` enum values to uppercase. |
 | April 6th, 2021 | Update messaging's `createMessage` and `uploadMedia` successful response status code. |
 | March 25th, 2021 | Updated portal config to use a local js script. |
 | March 17th, 2021 | Added `campaignClass` to the message search API response. |
