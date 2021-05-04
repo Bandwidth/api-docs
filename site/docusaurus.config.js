@@ -72,20 +72,10 @@ module.exports = {
         href: 'https://github.com/Bandwidth-Samples',
         label: 'Samples',
         position: 'left',
-      }, {
-        to: 'changelog',
-        activeBasePath: 'changelog',
-        label: 'Changelog',
-        position: 'left'
-      }, {
-        to: 'api-design-standards',
-        activeBasePath: 'api-design-standards',
-        label: 'API Design Standards',
-        position: 'left'
       }]
     },
     footer: {
-      style: 'dark',
+      style: "dark",
       links: [
         {
           title: 'Docs',
@@ -93,6 +83,10 @@ module.exports = {
             {
               label: 'Guides & Tutorials',
               to: '/docs/',
+            }, {
+              to: 'changelog',
+              activeBasePath: 'changelog',
+              label: 'Changelog',
             },
           ],
         },
@@ -103,6 +97,11 @@ module.exports = {
               label: 'Developer Forum',
               href: 'http://bandwidthdashboard.discussion.community/',
             },
+            {
+              label: 'API Design Standards',
+              activeBasePath: 'api-design-standards',
+              to: 'api-design-standards',
+            }
           ],
         },
         {
@@ -116,11 +115,14 @@ module.exports = {
             {
               label: 'GitHub',
               href: 'https://github.com/Bandwidth',
-            },
+            }, {
+              label: 'Try Sandbox',
+              href: 'https://simulator.bandwidth.com/'
+            }
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Bandwidth`,
+      copyright: `Copyright © ${new Date().getFullYear()} Bandwidth Inc.`,
     },
   },
   presets: [
