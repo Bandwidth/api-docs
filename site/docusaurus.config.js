@@ -70,7 +70,7 @@ module.exports = {
         position: 'left',
       }, {
         href: 'https://github.com/Bandwidth-Samples',
-        label: 'Sample Apps',
+        label: 'Samples',
         position: 'left',
       }, {
         to: 'changelog',
