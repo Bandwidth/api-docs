@@ -33,6 +33,7 @@ module.exports = {
     },
     navbar: {
       title: 'Bandwidth',
+      hideOnScroll: true,
       logo: {
         alt: 'My Site Logo',
         src: 'img/bandwidth-logo.png',
