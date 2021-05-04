@@ -36,11 +36,12 @@ const EXTENSION_TO_LANG = {
 
 var spec_name = '';
 var operation_id = '';
-const SPEC_DIRECTORY = 'specs/';
+const SPEC_SOURCE_DIRECTORY = 'specs-source/';
+const SPEC_OUTPUT_DIRECTORY = 'specs/';
 
-var files = fs.readdirSync(SPEC_DIRECTORY);
+var files = fs.readdirSync(SPEC_SOURCE_DIRECTORY);
 files.forEach(spec => {
-    var spec_json = JSON.parse(fs.readFileSync(SPEC_DIRECTORY + spec));
+    var spec_json = JSON.parse(fs.readFileSync(SPEC_SOURCE_DIRECTORY + spec));
     spec_name = spec_json["info"]["title"];
 
     //This results in every URL defined in the OpenAPI spec
@@ -73,5 +74,5 @@ files.forEach(spec => {
             }
         }
     }
-    console.log(JSON.stringify(spec_json, null, 4));
+    fs.writeFileSync(SPEC_OUTPUT_DIRECTORY + spec, JSON.stringify(spec_json, null, 4), { flag: 'w+' });
 });
