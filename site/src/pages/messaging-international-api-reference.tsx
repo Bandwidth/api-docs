@@ -13,7 +13,7 @@ export default function ApiReference() {
                     theme: {
                         colors: {
                             primary: {
-                                main: '#00bf8c'
+                                main: siteConfig.customFields.messagingGreen
                             }
                         },
                         typography: {

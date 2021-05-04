@@ -13,7 +13,7 @@ export default function ApiReference() {
                     theme: {
                         colors: {
                             primary: {
-                                main: '#652B51'
+                                main: siteConfig.customFields.numbersMaroon
                             }
                         },
                         typography: {

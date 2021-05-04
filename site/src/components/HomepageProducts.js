@@ -45,7 +45,7 @@ function Product({Svg, title, description}) {
   return (
     <div className={clsx('col col--3')}>
       <div className="text--center">
-        <Svg className={styles.ProductSvg} alt={title} />
+        <Svg className={styles.productSvg} alt={title} />
       </div>
       <div className="text--center padding-horiz--md">
         <h3>{title}</h3>
@@ -57,7 +57,7 @@ function Product({Svg, title, description}) {
 
 export default function HomepageProducts() {
   return (
-    <section className={styles.Products}>
+    <section className={styles.products}>
       <div className="container">
         <div className="row">
           {ProductList.map((props, idx) => (

@@ -13,7 +13,7 @@ export default function ApiReference() {
                     theme: {
                         colors: {
                             primary: {
-                                main: '#00bf8c'
+                                main: siteConfig.customFields.messagingGreen
                             }
                         },
                         typography: {
@@ -32,11 +32,11 @@ export default function ApiReference() {
                         },
                         sidebar: {
                             width: '300px', // about the same as the sidebar in the docs area, for consistency
-                            backgroundColor: '#FFFFFF'
+                            backgroundColor: siteConfig.customFields.white
                         },
                         rightPanel: {
-                          backgroundColor: '#263238',
-                          textColor: '#FFFFFF',
+                          backgroundColor: siteConfig.customFields.redocCodeBackground,
+                          textColor: siteConfig.customFields.white,
                           width: '40%'
                         },
                     }

@@ -149,7 +149,19 @@ module.exports = {
       messagingSpec: JSON.parse(messagingSpec),
       messagingInternationalSpec: JSON.parse(messagingInternationalSpec),
       webRTCSpec: JSON.parse(webRtcSpec),
-      multiFactorAuthSpec: JSON.parse(multiFactorAuthSpec)
+      multiFactorAuthSpec: JSON.parse(multiFactorAuthSpec),
+      // CSS Colors
+      bwBlue: '#079CEE',
+      voicePurple: '#9a59c5',
+      messagingGreen: '#00bf8c',
+      emergencyOrange: '#ff6f47',
+      numbersMaroon: '#652B51',
+      white: '#FFFFFF',
+      lightBlue: '#E6F5FD',
+      grey: '#9C9A9B',
+      midnight: '#084f7A',
+      black: '#090306',
+      redocCodeBackground: '#263238',
     },
     plugins: [path.resolve(__dirname, 'redoc-plugin')],
 };
