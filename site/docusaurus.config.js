@@ -33,7 +33,7 @@ module.exports = {
     },
     // this is broken
     // prism: {
-    //   additionalLanguages: ['powershell', 'java', 'csharp', 'php'],
+    //   additionalLanguages: ['java', 'csharp', 'php'],
     // },
     navbar: {
       title: 'Bandwidth',
