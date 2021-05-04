@@ -27,9 +27,9 @@ module.exports = {
     announcementBar: {
       id: 'new_docsite_flag', // Any value that will identify this message.
       content:
-        'Welcome to the new home of Bandwidth\'s Developer Documentation. To visit the old docs, <a target="_blank" rel="noopener noreferrer" href="https://dev.bandwidth.com/">click here.</a>',
-      backgroundColor: '#fafbfc', // Defaults to `#fff`.
-      textColor: '#091E42', // Defaults to `#000`.
+        'Welcome to the new home of Bandwidth\'s Developer Documentation. To visit the old docs, <a target="_blank" href="https://dev.bandwidth.com/">click here.</a>',
+      backgroundColor: '#FFFFFF', // Defaults to `#fff`.
+      textColor: '#079CEE', // Defaults to `#000`.
       isCloseable: false, // Defaults to `true`.
     },
     navbar: {
