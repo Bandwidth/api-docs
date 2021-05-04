@@ -31,9 +31,10 @@ module.exports = {
       textColor: '#079CEE', // Defaults to `#000`.
       isCloseable: false, // Defaults to `true`.
     },
-    prism: {
-      additionalLanguages: ['powershell', 'java', 'csharp', 'php'],
-    },
+    // this is broken
+    // prism: {
+    //   additionalLanguages: ['powershell', 'java', 'csharp', 'php'],
+    // },
     navbar: {
       title: 'Bandwidth',
       hideOnScroll: true,
