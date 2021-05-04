@@ -4,32 +4,38 @@ import styles from './HomepageFeatures.module.css';
 
 const FeatureList = [
   {
-    title: 'Easy to Use',
-    Svg: require('../../static/img/undraw_docusaurus_mountain.svg').default,
+    title: 'Numbers',
+    Svg: require('../../static/img/icon-numbers.svg').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        We’ve got your number. In fact, we have as many of them as you want.
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
-    Svg: require('../../static/img/undraw_docusaurus_tree.svg').default,
+    title: 'Voice',
+    Svg: require('../../static/img/icon-voice.svg').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        Need to make a call? Placing and receiving phone calls is fast and easy with Bandwidth Voice.
       </>
     ),
   },
   {
-    title: 'Powered by React',
-    Svg: require('../../static/img/undraw_docusaurus_react.svg').default,
+    title: 'Messaging',
+    Svg: require('../../static/img/icon-messaging.svg').default,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Communication at its most basic. Adding SMS or MMS is a snap.
+      </>
+    ),
+  },
+  {
+    title: 'Emergency',
+    Svg: require('../../static/img/icon-emergency.svg').default,
+    description: (
+      <>
+        Connect your users to emergency services with fast, reliable, accurate E911 services.
       </>
     ),
   },
@@ -37,7 +43,7 @@ const FeatureList = [
 
 function Feature({Svg, title, description}) {
   return (
-    <div className={clsx('col col--4')}>
+    <div className={clsx('col col--3')}>
       <div className="text--center">
         <Svg className={styles.featureSvg} alt={title} />
       </div>

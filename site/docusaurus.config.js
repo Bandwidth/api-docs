@@ -23,7 +23,7 @@ module.exports = {
       title: 'Bandwidth',
       logo: {
         alt: 'My Site Logo',
-        src: 'img/logo.svg',
+        src: 'img/bandwidth-logo.png',
       },
       items: [{
         label: 'API Reference',
