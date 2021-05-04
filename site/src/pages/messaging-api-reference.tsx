@@ -13,7 +13,7 @@ export default function ApiReference() {
                     theme: {
                         colors: {
                             primary: {
-                                main: '#25c2a0'
+                                main: '#00bf8c'
                             }
                         },
                         typography: {
@@ -26,7 +26,8 @@ export default function ApiReference() {
                             },
                             code: {
                                 lineHeight: 'var(--ifm-pre-line-height)',
-                                fontFamily: 'var(--ifm-font-family-monospace)'
+                                fontFamily: 'var(--ifm-font-family-monospace)',
+                                wrap: true
                             }
                         },
                         sidebar: {

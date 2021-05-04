@@ -13,7 +13,7 @@ export default function ApiReference() {
                     theme: {
                         colors: {
                             primary: {
-                                main: '#25c2a0'
+                                main: '#079CEE'
                             }
                         },
                         typography: {
