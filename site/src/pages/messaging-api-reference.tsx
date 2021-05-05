@@ -13,7 +13,7 @@ export default function ApiReference() {
                     theme: {
                         colors: {
                             primary: {
-                                main: '#25c2a0'
+                                main: siteConfig.customFields.messagingGreen
                             }
                         },
                         typography: {
@@ -26,12 +26,19 @@ export default function ApiReference() {
                             },
                             code: {
                                 lineHeight: 'var(--ifm-pre-line-height)',
-                                fontFamily: 'var(--ifm-font-family-monospace)'
+                                fontFamily: 'var(--ifm-font-family-monospace)',
+                                wrap: true
                             }
                         },
                         sidebar: {
-                            width: '300px' // about the same as the sidebar in the docs area, for consistency
-                        }
+                            width: '300px', // about the same as the sidebar in the docs area, for consistency
+                            backgroundColor: siteConfig.customFields.white
+                        },
+                        rightPanel: {
+                          backgroundColor: siteConfig.customFields.redocCodeBackground,
+                          textColor: siteConfig.customFields.white,
+                          width: '40%'
+                        },
                     }
                 }}/>
             </main>
