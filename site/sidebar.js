@@ -1,59 +1,38 @@
 module.exports = {
-  mySidebar: [
-    {
-      type: 'doc',
-      id: 'intro',
-      label: 'Introduction'
-    },
-    {
-      type: 'category',
-      label: 'Account',
-      items: [
+  accountSidebar: {
+      'Account': [
         'account/structure',
         'account/credentials',
       ],
     },
-    {
-      type: 'category',
-      label: 'Numbers',
-      items: [
+  numbersSidebar: {
+      'Numbers': [
         'numbers/about-numbers'
       ],
     },
-    {
-      type: 'category',
-      label: 'Voice',
-      items: [
+    voiceSidebar: {
+      'Voice': [
         'voice/about-voice'
       ],
     },
-    {
-      type: 'category',
-      label: 'Messaging',
-      items: [
+    messagingSidebar: {
+      'Messaging': [
         'messaging/about-messaging'
       ],
     },
-    {
-      type: 'category',
-      label: 'Multi-Factor Authentication',
-      items: [
+    mfaSidebar: {
+      'MFA': [
         'mfa/about-mfa'
       ],
     },
-    {
-      type: 'category',
-      label: 'WebRTC',
-      items: [
+    webRtcSidebar: {
+      'WebRTC': [
         'webRtc/about-webRtc'
       ],
     },
-    {
-      type: 'category',
-      label: 'Emergency Services',
-      items: [
+    emergencySidebar: {
+      'Emergency': [
         'emergency/about-emergency'
       ],
-    }
-  ],
+    },
 };
