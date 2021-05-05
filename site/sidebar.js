@@ -16,32 +16,44 @@ module.exports = {
     {
       type: 'category',
       label: 'Numbers',
-      items: [],
+      items: [
+        'numbers/about-numbers'
+      ],
     },
     {
       type: 'category',
       label: 'Voice',
-      items: [],
+      items: [
+        'voice/about-voice'
+      ],
     },
     {
       type: 'category',
       label: 'Messaging',
-      items: [],
+      items: [
+        'messaging/about-messaging'
+      ],
     },
     {
       type: 'category',
       label: 'Multi-Factor Authentication',
-      items: [],
+      items: [
+        'mfa/about-mfa'
+      ],
     },
     {
       type: 'category',
       label: 'WebRTC',
-      items: [],
+      items: [
+        'webRtc/about-webRtc'
+      ],
     },
     {
       type: 'category',
       label: 'Emergency Services',
-      items: [],
+      items: [
+        'emergency/about-emergency'
+      ],
     }
   ],
 };

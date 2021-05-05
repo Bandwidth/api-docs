@@ -43,32 +43,67 @@ module.exports = {
         src: 'img/bandwidth-logo.png',
       },
       items: [{
-        label: 'API Reference',
+        label: 'Account',
+        items: [{
+          to: 'docs/account/structure',
+          label: 'Structre'
+        }, {
+          to: 'docs/account/credentials',
+          label: 'Credentials'
+        }]
+      },{
+        label: 'Numbers',
         items: [{
           to: 'numbers-api-reference',
-          label: 'Numbers'
+          label: 'API Reference'
         }, {
-          to: 'voice-api-reference',
-          label: 'Voice'
-        }, {
-          to: 'messaging-api-reference',
-          label: 'Messaging'
-        }, {
-          to: 'messaging-international-api-reference',
-          label: 'Messaging - International'
-        }, {
-          to: 'multifactorauth-api-reference',
-          label: 'Multi-Factor Authentication'
-        }, {
-          to: 'webrtc-api-reference',
-          label: 'WebRTC'
+          to: 'docs/numbers/about',
+          label: 'Docs'
         }]
       }, {
-        to: 'docs/',
-        activeBasePath: 'docs',
-        label: 'Docs',
-        position: 'left',
+        label: 'Voice',
+        items: [{
+          to: 'voice-api-reference',
+          label: 'API Reference'
+        }, {
+          to: 'docs/voice/about',
+          label: 'Docs'
+        }]
       }, {
+        label: 'Messaging',
+        items: [{
+          to: 'messaging-api-reference',
+          label: 'API Reference'
+        }, {
+          to: 'messaging-international-api-reference',
+          label: 'International API Reference'
+        }, {
+          to: 'docs/messaging/about',
+          label: 'Docs'
+        }]
+      }, {
+        label: 'WebRTC',
+        items: [{
+          to: 'webRtc-api-reference',
+          label: 'API Reference'
+        }, {
+          to: 'docs/webrtc/about',
+          label: 'Docs'
+        }]
+      }, {
+        label: 'MFA',
+        items: [{
+          to: 'multifactorauth-api-reference',
+          label: 'API Reference'
+        }, {
+          to: 'docs/mfa/about',
+          label: 'Docs'
+        }]}, {
+          label: 'Emergency',
+          items: [{
+            to: 'docs/emergency/about',
+            label: 'Docs'
+          }]},{
         href: 'https://github.com/Bandwidth-Samples',
         label: 'Samples',
         position: 'left',
