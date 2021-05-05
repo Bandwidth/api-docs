@@ -1,6 +1,6 @@
 ---
 id: changelog
-slug: /
+slug: /changelog
 ---
 
 # Changelog
