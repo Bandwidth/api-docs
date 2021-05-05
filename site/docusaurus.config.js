@@ -43,67 +43,32 @@ module.exports = {
         src: 'img/bandwidth-logo.png',
       },
       items: [{
-        label: 'Account',
-        items: [{
-          to: 'docs/account/structure',
-          label: 'Structre'
-        }, {
-          to: 'docs/account/credentials',
-          label: 'Credentials'
-        }]
-      },{
-        label: 'Numbers',
+        label: 'API Reference',
         items: [{
           to: 'numbers-api-reference',
-          label: 'API Reference'
+          label: 'Numbers'
         }, {
-          to: 'docs/numbers/about',
-          label: 'Docs'
-        }]
-      }, {
-        label: 'Voice',
-        items: [{
           to: 'voice-api-reference',
-          label: 'API Reference'
+          label: 'Voice'
         }, {
-          to: 'docs/voice/about',
-          label: 'Docs'
-        }]
-      }, {
-        label: 'Messaging',
-        items: [{
           to: 'messaging-api-reference',
-          label: 'API Reference'
+          label: 'Messaging'
         }, {
           to: 'messaging-international-api-reference',
-          label: 'International API Reference'
+          label: 'Messaging - International'
         }, {
-          to: 'docs/messaging/about',
-          label: 'Docs'
-        }]
-      }, {
-        label: 'WebRTC',
-        items: [{
-          to: 'webRtc-api-reference',
-          label: 'API Reference'
-        }, {
-          to: 'docs/webrtc/about',
-          label: 'Docs'
-        }]
-      }, {
-        label: 'MFA',
-        items: [{
           to: 'multifactorauth-api-reference',
-          label: 'API Reference'
+          label: 'Multi-Factor Authentication'
         }, {
-          to: 'docs/mfa/about',
-          label: 'Docs'
-        }]}, {
-          label: 'Emergency',
-          items: [{
-            to: 'docs/emergency/about',
-            label: 'Docs'
-          }]},{
+          to: 'webrtc-api-reference',
+          label: 'WebRTC'
+        }]
+      }, {
+        to: 'docs/',
+        activeBasePath: 'docs',
+        label: 'Docs',
+        position: 'left',
+      },{
         href: 'https://github.com/Bandwidth-Samples',
         label: 'Samples',
         position: 'left',
