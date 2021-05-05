@@ -10,7 +10,7 @@ module.exports = {
       label: 'Account',
       items: [
         'account/structure',
-        'account/credentials'
+        'account/credentials',
       ],
     },
     {

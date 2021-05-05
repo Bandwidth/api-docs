@@ -19,11 +19,28 @@ module.exports = {
   organizationName: 'bandwidth', // Usually your GitHub org/user name.
   projectName: 'api-docs', // Usually your repo name.
   themeConfig: {
+    image: 'img/bandwidth.png',    // used for meta tag
+    colorMode: {
+      disableSwitch: true    // for disabling dark mode
+    },
+    announcementBar: {
+      id: 'new_docsite_flag', // Any value that will identify this message.
+      content:
+        'Welcome to the new home of Bandwidth\'s Developer Documentation. To visit the old docs, <a target="_blank" href="https://dev.bandwidth.com/">click here.</a>',
+      backgroundColor: '#FFFFFF', // Defaults to `#fff`.
+      textColor: '#079CEE', // Defaults to `#000`.
+      isCloseable: false, // Defaults to `true`.
+    },
+    // this is broken
+    // prism: {
+    //   additionalLanguages: ['java', 'csharp', 'php'],
+    // },
     navbar: {
       title: 'Bandwidth',
+      hideOnScroll: true,
       logo: {
         alt: 'My Site Logo',
-        src: 'img/logo.svg',
+        src: 'img/bandwidth-logo.png',
       },
       items: [{
         label: 'API Reference',
@@ -53,22 +70,12 @@ module.exports = {
         position: 'left',
       }, {
         href: 'https://github.com/Bandwidth-Samples',
-        label: 'Sample Apps',
+        label: 'Samples',
         position: 'left',
-      }, {
-        to: 'changelog',
-        activeBasePath: 'changelog',
-        label: 'Changelog',
-        position: 'left'
-      }, {
-        to: 'api-design-standards',
-        activeBasePath: 'api-design-standards',
-        label: 'API Design Standards',
-        position: 'left'
       }]
     },
     footer: {
-      style: 'dark',
+      style: "dark",
       links: [
         {
           title: 'Docs',
@@ -76,6 +83,10 @@ module.exports = {
             {
               label: 'Guides & Tutorials',
               to: '/docs/',
+            }, {
+              to: 'changelog',
+              activeBasePath: 'changelog',
+              label: 'Changelog',
             },
           ],
         },
@@ -86,6 +97,11 @@ module.exports = {
               label: 'Developer Forum',
               href: 'http://bandwidthdashboard.discussion.community/',
             },
+            {
+              label: 'API Design Standards',
+              activeBasePath: 'api-design-standards',
+              to: 'api-design-standards',
+            }
           ],
         },
         {
@@ -99,11 +115,14 @@ module.exports = {
             {
               label: 'GitHub',
               href: 'https://github.com/Bandwidth',
-            },
+            }, {
+              label: 'Try Sandbox',
+              href: 'https://simulator.bandwidth.com/'
+            }
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Bandwidth`,
+      copyright: `Copyright © ${new Date().getFullYear()} Bandwidth Inc.`,
     },
   },
   presets: [
@@ -132,7 +151,19 @@ module.exports = {
       messagingSpec: JSON.parse(messagingSpec),
       messagingInternationalSpec: JSON.parse(messagingInternationalSpec),
       webRTCSpec: JSON.parse(webRtcSpec),
-      multiFactorAuthSpec: JSON.parse(multiFactorAuthSpec)
+      multiFactorAuthSpec: JSON.parse(multiFactorAuthSpec),
+      // CSS Colors
+      bwBlue: '#079CEE',
+      voicePurple: '#9a59c5',
+      messagingGreen: '#00bf8c',
+      emergencyOrange: '#ff6f47',
+      numbersMaroon: '#652B51',
+      white: '#FFFFFF',
+      lightBlue: '#E6F5FD',
+      grey: '#9C9A9B',
+      midnight: '#084f7A',
+      black: '#090306',
+      redocCodeBackground: '#263238',
     },
     plugins: [path.resolve(__dirname, 'redoc-plugin')],
 };
