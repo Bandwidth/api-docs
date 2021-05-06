@@ -60,13 +60,15 @@ files.forEach(spec => {
 
             //If code samples exist, add them
             if (fs.existsSync(sample_files_directory)) {
-                operation_object["x-code-samples"] = [];
+                const CODE_SAMPLES = "x-codeSamples";
+
+                operation_object[CODE_SAMPLES] = [];
                 var sample_code_files = fs.readdirSync(sample_files_directory);
                  sample_code_files.forEach(sample_code_file => {
                     var redoc_lang = EXTENSION_TO_LANG[sample_code_file.split(".").slice(-1)];
                     var sample_code_file_contents = fs.readFileSync(sample_files_directory + sample_code_file, 'utf8');
 
-                    operation_object["x-code-samples"].push({
+                    operation_object[CODE_SAMPLES].push({
                         "lang": redoc_lang,
                         "source": sample_code_file_contents
                     });
