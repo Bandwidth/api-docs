@@ -10,6 +10,7 @@ export default function ApiReference() {
             <main>
                 <RedocStandalone spec={siteConfig.customFields.messagingInternationalSpec} options={{
                     scrollYOffset: '.navbar', // makes the fixed sidebar and scrolling play nicey with docusaurus navbar
+                    pathInMiddlePanel: true, 
                     theme: {
                         colors: {
                             primary: {
