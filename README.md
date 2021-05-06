@@ -145,7 +145,6 @@ Docusaurus supports the use of .MDX files - making the use of markdown even more
 
 The Docusaurus flavored markdown also supports setting markdown attributes in the guide - it is recommended to start each `.md` or `.mdx` file with the following:
 
-    ```markdown
     ---
     id: docId    <!--the document id - used as a referece in the sidebar.js folder-->
     title: Document Title    <!--Used by Docusaurus to generate the title properly (for SEO)-->
@@ -161,7 +160,6 @@ The Docusaurus flavored markdown also supports setting markdown attributes in th
     custom_edit_url: github.com/repo/thisFile.mdx   <!--The URL for editing this document. If this field is not present, the document's edit URL will fall back to editUrl from options fields passed to docusaurus-plugin-content-docs-->
     image: ../../static/img/myImg.png    <!--Cover or thumbnail image that will be used when displaying the link to your post.-->
     ---
-    ```
 
 ### Embedding React Components
 
@@ -169,7 +167,6 @@ MDX supports JSX within the markdown and generates it as React componetns - maki
 
 The below adds a language switcher in line with text in an MDX file:
 
-    ```markdown
     This text will be rendered before the language switcher
 
     import Tabs from '@theme/Tabs';
@@ -216,7 +213,7 @@ The below adds a language switcher in line with text in an MDX file:
     </Tabs>
 
     And this text will be rendered after the language switcher
-    ```
+
 
 ## PR Requirements
 
