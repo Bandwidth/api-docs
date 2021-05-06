@@ -145,7 +145,7 @@ Docusaurus supports the use of .MDX files - making the use of markdown even more
 
 The Docusaurus flavored markdown also supports setting markdown attributes in the guide - it is recommended to start each `.md` or `.mdx` file with the following:
 
-    ```md
+    ```markdown
     ---
     id: docId    <!--the document id - used as a referece in the sidebar.js folder-->
     title: Document Title    <!--Used by Docusaurus to generate the title properly (for SEO)-->
@@ -169,7 +169,7 @@ MDX supports JSX within the markdown and generates it as React componetns - maki
 
 The below adds a language switcher in line with text in an MDX file:
 
-    ```md
+    ```markdown
     This text will be rendered before the language switcher
 
     import Tabs from '@theme/Tabs';
