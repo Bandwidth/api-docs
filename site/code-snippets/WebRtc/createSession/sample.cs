@@ -1,8 +1,3 @@
-using Bandwidth.Standard;
-using Bandwidth.Standard.WebRtc.Models;
-
-// ...
-
 var client = new BandwidthClient.Builder()
     .Environment(Bandwidth.Standard.Environment.Production)
     .WebRtcBasicAuthCredentials("username", "password")
