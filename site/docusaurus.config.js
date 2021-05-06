@@ -11,7 +11,7 @@ const multiFactorAuthSpec = fs.readFileSync('./specs/multiFactorAuth.json', 'utf
 module.exports = {
   title: 'Bandwidth API Docs',
   tagline: 'Learn About Bandwidth\'s Product API\'s',
-  url: 'https://your-docusaurus-test-site.com',
+  url: 'https://dev.bandwidth.com',
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
