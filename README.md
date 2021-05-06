@@ -10,7 +10,7 @@ Welcome to the home of Bandwidth's API documentation! This repo contains the Ope
 
 ## Docsite Generation
 
-The `package.json` file contains node scripts that let you run dynamic docsite servers locally, as well as build and serve static versions of the site. The commands are as follows:
+The `./site/package.json` file contains node scripts that let you run dynamic docsite servers locally, as well as build and serve static versions of the site. The commands are as follows:
 
 ```sh
 cd site
