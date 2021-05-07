@@ -83,7 +83,7 @@ This file defines the configuration for the docusaurus site. It controls the nav
 This file defines the sidebar for the docs section of the site. Changes here will be reflected in the docs page, essentially this controls the naviagtion for the entirety of the docs section.
 
 The sidebar.js file can be configured to create multiple sidebar groups that can be hidden depending on which documentation is being viewed. Ex. only a sidebar pertaining to messaging can be shown when looking at docs related to messaging. Code ex.:
-    ```
+    
     module.exports = {
       accountSidebar: {
           'Account': [
@@ -107,7 +107,6 @@ The sidebar.js file can be configured to create multiple sidebar groups that can
           ],
         },
     };
-    ```
 
 When looking at `account/structure` in this sidebar config - the user woild only see the other docs under the `Account` object and not anything pertaining to voice/messaging/etc.
 
