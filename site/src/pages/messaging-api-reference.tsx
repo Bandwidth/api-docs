@@ -15,7 +15,14 @@ export default function ApiReference() {
                         colors: {
                             primary: {
                                 main: siteConfig.customFields.messagingGreen
-                            }
+                            },
+                            // text: {
+                            //   primary:
+                            //   secondary:
+                            // },
+                        },
+                        schema: {
+                          nestedBackground: '#FFFFFF'
                         },
                         typography: {
                             fontSize: 'var(--ifm-font-size-base)',
@@ -31,11 +38,22 @@ export default function ApiReference() {
                                 wrap: true
                             }
                         },
-                        sidebar: {
+                        sidebar: {    // the left hand sidebar
                             width: '300px', // about the same as the sidebar in the docs area, for consistency
-                            backgroundColor: siteConfig.customFields.white
+                            // backgroundColor:
+                            // textColor:
+                            groupItems: {
+                              textTransform: "capitalize"
+                            },
+                            level1Items: {
+                                textTransform: "capitalize"
+                            },
+                            arrow: {
+                              // size: "1.5em",
+                              color: siteConfig.customFields.black,
+                            }
                         },
-                        rightPanel: {
+                        rightPanel: {    // the right hand code snippets
                           backgroundColor: siteConfig.customFields.redocCodeBackground,
                           textColor: siteConfig.customFields.white,
                           width: '40%'
