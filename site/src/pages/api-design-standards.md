@@ -1031,3 +1031,10 @@ Typically, minor updates on APIs will also lead to minor updates on the SDKs. Th
 Typically, SDKs will have more major updates and patch updates than APIs. This is due to SDK improvements that are made independently of API changes. These SDK improvements may range from package dependency updates to improved (and possibly changed) interfaces.
 
 Major updates on APIs may or may not result in major updates on the SDKs, depending on the scope of the change. Some breaking changes on the API, such as URL changes and enum value changes, may be hidden by patch updates to the SDKs, while others, such as interface changes, cannot be hidden by the SDKs and will require major updates to the SDKs. Some API changes such as data format changes and credential updates may not even require SDK changes at all.
+
+## Optional Values And Null Values
+API responses should always contain every single field defined by the underlying model. Fields may not be omitted in the response. Optional fields, or fields that may not currently be defined, should be returned with `null` values.
+
+API requests may be defined with `null` values, or those fields may be omitted. The API should treat omitted and `null` values identically.
+
+The OpenAPI spec that defines these APIs should use the `nullable: true` definition for any optional field.
