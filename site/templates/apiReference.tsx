@@ -15,7 +15,14 @@ export default function ApiReference() {
                         colors: {
                             primary: {
                                 main: siteConfig.customFields.messagingGreen
-                            }
+                            },
+                            // text: {
+                            //   primary:
+                            //   secondary:
+                            // },
+                        },
+                        schema: {
+                          nestedBackground: '#FFFFFF'
                         },
                         typography: {
                             fontSize: 'var(--ifm-font-size-base)',
@@ -27,12 +34,30 @@ export default function ApiReference() {
                             },
                             code: {
                                 lineHeight: 'var(--ifm-pre-line-height)',
-                                fontFamily: 'var(--ifm-font-family-monospace)'
+                                fontFamily: 'var(--ifm-font-family-monospace)',
+                                wrap: true
                             }
                         },
-                        sidebar: {
-                            width: '300px' // about the same as the sidebar in the docs area, for consistency
-                        }
+                        sidebar: {    // the left hand sidebar
+                            width: '300px', // about the same as the sidebar in the docs area, for consistency
+                            // backgroundColor:
+                            // textColor:
+                            groupItems: {
+                              textTransform: "capitalize"
+                            },
+                            level1Items: {
+                                textTransform: "capitalize"
+                            },
+                            arrow: {
+                              // size: "1.5em",
+                              color: siteConfig.customFields.black,
+                            }
+                        },
+                        rightPanel: {    // the right hand code snippets
+                          backgroundColor: siteConfig.customFields.redocCodeBackground,
+                          textColor: siteConfig.customFields.white,
+                          width: '40%'
+                        },
                     }
                 }}/>
             </main>
