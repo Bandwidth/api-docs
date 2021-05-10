@@ -23,6 +23,17 @@
  */
 const fs = require('fs');
 
+const ENV_SYNTAX_FIND_AND_REPLACE = require('./env-replace.json');
+function replace_environmental_variables(strn) {
+
+    for (var find in ENV_SYNTAX_FIND_AND_REPLACE) {
+        var replace = ENV_SYNTAX_FIND_AND_REPLACE[find];
+        strn = strn.replace(find, replace);
+    }
+
+    return strn
+}
+
 //Converts the file extension to the proper Redoc `lang` tag
 const EXTENSION_TO_LANG = {
     "cs": "C#",
@@ -67,6 +78,7 @@ files.forEach(spec => {
                  sample_code_files.forEach(sample_code_file => {
                     var redoc_lang = EXTENSION_TO_LANG[sample_code_file.split(".").slice(-1)];
                     var sample_code_file_contents = fs.readFileSync(sample_files_directory + sample_code_file, 'utf8');
+                    sample_code_file_contents = replace_environmental_variables(sample_code_file_contents);
 
                     operation_object[CODE_SAMPLES].push({
                         "lang": redoc_lang,
