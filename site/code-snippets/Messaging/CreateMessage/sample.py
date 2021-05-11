@@ -1,3 +1,5 @@
-print('hello world')
+import os
 
-print('hello again')
+env_value = os.environ["BW_USERNAME"]
+
+print(env_value)
