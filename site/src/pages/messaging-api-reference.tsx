@@ -27,19 +27,12 @@ export default function ApiReference() {
                             },
                             code: {
                                 lineHeight: 'var(--ifm-pre-line-height)',
-                                fontFamily: 'var(--ifm-font-family-monospace)',
-                                wrap: true
+                                fontFamily: 'var(--ifm-font-family-monospace)'
                             }
                         },
                         sidebar: {
-                            width: '300px', // about the same as the sidebar in the docs area, for consistency
-                            backgroundColor: siteConfig.customFields.white
-                        },
-                        rightPanel: {
-                          backgroundColor: siteConfig.customFields.redocCodeBackground,
-                          textColor: siteConfig.customFields.white,
-                          width: '40%'
-                        },
+                            width: '300px' // about the same as the sidebar in the docs area, for consistency
+                        }
                     }
                 }}/>
             </main>
