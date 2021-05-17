@@ -97,5 +97,5 @@ files.forEach(spec => {
             }
         }
     }
-    //fs.writeFileSync(SPEC_OUTPUT_DIRECTORY + spec, JSON.stringify(spec_json, null, 4), { flag: 'w+' });
+    fs.writeFileSync(SPEC_OUTPUT_DIRECTORY + spec, JSON.stringify(spec_json, null, 4), { flag: 'w+' });
 });
