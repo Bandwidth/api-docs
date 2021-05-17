@@ -13,6 +13,7 @@ begin
   result = messaging_client.get_messages(ENV['BW_ACCOUNT_ID'], source_tn: ENV['BW_NUMBER'])
   puts result.data.total_count
 rescue Exception => e
-  puts e
+  puts e.description
+  puts e.response_code
   exit(1)
 end

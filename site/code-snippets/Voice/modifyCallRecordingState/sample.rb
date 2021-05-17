@@ -10,15 +10,11 @@ bandwidth_client = Bandwidth::Client.new(
 
 voice_client = bandwidth_client.voice_client.client
 
-body = ApiCreateCallRequest.new
-body.from = ENV['BW_NUMBER']
-body.to = ENV['USER_NUMBER']
-body.answer_url = "http://www.myapp.com/hello"
-body.application_id = "7fc9698a-b04a-468b-9e8f-91238c0d0086"
+body = ModifyCallRecordingState.new
+body.state = "paused"
 
 begin
-    result = voice_client.create_call(account_id, :body => body)
-    puts result.data.call_id
+    voice_client.modify_call_recording_state(ENV['BW_ACCOUNT_ID'], call_id, :body => body)
 rescue Exception => e
     puts e.description
     puts e.response_code

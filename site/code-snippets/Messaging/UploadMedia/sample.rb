@@ -22,6 +22,7 @@ begin
   )
   f.close()
 rescue Exception => e
-  puts e
+  puts e.description
+  puts e.response_code
   exit(1)
 end
