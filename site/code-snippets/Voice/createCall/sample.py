@@ -1,5 +1,6 @@
 from bandwidth.bandwidth_client import BandwidthClient
 from bandwidth.voice.models.api_create_call_request import ApiCreateCallRequest
+from bandwidth.voice.exceptions.api_error_response_exception import ApiErrorResponseException
 
 import os
 
@@ -22,5 +23,10 @@ body.application_id = BW_VOICE_APPLICATION_ID
 body.to = USER_NUMBER
 body.mfrom = BW_NUMBER
 body.answer_url = VOICE_CALLBACK_URL
-response = self.voice_client.create_call(BW_ACCOUNT_ID, body)
-print(response.body.call_id)
+try:
+    response = self.voice_client.create_call(BW_ACCOUNT_ID, body)
+    print(response.body.call_id)
+except ApiErrorResponseException as e:
+    print(e.description)
+    print(e.response_code)
+    exit(1)
