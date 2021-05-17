@@ -14,7 +14,7 @@ bandwidth_client = BandwidthClient(
     messaging_basic_auth_user_name=BW_USERNAME,
     messaging_basic_auth_password=BW_PASSWORD
 )
-voice_client = bandwidth_client.voice_client.client
+messaging_client = bandwidth_client.messaging_client.client
 
 body = MessageRequest()
 body.application_id = BW_MESSAGING_APPLICATION_ID
