@@ -22,12 +22,21 @@
  *     save the OpenAPI spec
  */
 const fs = require('fs');
+const ENV_REPLACE_DIRECTORY = '/env-replace/';
 
-const ENV_SYNTAX_FIND_AND_REPLACE = require('./env-replace.json');
+var ENV_FIND_AND_REPLACE = {};
+var files = fs.readdirSync(__dirname + ENV_REPLACE_DIRECTORY)
+files.forEach(file => {
+    var fileRead = require(__dirname + ENV_REPLACE_DIRECTORY + file);
+    for (var key in fileRead) {
+        ENV_FIND_AND_REPLACE[key] = fileRead[key];
+    }
+});
+
 function replace_environmental_variables(strn) {
 
-    for (var find in ENV_SYNTAX_FIND_AND_REPLACE) {
-        var replace = ENV_SYNTAX_FIND_AND_REPLACE[find];
+    for (var find in ENV_FIND_AND_REPLACE) {
+        var replace = ENV_FIND_AND_REPLACE[find];
         strn = strn.replace(find, replace);
     }
 
@@ -88,5 +97,5 @@ files.forEach(spec => {
             }
         }
     }
-    fs.writeFileSync(SPEC_OUTPUT_DIRECTORY + spec, JSON.stringify(spec_json, null, 4), { flag: 'w+' });
+    //fs.writeFileSync(SPEC_OUTPUT_DIRECTORY + spec, JSON.stringify(spec_json, null, 4), { flag: 'w+' });
 });
