@@ -303,7 +303,7 @@ If possible, include a Retry-After header on 429 errors.
 |--|--|--|
 |400|POST, PUT|All methods that have a request body should return a 400 if the request body is bad (ex: malformed, missing fields)|
 |401|All|All endpoints should be protected by basic auth and return a 401 on bad credentials|
-|403|All|All endpoints should return a 403 if the user does not have permissions to use the endpoint*|
+|403|All|All endpoints should return a 403 if the user does not have permissions to use the endpoint or any subset of the endpoint. This includes situations where options or feature flags may control access to the endpoint*|
 |404|All|All URLs that don’t map to a valid endpoint should return a 404. Any request in the format `/resource/<id>` where the id does not map to an existing object should return a 404*|
 |405|All invalid methods|All URLs that only accept a subset of HTTP methods should return a 405 on an unallowed method|
 
