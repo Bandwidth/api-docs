@@ -317,7 +317,11 @@ For the most part, a user accessing a resource guarded by permissions should rec
 |A user tries to access a protected resource without proper permissions. This user should have no knowledge of this resource’s existence, and potentially should never know of this resource’s existence.|404|This resource is not known to the user (and by extension, most likely the public as well) and should remain that way. A 404 response keeps the user ignorant of this resource’s existence.|
 
 ## Base URLs
-Base URLs should follow the `https://<product>.bandwidth.com/api/v<number>/<path>/` format defined in this presentation.
+Base URLs should follow the `https://<resource_area>.bandwidth.com/api/v<major_number_version>/<path>/` format.
+
+The resource area of the URL should be used as a high-level grouping of resources based on product or service offerings from Bandwidth. Examples include voice, messaging, dashboard, numbers, billing, and webrtc.
+
+The version of the URL should be used to signal breaking changes on the API. It does not need to be tied to product versions, although that is possible.
 
 > Why? Following a standard leads to uniformity across all products.
 
