@@ -79,7 +79,7 @@ module.exports = {
       style: "dark",
       logo: {
         alt: 'Bandwidth',
-        src: '/static/img/bandwidth-logo.png',
+        src: 'img/bandwidth-logo.png',
         href: 'https://www.bandwidth.com',
       },
       links: [
