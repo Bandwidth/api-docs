@@ -1,11 +1,24 @@
 ---
 id: structure
-slug: /account/structure
+title: Account Structure
+slug: /account/guides/structure
+description: A general overview of Bandwidth's account structure
+keywords:
+  - bandwidth
+  - account
+  - structure
+  - sub-account
+  - location
+  - site
+  - sippeer
+image: ../../../static/img/bandwidth-logo.png
 ---
 
-# Account Structure
-
-![account-structure](../../static/img/account-structure.png)
+<img
+  src={require('../../../static/img/account-structure.png').default}
+  alt="Account Structure"
+  class="center"
+/>
 
 This guide serves to explain the hierarchical structure of your Bandwidth Dashboard Account. It covers Sub-accounts (Sites), Locations (SIP Peers), and Applications, how they are used, and some cases for creating one or multiples of each.
 

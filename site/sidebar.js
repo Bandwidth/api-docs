@@ -9,39 +9,98 @@ module.exports = {
       type: 'category',
       label: 'Account',
       items: [
-        'account/structure',
-        'account/credentials',
+        'account/about',
+        {
+          type: 'category',
+          label: 'Guides and Tutorials',
+          items: [
+                  'account/guides/structure',
+                  'account/guides/credentials',
+                 ]
+        },
+        {
+          type: 'category',
+          label: 'Applications',
+          items: []
+        },
+        {
+          type: 'category',
+          label: 'Subscriptions',
+          items: []
+        },
       ],
     },
     {
       type: 'category',
       label: 'Numbers',
-      items: [],
+      items: [
+        'numbers/about',
+        {
+          type: 'category',
+          label: 'Guides and Tutorials',
+          items: []
+        },
+      ],
     },
     {
       type: 'category',
       label: 'Voice',
-      items: [],
+      items: [
+        'voice/about',
+        {
+          type: 'category',
+          label: 'Guides and Tutorials',
+          items: []
+        },
+      ],
     },
     {
       type: 'category',
       label: 'Messaging',
-      items: [],
-    },
-    {
-      type: 'category',
-      label: 'Multi-Factor Authentication',
-      items: [],
+      items: [
+        'messaging/about',
+        {
+          type: 'category',
+          label: 'Guides and Tutorials',
+          items: []
+        },
+      ],
     },
     {
       type: 'category',
       label: 'WebRTC',
-      items: [],
+      items: [
+        'webrtc/about',
+        {
+          type: 'category',
+          label: 'Guides and Tutorials',
+          items: []
+        },
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Multi-Factor Authentication',
+      items: [
+        'mfa/about',
+        {
+          type: 'category',
+          label: 'Guides and Tutorials',
+          items: []
+        },
+      ],
     },
     {
       type: 'category',
       label: 'Emergency Services',
-      items: [],
+      items: [
+        'emergency/about',
+        {
+          type: 'category',
+          label: 'Guides and Tutorials',
+          items: []
+        },
+      ],
     }
   ],
 };
