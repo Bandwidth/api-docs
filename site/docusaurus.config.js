@@ -65,7 +65,7 @@ module.exports = {
           label: 'WebRTC'
         }]
       }, {
-        to: 'docs/',
+        to: 'docs',
         activeBasePath: 'docs',
         label: 'Docs',
         position: 'left',
