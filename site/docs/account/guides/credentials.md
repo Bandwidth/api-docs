@@ -1,9 +1,14 @@
 ---
 id: credentials
-slug: /account/credentials
+title: Credentials
+slug: /account/guides/credentials
+description: A general overview of Bandwidth's API Credentials
+keywords:
+  - bandwidth
+  - API
+  - credentials
+image: ../../../static/img/bandwidth-logo.png
 ---
-
-# Account Credentials
 
 This guide will cover the credentials for interacting with Bandwidth's APIs.
 
