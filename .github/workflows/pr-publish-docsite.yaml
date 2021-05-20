@@ -24,11 +24,6 @@ jobs:
           cd site
           yarn install --frozen-lockfile
           npm run build
-    - name: Confirm Release Notes Update
-      uses: dangoslen/changelog-enforcer@v2
-      with:
-        changeLogPath: 'site/src/pages/changelog.md'
-        skipLabels: 'no-changelog'
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -40,6 +35,7 @@ jobs:
       run: |
         BUCKET_NAME=bw-api-docs-${GITHUB_HEAD_REF#refs/heads/}
         BUCKET_NAME=$(echo "$BUCKET_NAME" | tr '[:upper:]' '[:lower:]') #convert to lowercase for AWS bucket (can't be uppercase)
+        BUCKET_NAME=$(echo "$BUCKET_NAME" | sed -e "s/[^a-z0-9]/-/g") #replace all remaining non alphanumerics with -
         echo $BUCKET_NAME
         echo "::set-output name=bucket_name::$BUCKET_NAME"
     - name: Create Bucket

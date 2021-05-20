@@ -35,11 +35,12 @@ module.exports = {
     // prism: {
     //   additionalLanguages: ['java', 'csharp', 'php'],
     // },
+    sidebarCollapsible: true,
     navbar: {
       title: 'Bandwidth',
       hideOnScroll: true,
       logo: {
-        alt: 'My Site Logo',
+        alt: 'Bandwidth',
         src: 'img/bandwidth-logo.png',
       },
       items: [{
@@ -64,7 +65,7 @@ module.exports = {
           label: 'WebRTC'
         }]
       }, {
-        to: 'docs/',
+        to: 'docs',
         activeBasePath: 'docs',
         label: 'Docs',
         position: 'left',
@@ -76,6 +77,11 @@ module.exports = {
     },
     footer: {
       style: "dark",
+      logo: {
+        alt: 'Bandwidth',
+        src: 'img/bandwidth-logo-footer.png',
+        href: 'https://www.bandwidth.com',
+      },
       links: [
         {
           title: 'Docs',
@@ -132,12 +138,12 @@ module.exports = {
         docs: {
           sidebarPath: require.resolve('./sidebar.js'),
           editUrl:
-            'https://github.com/bandwidth/api-docs/edit/master/site/',
+            'https://github.com/Bandwidth/api-docs/edit/main/site/',
         },
         blog: {
           showReadingTime: true,
           editUrl:
-            'https://github.com/facebook/api-docs/edit/master/site/',
+            'https://github.com/Bandwidth/api-docs/edit/main/site/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
