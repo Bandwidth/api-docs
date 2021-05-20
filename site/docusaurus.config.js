@@ -35,7 +35,7 @@ module.exports = {
     // prism: {
     //   additionalLanguages: ['java', 'csharp', 'php'],
     // },
-    sidebarCollapsible: true,
+    sidebarCollapsible: false,
     navbar: {
       title: 'Bandwidth',
       hideOnScroll: true,
