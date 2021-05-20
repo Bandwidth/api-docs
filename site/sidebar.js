@@ -1,106 +1,66 @@
 module.exports = {
-  mySidebar: [
-    {
-      type: 'doc',
-      id: 'intro',
-      label: 'Introduction'
-    },
-    {
-      type: 'category',
-      label: 'Account',
-      items: [
-        'account/about',
-        {
-          type: 'category',
-          label: 'Guides and Tutorials',
-          items: [
-                  'account/guides/structure',
-                  'account/guides/credentials',
-                 ]
-        },
-        {
-          type: 'category',
-          label: 'Applications',
-          items: []
-        },
-        {
-          type: 'category',
-          label: 'Subscriptions',
-          items: []
+  accountSidebar: {
+      'Account': [
+        'account/about', {
+          'Guides and Tutorials': [
+            'account/guides/structure',
+            'account/guides/credentials',
+          ],
         },
       ],
     },
-    {
-      type: 'category',
-      label: 'Numbers',
-      items: [
-        'numbers/about',
-        {
-          type: 'category',
-          label: 'Guides and Tutorials',
-          items: []
+  numbersSidebar: {
+      'Numbers': [
+        'numbers/about', {
+          'Guides and Tutorials': [
+            'numbers/guides/numbers-sample',
+          ],
         },
       ],
     },
-    {
-      type: 'category',
-      label: 'Voice',
-      items: [
-        'voice/about',
-        {
-          type: 'category',
-          label: 'Guides and Tutorials',
-          items: []
+    voiceSidebar: {
+      'Voice': [
+        'voice/about', {
+          'Guides and Tutorials': [
+            'voice/guides/voice-sample',
+          ],
         },
       ],
     },
-    {
-      type: 'category',
-      label: 'Messaging',
-      items: [
-        'messaging/about',
-        {
-          type: 'category',
-          label: 'Guides and Tutorials',
-          items: []
+    messagingSidebar: {
+      'Messaging': [
+        'messaging/about', {
+          'Guides and Tutorials': [
+            'messaging/guides/messaging-sample',
+          ],
         },
       ],
     },
-    {
-      type: 'category',
-      label: 'WebRTC',
-      items: [
-        'webrtc/about',
-        {
-          type: 'category',
-          label: 'Guides and Tutorials',
-          items: []
+    mfaSidebar: {
+      'MFA': [
+        'mfa/about', {
+          'Guides and Tutorials': [
+            'mfa/guides/mfa-sample',
+          ],
         },
       ],
     },
-    {
-      type: 'category',
-      label: 'Multi-Factor Authentication',
-      items: [
-        'mfa/about',
-        {
-          type: 'category',
-          label: 'Guides and Tutorials',
-          items: []
+    webRtcSidebar: {
+      'WebRTC': [
+        'webrtc/about', {
+          'Guides and Tutorials': [
+            'webrtc/guides/webrtc-sample',
+          ],
         },
       ],
     },
-    {
-      type: 'category',
-      label: 'Emergency Services',
-      items: [
-        'emergency/about',
-        {
-          type: 'category',
-          label: 'Guides and Tutorials',
-          items: []
+    emergencySidebar: {
+      'Emergency': [
+        'emergency/about', {
+          'Guides and Tutorials': [
+            'emergency/guides/emergency-sample',
+          ],
         },
       ],
-    }
-  ],
+    },
 };
