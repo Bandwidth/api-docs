@@ -2,6 +2,18 @@
 
 Welcome to the home of Bandwidth's API documentation! This repo contains the OpenAPI specifications that power Bandwidth's API references and SDKs, and will eventually replace https://github.com/bandwidth/bandwidth.github.io.
 
+## API Docs Strategy Overview
+
+At a high level, we hope to provide 3 categories of documentation to our users, those being API references, guides, and sample apps. API references and guides will be provided within this project, while sample apps will be provided within the https://github.com/bandwidth-samples org.
+
+API references are the "facts" about the APIs, and will typically be defined by OpenAPI specs. If OpenAPI is not sufficient (for example: BXML), then raw markdown files can be used. An example of an API reference would be the create message endpoint.
+
+Guides cover a wide range of possibilities, but typically any step by step process required to use a feature should be a guide. These guides should be written as markdown files, and should link out to any API reference as needed. An example of a guide would be a description of how to respond to an inbound SMS.
+
+### SDK Docs Strategy Overview
+
+Bandwidth's SDKs will contain thin READMEs that show the basics of getting started with the SDK, and link out to the full API reference. These READMEs will not contain all of the functions within the SDK; that should be defined with the API references.
+
 ## Contribution Guidelines Overview
 
 1) If you're adding a new OpenAPI spec, you will need to change the `docusaurus.config.js` file to both add a new item in the navbar items as well as add the spec as a custom field. You will need to create a new page for the spec under the `./site/src/pages` directory as well.
@@ -27,7 +39,7 @@ nmp run serve    # host the static site in the /site/build folder
 
 To add a new spec - there are a few steps that need to be taken:
 
-  1. Add the JSON file to the `./site/specs folder`
+  1. Add the JSON file to the `./site/specs-source` folder
   1. In `./site/docusaurus.config.js`, add an import statement for the new spec. Ex.: `const newSpec = fs.readFileSync('./specs/new.json', 'utf-8');`
   1. In `./site/docusaurus.config.js`, add the new spec as a custom field at the bottom of the config. Ex.: `newSpec: JSON.parse(newSpec),`
   1. In `./site/src/pages`, create a `newSpec.tsx` file and populate the needed React RedocStandalone code - recommend copy/pasting from another `{spec}.tsx` file
