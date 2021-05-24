@@ -6,7 +6,7 @@ Validates the language code snippets. If files need to be ran in a specific orde
 import os
 
 #CODE_SNIPPETS_PATH = "site/code-snippets"
-#CODE_SNIPPETS_PATH = "site/sample-python"
+CODE_SNIPPETS_PATH = "site/sample-python"
 
 def code_snippet_sort_key(e):
     """
