@@ -25,7 +25,7 @@ export default function ApiReference() {
                 <code>https://dashboard.bandwidth.com/api/</code>
               </div>
               <div class="a">
-                <Iframe url="https://dev.bandwidth.com/numbers/apiRef.html"
+                <iframe src="https://dev.bandwidth.com/numbers/apiRef.html"
                         width="900px"
                         height="650px"
                         display="inline"
