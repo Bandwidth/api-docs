@@ -17,7 +17,7 @@ USER_NUMBER = os.environ["USER_NUMBER"]
 
 body = TwoFactorVerifyRequestSchema(
     to = USER_NUMBER,
-    application_id = MFA_VOICE_APPLICATION_ID,
+    application_id = BW_MFA_VOICE_APPLICATION_ID,
     #application_id = MFA_MESSAGING_APPLICATION_ID,
     scope = "scope",
     code = "123456", #This is the user's input to validate

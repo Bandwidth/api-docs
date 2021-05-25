@@ -23,7 +23,7 @@ body.to = [USER_NUMBER]
 body.mfrom = BW_NUMBER
 body.text = "Hello world"
 try:
-    response = self.messaging_client.create_message(BW_ACCOUNT_ID, body)
+    response = messaging_client.create_message(BW_ACCOUNT_ID, body)
     print(response.body.id)
 except APIException as e:
     print(e.response_code)
