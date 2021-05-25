@@ -25,7 +25,8 @@ export default function ApiReference() {
                 <code>https://dashboard.bandwidth.com/api/</code>
               </div>
               <div class="a">
-                <iframe src="https://dev.bandwidth.com/numbers/apiRef.html"
+                <Iframe url="https://rice.ngrok.io/numbers/apiRef.html"
+                        id="irisRaml"
                         width="900px"
                         height="650px"
                         display="inline"
