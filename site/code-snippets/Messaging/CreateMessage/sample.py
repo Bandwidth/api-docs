@@ -1,6 +1,6 @@
 from bandwidth.bandwidth_client import BandwidthClient
 from bandwidth.messaging.models.message_request import MessageRequest
-from bandwidth.messaging.exceptions.messaging_exception import MessagingException
+from bandwidth.exceptions.api_exception import APIException
 
 import os
 
@@ -25,7 +25,5 @@ body.text = "Hello world"
 try:
     response = self.messaging_client.create_message(BW_ACCOUNT_ID, body)
     print(response.body.id)
-except MessagingException as e:
-    print(e.description)
+except APIException as e:
     print(e.response_code)
-    exit(1)

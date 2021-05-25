@@ -1,4 +1,5 @@
 from bandwidth.bandwidth_client import BandwidthClient
+from bandwidth.exceptions.api_exception import APIException
 
 import os
 
@@ -15,4 +16,7 @@ messaging_client = bandwidth_client.messaging_client.client
 media_file_name = 'sample_file_name'
 media_file = b'12345' #Any binary string will work for the upload. This includes file contents
 
-messaging_client.upload_media(BW_ACCOUNT_ID, media_file_name, str(len(media_file)), body=media_file)
+try:
+    messaging_client.upload_media(BW_ACCOUNT_ID, media_file_name, str(len(media_file)), body=media_file)
+except APIException as e:
+    print(e.response_code)

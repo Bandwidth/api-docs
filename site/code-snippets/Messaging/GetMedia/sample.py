@@ -1,4 +1,5 @@
 from bandwidth.bandwidth_client import BandwidthClient
+from bandwidth.exceptions.api_exception import APIException
   
 import os
 
@@ -14,5 +15,8 @@ messaging_client = bandwidth_client.messaging_client.client
 
 media_file_name = 'sample_file_name'
 
-response = messaging_client.get_media(ACCOUNT_ID, media_file_name)
-downloaded_media_file = response.body
+try:
+    response = messaging_client.get_media(ACCOUNT_ID, media_file_name)
+    downloaded_media_file = response.body
+except APIException as e:
+    print(e.response_code)

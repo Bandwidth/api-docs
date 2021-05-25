@@ -1,21 +1,15 @@
 """
 validate_code_snippets.py
 
-Validates the language code snippets. If files need to be ran in a specific order, they should be labeled as <file><index>.<extension>
+Validates the language code snippets. This really only checks for proper syntax; API integration tests
+that are order dependent will be handled in the SDK repos. 
+
+The exit code of running each code snippet Take note that code snippets cannot have a non 0 exit 
 """
 import os
 
 CODE_SNIPPETS_PATH = "site/code-snippets"
 
-def code_snippet_sort_key(e):
-    """
-    Forces the sort to be based on the filename in the format <file><index>.<extension>
-    instead of the full file path CODE_SNIPPETS_PATH/<file><index>.<extension>.
-
-    This allows us to force the order of files across different operations for things
-    that need to be in a specific order.
-    """
-    return e.split("/")[-1]
 
 def main(extension, cli_exec_command):
     """
@@ -28,9 +22,7 @@ def main(extension, cli_exec_command):
     #Use `find` to list all the files in the code snippets.
     #`find` lists the files separated by \n, so we split on that, and we remove the
     #last element because an extra '' is thrown in for some reason.
-    #Then we sort with the code_snippet_sort_key to get our desired order
     code_files = os.popen("find {code_snippets_path} -name \"*.{extension}\"".format(code_snippets_path=CODE_SNIPPETS_PATH, extension=extension)).read().split("\n")[0:-1]
-    code_files.sort(key=code_snippet_sort_key)
 
     #Execute each file
     success = True

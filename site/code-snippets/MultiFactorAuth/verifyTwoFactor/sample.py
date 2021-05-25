@@ -1,5 +1,6 @@
 from bandwidth.bandwidth_client import BandwidthClient
 from bandwidth.twofactorauth.models.two_factor_verify_request_schema import TwoFactorVerifyRequestSchema
+from bandwidth.exceptions.api_exception import APIException
 
 import os
 
@@ -22,5 +23,9 @@ body = TwoFactorVerifyRequestSchema(
     code = "123456", #This is the user's input to validate
     expiration_time_in_minutes = 3
 )
-response = auth_client.create_verify_two_factor(BW_ACCOUNT_ID, body)
-print(response.body.valid)
+
+try:
+    response = auth_client.create_verify_two_factor(BW_ACCOUNT_ID, body)
+    print(response.body.valid)
+except APIException as e:
+    print(e.response_code)

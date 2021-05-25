@@ -134,6 +134,18 @@ Will be filled out later, but blog files will go in here
 
 Custom templates for any additions that people may need to use.
 
+#### /scripts
+
+Scripts for the docsite. Includes things like code snippet validation, and code snippet insertion into the OpenAPI specs.
+
+#### /code-snippets
+
+Includes code snippets for the docsite in various languages. These must be added in the format `<MainSpec>/<OperationId>/filename.<extension>`. Operation IDs are case sensitive.
+
+These code snippets must include environmental variables defined in the appropriate `site/scripts/env-replace/<language>.json` file.
+
+Code snippet validation is done on PRs to the docsite. Currently these use dummy values on the API, so they all pretty much 401 or 400. Future plans may include doing real valid requests, but that is currently out of scope.
+
 ### Postman
 
 The `./postman` directory contains code and templates to generate our public facing Postman collection. The majority of the collection is generated from our OpenAPI specs, but `resources/postman_scaffold_collection.json` contains templates for Postman tutorials if someone wants to create one.
