@@ -1,5 +1,6 @@
 from bandwidth.bandwidth_client import BandwidthClient
 from bandwidth.twofactorauth.models.two_factor_code_request_schema import TwoFactorCodeRequestSchema
+from bandwidth.exceptions.api_exception import APIException
 
 import os
 
@@ -24,4 +25,7 @@ body = TwoFactorCodeRequestSchema(
     digits = 6,
     message = "Your temporary {NAME} {SCOPE} code is {CODE}"
 )
-auth_client.create_messaging_two_factor(BW_ACCOUNT_ID, body)
+try:
+    auth_client.create_messaging_two_factor(BW_ACCOUNT_ID, body)
+except APIException as e:
+    print(e.response_code)
