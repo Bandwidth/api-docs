@@ -9,11 +9,15 @@ BW_PASSWORD = os.environ["BW_PASSWORD"]
 BW_ACCOUNT_ID = os.environ["BW_ACCOUNT_ID"]
 BW_MFA_VOICE_APPLICATION_ID = os.environ["BW_MFA_VOICE_APPLICATION_ID"]
 #BW_MFA_MESSAGING_APPLICATION_ID = os.environ["BW_MFA_MESSAGING_APPLICATION_ID"]
-
 #Both voice and messaging application IDs can be used. The verify request
 #must have the same ID as the code request.
-
 USER_NUMBER = os.environ["USER_NUMBER"]
+
+bandwidth_client = BandwidthClient(
+    two_factor_auth_basic_auth_user_name=BW_USERNAME,
+    two_factor_auth_basic_auth_password=BW_PASSWORD
+)
+auth_client = bandwidth_client.two_factor_auth_client.mfa
 
 body = TwoFactorVerifyRequestSchema(
     to = USER_NUMBER,

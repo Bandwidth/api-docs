@@ -24,7 +24,7 @@ body.to = USER_NUMBER
 body.mfrom = BW_NUMBER
 body.answer_url = VOICE_CALLBACK_URL
 try:
-    response = self.voice_client.create_call(BW_ACCOUNT_ID, body)
+    response = voice_client.create_call(BW_ACCOUNT_ID, body)
     print(response.body.call_id)
 except APIException as e:
     print(e.response_code)
