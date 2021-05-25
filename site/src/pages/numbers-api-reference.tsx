@@ -28,7 +28,6 @@ export default function ApiReference() {
                 <Iframe url="https://dev.bandwidth.com/numbers/apiRef.html"
                         width="900px"
                         height="650px"
-                        id="irisRaml"
                         display="inline"
                         position="relative"
                         frameBorder="0"/>
