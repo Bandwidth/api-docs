@@ -20,11 +20,11 @@ export default function ApiReference() {
                 <br/>
                 <code>https://dashboard.bandwidth.com/api/</code>
               </div>
-              <div class="a">
-                <Iframe url="http://dev.bandwidth.com/numbers/apiRef.html"
+              <div class="irisRaml">
+                <Iframe url="http://bw-dev-dx-2001-3.s3-website-us-east-1.amazonaws.com/numbers/apiRef.html"
                         id="irisRaml"
-                        width="1000px"
-                        height="650px"
+                        width="100%"
+                        height="100%"
                         display="inline"
                         position="relative"
                         frameBorder="0"/>
