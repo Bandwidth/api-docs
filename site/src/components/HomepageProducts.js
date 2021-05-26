@@ -6,7 +6,7 @@ const ProductList = [
   {
     title: 'Numbers',
     Svg: require('../../static/img/icon-numbers.svg').default,
-    link: '/docs/numbers',
+    link: '/docs/numbers/',
     description: (
       <>
         We’ve got your number. In fact, we have as many of them as you want.
@@ -16,7 +16,7 @@ const ProductList = [
   {
     title: 'Voice',
     Svg: require('../../static/img/icon-voice.svg').default,
-    link: '/docs/voice',
+    link: '/docs/voice/',
     description: (
       <>
         Need to make a call? Placing and receiving phone calls is fast and easy with Bandwidth Voice.
@@ -26,7 +26,7 @@ const ProductList = [
   {
     title: 'Messaging',
     Svg: require('../../static/img/icon-messaging.svg').default,
-    link: '/docs/messaging',
+    link: '/docs/messaging/',
     description: (
       <>
         Communication at its most basic. Adding SMS or MMS is a snap.
@@ -36,7 +36,7 @@ const ProductList = [
   {
     title: 'Emergency',
     Svg: require('../../static/img/icon-emergency.svg').default,
-    link: '/docs/emergency',
+    link: '/docs/emergency/',
     description: (
       <>
         Connect your users to emergency services with fast, reliable, accurate E911 services.
