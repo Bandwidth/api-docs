@@ -11,21 +11,17 @@ export default function ApiReference() {
               <br/>
               <div class="a">
                 Emojis are explicitly not allowed on any endpoint for this API.
-              </div><br/>
-              <div class="a">
+                <br/><br/>
                 This API expects phone numbers to be in a 10 digit format <code>XXXYYYZZZZ</code>, not in E164 format.
-              </div>
-              <div class="a">
+                <br/>
                 This is different from the voice and messaging APIs, which expect phone numbers in E164 format.
-              </div><br/>
-              <div class="a">
+                <br/><br/>
                 Base API URL:
-              </div>
-              <div class="a">
+                <br/>
                 <code>https://dashboard.bandwidth.com/api/</code>
               </div>
               <div class="a">
-                <Iframe url="https://dev.bandwidth.com/numbers/apiRef.html"
+                <Iframe url="http://bw-dev-dx-2001-3.s3-website-us-east-1.amazonaws.com/numbers/apiRef.html"
                         id="irisRaml"
                         width="1000px"
                         height="650px"
