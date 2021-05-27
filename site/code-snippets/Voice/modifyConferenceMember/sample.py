@@ -21,6 +21,6 @@ conference_id = "conf-1234"
 call_id = "c-1234"
 
 try:
-    voice_client.modify_conference_member(BW_ACCOUNT_ID, body)
+    voice_client.modify_conference_member(BW_ACCOUNT_ID, conference_id, call_id, body)
 except APIException as e:
     print(e.response_code)

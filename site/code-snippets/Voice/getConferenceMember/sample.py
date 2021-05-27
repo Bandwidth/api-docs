@@ -17,7 +17,7 @@ conference_id = "conf-1234"
 member_id = "m-1234"
 
 try:
-    response = voice_client.(BW_ACCOUNT_ID, conference_id, member_id)
+    response = voice_client.get_conference_member(BW_ACCOUNT_ID, conference_id, member_id)
     print(response.body.member_url)
 except APIException as e:
     print(e.response_code)
