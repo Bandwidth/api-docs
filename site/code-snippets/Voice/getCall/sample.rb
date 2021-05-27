@@ -13,8 +13,9 @@ voice_client = bandwidth_client.voice_client.client
 call_id = "c-1234"
 
 begin
-    result = voice_client.get_call_state(ENV['BW_ACCOUNT_ID'], call_id)
-    puts result.data.state
+    #result = voice_client.get_call_state(ENV['BW_ACCOUNT_ID'], call_id)
+    #puts result.data.state
+    puts "Method broke"
 rescue APIException => e
     puts e.response_code
 end
