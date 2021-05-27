@@ -1,5 +1,5 @@
 # Container image that runs your code
-FROM ruby:2.7.3-alpine3.13
+FROM ruby:2.7.3-buster
 
 # We need python3 for the script
 RUN apt-get install python3
