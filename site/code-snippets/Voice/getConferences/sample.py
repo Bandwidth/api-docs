@@ -15,6 +15,7 @@ voice_client = bandwidth_client.voice_client.client
 
 try:
     response = voice_client.get_conferences_by_account(BW_ACCOUNT_ID)
-    print(response.body[0].id)
+    if len(response.body) > 0:
+        print(response.body[0].id)
 except APIException as e:
     print(e.response_code)

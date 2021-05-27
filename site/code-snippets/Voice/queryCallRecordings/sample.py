@@ -15,6 +15,7 @@ voice_client = bandwidth_client.voice_client.client
 
 try:
     result = voice_client.get_query_metadata_for_account(BW_ACCOUNT_ID)
-    print(result.body[0].recording_id)
+    if len(result.body) > 0:
+        print(result.body[0].recording_id)
 except APIException as e:
     print(e.response_code)
