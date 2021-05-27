@@ -1,4 +1,5 @@
 from bandwidth.bandwidth_client import BandwidthClient
+from bandwidth.voice.models.api_transcribe_recording_request import ApiTranscribeRecordingRequest
 from bandwidth.exceptions.api_exception import APIException
 
 import os
@@ -14,9 +15,12 @@ bandwidth_client = BandwidthClient(
 voice_client = bandwidth_client.voice_client.client
 
 call_id = "c-1234"
+recording_id = "r-1234"
+
+body = ApiTranscribeRecordingRequest()
+body.callback_url = "https://callback-url.com"
 
 try:
-    result = calls_controller.get_call_state(BW_ACCOUNT_ID, call_id)
-    print(result.body.state)
-except APIException as e: 
+    voice_client.create_transcribe_recording(BW_ACCOUNT_ID, call_id, recording_id, body)
+except APIException as e:
     print(e.response_code)

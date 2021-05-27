@@ -13,10 +13,8 @@ bandwidth_client = BandwidthClient(
 )
 voice_client = bandwidth_client.voice_client.client
 
-call_id = "c-1234"
-
 try:
-    result = calls_controller.get_call_state(BW_ACCOUNT_ID, call_id)
-    print(result.body.state)
-except APIException as e: 
+    result = recordings_controller.get_query_metadata_for_account(BW_ACCOUNT_ID)
+    print(result.body[0].recording_id)
+except APIException as e:
     print(e.response_code)
