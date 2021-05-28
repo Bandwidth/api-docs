@@ -18,7 +18,9 @@ voice_client = bandwidth_client.voice_client.client
 body = ApiModifyConferenceRequest()
 body.status = StatusEnum.ACTIVE
 
+conference_id = "conf-1234"
+
 try:
-    voice_client.modify_conference(BW_ACCOUNT_ID, body)
+    voice_client.modify_conference(BW_ACCOUNT_ID, conference_id, body)
 except APIException as e:
     print(e.response_code)
