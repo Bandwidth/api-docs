@@ -14,7 +14,7 @@ conference_id = "conf-1234"
 
 begin
     response = voice_client.get_query_metadata_for_account_and_conference(ENV['BW_ACCOUNT_ID'], conference_id)
-    if response.body.length > 0
+    if response.data.length > 0
         puts response.body[0].name
     end
 rescue APIException => e

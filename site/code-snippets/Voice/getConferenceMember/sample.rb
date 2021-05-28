@@ -14,7 +14,7 @@ conference_id = "conf-1234"
 member_id = "m-1234"
 
 begin
-    response = voice_client.get_conference_member(ENV['BW_ACCOUNT_ID', conference_id, member_id)
+    response = voice_client.get_conference_member(ENV['BW_ACCOUNT_ID'], conference_id, member_id)
     puts response.data.member_url
 rescue APIException => e
     puts e.response_code
