@@ -18,8 +18,6 @@ body.tag = '{"test": "message"}'
 begin
     result = messaging_client.create_message(ENV['BW_ACCOUNT_ID'], body)
     puts 'messageId: ' + result.data.id
-rescue Exception => e
-    puts e.description
+rescue APIException => e
     puts e.response_code
-    exit(1)
 end

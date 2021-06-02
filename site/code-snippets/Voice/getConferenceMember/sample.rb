@@ -1,5 +1,5 @@
 require 'bandwidth'
-
+  
 include Bandwidth
 include Bandwidth::Voice
 
@@ -10,14 +10,12 @@ bandwidth_client = Bandwidth::Client.new(
 
 voice_client = bandwidth_client.voice_client.client
 
-body = ApiModifyCallRequest.new
-body.redirect_url = "http://www.myapp.com/new"
-body.state = "active"
-
-call_id = "c-1234"
+conference_id = "conf-1234"
+member_id = "m-1234"
 
 begin
-    voice_client.modify_call(ENV['BW_ACCOUNT_ID'], call_id, :body => body)
+    response = voice_client.get_conference_member(ENV['BW_ACCOUNT_ID'], conference_id, member_id)
+    puts response.data.member_url
 rescue APIException => e
     puts e.response_code
 end

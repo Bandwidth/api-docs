@@ -10,14 +10,12 @@ bandwidth_client = Bandwidth::Client.new(
 
 voice_client = bandwidth_client.voice_client.client
 
-body = ApiModifyCallRequest.new
-body.redirect_url = "http://www.myapp.com/new"
-body.state = "active"
-
-call_id = "c-1234"
+conference_id = "conf-1234"
+recording_id = "r-1234"
 
 begin
-    voice_client.modify_call(ENV['BW_ACCOUNT_ID'], call_id, :body => body)
+    response = voice_client.get_metadata_for_conference_recording(ENV['BW_ACCOUNT_ID'], conference_id, recording_id)
+    puts response.body.application_id
 rescue APIException => e
     puts e.response_code
 end

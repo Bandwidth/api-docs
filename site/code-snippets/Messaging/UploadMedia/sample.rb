@@ -10,8 +10,9 @@ bandwidth_client = Bandwidth::Client.new(
 messaging_client = bandwidth_client.messaging_client.client
 
 begin
-  f = File.open("some_file", "rb")
-  file_content = f.read
+  #f = File.open("some_file", "rb")
+  #file_content = f.read
+  file_content = "12345"
   messaging_client.upload_media(
     ENV['BW_ACCOUNT_ID'],
     ENV['MEDIA_ID'],
@@ -21,8 +22,6 @@ begin
     :cache_control => "no-cache"
   )
   f.close()
-rescue Exception => e
-  puts e.description
+rescue APIException => e
   puts e.response_code
-  exit(1)
 end

@@ -14,9 +14,9 @@ bandwidth_client = BandwidthClient(
 voice_client = bandwidth_client.voice_client.client
 
 call_id = "c-1234"
+recording_id = "r-1234"
 
 try:
-    result = voice_client.get_call_state(BW_ACCOUNT_ID, call_id)
-    print(result.body.state)
-except APIException as e: 
+    voice_client.delete_recording(BW_ACCOUNT_ID, call_id, recording_id)
+except APIException as e:
     print(e.response_code)

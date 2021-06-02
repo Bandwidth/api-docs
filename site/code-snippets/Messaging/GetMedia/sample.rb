@@ -14,8 +14,6 @@ begin
   f = File.open("file_to_write", "wb")
   f.puts(downloaded_media.data)
   f.close()
-rescue Exception => e
-  puts e.description
+rescue APIException => e
   puts e.response_code
-  exit(1)
 end

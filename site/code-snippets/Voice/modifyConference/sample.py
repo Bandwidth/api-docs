@@ -1,4 +1,6 @@
 from bandwidth.bandwidth_client import BandwidthClient
+from bandwidth.voice.models.api_modify_conference_request import ApiModifyConferenceRequest
+from bandwidth.voice.models.status_enum import StatusEnum
 from bandwidth.exceptions.api_exception import APIException
 
 import os
@@ -13,10 +15,12 @@ bandwidth_client = BandwidthClient(
 )
 voice_client = bandwidth_client.voice_client.client
 
-call_id = "c-1234"
+body = ApiModifyConferenceRequest()
+body.status = StatusEnum.ACTIVE
+
+conference_id = "conf-1234"
 
 try:
-    result = voice_client.get_call_state(BW_ACCOUNT_ID, call_id)
-    print(result.body.state)
-except APIException as e: 
+    voice_client.modify_conference(BW_ACCOUNT_ID, conference_id, body)
+except APIException as e:
     print(e.response_code)

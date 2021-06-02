@@ -14,8 +14,6 @@ begin
   media.data.each { |item|
     puts item.media_name
   }
-rescue Exception => e
-  puts e.description
+rescue APIException => e
   puts e.response_code
-  exit(1)
 end

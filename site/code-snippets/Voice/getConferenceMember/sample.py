@@ -13,10 +13,11 @@ bandwidth_client = BandwidthClient(
 )
 voice_client = bandwidth_client.voice_client.client
 
-call_id = "c-1234"
+conference_id = "conf-1234"
+member_id = "m-1234"
 
 try:
-    result = voice_client.get_call_state(BW_ACCOUNT_ID, call_id)
-    print(result.body.state)
-except APIException as e: 
+    response = voice_client.get_conference_member(BW_ACCOUNT_ID, conference_id, member_id)
+    print(response.body.member_url)
+except APIException as e:
     print(e.response_code)
