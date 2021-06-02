@@ -21,7 +21,7 @@ module.exports = {
   themeConfig: {
     image: 'img/bandwidth.png',    // used for meta tag
     colorMode: {
-      disableSwitch: true    // for disabling dark mode
+      disableSwitch: false    // for disabling dark mode
     },
     announcementBar: {
       id: 'new_docsite_flag', // Any value that will identify this message.
