@@ -2,4 +2,4 @@
 
 cp /composer.json .
 composer require bandwidth/sdk
-python3 site/scripts/validate_code_snippets.py php php
+python3 site/scripts/validate_code_snippets.py php php "site/code-snippets/Voice/getCall/sample.php"
