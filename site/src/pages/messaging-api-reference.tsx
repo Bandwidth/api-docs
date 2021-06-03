@@ -3,10 +3,9 @@ import Layout from '@theme/Layout';
 import useThemeContext from '@theme/hooks/useThemeContext';    // returns whether or not the theme is light or dark
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import {RedocStandalone} from 'redoc';
-import {lightTheme} from '../css/redocTheme';
-import {darkTheme} from '../css/redocTheme';
+import {lightTheme, darkTheme} from '../css/redocTheme';
 
-const Example = () => {
+const RedocConfig = () => {
   const {siteConfig} = useDocusaurusContext();
   const {isDarkTheme} = useThemeContext();
   return <RedocStandalone spec={siteConfig.customFields.messagingSpec} options={{
@@ -24,7 +23,7 @@ export default function ApiReference() {
     return (
         <Layout>
             <main>
-              <Example />
+              <RedocConfig />
             </main>
         </Layout>
     );
