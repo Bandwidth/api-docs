@@ -13,7 +13,7 @@ const RedocConfig = () => {
                       pathInMiddlePanel: true,
                       expandSingleSchemaField: true,
                       menuToggle: true,
-                      theme: isDarkTheme ? darkTheme(siteConfig.customFields.bandwidthBlue) : lightTheme(siteConfig.customFields.bandwidthBlue)
+                      theme: isDarkTheme ? darkTheme(siteConfig.customFields.bwBlue) : lightTheme(siteConfig.customFields.bwBlue)
                   }}/>
 }
 
