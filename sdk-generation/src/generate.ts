@@ -126,7 +126,8 @@ function wrapRef(oas: any) {
 function addOpenApiSpecs(formData: FormData) {
   if (spec === undefined) {
     for (const apiNamespace of specs) {
-      const apiSpecPath = `${masterConfig.apiSpecRoot}/${apiNamespace}/${masterConfig.apiSpecFile}`;
+      const apiSpecPath = `${masterConfig.apiSpecRoot}/${apiNamespace}`;
+      console.log(apiSpecPath);
 
       let stream;
       if (masterConfig.wrappedRef.includes(apiNamespace)) {
@@ -144,7 +145,7 @@ function addOpenApiSpecs(formData: FormData) {
     }
   } else {
     // Add only the one spec to the form data
-    const apiSpecPath = `${masterConfig.apiSpecRoot}/${spec}/${masterConfig.apiSpecFile}`;
+    const apiSpecPath = `${masterConfig.apiSpecRoot}/${spec}`;
 
     let stream;
     if (masterConfig.wrappedRef.includes(spec)) {
