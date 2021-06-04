@@ -21,7 +21,9 @@ export default function ApiReference() {
     return (
         <Layout>
             <main>
-              <RedocConfig />
+              <div className="RedocStandalone">
+                <RedocConfig />
+              </div>
             </main>
         </Layout>
     );

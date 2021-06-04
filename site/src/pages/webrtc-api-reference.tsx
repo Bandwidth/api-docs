@@ -20,9 +20,11 @@ const RedocConfig = () => {
 export default function ApiReference() {
     return (
         <Layout>
-            <main>
+          <main>
+            <div className="RedocStandalone">
               <RedocConfig />
-            </main>
+            </div>
+          </main>
         </Layout>
     );
 }
