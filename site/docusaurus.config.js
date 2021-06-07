@@ -21,7 +21,7 @@ module.exports = {
   themeConfig: {
     image: 'img/bandwidth.png',    // used for meta tag
     colorMode: {
-      disableSwitch: true    // for disabling dark mode
+      disableSwitch: false    // for disabling dark mode
     },
     announcementBar: {
       id: 'new_docsite_flag', // Any value that will identify this message.
@@ -38,7 +38,7 @@ module.exports = {
     sidebarCollapsible: true,
     navbar: {
       title: 'Bandwidth',
-      hideOnScroll: true,
+      hideOnScroll: false,
       logo: {
         alt: 'Bandwidth',
         src: 'img/bandwidth-logo.png',
