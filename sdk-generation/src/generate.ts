@@ -123,20 +123,36 @@ function wrapRef(oas: any) {
   return oas;
 }
 
+// Removes the "tags" attributes for SDK generation
+function removeTags(oas: any) {
+  const { paths } = oas;
+
+  Object.keys(paths).forEach((pathName) => {
+    const operations = paths[pathName];
+
+    Object.keys(operations).forEach((operationName) => {
+      const operation = operations[operationName];
+      if (operation.tags) {
+        /* eslint-disable no-param-reassign */
+        operation.tags = null;
+      }
+    });
+  });
+
+  return oas;
+}
+
 function addOpenApiSpecs(formData: FormData) {
   if (spec === undefined) {
     for (const apiNamespace of specs) {
       const apiSpecPath = `${masterConfig.apiSpecRoot}/${apiNamespace}`;
-      console.log(apiSpecPath);
 
-      let stream;
+      let apiSpec = removeTags(readJSONSync(apiSpecPath));
       if (masterConfig.wrappedRef.includes(apiNamespace)) {
-        const apiSpec = readJSONSync(apiSpecPath);
-        const wrappedSpec = wrapRef(apiSpec);
-        stream = JSON.stringify(wrappedSpec);
-      } else {
-        stream = JSON.stringify(readJSONSync(apiSpecPath));
+        apiSpec = wrapRef(apiSpec);
       }
+
+      const stream = JSON.stringify(apiSpec);
 
       formData.append("apiDescriptions", stream, {
         contentType: "application/octet-stream",
@@ -147,14 +163,12 @@ function addOpenApiSpecs(formData: FormData) {
     // Add only the one spec to the form data
     const apiSpecPath = `${masterConfig.apiSpecRoot}/${spec}`;
 
-    let stream;
+    let apiSpec = removeTags(readJSONSync(apiSpecPath));
     if (masterConfig.wrappedRef.includes(spec)) {
-      const apiSpec = readJSONSync(apiSpecPath);
-      const wrappedSpec = wrapRef(apiSpec);
-      stream = JSON.stringify(wrappedSpec);
-    } else {
-      stream = JSON.stringify(readJSONSync(apiSpecPath));
+      apiSpec = wrapRef(apiSpec);
     }
+
+    const stream = JSON.stringify(apiSpec);
 
     formData.append("apiDescriptions", stream, {
       contentType: "application/octet-stream",
