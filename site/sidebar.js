@@ -35,6 +35,7 @@ module.exports = {
       label: 'Numbers',
       items: [
         'numbers/about',
+        'numbers/errors',
         {
           type: 'category',
           label: 'Guides and Tutorials',
