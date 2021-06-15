@@ -1,10 +1,10 @@
 const YAML = require('yaml');
 const fs = require('fs');
 const path = require('path');
-const numbersSpec = fs.readFileSync('./specs/numbers.json', 'utf-8');
+//const numbersSpec = fs.readFileSync('./specs/numbers.json', 'utf-8');
 const voiceSpec = fs.readFileSync('./specs/voice.json', 'utf-8');
 const messagingSpec = fs.readFileSync('./specs/messaging.json', 'utf-8');
-const messagingInternationalSpec = fs.readFileSync('./specs/messagingInternational.json', 'utf-8');
+//const messagingInternationalSpec = fs.readFileSync('./specs/messagingInternational.json', 'utf-8');
 const webRtcSpec = fs.readFileSync('./specs/webRtc.json', 'utf-8');
 const multiFactorAuthSpec = fs.readFileSync('./specs/multiFactorAuth.json', 'utf-8');
 
@@ -152,10 +152,10 @@ module.exports = {
     ],
   ],
   customFields: {
-      numbersSpec: JSON.parse(numbersSpec),
+      //numbersSpec: JSON.parse(numbersSpec),
       voiceSpec: JSON.parse(voiceSpec),
       messagingSpec: JSON.parse(messagingSpec),
-      messagingInternationalSpec: JSON.parse(messagingInternationalSpec),
+      //messagingInternationalSpec: JSON.parse(messagingInternationalSpec),
       webRTCSpec: JSON.parse(webRtcSpec),
       multiFactorAuthSpec: JSON.parse(multiFactorAuthSpec),
       // CSS Colors
