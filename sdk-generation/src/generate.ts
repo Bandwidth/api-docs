@@ -125,19 +125,22 @@ function wrapRef(oas: any) {
 
 // Removes the "tags" attributes for SDK generation
 function removeTags(oas: any) {
-  const { paths } = oas;
+  const ignoreTags = ["MultiFactorAuth"];
+  if (!ignoreTags.includes(oas.info.title)) {
+    const { paths } = oas;
 
-  Object.keys(paths).forEach((pathName) => {
-    const operations = paths[pathName];
+    Object.keys(paths).forEach((pathName) => {
+      const operations = paths[pathName];
 
-    Object.keys(operations).forEach((operationName) => {
-      const operation = operations[operationName];
-      if (operation.tags) {
-        /* eslint-disable no-param-reassign */
-        operation.tags = null;
-      }
+      Object.keys(operations).forEach((operationName) => {
+        const operation = operations[operationName];
+        if (operation.tags) {
+          /* eslint-disable no-param-reassign */
+          operation.tags = null;
+        }
+      });
     });
-  });
+  }
 
   return oas;
 }
