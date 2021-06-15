@@ -55,9 +55,6 @@ module.exports = {
           to: 'messaging-api-reference',
           label: 'Messaging'
         }, {
-          to: 'messaging-international-api-reference',
-          label: 'Messaging - International'
-        }, {
           to: 'multifactorauth-api-reference',
           label: 'Multi-Factor Authentication'
         }, {
