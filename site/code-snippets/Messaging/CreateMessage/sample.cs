@@ -1,9 +1,9 @@
-const var username = System.Environment.GetEnvironmentVariable("BW_USERNAME");
-const var password = System.Environment.GetEnvironmentVariable("BW_PASSWORD");
-const var accountId = System.Environment.GetEnvironmentVariable("BW_ACCOUNT_ID");
-const var applicationId = System.Environment.GetEnvironmentVariable("BW_MESSAGING_APPLICATION_ID");
-const var bandwidthNumber = System.Environment.GetEnvironmentVariable("BW_NUMBER");
-const var userNumber = System.Environment.GetEnvironmentVariable("USER_NUMBER");
+var username = System.Environment.GetEnvironmentVariable("BW_USERNAME");
+var password = System.Environment.GetEnvironmentVariable("BW_PASSWORD");
+var accountId = System.Environment.GetEnvironmentVariable("BW_ACCOUNT_ID");
+var applicationId = System.Environment.GetEnvironmentVariable("BW_MESSAGING_APPLICATION_ID");
+var bandwidthNumber = System.Environment.GetEnvironmentVariable("BW_NUMBER");
+var userNumber = System.Environment.GetEnvironmentVariable("USER_NUMBER");
 
 var client = new BandwidthClient.Builder()
     .MessagingBasicAuthCredentials(username, password)
