@@ -17,4 +17,4 @@ var request = new MessageRequest()
     Text = "Hello world"
 };
 
-var response = client.CreateMessage(accountId, request);
+var response = await client.CreateMessageAsync(accountId, request);
