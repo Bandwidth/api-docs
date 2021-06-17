@@ -1,6 +1,9 @@
+var username = System.Environment.GetEnvironmentVariable("BW_USERNAME");
+var password = System.Environment.GetEnvironmentVariable("BW_PASSWORD");
+var accountId = System.Environment.GetEnvironmentVariable("BW_ACCOUNT_ID");
+
 var client = new BandwidthClient.Builder()
-    .Environment(Bandwidth.Standard.Environment.Production)
-    .WebRtcBasicAuthCredentials("username", "password")
+    .WebRtcBasicAuthCredentials(username, password)
     .Build();
 
 var session = new Session()
@@ -8,4 +11,4 @@ var session = new Session()
     Tag = "new-session"
 };
 
-var response = await _client.WebRtc.APIController.CreateSessionAsync("1111111", session);
+var response = await client.WebRtc.APIController.CreateSessionAsync(accountId, session);
