@@ -3,66 +3,181 @@
   "info": {
     "title": "PhoneNumberLookup",
     "description": "A Bandwidth API to provide carrier information for a telephone number or batch of telephone numbers. Currently supports lookups of telephone numbers in the mainland United States, Alaska, Hawaii, District of Columbia, and the provinces of Canada. Telephone numbers submitted must be in E.164 format to be processed.",
-    "version": "1.0.4",
+    "contact": {},
+    "version": "1.0.5",
     "x-server-configuration": {
-        "default-environment": "production",
-        "default-server": "default",
-        "environments": [
+      "default-environment": "production",
+      "default-server": "default",
+      "environments": [
+        {
+          "name": "production",
+          "servers": [
             {
-                "name": "production",
-                "servers": [
-                   {
-                      "name": "default",
-                      "url": "https://numbers.bandwidth.com/api/v1"
-                   }
-                ]
-             },
-             {
-               "name": "test",
-               "servers": [
-                  {
-                     "name": "default",
-                     "url": "https://uat.numbers.bandwidth.com/api/v1"
-                  }
-               ]
-             },
-             {
-                "name": "custom",
-                "servers": [
-                   {
-                      "name": "default",
-                      "url": "{base_url}"
-                   }
-                ]
-             }
-        ],
-        "parameters": [
-            {
-                "name": "base_url",
-                "description": "",
-                "type": "string",
-                "example": "https://www.example.com"
+              "name": "default",
+              "url": "https://numbers.bandwidth.com/api/v1"
             }
-        ]
+          ]
+        },
+        {
+          "name": "test",
+          "servers": [
+            {
+              "name": "default",
+              "url": "https://uat.numbers.bandwidth.com/api/v1"
+            }
+          ]
+        },
+        {
+          "name": "custom",
+          "servers": [
+            {
+              "name": "default",
+              "url": "{base_url}"
+            }
+          ]
+        }
+      ],
+      "parameters": [
+        {
+          "name": "base_url",
+          "description": "",
+          "type": "string",
+          "example": "https://www.example.com"
+        }
+      ]
     }
   },
   "components": {
     "securitySchemes": {
-        "httpBasic": {
-            "type": "http",
-            "scheme": "basic"
-        }
+      "httpBasic": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "OrderRequest": {
+        "title": "OrderRequest",
+        "type": "object",
+        "properties": {
+          "tns": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "x-examples": {
+          "One TN": {
+            "tns": [
+              "19196104423"
+            ]
+          },
+          "Multiple TNs": {
+            "tns": [
+              "19196104423",
+              "+19196104424"
+            ]
+          }
+        },
+        "description": "Create TN Lookup Request"
+      },
+      "OrderResponse": {
+        "title": "OrderResponse",
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "x-examples": {
+          "Response Example": {
+            "requestId": "004223a0-8b17-41b1-bf81-20732adf5590",
+            "status": "IN_PROGRESS"
+          }
+        },
+        "description": "The request has been accepted for processing but not yet finished and in a terminal state (COMPLETE, PARTIAL_COMPLETE, or FAILED)"
+      },
+      "OrderStatus": {
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "description": "The requestId."
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of the request (IN_PROGRESS, COMPLETE, PARTIAL_COMPLETE, or FAILED)."
+          },
+          "failedTelephoneNumbers": {
+            "type": "array",
+            "description": "The telephone numbers whose lookup failed",
+            "items": {
+              "type": "string"
+            }
+          },
+          "result": {
+            "type": "array",
+            "description": "The carrier information results for the specified telephone number.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "Response Code": {
+                  "type": "integer",
+                  "description": "Our vendor's response code."
+                },
+                "Message": {
+                  "type": "string",
+                  "description": "Message associated with the response code."
+                },
+                "E.164 Format": {
+                  "type": "string",
+                  "description": "The telephone number in E.164 format."
+                },
+                "Formatted": {
+                  "type": "string",
+                  "description": "The formatted version of the telephone number."
+                },
+                "Country": {
+                  "type": "string",
+                  "description": "The country of the telephone number."
+                },
+                "Line Type": {
+                  "type": "string",
+                  "description": "The line type of the telephone number."
+                },
+                "Line Provider": {
+                  "type": "string",
+                  "description": "The service provider of the telephone number."
+                },
+                "Mobile Country Code": {
+                  "type": "string",
+                  "description": "The first half of the Home Network Identity (HNI)."
+                },
+                "Mobile Network Code": {
+                  "type": "string",
+                  "description": "The second half of the HNI."
+                }
+              }
+            }
+          }
+        },
+        "description": "If requestId exists, the result for that request is returned. See the Examples for details on the various responses that you can receive.  Generally, if you see a Response Code of 0 in a result for a TN, information will be available for it.  Any other Response Code will indicate no information was available for the TN.",
+        "title": ""
+      }
     }
   },
-  "security": [{
-          "httpBasic": []
-      }
+  "security": [
+    {
+      "httpBasic": []
+    }
   ],
   "paths": {
     "/accounts/{accountId}/tnlookup": {
       "post": {
-        "summary": "Creates a request for a given TN, or batch of TNs.",
-        "operationId": "TnLookupRequest",
+        "summary": "Create TN Lookup Request",
+        "operationId": "LookupRequest",
         "tags": [
           "Number lookup"
         ],
@@ -83,15 +198,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "tns": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                }
+                "$ref": "#/components/schemas/OrderRequest"
               },
               "examples": {
                 "One TN": {
@@ -101,7 +208,7 @@
                     ]
                   }
                 },
-                "Multiple TNs": {
+                "Multiple Tns": {
                   "value": {
                     "tns": [
                       "19196104423",
@@ -124,14 +231,13 @@
                   "status": "IN_PROGRESS"
                 },
                 "schema": {
-                  "properties": {
-                    "requestId": {
-                      "type": "string",
-                      "description": "The requestId."
-                    },
-                    "status": {
-                      "type": "string",
-                      "description": "The status of the request."
+                  "$ref": "#/components/schemas/OrderResponse"
+                },
+                "examples": {
+                  "Order Response": {
+                    "value": {
+                      "requestId": "004223a0-8b17-41b1-bf81-20732adf5590",
+                      "status": "IN_PROGRESS"
                     }
                   }
                 }
@@ -168,13 +274,14 @@
           "5XX": {
             "description": "Unexpected error. Please contact Bandwidth Support if your requests are receiving this status code for an extended period of time."
           }
-        }
+        },
+        "description": "Create a TN Lookup Order"
       }
     },
     "/accounts/{accountId}/tnlookup/{requestId}": {
       "get": {
-        "summary": "Returns the result of a request by id.",
-        "operationId": "GetTnLookupResult",
+        "summary": "Query TN Lookup Request Status",
+        "operationId": "LookupRequestStatus",
         "tags": [
           "Number lookup"
         ],
@@ -308,68 +415,7 @@
                   }
                 },
                 "schema": {
-                  "properties": {
-                    "requestId": {
-                      "type": "string",
-                      "description": "The requestId."
-                    },
-                    "status": {
-                      "type": "string",
-                      "description": "The status of the request (IN_PROGRESS, COMPLETE, PARTIAL_COMPLETE, or FAILED)."
-                    },
-                    "failedTelephoneNumbers": {
-                      "type": "array",
-                      "description": "The telephone numbers whose lookup failed",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "result": {
-                      "type": "array",
-                      "description": "The carrier information results for the specified telephone number.",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "Response Code": {
-                            "type": "integer",
-                            "description": "Our vendor's response code."
-                          },
-                          "Message": {
-                            "type": "string",
-                            "description": "Message associated with the response code."
-                          },
-                          "E.164 Format": {
-                            "type": "string",
-                            "description": "The telephone number in E.164 format."
-                          },
-                          "Formatted": {
-                            "type": "string",
-                            "description": "The formatted version of the telephone number."
-                          },
-                          "Country": {
-                            "type": "string",
-                            "description": "The country of the telephone number."
-                          },
-                          "Line Type": {
-                            "type": "string",
-                            "description": "The line type of the telephone number."
-                          },
-                          "Line Provider": {
-                            "type": "string",
-                            "description": "The service provider of the telephone number."
-                          },
-                          "Mobile Country Code": {
-                            "type": "string",
-                            "description": "The first half of the Home Network Identity (HNI)."
-                          },
-                          "Mobile Network Code": {
-                            "type": "string",
-                            "description": "The second half of the HNI."
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/OrderStatus"
                 }
               }
             }
@@ -389,8 +435,15 @@
           "5XX": {
             "description": "Unexpected error. Please contact Bandwidth Support if your requests are receiving this status code for an extended period of time."
           }
-        }
+        },
+        "description": "Query an existing TN Lookup Order"
       }
     }
-  }
+  },
+  "servers": [
+    {
+      "description": "Production",
+      "url": "https://numbers.bandwidth.com/api/v1"
+    }
+  ]
 }
