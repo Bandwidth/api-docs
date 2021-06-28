@@ -6,9 +6,9 @@ var client = new BandwidthClient.Builder()
     .WebRtcBasicAuthCredentials(username, password)
     .Build();
 
-var session = new Session()
+var participant = new Participant()
 {
-    Tag = "new-session"
+    PublishPermissions = new List<PublishPermissionEnum>() { PublishPermissionEnum.AUDIO, PublishPermissionEnum.VIDEO }
 };
 
-var response = await client.WebRtc.APIController.CreateSessionAsync(accountId, session);
+var response = await client.WebRtc.APIController.CreateParticipantAsync(accountId, participant);

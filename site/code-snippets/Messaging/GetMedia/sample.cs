@@ -3,12 +3,9 @@ var password = System.Environment.GetEnvironmentVariable("BW_PASSWORD");
 var accountId = System.Environment.GetEnvironmentVariable("BW_ACCOUNT_ID");
 
 var client = new BandwidthClient.Builder()
-    .WebRtcBasicAuthCredentials(username, password)
+    .MessagingBasicAuthCredentials(username, password)
     .Build();
 
-var session = new Session()
-{
-    Tag = "new-session"
-};
+var mediaId = "media-id-123";
 
-var response = await client.WebRtc.APIController.CreateSessionAsync(accountId, session);
+var response = await client.GetMediaAsync(accountId, mediaId);
