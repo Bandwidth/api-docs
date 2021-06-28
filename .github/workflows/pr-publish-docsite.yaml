@@ -7,42 +7,42 @@ on:
     branches:
       - 'main'
     paths:
-      - 'external/specs/**'
-      - 'external/markdown/**'
+      - 'site/**'
+  workflow_dispatch:
 
 jobs:
   publish:
     name: Publish Temp Docsite
     runs-on: ubuntu-latest
     steps:
-    - name: Repo Checkout
-      uses: actions/checkout@v2
-    - name: NPM install
-      run: npm install
-    - name: Confirm Release Notes Update
-      uses: dangoslen/changelog-enforcer@v2
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
       with:
-        changeLogPath: 'external/markdown/changelog.md'
-        skipLabels: 'no-changelog'
+        node-version: '14'
+    - name: Generate Static Site
+      run: |
+          cd site
+          yarn install --frozen-lockfile
+          npm run build
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
-    - name: Generate Doc Portal
-      run: npm run generate-docsite-external
     - name: Create Bucket Name
       id: create_name
       run: |
-        BUCKET_NAME=docsite-bandwidth-${GITHUB_HEAD_REF#refs/heads/}
+        BUCKET_NAME=bw-api-docs-${GITHUB_HEAD_REF#refs/heads/}
         BUCKET_NAME=$(echo "$BUCKET_NAME" | tr '[:upper:]' '[:lower:]') #convert to lowercase for AWS bucket (can't be uppercase)
+        BUCKET_NAME=$(echo "$BUCKET_NAME" | sed -e "s/[^a-z0-9]/-/g") #replace all remaining non alphanumerics with -
         echo $BUCKET_NAME
         echo "::set-output name=bucket_name::$BUCKET_NAME"
     - name: Create Bucket
       run: |
         echo $BUCKET_NAME
         aws s3 mb s3://$BUCKET_NAME --region us-east-1
+        aws s3 website s3://$BUCKET_NAME --index-document index.html
       env:
         BUCKET_NAME: ${{ steps.create_name.outputs.bucket_name }}
     - name: Put Lifecycle
@@ -72,7 +72,7 @@ jobs:
         BUCKET_NAME: ${{ steps.create_name.outputs.bucket_name }}
     - name: Sync zip to Bucket
       run: |
-        aws s3 sync ./external/portal s3://$BUCKET_NAME --acl public-read
+        aws s3 sync ./site/build s3://$BUCKET_NAME --acl public-read
       env:
         BUCKET_NAME: ${{ steps.create_name.outputs.bucket_name }}
     - name: Comment on PR
@@ -80,4 +80,5 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        message: https://${{ steps.create_name.outputs.bucket_name }}.s3.amazonaws.com/index.html
+        message: http://${{ steps.create_name.outputs.bucket_name }}.s3-website-us-east-1.amazonaws.com/
+        allow-repeats: true
