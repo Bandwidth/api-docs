@@ -13,15 +13,13 @@ const controller = new ApiController(client);
 
 const accountId = BW_ACCOUNT_ID;
 
-const conferenceId = 'conf-abc12345-6defabc1-2345-6def-abc1-23456defabc1';
-
-const getConference = async function() {
+const getConferences = async function() {
   try{
-      const response = await controller.getConferenceById(accountId, conferenceId);
+      const response = await controller.getConferencesByAccount(accountId);
       console.log(response)
   } catch(error) {
       console.error(error);
   }
 }
 
-getConference();
+getConferences();
