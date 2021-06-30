@@ -1,7 +1,7 @@
 ---
 id: overview
 title: Overview
-slug: /docs/webrtc/guides/overview
+slug: /webrtc/guides/overview
 description: todo
 keywords:
   - todo
@@ -23,7 +23,7 @@ Bandwidth’s signaling implementation relies on the concepts of sessions and pa
 
 # Streams
 
-For any camera or microphone that you want to connect to Bandwidth WebRTC you will be working with the [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream) that it creates. MediaStreams must be tied to a DOM element on a webpage and a Participant can subscribe to more than one stream, as is the case for audio and video streams, or even multiple video streams as is often the case when screen sharing. Streams can also be aliased so that Participants can subscribe to a particular subset of Streams.
+For any camera or microphone that you want to connect to Bandwidth WebRTC you will be working with the [MediaStream](https://developer.mozilla.org/en-US/Web/API/MediaStream) that it creates. MediaStreams must be tied to a DOM element on a webpage and a Participant can subscribe to more than one stream, as is the case for audio and video streams, or even multiple video streams as is often the case when screen sharing. Streams can also be aliased so that Participants can subscribe to a particular subset of Streams.
 
 # Participants
 

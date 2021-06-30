@@ -171,7 +171,7 @@ The Docusaurus flavored markdown also supports setting markdown attributes in th
     ---
     id: docId    <!--the document id - used as a referece in the sidebar.js folder-->
     title: Document Title    <!--Used by Docusaurus to generate the title properly (for SEO)-->
-    slug: /docs/{product}/docName    <!--generates the path after the base URL to provide a neat link for sharing-->
+    slug: /{product}/docName    <!--generates the path after the base URL to provide a neat link for sharing-->
     description: description of your document <!--becomes the <meta name="description" content="..."/> and <meta property="og:description" content="..."/> in <head>, used by search engines. If this field is not present, it will default to the first line of the contents.-->
     keywords: <!--Keywords meta tag for the document page, for search engines.-->
       - some

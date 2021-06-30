@@ -1,7 +1,7 @@
 ---
 id: quickstart
 title: Quickstart
-slug: /docs/webrtc/guides/quickstart
+slug: /webrtc/guides/quickstart
 description: todo
 keywords:
   - todo

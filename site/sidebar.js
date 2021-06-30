@@ -76,7 +76,11 @@ module.exports = {
         {
           type: 'category',
           label: 'Guides and Tutorials',
-          items: []
+          items: [
+            'webrtc/guides/callFlow',
+            'webrtc/guides/overview',
+            'webrtc/guides/quickstart'
+          ]
         },
       ],
     },
