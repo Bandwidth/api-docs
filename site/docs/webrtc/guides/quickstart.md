@@ -1,7 +1,7 @@
 ---
-id: todo
-title: todo
-slug: /quickstart
+id: quickstart
+title: Quickstart
+slug: /webrtc/guides/quickstart
 description: todo
 keywords:
   - todo
