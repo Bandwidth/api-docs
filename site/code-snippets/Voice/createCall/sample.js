@@ -8,7 +8,6 @@ const BW_NUMBER = process.env["BW_NUMBER"];
 const USER_NUMBER = process.env["USER_NUMBER"];
 const VOICE_CALLBACK_URL = process.env["VOICE_CALLBACK_URL"];
 
-
 const client = new Client({
   basicAuthUserName: BW_USERNAME,
   basicAuthPassword: BW_PASSWORD
