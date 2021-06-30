@@ -1,7 +1,7 @@
 ---
 id: overview
 title: Overview
-slug: /webrtc/guides/overview
+slug: /docs/webrtc/guides/overview
 description: todo
 keywords:
   - todo

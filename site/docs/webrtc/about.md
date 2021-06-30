@@ -1,7 +1,7 @@
 ---
 id: about
 title: about
-slug: /webrtc/about
+slug: /docs/webrtc/about
 description: todo
 keywords:
   - todo

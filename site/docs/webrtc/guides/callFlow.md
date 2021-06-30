@@ -1,7 +1,7 @@
 ---
 id: callFlow
 title: CallFlow
-slug: /webrtc/guides/callFlow
+slug: /docs/webrtc/guides/callFlow
 description: todo
 keywords:
   - todo

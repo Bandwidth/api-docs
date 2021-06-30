@@ -72,6 +72,7 @@ module.exports = {
       label: 'WebRTC',
       items: [
         'webrtc/about',
+        'webrtc/errors',
         {
           type: 'category',
           label: 'Guides and Tutorials',

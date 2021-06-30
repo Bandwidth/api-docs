@@ -1,7 +1,7 @@
 ---
 id: errors
 title: errors
-slug: /webrtc/errors
+slug: /docs/webrtc/errors
 description: todo
 keywords:
   - todo
