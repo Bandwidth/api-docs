@@ -1,7 +1,7 @@
 ---
 id: todo
 title: todo
-slug: /todo
+slug: /quickstart
 description: todo
 keywords:
   - todo

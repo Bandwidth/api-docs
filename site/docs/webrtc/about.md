@@ -1,7 +1,7 @@
 ---
 id: todo
 title: todo
-slug: /todo
+slug: /about
 description: todo
 keywords:
   - todo
@@ -26,13 +26,6 @@ Our Video API and WebRTC Calling API are both powered by Bandwidth's WebRTC Plat
 | Links | Description |
 | :---- | :---- |
 | [WebRTC Sample Applications](https://github.com/search?q=topic%3Awebrtc+org%3ABandwidth-Samples) | WebRTC sample applications for a variety of technologies |
-
-## REST API Reference Index
-
-| Resource                                         | Description                                                         |
-| :----------------------------------------------- | :------------------------------------------------------------------ |
-| [`/participants`](methods/participants/about.md) | Manage participants in a session                                    |
-| [`/sessions`](methods/sessions/about.md)         | Sessions allow you to create media connections between participants |
 
 ## Error Codes
 
