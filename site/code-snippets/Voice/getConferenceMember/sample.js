@@ -14,15 +14,15 @@ const controller = new ApiController(client);
 const accountId = BW_ACCOUNT_ID;
 
 const conferenceId = 'conf-abc12345-6defabc1-2345-6def-abc1-23456defabc1';
-const recordingId = 'r-abc12345-6def-abc1-2345-6defabc12345';
+const memberId = 'c-abc12345-6defabc1-2345-6def-abc1-23456defabc1';
 
-const getConferenceRecording = async function() {
+const getConferenceMember = async function() {
   try{
-      const response = await controller.getMetadataForConferenceRecording(accountId, conferenceId, recordingId);
+      const response = await controller.getConferenceMember(accountId, conferenceId, memberId);
       console.log(response)
   } catch(error) {
       console.error(error);
   }
 }
 
-getConferenceRecording();
+getConferenceMember();
