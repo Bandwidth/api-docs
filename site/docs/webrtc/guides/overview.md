@@ -2,9 +2,10 @@
 id: overview
 title: Overview
 slug: /webrtc/guides/overview
-description: todo
+description: Bandwidth WebRtc Overview
 keywords:
-  - todo
+  - bandwidth
+  - webrtc
 hide_title: true
 image: ../../static/img/bandwidth-logo.png
 ---

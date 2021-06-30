@@ -2,9 +2,10 @@
 id: quickstart
 title: Quickstart
 slug: /webrtc/guides/quickstart
-description: todo
+description: Bandwidth WebRtc Quickstart
 keywords:
-  - todo
+  - bandwidth
+  - webrtc
 hide_title: true
 image: ../../static/img/bandwidth-logo.png
 ---

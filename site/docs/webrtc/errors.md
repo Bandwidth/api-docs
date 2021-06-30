@@ -1,10 +1,11 @@
 ---
 id: errors
-title: errors
+title: Errors
 slug: /webrtc/errors
-description: todo
+description: WebRtc errors page
 keywords:
-  - todo
+  - bandwidth
+  - webrtc
 hide_title: true
 image: ../../static/img/bandwidth-logo.png
 ---

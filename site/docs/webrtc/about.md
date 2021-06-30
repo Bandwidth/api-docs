@@ -1,10 +1,11 @@
 ---
 id: about
-title: about
+title: About
 slug: /webrtc/about
-description: todo
+description: WebRtc About Page
 keywords:
-  - todo
+  - bandwidth
+  - webrtc
 hide_title: true
 image: ../../static/img/bandwidth-logo.png
 ---

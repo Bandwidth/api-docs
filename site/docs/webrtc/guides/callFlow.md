@@ -2,9 +2,11 @@
 id: callFlow
 title: CallFlow
 slug: /webrtc/guides/callFlow
-description: todo
+description: Bandwidth WebRtc Callfow
 keywords:
-  - todo
+  - bandwidth
+  - webrtc
+  - callflow
 hide_title: true
 image: ../../static/img/bandwidth-logo.png
 ---
