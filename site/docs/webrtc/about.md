@@ -1,7 +1,7 @@
 ---
 id: about
 title: About
-slug: /webrtc/about
+slug: /webrtc
 description: WebRtc About Page
 keywords:
   - bandwidth
@@ -9,7 +9,7 @@ keywords:
 hide_title: true
 image: ../../static/img/bandwidth-logo.png
 ---
-# Bandwidth's WebRTC Calling API and Video API
+## Bandwidth's WebRTC Calling API and Video API
 
 ⚠️ Your account must be activated to use WebRTC. Please contact [sales support](https://www.bandwidth.com/talk-to-an-expert/) to learn how to get access!
 

@@ -6,7 +6,7 @@ description: Bandwidth WebRtc Overview
 keywords:
   - bandwidth
   - webrtc
-hide_title: true
+hide_title: false
 image: ../../static/img/bandwidth-logo.png
 ---
 # WebRTC Concept Overview
@@ -22,11 +22,11 @@ WebRTC utilizes two forms of communication: the media streams themselves and sig
 
 Bandwidth’s signaling implementation relies on the concepts of sessions and participants, which must be set up in order for media streams to be created. The Bandwidth WebRTC API allows you to create and manage sessions, participants, and the streams they are subscribed to.
 
-# Streams
+## Streams
 
 For any camera or microphone that you want to connect to Bandwidth WebRTC you will be working with the [MediaStream](https://developer.mozilla.org/en-US/Web/API/MediaStream) that it creates. MediaStreams must be tied to a DOM element on a webpage and a Participant can subscribe to more than one stream, as is the case for audio and video streams, or even multiple video streams as is often the case when screen sharing. Streams can also be aliased so that Participants can subscribe to a particular subset of Streams.
 
-# Participants
+## Participants
 
 Before you can connect a stream to WebRTC, you will need a Participant. You can basically think of a participant as a person using the system - although there can be programmatic participants. When you create a Participant you will receive a Participant ID and an authentication token in return. The token must be supplied when connecting with the Bandwidth WebRTC SDK.
 
@@ -46,7 +46,7 @@ var participantBody = new BandwidthWebRTC.Participant(
      {"tag" : "participant-uuid","publishPermissions" : ["AUDIO", "VIDEO"]});
 ```
 
-## Participant Tags
+### Participant Tags
 
 You can add a tag to a participant to help you identify them with a friendly name. Participant Tag information is passed on to your Billing Reports, which can facilitate billing of clients if you do pass-through billing or auditing. These can also be used to allow for easier understanding or grouping of participants.
 
@@ -55,27 +55,27 @@ Example uses of a Participant Tags:
 - Externally safe User UUIDs to make it easier to associate participants with internal users
 - Externally safe Account UUIDs to assist with allocating costs from a Billing Report.
 
-### Restrictions/Limitations
+#### Restrictions/Limitations
 
 - Tags MUST NOT include Personally Identifying Information (PII). We recommend using UUIDs if you need to reference customers or users.
 - No uniqueness is enforced by the WebRTC system for tags. Duplicates are acceptable.
 - A Participant tag is limited to 50 characters
 
-## A note on dialed-in participants
+### A note on dialed-in participants
 
 You can have people in your WebRTC session (audio or video) who are dialed in on a phone using our SIP Interconnection feature. These participants will need to call a number that is served by a Bandwidth Voice API application, in that application you will `<transfer>` the call to a special SIP URI with an authentication token to allow them to join the session.
 
 More can be found on this in our [quickstart guide](quickstart.md).
 
-# Sessions
+## Sessions
 
 Sessions are a concept that allows you to easily group multiple Participants together - depending on your use case, this may be analogous to something like a meeting, appointment, call, or event. Participants and their streams are associated with one another via subscriptions, described below.
 
-## Limitations
+### Limitations
 
 There is a limit of 20 participants in a session. This includes all participants, whether they are Audio-only, Audio & Video, or dialed-in participants.
 
-## Session Tags
+### Session Tags
 
 You can add a tag to a session to help you identify them with friendly names. Session Tag information is passed on to your Billing Reports, which can facilitate billing of clients if you do pass-through billing or auditing. These can also be used to allow for easier understanding or grouping of sessions.
 
@@ -84,13 +84,13 @@ Example uses of a Participant Tags:
 - Meeting IDs to make it easier to associate a session with internal scheduling or management
 - Externally safe Account UUIDs to assist with allocating costs from a Billing Report.
 
-### Restrictions/Limitations
+#### Restrictions/Limitations
 
 - Tags MUST NOT include Personally Identifying Information (PII). We recommend using UUIDs if you need to reference customers or users.
 - No uniqueness is enforced by the WebRTC system for tags. Duplicates are acceptable.
 - A Session tag is limited to 50 characters
 
-# Subscriptions
+## Subscriptions
 
 When a Participant receives the audio or video Streams from another Participant, it is via a Subscription. Subscriptions are very flexible, allowing for the creation of custom scenarios where participants may hear or see some people and devices, but not others. Subscriptions can be created three levels: \
 
@@ -108,7 +108,7 @@ Note that Subscriptions can be updated in real time during a call by calling the
 
 The request and response bodies for these endpoints contain the subscription information for an individual participant. The types of subscriptions and how to specify them in the API are described below.
 
-## Session Level
+### Session Level
 
 A session level subscription subscribes a participant to all current and future participants of a session. It is specified simply with a session ID:
 
@@ -127,7 +127,7 @@ var body = new BandwidthWebRTC.Subscriptions({"sessionId" : sessionId});
 webRTCController.addParticipantToSession(accountId, sessionId, participant.id, body, function(error, response, context) { ... })
 ```
 
-## Participant Level
+### Participant Level
 
 A participant level subscription subscribes a participant to an explicit set of participants.
 
@@ -152,7 +152,7 @@ A participant level subscription subscribes a participant to an explicit set of 
 }
 ```
 
-## Participant Stream Level
+### Participant Stream Level
 
 A participant stream level subscription adds further detail to a participant based subscription with the inclusion of an optional list of logical device names, or `streamAliases`. The absence of a list of stream aliases means to subscribe to all devices exposed by a participant.
 
@@ -171,7 +171,7 @@ A participant stream level subscription adds further detail to a participant bas
 }
 ```
 
-# Client vs Server - 3rd Party Call Control
+## Client vs Server - 3rd Party Call Control
 
 Bandwidth’s WebRTC platform utilizes Third Party Call Control, meaning that none of the participants in the call actually control the media flow. Control of the call (or Call Control) is instead managed by a third party, or the server (i.e your web application). This is done to ease coordination and increase security.
 
