@@ -48,7 +48,7 @@ Bandwidth enhances the use of WebRTC by wrapping standard WebRTC capabilities in
 At a very high level the model simplifies the browser and server-level interactions with the media and signalling/session control levels:
 
 <center>
-<img src="simple.svg" alt="The simplest view of Bandwidth WebRTC" width="50%"/>
+<img src="../../static/img/simple.svg" alt="The simplest view of Bandwidth WebRTC" width="35%"/>
 </center>
 
 ### Secure Coordination of Server, Browser, and Media
@@ -81,7 +81,7 @@ Bandwidth brings a comprehensive Programmable Voice network capability to the ov
 This enables creation of Browser-based endpoints that participate in voice network, WebRTC video communication that extends into the PSTN, and everything in between.
 
 <center>
-<img src="end-end_media_and_signaling.svg" alt="Interaction with the Bandwidth Programmable Voice network" width="80%"/>
+<img src="../../static/img/end-end_media_and_signaling.svg" alt="Interaction with the Bandwidth Programmable Voice network" width="60%"/>
 </center>
 
 The Programmable Voice uses SIP URI and User-User information to place, transfer, bridge, or conference WebRTC endpoints into PSTN calls. On the WebRTC side of the equation, the interconnection with the Programmable Voice shows up as a WebRTC participant in the overall WebRTC communication, controlled with the same level of fine-grained control described above.
