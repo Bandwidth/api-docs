@@ -103,11 +103,6 @@ module.exports = {
             {
               label: 'Developer Forum',
               href: 'http://bandwidthdashboard.discussion.community/',
-            },
-            {
-              label: 'API Design Standards',
-              activeBasePath: 'api-design-standards',
-              to: 'api-design-standards',
             }
           ],
         },
