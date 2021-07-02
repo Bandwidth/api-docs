@@ -1,107 +1,103 @@
 module.exports = {
   mySidebar: [
     {
-      type: 'doc',
-      id: 'intro',
-      label: 'Introduction'
+      type: "doc",
+      id: "intro",
+      label: "Introduction",
     },
     {
-      type: 'category',
-      label: 'Account',
+      type: "category",
+      label: "Account",
       items: [
-        'account/about',
+        "account/about",
         {
-          type: 'category',
-          label: 'Guides and Tutorials',
-          items: [
-                  'account/guides/structure',
-                  'account/guides/credentials',
-                 ]
+          type: "category",
+          label: "Guides and Tutorials",
+          items: ["account/guides/structure", "account/guides/credentials"],
         },
         {
-          type: 'category',
-          label: 'Applications',
-          items: []
+          type: "category",
+          label: "Applications",
+          items: [],
         },
         {
-          type: 'category',
-          label: 'Subscriptions',
-          items: []
+          type: "category",
+          label: "Subscriptions",
+          items: [],
         },
       ],
     },
     {
-      type: 'category',
-      label: 'Numbers',
+      type: "category",
+      label: "Numbers",
       items: [
-        'numbers/about',
-        'numbers/errors',
+        "numbers/about",
+        "numbers/errors",
         {
-          type: 'category',
-          label: 'Guides and Tutorials',
-          items: []
+          type: "category",
+          label: "Guides and Tutorials",
+          items: [],
         },
       ],
     },
     {
-      type: 'category',
-      label: 'Voice',
+      type: "category",
+      label: "Voice",
       items: [
-        'voice/about',
+        "voice/about",
         {
-          type: 'category',
-          label: 'Guides and Tutorials',
-          items: []
+          type: "category",
+          label: "Guides and Tutorials",
+          items: [],
         },
       ],
     },
     {
-      type: 'category',
-      label: 'Messaging',
+      type: "category",
+      label: "Messaging",
       items: [
-        'messaging/about',
+        "messaging/about",
         {
-          type: 'category',
-          label: 'Guides and Tutorials',
-          items: []
+          type: "category",
+          label: "Guides and Tutorials",
+          items: [],
         },
       ],
     },
     {
-      type: 'category',
-      label: 'WebRTC',
+      type: "category",
+      label: "WebRTC",
       items: [
-        'webrtc/about',
+        "webrtc/about",
+        "webrtc/overview",
+        "webrtc/quickstart",
+        "webrtc/resources",
+        "webrtc/callflow",
+      ],
+    },
+    {
+      type: "category",
+      label: "Multi-Factor Authentication",
+      items: [
+        "mfa/about",
         {
-          type: 'category',
-          label: 'Guides and Tutorials',
-          items: []
+          type: "category",
+          label: "Guides and Tutorials",
+          items: [],
         },
       ],
     },
     {
-      type: 'category',
-      label: 'Multi-Factor Authentication',
+      type: "category",
+      label: "Emergency Services",
       items: [
-        'mfa/about',
+        "emergency/about",
         {
-          type: 'category',
-          label: 'Guides and Tutorials',
-          items: []
+          type: "category",
+          label: "Guides and Tutorials",
+          items: [],
         },
       ],
     },
-    {
-      type: 'category',
-      label: 'Emergency Services',
-      items: [
-        'emergency/about',
-        {
-          type: 'category',
-          label: 'Guides and Tutorials',
-          items: []
-        },
-      ],
-    }
   ],
 };
