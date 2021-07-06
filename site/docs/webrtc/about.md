@@ -8,7 +8,7 @@ keywords:
   - webrtc
   - video
 hide_title: true
-image: ../../static/img/bandwidth-logo.png
+image: ../../img/bandwidth-logo.png
 ---
 
 ## An Intro to WebRTC
