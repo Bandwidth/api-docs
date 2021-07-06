@@ -36,7 +36,7 @@ If you are an SDK user, there are a pair of them that you will want: a client SD
 
 ## APIs
 
-The Bandwidth WebRTC API is documented in the [API Reference section](../webrtc-api-reference) **FIX THIS** of these API Documents
+The Bandwidth WebRTC API is documented in the API Reference section of these API Documents
 
 ## Sample Applications
 
