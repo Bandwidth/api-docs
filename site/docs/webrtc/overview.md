@@ -1,6 +1,6 @@
 ---
 id: overview
-title: Bandwidth WebRTC Model Details
+title: Overview
 slug: /webrtc/overview
 description: What's a webRTC ?
 keywords:
@@ -10,10 +10,6 @@ keywords:
 hide_title: true
 image: ../../static/img/bandwidth-logo.png
 ---
-
-# Bandwidth WebRTC Model Details
-
-## Overview
 
 WebRTC utilizes two forms of communication: the media streams themselves and signaling. Signaling is responsible for:
 

@@ -1,6 +1,6 @@
 ---
 id: quickstart
-title: A WebRTC Walkthrough
+title: Quickstart
 slug: /webrtc/quickstart
 description: run through this for some fun
 keywords:
@@ -10,8 +10,6 @@ keywords:
 hide_title: true
 image: ../../static/img/bandwidth-logo.png
 ---
-
-# A WebRTC Walkthrough
 
 ## How it works
 

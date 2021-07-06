@@ -1,6 +1,6 @@
 ---
 id: resources
-title: Bandwidth WebRTC Resources
+title: Resources
 slug: /webrtc/resources
 description: Another general overview of Bandwidth's account services
 keywords:
@@ -10,8 +10,6 @@ keywords:
 hide_title: true
 image: ../../static/img/bandwidth-logo.png
 ---
-
-# Bandwidth WebRTC Resources
 
 ## Trying it Out
 
