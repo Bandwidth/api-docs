@@ -15,19 +15,22 @@ image: ../../static/img/bandwidth-logo.png
 
 ## Trying it Out
 
-(Comming soon) The [WebRTC Sample Video Conference](../webrtc-api-reference) **FIX THIS** provides you an opportunity to try out some Video Conferencing, and see the API calls that are used to achieve it.
+The [Bandwidth WebRTC Sample Video Conference](https://https://meet.edge.bandwidth.com/) provides you an opportunity to try out some Video Conferencing, and see the API calls that are used to achieve it (if you are good at using browser developer tools).
+
+Note that this is not intended as a full fledged conferencing system - it is mearly a sample application that we have elected to host for demonstration purposes.
 
 ## SDKs
 
-If you are an SDK user, there are a pair of them that you will want: the browser JS SDK and a Server SDK:
+If you are an SDK user, there are a pair of them that you will want: a client SDK and a Server SDK:
 
-- [The Bandwidth Browser SDK](https://www.npmjs.com/package/@bandwidth/webrtc-browser)
-- The Bandwidth Mobile Client SDKs
+- The Bandwidth Client SDKs
 
-  | Environment                                                                   | Notes                                  |
-  | -------------------------------------------------------------------------- | -------------------------------------- |
-  | [IOS](https://github.com/Bandwidth/bandwidth-webrtc-swift)                 | **FIX THIS** - a better explanation |
-  | [Android](https://github.com/Bandwidth/bandwidth-android)                  | **FIX THIS** - a better explanation |
+  | Environment                                                        | Notes                               |
+  | ------------------------------------------------------------------ | ----------------------------------- |
+  | [Browser](https://www.npmjs.com/package/@bandwidth/webrtc-browser) | The Bandwidth Browser SDK           |
+  | [IOS](https://github.com/Bandwidth/bandwidth-webrtc-swift)         | **FIX THIS** - a better explanation |
+  | [Android](https://github.com/Bandwidth/bandwidth-android)          | **FIX THIS** - a better explanation |
+
 - The Bandwidth Server API SDKs
 
   | Language                                                                   | Notes                                  |

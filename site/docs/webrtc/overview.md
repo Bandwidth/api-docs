@@ -13,14 +13,14 @@ image: ../../static/img/bandwidth-logo.png
 
 # Bandwidth WebRTC Model Details
 
-## Overview
+## More details on Bandwidth WebRTC
 
-WebRTC utilizes two forms of communication: the media streams themselves and signaling. Signaling is responsible for:
+WebRTC utilizes two forms of communication: the media streams themselves and signaling. **Signaling** is responsible for:
 
 - Setting up media streams between local and remote endpoints by negotiating and exchanging connectivity and media format information.
 - Acting as a control channel where messages are exchanged about devices and streams coming and going
 
-Bandwidth’s signaling implementation relies on the concepts of sessions and participants, which must be set up in order for media streams to be created. The Bandwidth WebRTC API allows you to create and manage sessions, participants, and the streams they are subscribed to.
+Bandwidth’s signaling implementation relies on session and participant objects, which must be set up in order for media streams to be created. The Bandwidth WebRTC API allows you to create and manage sessions, participants, and the streams they are subscribed to.
 
 ## Streams
 
@@ -123,8 +123,9 @@ The session ID will always match the session ID in the URL path. As new particip
 This can be accomplished in the SDK via the addParticipantToSession call.
 
 ```
-var body = new BandwidthWebRTC.Subscriptions({"sessionId" : sessionId});
-webRTCController.addParticipantToSession(accountId, sessionId, participant.id, body, function(error, response, context) { ... })
+    var body = new BandwidthWebRTC.Subscriptions({"sessionId" : sessionId});
+
+    webRTCController.addParticipantToSession(accountId, sessionId, participant.id, body, function(error, response, context) { ... })
 ```
 
 ### Participant Level
@@ -173,6 +174,6 @@ A participant stream level subscription adds further detail to a participant bas
 
 ## Client vs Server - 3rd Party Call Control
 
-Bandwidth’s WebRTC platform utilizes Third Party Call Control, meaning that none of the participants in the call actually control the media flow. Control of the call (or Call Control) is instead managed by a third party, or the server (i.e your web application). This is done to ease coordination and increase security.
+Bandwidth’s WebRTC platform utilizes a Third Party Call Control model, meaning that none of the participants in the call actually control the media flow. Control of the session (or Call Control) is instead managed by a third party, or the server (i.e your web application). This is done to ease coordination and increase security.
 
 In practical terms, this means that your server application will need to manage the subscriptions that are established between the participants. We have created helper methods to simplify cases where everyone in a session should be “fully wired” together. But you still maintain the ability to create custom situations, such as a manager ‘whisper’ in a contact center - where the caller can’t hear the manager, but the contact center agent can.

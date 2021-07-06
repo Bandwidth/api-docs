@@ -13,7 +13,9 @@ image: ../../static/img/bandwidth-logo.png
 
 # WebRTC Callflows for those who care
 
-## Call Flow
+## API Call Flows
+
+### Basic Browser Connection
 
 In this diagram we will review the interactions you will need in order to establish a working WebRTC session. To simplify the diagram, we are showing only one web browser in the session, but adding more merely follows the same pattern.
 
@@ -23,7 +25,7 @@ In this diagram we will review the interactions you will need in order to establ
 
 We start by creating a Session (1) and a Participant (2), and then adding the Participant to the Session (3) - when we do so, we will be specifying a Subscription to the SessionId within the _body_ parameter of the addParticipantToSession() call.
 
-Next we serve a page to the user that has the required WebRTC components as well as the JWT that we received when we [made what call???].
+Next we serve a page to the user that includes the required WebRTC components as well as the JWT that we received when the participant was created.
 
 Within our browser javascript implementation, we will be calling connect() (5) in order to establish our connection to the WebRTC platform. Once that is complete, we can call publish() (6) to start flowing media.
 
@@ -32,6 +34,10 @@ When media is flowing to us, an onStreamAvailable listener will be triggered. [w
 To remove this participant from the call, because the call has ended or just because just this participant is done, we call removeParticipantFromSession() (8) on the server side. If we only wanted to remove some subscriptions from this Participant, but leave them in the session otherwise, we can just call [WHAT?] from the server application.
 
 At the conclusion of the session, the browser javascript should call disconnect() (9) to sever the websocket connection with the WebRTC platform. Once all other participants have similarly been disconnected, the server application can call deleteSession (10) for proper hygiene. All Sessions are concluded and cleaned up, along with associated Subscriptions, after 9 hours.
+
+### Connecting to Programmable Voice
+
+Establishing a connection between the WebRTC Session and the Bandwidth Programmable Voice network uses the Voice APIs to establish calls on the voice network side, and then transfers or bridges that call to the WebRTC session.
 
 <center>
 <img src="../../static/img/webrtc_callflow2.png" alt="Connecting a WebRTC endpoint" width="50%"/>

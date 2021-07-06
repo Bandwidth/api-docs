@@ -216,8 +216,7 @@ participant so they can interact with this browser?
 
 One way to add a participant is to support an inbound phone call, which creates an audio conference between the browser and phone.
 
-Our sample app does just this, using Bandwidth's Voice API! Read more about how to create a [Bandwidth Voice API application]
-(https://github.com/Bandwidth-Samples/webrtc-hello-world-js).
+Our sample app does just this, using Bandwidth's Voice API! Read more about how to create a [Bandwidth Voice API application](https://github.com/Bandwidth-Samples/webrtc-hello-world-js).
 
 In our backend example code, we support the `/incomingCall` callback from our Voice API application:
 
