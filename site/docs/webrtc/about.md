@@ -19,19 +19,19 @@ Using Bandwidth's APIs, you can write audio and video enabled applications that 
 
 ### Browsers
 
-Part of the Magic of WebRTC was the choice to embed a standard real-time media handling capability into all browsers, allowing real time communicaions between any collection of desktopp and mobile browsers using a globally adopted standard.
+Part of the Magic of WebRTC was the choice to embed a standard real-time media handling capability into all browsers, allowing real time communications between any collection of desktop and mobile browsers using a globally adopted standard.
 
 Standard browser APIs for access to sources of media ( [getUserMedia](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia) for camera and microphone, [getDisplayMedia](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getDisplayMedia) for screen content) and [The RTCPeerConnection API](https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection) for controlling media flows to remote endpoints enable all parties to exchange real time media in an efficient and uniform manner.
 
 ### Media
 
-One of the intended sideeffects of the browser-centric approach taken with WebRTC is the broad spectrum of media that can be exchanged, and the flexibility available in exchanging that media. The enpoints of any media streams are free to free to adapt the to constraints of the channel with a suite of codecs, and additional application-specific data can be exchanged using WebRTC data channels.
+One of the intended side-effects of the browser-centric approach taken with WebRTC is the broad spectrum of media that can be exchanged, and the flexibility available in exchanging that media. The endpoints of any media streams are free to free to adapt the to constraints of the channel with a suite of codecs, and additional application-specific data can be exchanged using WebRTC data channels.
 
-Whether it is voice, video, screen-sharing or applicaion-specific data, WebRTC supports it.
+Whether it is voice, video, screen-sharing or application-specific data, WebRTC supports it.
 
 ### Programmibility
 
-The astute reader will notice that nothing above mentions finding / addressing the other participants in a communication, and nothing above mentions control at the session level for adding and removing participants in a session. That is because the browser WebRTC infrastructure leaves all of that to the controlling application. WebRTC is explicitly unopinionated on that front.
+The astute reader will notice that nothing above mentions finding / addressing the other participants in a communication, and nothing above mentions control at the session level for adding and removing participants in a session. That is because the browser WebRTC infrastructure leaves all of that to the controlling application. WebRTC is explicitly unopinionaited on that front.
 
 Although this sounds like a deficiency it results in flexibility in creation of applications and communication patterns that ideally suit the creator's intended use.
 
@@ -43,7 +43,7 @@ Bandwidth enhances the use of WebRTC by wrapping standard WebRTC capabilities in
 - the overall model allowing fine-grained control
 - the interaction with the V2 Voice capability set
 
-At a very high level the model simplifies the browser and server-level interactions with the media and signalling/session control levels:
+At a very high level the model simplifies the browser and server-level interactions with the media and signaling/session control levels:
 
 <center>
 <img src="../../static/img/simple.svg" alt="The simplest view of Bandwidth WebRTC" width="35%"/>
@@ -59,14 +59,14 @@ Secure Server to Server interaction provides secure access to the Bandwidth WebR
 
 ### Fine Grained Control: Application Flexibility
 
-The model underlying Bandwidth's WebRTC soution allows the application to control the flows of media with exquisite precision. There are 4 levels of control that can be controlled, in increasing levels of precision...
+The model underlying Bandwidth's WebRTC solution allows the application to control the flows of media with exquisite precision. There are 4 levels of control that can be controlled, in increasing levels of precision...
 
 - **sessions** - groups of users involved in a communication
 - **participants** - the addressable members that are involved in a session
 - **subscriptions** - essentially who "listens to" who. It is possible to create complex topologies to address specific application needs
 - **media** - the specific media that is exchanged between any subscribed participants and/or sessions
 
-With these elements under applicaiton control almost any real time communication imaginable can be identified.
+With these elements under application control almost any real time communication imaginable can be identified.
 
 The details of this model and its control are covered in the document section [Bandwidth WebRTC Model Details](overview.md)
 
