@@ -17,7 +17,9 @@ image: ../../static/img/bandwidth-logo.png
 
 In this diagram we will review the interactions you will need in order to establish a working WebRTC session. To simplify the diagram, we are showing only one web browser in the session, but adding more merely follows the same pattern.
 
-![alt_text](webrtc_callflow1.png "image_tooltip")
+<center>
+<img src="../../static/img/webrtc_callflow1.png" alt="Connecting a WebRTC endpoint" width="45%"/>
+</center>
 
 We start by creating a Session (1) and a Participant (2), and then adding the Participant to the Session (3) - when we do so, we will be specifying a Subscription to the SessionId within the _body_ parameter of the addParticipantToSession() call.
 
@@ -31,7 +33,9 @@ To remove this participant from the call, because the call has ended or just bec
 
 At the conclusion of the session, the browser javascript should call disconnect() (9) to sever the websocket connection with the WebRTC platform. Once all other participants have similarly been disconnected, the server application can call deleteSession (10) for proper hygiene. All Sessions are concluded and cleaned up, along with associated Subscriptions, after 9 hours.
 
-![alt_text](webrtc_callflow2.png "image_tooltip")
+<center>
+<img src="../../static/img/webrtc_callflow2.png" alt="Connecting a WebRTC endpoint" width="50%"/>
+</center>
 
 We start by initiating an outbound call via the Bandwidth VoiceAPI using the createCall() (1). Once that is established (you’ll receive a callback [XYZ]), you create a Session (2) and then create a Participant for this PSTN caller (3).
 
