@@ -13,7 +13,7 @@ image: ../../static/img/bandwidth-logo.png
 
 ## Trying it Out
 
-(Comming soon) The [WebRTC Sample Video Conference](../../webrtc-api-reference) provides you an opportunity to try out some Video Conferencing, and see the API calls that are used to achieve it.
+(Comming soon) The [WebRTC Sample Video Conference](/webrtc-api-reference) provides you an opportunity to try out some Video Conferencing, and see the API calls that are used to achieve it.
 
 ## SDKs
 
