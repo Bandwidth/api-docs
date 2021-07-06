@@ -24,7 +24,7 @@ If you are an SDK user, there are a pair of them that you will want: the browser
 
   | Environment                                                                   | Notes                                  |
   | -------------------------------------------------------------------------- | -------------------------------------- |
-  | [IOS](https://github.com/Bandwidth/bandwidth-webrtc-swift)                 | **FIX THIS** - a better explanation |
+  | [iOS](https://github.com/Bandwidth/bandwidth-webrtc-swift)                 | Bandwidth's WebRTC implementation suitable for iOS devices |
   | [Android](https://github.com/Bandwidth/bandwidth-android)                  | **FIX THIS** - a better explanation |
 - The Bandwidth Server API SDKs
 
