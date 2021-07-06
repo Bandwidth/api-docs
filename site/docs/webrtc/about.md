@@ -43,9 +43,11 @@ Bandwidth enhances the use of WebRTC by wrapping standardized multimedia capabil
 
 At a very high level the model simplifies the browser and server-level interactions with the media and signaling/session control levels:
 
-<center>
-<img src="../../static/img/simple.svg" alt="The simplest view of Bandwidth WebRTC" width="35%"/>
-</center>
+<img
+  src={require('../../../static/img/simple.svg').default}
+  alt="The simplest view of Bandwidth WebRTC"
+  class="center"
+/>
 
 This approach allows for simple and powerful...
 
@@ -70,7 +72,7 @@ The model underlying Bandwidth's WebRTC soution allows the application to contro
 - **subscriptions** - essentially who "listens to" whom. It is possible to create complex topologies to address specific application needs
 - **media** - the specific media that is exchanged between any subscribed participants and/or sessions
 
-With these elements under applicaiton control almost any real time communication imaginable can be created.
+With these elements under application control almost any real time communication imaginable can be created.
 
 The details of this model and its control are covered in greater detail in the document section [Bandwidth WebRTC Model Details](overview.md)
 
@@ -82,11 +84,13 @@ Bandwidth brings a comprehensive Programmable Voice network capability to the ov
 
 This enables creation of Browser-based endpoints that participate in voice network, WebRTC video communication that extends into the PSTN, and everything in between.
 
-<center>
-<img src="../../static/img/end-end_media_and_signaling.svg" alt="Interaction with the Bandwidth Programmable Voice network" width="60%"/>
-</center>
+<img
+  src={require('../../../static/img/end-end_media_and_signaling.svg').default}
+  alt="Interaction with the Bandwidth Programmable Voice network"
+  class="center"
+/>
 
-The Programmable Voice infrastrucutre uses SIP URI and User-User information to place, transfer, bridge, or conference WebRTC endpoints into PSTN calls. On the WebRTC side of the equation, the interconnection with the Programmable Voice shows up as a WebRTC participant in the overall WebRTC session, managed with the same level of fine-grained control described above.
+The Programmable Voice infrastructure uses SIP URI and User-User information to place, transfer, bridge, or conference WebRTC endpoints into PSTN calls. On the WebRTC side of the equation, the interconnection with the Programmable Voice shows up as a WebRTC participant in the overall WebRTC session, managed with the same level of fine-grained control described above.
 
 ## Learning about WebRTC
 
