@@ -1,7 +1,7 @@
 ---
 id: about
-title: A WebRTC Summary
-slug: /webrtc/about
+title: About
+slug: /webrtc
 description: A general overview of Bandwidth's account services
 keywords:
   - bandwidth
@@ -10,8 +10,6 @@ keywords:
 hide_title: true
 image: ../../static/img/bandwidth-logo.png
 ---
-
-# A WebRTC Summary
 
 ## Summary
 
