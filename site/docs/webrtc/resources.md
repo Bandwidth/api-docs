@@ -11,14 +11,6 @@ hide_title: true
 image: ../../static/img/bandwidth-logo.png
 ---
 
-# Bandwidth WebRTC Resources
-
-## Trying it Out
-
-The [Bandwidth WebRTC Sample Video Conference](https://https://meet.edge.bandwidth.com/) provides you an opportunity to try out some Video Conferencing, and see the API calls that are used to achieve it (if you are good at using browser developer tools).
-
-Note that this is not intended as a full fledged conferencing system - it is mearly a sample application that we have elected to host for demonstration purposes.
-
 ## SDKs
 
 If you are an SDK user, there are a pair of them that you will want: a client SDK and a Server SDK:

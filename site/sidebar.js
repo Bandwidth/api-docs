@@ -69,10 +69,17 @@ module.exports = {
       label: "WebRTC",
       items: [
         "webrtc/about",
-        "webrtc/overview",
-        "webrtc/quickstart",
-        "webrtc/resources",
-        "webrtc/callflow",
+        {
+          type: "category",
+          label: "Guides and Tutorials",
+          items: [
+            "webrtc/overview",
+            "webrtc/quickstart",
+            "webrtc/callflow",
+            "webrtc/resources"
+          ],
+        },
+        "webrtc/errors"
       ],
     },
     {

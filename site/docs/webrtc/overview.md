@@ -11,8 +11,6 @@ hide_title: true
 image: ../../static/img/bandwidth-logo.png
 ---
 
-# Bandwidth WebRTC Model Details
-
 ## More details on Bandwidth WebRTC
 
 WebRTC utilizes two forms of communication: the media streams themselves and signaling. **Signaling** is responsible for:

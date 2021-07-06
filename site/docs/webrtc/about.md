@@ -1,7 +1,7 @@
 ---
 id: about
-title: A WebRTC Summary
-slug: /webrtc/about
+title: About
+slug: /webrtc
 description: A general overview of Bandwidth's account services
 keywords:
   - bandwidth
@@ -10,8 +10,6 @@ keywords:
 hide_title: true
 image: ../../static/img/bandwidth-logo.png
 ---
-
-# A WebRTC Summary
 
 ## An Intro to WebRTC
 
@@ -27,9 +25,9 @@ Standard browser APIs for access to sources of media ( [getUserMedia](https://de
 
 ### Media
 
-One of the intended sideeffects of the browser-centric approach taken with WebRTC is the broad spectrum of media that can be exchanged, and the flexibility available in exchanging that media. The enpoints of any media streams are free to free to adapt the to constraints of the channel with a suite of codecs, and additional application-specific data can be exchanged using WebRTC data channels.
+One of the intended side-effects of the browser-centric approach taken with WebRTC is the broad spectrum of media that can be exchanged, and the flexibility available in exchanging that media. The endpoints of any media streams are free to free to adapt the to constraints of the channel with a suite of codecs, and additional application-specific data can be exchanged using WebRTC data channels.
 
-Whether it is voice, video, screen-sharing or applicaion-specific data, WebRTC supports it.
+Whether it is voice, video, screen-sharing or application-specific data, WebRTC supports it.
 
 ### Programmibility
 
@@ -43,7 +41,7 @@ Your application completely controls who "talks to" whom.
 
 Bandwidth enhances the use of WebRTC by wrapping standardized multimedia capabilities in an API and SDK suite that simplifies the creation of communication applications that fully leverage the power of both WebRTC and the Bandwidth voice network.
 
-At a very high level the model simplifies the browser and server-level interactions with the media and signalling/session control levels:
+At a very high level the model simplifies the browser and server-level interactions with the media and signaling/session control levels:
 
 <center>
 <img src="../../static/img/simple.svg" alt="The simplest view of Bandwidth WebRTC" width="35%"/>

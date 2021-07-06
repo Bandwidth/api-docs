@@ -1,6 +1,6 @@
 ---
 id: quickstart
-title: A WebRTC Walkthrough
+title: Quickstart
 slug: /webrtc/quickstart
 description: run through this for some fun
 keywords:
@@ -11,11 +11,9 @@ hide_title: true
 image: ../../static/img/bandwidth-logo.png
 ---
 
-# A WebRTC Walkthrough
-
 ## How it works
 
-For the purposes of this guide, we will walk you through the sample app in _Node.js_, but the idea is the same in all languages.
+For the purposes of this guide, we will walk you through the **[webrtc-hello-world-ts sample app](https://github.com/Bandwidth-Samples/webrtc-hello-world-ts)** in _Node.js_, but the idea is the same in all languages.
 
 ### Creating a session and participants
 

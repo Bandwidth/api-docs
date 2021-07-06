@@ -1,6 +1,6 @@
 ---
 id: callflow
-title: WebRTC Callflows for those who care
+title: Callflows
 slug: /webrtc/callflow
 description: How's a call happen anyway ?
 keywords:
@@ -10,8 +10,6 @@ keywords:
 hide_title: true
 image: ../../static/img/bandwidth-logo.png
 ---
-
-# WebRTC Callflows for those who care
 
 ## API Call Flows
 
