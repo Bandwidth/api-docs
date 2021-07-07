@@ -1,4 +1,5 @@
 #!/bin/sh
 
 npm install
-node site/scripts/validate_code_snippets.js js node
+cd site/code-snippets && npm install
+node site/scripts/validate_code_snippets.js
