@@ -2,4 +2,4 @@
 
 npm install
 cd site/code-snippets && npm install && cd .. && cd ..
-node site/scripts/validate_code_snippets.js
+python3 site/scripts/validate_code_snippets.py js node
