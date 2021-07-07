@@ -17,9 +17,11 @@ image: ../../static/img/bandwidth-logo.png
 
 In this diagram we will review the interactions you will need in order to establish a working WebRTC session. To simplify the diagram, we are showing only one web browser in the session, but adding more merely follows the same pattern.
 
-<center>
-<img src="../../static/img/webrtc_callflow1.png" alt="Connecting a WebRTC endpoint" width="45%"/>
-</center>
+<img
+  src='../../img/webrtc_callflow1.png'
+  alt="Connecting a WebRTC endpoint"
+  class="center"
+/>
 
 We start by creating a Session (1) and a Participant (2), and then adding the Participant to the Session (3) - when we do so, we will be specifying a Subscription to the SessionId within the _body_ parameter of the addParticipantToSession() call.
 
@@ -37,9 +39,11 @@ At the conclusion of the session, the browser javascript should call disconnect(
 
 Establishing a connection between the WebRTC Session and the Bandwidth Programmable Voice network uses the Voice APIs to establish calls on the voice network side, and then transfers or bridges that call to the WebRTC session.
 
-<center>
-<img src="../../static/img/webrtc_callflow2.png" alt="Connecting a WebRTC endpoint" width="50%"/>
-</center>
+<img
+  src='../../img/webrtc_callflow2.png'
+  alt="Connecting a WebRTC endpoint"
+  class="center"
+/>
 
 We start by initiating an outbound call via the Bandwidth VoiceAPI using the createCall() (1). Once that is established (you’ll receive a callback [XYZ]), you create a Session (2) and then create a Participant for this PSTN caller (3).
 
