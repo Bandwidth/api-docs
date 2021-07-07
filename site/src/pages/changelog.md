@@ -7,6 +7,7 @@ slug: /changelog
 
 | Date | Notes |
 |--|--|
+| July 7nd, 2021 | Updated Phone Number Lookup spec to reflect that all property names in the result section are now camelcase.|
 | July 2nd, 2021 | Updated WebRTC's parameter order definition. `sessionId` should always be passed in before `participantId` when both are present |
 | May 20, 2021  | Updated Phone Number Lookup spec to remove X-accountId and replace with path parameter |
 | May 5th, 2021 | Update WebRTC's `callbackUrl` parameter in Participant to be nullable. |
