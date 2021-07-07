@@ -10,11 +10,11 @@ const fs = require("fs")
 var path = require('path')
 
 try {
-  const arrayOfFiles = fs.readdirSync("../code-snippets")
+  const arrayOfFiles = fs.readdirSync("site/code-snippets")
   arrayOfFiles.forEach (product => {
-    const operationFiles = fs.readdirSync("../code-snippets/" + product)
+    const operationFiles = fs.readdirSync("site/code-snippets/" + product)
     operationFiles.forEach (operation => {
-      const sampleFileArray = fs.readdirSync("../code-snippets/" + product + "/" + operation)
+      const sampleFileArray = fs.readdirSync("site/code-snippets/" + product + "/" + operation)
       // console.log(sampleFileArray)
       sampleFileArray.forEach(file => {
         if (path.extname(file) == ".js"){
