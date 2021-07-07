@@ -21,6 +21,12 @@ const payload = {
   expirationTimeInMinutes: 3
 }
 
-const response = await controller.verifyTwoFactor(BW_ACCOUNT_ID, payload);
+const verifyTwoFactor = async function() {
+  try {
+    const response = await controller.verifyTwoFactor(BW_ACCOUNT_ID, payload);
+    console.log(JSON.stringify(response, null, 2));
+  } catch (error) {
+    console.error(error);
+}};
 
-console.log(JSON.stringify(response, null, 2));
+verifyTwoFactor();

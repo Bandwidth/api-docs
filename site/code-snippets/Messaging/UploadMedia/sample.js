@@ -7,7 +7,7 @@ const BW_ACCOUNT_ID = process.env["BW_ACCOUNT_ID"];
 const mediaId = "abc123.pdf";
 const contentType = "application/octet-stream";
 const cacheControl = "no-cache";
-const contents = fs.readFileSync("file-to-read.pdf", "binary");
+const contents = 0b12345; // Any binary string will work for the upload. This includes file contents
 
 const client = new Client({
   basicAuthUserName: BW_USERNAME,

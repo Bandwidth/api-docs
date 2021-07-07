@@ -23,6 +23,12 @@ const payload = {
   message: "Your temporary {NAME} {SCOPE} code is {CODE}"
 }
 
-const response = await controller.voiceTwoFactor(BW_ACCOUNT_ID, payload);
+const voiceTwoFactor = async function() {
+  try {
+    const response = await controller.voiceTwoFactor(BW_ACCOUNT_ID, payload);
+    console.log(JSON.stringify(response, null, 2));
+  } catch (error) {
+    console.error(error);
+}};
 
-console.log(JSON.stringify(response, null, 2));
+voiceTwoFactor();
