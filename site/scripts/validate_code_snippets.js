@@ -4,16 +4,6 @@ validate_code_snippets.js
 Validates the language code snippets. This really only checks for proper syntax; API integration tests
 that are order dependent will be handled in the SDK repos.
 */
-// const { exec } = require("child_process");
-//
-// exec('ls -la', (error, stdout, stderr) => {
-//   if (error) {
-//     console.error(`exec error: ${error}`);
-//     return;
-//   }
-//   console.log(`stdout: ${stdout}`);
-//   console.error(`stderr: ${stderr}`);
-// });
 
 const { exec } = require("child_process");
 const fs = require("fs")
@@ -34,7 +24,7 @@ try {
               console.error(`exec error: ${error}`);
               return;
             }
-            console.log(`stdout: ${stdout}`);
+            // console.log(`stdout: ${stdout}`);
             console.error(`stderr: ${stderr}`);
           });
         }
@@ -64,3 +54,14 @@ try {
 // } catch(e) {
 //     console.log(e)
 // }
+
+// const { exec } = require("child_process");
+//
+// exec('ls -la', (error, stdout, stderr) => {
+//   if (error) {
+//     console.error(`exec error: ${error}`);
+//     return;
+//   }
+//   console.log(`stdout: ${stdout}`);
+//   console.error(`stderr: ${stderr}`);
+// });
