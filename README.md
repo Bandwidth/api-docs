@@ -95,30 +95,32 @@ This file defines the configuration for the docusaurus site. It controls the nav
 This file defines the sidebar for the docs section of the site. Changes here will be reflected in the docs page, essentially this controls the naviagtion for the entirety of the docs section.
 
 The sidebar.js file can be configured to create multiple sidebar groups that can be hidden depending on which documentation is being viewed. Ex. only a sidebar pertaining to messaging can be shown when looking at docs related to messaging. Code ex.:
-    
-    module.exports = {
-      accountSidebar: {
-          'Account': [
-            'account/structure',
-            'account/credentials',
-          ],
-        },
-      numbersSidebar: {
-          'Numbers': [
-            'numbers/about-numbers'
-          ],
-        },
-        voiceSidebar: {
-          'Voice': [
-            'voice/about-voice'
-          ],
-        },
-        messagingSidebar: {
-          'Messaging': [
-            'messaging/about-messaging'
-          ],
-        },
-    };
+
+```
+module.exports = {
+  accountSidebar: {
+    'Account': [
+      'account/structure',
+      'account/credentials',
+    ],
+  },
+  numbersSidebar: {
+    'Numbers': [
+       'numbers/about-numbers'
+    ],
+  },
+  voiceSidebar: {
+    'Voice': [
+      'voice/about-voice'
+    ],
+  },
+  messagingSidebar: {
+    'Messaging': [
+      'messaging/about-messaging'
+    ],
+  },
+};
+```
 
 When looking at `account/structure` in this sidebar config - the user woild only see the other docs under the `Account` object and not anything pertaining to voice/messaging/etc.
 
@@ -136,7 +138,7 @@ The formatted OpenAPI specs used as the source of truth for the docsite will be 
 
 #### /docs
 
-Markdown documents will be placed in this sub-directories here - depending on which product they apply to. Any content added here will need to be added to the `sidebar.js` folder to make it possible for users to find - otherwise the doc will be inaccessable witout a direct link.
+Markdown documents will be placed in this sub-directories here - depending on which product they apply to. Any content added here will need to be added to the `sidebar.js` file to make it possible for users to find - otherwise the doc will be inaccessable witout a direct link.
 
 #### /blog
 
@@ -171,7 +173,7 @@ The Docusaurus flavored markdown also supports setting markdown attributes in th
     ---
     id: docId    <!--the document id - used as a referece in the sidebar.js folder-->
     title: Document Title    <!--Used by Docusaurus to generate the title properly (for SEO)-->
-    slug: /docs/{product}/docName    <!--generates the path after the base URL to provide a neat link for sharing-->
+    slug: /{product}/docName    <!--generates the path after the base URL to provide a neat link for sharing-->
     description: description of your document <!--becomes the <meta name="description" content="..."/> and <meta property="og:description" content="..."/> in <head>, used by search engines. If this field is not present, it will default to the first line of the contents.-->
     keywords: <!--Keywords meta tag for the document page, for search engines.-->
       - some
