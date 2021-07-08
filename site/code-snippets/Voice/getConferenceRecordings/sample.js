@@ -16,7 +16,7 @@ const accountId = BW_ACCOUNT_ID;
 const conferenceId = 'c-abc12345-6defabc1-2345-6def-abc1-23456defabc1';
 
 const getConferenceRecordings = async function() {
-  try{
+  try {
       const response = await controller.getQueryMetadataForAccountAndConference(accountId, conferenceId);
       console.log(response)
   } catch(error) {

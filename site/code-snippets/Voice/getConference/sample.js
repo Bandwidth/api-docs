@@ -16,7 +16,7 @@ const accountId = BW_ACCOUNT_ID;
 const conferenceId = 'conf-abc12345-6defabc1-2345-6def-abc1-23456defabc1';
 
 const getConference = async function() {
-  try{
+  try {
       const response = await controller.getConferenceById(accountId, conferenceId);
       console.log(response)
   } catch(error) {

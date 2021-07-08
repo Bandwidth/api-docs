@@ -15,7 +15,7 @@ const accountId = BW_ACCOUNT_ID;
 const sessionId = "75c21163-e110-41bc-bd76-1bb428ec85d5"
 
 const getSession = async function() {
-  try{
+  try {
     const response = await controller.getSession(accountId, sessionId)
     console.log(response.body);
   } catch(error) {

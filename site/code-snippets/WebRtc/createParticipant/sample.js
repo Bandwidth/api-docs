@@ -14,7 +14,7 @@ const controller = new ApiController(client);
 const accountId = BW_ACCOUNT_ID;
 
 const createParticipant = async function() {
-  try{
+  try {
     const response = await controller.createParticipant(accountId, {
       callbackUrl: "http://www.myapp.com/new",
       publishPermissions: ["AUDIO"]

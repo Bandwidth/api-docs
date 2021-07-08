@@ -14,7 +14,7 @@ const controller = new ApiController(client);
 const accountId = BW_ACCOUNT_ID;
 
 const createSession = async function() {
-  try{
+  try {
     const response = await controller.createSession(accountId, {
       tag: '{"SessionName": "my_session"}'
     })

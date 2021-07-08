@@ -14,7 +14,7 @@ const controller = new ApiController(client);
 const accountId = BW_ACCOUNT_ID;
 
 const getCallRecordings = async function() {
-  try{
+  try {
       const response = await controller.getQueryMetadataForAccount(accountId);
       console.log(response)
   } catch(error) {

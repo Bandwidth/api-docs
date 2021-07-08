@@ -17,7 +17,7 @@ const conferenceId = 'conf-abc12345-6defabc1-2345-6def-abc1-23456defabc1';
 const memberId = 'c-abc12345-6defabc1-2345-6def-abc1-23456defabc1';
 
 const getConferenceMember = async function() {
-  try{
+  try {
       const response = await controller.getConferenceMember(accountId, conferenceId, memberId);
       console.log(response)
   } catch(error) {

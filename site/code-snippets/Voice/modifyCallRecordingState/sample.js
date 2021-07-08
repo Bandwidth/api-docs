@@ -16,7 +16,7 @@ const accountId = BW_ACCOUNT_ID;
 const callId = 'c-abc12345-6defabc1-2345-6def-abc1-23456defabc1';
 
 const modifyCallRecordingState = async function() {
-  try{
+  try {
       const response = await controller.modifyCallRecordingState(accountId, callId, {
       state: 'PAUSED'
     });

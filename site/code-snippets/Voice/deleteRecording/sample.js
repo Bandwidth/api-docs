@@ -18,7 +18,7 @@ const recordingId = 'r-abc12345-6def-abc1-2345-6defabc12345';
 
 const deleteRecording = async function() {
   // Delete the recording information, media and transcription.
-  try{
+  try {
       const response = await controller.deleteRecording(accountId, callId, recordingId);
       console.log(response.body);
   } catch(error) {

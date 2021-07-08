@@ -18,7 +18,7 @@ const controller = new ApiController(client);
 const accountId = BW_ACCOUNT_ID;
 
 const makeCall = async function() {
-  try{
+  try {
     const response = await controller.createCall(accountId, {
         applicationId: BW_VOICE_APPLICATION_ID,
         to: USER_NUMBER,

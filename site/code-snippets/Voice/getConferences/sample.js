@@ -14,7 +14,7 @@ const controller = new ApiController(client);
 const accountId = BW_ACCOUNT_ID;
 
 const getConferences = async function() {
-  try{
+  try {
       const response = await controller.getConferencesByAccount(accountId);
       console.log(response)
   } catch(error) {

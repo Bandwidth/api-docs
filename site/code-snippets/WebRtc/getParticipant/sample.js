@@ -15,7 +15,7 @@ const accountId = BW_ACCOUNT_ID;
 const participantId = "320e2af6-13ec-498d-8b51-daba52c37853"
 
 const getParticipant = async function() {
-  try{
+  try {
     const response = await controller.getParticipant(accountId, participantId)
     console.log(response.body);
   } catch(error) {
