@@ -16,12 +16,10 @@ $client = new BandwidthLib\BandwidthClient($config);
 
 $webRtcClient = $client->getWebRtc()->getClient();
 
-$body = new BandwidthLib\WebRtc\Models\Participant();
-$body->publishPermissions = array("AUDIO", "VIDEO");
-$body->deviceApiVersion = "V3";
+$participantId = "1234-abcd";
 
 try {
-    $webRtcClient->deleteParticipant($BW_ACCOUNT_ID, $body);
+    $webRtcClient->deleteParticipant($BW_ACCOUNT_ID, $participantId);
 } catch (BandwidthLib\APIException $e) {
     print_r($e->getResponseCode());
 }

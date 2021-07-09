@@ -17,7 +17,7 @@ $client = new BandwidthLib\BandwidthClient($config);
 $webRtcClient = $client->getWebRtc()->getClient();
 
 $sessionId = "1234-abcd";
-$participantId = "4321-dcba"
+$participantId = "4321-dcba";
 
 try {
     $webRtcClient->addParticipantToSession($BW_ACCOUNT_ID, $sessionId, $participantId);
