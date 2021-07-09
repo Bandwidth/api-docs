@@ -52,6 +52,7 @@ module.exports = {
             "numbers/orderingNumbers",
             "numbers/disconnectNumbers",
             "numbers/manageNumberFeatures",
+            "numbers/downloadingReports",
           ],
         },
         "numbers/errors",
