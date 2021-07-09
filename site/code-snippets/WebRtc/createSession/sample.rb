@@ -18,7 +18,7 @@ body = Session.new
 body.tag = "tag"
 
 begin
-    response = web_rtc_client.create_session(BW_ACCOUNT_ID, body)
+    response = web_rtc_client.create_session(BW_ACCOUNT_ID, :body => body)
     puts response.data.id
 rescue APIException => e
     puts e.response_code

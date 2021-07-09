@@ -19,7 +19,7 @@ body.publish_permissions = ["AUDIO", "VIDEO"]
 body.device_api_version = "V3"
 
 begin
-    response = web_rtc_client.create_participant(BW_ACCOUNT_ID, body)
+    response = web_rtc_client.create_participant(BW_ACCOUNT_ID, :body => body)
     puts response.data.participant.id
 rescue APIException => e
     puts e.response_code
