@@ -1,0 +1,292 @@
+---
+id: orderingNumbers
+title: Ordering Numbers
+slug: /numbers/guides/orderingNumbers
+description: How to order available numbers using the Bandwidth API
+keywords:
+  - bandwidth
+  - numbers
+  - order
+hide_title: true
+image: ../../static/img/bandwidth-logo.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+export const accountId = "{accountId}";
+export const orderId = "{orderId}";
+export const disconnectId = "{disconnectId}";
+
+export const Highlight = ({children, color}) => (
+    <span
+      style={{
+        backgroundColor: color,
+        borderRadius: '2px',
+        color: '#fff',
+        padding: '0.2rem',
+      }}>
+      {children}
+    </span>
+  );
+
+This guide will take you through the basics of ordering phone numbers with the Bandwidth Dashboard API.
+
+## Polling vs. Webhooks
+
+Phone number ordering in the Bandwidth Dashboard is asyncronous when creating an "order". The orders are then processed and the order status is updated asyncronously.  Bandwidth recommends configuring your account with a subscription a instead of polling the order resource for `<OrderStatus>`.
+
+Order processing times can vary and are not guaranteed, so bandwidth does __not__ recommend setting a timeout on waiting for an order to show either `COMPLETE` or `FAILED` status, but instead relying on a webhook from an orders subscription.
+
+## Order Phone Numbers {#order-phone-numbers}
+
+Ordering Phone Numbers for use with the network allows you to provosion specific phone numbers from available inventory that have been discovered in a search.
+
+### Possible Order Types
+
+The Dashboard API allows you to submit different order types in your API request body to order numbers based on different requirements.
+
+| Order Type                           | Description |
+|:-------------------------------------|:------------|
+| `ExistingTelephoneNumberOrderType`   | Order a known, available number or set of numbers |
+| `AreaCodeSearchAndOrderType`         | Order an unknown number or group of numbers from the same Area Code |
+| `RateCenterSearchAndOrderType`       | Order an unknown number or group of numbers from the same Rate Center |
+| `NPANXXSearchAndOrderType`           | Order an unknown number or group of numbers from the same NPANxx |
+| `TollFreeVanitySearchAndOrderType`   | Order an unknown toll-free number or group of toll-free numbers from that follow a specified vanity pattern |
+| `TollFreeWildCharSearchAndOrderType` | Order an unknown toll-free number or group of toll-free numbers from any toll-free area code (ex. 8** or 83*) |
+| `StateSearchAndOrderType`            | Order an unknown number or group of numbers from the same state |
+| `CitySearchAndOrderType`             | Order an unknown number or group of numbers from the same city |
+| `ZIPSearchAndOrderType`              | Order an unknown number or group of numbers from the same zip code |
+| `LATASearchAndOrderType`             | Order an unknown number or group of numbers from the same LATA |
+| `CombinedSearchAndOrderType`         | Order an unknown number or group of numbers from a combination of search parameters |
+
+To see specific examples of each order type, please visit the [Dashboard API Reference](../../../numbers-api-reference).
+
+### Request URL
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/orders</code>
+
+### Common Request Parameters
+
+**EVERY** type of order can/must include the parameters below
+
+| Parameter            | Required | Description                                                                                                                                                                                                                                                                                                                                          |
+|:---------------------|:---------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `Quantity`           | No       | The desired quantity of requested numbers. values range from 1-5000.  Default: `5000`                                                                                                                                                                                                                                                        |
+| `CustomerOrderId`    | No       | Optional value for Id set by customer                                                                                                                                                                                                                                                                                                                |
+| `SiteId`             | Yes      | The ID of the Site (Sub-Account) that the SIP Peer is to be associated with.                                                                                                                                                                                                                                                                    |
+| `PeerId`             | No       | The ID of the SIP Peer (Location) that the telephone numbers are to be assigned to.                                                                                                           |
+| `PartialAllowed`     | No       | By default all order submissions are fulfilled partially. Setting the `PartialAllowed` to false would trigger the entire order to be fulfilled (any error encountered such as 1 TN not being available would fail all TNs in the order)  Default: `false`                                                                                    |
+| `BackOrderRequested` | No       | `BackOrderRequested` will indicate to the system that if the entire quantity of numbers is not available on the first attempt to fill the new number order, the request will be repeated periodically until the request is successful or canceled.  `true` - Backorder numbers if the entire quantity is not available  Default: `false` |
+
+### Order Type Specific Request Parameters
+
+These parameters _may or may not_ be required based on the type of order.  Check out the reference documentation for more information on the different types of orders
+
+| Parameter                                                                  | Description                                                                                                                                                                                                                                                                                                                                                                                                 |
+|:---------------------------------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `TelephoneNumberList`                                                      | A list of telephone numbers to order                                                                                                                                                                                                                                                                                                                                                                        |
+| `AreaCode`                                                                 | Allowed ranged: [2-9] for the first digit and [0, 9] for both the second and third digits.                                                                                                                                                                                                                                                                                                                  |
+| `RateCenter`                                                               | A text Rate Center name. Must be combined with State information                                                                                                                                                                                                                                                                                                                                            |
+| `State`                                                                    | The two-letter abbreviation of the state                                                                                                                                                                                                                                                                                                                                                                    |
+| `City`                                                                     | The name of the city that the Ordered telephone numbers should apply to                                                                                                                                                                                                                                                                                                                                     |
+| `Zip`                                                                      | A five-digit (XXXXX) or nine-digit (XXXXX-XXXX) format value.                                                                                                                                                                                                                                                                                                                                               |
+| `Lata`                                                                     | A maximum five-digit (XXXXX) numeric format.                                                                                                                                                                                                                                                                                                                                                                |
+| `EnableLCA`                                                                | If set to `true`, local calling access numbers will be returned for Rate Center, NPA-NXX and NPANXXX orders if numbers are not available for the given criteria.  Default: `true`.                                                                                                                                                                                                                  |
+| `Npa-Nxx`  -or-  `Npa-Nxxxx`  ⚠️ with `EnableLCA` : `true` | NpaNxx combination to be searched.  Valid Npa values: [2-9] for the first digit, and [0-9] for both the second and third digits.  Valid Nxx values: [2-9] for the first digit, and [0-9] for both the second and third digits.  Valid Xxvalues [0-9].  ℹ️  If set to true, enables the ability to get local calling access numbers if numbers are not available for the given criteria. |
+| `LocalVanity`                                                              | A text string used to request a regular vanity number. Valid range is between 4 and 7 alphanumeric characters.                                                                                                                                                                                                                                                                                              |
+| `EndsIn`                                                                   | Intended to use with `LocalVanity` only.  -`true` : the search will look for only numbers which end in specified `LocalVanity`  -`false`: `LocalVanity` sequence can be met anywhere in last 7 number digits.  Default: `false`                                                                                                                                                             |
+| `TollFreeVanity`                                                           | A text string used to request a toll free vanity number. Valid range is between 4 and 7 alphanumeric characters.                                                                                                                                                                                                                                                                                            |
+| `TollFreeWildCardPattern`                                                  | A 3-digit wild card pattern for specifying toll free prefixes, comprised of 8 followed by two stars, a digit and a star or two digits                                                                                                                                                                                                                                                                       |
+| `ReservationIdList`                                                        | If a telephone number or numbers have been previously reserved, the ReservationIdList provides the IDs necessary to release the numbers. This only applies to reserved numbers - if no reservation has been placed on the numbers this list is not required.                                                                                                                                                |
+| `TnAttributes`                                                             | Attributes to be assigned to the telephone number. Optional parameter. Possible values: `Protected`                                                                                                                                                                                                                                                                                                         |
+
+### Examples
+
+<Tabs
+  groupId="http_number_order"
+  defaultValue="area_code_order"
+  values={[
+    { label: 'Order by Area Code', value: 'area_code_order', },
+    { label: 'Order a Specific Number', value: 'specific_tn_order', },
+  ]
+}>
+<TabItem value="area_code_order">
+
+Search and Order 1 Number in a specific Area Code
+> Request
+
+```xml
+POST https://dashboard.bandwidth.com/api/accounts/{accountId}/orders HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<Order>
+    <AreaCodeSearchAndOrderType>
+        <AreaCode>910</AreaCode>
+        <Quantity>1</Quantity>
+    </AreaCodeSearchAndOrderType>
+    <SiteId>461</SiteId>
+</Order>
+```
+
+> Response
+
+```xml
+HTTP/1.1 201 Created
+Content-Type: application/xml; charset=utf-8
+Location: https://dashboard.bandwidth.com/api/accounts/{accountId}/orders/47955555-ce10-456e-8cb9-eb13b9f14cfd
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OrderResponse>
+    <Order>
+        <OrderCreateDate>2018-01-23T19:56:29.678Z</OrderCreateDate>
+        <BackOrderRequested>false</BackOrderRequested>
+        <id>47955555-67aa-4adb-8c0f-b6894e60c0dc</id>
+        <AreaCodeSearchAndOrderType>
+            <AreaCode>910</AreaCode>
+            <Quantity>1</Quantity>
+        </AreaCodeSearchAndOrderType>
+        <PartialAllowed>true</PartialAllowed>
+        <SiteId>461</SiteId>
+    </Order>
+    <OrderStatus>RECEIVED</OrderStatus>
+</OrderResponse>
+```
+
+</TabItem>
+<TabItem value="specific_tn_order">
+
+Order a specific Number
+> Request
+
+```xml
+POST https://dashboard.bandwidth.com/api/accounts/{accountId}/orders HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<Order>
+    <ExistingTelephoneNumberOrderType>
+        <TelephoneNumberList>
+            <TelephoneNumber>9198675309</TelephoneNumber>
+        </TelephoneNumberList>
+    </ExistingTelephoneNumberOrderType>
+    <SiteId>461</SiteId>
+</Order>
+```
+
+> Response
+
+```xml
+HTTP/1.1 201 Created
+Content-Type: application/xml; charset=utf-8
+Location: https://dashboard.bandwidth.com/api/accounts/{accountId}/orders/47955555-ce10-456e-8cb9-eb13b9f14cfd
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OrderResponse>
+    <Order>
+        <OrderCreateDate>2018-01-23T19:56:29.678Z</OrderCreateDate>
+        <BackOrderRequested>false</BackOrderRequested>
+        <id>47955555-67aa-4adb-8c0f-b6894e60c0dc</id>
+        <ExistingTelephoneNumberOrderType>
+            <TelephoneNumberList>
+                <TelephoneNumber>9198675309</TelephoneNumber>
+            </TelephoneNumberList>
+        </ExistingTelephoneNumberOrderType>
+        <PartialAllowed>true</PartialAllowed>
+        <SiteId>461</SiteId>
+    </Order>
+    <OrderStatus>RECEIVED</OrderStatus>
+</OrderResponse>
+```
+
+</TabItem>
+</Tabs>
+
+
+## Fetching Order Information {#get-order-info}
+
+A <Highlight color="#00bf8c">GET</Highlight> Request to an existing order will return it's status as well as any information originally used to create the order.
+
+### Request URL
+<Highlight color="#00bf8c">GET</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/orders/{orderId}</code>
+
+### Examples
+
+<Tabs
+  groupId="http_number_order_search"
+  defaultValue="webhook_order_status"
+  values={[
+    { label: 'Order Status Webhook', value: 'webhook_order_status', },
+    { label: 'Poll for Order Status', value: 'poll_order_status', },
+  ]
+}>
+<TabItem value="webhook_order_status">
+
+Order Status Webhook
+
+**Note:** This is a webhook that bandwidth sends to _your_ server upon order completion/failure - there is no need to poll the resource if using this recommended method.
+
+```xml
+POST your_url.com/webhookService HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+
+<?xml version="1.0"?>
+<Notification>
+    <SubscriptionId>...</SubscriptionId>
+    <OrderType>OrderId</OrderType>
+    <CustomerOrderId>...</CustomerOrderId>
+    <Status>COMPLETE</Status>
+    <CompletedTelephoneNumbers>
+        <TelephoneNumber> ... </TelephoneNumber>
+    </CompletedTelephoneNumbers>
+</Notification>
+```
+
+</TabItem>
+<TabItem value="poll_order_status">
+
+Poll Order Information
+> Request
+
+```http
+GET https://dashboard.bandwidth.com/api/accounts/{accountId}/orders/d30eda5a-ce10-456e-8cb9-eb13b9f14cfd HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```
+
+> Response
+
+```xml
+HTTP/1.1 200 OK
+Content-Type: application/xml; charset=utf-8
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OrderResponse>
+    <CompletedQuantity>1</CompletedQuantity>
+    <CreatedByUser>jbm</CreatedByUser>
+    <LastModifiedDate>2018-01-23T19:56:29.782Z</LastModifiedDate>
+    <OrderCompleteDate>2018-01-23T19:56:29.782Z</OrderCompleteDate>
+    <Order>
+        <OrderCreateDate>2018-01-23T19:56:29.678Z</OrderCreateDate>
+        <PeerId>651681</PeerId>
+        <BackOrderRequested>false</BackOrderRequested>
+        <AreaCodeSearchAndOrderType>
+            <AreaCode>910</AreaCode>
+            <Quantity>1</Quantity>
+        </AreaCodeSearchAndOrderType>
+        <PartialAllowed>true</PartialAllowed>
+        <SiteId>24717</SiteId>
+    </Order>
+    <OrderStatus>COMPLETE</OrderStatus>
+    <CompletedNumbers>
+        <TelephoneNumber>
+            <FullNumber>9102414365</FullNumber>
+        </TelephoneNumber>
+    </CompletedNumbers>
+    <Summary>1 number ordered in (910)</Summary>
+    <FailedQuantity>0</FailedQuantity>
+</OrderResponse>
+```
+
+</TabItem>
+</Tabs>

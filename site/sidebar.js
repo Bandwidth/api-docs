@@ -47,7 +47,12 @@ module.exports = {
         {
           type: "category",
           label: "Guides and Tutorials",
-          items: [],
+          items: [
+            "numbers/searchingNumbers",
+            "numbers/orderingNumbers",
+            "numbers/disconnectNumbers",
+            "numbers/manageNumberFeatures",
+          ],
         },
         "numbers/errors",
       ],
