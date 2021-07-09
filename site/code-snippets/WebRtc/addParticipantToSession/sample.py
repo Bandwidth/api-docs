@@ -17,6 +17,6 @@ session_id = "1234-abcd"
 participant_id = "4321-dcba"
 
 try:
-    web_rtc_client.add_participant_to_session(BW_ACCOUNT_ID, body)
+    web_rtc_client.add_participant_to_session(BW_ACCOUNT_ID, session_id, participant_id)
 except APIException as e:
     print(e.response_code)
