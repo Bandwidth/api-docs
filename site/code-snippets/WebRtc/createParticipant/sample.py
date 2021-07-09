@@ -2,6 +2,8 @@ from bandwidth.bandwidth_client import BandwidthClient
 from bandwidth.exceptions.api_exception import APIException
 from bandwidth.webrtc.models.participant import Participant
 
+import os
+
 BW_USERNAME = os.environ["BW_USERNAME"]
 BW_PASSWORD = os.environ["BW_PASSWORD"]
 BW_ACCOUNT_ID = os.environ["BW_ACCOUNT_ID"]
