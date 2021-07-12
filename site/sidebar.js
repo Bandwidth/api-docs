@@ -14,8 +14,9 @@ module.exports = {
           type: "category",
           label: "Guides and Tutorials",
           items: [
-            "account/guides/structure",
-            "account/guides/credentials"
+            "account/credentials",
+            "account/structure",
+            "account/setup"
           ]},
         {
           type: "category",
