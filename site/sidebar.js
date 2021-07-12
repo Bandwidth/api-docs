@@ -109,11 +109,8 @@ module.exports = {
       label: "Multi-Factor Authentication",
       items: [
         "mfa/about",
-        {
-          type: "category",
-          label: "Guides and Tutorials",
-          items: [],
-        },
+        "mfa/errors",
+        "mfa/rateLimits"
       ],
     },
     {

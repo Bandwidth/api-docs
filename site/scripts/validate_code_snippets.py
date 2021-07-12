@@ -2,9 +2,9 @@
 validate_code_snippets.py
 
 Validates the language code snippets. This really only checks for proper syntax; API integration tests
-that are order dependent will be handled in the SDK repos. 
+that are order dependent will be handled in the SDK repos.
 
-The exit code of running each code snippet Take note that code snippets cannot have a non 0 exit 
+The exit code of running each code snippet Take note that code snippets cannot have a non 0 exit
 """
 import os
 
@@ -28,7 +28,7 @@ def main(extension, cli_exec_command, skip_files):
     #Execute each file
     success = True
     for code_file in code_files:
-        if not code_file in skip_files:
+        if (not code_file in skip_files) and (not "node_modules" in code_file):
             response_code = os.system("{cli_exec_command} {code_file}".format(cli_exec_command=cli_exec_command, code_file=code_file))
             if response_code != 0:
                 print(code_file + " returned code " + str(response_code))
