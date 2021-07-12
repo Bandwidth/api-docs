@@ -50,9 +50,10 @@ module.exports = {
           items: [
             "numbers/searchingNumbers",
             "numbers/orderingNumbers",
-            "numbers/disconnectNumbers",
+            "numbers/portingNumbers",
             "numbers/hostingNumbers",
             "numbers/manageNumberFeatures",
+            "numbers/disconnectNumbers",
             "numbers/downloadingReports",
           ],
         },
