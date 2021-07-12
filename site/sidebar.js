@@ -53,6 +53,7 @@ module.exports = {
             "numbers/portingNumbers",
             "numbers/hostingNumbers",
             "numbers/manageNumberFeatures",
+            "numbers/searchNumbers",
             "numbers/disconnectNumbers",
             "numbers/lookupNumbers",
             "numbers/downloadingReports",
