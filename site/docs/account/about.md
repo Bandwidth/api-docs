@@ -20,5 +20,4 @@ Your Bandwidth account is your entrypoint into using Bandwidth's products and se
 | [Structure](account/guides/structure) | An overview of Bandwidth's account structure |
 | [Setup](account/guides/setup) | How to set up your Bandwidth Dashboard account |
 
-
 </center>
