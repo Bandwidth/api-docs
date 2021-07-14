@@ -19,8 +19,6 @@ public class Sample {
         Session session = new Session();
         session.setTag("new-session");
 
-        This should blow up the build.
-
         try {
             ApiResponse<Session> response = client.getWebRtcClient().getAPIController().createSession(ACCOUNT_ID, session);
         } catch (ApiException|IOException ex) {
