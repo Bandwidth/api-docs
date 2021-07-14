@@ -11,14 +11,13 @@ import os
 CODE_SNIPPETS_PATH = "site/code-snippets"
 
 
-def main(extension, cli_exec_command, cli_args, skip_files):
+def main(extension, cli_exec_command, skip_files):
     """
     Main function
 
     Args:
         extension (str): The file extension to search for (ex: py, rb)
         cli_exec_command (str): The command to execute the file (ex: python, ruby)
-        cli_args (str): Additional command options
         skip_files (list<str>): A list of files to skip validation on
     """
     #Use `find` to list all the files in the code snippets.
@@ -30,7 +29,7 @@ def main(extension, cli_exec_command, cli_args, skip_files):
     success = True
     for code_file in code_files:
         if (not code_file in skip_files) and (not "node_modules" in code_file):
-            response_code = os.system("{cli_exec_command} {code_file} {cli_args}".format(cli_exec_command=cli_exec_command, code_file=code_file, cli_args=cli_args))
+            response_code = os.system("{cli_exec_command} {code_file}".format(cli_exec_command=cli_exec_command, code_file=code_file))
             if response_code != 0:
                 print(code_file + " returned code " + str(response_code))
                 success = False
@@ -47,9 +46,8 @@ if __name__ == '__main__':
     try:
         extension = sys.argv[1]
         cli_exec_command = sys.argv[2]
-        cli_args = sys.argv[3]
-        skip_files = sys.argv[4:]
+        skip_files = sys.argv[3:]
     except:
-        print("Usage: python validate_code_snippets.py <extension> <cli_exec_command> <cli_args> <skip_files>")
+        print("Usage: python validate_code_snippets.py <extension> <cli_exec_command> <skip_files>")
         exit(1)
-    main(extension, cli_exec_command, cli_args, skip_files)
+    main(extension, cli_exec_command, skip_files)
