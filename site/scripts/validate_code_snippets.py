@@ -11,7 +11,7 @@ import os
 CODE_SNIPPETS_PATH = "site/code-snippets"
 
 
-def main(extension, cli_exec_command, skip_files):
+def main(extension, cli_exec_command, cli_args, skip_files):
     """
     Main function
 
@@ -29,7 +29,7 @@ def main(extension, cli_exec_command, skip_files):
     success = True
     for code_file in code_files:
         if (not code_file in skip_files) and (not "node_modules" in code_file):
-            response_code = os.system("{cli_exec_command} {code_file}".format(cli_exec_command=cli_exec_command, code_file=code_file))
+            response_code = os.system("{cli_exec_command} {code_file} {cli_args}".format(cli_exec_command=cli_exec_command, code_file=code_file, cli_args=cli_args))
             if response_code != 0:
                 print(code_file + " returned code " + str(response_code))
                 success = False
