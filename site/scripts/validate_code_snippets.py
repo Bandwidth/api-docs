@@ -17,7 +17,8 @@ def main(extension, cli_exec_command, cli_args, skip_files):
 
     Args:
         extension (str): The file extension to search for (ex: py, rb)
-        cli_exec_command (str): The command to run to execute the file (ex: python, ruby)
+        cli_exec_command (str): The command to execute the file (ex: python, ruby)
+        cli_args (str): Additional command options
         skip_files (list<str>): A list of files to skip validation on
     """
     #Use `find` to list all the files in the code snippets.
@@ -46,8 +47,9 @@ if __name__ == '__main__':
     try:
         extension = sys.argv[1]
         cli_exec_command = sys.argv[2]
-        skip_files = sys.argv[3:]
+        cli_args = sys.argv[3]
+        skip_files = sys.argv[4:]
     except:
-        print("Usage: python validate_code_snippets.py <extension> <cli_exec_command> <skip_files>")
+        print("Usage: python validate_code_snippets.py <extension> <cli_exec_command> <cli_args> <skip_files>")
         exit(1)
-    main(extension, cli_exec_command, skip_files)
+    main(extension, cli_exec_command, cli_args, skip_files)
