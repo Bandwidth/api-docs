@@ -1,12 +1,13 @@
+import com.bandwidth.BandwidthClient;
+import com.bandwidth.exceptions.ApiException;
+import com.bandwidth.http.response.ApiResponse;
+import com.bandwidth.webrtc.models.AccountsParticipantsResponse;
+import com.bandwidth.webrtc.models.Participant;
+import com.bandwidth.webrtc.models.PublishPermissionEnum;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-
-import com.bandwidth.*;
-import com.bandwidth.webrtc.models.*;
-import com.bandwidth.webrtc.controllers.*;
-import com.bandwidth.exceptions.ApiException;
-import com.bandwidth.http.response.ApiResponse;
 
 public class Sample {
     public static final String USERNAME = System.getenv("BW_USERNAME");
@@ -15,8 +16,8 @@ public class Sample {
 
     public static void main(String[] args) {
         BandwidthClient client = new BandwidthClient.Builder()
-            .webRtcBasicAuthCredentials(USERNAME, PASSWORD)
-            .build();
+                .webRtcBasicAuthCredentials(USERNAME, PASSWORD)
+                .build();
 
         Participant participant = new Participant();
         List<PublishPermissionEnum> publishPermissions = Arrays.asList(PublishPermissionEnum.AUDIO, PublishPermissionEnum.VIDEO);
