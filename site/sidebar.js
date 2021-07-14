@@ -13,8 +13,11 @@ module.exports = {
         {
           type: "category",
           label: "Guides and Tutorials",
-          items: ["account/guides/structure", "account/guides/credentials"],
-        },
+          items: [
+            "account/credentials",
+            "account/structure",
+            "account/setup"
+          ]},
         {
           type: "category",
           label: "Applications",
@@ -32,12 +35,32 @@ module.exports = {
       label: "Numbers",
       items: [
         "numbers/about",
-        "numbers/errors",
+        {
+          type: "category",
+          label: "Webhooks",
+          items: [
+            "numbers/webhooks",
+            "numbers/orderWebhook",
+            "numbers/eventWebhook",
+            "numbers/portoutValidationWebhook",
+          ],
+        },
         {
           type: "category",
           label: "Guides and Tutorials",
-          items: [],
+          items: [
+            "numbers/searchingNumbers",
+            "numbers/orderingNumbers",
+            "numbers/portingNumbers",
+            "numbers/hostingNumbers",
+            "numbers/manageNumberFeatures",
+            "numbers/searchNumbers",
+            "numbers/disconnectNumbers",
+            "numbers/lookupNumbers",
+            "numbers/downloadingReports",
+          ],
         },
+        "numbers/errors",
       ],
     },
     {
@@ -49,9 +72,8 @@ module.exports = {
           type: "category",
           label: "Guides and Tutorials",
           items: [],
-        },
-      ],
-    },
+        }
+      ]},
     {
       type: "category",
       label: "Messaging",

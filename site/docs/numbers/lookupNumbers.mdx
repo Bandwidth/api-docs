@@ -1,0 +1,331 @@
+---
+id: lookupNumbers
+title: Number Lookup Service
+slug: /numbers/guides/lookupNumbers
+description: How to look up external numbers using the Bandwidth API
+keywords:
+  - bandwidth
+  - numbers
+  - lookup
+hide_title: true
+image: ../../static/img/bandwidth-logo.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+export const accountId = "{accountId}";
+export const orderId = "{orderId}";
+
+export const Highlight = ({children, color}) => (
+    <span
+      style={{
+        backgroundColor: color,
+        borderRadius: '2px',
+        color: '#fff',
+        padding: '0.2rem',
+      }}>
+      {children}
+    </span>
+  );
+
+A guide that walks through the Bandwidth API to provide carrier information for a telephone number or batch of telephone numbers.
+
+Currently, this service supports lookups of telephone numbers in the mainland United States, Alaska, Hawaii, District of Columbia, and the provinces of Canada. Telephone numbers submitted must be in E.164 format to be processed.
+
+## Submit Number Lookup Order
+
+### Request URL
+<Highlight color="#079CEE">POST</Highlight> <code>https://numbers.bandwidth.com/api/v1/accounts/{accountId}/tnlookup</code>
+
+### Examples
+
+<Tabs
+  groupId="http_number_lookup_order"
+  defaultValue="single_tn"
+  values={[
+    { label: 'Single Number Lookup', value: 'single_tn', },
+    { label: 'Multiple Number Lookup', value: 'multiple_tn', },
+  ]
+}>
+<TabItem value="single_tn">
+
+> Request
+
+```http
+POST https://numbers.bandwidth.com/api/v1/accounts/{accountId}/tnlookup HTTP/1.1
+Content-Type: application/json
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+{
+  "tns": [
+    "19196104423"
+  ]
+}
+```
+
+> Response
+
+```http
+HTTP 202 Accepted
+Content-Type: application/json
+Location: https://numbers.bandwidth.com/api/v1/accounts/9999999/tnlookup/004223a0-8b17-41b1-bf81-20732adf5590
+
+{
+  "requestId": "004223a0-8b17-41b1-bf81-20732adf5590",
+  "status": "IN_PROGRESS"
+}
+```
+
+</TabItem>
+<TabItem value="multiple_tn">
+
+> Request
+
+```http
+POST https://numbers.bandwidth.com/api/v1/accounts/{accountId}/tnlookup HTTP/1.1
+Content-Type: application/json
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+{
+  "tns": [
+    "19196104423",
+    "+19196104424"
+  ]
+}
+```
+
+> Response
+
+```http
+HTTP 202 Accepted
+Content-Type: application/json
+Location: https://numbers.bandwidth.com/api/v1/accounts/9999999/tnlookup/004223a0-8b17-41b1-bf81-20732adf5590
+
+{
+  "requestId": "004223a0-8b17-41b1-bf81-20732adf5590",
+  "status": "IN_PROGRESS"
+}
+```
+
+</TabItem>
+</Tabs>
+
+## Fetch Order Information
+
+### Request URL
+
+<Highlight color="#00bf8c">GET</Highlight> <code>https://numbers.bandwidth.com/api/v1/accounts/{accountId}/tnlookup/{orderId}</code>
+
+### Examples
+
+<Tabs
+  groupId="http_number_lookup_order_status"
+  defaultValue="in_progress"
+  values={[
+    { label: 'IN PROGRESS', value: 'in_progress', },
+    { label: 'One TN - COMPLETE', value: 'one_tn_complete', },
+    { label: 'Multiple TNs - COMPLETE', value: 'multiple_tn_complete', },
+    { label: 'Multiple TNs - PARTIAL_COMPLETE', value: 'multiple_tn_partial_complete', },
+    { label: 'No Information - COMPLETE', value: 'complete_no_info', },
+    { label: 'FAILED', value: 'failed', },
+  ]
+}>
+<TabItem value="in_progress">
+
+> Request
+
+```http
+GET https://numbers.bandwidth.com/api/v1/accounts/{accountId}/tnlookup/{orderId} HTTP/1.1
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```
+
+> Response
+
+```json
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "requestId": "004223a0-8b17-41b1-bf81-20732adf5590",
+  "status": "IN_PROGRESS"
+}
+```
+
+</TabItem>
+<TabItem value="one_tn_complete">
+
+> Request
+
+```http
+GET https://numbers.bandwidth.com/api/v1/accounts/{accountId}/tnlookup/{orderId} HTTP/1.1
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```
+
+> Response
+
+```json
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "requestId": "004223a0-8b17-41b1-bf81-20732adf5590",
+  "status": "COMPLETE",
+  "result": [
+    {
+      "Response Code": 0,
+      "Message": "NOERROR",
+      "E.164 Format": "19196104424",
+      "Formatted": "(919) 610-4424",
+      "Country": "US",
+      "Line Type": "Mobile",
+      "Line Provider": "T-Mobile USA",
+      "Mobile Country Code": "310",
+      "Mobile Network Code": "160"
+    }
+  ]
+}
+```
+
+</TabItem>
+<TabItem value="multiple_tn_complete">
+
+> Request
+
+```http
+GET https://numbers.bandwidth.com/api/v1/accounts/{accountId}/tnlookup/{orderId} HTTP/1.1
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```
+
+> Response
+
+```json
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "requestId": "004223a0-8b17-41b1-bf81-20732adf5590",
+  "status": "COMPLETE",
+  "result": [
+    {
+      "Response Code": 0,
+      "Message": "NOERROR",
+      "E.164 Format": "+19196104424",
+      "Formatted": "(919) 610-4424",
+      "Country": "US",
+      "Line Type": "Mobile",
+      "Line Provider": "T-Mobile USA",
+      "Mobile Country Code": "310",
+      "Mobile Network Code": "160"
+    },
+    {
+      "Response Code": 0,
+      "Message": "NOERROR",
+      "E.164 Format": "19196104423",
+      "Formatted": "(919) 610-4423",
+      "Country": "US",
+      "Line Type": "Mobile",
+      "Line Provider": "Verizon Wireless",
+      "Mobile Country Code": "310",
+      "Mobile Network Code": "010"
+    }
+  ]
+}
+```
+
+</TabItem>
+<TabItem value="multiple_tn_partial_complete">
+
+> Request
+
+```http
+GET https://numbers.bandwidth.com/api/v1/accounts/{accountId}/tnlookup/{orderId} HTTP/1.1
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```
+
+> Response
+
+```json
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "requestId": "004223a0-8b17-41b1-bf81-20732adf5590",
+  "status": "PARTIAL_COMPLETE",
+  "result": [
+    {
+      "Response Code": 0,
+      "Message": "NOERROR",
+      "E.164 Format": "+19196104424",
+      "Formatted": "(919) 610-4424",
+      "Country": "US",
+      "Line Type": "Mobile",
+      "Line Provider": "T-Mobile USA",
+      "Mobile Country Code": "310",
+      "Mobile Network Code": "160"
+    }
+  ],
+  "failedTelephoneNumbers": [
+    "+13992077164"
+  ]
+}
+```
+
+</TabItem>
+<TabItem value="complete_no_info">
+
+> Request
+
+```http
+GET https://numbers.bandwidth.com/api/v1/accounts/{accountId}/tnlookup/{orderId} HTTP/1.1
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```
+
+> Response
+
+```json
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "requestId": "004223a0-8b17-41b1-bf81-20732adf5590",
+  "status": "COMPLETE",
+  "result": [
+    {
+      "Response Code": 3,
+      "Message": "NXDOMAIN",
+      "E.164 Format": "19196104425",
+      "Formatted": "(919) 610-4425",
+      "Country": "US"
+    }
+  ]
+}
+```
+
+</TabItem>
+<TabItem value="failed">
+
+> Request
+
+```http
+GET https://numbers.bandwidth.com/api/v1/accounts/{accountId}/tnlookup/{orderId} HTTP/1.1
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```
+
+> Response
+
+```json
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "requestId": "004223a0-8b17-41b1-bf81-20732adf5590",
+  "status": "FAILED",
+  "failedTelephoneNumbers": [
+    "+13992077164"
+  ]
+}
+```
+
+</TabItem>
+</Tabs>

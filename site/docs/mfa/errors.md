@@ -67,7 +67,7 @@ Content-Type: application/json; charset=utf-8
 
 ## 401 – UNAUTHORIZED {#http-401}
 
-Bandwidth returns a `HTTP-401` Error when the specified user does not have access to the account. Ensure the username and password are correct along with the correct account number. See the [security & credentials guide](../account/guides/credentials.md) for more information.
+Bandwidth returns a `HTTP-401` Error when the specified user does not have access to the account. Ensure the username and password are correct along with the correct account number. See the [security & credentials guide](../account/guides/credentials) for more information.
 
 ### Parameters
 | Parameter               | Type     | Description                                      |

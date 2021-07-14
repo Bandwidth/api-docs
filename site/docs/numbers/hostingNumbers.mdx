@@ -1,0 +1,326 @@
+---
+id: hostingNumbers
+title: Hosting Numbers
+slug: /numbers/guides/hostingNumbers
+description: How to host numbers for messaging using the Bandwidth APIs
+keywords:
+  - bandwidth
+  - numbers
+  - hosted
+  - hosting
+  - hosted messaging
+hide_title: true
+image: ../../static/img/bandwidth-logo.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+export const accountId = "{accountId}";
+export const orderId = "{orderId}";
+
+export const Highlight = ({children, color}) => (
+    <span
+      style={{
+        backgroundColor: color,
+        borderRadius: '2px',
+        color: '#fff',
+        padding: '0.2rem',
+      }}>
+      {children}
+    </span>
+  );
+
+This walks through how to programmatically import Phone Numbers to your account for use with Bandwidth's Messaging Products.
+
+Line Options feature management is **NOT** available for Phone numbers that have been imported for use with Hosted Messaging.
+
+![import_remove_tns](../../static/img/import_tn_flow.png)
+
+## Polling vs. Webhooks
+
+Hosted Messaging Orders in the Bandwidth Dashboard is asyncronous when creating an "order". The orders are then processed and the order status is updated asyncronously.  Bandwidth recommends configuring your account with a subscription a instead of polling the order resource for `<OrderStatus>`.
+
+Order processing times can vary and are not guaranteed, so bandwidth does __not__ recommend setting a timeout on waiting for an order to show either `COMPLETE` or `FAILED` status, but instead relying on a webhook from an orders subscription.
+
+## Check for Importability
+
+The `importTnChecker` endpoint validates whether or not Bandwidth can host the number for messaging. Please note that a valid response from this endpoint does not ensure that the messaging traffic will be routed to Bandwidt - there are many factors with the other carriers that could cause them to withold messaging ownership rights on a number.
+
+### Request URL
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/importTnChecker</code>
+
+### Examples
+
+> Request
+
+```xml
+POST https://dashboard.bandwidth.com/api/accounts/{accountId}/importTnChecker HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<ImportTnCheckerPayload>
+    <TelephoneNumbers>
+        <TelephoneNumber>3032281000</TelephoneNumber>
+        <TelephoneNumber>4109235436</TelephoneNumber>
+        <TelephoneNumber>4104685864</TelephoneNumber>
+    </TelephoneNumbers>
+    <SiteId>486</SiteId>
+    <SipPeerId>500025</SipPeerId>
+</ImportTnCheckerPayload>
+```
+
+> Response
+
+```xml
+HTTP 200 OK
+Content-Type: application/xml; charset=utf-8
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ImportTnCheckerResponse>
+    <ImportTnCheckerPayload>
+        <TelephoneNumbers><!--These can be hosted for messaging-->
+            <TelephoneNumber>3032281000</TelephoneNumber>
+        </TelephoneNumbers>
+        <ImportTnErrors>
+            <ImportTnError>
+                <Code>19006</Code>
+                <Description>Bandwidth numbers cannot be imported by this account at this time.</Description>
+                <TelephoneNumbers><!--These can NOT be hosted for messaging-->
+                    <TelephoneNumber>4109235436</TelephoneNumber>
+                    <TelephoneNumber>4104685864</TelephoneNumber>
+                </TelephoneNumbers>
+            </ImportTnError>
+        </ImportTnErrors>
+    </ImportTnCheckerPayload>
+</ImportTnCheckerResponse>
+```
+
+## Create importTnOrder
+
+After validating the numbers are able to be imported, create a POST request to create the order to import the phone numbers in to your Bandwidth account.
+
+### Request URL
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/importTnOrders</code>
+
+### Request Parameters
+
+| Parameter                | Required | Description                                                                                                                               |
+|:-------------------------|:---------|:------------------------------------------------------------------------------------------------------------------------------------------|
+| `<CustomerOrderId>`      | No       | Internal customer order id for tracking the order.  Only alphanumeric values, dashes and spaces are allowed. Max length is 40 characters. |
+| `<Name>`                 | Yes      | Subscriber business / customer name.                                                                                                      |
+| `<HouseNumber>`          | Yes      | Street address number.                                                                                                                    |
+| `<StreetName>`           | Yes      | Street name.                                                                                                                              |
+| `<City>`                 | Yes      | City.                                                                                                                                     |
+| `<StateCode>`            | Yes      | Two letter state code.                                                                                                                    |
+| `<Zip>`                  | Yes      | Zip code.                                                                                                                                 |
+| `<LoaAuthorizingPerson>` | Yes      | First and last name of person who authorized LOA.                                                                                         |
+| `<TelephoneNumber>`      | Yes      | Ten digit phone number with no dots or dashes. One or more is required. Use a PhoneNumber tag for each phone number in the list.          |
+| `<SiteId>`               | Yes      | See section on Sites                                                                                                                      |
+| `<SipPeerId>`            | No       | See section on SIP Peers                                                                                                                  |
+
+
+### Examples
+
+> Request
+
+```xml
+POST https://dashboard.bandwidth.com/api/accounts/{accountId}/importTnOrders HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<ImportTnOrder>
+  <CustomerOrderId>marktestorders</CustomerOrderId>
+  <SiteId>14413</SiteId>
+  <SipPeerId>521952</SipPeerId>
+  <Subscriber>
+      <Name>ABC Inc.</Name>
+    <ServiceAddress>
+      <HouseNumber>11235</HouseNumber>
+      <StreetName>Back</StreetName>
+      <City>Denver</City>
+      <StateCode>CO</StateCode>
+      <Zip>27541</Zip>
+      <County>Canyon</County>
+    </ServiceAddress>
+  </Subscriber>
+  <LoaAuthorizingPerson>markmacc</LoaAuthorizingPerson>
+  <TelephoneNumbers>
+    <TelephoneNumber>3032281000</TelephoneNumber>
+    <TelephoneNumber>3032280004</TelephoneNumber>
+  </TelephoneNumbers>
+</ImportTnOrder>
+```
+
+> Response
+
+```xml
+HTTP/1.1 201 Created
+Content-Type: application/xml; charset=utf-8
+Location: https://dashboard.bandwidth.com/api/accounts/{accountId}/importTnOrders/{orderId}
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ImportTnOrderResponse>
+  <ImportTnOrder>
+    <CustomerOrderId>marktestorders</CustomerOrderId>
+    <OrderCreateDate>2018-01-20T02:59:54.000Z</OrderCreateDate>
+    <AccountId>9900012</AccountId>
+    <CreatedByUser>{username}</CreatedByUser>
+    <OrderId>b05de7e6-0cab-4c83-81bb-9379cba8efd0</OrderId>
+    <LastModifiedDate>2018-01-20T02:59:54.000Z</LastModifiedDate>
+    <SiteId>202</SiteId>
+    <SipPeerId>520565</SipPeerId>
+    <Subscriber>
+      <Name>ABC Inc.</Name>
+      <ServiceAddress>
+        <HouseNumber>11235</HouseNumber>
+        <StreetName>Back</StreetName>
+        <City>Denver</City>
+        <StateCode>CO</StateCode>
+        <Zip>27541</Zip>
+        <County>Canyon</County>
+      </ServiceAddress>
+    </Subscriber>
+    <LoaAuthorizingPerson>markmacc</LoaAuthorizingPerson>
+    <TelephoneNumbers>
+      <TelephoneNumber>3032281000</TelephoneNumber>
+      <TelephoneNumber>3032280004</TelephoneNumber>
+    </TelephoneNumbers>
+    <ProcessingStatus>PROCESSING</ProcessingStatus>
+    <Errors/>
+  </ImportTnOrder>
+</ImportTnOrderResponse>
+```
+
+## Fetching importTnOrders Information
+
+A <Highlight color="#00bf8c">GET</Highlight> request to an existing importTnOrder will return it's status as well as any information originally used to create the order.
+
+### Request URL
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/importTnOrders/{orderId}</code>
+
+### Examples
+
+<Tabs
+  groupId="http_importTnOrder_search"
+  defaultValue="webhook_importTnOrder_status"
+  values={[
+    { label: 'ImportTnOrder Status Webhook', value: 'webhook_importTnOrder_status', },
+    { label: 'Poll for ImportTnOrder Status', value: 'poll_importTnOrder_status', },
+  ]
+}>
+<TabItem value="webhook_importTnOrder_status">
+
+ImportTnOrder Status Webhook
+
+**Note:** This is a webhook that bandwidth sends to _your_ server upon order completion/failure - there is no need to poll the resource if using this recommended method.
+
+```xml
+POST your_url.com/webhookService HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+
+<?xml version="1.0"?>
+<Notification>
+    <SubscriptionId>...</SubscriptionId>
+    <OrderType>importtnorders</OrderType>
+    <OrderId>b05de7e6-0cab-4c83-81bb-9379cba8efd0</OrderId>
+    <CustomerOrderId>...</CustomerOrderId>
+    <Status>COMPLETE</Status>
+    <Message>Import TN order processing has started.</Message>
+    <Note>...</Note>
+</Notification>
+```
+
+</TabItem>
+<TabItem value="poll_importTnOrder_status">
+
+Poll Order Information
+> Request
+
+```http
+GET https://dashboard.bandwidth.com/api/accounts/{accountId}/importTnOrders/b05de7e6-0cab-4c83-81bb-9379cba8efd0 HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```
+
+> Response
+
+```xml
+HTTP 200 OK
+Content-Type: application/xml; charset=utf-8
+
+<?xml version="1.0"?>
+<ImportTnOrder>
+   <OrderCreateDate>2019-08-28T13:09:11.192Z</OrderCreateDate>
+   <AccountId>9900674</AccountId>
+   <CreatedByUser>mmacchioni</CreatedByUser>
+   <OrderId>b05de7e6-0cab-4c83-81bb-9379cba8efd0</OrderId>
+   <LastModifiedDate>2019-08-28T13:09:26.295Z</LastModifiedDate>
+   <SiteId>14419</SiteId>
+   <Subscriber>
+      <Name>BANDWDITH</Name>
+      <ServiceAddress>
+         <HouseNumber>900</HouseNumber>
+         <StreetName>Main Campus Dr.</StreetName>
+         <City>Raleigh</City>
+         <StateCode>NC</StateCode>
+         <Zip>27606</Zip>
+         <County>Wake</County>
+         <Country>United States</Country>
+         <AddressType>Service</AddressType>
+      </ServiceAddress>
+   </Subscriber>
+   <LoaAuthorizingPerson>Mark Macchioni</LoaAuthorizingPerson>
+   <TelephoneNumbers>
+      <TelephoneNumber>9195041533</TelephoneNumber>
+   </TelephoneNumbers>
+   <ProcessingStatus>COMPLETE</ProcessingStatus>
+   <Errors />
+   <SipPeerId>521967</SipPeerId>
+</ImportTnOrder>
+```
+
+</TabItem>
+</Tabs>
+
+## Upload Letter of Authorization (LOA)
+
+For **completed** orders, Bandwidth requires a completed Subscriber "Letter of Authorization" (LOA) from the phone number user.  The LOA file is used in the case there is a dispute to ensure the phone number had permission to be enabled for hosted messaging for Bandwidth.
+
+You are able to keep the LOA file within your own system, or upload the file to Bandwidth as part of the `importTnOrder` path.
+
+### Request URL
+
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/importTnOrders/{orderId}/loas</code>
+
+### Request Parameters
+
+A POST request to the /loas resource will upload the file. The key attribute to a successful upload is to ensure that the headers are set correctly to support the _type_ of the file upload.
+
+### Examples
+
+> Request
+
+```http
+POST https://dashboard.../{accountId}/importTnOrders/{orderId}/loas HTTP/1.1
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+Accept: /
+Accept-Encoding: gzip, deflate
+Content-Type: application/pdf
+
+[file-content-as-body]
+```
+
+> Response
+
+```xml
+HTTP/1.1 201 Created
+Content-Type: application/xml; charset=utf-8
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<fileUploadResponse>
+    <filename>63097af1-37ae-432f-8a0d-9b0e6517a35b-1429550165581.pdf</filename>
+    <resultCode>0</resultCode>
+    <resultMessage>LOA file uploaded successfully for order 63097af1-37ae-432f-8a0d-9b0e6517a35b</resultMessage>
+</fileUploadResponse>
+```

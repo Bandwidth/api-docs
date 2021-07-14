@@ -1,0 +1,273 @@
+---
+id: searchingNumbers
+title: Searching Numbers
+slug: /numbers/guides/searchingForNumbers
+description: How to search for available numbers using the Bandwidth API
+keywords:
+  - bandwidth
+  - numbers
+  - search
+hide_title: true
+image: ../../static/img/bandwidth-logo.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+export const accountId = "{accountId}";
+
+export const Highlight = ({children, color}) => (
+    <span
+      style={{
+        backgroundColor: color,
+        borderRadius: '2px',
+        color: '#fff',
+        padding: '0.2rem',
+      }}>
+      {children}
+    </span>
+  );
+
+Searching for available phone numbers can be performed through our Dashboard API. There are many ways to search for phone numbers and this guide covers the various methods and how you perform them.
+
+Specific API information can be found on our [Dashboard API reference](../../../numbers-api-reference)
+
+## Searching Numbers
+
+In certain cases where the **exact digits** are important (such as localVantiy, endsIn, npaNxxx) LCA should be disabled to filter out non-pattern matched phone numbers.
+
+### Request URL
+<Highlight color="#00bf8c">GET</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/availableNumbers</code>
+
+### Query Parameters
+
+| Parameter               | Description                                                                                                                                                                                                  | Example           |
+|:------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:------------------|
+| areaCode                | The 3 digit area code to search for                                                                                                                                                                          | 919               |
+| npaNxx                  | The 6 digits following an area code                                                                                                                                                                          | 123321            |
+| npaNxxx                 | The 7 digits following an area code                                                                                                                                                                          | 1234321           |
+| rateCenter              | The rate center to search for                                                                                                                                                                                | Cary              |
+| state                   | The 2 letter state code to search for                                                                                                                                                                        | NC                |
+| city                    | The city to search for                                                                                                                                                                                       | Raleigh           |
+| zip                     | The 5 or 9 digit zip code to search for                                                                                                                                                                      | 27606, 27606-0007 |
+| lata                    | Local access and transport area. An up to 5 digit number that represents the geographic area in which numbers are routed                                                                                     | 244               |
+| localVanity             | A 3 to 7 alphanumeric character long string for pattern matching of phone numbers. May also include `*` (to match all) and `_` (to match one)                                                                | `81_`, `8*`       |
+| tollFreeVanity          | A 4 to 7 alphanumeric character long string for pattern matching of toll free numbers                                                                                                                        | `NEWCARS`         |
+| tollFreeWildCardPattern | A 3 alphanumeric character long string representing a wild card pattern for toll free numbers                                                                                                                | `8**`             |
+| quantity                | Number of phone numbers to return. Can be 1 to 5000. Defaults to 5000                                                                                                                                        | 5000              |
+| enableTNDetail          | Boolean value to include TN details. Defaults to false                                                                                                                                                       | `true`            |
+| LCA                     | Boolean value to include TNs in the local calling area.<br/>⚠️Defaults to `true`                                                                                                                              | `true`            |
+| endsIn                  | Boolean value to include only numbers which end in the `localVanity`. Defaults to false                                                                                                                      | `true`            |
+| orderBy                 | The field to order the results by. Can be one of `fullNumber`, `npaNxx`, `npaNxxx`, or `areaCode`                                                                                                            | `areaCode`        |
+| protected               | Determines if the search should return only protected numbers (`ONLY`), only not protected numbers (`NONE`), or both protected and not protected numbers (`MIXED`). Can be one of `NONE`, `ONLY`, or `MIXED` | `NONE`            |
+
+
+#### Local Calling Area (LCA)
+
+Bandwidth's available number searches with local calling enabled by default. The LCA flag searches nearby Ratecenters for phone numbers that are considered "local" to the parameters passed.
+
+### Search Types
+
+| Search Type                        | Required Parameters     | Combinational Parameters                                                                          | Optional Parameters                          |
+|:-----------------------------------|:------------------------|:--------------------------------------------------------------------------------------------------|:---------------------------------------------|
+| Area Code                          | areaCode                | rateCenter (state required), city (state required), state, lata, zip                              | quantity, enableTNDetail, protected          |
+| NPA-NXX                            | npaNxx                  | rateCenter (state required), city (state required), state, lata, zip, orderBy                     | quantity, enableTNDetail, protected          |
+| NPA-NXX with Local Calling Area    | npaNxx                  |                                                                                                   | quantity, LCA, enableTNDetail, protected     |
+| NPA-NXX-X                          | npaNxxx                 | rateCenter (state required), city (state required), state, lata, zip, orderBy                     | quantity, enableTNDetail, protected          |
+| NPA-NXX-X with Local Calling Area  | npaNxxx                 | rateCenter (state required), city (state required), state, lata, zip                              | quantity, LCA, enableTNDetail, protected     |
+| RateCenter                         | rateCenter, state       | city, areaCode/npaNxx/npaNxxx, lata, zip, orderBy                                                 | quantity, enableTNDetail, protected          |
+| RateCenter with Local Calling Area | rateCenter, state       |                                                                                                   | quantity, LCA, enableTNDetail, protected     |
+| State                              | state                   | rateCenter, city, areaCode/npaNxx/npaNxxx, lata, zip                                              | quantity, enableTNDetail, protected          |
+| City                               | state, city             | rateCenter, state, areaCode/npaNxx/npaNxxx, lata, zip, orderBy                                    | quantity, enableTNDetail, protected          |
+| Zip Code                           | zip                     | rateCenter (state required), city (state required), state, areaCode/npaNxx/npaNxxx, lata, orderBy | quantity, enableTNDetail, protected          |
+| LATA                               | lata                    | rateCenter (state required), city (state required), state, areaCode/npaNxx/npaNxxx, zip           | quantity, enableTNDetail, protected          |
+| Local Vanity                       | localVanity             | state, areaCode                                                                                   | endsIn, quantity, protected, enableTNdetails |
+| TollFree Vanity                    | tollFreeVanity          | orderBy                                                                                           | quantity                                     |
+| TollFree WildCard                  | tollFreeWildCardPattern | orderBy                                                                                           | quantity                                     |
+
+### Examples
+
+<Tabs
+  groupId="http_number_search"
+  defaultValue="area_code"
+  values={[
+    { label: 'Area Code', value: 'area_code', },
+    { label: 'Toll Free', value: 'toll_free', },
+    { label: 'Local Vanity', value: 'local_vanity', },
+    { label: 'NPANxxx, LCA=False', value: 'npanxxx_lca_false', },
+    { label: 'NPANxxx, LCA=True', value: 'npanxxx_lca_true', },
+  ]
+}>
+<TabItem value="area_code">
+
+Search for 2 phone numbers by Area Code
+
+Parameters:
+
+* areaCode : 919
+* quantity : 2
+
+> Request
+
+```http
+GET https://dashboard.bandwidth.com/api/accounts/{accountId}/availableNumbers?areaCode=919&quantity=2
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```
+
+> Response
+
+```xml
+HTTP/1.1 200
+Content-type: application/xml
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SearchResult>
+    <ResultCount>2</ResultCount>
+    <TelephoneNumberList>
+        <TelephoneNumber>9192760028</TelephoneNumber>
+        <TelephoneNumber>9194954957</TelephoneNumber>
+    </TelephoneNumberList>
+</SearchResult>
+```
+
+</TabItem>
+<TabItem value="toll_free">
+
+Search for 2 toll-free numbers
+
+Parameters:
+
+* tollFreeWildCardPattern : 8**
+* quantity                : 2
+
+> Request
+
+```http
+GET https://dashboard.bandwidth.com/api/accounts/{accountId}/availableNumbers?tollFreeWildCardPattern=8**&quantity=2
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```
+
+> Response
+
+```xml
+HTTP/1.1 200
+Content-type: application/xml
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SearchResult>
+    <ResultCount>2</ResultCount>
+    <TelephoneNumberList>
+        <TelephoneNumber>8336572433</TelephoneNumber>
+        <TelephoneNumber>8336580609</TelephoneNumber>
+    </TelephoneNumberList>
+</SearchResult>
+```
+
+</TabItem>
+<TabItem value="local_vanity">
+
+Search for 2 phone numbers by localVanity
+
+Parameters:
+
+* localVanity : 867_0*
+* lca         : false
+* quantity    : 2
+
+> Request
+
+```http
+GET https://dashboard.bandwidth.com/api/accounts/{accountId}/availableNumbers?localVanity=867_0*&quantity=2&lca=false
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```
+
+> Response
+
+```xml
+HTTP/1.1 200
+Content-type: application/xml
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SearchResult>
+    <ResultCount>2</ResultCount>
+    <TelephoneNumberList>
+        <TelephoneNumber>6672286710</TelephoneNumber>
+        <TelephoneNumber>5756186700</TelephoneNumber>
+    </TelephoneNumberList>
+</SearchResult>
+```
+
+</TabItem>
+<TabItem value="npanxxx_lca_false">
+
+Search for 2 phone numbers by NPANxxx with LCA False
+
+Parameters:
+
+* NPANxxx   : 9192760
+* lca       : false
+* quantity  : 2
+
+> Request
+
+```http
+GET https://dashboard.bandwidth.com/api/accounts/{accountId}/availableNumbers?npaNxxx=9192760&quantity=2&lca=false
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```
+
+> Response
+
+```xml
+HTTP/1.1 200
+Content-type: application/xml
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SearchResult>
+    <ResultCount>1</ResultCount>
+    <TelephoneNumberList>
+        <TelephoneNumber>9192760028</TelephoneNumber>
+    </TelephoneNumberList>
+</SearchResult>
+```
+
+</TabItem>
+<TabItem value="npanxxx_lca_true">
+
+Search for 5 phone numbers by NPANxxx with LCA true
+
+Parameters:
+
+* NPANxxx   : 9192760
+* lca       : **true** by default
+* quantity  : 5
+
+> Request
+
+```http
+GET https://dashboard.bandwidth.com/api/accounts/{accountId}/availableNumbers?npaNxxx=9192760&quantity=5
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```
+
+> Responds
+
+**Note the difference between the previous example, with the resulting numbers not exactly matching the pattern sent**
+
+```xml
+HTTP/1.1 200
+Content-type: application/xml
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SearchResult>
+    <ResultCount>5</ResultCount>
+    <TelephoneNumberList>
+        <TelephoneNumber>9102424029</TelephoneNumber>
+        <TelephoneNumber>9102424379</TelephoneNumber>
+        <TelephoneNumber>9105142211</TelephoneNumber>
+        <TelephoneNumber>9108081128</TelephoneNumber>
+        <TelephoneNumber>9108081915</TelephoneNumber>
+    </TelephoneNumberList>
+</SearchResult>
+```
+
+</TabItem>
+</Tabs>
