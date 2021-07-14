@@ -20,7 +20,7 @@ public class Sample {
             .build();
 
         try {
-            ApiResponse<Session> response = client.getWebRtcClient().getAPIController().addParticipantToSession(ACCOUNT_ID, sessionId, participantId);
+            ApiResponse<Session> response = client.getWebRtcClient().getAPIController().addParticipantToSession(ACCOUNT_ID, sessionId, participantId, null);
         } catch (ApiException|IOException ex) {
             // Handle exceptions from the request.
         }
