@@ -1,6 +1,6 @@
 ---
 id: resources
-title: Bandwidth WebRTC Resources
+title: Resources
 slug: /webrtc/resources
 description: Another general overview of Bandwidth's account services
 keywords:
@@ -17,11 +17,11 @@ If you are an SDK user, there are a pair of them that you will want: a client SD
 
 - The Bandwidth Client SDKs
 
-  | Environment                                                        | Notes                               |
-  | ------------------------------------------------------------------ | ----------------------------------- |
-  | [Browser](https://www.npmjs.com/package/@bandwidth/webrtc-browser) | The Bandwidth Browser SDK           |
-  | [IOS](https://github.com/Bandwidth/bandwidth-webrtc-swift)         | **FIX THIS** - a better explanation |
-  | [Android](https://github.com/Bandwidth/bandwidth-android)          | **FIX THIS** - a better explanation |
+  | Environment                                                        | Notes                                                               |
+  | ------------------------------------------------------------------ | ------------------------------------------------------------------- |
+  | [Browser](https://www.npmjs.com/package/@bandwidth/webrtc-browser) | The Bandwidth Browser SDK                                           |
+  | [IOS](https://github.com/Bandwidth/bandwidth-webrtc-swift)         | An OSS implementation of Bandwidth WebRTC suitable for iOS devices. |
+  | [Android](https://github.com/Bandwidth/bandwidth-android)          | Bandwidth Android SDK                                               |
 
 - The Bandwidth Server API SDKs
 

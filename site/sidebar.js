@@ -75,21 +75,17 @@ module.exports = {
           items: [
             "webrtc/overview",
             "webrtc/quickstart",
+            "webrtc/resources",
             "webrtc/callflow",
-            "webrtc/resources"
           ],
         },
-        "webrtc/errors"
+        "webrtc/errors",
       ],
     },
     {
       type: "category",
       label: "Multi-Factor Authentication",
-      items: [
-        "mfa/about",
-        "mfa/errors",
-        "mfa/rateLimits"
-      ],
+      items: ["mfa/about", "mfa/errors", "mfa/rateLimits"],
     },
     {
       type: "category",

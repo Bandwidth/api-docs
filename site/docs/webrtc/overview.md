@@ -1,6 +1,6 @@
 ---
 id: overview
-title: Bandwidth WebRTC Model Details
+title: Key Concepts
 slug: /webrtc/overview
 description: What's a webRTC ?
 keywords:
