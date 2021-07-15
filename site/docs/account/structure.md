@@ -11,7 +11,6 @@ keywords:
   - location
   - site
   - sippeer
-hide_title: true
 image: ../../static/img/bandwidth-logo.png
 ---
 

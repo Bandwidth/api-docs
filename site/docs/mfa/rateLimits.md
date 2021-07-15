@@ -1,6 +1,6 @@
 ---
 id: rateLimits
-title: MFA Rate Limits
+title: Rate Limits
 slug: /mfa/rateLimits
 description: Bandwidth's MFA Rate Limits
 keywords:
@@ -11,10 +11,8 @@ keywords:
   - factor
   - auth
   - authentication
-hide_title: true
 image: ../../static/img/bandwidth-logo.png
 ---
-# Rate Limits
 
 Rate limits for MFA are based on your [Voice API Rate Limits](../voice/about.md) and [Messaging API Rate Limits](../messaging/about.md).
 

@@ -7,7 +7,6 @@ keywords:
   - bandwidth
   - API
   - credentials
-hide_title: true
 image: ../../static/img/bandwidth-logo.png
 ---
 
