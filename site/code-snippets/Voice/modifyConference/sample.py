@@ -1,5 +1,5 @@
 from bandwidth.bandwidth_client import BandwidthClient
-from bandwidth.voice.models.api_modify_conference_request import ApiModifyConferenceRequest
+from bandwidth.voice.models.modify_conference_request import ModifyConferenceRequest
 from bandwidth.voice.models.status_enum import StatusEnum
 from bandwidth.exceptions.api_exception import APIException
 
@@ -15,7 +15,7 @@ bandwidth_client = BandwidthClient(
 )
 voice_client = bandwidth_client.voice_client.client
 
-body = ApiModifyConferenceRequest()
+body = ModifyConferenceRequest()
 body.status = StatusEnum.ACTIVE
 
 conference_id = "conf-1234"

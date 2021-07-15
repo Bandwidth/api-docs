@@ -1,5 +1,5 @@
 from bandwidth.bandwidth_client import BandwidthClient
-from bandwidth.voice.models.conference_member_detail import ConferenceMemberDetail
+from bandwidth.voice.models.conference_member_state import ConferenceMemberState
 from bandwidth.exceptions.api_exception import APIException
 
 import os
@@ -14,7 +14,7 @@ bandwidth_client = BandwidthClient(
 )
 voice_client = bandwidth_client.voice_client.client
 
-body = ConferenceMemberDetail()
+body = ConferenceMemberState()
 body.mute = True
 
 conference_id = "conf-1234"
