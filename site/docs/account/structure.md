@@ -1,7 +1,7 @@
 ---
 id: structure
 title: Structure
-slug: /account/guides/structure
+slug: /account/structure
 description: A general overview of Bandwidth's account structure
 keywords:
   - bandwidth

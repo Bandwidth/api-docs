@@ -7,11 +7,8 @@ keywords:
   - bandwidth
   - webrtc
   - video
-hide_title: true
 image: ../../static/img/bandwidth-logo.png
 ---
-
-## API Call Flows
 
 ### Basic Browser Connection
 

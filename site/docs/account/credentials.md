@@ -1,7 +1,7 @@
 ---
 id: credentials
 title: Credentials
-slug: /account/guides/credentials
+slug: /account/credentials
 description: A general overview of Bandwidth's API Credentials
 keywords:
   - bandwidth

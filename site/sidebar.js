@@ -10,24 +10,11 @@ module.exports = {
       label: "Account",
       items: [
         "account/about",
-        {
-          type: "category",
-          label: "Guides and Tutorials",
-          items: [
-            "account/credentials",
-            "account/structure",
-            "account/setup"
-          ]},
-        {
-          type: "category",
-          label: "Applications",
-          items: [],
-        },
-        {
-          type: "category",
-          label: "Subscriptions",
-          items: [],
-        },
+        "account/credentials",
+        "account/structure",
+        "account/setup",
+        "account/applications",
+        "account/subscriptions",
       ],
     },
     {

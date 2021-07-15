@@ -1,6 +1,6 @@
 ---
 id: errors
-title: MFA Errors
+title: Errors
 slug: /mfa/errors
 description: Bandwidth's MFA Errors
 keywords:
@@ -11,10 +11,8 @@ keywords:
   - factor
   - auth
   - authentication
-hide_title: true
 image: ../../static/img/bandwidth-logo.png
 ---
-# HTTP Errors when using MFA {#top}
 
 Bandwidth will respond with HTTP error codes when there are any issues with Multi-Factor Authentication endpoints. Any `4xx` or `5xx` HTTP response code will not be billed. All of the errors except for `401` and `403` have a similar response format. Unifying all of the responses is in the works, so be sure to keep checking the page for updates!
 
@@ -67,7 +65,7 @@ Content-Type: application/json; charset=utf-8
 
 ## 401 – UNAUTHORIZED {#http-401}
 
-Bandwidth returns a `HTTP-401` Error when the specified user does not have access to the account. Ensure the username and password are correct along with the correct account number. See the [security & credentials guide](../account/guides/credentials) for more information.
+Bandwidth returns a `HTTP-401` Error when the specified user does not have access to the account. Ensure the username and password are correct along with the correct account number. See the [security & credentials guide](../account/credentials) for more information.
 
 ### Parameters
 | Parameter               | Type     | Description                                      |

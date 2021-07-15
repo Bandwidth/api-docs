@@ -1,19 +1,15 @@
 ---
 id: webhooks
-title: Webhooks
+title: About
 slug: /numbers/webhooks   
 description: A general overview of Bandwidth's number API webhooks
 keywords:
   - bandwidth
   - numbers
   - webhooks
-hide_title: true
+hide_title: True
 image: ../../static/img/bandwidth-logo.png
 ---
-
-# About
-
-## Webhooks
 
 Bandwidth uses HTTP [webhooks](https://webhooks.pbworks.com/w/page/13385124/FrontPage) to send events to any publicly addressable url.
 

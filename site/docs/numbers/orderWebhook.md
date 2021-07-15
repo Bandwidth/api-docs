@@ -7,7 +7,6 @@ keywords:
   - bandwidth
   - numbers
   - webhooks
-hide_title: false
 image: ../../static/img/bandwidth-logo.png
 ---
 

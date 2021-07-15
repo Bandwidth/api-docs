@@ -1,13 +1,12 @@
 ---
 id: overview
-title: Bandwidth WebRTC Model Details
+title: WebRTC Overview
 slug: /webrtc/overview
 description: What's a webRTC ?
 keywords:
   - bandwidth
   - webrtc
   - video
-hide_title: true
 image: ../../static/img/bandwidth-logo.png
 ---
 
