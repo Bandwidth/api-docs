@@ -22,8 +22,6 @@ session_id = "1234-abcd"
 participant_id = "4321-dcba"
 
 try:
-    #web_rtc_client.update_participant_subscriptions(BW_ACCOUNT_ID, session_id, participant_id, body)
-    web_rtc_client.update_participant_subscriptions(BW_ACCOUNT_ID, participant_id, session_id, body)
-    #NOTE: This is currently improperly defined
+    web_rtc_client.update_participant_subscriptions(BW_ACCOUNT_ID, session_id, participant_id, body)
 except APIException as e:
     print(e.response_code)
