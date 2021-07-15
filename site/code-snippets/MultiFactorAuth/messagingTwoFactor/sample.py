@@ -15,7 +15,7 @@ bandwidth_client = BandwidthClient(
     multi_factor_auth_basic_auth_user_name=BW_USERNAME,
     multi_factor_auth_basic_auth_password=BW_PASSWORD
 )
-auth_client = bandwidth_client.two_factor_auth_client.mfa
+auth_client = bandwidth_client.multi_factor_auth_client.mfa
 
 body = TwoFactorCodeRequestSchema(
     mfrom = BW_MFA_NUMBER,
