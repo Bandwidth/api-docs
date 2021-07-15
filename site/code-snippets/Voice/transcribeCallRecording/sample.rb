@@ -17,7 +17,7 @@ body = TranscribeRecordingRequest.new
 body.callback_url = "https://callback-url.com"
 
 begin
-    voice_client.create_transcribe_call_recording(ENV['BW_ACCOUNT_ID'], call_id, recording_id)
+    voice_client.create_transcribe_call_recording(ENV['BW_ACCOUNT_ID'], call_id, recording_id, body)
 rescue APIException => e
     puts e.response_code
 end
