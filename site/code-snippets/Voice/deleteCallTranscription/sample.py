@@ -17,6 +17,6 @@ call_id = "c-1234"
 recording_id = "r-1234"
 
 try:
-    voice_client.delete_recording_transcription(BW_ACCOUNT_ID, call_id, recording_id)
+    voice_client.delete_call_transcription(BW_ACCOUNT_ID, call_id, recording_id)
 except APIException as e:
     print(e.response_code)

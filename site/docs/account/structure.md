@@ -1,6 +1,6 @@
 ---
 id: structure
-title: Account Structure
+title: Structure
 slug: /account/guides/structure
 description: A general overview of Bandwidth's account structure
 keywords:
@@ -11,11 +11,11 @@ keywords:
   - location
   - site
   - sippeer
-image: ../../../static/img/bandwidth-logo.png
+image: ../../static/img/bandwidth-logo.png
 ---
 
 <img
-  src={require('../../../static/img/account-structure.png').default}
+  src={require('../../static/img/account-structure.png').default}
   alt="Account Structure"
   class="center"
 />

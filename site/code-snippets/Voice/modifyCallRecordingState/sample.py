@@ -1,5 +1,5 @@
 from bandwidth.bandwidth_client import BandwidthClient
-from bandwidth.voice.models.modify_call_recording_state import ModifyCallRecordingState
+from bandwidth.voice.models.modify_call_recording_request import ModifyCallRecordingRequest
 from bandwidth.exceptions.api_exception import APIException
 
 import os
@@ -14,7 +14,7 @@ bandwidth_client = BandwidthClient(
 )
 voice_client = bandwidth_client.voice_client.client
 
-body = ModifyCallRecordingState()
+body = ModifyCallRecordingRequest()
 body.state = "paused"
 
 call_id = "c-1234"

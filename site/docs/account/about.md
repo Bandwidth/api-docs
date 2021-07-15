@@ -16,7 +16,8 @@ Your Bandwidth account is your entrypoint into using Bandwidth's products and se
 
 | Guide | Description |
 |:------|:------------|
-| [Account Structure](account/guides/structure) | An overview of Bandwidth's account structure |
 | [Credentials](account/guides/credentials) | How to properly configure API credentials |
+| [Structure](account/guides/structure) | An overview of Bandwidth's account structure |
+| [Setup](account/guides/setup) | How to set up your Bandwidth Dashboard account |
 
 </center>
