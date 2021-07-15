@@ -10,13 +10,13 @@ bandwidth_client = Bandwidth::Client.new(
 
 voice_client = bandwidth_client.voice_client.client
 
-body = ModifyCallRecordingState.new
+body = ModifyCallRecordingRequest.new
 body.state = "paused"
 
 call_id = "c-1234"
 
 begin
-    voice_client.modify_call_recording_state(ENV['BW_ACCOUNT_ID'], call_id, :body => body)
+    voice_client.modify_call_recording_state(ENV['BW_ACCOUNT_ID'], call_id, body)
 rescue APIException => e
     puts e.response_code
 end

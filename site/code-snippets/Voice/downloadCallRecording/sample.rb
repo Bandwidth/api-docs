@@ -18,7 +18,7 @@ call_id = "c-1234"
 recording_id = "r-1234"
 
 begin
-    result = voice_client.get_stream_recording_media(BW_ACCOUNT_ID, call_id, recording_id)
+    result = voice_client.get_download_call_recording(BW_ACCOUNT_ID, call_id, recording_id)
     downloaded_recording = result.data
 rescue APIException => e
     puts e.response_code

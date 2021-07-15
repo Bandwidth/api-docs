@@ -14,7 +14,7 @@ call_id = "c-1234"
 recording_id = "r-1234"
 
 begin
-    response = voice_client.get_metadata_for_recording(ENV['BW_ACCOUNT_ID'], call_id, recording_id)
+    response = voice_client.get_call_recording(ENV['BW_ACCOUNT_ID'], call_id, recording_id)
     puts response.data.application_id
 rescue APIException => e
     puts e.response_code

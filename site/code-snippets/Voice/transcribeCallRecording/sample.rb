@@ -13,11 +13,11 @@ voice_client = bandwidth_client.voice_client.client
 call_id = "c-1234"
 recording_id = "r-1234"
 
-body = ApiTranscribeRecordingRequest.new
+body = TranscribeRecordingRequest.new
 body.callback_url = "https://callback-url.com"
 
 begin
-    voice_client.create_transcribe_recording(ENV['BW_ACCOUNT_ID'], call_id, recording_id)
+    voice_client.create_transcribe_call_recording(ENV['BW_ACCOUNT_ID'], call_id, recording_id)
 rescue APIException => e
     puts e.response_code
 end

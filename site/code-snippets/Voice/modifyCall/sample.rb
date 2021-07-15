@@ -10,14 +10,14 @@ bandwidth_client = Bandwidth::Client.new(
 
 voice_client = bandwidth_client.voice_client.client
 
-body = ApiModifyCallRequest.new
+body = ModifyCallRequest.new
 body.redirect_url = "http://www.myapp.com/new"
 body.state = "active"
 
 call_id = "c-1234"
 
 begin
-    voice_client.modify_call(ENV['BW_ACCOUNT_ID'], call_id, :body => body)
+    voice_client.modify_call(ENV['BW_ACCOUNT_ID'], call_id, body)
 rescue APIException => e
     puts e.response_code
 end
