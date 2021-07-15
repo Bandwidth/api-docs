@@ -21,8 +21,7 @@ session_id = "1234-abcd"
 participant_id = "4321-dcba"
 
 begin
-    #web_rtc_client.update_participant_subscriptions(BW_ACCOUNT_ID, session_id, participant_id, :body => body)
-    web_rtc_client.update_participant_subscriptions(BW_ACCOUNT_ID, participant_id, session_id, :body => body)
+    web_rtc_client.update_participant_subscriptions(BW_ACCOUNT_ID, session_id, participant_id, :body => body)
     #NOTE: This is currently improperly defined
 rescue APIException => e
     puts e.response_code
