@@ -17,6 +17,6 @@ media_file_name = 'sample_file_name'
 media_file = b'12345' #Any binary string will work for the upload. This includes file contents
 
 try:
-    messaging_client.upload_media(BW_ACCOUNT_ID, media_file_name, str(len(media_file)), body=media_file)
+    messaging_client.upload_media(BW_ACCOUNT_ID, media_file_name, media_file)
 except APIException as e:
     print(e.response_code)
