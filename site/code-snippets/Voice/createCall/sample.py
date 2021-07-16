@@ -1,5 +1,5 @@
 from bandwidth.bandwidth_client import BandwidthClient
-from bandwidth.voice.models.api_create_call_request import ApiCreateCallRequest
+from bandwidth.voice.models.create_call_request import CreateCallRequest
 from bandwidth.exceptions.api_exception import APIException
 
 import os
@@ -18,7 +18,7 @@ bandwidth_client = BandwidthClient(
 )
 voice_client = bandwidth_client.voice_client.client
 
-body = ApiCreateCallRequest()
+body = CreateCallRequest()
 body.application_id = BW_VOICE_APPLICATION_ID
 body.to = USER_NUMBER
 body.mfrom = BW_NUMBER

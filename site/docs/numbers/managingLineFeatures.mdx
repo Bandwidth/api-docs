@@ -1,0 +1,742 @@
+---
+id: manageNumberFeatures
+title: Manage Number Features
+slug: /numbers/guides/manageNumberFeatures
+description: How to change/manage number features using the Bandwidth APIs
+keywords:
+  - bandwidth
+  - numbers
+  - managing
+  - change
+  - tnOptions
+  - features
+image: ../../static/img/bandwidth-logo.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+export const accountId = "{accountId}";
+export const tn = "{tn}";
+
+export const Highlight = ({children, color}) => (
+    <span
+      style={{
+        backgroundColor: color,
+        borderRadius: '2px',
+        color: '#fff',
+        padding: '0.2rem',
+      }}>
+      {children}
+    </span>
+  );
+
+The Bandwidth Phone Number Phone Number API allows the association of a number of “Option” or “Feature” characteristics with a Telephone Number.
+
+Line Options feature management is **NOT** available for Phone numbers that have been imported for use with Hosted Messaging.
+
+## Single TN Option Assignment {#single-tn}
+
+There are a number of TN capabilities that can be easily assigned directly to the Telephone Number(TN) on a per-TN basis.   This set of Per-TN Options includes:
+
+* Call Forwarding
+* Rewrite User
+* Inbound Calls Number Format
+* Remote Party ID Format
+
+The path for managing these options is: `/accounts/{accountId>/sites/{siteId}/sippeers/{sippeerId}/tns/{tn#}`
+
+## TnOptions Orders
+
+Most telephone number features are controlled by the TnOptions order type. This API endpoint allows you to configure different settings for multiple groups of numbers in one API call. For ex: you can set LIDB information on one group of numbers and DLDA infornmation on another, entirely different group of numbers, in the same API call.
+
+### Request URL
+
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/tnOptions</code>
+
+### TnOptions Request Body Fields
+
+| Name | Required | Values | Description |
+|:-----|:---------|:-------|:------------|
+| `CustomerOrderId` | Optional | Custom String | Customer order ID field - set by user to help identify orders |
+| `TnOptionGroups` | Required | Contains one or more `<TnOptionGroup>` objects |
+| `TnOptionGroup` | Required | Order is required to contain at least one - this contains the settings and `<TelephoneNumbers>` to adjust |
+| `PortOutPasscode` | Optional | alphanumeric string 4-10 characters _or_ `unchanged` _or_ `systemDefault` | Used to set portout passcode protection on a set of numbers. Use `systemDefault` to set the value to `null` |
+| `CallForward` | Optional | 10 digit number _or_ `unchanged` _or_ `systemDefault` | Set Call Forwarding for numbers on a SIP location. Use `systemDefault` to set the value to `null` |
+| `CallingNameDisplay` | Optional | `on` _or_ `off` _or_ `unchanged` _or_ `systemDefault` | Turn on/off CallingNameDisplay for a group of numbers. |
+| `SMS` | Optional | `on` _or_ `off` _or_ `unchnaged` | Turn on/off SMS for a group of numbers |
+| `FinalDestinationURI` | Optional | string _or_ `unchanged` _or_ `systemDefault` | Set a final destination (failover) URI on a group of numbers |
+| `NNID` | Optional | intiger _or_ `unchanged` _or_ `systemDefault` | Update the NNID for a group of numbers |
+| `ESPID` | Optional | string _or_ `unchanged` _or_ `systemDefault` | Update the ESPID for a group of numbers |
+
+### Examples
+
+<Tabs
+  groupId="http_tnOptions_example"
+  defaultValue="single_group"
+  values={[
+    { label: 'Single Group', value: 'single_group', },
+    { label: 'Multiple Groups', value: 'multiple_groups', },
+  ]
+}>
+<TabItem value="single_group">
+
+> Request
+
+```xml
+POST https://dashboard.bandwidth.com/api/account/{accountId}/tnOptions HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<TnOptionOrder>
+    <CustomerOrderId>TnOptionOrder1</CustomerOrderId>
+    <TnOptionGroups>
+        <TnOptionGroup>
+            <CallForward>6042661720</CallForward>
+            <CallingNameDisplay>on</CallingNameDisplay>
+            <PortOutPasscode>a1b2c3</PortOutPasscode>
+            <Sms>on</Sms>
+            <TelephoneNumbers>
+                <TelephoneNumber>2018551020</TelephoneNumber>
+            </TelephoneNumbers>
+        </TnOptionGroup>
+    </TnOptionGroups>
+</TnOptionOrder>
+```
+
+> Response
+
+```xml
+HTTP 201 Created
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<TnOptionOrderResponse>
+    <TnOptionOrder>
+        <OrderCreateDate>2016-01-15T12:01:14.324Z</OrderCreateDate>
+        <AccountId>14</AccountId>
+        <CreatedByUser>jbm</CreatedByUser>
+        <OrderId>ddbdc72e-dc27-490c-904e-d0c11291b095</OrderId>
+        <LastModifiedDate>2016-01-15T12:01:14.324Z</LastModifiedDate>
+        <ProcessingStatus>RECEIVED</ProcessingStatus>
+        <TnOptionGroups>
+            <TnOptionGroup>
+                <CallForward>6042661720</CallForward>
+                <CallingNameDisplay>on</CallingNameDisplay>
+                <Sms>on</Sms>
+                <TelephoneNumbers>
+                    <TelephoneNumber>2018551020</TelephoneNumber>
+                </TelephoneNumbers>
+        </TnOptionGroups>
+        <ErrorList/>
+    </TnOptionOrder>
+</TnOptionOrderResponse>
+```
+
+</TabItem>
+<TabItem value="multiple_groups">
+
+> Request
+
+```xml
+POST https://dashboard.bandwidth.com/api/account/{accountId}/tnOptions HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<TnOptionOrder>
+    <CustomerOrderId>TnOptionOrder1</CustomerOrderId>
+    <TnOptionGroups>
+        <TnOptionGroup>
+            <CallForward>6042661720</CallForward>
+            <PortOutPasscode>a1b2c3</PortOutPasscode>
+            <TelephoneNumbers>
+                <TelephoneNumber>2018551020</TelephoneNumber>
+            </TelephoneNumbers>
+        </TnOptionGroup>
+        <TnOptionGroup>
+            <CallingNameDisplay>on</CallingNameDisplay>
+            <Sms>on</Sms>
+            <TelephoneNumbers>
+                <TelephoneNumber>9195551234</TelephoneNumber>
+            </TelephoneNumbers>
+        </TnOptionGroup>
+    </TnOptionGroups>
+</TnOptionOrder>
+```
+
+> Response
+
+```xml
+HTTP 201 Created
+
+<TnOptionOrderResponse>
+    <TnOptionOrder>
+        <OrderCreateDate>2016-01-15T12:01:14.324Z</OrderCreateDate>
+        <AccountId>14</AccountId>
+        <CreatedByUser>jbm</CreatedByUser>
+        <OrderId>ddbdc72e-dc27-490c-904e-d0c11291b095</OrderId>
+        <LastModifiedDate>2016-01-15T12:01:14.324Z</LastModifiedDate>
+        <ProcessingStatus>RECEIVED</ProcessingStatus>
+        <CustomerOrderId>TnOptionOrder1</CustomerOrderId>
+        <TnOptionGroups>
+            <TnOptionGroup>
+                <CallForward>6042661720</CallForward>
+                <PortOutPasscode>a1b2c3</PortOutPasscode>
+                <TelephoneNumbers>
+                    <TelephoneNumber>2018551020</TelephoneNumber>
+                </TelephoneNumbers>
+            </TnOptionGroup>
+            <TnOptionGroup>
+                <CallingNameDisplay>on</CallingNameDisplay>
+                <Sms>on</Sms>
+                <TelephoneNumbers>
+                    <TelephoneNumber>9195551234</TelephoneNumber>
+                </TelephoneNumbers>
+            </TnOptionGroup>
+        </TnOptionGroups>
+        <ErrorList/>
+    </TnOptionOrder>
+</TnOptionOrderResponse>
+```
+
+</TabItem>
+</Tabs>
+
+### Fetch TnOptions Order Status
+
+Since the TnOptions order is asynchronous, it is recommended to create a tnoptions subscription to recieve order status webhooks, otherwise you need to poll `accounts/{accountId}/tnOptions/{orderId}` to get the order status.
+
+> Request
+
+```http
+GET https://dashboard.bandwidth.com/api/account/{accountId}/tnOptions/{orderId} HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```
+
+> Response
+
+```xml
+200 OK
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<TnOptionOrder>
+    <OrderCreateDate>2016-01-15T11:22:58.789Z</OrderCreateDate>
+    <AccountId>14</AccountId>
+    <CreatedByUser>jbm</CreatedByUser>
+    <OrderId>409033ee-88ec-43e3-85f3-538f30733963</OrderId>
+    <LastModifiedDate>2016-01-15T11:22:58.969Z</LastModifiedDate>
+    <ProcessingStatus>COMPLETE</ProcessingStatus>
+    <TnOptionGroups>
+        <TnOptionGroup>
+            <CallingNameDisplay>on</CallingNameDisplay>
+            <Sms>on</Sms>
+            <TelephoneNumbers>
+                <TelephoneNumber>2174101601</TelephoneNumber>
+            </TelephoneNumbers>
+        </TnOptionGroup>
+        <TnOptionGroup>
+            <CallingNameDisplay>off</CallingNameDisplay>
+            <TelephoneNumbers>
+                <TelephoneNumber>2174101602</TelephoneNumber>
+            </TelephoneNumbers>
+        </TnOptionGroup>
+        <TnOptionGroup>
+            <CallingNameDisplay>systemdefault</CallingNameDisplay>
+            <FinalDestinationURI>sip:+12345678901@1.2.3.4:5060</FinalDestinationURI>
+            <TelephoneNumbers>
+                <TelephoneNumber>2174101603</TelephoneNumber>
+            </TelephoneNumbers>
+        </TnOptionGroup>
+    </TnOptionGroups>
+    <ErrorList/>
+    <Warnings>
+        <Warning>
+            <TelephoneNumber>2174101601</TelephoneNumber>
+            <Description>SMS is already Enabled or number is in processing.</Description>
+        </Warning>
+    </Warnings>
+</TnOptionOrder>
+```
+
+## Calling Name Display Update (LIDB)
+
+The Bandwidth Phone Number API allows the updating of CNAM Display (LIDB) information in the network for Bandwidth TNs managed within the customer’s account.  This capability works within the same asynchronous work-order mechanism as is used for managing other delay-prone system interactions, where a “work-order” is created by the initial API call, and used as a reference for tracking and confirming the subsequent states, and the ultimate success and failure of the result.
+
+### Request URL
+
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/lidbs</code>
+
+### LIDBS Request Body Fields
+
+| Name | Values | Description |
+|:-----|:-------|:------------|
+| `LidbTnGroups` | Contains a list of `LidbTnGroup` objects | |
+| `LidbTnGroup` | Contains the `TelephoneNumbers` object and other required attributes | |
+| CustomerOrderId | String | Custom order id field - optional |
+| `TelephoneNumbers` | Contains a list of `TelephoneNumber` objects | |
+| `TelephoneNumber` | 10 digit Telephone Number | The number to be associated with the CNAM information provided |
+| `SubscriberInformation` | String | The value displayed to the user receiving the phone call from the Telephone numbers in the TelephoneNumbers List |
+| `UseType` | `RESIDENTAL` or `BUSINESS` | |
+| `Visibility` | `PUBLIC` or `PRIVATE` | If tagged as PRIVATE then the data will be provided, but the display will not be provided on a standard phone call |
+
+### Example
+
+```xml
+POST https://dashboard.bandwidth.com/api/account/{accountId}/lidbs HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<LidbOrder>
+    <CustomerOrderId>[String]</CustomerOrderId>
+    <LidbTnGroups>
+        <LidbTnGroup>
+            <TelephoneNumbers>
+                <TelephoneNumber>8045030097</TelephoneNumber>
+                <TelephoneNumber>8045030098</TelephoneNumber>
+            </TelephoneNumbers>
+            <SubscriberInformation>Joes Garage</SubscriberInformation>
+            <UseType>RESIDENTIAL</UseType>
+            <Visibility>PUBLIC</Visibility>
+        </LidbTnGroup>
+        <LidbTnGroup>
+            <TelephoneNumbers>
+                <TelephoneNumber>8888595935</TelephoneNumber>
+            </TelephoneNumbers>
+            <SubscriberInformation>Joes Storage</SubscriberInformation>
+            <UseType>RESIDENTIAL</UseType>
+            <Visibility>PRIVATE</Visibility>
+        </LidbTnGroup>
+    </LidbTnGroups>
+</LidbOrder>
+```
+
+> Response
+
+```xml
+HTTP 201 Created
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<LidbOrderResponse>
+    <LidbOrder>
+        <orderId>1d863522-c9bf-430c-8e79-cc63cad04a1d</orderId>
+        <CustomerOrderId>[String]</CustomerOrderId>
+        <ProcessingStatus>RECEIVED</ProcessingStatus>
+        <ErrorList>
+            <Error>
+                <TelephoneNumber>8888595935</TelephoneNumber>
+                <Code>11020</Code>
+                <Description>Cannot add LIDB to a telephone number that already has LIDB or is in process</Description>
+            </Error>
+        </ErrorList>
+        <LidbTnGroups>
+            <LidbTnGroup>
+                <TelephoneNumbers>
+                    <TelephoneNumber>8045030097</TelephoneNumber>
+                    <TelephoneNumber>8045030098</TelephoneNumber>
+                </TelephoneNumbers>
+                <SubscriberInformation>Joes Garage</SubscriberInformation>
+                <UseType>RESIDENTIAL</UseType>
+                <Visibility>PUBLIC</Visibility>
+            </LidbTnGroup>
+            <LidbTnGroup>
+                <TelephoneNumbers>
+                    <TelephoneNumber>8888595935</TelephoneNumber>
+                </TelephoneNumbers>
+                <SubscriberInformation>Joes Storage</SubscriberInformation>
+                <UseType>RESIDENTIAL</UseType>
+                <Visibility>PRIVATE</Visibility>
+            </LidbTnGroup>
+        </LidbTnGroups>
+    </LidbOrder>
+</LidbOrderResponse>
+```
+
+### Fetch LIDB Order Status
+
+Since the LIDB order is asynchronous, it is recommended to create a lidbs subscription to recieve order status webhooks, otherwise you need to poll `accounts/{accountId}/lidbs/{orderId}` to get the order status.
+
+**NOTE:** These orders require manual intervention and take over 24 hours to process.
+
+> Request
+
+```http
+GET https://dashboard.bandwidth.com/api/account/{accountId}/lidbs/{orderId} HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```
+
+> Response
+
+```xml
+HTTP 200 OK
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<LidbOrder>
+    <CustomerOrderId>testCustomerOrderId</CustomerOrderId>
+    <orderId>255bda29-fc57-44e8-a6c2-59b45388c6d0</orderId>
+    <OrderCreateDate>2014-05-28T14:46:21.724Z</OrderCreateDate>
+    <ProcessingStatus>RECEIVED</ProcessingStatus>
+    <CreatedByUser>jbm</CreatedByUser>
+    <LastModifiedDate>2014-02-20T19:33:17.600Z</LastModifiedDate>
+    <OrderCompleteDate>2014-02-20T19:33:17.600Z</OrderCompleteDate>
+    <ErrorList/>
+    <LidbTnGroups>
+        <LidbTnGroup>
+            <TelephoneNumbers>
+                <TelephoneNumber>4082213311</TelephoneNumber>
+            </TelephoneNumbers>
+            <FullNumber>8042105618</FullNumber>
+            <SubscriberInformation>Fred</SubscriberInformation>
+            <UseType>BUSINESS</UseType>
+            <Visibility>PRIVATE</Visibility>
+        </LidbTnGroup>
+        <LidbTnGroup>
+            <TelephoneNumbers>
+                <TelephoneNumber>4082212850</TelephoneNumber>
+                <TelephoneNumber>4082213310</TelephoneNumber>
+            </TelephoneNumbers>
+            <FullNumber>8042105760</FullNumber>
+            <SubscriberInformation>Fred</SubscriberInformation>
+            <UseType>RESIDENTIAL</UseType>
+            <Visibility>PUBLIC</Visibility>
+        </LidbTnGroup>
+    </LidbTnGroups>
+</LidbOrder>
+```
+
+## Directory Listing and Directory Assistance (DLDA)
+
+The DLDA service allows the association of a name and address listing with a Telephone Number or Telephone Numbers in the Bandwidth Phone Number Phone Number system.  The DLDA API follows the asynchronous order processing request model described elsewhere in this document, where a request is submitted, an order ID is returned as an ID of that request or order, and then the request is fulfilled in the background.  The status of the request is reflected in the status of the order, and can be queried at any time.
+
+### Request URL
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/dlda</code>
+
+### DLDA Fields {#dlda-fields}
+
+There are a number of fields involved in submitting a DLDA order, summarized in the table below:
+
+| Field Name                               | Field Meaning and Values                                                                                                                                                                                                                                                                                                                                                                                        | API Element              | required |
+|:-----------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------|:---------|
+| Listed Telephone Number                  | 10 Digit US Number                                                                                                                                                                                                                                                                                                                                                                                              | `<TelephoneNumber>`      | Yes      |
+| Listing Type                             | Listed (in DA & Dir)NonListed (in DA Only),NonPublished (No DA & No Dir)                                                                                                                                                                                                                                                                                                                                        | `<ListingType>`          | Yes      |
+| Type of Account                          | Residential orBusiness                                                                                                                                                                                                                                                                                                                                                                                          | `<SubscriberType>`       | Yes      |
+| Listed Name Last                         | Last Name or First Name of Business                                                                                                                                                                                                                                                                                                                                                                             | `<LastName>`             | Yes      |
+| Listed Name First                        | First Name or Remaining Name of Business                                                                                                                                                                                                                                                                                                                                                                        | `<FirstName>`            |          |
+| Listed Name First 2                      | First name of Second Party.  It will be appended to the First Name with an "&"                                                                                                                                                                                                                                                                                                                                  | `<FirstName2>`           |          |
+| Designation                              | Atty, Plmbr, etc…                                                                                                                                                                                                                                                                                                                                                                                               | `<Designation>`          |          |
+| Title of Lineage                         | Jr, Sr, III, IV, etc…                                                                                                                                                                                                                                                                                                                                                                                           | `<TitleOfLineage>`       |          |
+| Title of Address                         | Rev, Sgt, etc…                                                                                                                                                                                                                                                                                                                                                                                                  | `<TitleOfAddress>`       |          |
+| Title of Address2                        | Dr, etc..                                                                                                                                                                                                                                                                                                                                                                                                       | `<TitleOfAddress2>`      |          |
+| Title of Lineage for Dual Name           | Jr, Sr, III, IV, etc…                                                                                                                                                                                                                                                                                                                                                                                           | `<TitleOfLineageName2>`  |          |
+| Title of Address 1 for Dual Name         | Rev, Sgt, etc…                                                                                                                                                                                                                                                                                                                                                                                                  | `<TitleOfAddressName2>`  |          |
+| Title of Address 2 for Dual Name         | Dr, etc..                                                                                                                                                                                                                                                                                                                                                                                                       | `<TitleOfAddress2Name2>` |          |
+| Place Listing As                         | Business Name Sorting String.  This will be used as a string to control the sorting of the Listing if the Business Name above would not yield the correct results. For example, if 1040 Tax was the listed name; the PLA would be populated as either One Zero Forty Tax, Ten Forty Tax, or One Zero Four Zero Tax. The words within the PLA field will tell the publishers how to alphabetize the listed name. | `<PlaceListingAs>`       |          |
+| Address Indicator                        | Used to control whether the address is listed or not.                                                                                                                                                                                                                                                                                                                                                           | `<ListAddress>`          | Yes      |
+| Listed Address House Number Prefix       | Valid USPS Prefix                                                                                                                                                                                                                                                                                                                                                                                               | `<HousePrefix>`          |          |
+| Listed Address House Number              | Valid USPS House Number                                                                                                                                                                                                                                                                                                                                                                                         | `<HouseNumber>`          |          |
+| Listed Address Street No Suffix          | Valid USPS Street Number Suffix                                                                                                                                                                                                                                                                                                                                                                                 | `<HouseSuffix>`          |          |
+| Listed Address Street Directional        | N = North, S = South, E = East, W = West, NE = Northeast,NW = Northwest, SE = Southeast, SW = Southwest                                                                                                                                                                                                                                                                                                         | `<PreDirectional>`       |          |
+| Listed Address Street Name               | Valid USPS Street Name                                                                                                                                                                                                                                                                                                                                                                                          | `<StreetName>`           |          |
+| Listed Address Street Thoroughfare       | St, Rd, Ct, Dr, etc…                                                                                                                                                                                                                                                                                                                                                                                            | `<StreetSuffix>`         |          |
+| Listed Address Street Directional Suffix | N = North, S = South, E = East, W = West, NE = Northeast,NW = Northwest, SE = Southeast, SW = Southwest                                                                                                                                                                                                                                                                                                         | `<PostDirectional>`      |          |
+| Listed Address Location                  | Suite 320, Apartment 104A, 2nd Floor, 3rd Level, etc.                                                                                                                                                                                                                                                                                                                                                           | `<AddressLine2>`         |          |
+| Listed Address City                      | Valid USPS Community                                                                                                                                                                                                                                                                                                                                                                                            | `<City>`                 | Yes      |
+| Listed Address State                     | Valid USPS State                                                                                                                                                                                                                                                                                                                                                                                                | `<StateCode>`            | Yes      |
+| Listed Address Zip Code                  | Valid USPS Zip Code, zip plus code or international zip code                                                                                                                                                                                                                                                                                                                                                    | `<Zip>`                  | Yes      |
+
+
+### Examples
+
+> Request
+
+```xml
+POST https://dashboard.bandwidth.com/api/account/{accountId}/dldas HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<DldaOrder>
+    <CustomerOrderId>[String]</CustomerOrderId>
+    <DldaTnGroups>
+        <DldaTnGroup>
+            <TelephoneNumbers>
+                <TelephoneNumber>5202217754</TelephoneNumber>
+            </TelephoneNumbers>
+            <SubscriberType>RESIDENTIAL</SubscriberType>
+            <ListingType>LISTED</ListingType>
+            <ListingName>
+                <FirstName>John</FirstName>
+                <FirstName2/>
+                <LastName>Smith</LastName>
+                <Designation/>
+                <TitleOfLineage/>
+                <TitleOfAddress/>
+                <TitleOfAddress2/>
+                <TitleOfLineageName2/>
+                <TitleOfAddressName2/>
+                <TitleOfAddress2Name2/>
+                <PlaceListingAs/>
+            </ListingName>
+            <ListAddress>true</ListAddress>
+            <Address>
+                <HousePrefix/>
+                <HouseNumber>915</HouseNumber>
+                <HouseSuffix/>
+                <PreDirectional/>
+                <StreetName>Elm</StreetName>
+                <StreetSuffix>Ave</StreetSuffix>
+                <PostDirectional/>
+                <AddressLine2/>
+                <City>Carpinteria</City>
+                <StateCode>CA</StateCode>
+                <Zip>93013</Zip>
+                <PlusFour/>
+                <County/>
+                <AddressType>DLDA</AddressType>
+            </Address>
+        </DldaTnGroup>
+    </DldaTnGroups>
+</DldaOrder>
+```
+
+> Response
+
+```xml
+HTTP 201 Created
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DldaOrderResponse>
+    <DldaOrder>
+        <CustomerOrderId>[String]</CustomerOrderId>
+        <OrderCreateDate>2014-07-16T07:59:08.065Z</OrderCreateDate>
+        <AccountId>14</AccountId>
+        <CreatedByUser>team_ua</CreatedByUser>
+        <OrderId>f2ac3343-5bff-424a-b8ca-975f5e7b159e</OrderId>
+        <LastModifiedDate>2014-07-16T07:59:08.065Z</LastModifiedDate>
+        <ErrorList/>
+        <ProcessingStatus>RECEIVED</ProcessingStatus>
+        <DldaTnGroups>
+            <DldaTnGroup>
+                <TelephoneNumbers>
+                    <TelephoneNumber>5202217754</TelephoneNumber>
+                </TelephoneNumbers>
+                <AccountType>RESIDENCE</AccountType>
+                <ListingType>LISTED</ListingType>
+                <ListingName>
+                    <FirstName>John</FirstName>
+                    <FirstName2></FirstName2>
+                    <LastName>Smith</LastName>
+                    <Designation></Designation>
+                    <TitleOfLineage></TitleOfLineage>
+                    <TitleOfAddress></TitleOfAddress>
+                    <TitleOfAddress2></TitleOfAddress2>
+                    <TitleOfLineageName2></TitleOfLineageName2>
+                    <TitleOfAddressName2></TitleOfAddressName2>
+                    <TitleOfAddress2Name2></TitleOfAddress2Name2>
+                    <PlaceListingAs></PlaceListingAs>
+                </ListingName>
+                <ListAddress>true</ListAddress>
+                <Address>
+                    <HousePrefix></HousePrefix>
+                    <HouseNumber>915</HouseNumber>
+                    <HouseSuffix></HouseSuffix>
+                    <PreDirectional></PreDirectional>
+                    <StreetName>Elm</StreetName>
+                    <StreetSuffix>Ave</StreetSuffix>
+                    <PostDirectional></PostDirectional>
+                    <AddressLine2></AddressLine2>
+                    <City>Carpinteria</City>
+                    <StateCode>CA</StateCode>
+                    <Zip>93013</Zip>
+                    <PlusFour></PlusFour>
+                    <County></County>
+                    <Country>United States</Country>
+                    <AddressType>Dlda</AddressType>
+                </Address>
+            </DldaTnGroup>
+        </DldaTnGroups>
+    </DldaOrder>
+</DldaOrderResponse>
+```
+
+### Fetch DLDA Order Status
+
+Since the DLDA order is asynchronous, it is recommended to create a dldas subscription to recieve order status webhooks, otherwise you need to poll `accounts/{accountId}/dlda/{orderId}` to get the order status.
+
+> Request
+
+```http
+GET https://dashboard.bandwidth.com/api/account/{accountId}/dlda/{orderId} HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```
+
+> Response
+
+```xml
+HTTP 200 OK
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<DldaOrderResponse>
+    <DldaOrder>
+        <CustomerOrderId>5a88d16d-f8a9-45c5-a5db-137d700c6a22</CustomerOrderId>
+        <OrderCreateDate>2014-07-10T12:38:11.833Z</OrderCreateDate>
+        <AccountId>14</AccountId>
+        <CreatedByUser>jbm</CreatedByUser>
+        <OrderId>ea9e90c2-77a4-4f82-ac47-e1c5bb1311f4</OrderId>
+        <LastModifiedDate>2014-07-10T12:38:11.833Z</LastModifiedDate>
+        <ErrorList>
+            <Error>
+                <Code>16103</Code>
+                <Description>DL/DA information cannot be changed because the number is already being processed </Description>
+                <TelephoneNumber>2053778335</TelephoneNumber>
+            </Error>
+        </ErrorList>
+        <ProcessingStatus>RECEIVED</ProcessingStatus>
+        <DldaTnGroups>
+            <DldaTnGroup>
+                <TelephoneNumbers>
+                    <TelephoneNumber>2053778335</TelephoneNumber>
+                    <TelephoneNumber>2053865784</TelephoneNumber>
+                </TelephoneNumbers>
+                <AccountType>BUSINESS</AccountType>
+                <ListingType>LISTED</ListingType>
+                <ListingName>
+                    <FirstName>Joe</FirstName>
+                    <LastName>Smith</LastName>
+                </ListingName>
+                <ListAddress>true</ListAddress>
+                <Address>
+                    <HouseNumber>12</HouseNumber>
+                    <StreetName>ELM</StreetName>
+                    <City>New York</City>
+                    <StateCode>NY</StateCode>
+                    <Zip>10007</Zip>
+                    <Country>United States</Country>
+                    <AddressType>Dlda</AddressType>
+                </Address>
+            </DldaTnGroup>
+        </DldaTnGroups>
+    </DldaOrder>
+</DldaOrderResponse>
+```
+
+#### Checking DLDA information associated with a TN
+
+<Highlight color="#00bf8c">GET</Highlight> <code>https://dashboard.bandwidth.com/api/tns/{tn}/tndetails</code> retrieves detailed information about the phone number.
+
+In addition to the name and address information inherent in a DLDA update, the DLDA information associated with the TN includes a `<Status>` value that indicates whether the DLDA information has been successfully registered with the Listing provider, or is in some other state.  Valid values for the `<Status>` element are:
+
+| Status             | Description                                                                                                                                                                                                                                                                                               |
+|:-------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `Success`          | The information reported in the payload is the information that has been successfully registered with the Listing Provider.  If a subsequent attempt has been made and failed, the original successful status and information will be retained.  The failure can be interpreted based on the order state. |
+| `Failed`           | The only attempt to update DLDA information for this TN has failed, and there is no DLDA information associated with the TN with the Listing Provider.                                                                                                                                                    |
+| `Pending-Editable` | An attempt to update DLDA information with the Listing Provider is in progress, but can be altered.                                                                                                                                                                                                       |
+| `Pending-Locked`   | An attempt to update DLDA information with the Listing Provider is in progress, but cannot be changed at this time.  A new order will be required once the current attempt succeeds or fails.                                                                                                             |
+
+If the `<Status>` of the DLDA order impacting the TN is transient, indicating that there is an order in process and the outcome is inconclusive, the DLDA information will be replaced with a link to the order currently processing a DLDA change for that TN.  This will be the case if the status is `Pending-Editable` or `Pending-Locked`.
+
+## Set a Failover URI
+**Please Note that the Failover URI functionality is only available for SIP Voice users at this time.**
+
+Setting a failover URI (Final Destination URI) allows Bandwidth to forward voice traffic to an alternate number in the event of a delivery failure to your original call route.
+
+To set the Final Destination URI to a **SIP address**, use the format:
+```xml
+<FinalDestinationURI>sip:{address}@{host}</FinalDestinationURI>
+```
+
+To set the Final Destination URI to a **PSTN address**, use the format:
+```xml
+<FinalDestinationURI>+13332221111@PSTN</FinalDestinationURI>
+```
+
+More detailed informaion on setting a Final Destination URI can be found [here](https://www.bandwidth.com/blog/establishing-automatic-failover-for-routing-calls-in-case-of-failure-final-destination-uri/).
+
+### Examples
+
+<Tabs
+  groupId="http_failover_uri"
+  defaultValue="failover_location"
+  values={[
+    { label: 'Establish Failover on a Location (Sip-Peer)', value: 'failover_location', },
+    { label: 'Establish Failover on a Number', value: 'failover_number', },
+  ]
+}>
+<TabItem value="failover_location">
+
+> Request
+
+**NOTE** This PUT request is idempotent - it will overwrite the existing location (sip-peer) settings when made so be sure to include any previous settings that must persist on the location or you risk replacing them with their default `null` values
+
+```xml
+PUT https://dashboard.bandwidth.com/api/account/{accountId}/sites/{siteId}/sippeers/{sippeerId} HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<SipPeer>
+ <PeerName>{location_name}</PeerName>
+ <FinalDestinationUri>{final_destination}</FinalDestinationUri>
+ <IsDefaultPeer>true</IsDefaultPeer>
+</SipPeer>
+```
+
+> Response
+
+```xml
+HTTP 200 OK
+```
+</TabItem>
+<TabItem value="failover_number">
+
+> Request
+
+```xml
+POST https://dashboard.bandwidth.com/api/accounts/{accountId}/tnoptions HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<TnOptionOrder>
+    <TnOptionGroups>
+        <TnOptionGroup>
+            <FinalDestinationURI>{final_destination}</FinalDestinationURI>
+            <TelephoneNumbers>
+                <TelephoneNumber>{TN_1}</TelephoneNumber>
+                <TelephoneNumber>{TN_N}</TelephoneNumber>
+                <TelephoneNumber>{TN_last}</TelephoneNumber>
+            </TelephoneNumbers>
+        </TnOptionGroup>
+    </TnOptionGroups>
+</TnOptionOrder>
+```
+
+> Response
+
+```xml
+HTTP 201 Created
+
+<TnOptionOrderResponse>
+    <TnOptionOrder>
+        <OrderCreateDate>2016-01-15T12:01:14.324Z</OrderCreateDate>
+        <AccountId>14</AccountId>
+        <CreatedByUser>jbm</CreatedByUser>
+        <OrderId>ddbdc72e-dc27-490c-904e-d0c11291b095</OrderId>
+        <LastModifiedDate>2016-01-15T12:01:14.324Z</LastModifiedDate>
+        <ProcessingStatus>RECEIVED</ProcessingStatus>
+        <CustomerOrderId>TnOptionOrder1</CustomerOrderId>
+        <TnOptionGroups>
+            <TnOptionGroup>
+                <FinalDestinationURI>{final_destination}</FinalDestinationURI>
+                <TelephoneNumbers>
+                    <TelephoneNumber>{TN_1}</TelephoneNumber>
+                    <TelephoneNumber>{TN_N}</TelephoneNumber>
+                    <TelephoneNumber>{TN_last}</TelephoneNumber>
+                </TelephoneNumbers>
+            </TnOptionGroup>
+        </TnOptionGroups>
+        <ErrorList/>
+    </TnOptionOrder>
+</TnOptionOrderResponse>
+```
+
+</TabItem>
+</Tabs>

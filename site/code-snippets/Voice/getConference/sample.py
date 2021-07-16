@@ -16,7 +16,7 @@ voice_client = bandwidth_client.voice_client.client
 conference_id = "conf-1234"
 
 try:
-    response = voice_client.get_conference_by_id(BW_ACCOUNT_ID, conference_id)
+    response = voice_client.get_conference(BW_ACCOUNT_ID, conference_id)
     print(response.body.name)
 except APIException as e:
     print(e.response_code)

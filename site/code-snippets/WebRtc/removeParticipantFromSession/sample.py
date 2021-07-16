@@ -18,8 +18,6 @@ session_id = "1234-abcd"
 participant_id = "4312-dbca"
 
 try:
-    #web_rtc_client.remove_participant_from_session(BW_ACCOUNT_ID, session_id, participant_id)
-    web_rtc_client.remove_participant_from_session(BW_ACCOUNT_ID, participant_id, session_id)
-    #NOTE: This is currently improperly defined
+    web_rtc_client.remove_participant_from_session(BW_ACCOUNT_ID, session_id, participant_id)
 except APIException as e:
     print(e.response_code)
