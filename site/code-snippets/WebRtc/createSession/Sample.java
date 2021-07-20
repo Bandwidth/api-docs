@@ -3,7 +3,6 @@ import java.util.concurrent.ExecutionException;
 
 import com.bandwidth.*;
 import com.bandwidth.webrtc.models.*;
-import com.bandwidth.webrtc.controllers.*;
 import com.bandwidth.http.response.ApiResponse;
 
 public class Sample {
@@ -13,8 +12,8 @@ public class Sample {
 
     public static void main(String[] args) {
         BandwidthClient client = new BandwidthClient.Builder()
-            .webRtcBasicAuthCredentials(USERNAME, PASSWORD)
-            .build();
+                .webRtcBasicAuthCredentials(USERNAME, PASSWORD)
+                .build();
 
         Session session = new Session();
         session.setTag("new-session");
