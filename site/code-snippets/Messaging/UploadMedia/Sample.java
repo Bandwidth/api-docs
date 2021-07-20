@@ -1,10 +1,10 @@
 import com.bandwidth.BandwidthClient;
-import com.bandwidth.exceptions.ApiException;
 import com.bandwidth.http.response.ApiResponse;
 import com.bandwidth.utilities.FileWrapper;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class Sample {
     public static final String USERNAME = System.getenv("BW_USERNAME");
@@ -20,9 +20,10 @@ public class Sample {
         FileWrapper fileWrapper = new FileWrapper(new File("/path/to/file"));
 
         try {
-            ApiResponse<Void> response = client.getMessagingClient().getAPIController().uploadMedia(ACCOUNT_ID, mediaId, fileWrapper.getFile().length(), fileWrapper, "content/type", "no-cache");
-        } catch (ApiException|IOException ex) {
-            // Handle exceptions from the request.
+            CompletableFuture<ApiResponse<Void>> completableFuture = client.getMessagingClient().getAPIController().uploadMediaAsync(ACCOUNT_ID, mediaId, fileWrapper.getFile().length(), fileWrapper, "content/type", "no-cache");
+            System.out.println(completableFuture.get().getResult());
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println(e.getMessage());
         }
     }
 }

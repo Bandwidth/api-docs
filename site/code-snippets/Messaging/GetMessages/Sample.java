@@ -1,9 +1,9 @@
 import com.bandwidth.BandwidthClient;
-import com.bandwidth.exceptions.ApiException;
 import com.bandwidth.http.response.ApiResponse;
 import com.bandwidth.messaging.models.BandwidthMessagesList;
 
-import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class Sample {
     public static final String USERNAME = System.getenv("BW_USERNAME");
@@ -18,9 +18,10 @@ public class Sample {
                 .build();
 
         try {
-            ApiResponse<BandwidthMessagesList> response = client.getMessagingClient().getAPIController().getMessages(ACCOUNT_ID, null, bandwidthNumber, null, null, null, null, null, null, null);
-        } catch (ApiException|IOException ex) {
-            // Handle exceptions from the request.
+            CompletableFuture<ApiResponse<BandwidthMessagesList>> completableFuture = client.getMessagingClient().getAPIController().getMessagesAsync(ACCOUNT_ID, null, bandwidthNumber, null, null, null, null, null, null, null);
+            System.out.println(completableFuture.get().getResult());
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println(e.getMessage());
         }
     }
 }

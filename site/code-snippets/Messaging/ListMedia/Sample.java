@@ -1,9 +1,9 @@
 import com.bandwidth.BandwidthClient;
-import com.bandwidth.exceptions.ApiException;
 import com.bandwidth.http.response.ApiResponse;
 import com.bandwidth.messaging.models.Media;
 
-import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.List;
 
 public class Sample {
@@ -17,9 +17,10 @@ public class Sample {
                 .build();
 
         try {
-            ApiResponse<List<Media>> response = client.getMessagingClient().getAPIController().listMedia(ACCOUNT_ID, null);
-        } catch (ApiException|IOException ex) {
-            // Handle exceptions from the request.
+            CompletableFuture<ApiResponse<List<Media>>> completableFuture = client.getMessagingClient().getAPIController().listMediaAsync(ACCOUNT_ID, null);
+            System.out.println(completableFuture.get().getResult());
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println(e.getMessage());
         }
     }
 }

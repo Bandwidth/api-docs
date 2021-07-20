@@ -1,10 +1,10 @@
 import com.bandwidth.BandwidthClient;
-import com.bandwidth.exceptions.ApiException;
 import com.bandwidth.http.response.ApiResponse;
 import com.bandwidth.voice.models.ApiCallResponse;
 import com.bandwidth.voice.models.ApiCreateCallRequest;
 
-import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class Sample {
     public static final String USERNAME = System.getenv("BW_USERNAME");
@@ -22,9 +22,10 @@ public class Sample {
                 .build();
 
         try {
-            ApiResponse<Void> response = client.getVoiceClient().getAPIController().deleteRecordingMedia(ACCOUNT_ID, callId, recordingId);
-        } catch (ApiException|IOException ex) {
-            // Handle exceptions from the request.
+            CompletableFuture<ApiResponse<Void>> completableFuture = client.getVoiceClient().getAPIController().deleteRecordingMediaAsync(ACCOUNT_ID, callId, recordingId);
+            System.out.println(completableFuture.get().getResult());
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println(e.getMessage());
         }
     }
 }

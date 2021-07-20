@@ -1,10 +1,10 @@
 import com.bandwidth.BandwidthClient;
-import com.bandwidth.exceptions.ApiException;
 import com.bandwidth.http.response.ApiResponse;
 import com.bandwidth.messaging.models.BandwidthMessage;
 import com.bandwidth.messaging.models.MessageRequest;
 
-import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.Collections;
 
 public class Sample {
@@ -28,9 +28,10 @@ public class Sample {
         request.setText("Hello world");
 
         try {
-            ApiResponse<BandwidthMessage> response = client.getMessagingClient().getAPIController().createMessage(ACCOUNT_ID, request);
-        } catch (ApiException|IOException ex) {
-            // Handle exceptions from the request.
+            CompletableFuture<ApiResponse<BandwidthMessage>> completableFuture = client.getMessagingClient().getAPIController().createMessageAsync(ACCOUNT_ID, request);
+            System.out.println(completableFuture.get().getResult());
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println(e.getMessage());
         }
     }
 }

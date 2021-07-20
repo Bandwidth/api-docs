@@ -1,10 +1,10 @@
 import com.bandwidth.BandwidthClient;
-import com.bandwidth.exceptions.ApiException;
 import com.bandwidth.http.response.ApiResponse;
 import com.bandwidth.twofactorauth.models.TwoFactorCodeRequestSchema;
 import com.bandwidth.twofactorauth.models.TwoFactorMessagingResponse;
 
-import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class Sample {
     public static final String USERNAME = System.getenv("BW_USERNAME");
@@ -32,9 +32,10 @@ public class Sample {
         request.setMessage(message);
 
         try {
-            ApiResponse<TwoFactorMessagingResponse> response = client.getTwoFactorAuthClient().getMFAController().createMessagingTwoFactor(ACCOUNT_ID, request);
-        } catch (ApiException|IOException ex) {
-            // Handle exceptions from the request.
+            CompletableFuture<ApiResponse<TwoFactorMessagingResponse>> completableFuture = client.getTwoFactorAuthClient().getMFAController().createMessagingTwoFactorAsync(ACCOUNT_ID, request);
+            System.out.println(completableFuture.get().getResult());
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println(e.getMessage());
         }
     }
 }

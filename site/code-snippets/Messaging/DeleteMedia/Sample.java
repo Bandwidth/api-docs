@@ -1,10 +1,10 @@
 import com.bandwidth.BandwidthClient;
-import com.bandwidth.exceptions.ApiException;
 import com.bandwidth.http.response.ApiResponse;
 import com.bandwidth.messaging.models.BandwidthMessage;
 import com.bandwidth.messaging.models.MessageRequest;
 
-import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.Collections;
 
 public class Sample {
@@ -20,9 +20,10 @@ public class Sample {
                 .build();
 
         try {
-            ApiResponse<Void> response = client.getMessagingClient().getAPIController().deleteMedia(ACCOUNT_ID, mediaId);
-        } catch (ApiException|IOException ex) {
-            // Handle exceptions from the request.
+            CompletableFuture<ApiResponse<Void>> completableFuture = client.getMessagingClient().getAPIController().deleteMediaAsync(ACCOUNT_ID, mediaId);
+            System.out.println(completableFuture.get().getResult());
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println(e.getMessage());
         }
     }
 }

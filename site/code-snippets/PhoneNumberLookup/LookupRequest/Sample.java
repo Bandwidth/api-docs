@@ -1,10 +1,10 @@
 import com.bandwidth.BandwidthClient;
-import com.bandwidth.exceptions.ApiException;
 import com.bandwidth.http.response.ApiResponse;
 import com.bandwidth.phonenumberlookup.models.OrderRequest;
 import com.bandwidth.phonenumberlookup.models.OrderResponse;
 
-import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,9 +24,10 @@ public class Sample {
         OrderRequest request = new OrderRequest(numbers);
 
         try {
-            ApiResponse<OrderResponse> response = client.getPhoneNumberLookupClient().getAPIController().createLookupRequest(ACCOUNT_ID, request);
-        } catch (ApiException|IOException ex) {
-            // Handle exceptions from the request.
+            CompletableFuture<ApiResponse<OrderResponse>> completableFuture = client.getPhoneNumberLookupClient().getAPIController().createLookupRequestAsync(ACCOUNT_ID, request);
+            System.out.println(completableFuture.get().getResult());
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println(e.getMessage());
         }
     }
 }

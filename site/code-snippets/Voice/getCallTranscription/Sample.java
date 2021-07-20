@@ -1,10 +1,10 @@
 import com.bandwidth.BandwidthClient;
-import com.bandwidth.exceptions.ApiException;
 import com.bandwidth.http.response.ApiResponse;
 import com.bandwidth.voice.models.RecordingMetadataResponse;
 import com.bandwidth.voice.models.TranscriptionResponse;
 
-import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.List;
 
 public class Sample {
@@ -23,9 +23,10 @@ public class Sample {
                 .build();
 
         try {
-            ApiResponse<TranscriptionResponse> response = client.getVoiceClient().getAPIController().getRecordingTranscription(ACCOUNT_ID, callId, recordingId);
-        } catch (ApiException|IOException ex) {
-            // Handle exceptions from the request.
+            CompletableFuture<ApiResponse<TranscriptionResponse>> completableFuture = client.getVoiceClient().getAPIController().getRecordingTranscriptionAsync(ACCOUNT_ID, callId, recordingId);
+            System.out.println(completableFuture.get().getResult());
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println(e.getMessage());
         }
     }
 }

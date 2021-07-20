@@ -1,9 +1,9 @@
 import com.bandwidth.BandwidthClient;
-import com.bandwidth.exceptions.ApiException;
 import com.bandwidth.http.response.ApiResponse;
 import com.bandwidth.phonenumberlookup.models.OrderStatus;
 
-import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class Sample {
     public static final String USERNAME = System.getenv("BW_USERNAME");
@@ -18,9 +18,10 @@ public class Sample {
         String requestId = "8a358296-e188-4a3a-b974-8e4d12001dd8";
 
         try {
-            ApiResponse<OrderStatus> response = client.getPhoneNumberLookupClient().getAPIController().getLookupRequestStatus(ACCOUNT_ID, requestId);
-        } catch (ApiException|IOException ex) {
-            // Handle exceptions from the request.
+            CompletableFuture<ApiResponse<OrderStatus>> completableFuture = client.getPhoneNumberLookupClient().getAPIController().getLookupRequestStatusAsync(ACCOUNT_ID, requestId);
+            System.out.println(completableFuture.get().getResult());
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println(e.getMessage());
         }
     }
 }

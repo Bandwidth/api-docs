@@ -1,9 +1,9 @@
 import com.bandwidth.BandwidthClient;
-import com.bandwidth.exceptions.ApiException;
 import com.bandwidth.http.response.ApiResponse;
 import com.bandwidth.voice.models.RecordingMetadataResponse;
 
-import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.List;
 
 public class Sample {
@@ -20,9 +20,10 @@ public class Sample {
                 .build();
 
         try {
-            ApiResponse<List<RecordingMetadataResponse>> response = client.getVoiceClient().getAPIController().getQueryMetadataForAccountAndCall(ACCOUNT_ID, callId);
-        } catch (ApiException|IOException ex) {
-            // Handle exceptions from the request.
+            CompletableFuture<ApiResponse<List<RecordingMetadataResponse>>> completableFuture = client.getVoiceClient().getAPIController().getQueryMetadataForAccountAndCallAsync(ACCOUNT_ID, callId);
+            System.out.println(completableFuture.get().getResult());
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println(e.getMessage());
         }
     }
 }

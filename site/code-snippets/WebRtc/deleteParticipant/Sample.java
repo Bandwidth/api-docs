@@ -1,8 +1,8 @@
 import com.bandwidth.BandwidthClient;
-import com.bandwidth.exceptions.ApiException;
 import com.bandwidth.http.response.ApiResponse;
 
-import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class Sample {
     public static final String USERNAME = System.getenv("BW_USERNAME");
@@ -17,9 +17,10 @@ public class Sample {
         String participantId = "568749d5-04d5-483d-adf5-deac7dd3d521";
 
         try {
-            ApiResponse<Void> response = client.getWebRtcClient().getAPIController().deleteParticipant(ACCOUNT_ID, participantId);
-        } catch (ApiException|IOException ex) {
-            // Handle exceptions from the request.
+            CompletableFuture<ApiResponse<Void>> completableFuture = client.getWebRtcClient().getAPIController().deleteParticipantAsync(ACCOUNT_ID, participantId);
+            System.out.println(completableFuture.get().getResult());
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println(e.getMessage());
         }
     }
 }

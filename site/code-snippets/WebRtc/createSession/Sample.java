@@ -1,9 +1,9 @@
-import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import com.bandwidth.*;
 import com.bandwidth.webrtc.models.*;
 import com.bandwidth.webrtc.controllers.*;
-import com.bandwidth.exceptions.ApiException;
 import com.bandwidth.http.response.ApiResponse;
 
 public class Sample {
@@ -20,9 +20,10 @@ public class Sample {
         session.setTag("new-session");
 
         try {
-            ApiResponse<Session> response = client.getWebRtcClient().getAPIController().createSession(ACCOUNT_ID, session);
-        } catch (ApiException|IOException ex) {
-            // Handle exceptions from the request.
+            CompletableFuture<ApiResponse<Session>> completableFuture = client.getWebRtcClient().getAPIController().createSessionAsync(ACCOUNT_ID, session);
+            System.out.println(completableFuture.get().getResult());
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println(e.getMessage());
         }
     }
 }

@@ -1,9 +1,9 @@
 import com.bandwidth.BandwidthClient;
-import com.bandwidth.exceptions.ApiException;
 import com.bandwidth.http.response.ApiResponse;
 import com.bandwidth.webrtc.models.Session;
 
-import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class Sample {
     public static final String USERNAME = System.getenv("BW_USERNAME");
@@ -18,9 +18,10 @@ public class Sample {
                 .build();
 
         try {
-            ApiResponse<Session> response = client.getWebRtcClient().getAPIController().getSession(ACCOUNT_ID, sessionId);
-        } catch (ApiException|IOException ex) {
-            // Handle exceptions from the request.
+            CompletableFuture<ApiResponse<Session>> completableFuture = client.getWebRtcClient().getAPIController().getSessionAsync(ACCOUNT_ID, sessionId);
+            System.out.println(completableFuture.get().getResult());
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println(e.getMessage());
         }
     }
 }

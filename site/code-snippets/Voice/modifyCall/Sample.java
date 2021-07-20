@@ -1,11 +1,11 @@
 import com.bandwidth.BandwidthClient;
-import com.bandwidth.exceptions.ApiException;
 import com.bandwidth.http.response.ApiResponse;
 import com.bandwidth.voice.models.ApiModifyCallRequest;
 import com.bandwidth.voice.models.ConferenceDetail;
 import com.bandwidth.voice.models.State1Enum;
 
-import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.List;
 
 public class Sample {
@@ -24,9 +24,10 @@ public class Sample {
         request.setState(State1Enum.COMPLETED);
 
         try {
-            ApiResponse<Void> response = client.getVoiceClient().getAPIController().modifyCall(ACCOUNT_ID, callId, request);
-        } catch (ApiException|IOException ex) {
-            // Handle exceptions from the request.
+            CompletableFuture<ApiResponse<Void>> completableFuture = client.getVoiceClient().getAPIController().modifyCallAsync(ACCOUNT_ID, callId, request);
+            System.out.println(completableFuture.get().getResult());
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println(e.getMessage());
         }
     }
 }

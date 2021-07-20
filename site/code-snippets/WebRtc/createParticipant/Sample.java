@@ -1,11 +1,11 @@
 import com.bandwidth.BandwidthClient;
-import com.bandwidth.exceptions.ApiException;
 import com.bandwidth.http.response.ApiResponse;
 import com.bandwidth.webrtc.models.AccountsParticipantsResponse;
 import com.bandwidth.webrtc.models.Participant;
 import com.bandwidth.webrtc.models.PublishPermissionEnum;
 
-import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,9 +24,9 @@ public class Sample {
         participant.setPublishPermissions(publishPermissions);
 
         try {
-            ApiResponse<AccountsParticipantsResponse> response = client.getWebRtcClient().getAPIController().createParticipant(ACCOUNT_ID, participant);
-        } catch (ApiException|IOException ex) {
-            // Handle exceptions from the request.
+            CompletableFuture<ApiResponse<AccountsParticipantsResponse>> completableFuture = client.getWebRtcClient().getAPIController().createParticipantAsync(ACCOUNT_ID, participant);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
         }
     }
 }
