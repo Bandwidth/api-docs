@@ -16,7 +16,7 @@ public class Sample {
         String mediaId = "media-id-123";
 
         BandwidthClient client = new BandwidthClient.Builder()
-                .webRtcBasicAuthCredentials(USERNAME, PASSWORD)
+                .messagingBasicAuthCredentials(USERNAME, PASSWORD)
                 .build();
 
         try {

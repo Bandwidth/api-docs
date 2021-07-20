@@ -14,7 +14,7 @@ public class Sample {
         String bandwidthNumber = System.getenv("BW_NUMBER");
 
         BandwidthClient client = new BandwidthClient.Builder()
-                .webRtcBasicAuthCredentials(USERNAME, PASSWORD)
+                .messagingBasicAuthCredentials(USERNAME, PASSWORD)
                 .build();
 
         try {
