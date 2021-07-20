@@ -14,7 +14,7 @@ public class Sample {
         String conferenceId = "conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8";
 
         BandwidthClient client = new BandwidthClient.Builder()
-                .webRtcBasicAuthCredentials(USERNAME, PASSWORD)
+                .voiceBasicAuthCredentials(USERNAME, PASSWORD)
                 .build();
 
         ApiModifyConferenceRequest request = new ApiModifyConferenceRequest();

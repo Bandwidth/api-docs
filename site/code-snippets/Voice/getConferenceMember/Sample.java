@@ -15,7 +15,7 @@ public class Sample {
         String memberId = "c-95ac8d8d-b81437f5-4586-4d5b-9b46-29f8b3fe0aaf";
 
         BandwidthClient client = new BandwidthClient.Builder()
-                .webRtcBasicAuthCredentials(USERNAME, PASSWORD)
+                .voiceBasicAuthCredentials(USERNAME, PASSWORD)
                 .build();
 
         try {

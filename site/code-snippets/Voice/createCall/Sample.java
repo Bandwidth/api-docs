@@ -19,7 +19,7 @@ public class Sample {
         String answerUrl = baseUrl.concat("/callbacks/answer");
 
         BandwidthClient client = new BandwidthClient.Builder()
-                .webRtcBasicAuthCredentials(USERNAME, PASSWORD)
+                .voiceBasicAuthCredentials(USERNAME, PASSWORD)
                 .build();
 
         ApiCreateCallRequest request = new ApiCreateCallRequest();

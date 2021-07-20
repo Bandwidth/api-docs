@@ -14,7 +14,7 @@ public class Sample {
         String callId = "c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d";
 
         BandwidthClient client = new BandwidthClient.Builder()
-                .webRtcBasicAuthCredentials(USERNAME, PASSWORD)
+                .voiceBasicAuthCredentials(USERNAME, PASSWORD)
                 .build();
 
         ModifyCallRecordingState recordingState = new ModifyCallRecordingState();

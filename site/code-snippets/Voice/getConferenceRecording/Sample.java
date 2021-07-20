@@ -16,7 +16,7 @@ public class Sample {
         String recordingId = "r-d68201ef-d53e-4c6d-a743-1c1283909d41";
 
         BandwidthClient client = new BandwidthClient.Builder()
-                .webRtcBasicAuthCredentials(USERNAME, PASSWORD)
+                .voiceBasicAuthCredentials(USERNAME, PASSWORD)
                 .build();
 
         try {

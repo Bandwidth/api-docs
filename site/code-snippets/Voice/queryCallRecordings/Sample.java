@@ -13,7 +13,7 @@ public class Sample {
 
     public static void main(String[] args) {
         BandwidthClient client = new BandwidthClient.Builder()
-                .webRtcBasicAuthCredentials(USERNAME, PASSWORD)
+                .voiceBasicAuthCredentials(USERNAME, PASSWORD)
                 .build();
 
         ConferenceMemberDetail conferenceMemberDetail = new ConferenceMemberDetail();
