@@ -71,6 +71,17 @@ module.exports = {
           label: "Guides and Tutorials",
           items: [],
         },
+        {
+          type: "category",
+          label: "Webhooks",
+          items: [],
+        },
+        {
+          type: "category",
+          label: "Errors",
+          items: [],
+        },
+        "messaging/rateLimits"
       ],
     },
     {
