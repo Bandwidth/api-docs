@@ -2,6 +2,19 @@
 
 Welcome to the home of Bandwidth's API documentation! This repo contains the OpenAPI specifications that power Bandwidth's API references and SDKs, and will eventually replace https://github.com/bandwidth/bandwidth.github.io.
 
+## Table of Contents
+
+  1. [API Docs Strategy Overview](#api-docs-strategy-overview)
+  1. [SDK Docs Strategy Overview](#sdk-docs-strategy-overview)
+  1. [Contribution Guidelines Overview](#contribution-guidelines-overview)
+  1. [Docsite Generation](#docsite-generation)
+  1. [Adding a New Spec](#adding-a-new-spec)
+  1. [Adding New Documentation](#adding-new-documentation)
+  1. [Components](#components)
+  1. [Markdown](#markdown)
+  1. [PR Requirements](#pr-requirements)
+  1. [SDK Generation](#sdk-generation)
+
 ## API Docs Strategy Overview
 
 At a high level, we hope to provide 3 categories of documentation to our users, those being API references, guides, and sample apps. API references and guides will be provided within this project, while sample apps will be provided within the https://github.com/bandwidth-samples org.
@@ -42,7 +55,7 @@ To add a new spec - there are a few steps that need to be taken:
   1. Add the JSON file to the `./site/specs-source` folder
   1. In `./site/docusaurus.config.js`, add an import statement for the new spec. Ex.: `const newSpec = fs.readFileSync('./specs/new.json', 'utf-8');`
   1. In `./site/docusaurus.config.js`, add the new spec as a custom field at the bottom of the config. Ex.: `newSpec: JSON.parse(newSpec),`
-  1. In `./site/src/pages`, create a `newSpec.tsx` file and populate the needed React RedocStandalone code - recommend copy/pasting from another `{spec}.tsx` file
+  1. In `./site/src/pages`, create a `newSpec.tsx` file and populate the needed React RedocStandalone code - recommend copy/pasting the `./site/templates/apiReference.tsx` file
   1. In `./site/docusaurus.config.js`, add the spec to the Navbar Items object. Ex:
       ```js
       {
@@ -51,6 +64,14 @@ To add a new spec - there are a few steps that need to be taken:
       }
       ```
   1. Run `npm start` or reload the site and you should see the new spec under the API Reference dropdown.
+
+## Adding New Documentation
+
+To add new documentation to the site, please follow these instructions:
+
+  1. Add your .md or .mdx file to the `./site/docs/{relevantDirectory}` directory
+  1. Ensure your file has the necessary [heading and title](#markdown)
+  1. Update the `./site/sidebar.js` file with the `"{relevantDirectory}/{docTitle}"` in the relevant spot
 
 
 ## Components
