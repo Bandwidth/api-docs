@@ -18,7 +18,7 @@ conference_id = "conf-1234"
 recording_id = "r-1234"
 
 begin
-    result = voice_client.get_stream_conference_recording_media(BW_ACCOUNT_ID, conference_id, recording_id)
+    result = voice_client.get_download_conference_recording(BW_ACCOUNT_ID, conference_id, recording_id)
     downloaded_recording = result.data
 rescue APIException => e
     puts e.response_code

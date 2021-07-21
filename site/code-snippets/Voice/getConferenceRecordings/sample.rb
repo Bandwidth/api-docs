@@ -13,7 +13,7 @@ voice_client = bandwidth_client.voice_client.client
 conference_id = "conf-1234"
 
 begin
-    response = voice_client.get_query_metadata_for_account_and_conference(ENV['BW_ACCOUNT_ID'], conference_id)
+    response = voice_client.get_conference_recordings(ENV['BW_ACCOUNT_ID'], conference_id)
     if response.data.length > 0
         puts response.body[0].name
     end

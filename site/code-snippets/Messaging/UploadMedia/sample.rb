@@ -16,7 +16,6 @@ begin
   messaging_client.upload_media(
     ENV['BW_ACCOUNT_ID'],
     ENV['MEDIA_ID'],
-    file_content.length.to_s,
     file_content,
     :content_type => "application/octet-stream",
     :cache_control => "no-cache"

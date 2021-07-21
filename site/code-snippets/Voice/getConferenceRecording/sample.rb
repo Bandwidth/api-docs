@@ -14,7 +14,7 @@ conference_id = "conf-1234"
 recording_id = "r-1234"
 
 begin
-    response = voice_client.get_metadata_for_conference_recording(ENV['BW_ACCOUNT_ID'], conference_id, recording_id)
+    response = voice_client.get_conference_recording(ENV['BW_ACCOUNT_ID'], conference_id, recording_id)
     puts response.body.application_id
 rescue APIException => e
     puts e.response_code

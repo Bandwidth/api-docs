@@ -18,9 +18,7 @@ participant_id = "1234-abcd"
 session_id = "4321-dcba"
 
 begin
-    #response = web_rtc_client.get_participant_subscriptions(BW_ACCOUNT_ID, participant_id, session_id)
     response = web_rtc_client.get_participant_subscriptions(BW_ACCOUNT_ID, session_id, participant_id)
-    #NOTE: This is currently improperly defined
     puts response.data
 rescue APIException => e
     puts e.response_code
