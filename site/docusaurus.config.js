@@ -45,6 +45,11 @@ module.exports = {
         src: 'img/bandwidth-logo.png',
       },
       items: [{
+        to: 'docs',
+        activeBasePath: 'docs',
+        label: 'Docs',
+        position: 'left',
+      },{
         label: 'API Reference',
         items: [{
           to: 'numbers-api-reference',
@@ -65,11 +70,6 @@ module.exports = {
           to: 'webrtc-api-reference',
           label: 'WebRTC'
         }]
-      }, {
-        to: 'docs',
-        activeBasePath: 'docs',
-        label: 'Docs',
-        position: 'left',
       }, {
         href: 'https://github.com/Bandwidth-Samples',
         label: 'Samples',
