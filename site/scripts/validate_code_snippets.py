@@ -17,7 +17,7 @@ def main(extension, cli_exec_command, skip_files):
 
     Args:
         extension (str): The file extension to search for (ex: py, rb)
-        cli_exec_command (str): The command to run to execute the file (ex: python, ruby)
+        cli_exec_command (str): The command to execute the file (ex: python, ruby)
         skip_files (list<str>): A list of files to skip validation on
     """
     #Use `find` to list all the files in the code snippets.
