@@ -2,7 +2,7 @@
 id: about
 title: About
 slug: /messaging   
-description: A general overview of Bandwidth's account services
+description: A general overview of Bandwidth's Messaging API
 keywords:
   - bandwidth
   - messaging
@@ -32,9 +32,9 @@ After 24 hours, if your server has not returned a `HTTP 2xx` code, Bandwidth wil
 
 The messaging API works off of an internal queuing system.  As such, when you <code class="post">POST</code> to the `v2/.../messages` to create a new message, Bandwidth will reply with an `HTTP 202 - Accepted`.  This indicates that the message has been placed on the queue
 
-As the message progresses through the internal system you will receive a [Message Delivered](webhooks/msgDelivered.md) webhook when the message has been handed off to the downstream carrier.
+As the message progresses through the internal system you will receive a Message Delivered webhook when the message has been handed off to the downstream carrier.
 
-If at any-point through the process the message fails, you will receive a detailed [Message Failed](webhooks/messageFailed.md) webhook with an error code describing the reason for failure.
+If at any-point through the process the message fails, you will receive a detailed Message Failed webhook with an error code describing the reason for failure.
 
 ### Message Segment Counts
 
