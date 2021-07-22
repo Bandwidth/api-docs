@@ -23,9 +23,7 @@ $sessionId = "1234-abcd";
 $participantId = "4321-dcba";
 
 try {
-    //$webRtcClient->updateParticipantSubscriptions($BW_ACCOUNT_ID, $sessionId, $participantId, $body);
-    $webRtcClient->updateParticipantSubscriptions($BW_ACCOUNT_ID, $participantId, $sessionId, $body);
-    //NOTE: This is currently improperly defined
+    $webRtcClient->updateParticipantSubscriptions($BW_ACCOUNT_ID, $sessionId, $participantId, $body);
 } catch (BandwidthLib\APIException $e) {
     print_r($e->getResponseCode());
 }

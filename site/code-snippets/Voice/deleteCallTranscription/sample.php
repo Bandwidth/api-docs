@@ -20,7 +20,7 @@ $callId = "c-1234";
 $recordingId = "r-1234";
 
 try {
-    $voiceClient->deleteRecordingTranscription($BW_ACCOUNT_ID, $callId, $recordingId);
+    $voiceClient->deleteCallTranscription($BW_ACCOUNT_ID, $callId, $recordingId);
 } catch (BandwidthLib\APIException $e) {
     print_r($e->getResponseCode());
 }

@@ -19,7 +19,7 @@ $voiceClient = $client->getVoice()->getClient();
 $callId = "c-1234";
 
 try {
-    $response = $voiceClient->getCallState($BW_ACCOUNT_ID, $callId);
+    $response = $voiceClient->getCall($BW_ACCOUNT_ID, $callId);
     print_r($response->getResult()->state);
 } catch (BandwidthLib\APIException $e) {
     print_r($e->getResponseCode());

@@ -19,7 +19,7 @@ $voiceClient = $client->getVoice()->getClient();
 $callId = "c-1234";
 
 try {
-    $response = $voiceClient->getQueryMetadataForAccountAndCall($BW_ACCOUNT_ID, $callId);
+    $response = $voiceClient->getCallRecordings($BW_ACCOUNT_ID, $callId);
     if (count($response->getResult()) > 0) {
         print_r($response->getResult()[0]->recordingId);
     }

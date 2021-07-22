@@ -14,8 +14,8 @@ $USER_NUMBER = getenv("USER_NUMBER");
 
 $config = new BandwidthLib\Configuration(
     array(
-        'twoFactorAuthBasicAuthUserName' => $BW_USERNAME,
-        'twoFactorAuthBasicAuthPassword' => $BW_PASSWORD,
+        'multiFactorAuthBasicAuthUserName' => $BW_USERNAME,
+        'multiFactorAuthBasicAuthPassword' => $BW_PASSWORD,
     )
 );
 $client = new BandwidthLib\BandwidthClient($config);

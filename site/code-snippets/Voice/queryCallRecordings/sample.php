@@ -17,7 +17,7 @@ $client = new BandwidthLib\BandwidthClient($config);
 $voiceClient = $client->getVoice()->getClient();
 
 try {
-    $response = $voiceClient->getQueryMetadataForAccount($BW_ACCOUNT_ID);
+    $response = $voiceClient->getQueryCallRecordings($BW_ACCOUNT_ID);
     if (count($response->getResult()) > 0) {
         print_r($response->getResult()[0]->recordingId);
     }
