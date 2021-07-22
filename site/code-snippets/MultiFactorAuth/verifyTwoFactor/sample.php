@@ -14,15 +14,15 @@ $USER_NUMBER = getenv("USER_NUMBER");
 
 $config = new BandwidthLib\Configuration(
     array(
-        'twoFactorAuthBasicAuthUserName' => $BW_USERNAME,
-        'twoFactorAuthBasicAuthPassword' => $BW_PASSWORD,
+        'multiFactorAuthBasicAuthUserName' => $BW_USERNAME,
+        'multiFactorAuthBasicAuthPassword' => $BW_PASSWORD,
     )
 );
 $client = new BandwidthLib\BandwidthClient($config);
 
-$mfaClient = $client->getTwoFactorAuth()->getMFA();
+$mfaClient = $client->getMultiFactorAuth()->getMFA();
 
-$body = new BandwidthLib\TwoFactorAuth\Models\TwoFactorVerifyRequestSchema();
+$body = new BandwidthLib\MultiFactorAuth\Models\TwoFactorVerifyRequestSchema();
 $body->from = $BW_MFA_NUMBER;
 $body->to = $USER_NUMBER;
 $body->applicationId = $BW_MFA_MESSAGING_APPLICATION_ID;

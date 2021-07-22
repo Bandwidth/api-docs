@@ -20,9 +20,7 @@ $sessionId = "1234-abcd";
 $participantId = "4321-dcba";
 
 try {
-    //$webRtcClient->removeParticipantFromSession($BW_ACCOUNT_ID, $sessionId, $participantId);
-    $webRtcClient->removeParticipantFromSession($BW_ACCOUNT_ID, $participantId, $sessionId);
-    //NOTE: This is currently improperly defined
+    $webRtcClient->removeParticipantFromSession($BW_ACCOUNT_ID, $sessionId, $participantId);
 } catch (BandwidthLib\APIException $e) {
     print_r($e->getResponseCode());
 }

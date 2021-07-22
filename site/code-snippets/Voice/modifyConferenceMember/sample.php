@@ -19,7 +19,7 @@ $voiceClient = $client->getVoice()->getClient();
 $conferenceId = "conf-1234";
 $callId = "c-1234";
 
-$body = new BandwidthLib\Voice\Models\ConferenceMemberDetail();
+$body = new BandwidthLib\Voice\Models\ConferenceMemberState();
 $body->mute = true;
 
 try {

@@ -18,7 +18,7 @@ $voiceClient = $client->getVoice()->getClient();
 
 $callId = "c-1234";
 
-$body = new BandwidthLib\Voice\Models\ModifyCallRecordingState();
+$body = new BandwidthLib\Voice\Models\ModifyCallRecordingRequest();
 $body->redirectUrl = "http://www.myapp.com/new";
 $body->state = "paused";
 

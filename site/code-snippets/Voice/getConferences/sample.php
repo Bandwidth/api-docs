@@ -17,7 +17,7 @@ $client = new BandwidthLib\BandwidthClient($config);
 $voiceClient = $client->getVoice()->getClient();
 
 try {
-    $response = $voiceClient->getConferencesByAccount($BW_ACCOUNT_ID);
+    $response = $voiceClient->getConferences($BW_ACCOUNT_ID);
     if (count($response->getResult()) > 0) {
         print_r($response->getResult()[0]->id);
     }

@@ -20,7 +20,7 @@ $mediaFileName = "sample_file_name";
 $mediaFile = "12345"; //Any binary string will work for the upload. This includes file contents
 
 try {
-    $messagingClient->uploadMedia($BW_ACCOUNT_ID, $mediaFileName, strlen($mediaFile), $mediaFile);
+    $messagingClient->uploadMedia($BW_ACCOUNT_ID, $mediaFileName, $mediaFile);
 } catch (BandwidthLib\APIException $e) {
     print_r($e->getResponseCode());
 }

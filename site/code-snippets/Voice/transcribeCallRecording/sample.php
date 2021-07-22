@@ -19,11 +19,11 @@ $voiceClient = $client->getVoice()->getClient();
 $callId = "c-1234";
 $recordingId = "r-1234";
 
-$body = new BandwidthLib\Voice\Models\ApiTranscribeRecordingRequest();
+$body = new BandwidthLib\Voice\Models\TranscribeRecordingRequest();
 $body->callbackUrl = "https://callback-url.com";
 
 try {
-    $voiceClient->createTranscribeRecording($BW_ACCOUNT_ID, $callId, $recordingId, $body);
+    $voiceClient->createTranscribeCallRecording($BW_ACCOUNT_ID, $callId, $recordingId, $body);
 } catch (BandwidthLib\APIException $e) {
     print_r($e->getResponseCode());
 }

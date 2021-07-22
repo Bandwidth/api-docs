@@ -18,7 +18,7 @@ $voiceClient = $client->getVoice()->getClient();
 
 $callId = "c-1234";
 
-$body = new BandwidthLib\Voice\Models\ApiModifyCallRequest();
+$body = new BandwidthLib\Voice\Models\ModifyCallRequest();
 $body->redirectUrl = "http://www.myapp.com/new";
 $body->state = "active";
 

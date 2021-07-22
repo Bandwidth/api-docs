@@ -20,7 +20,7 @@ $conferenceId = "conf-1234";
 $recordingId = "r-1234";
 
 try {
-    $response = $voiceClient->getStreamConferenceRecordingMedia($BW_ACCOUNT_ID, $conferenceId, $recordingId);
+    $response = $voiceClient->getDownloadConferenceRecording($BW_ACCOUNT_ID, $conferenceId, $recordingId);
     $downloaded_recording = $response->getResult();
 } catch (BandwidthLib\APIException $e) {
     print_r($e->getResponseCode());

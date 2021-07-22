@@ -19,7 +19,7 @@ $voiceClient = $client->getVoice()->getClient();
 $conferenceId = "conf-1234";
 
 try {
-    $response = $voiceClient->getConferenceById($BW_ACCOUNT_ID, $conferenceId);
+    $response = $voiceClient->getConference($BW_ACCOUNT_ID, $conferenceId);
     print_r($response->getResult()->name);
 } catch (BandwidthLib\APIException $e) {
     print_r($e->getResponseCode());

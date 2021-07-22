@@ -20,7 +20,7 @@ $client = new BandwidthLib\BandwidthClient($config);
 
 $voiceClient = $client->getVoice()->getClient();
 
-$body = new BandwidthLib\Voice\Models\ApiCreateCallRequest();
+$body = new BandwidthLib\Voice\Models\CreateCallRequest();
 $body->from = $BW_NUMBER;
 $body->to = $USER_NUMBER;
 $body->answerUrl = $VOICE_CALLBACK_URL;
