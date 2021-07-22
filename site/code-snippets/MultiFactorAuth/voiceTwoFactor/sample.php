@@ -19,7 +19,7 @@ $client = new BandwidthLib\BandwidthClient($config);
 
 $mfaClient = $client->getMultiFactorAuth()->getMFA();
 
-$body = new BandwidthLib\TwoFactorAuth\Models\TwoFactorCodeRequestSchema();
+$body = new BandwidthLib\MultiFactorAuth\Models\TwoFactorCodeRequestSchema();
 $body->from = $BW_MFA_NUMBER;
 $body->to = $USER_NUMBER;
 $body->applicationId = $BW_MFA_VOICE_APPLICATION_ID;

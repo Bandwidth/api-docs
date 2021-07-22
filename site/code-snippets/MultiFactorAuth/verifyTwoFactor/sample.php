@@ -22,7 +22,7 @@ $client = new BandwidthLib\BandwidthClient($config);
 
 $mfaClient = $client->getMultiFactorAuth()->getMFA();
 
-$body = new BandwidthLib\TwoFactorAuth\Models\TwoFactorVerifyRequestSchema();
+$body = new BandwidthLib\MultiFactorAuth\Models\TwoFactorVerifyRequestSchema();
 $body->from = $BW_MFA_NUMBER;
 $body->to = $USER_NUMBER;
 $body->applicationId = $BW_MFA_MESSAGING_APPLICATION_ID;
