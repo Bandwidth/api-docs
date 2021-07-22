@@ -17,7 +17,7 @@ $config = new BandwidthLib\Configuration(
 );
 $client = new BandwidthLib\BandwidthClient($config);
 
-$mfaClient = $client->getTwoFactorAuth()->getMFA();
+$mfaClient = $client->getMultiFactorAuth()->getMFA();
 
 $body = new BandwidthLib\TwoFactorAuth\Models\TwoFactorCodeRequestSchema();
 $body->from = $BW_MFA_NUMBER;
