@@ -68,7 +68,10 @@ module.exports = {
         {
           type: "category",
           label: "Guides and Tutorials",
-          items: [],
+          items: [
+            "voice/recordingGuide",
+            "voice/cnamPerDipGuide",
+          ],
         },
         "voice/rateLimits",
         "voice/errors",
