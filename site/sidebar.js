@@ -57,9 +57,21 @@ module.exports = {
         "voice/about",
         {
           type: "category",
+          label: "Webhooks",
+          items: [],
+        },
+        {
+          type: "category",
+          label: "BXML",
+          items: [],
+        },
+        {
+          type: "category",
           label: "Guides and Tutorials",
           items: [],
-        }
+        },
+        "voice/rateLimits",
+        "voice/errors",
       ]},
     {
       type: "category",
