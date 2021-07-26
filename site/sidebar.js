@@ -66,11 +66,18 @@ module.exports = {
       label: "Messaging",
       items: [
         "messaging/about",
+        "messaging/webhooks",
         {
           type: "category",
           label: "Guides and Tutorials",
-          items: [],
+          items: [
+            "messaging/createMessage",
+            "messaging/getMessage",
+            "messaging/mediaManagement",
+          ],
         },
+        "messaging/rateLimits",
+        "messaging/errors",
       ],
     },
     {

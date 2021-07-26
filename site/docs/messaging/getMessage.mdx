@@ -1,0 +1,268 @@
+---
+id: getMessage
+title: Get Message Information
+slug: /messaging/getMessage
+description: Get message metadata using Bandwidth's API
+keywords:
+  - bandwidth
+  - messaging
+  - get
+hide_title: false
+image: ../../static/img/bandwidth-logo.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+export const accountId = "{accountId}";
+
+export const Highlight = ({children, color}) => (
+    <span
+      style={{
+        backgroundColor: color,
+        borderRadius: '2px',
+        color: '#fff',
+        padding: '0.2rem',
+      }}>
+      {children}
+    </span>
+  );
+
+Bandwidth's Messaging API supplies a <Highlight color="#00bf8c">GET</Highlight> method to allow you to query historical data regarding messages.
+
+Once we have successfully delivered the webhook event and receive an `HTTP 2xx` response, Bandwidth allows you to query details about those messages. **However**, Bandwidth does not store any text message content for privacy reasons - only metadata.
+
+## Request URL
+
+<Highlight color="#00bf8c">GET</Highlight> <a href="/messaging-api-reference#operation/GetMessages"><code>https://messaging.bandwidth.com/api/v2/users/{accountId}/messages</code></a>
+
+## Query Parameters
+
+This endpoint requires at least one query parameter to search through your messaging data. The available parameters are below.
+
+**NOTE:** Most of the query parameters for this endpoint require URL encoding (exception being a `messageId` that include hyphens). Examples shown are the post encoded values, which is what this endpoint expects to receive.
+
+| Parameter | Type | Description | Examples |
+|:--|:--|:--|:--|
+| `messageId` | string | The ID of the message to search for. Special characters need to be encoded using URL encoding | `9e0df4ca-b18d-40d7-a59f-82fcdf5ae8e6`, `1589228074636lm4k2je7j7jklbn2` |
+| `sourceTn` | string | The phone number that sent the message | `%2B15554443333` |
+| `destinationTn` | string | The phone number that received the message | `%2B15554443333` |
+| `messageStatus` | string | The [status](#message-status) of the message. One of `RECEIVED`, `QUEUED`, `SENDING`, `SENT`, `FAILED`, `DELIVERED`, `ACCEPTED`, `UNDELIVERED` | `RECEIVED` |
+| `errorCode` | integer | The error code of the message | `9902` |
+| `fromDateTime` | string | The start of the date range to search in ISO 8601 format. Uses the message receive time. The date range to search in is currently 14 days. | `2016-09-14T18:20:16.000Z` |
+| `toDateTime` | string | The end of the date range to search in ISO 8601 format. Uses the message receive time. The date range to search in is currently 14 days. | `2016-09-14T18:20:16.000Z` |
+| `pageToken` | string | A base64 encoded value used for pagination of results | gdEewhcJLQRB5 |
+| `limit` | integer | The maximum records requested in search result . Default `100`. <br/> The sum of limit and after cannot be more than 10000 | `limit=100` |
+
+### Message Status
+
+Messages can have a number of different statuses as they pass through the Bandwidth network and on to their final destination. All possible message `STATUS` values are defined below:
+
+| Status | Description |
+|:--|:--|
+| `RECEIVED` | Bandwidth has received your request to send a message. This is the initial status when sending a message. |
+| `QUEUED` |Bandwidth has successfully received the message and queued the message prior to being sent downstream. |
+| `SENDING` | Bandwidth is in the process of sending your messages to the downstream carrier. |
+| `SENT` | Bandwidth has sent the message. The downstream carrier has accepted the message. |
+| `DELIVERED` | Bandwidth has received a delivery receipt from the downstream carrier confirming successful delivery to the carrier or handset (when available). |
+| `FAILED` | The message could not be sent or the delivery receipt received from the downstream carrier indicated the message was not deliverable. Review error codes for more information. |
+| `ACCEPTED` | Message was accepted by the customer. |
+| `UNDELIVERED` | Message was not capable of being delivered. Delivery receipt indicates the message was failed or rejected by the upstream provider. |
+
+## Response Parameters
+
+| Parameter | Type | Description |
+|:--|:--|:--|
+| `totalCount` | integer | Total number of messages matched by the search |
+| `messages` | array | The most recent messages are returned sorted by receive time |
+| `messageId` | string | The message id |
+| `accountId` | string | The account id of the message |
+| `destinationTn` | string | The recipient phone number of the message |
+| `sourceTn` | string | The source phone number of the message |
+| `messageStatus` | string | The status of the message |
+| `messageDirection` | string | The direction of the message relative to Bandwidth  |
+| `messageType` | string | The type of message  |
+| `segmentCount` | integer | The number of segments the message was sent as |
+| `errorCode` | integer | The numeric error code of the message |
+| `receiveTime` | string | The ISO 8601 datetime of the message |
+| `carrierName` | string | The name of the carrier. Not currently supported for MMS, coming soon |
+| `messageSize` | integer | The size of the message in bytes, including message content and headers |
+| `messageLength` | integer | The number of text characters in the message |
+| `attachmentCount` | integer | The number of attachments the message has |
+| `recipientCount` | integer | The number of recipients the message has |
+| `campaignClass` | string | The campaign class of the message, or unregistered. Only applies to A2P traffic. |
+| `pageInfo` | array | Array containing pagination links |
+| `pageInfo.prevPage` | string | The link to the previous page for pagination |
+| `pageInfo.nextPage` | string | The link to the next page for pagination |
+
+## Examples
+
+### GET Message Info using MessageId
+
+<Tabs
+  groupId="messaging"
+  defaultValue="http"
+  values={[
+    { label: 'HTTP', value: 'http', },
+    { label: 'cURL', value: 'curl', },
+    { label: 'Java', value: 'java', },
+    { label: 'C#', value: 'csharp', },
+    { label: 'Ruby', value: 'ruby', },
+    { label: 'NodeJS', value: 'nodejs', },
+    { label: 'Python', value: 'python', },
+    { label: 'PHP', value: 'php', },
+  ]
+}>
+<TabItem value="http">
+
+> Request
+
+```http
+GET https://messaging.bandwidth.com/api/v2/users/12345/messages?messageId=1589228074636lm4k2je7j7jklbn2 HTTP/1.1
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```
+
+> Response
+
+```json
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "totalCount":1,
+    "pageInfo": {},
+    "messages":[
+        {
+            "messageId":"1589228074636lm4k2je7j7jklbn2",
+            "accountId":"12345",
+            "sourceTn":"+15554443333",
+            "destinationTn":"+15554442222",
+            "messageStatus":"DELIVERED",
+            "messageDirection":"OUTBOUND",
+            "messageType":"sms",
+            "segmentCount":1,
+            "errorCode":0,
+            "receiveTime":"2020-04-07T14:03:07.000Z",
+            "carrierName":"other",
+            "messageSize": 27,
+            "messageLength": 18,
+            "attachmentCount": 1,
+            "recipientCount": 1,
+            "campaignClass": "T"
+        }
+    ]
+}
+```
+
+</TabItem>
+<TabItem value="curl">
+
+> Request
+
+```curl
+curl --location --request GET 'https://messaging.bandwidth.com/api/v2/users/12345/messages?messageId=1589228074636lm4k2je7j7jklbn2' --header 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ='
+```
+
+> Response
+
+```json
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "totalCount":1,
+    "pageInfo": {},
+    "messages":[
+        {
+            "messageId":"1589228074636lm4k2je7j7jklbn2",
+            "accountId":"12345",
+            "sourceTn":"+15554443333",
+            "destinationTn":"+15554442222",
+            "messageStatus":"DELIVERED",
+            "messageDirection":"OUTBOUND",
+            "messageType":"sms",
+            "segmentCount":1,
+            "errorCode":0,
+            "receiveTime":"2020-04-07T14:03:07.000Z",
+            "carrierName":"other",
+            "messageSize": 27,
+            "messageLength": 18,
+            "attachmentCount": 1,
+            "recipientCount": 1,
+            "campaignClass": "T"
+        }
+    ]
+}
+```
+
+</TabItem>
+<TabItem value="java">
+
+```java
+try {
+    CompletableFuture<ApiResponse<BandwidthMessagesList>> completableFuture = client.getMessagingClient().getAPIController().getMessagesAsync(ACCOUNT_ID, "1589228074636lm4k2je7j7jklbn2", null, null, null, null, null, null, null, null);
+    System.out.println(completableFuture.get().getResult());
+} catch (InterruptedException | ExecutionException e) {
+    System.out.println(e.getMessage());
+}
+```
+
+</TabItem>
+<TabItem value="csharp">
+
+```csharp
+var response = await client.GetMessagesAsync(accountId, messageId: "1589228074636lm4k2je7j7jklbn2");
+```
+
+</TabItem>
+<TabItem value="ruby">
+
+```ruby
+begin
+  result = messaging_client.get_messages(ENV['BW_ACCOUNT_ID'], :message_id => "1589228074636lm4k2je7j7jklbn2")
+  puts result.data.total_count
+rescue APIException => e
+  puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="nodejs">
+
+```js
+const getMessage = async function() {
+  try {
+    const response = await controller.getMessages(BW_ACCOUNT_ID, "1589228074636lm4k2je7j7jklbn2");
+    console.log(response.body)
+  } catch (error) {
+  console.error(error);
+}};
+
+getMessage();
+```
+
+</TabItem>
+<TabItem value="python">
+
+```python
+try:
+    response = messaging_client.get_messages(BW_ACCOUNT_ID, message_id="1589228074636lm4k2je7j7jklbn2")
+    print(response.body.total_count)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+try {
+    $response = $messagingClient->getMessages($BW_ACCOUNT_ID, $messageId = "1589228074636lm4k2je7j7jklbn2");
+    print_r($response->getResult()->totalCount);
+} catch (BandwidthLib\APIException $e) {
+    print_r($e->getResponseCode());
+}
+```
+
+</TabItem>
+</Tabs>
