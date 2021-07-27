@@ -1,0 +1,639 @@
+---
+id: transfer
+title: Transfer
+slug: /voice/bxml/transfer
+description: A general overview of Bandwidth's Ring Transfer Verb
+keywords:
+  - bandwidth
+  - voice
+  - transfer
+hide_title: false
+image: ../../static/img/bandwidth-logo.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+The Transfer verb is used to transfer a party onto an existing call.
+
+## Text Content
+
+There is no text content available to be set for the `<Transfer>` verb.
+
+## Attributes
+
+| Attribute | Description |
+|:----------|:------------|
+| transferCallerId | (optional) The caller ID to use when the call is transferred, if different. Must be in E.164 format (e.g. +15555555555) or be one of the following strings `Restricted`, `Anonymous`, `Private`, or `Unavailable`.<br/><br/> Note: Leave blank to pass along the number of the remote party. |
+| callTimeout | (optional) The timeout (in seconds) for the callee to answer the call after it starts ringing. If the call does not start ringing within 30s, the call will be cancelled regardless of this value. Range: decimal values between 1 - 300.  Default value is 30 seconds. |
+| transferCompleteUrl | (optional) URL to send the [Transfer Complete](/docs/voice/webhooks/transferComplete) event to and request new BXML. Optional but recommended. [See below](#transferCompleteUrl) for further details. May be a relative URL. |
+| transferCompleteMethod | (optional) The HTTP method to use for the request to `transferCompleteUrl`. GET or POST. Default value is POST. |
+| transferCompleteFallbackUrl | (optional) A fallback url which, if provided, will be used to retry the [Transfer Complete](/docs/voice/webhooks/transferComplete) callback delivery in case `transferCompleteUrl` fails to respond. |
+| transferCompleteFallbackMethod | (optional) The HTTP method to use to deliver the [Transfer Complete](/docs/voice/webhooks/transferComplete) callback to `transferCompleteFallbackUrl`. GET or POST. Default value is POST. |
+| username | (optional) The username to send in the HTTP request to `transferCompleteUrl`. |
+| password | (optional) The password to send in the HTTP request to `transferCompleteUrl`. |
+| fallbackUsername | (optional) The username to send in the HTTP request to `transferCompleteFallbackUrl`. |
+| fallbackPassword | (optional) The password to send in the HTTP request to `transferCompleteFallbackUrl`. |
+| tag | (optional) A custom string that will be sent with this and all future callbacks unless overwritten by a future `tag` attribute or cleared.<br/><br/>May be cleared by setting `tag=""`<br/><br/>Max length 256 characters. |
+| diversionTreatment | (optional) Can be any of the following: <br/> `none`: No diversion headers are sent on the outbound leg of the transferred call. <br/>`propagate`: Copy the Diversion header from the inbound leg to the outbound leg. Ignored if there is no Diversion header present on the inbound leg. <br/>`stack`: After propagating any Diversion header from the inbound leg to the outbound leg, stack on top another Diversion header based on the Request-URI of the inbound call. <br/><br/>Defaults to `none`.  If diversionTreatment is not specified, no diversion header will be included for the transfer even if one came with the inbound call. |
+| diversionReason | (optional) Can be any of the following values: <br/>`unknown`<br/>`user-busy`<br/>`no-answer`<br/>`unavailable`<br/>`unconditional`<br/>`time-of-day`<br/>`do-not-disturb`<br/>`deflection`<br/>`follow-me`<br/>`out-of-service`<br/>`away` <br/><br/>This parameter is considered only when `diversionTreatment` is set to `stack`.  Defaults to `unknown`. |
+
+### transferCompleteUrl
+
+When the called party hangs up, if the `transferCompleteUrl` attribute is specified, the [TransferComplete](/docs/voice/webhooks/transferComplete) callback is sent to the `transferCompleteUrl`,
+this callback is also sent if any problem occurs with the transfer, such as the callee is busy, doesn't answer, or the call gets [rate limited](/docs/voice/rateLimits).
+The BXML returned by that callback is executed on the original call. Verbs following the `<Transfer>` will be ignored when the `transferCompleteUrl` attribute is specified.
+
+If no `transferCompleteUrl` is specified, no event will be sent, and execution of verbs following the `<Transfer>` tag continues when the called party hangs up.
+
+Note that the [TransferComplete](/docs/voice/webhooks/transferComplete) callback is only sent if the call is still active after the `<Transfer>` completes. If you need an event delivered for every `<Transfer>` regardless of how it ends, see the [Transfer Disconnect](/docs/voice/webhooks/transferDisconnect).
+
+### Nested Tags
+Between 1 and 8 `<PhoneNumber>` or `<SipUri>` tags must be nested within the `<Transfer>` tag to define the called parties. If more than
+one destination is specified, called parties will ring simultaneously and the first to answer will be bridged to the original call.
+
+| Tag | Description |
+|:----|:------------|
+| PhoneNumber | A phone number to transfer the call to. Value must be in E.164 format (e.g. `+15555555555`). |
+| SipUri | A SIP URI to transfer the call to (e.g. `sip:user@server.com`). |
+
+### PhoneNumber attributes
+
+| Attribute | Description |
+|:----------|:------------|
+| transferAnswerUrl | (optional) URL, if any, to send the [Transfer Answer](/docs/voice/webhooks/transferAnswer) event to and request BXML to be executed for the called party before the call is bridged. May be a relative URL. |
+| transferAnswerMethod | (optional) The HTTP method to use for the request to `transferAnswerUrl`. GET or POST. Default value is POST. |
+| transferAnswerFallbackUrl | (optional) A fallback url which, if provided, will be used to retry the [Transfer Answer](/docs/voice/webhooks/transferAnswer) callback delivery in case `transferAnswerUrl` fails to respond. |
+| transferAnswerFallbackMethod | (optional) The HTTP method to use to deliver the [Transfer Answer](/docs/voice/webhooks/transferAnswer) callback to `transferAnswerFallbackUrl`. GET or POST. Default value is POST. |
+| transferDisconnectUrl | (optional) URL, if any, to send the [Transfer Disconnect](/docs/voice/webhooks/transferDisconnect) event to. This event will be sent regardless of how the transfer ends and may not be responded to with BXML. May be a relative URL.|
+| transferDisconnectMethod | (optional) The HTTP method to use for the request to `transferDisconnectUrl`. GET or POST. Default value is POST. |
+| username | (optional) The username to send in the HTTP request to `transferAnswerUrl` and `transferDisconnectUrl`. |
+| password | (optional) The password to send in the HTTP request to `transferAnswerUrl` and `transferDisconnectUrl`. |
+| fallbackUsername | (optional) The username to send in the HTTP request to `transferAnswerFallbackUrl`. |
+| fallbackPassword | (optional) The password to send in the HTTP request to `transferAnswerFallbackUrl`. |
+| tag | (optional) A custom string that will be sent with these and all future callbacks unless overwritten by a future `tag` attribute or cleared.<br/><br/>May be cleared by setting `tag=""`<br/><br/>Max length 256 characters. |
+
+### SipUri attributes
+
+| Attribute | Description |
+|:----------|:------------|
+| uui | (optional) The value of the `User-To-User` header to send within the initial `INVITE`. Must include the `encoding` parameter as specified in [`RFC 7433`](https://tools.ietf.org/html/rfc7433). Only `base64` and `jwt` encoding are currently allowed. This value, including the encoding specifier, may not exceed 256 characters. |
+| transferAnswerUrl | (optional) URL, if any, to send the [Transfer Answer](/docs/voice/webhooks/transferAnswer) event to and request BXML to be executed for the called party before the call is bridged. May be a relative URL. |
+| transferAnswerMethod | (optional) The HTTP method to use for the request to `transferAnswerUrl`. GET or POST. Default value is POST. |
+| transferAnswerFallbackUrl | (optional) A fallback url which, if provided, will be used to retry the [Transfer Answer](/docs/voice/webhooks/transferAnswer) callback delivery in case `transferAnswerUrl` fails to respond. |
+| transferAnswerFallbackMethod | (optional) The HTTP method to use to deliver the [Transfer Answer](/docs/voice/webhooks/transferAnswer) callback to `transferAnswerFallbackUrl`. GET or POST. Default value is POST. |
+| transferDisconnectUrl | (optional) URL, if any, to send the [Transfer Disconnect](/docs/voice/webhooks/transferDisconnect) event to. This event will be sent regardless of how the transfer ends and may not be responded to with BXML. May be a relative URL.|
+| transferDisconnectMethod | (optional) The HTTP method to use for the request to `transferDisconnectUrl`. GET or POST. Default value is POST. |
+| username | (optional) The username to send in the HTTP request to `transferAnswerUrl` and `transferDisconnectUrl`. |
+| password | (optional) The password to send in the HTTP request to `transferAnswerUrl` and `transferDisconnectUrl`. |
+| fallbackUsername | (optional) The username to send in the HTTP request to `transferAnswerFallbackUrl`. |
+| fallbackPassword | (optional) The password to send in the HTTP request to `transferAnswerFallbackUrl`. |
+| tag | (optional) A custom string that will be sent with these and all future callbacks unless overwritten by a future `tag` attribute or cleared.<br/><br/>May be cleared by setting `tag=""`<br/><br/>Max length 256 characters. |
+
+When the called party answers, if the `transferAnswerUrl` is specified, the [Transfer Answer](/docs/voice/webhooks/transferAnswer) callback is sent to the `transferAnswerUrl` and
+the BXML returned by that callback is executed. That BXML is executed only for the called party.  At the conclusion
+of that BXML, the calls are bridged.
+
+When each leg of the transfer ends for any reason, if `transferDisconnectUrl` was set for that phone number, the
+[Transfer Disconnect](/docs/voice/webhooks/transferDisconnect) event will be sent to that URL. This event may not be responded to with BXML.
+
+:::caution
+There can be a maximum of 8 phone numbers to transfer to.
+:::
+
+## Webhooks Received
+
+| Webhooks  | Can reply with more BXML |
+|:----------|:-------------------------|
+| [Transfer Answer](/docs/voice/webhooks/transferAnswer) | Yes |
+| [Transfer Complete](/docs/voice/webhooks/transferComplete) | Yes |
+| [Transfer Disconnect](/docs/voice/webhooks/transferDisconnect) | No |
+
+## Examples
+
+### Simple Transfer
+
+This shows how to use Bandwidth XML to transfer a phone call.
+
+<Tabs
+  groupId="bxml"
+  defaultValue="xml"
+  values={[
+    { label: 'XML', value: 'xml', },
+    { label: 'Java', value: 'java', },
+    { label: 'C#', value: 'csharp', },
+    { label: 'Ruby', value: 'ruby', },
+    { label: 'NodeJS', value: 'nodejs', },
+    { label: 'Python', value: 'python', },
+    { label: 'PHP', value: 'php', },
+  ]
+}>
+<TabItem value="xml">
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <SpeakSentence gender="male">Transferring your call, please wait.</SpeakSentence>
+    <Transfer transferCallerId="+15554567891">
+        <PhoneNumber>+15554567892</PhoneNumber>
+    </Transfer>
+</Response>
+```
+
+</TabItem>
+<TabItem value="java">
+
+```java
+SpeakSentence speakSentence = SpeakSentence.builder()
+        .text("Transferring your call, please wait.")
+        .gender("male")
+        .build();
+
+PhoneNumber phoneNumber = PhoneNumber.builder()
+        .phoneNumber("+11234567892")
+        .build();
+
+Transfer transfer = Transfer.builder()
+        .transferCallerId("+11234567891")
+        .phoneNumbers(phoneNumber)
+        .build();
+
+Response response = Response.builder().build()
+        .add(speakSentence)
+        .add(transfer);
+
+System.out.println(response.toBXML());
+```
+
+</TabItem>
+<TabItem value="csharp">
+
+```csharp
+Response response = new Response();
+
+PhoneNumber phoneNumber1 = new PhoneNumber();
+phoneNumber1.Number = "+11234567892";
+
+Transfer transfer = new Transfer();
+transfer.PhoneNumbers = new PhoneNumber[] { phoneNumber1 };
+transfer.TransferCallerId = "+11234567891";
+
+response.Add(transfer);
+
+Console.WriteLine(response.ToBXML());
+```
+
+</TabItem>
+<TabItem value="ruby">
+
+```ruby
+response = Bandwidth::Voice::Response.new()
+phone_number = Bandwidth::Voice::PhoneNumber.new({
+    :number => "+11234567892"
+})
+transfer = Bandwidth::Voice::Transfer.new({
+    :transfer_caller_id => "+11234567891",
+    :phone_numbers => [phone_number]
+})
+
+response.push(transfer)
+puts response.to_bxml()
+```
+
+</TabItem>
+<TabItem value="nodejs">
+
+```js
+var phone_number = new BandwidthBxml.Verbs.PhoneNumber();
+phone_number.setNumber("+17777777777");
+
+var transfer = new BandwidthBxml.Verbs.Transfer();
+transfer.setTransferCallerId("+18888888888");
+transfer.addPhoneNumber(phone_number);
+
+var response = new BandwidthBxml.Response();
+response.addVerb(transfer);
+
+console.log(response.toBxml());
+```
+
+</TabItem>
+<TabItem value="python">
+
+```python
+phone_number = PhoneNumber(
+    number="+11234567892"
+)
+transfer = Transfer(
+    transfer_caller_id="+11234567891",
+    phone_numbers=[phone_number]
+)
+
+response.add_verb(transfer)
+print(response.to_bxml())
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+$number = new BandwidthLib\Voice\Bxml\PhoneNumber("+17777777777");
+
+$transfer = new BandwidthLib\Voice\Bxml\Transfer();
+$transfer->transferCallerId("+18888888888");
+$transfer->phoneNumbers(array($number));
+
+$response = new BandwidthLib\Voice\Bxml\Response();
+$response->addVerb($transfer);
+
+echo $response->toBxml();
+echo "\n";
+```
+
+</TabItem>
+</Tabs>
+
+### Transfer With Announcement
+
+This shows how to use Bandwidth XML to transfer a phone call with a pre-transfer announcement.
+
+<Tabs
+  groupId="bxml"
+  defaultValue="xml"
+  values={[
+    { label: 'XML', value: 'xml', },
+    { label: 'Java', value: 'java', },
+    { label: 'C#', value: 'csharp', },
+    { label: 'Ruby', value: 'ruby', },
+    { label: 'NodeJS', value: 'nodejs', },
+    { label: 'Python', value: 'python', },
+    { label: 'PHP', value: 'php', },
+  ]
+}>
+<TabItem value="xml">
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <SpeakSentence voice="paul">Transferring your call, please wait.</SpeakSentence>
+    <Transfer transferCallerId="+15554567891">
+        <PhoneNumber transferAnswerUrl="http://myapp.com/announcement">+15554567892</PhoneNumber>
+    </Transfer>
+</Response>
+```
+
+> The announcement BXML response from http://myapp.com/announcement is:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <SpeakSentence voice="paul">A customer would like to speak to you.</SpeakSentence>
+</Response>
+```
+
+</TabItem>
+<TabItem value="java">
+
+```java
+SpeakSentence speakSentence = SpeakSentence.builder()
+        .text("Transferring your call, please wait.")
+        .voice("paul")
+        .build();
+
+PhoneNumber phoneNumber = PhoneNumber.builder()
+        .phoneNumber("+11234567892")
+        .transferAnswerUrl("http://myapp.com/announcement")
+        .build();
+
+Transfer transfer = Transfer.builder()
+        .transferCallerId("+11234567891")
+        .phoneNumbers(phoneNumber)
+        .build();
+
+Response response = Response.builder().build()
+        .add(speakSentence)
+        .add(transfer);
+
+System.out.println(response.toBXML());
+```
+
+> The announcement BXML response from http://myapp.com/announcement is:
+
+```java
+SpeakSentence speakSentence = SpeakSentence.builder()
+        .text("A customer would like to speak to you")
+        .voice("julie")
+        .build();
+```
+
+</TabItem>
+<TabItem value="csharp">
+
+```csharp
+Response response = new Response();
+
+SpeakSentence speakSentence = new SpeakSentence();
+speakSentence.Sentence = "Transferring your call, please wait.";
+
+PhoneNumber phoneNumber1 = new PhoneNumber();
+phoneNumber1.Number = "+11234567892";
+phoneNumber1.TransferAnswerUrl = "http://myapp.com/announcement";
+
+Transfer transfer = new Transfer();
+transfer.PhoneNumbers = new PhoneNumber[] { phoneNumber1 };
+transfer.TransferCallerId = "+11234567891";
+
+response.Add(speakSentence);
+response.Add(transfer);
+
+Console.WriteLine(response.ToBXML());
+```
+
+> The announcement BXML response from http://myapp.com/announcement is:
+
+```csharp
+Response response = new Response();
+
+SpeakSentence speakSentence = new SpeakSentence();
+speakSentence.Sentence = "A customer would like to speak to you.";
+
+response.Add(speakSentence);
+
+Console.WriteLine(response.ToBXML());
+```
+
+</TabItem>
+<TabItem value="ruby">
+
+```ruby
+response = Bandwidth::Voice::Response.new()
+speak_sentence = Bandwidth::Voice::SpeakSentence.new({
+    :sentence => "Transferring your call, please wait.",
+    :voice => "paul"
+})
+phone_number = Bandwidth::Voice::PhoneNumber.new({
+    :number => "+11234567892",
+    :transfer_answer_url => "http://myapp.com/announcement"
+})
+transfer = Bandwidth::Voice::Transfer.new({
+    :transfer_caller_id => "+11234567891",
+    :phone_numbers => [phone_number]
+})
+
+response.push(speak_sentence)
+response.push(transfer)
+puts response.to_bxml()
+```
+
+> The announcement BXML response from http://myapp.com/announcement is:
+
+```ruby
+speak_sentence = Bandwidth::Voice::SpeakSentence.new({
+    :sentence => "Transferring your call, please wait.",
+    :voice => "paul"
+})
+```
+
+</TabItem>
+<TabItem value="nodejs">
+
+```js
+var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
+speakSentence.setSentence("Transferring your call, please wait.");
+speakSentence.setVoice("paul");
+
+var phone_number = new BandwidthBxml.Verbs.PhoneNumber();
+phone_number.setNumber("+17777777777");
+
+var transfer = new BandwidthBxml.Verbs.Transfer();
+transfer.setTransferCallerId("+18888888888");
+transfer.addPhoneNumber(phone_number);
+
+var response = new BandwidthBxml.Response();
+response.addVerb(speakSentence);
+response.addVerb(transfer);
+
+console.log(response.toBxml());
+```
+
+> The announcement BXML response from http://myapp.com/announcement is:
+
+```js
+var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
+speakSentence.setSentence("Transferring your call, please wait.");
+speakSentence.setVoice("paul");
+```
+
+</TabItem>
+<TabItem value="python">
+
+```python
+response = Response()
+speak_sentence = SpeakSentence(
+    sentence="Transferring your call, please wait.",
+    voice="paul"
+)
+phone_number = PhoneNumber(
+    number="+11234567892",
+    transfer_answer_url="http://myapp.com/announcement"
+)
+transfer = Transfer(
+    transfer_caller_id="+11234567891",
+    phone_numbers=[phone_number]
+)
+
+response.add_verb(speak_sentence)
+response.add_verb(transfer)
+print(response.to_bxml())
+```
+
+> The announcement BXML response from http://myapp.com/announcement is:
+
+```python
+speak_sentence = SpeakSentence(
+    sentence="Transferring your call, please wait.",
+    voice="paul"
+)
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+$speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Transferring your call, please wait.");
+$speakSentence->voice("paul");
+
+$number = new BandwidthLib\Voice\Bxml\PhoneNumber("+17777777777");
+
+$transfer = new BandwidthLib\Voice\Bxml\Transfer();
+$transfer->transferCallerId("+18888888888");
+$transfer->phoneNumbers(array($number));
+
+$response = new BandwidthLib\Voice\Bxml\Response();
+$response->addVerb($speakSentence);
+$response->addVerb($transfer);
+
+echo $response->toBxml();
+echo "\n";
+```
+
+> The announcement BXML response from http://myapp.com/announcement is:
+
+```php
+$speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Transferring your call, please wait.");
+$speakSentence->voice("paul");
+```
+
+</TabItem>
+</Tabs>
+
+### Multi Transfer
+
+<Tabs
+  groupId="bxml"
+  defaultValue="xml"
+  values={[
+    { label: 'XML', value: 'xml', },
+    { label: 'Java', value: 'java', },
+    { label: 'C#', value: 'csharp', },
+    { label: 'Ruby', value: 'ruby', },
+    { label: 'NodeJS', value: 'nodejs', },
+    { label: 'Python', value: 'python', },
+    { label: 'PHP', value: 'php', },
+  ]
+}>
+<TabItem value="xml">
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <Transfer transferCallerId="+15552221235">
+        <PhoneNumber>+15552221234</PhoneNumber>
+        <PhoneNumber>+15552221233</PhoneNumber>
+    </Transfer>
+</Response>
+```
+
+</TabItem>
+<TabItem value="java">
+
+```java
+PhoneNumber phoneNumber1 = PhoneNumber.builder()
+        .phoneNumber("+11234567892")
+        .build();
+
+PhoneNumber phoneNumber2 = PhoneNumber.builder()
+        .phoneNumber("+11234567893")
+        .build();
+
+Transfer transfer = Transfer.builder()
+        .transferCallerId("+11234567891")
+        .phoneNumbers(phoneNumber1, phoneNumber2)
+        .build();
+
+Response response = Response.builder().build()
+        .add(transfer);
+
+System.out.println(response.toBXML());
+```
+
+</TabItem>
+<TabItem value="csharp">
+
+```csharp
+Response response = new Response();
+
+PhoneNumber phoneNumber1 = new PhoneNumber();
+phoneNumber1.Number = "+15552221234";
+
+PhoneNumber phoneNumber2 = new PhoneNumber();
+phoneNumber2.Number = "+15552221233";
+
+Transfer transfer = new Transfer();
+transfer.PhoneNumbers = new PhoneNumber[] { phoneNumber1, phoneNumber2 };
+transfer.TransferCallerId = "+15552221235";
+
+response.Add(transfer);
+
+Console.WriteLine(response.ToBXML());
+```
+
+</TabItem>
+<TabItem value="ruby">
+
+```ruby
+response = Bandwidth::Voice::Response.new()
+phone_number_1 = Bandwidth::Voice::PhoneNumber.new({
+    :number => "+15552221234"
+})
+phone_number_2 = Bandwidth::Voice::PhoneNumber.new({
+    :number => "+15552221233"
+})
+transfer = Bandwidth::Voice::Transfer.new({
+    :transfer_caller_id => "+15552221235",
+    :phone_numbers => [phone_number_1, phone_number_2]
+})
+
+response.push(transfer)
+puts response.to_bxml()
+```
+
+</TabItem>
+<TabItem value="nodejs">
+
+```js
+var phone_number_1 = new BandwidthBxml.Verbs.PhoneNumber();
+phone_number_1.setNumber("+17777777777");
+var phone_number_2 = new BandwidthBxml.Verbs.PhoneNumber();
+phone_number_2.setNumber("+18888888888");
+
+var transfer = new BandwidthBxml.Verbs.Transfer();
+transfer.setTransferCallerId("+19999999999");
+transfer.addPhoneNumber(phone_number_1);
+transfer.addPhoneNumber(phone_number_2);
+
+var response = new BandwidthBxml.Response();
+response.addVerb(transfer);
+
+console.log(response.toBxml());
+```
+
+</TabItem>
+<TabItem value="python">
+
+```python
+phone_number_1 = PhoneNumber(
+    number="+15552221234"
+)
+phone_number_2 = PhoneNumber(
+    number="+15552221233"
+)
+transfer = Transfer(
+    transfer_caller_id="+15552221235",
+    phone_numbers=[phone_number_1, phone_number_2]
+)
+
+response.add_verb(transfer)
+print(response.to_bxml())
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+$number1 = new BandwidthLib\Voice\Bxml\PhoneNumber("+17777777777");
+$number2 = new BandwidthLib\Voice\Bxml\PhoneNumber("+15555555555");
+
+$transfer = new BandwidthLib\Voice\Bxml\Transfer();
+$transfer->transferCallerId("+18888888888");
+$transfer->phoneNumbers(array($number1, $number2));
+
+$response = new BandwidthLib\Voice\Bxml\Response();
+$response->addVerb($transfer);
+
+echo $response->toBxml();
+echo "\n";
+```
+
+</TabItem>
+</Tabs>
