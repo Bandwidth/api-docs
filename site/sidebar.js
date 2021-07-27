@@ -65,9 +65,10 @@ module.exports = {
           label: "BXML",
           items: [
             "voice/bxml",
-            "voice/bridge",
-            "voice/conference",
-            "voice/forward",
+            "voice/bxml/bridge",
+            "voice/bxml/conference",
+            "voice/bxml/forward",
+            "voice/bxml/gather",
           ],
         },
         {
