@@ -34,7 +34,7 @@ module.exports = {
     },
     // this is broken
     // prism: {
-    //   additionalLanguages: ['java', 'csharp', 'php', ruby],
+    //   additionalLanguages: ['java', 'csharp', 'php', 'ruby'],
     // },
     sidebarCollapsible: true,
     navbar: {
