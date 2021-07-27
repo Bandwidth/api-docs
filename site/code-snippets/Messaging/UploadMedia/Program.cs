@@ -24,6 +24,6 @@ class Program
         var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(content));
         var fileStreamInfo = new FileStreamInfo(memoryStream);
 
-        var response = await client.Messaging.APIController.UploadMediaAsync(accountId, mediaId, fileStreamInfo.FileStream.Length, fileStreamInfo, contentType);
+        await client.Messaging.APIController.UploadMediaAsync(accountId, mediaId, fileStreamInfo.FileStream.Length, fileStreamInfo, contentType);
     }
 }
