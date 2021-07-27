@@ -28,6 +28,6 @@ class Program
             ExpirationTimeInMinutes = expirationTimeInMinutes
         };
 
-        var response = await client.TwoFactorAuth.MFAController.CreateVerifyTwoFactor(accountId, request);
+        var response = await client.TwoFactorAuth.MFAController.CreateVerifyTwoFactorAsync(accountId, request);
     }
 }
