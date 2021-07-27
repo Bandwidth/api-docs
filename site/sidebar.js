@@ -80,6 +80,7 @@ module.exports = {
             "voice/bxml/sendDtmf",
             "voice/bxml/speakSentence",
             "voice/bxml/startGather",
+            "voice/bxml/startRecording",
           ],
         },
         {
