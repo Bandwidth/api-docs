@@ -22,6 +22,6 @@ class Program
             State = State2Enum.PAUSED
         };
 
-        var response = await client.Voice.APIController.ModifyCallRecordingStateAsync(accountId, callId, state);
+        await client.Voice.APIController.ModifyCallRecordingStateAsync(accountId, callId, state);
     }
 }
