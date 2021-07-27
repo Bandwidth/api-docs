@@ -16,6 +16,6 @@ class Program
 
         var mediaId = "media-id-123";
 
-        var response = await client.GetMediaAsync(accountId, mediaId);
+        var response = await client.Messaging.APIController.GetMediaAsync(accountId, mediaId);
     }
 }

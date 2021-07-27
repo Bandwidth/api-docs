@@ -16,6 +16,6 @@ class Program
 
         var mediaId = "media-id-123";
 
-        var response = await client.DeleteMediaAsync(accountId, mediaId);
+        var response = await client.Messaging.APIController.DeleteMediaAsync(accountId, mediaId);
     }
 }

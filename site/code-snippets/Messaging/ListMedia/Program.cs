@@ -14,6 +14,6 @@ class Program
             .MessagingBasicAuthCredentials(username, password)
             .Build();
 
-        var response = await client.ListMediaAsync(accountId);
+        var response = await client.Messaging.APIController.ListMediaAsync(accountId);
     }
 }

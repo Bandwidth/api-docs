@@ -15,6 +15,6 @@ class Program
             .MessagingBasicAuthCredentials(username, password)
             .Build();
 
-        var response = await client.GetMessagesAsync(accountId, sourceTn: bandwidthNumber);
+        var response = await client.Messaging.APIController.GetMessagesAsync(accountId, sourceTn: bandwidthNumber);
     }
 }

@@ -26,6 +26,6 @@ class Program
             Text = "Hello world"
         };
 
-        var response = await client.CreateMessageAsync(accountId, request);
+        var response = await client.Messaging.APIController.CreateMessageAsync(accountId, request);
     }
 }
