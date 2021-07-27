@@ -16,6 +16,6 @@ class Program
             .WebRtcBasicAuthCredentials(username, password)
             .Build();
 
-        var response = await client.WebRtc.APIController.DeleteSessionAsync(accountId, sessionId);
+        await client.WebRtc.APIController.DeleteSessionAsync(accountId, sessionId);
     }
 }
