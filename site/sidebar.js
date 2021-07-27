@@ -72,6 +72,7 @@ module.exports = {
             "voice/bxml/hangup",
             "voice/bxml/pause",
             "voice/bxml/pauseRecording",
+            "voice/bxml/playAudio",
           ],
         },
         {
