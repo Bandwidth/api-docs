@@ -19,6 +19,6 @@ class Program
             .VoiceBasicAuthCredentials(username, password)
             .Build();
 
-        await client.Voice.APIController.DeleteRecordingTranscriptionAsync(accountId, callId, recordingId);
+        var response = await client.Voice.APIController.GetMetadataForRecordingAsync(accountId, callId, recordingId);
     }
 }
