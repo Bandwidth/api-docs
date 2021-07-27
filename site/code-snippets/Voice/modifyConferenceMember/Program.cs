@@ -23,6 +23,6 @@ class Program
             Mute = true
         };
 
-        var response = await client.Voice.APIController.ModifyConferenceMemberAsync(accountId, conferenceId, callId, detail);
+        await client.Voice.APIController.ModifyConferenceMemberAsync(accountId, conferenceId, callId, detail);
     }
 }
