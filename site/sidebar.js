@@ -63,7 +63,9 @@ module.exports = {
         {
           type: "category",
           label: "BXML",
-          items: [],
+          items: [
+            "voice/bxml"
+          ],
         },
         {
           type: "category",
