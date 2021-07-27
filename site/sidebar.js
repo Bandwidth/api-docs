@@ -66,6 +66,7 @@ module.exports = {
           items: [
             "voice/bxml",
             "voice/bridge",
+            "voice/conference",
           ],
         },
         {
