@@ -79,6 +79,7 @@ module.exports = {
             "voice/bxml/ring",
             "voice/bxml/sendDtmf",
             "voice/bxml/speakSentence",
+            "voice/bxml/startGather",
           ],
         },
         {
