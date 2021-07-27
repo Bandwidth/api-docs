@@ -22,6 +22,6 @@ class Program
             SessionId = sessionId
         };
 
-        var response = await client.WebRtc.APIController.UpdateParticipantSubscriptionsAsync(accountId, participantId, sessionId, subscriptions);
+        await client.WebRtc.APIController.UpdateParticipantSubscriptionsAsync(accountId, participantId, sessionId, subscriptions);
     }
 }
