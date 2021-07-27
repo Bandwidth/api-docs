@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Bandwidth.Standard;
-using Bandwidth.Standard.PhoneNumberLookup.Models;
+using Bandwidth.Standard.Exceptions;
 
 class Program
 {
@@ -20,6 +20,14 @@ class Program
             Tns = new List<string> { System.Environment.GetEnvironmentVariable("USER_NUMBER") }
         };
 
-        var response = await client.PhoneNumberLookup.APIController.CreateLookupRequestAsync(accountId, request);
+        try
+        {
+            var response = await client.PhoneNumberLookup.APIController.CreateLookupRequestAsync(accountId, request);
+            Console.WriteLine(response.Result);
+        }
+        catch (ApiException e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
 }
