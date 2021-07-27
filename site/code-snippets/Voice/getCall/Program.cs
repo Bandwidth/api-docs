@@ -17,6 +17,6 @@ class Program
             .VoiceBasicAuthCredentials(username, password)
             .Build();
 
-        var response = await client.Voice.APIController.GetCallStateAsync(accountId, request);
+        var response = await client.Voice.APIController.GetCallStateAsync(accountId, callId);
     }
 }
