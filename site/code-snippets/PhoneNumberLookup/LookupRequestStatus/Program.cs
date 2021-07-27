@@ -1,6 +1,7 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Bandwidth.Standard;
-using Bandwidth.Standard.Voice.Models;
+using Bandwidth.Standard.PhoneNumberLookup.Models;
 
 class Program
 {
@@ -10,17 +11,12 @@ class Program
         var password = System.Environment.GetEnvironmentVariable("BW_PASSWORD");
         var accountId = System.Environment.GetEnvironmentVariable("BW_ACCOUNT_ID");
 
-        var conferenceId = "conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8";
-
         var client = new BandwidthClient.Builder()
-            .VoiceBasicAuthCredentials(username, password)
+            .PhoneNumberLookupBasicAuthCredentials(username, password)
             .Build();
 
-        var request = new ApiModifyConferenceRequest
-        {
-            Status = StatusEnum.Completed
-        };
+        var requestId = "8a358296-e188-4a3a-b974-8e4d12001dd8";
 
-        await client.Voice.APIController.ModifyConferenceAsync(accountId, conferenceId, request);
+        var response = await client.PhoneNumberLookup.APIController.GetLookupRequestStatusAsync(accountId, requestId);
     }
 }
