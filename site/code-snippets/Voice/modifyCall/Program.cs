@@ -23,6 +23,6 @@ class Program
             State = State1Enum.Completed
         };
 
-        var response = await client.Voice.APIController.ModifyCallAsync(accountId, callId, request);
+        await client.Voice.APIController.ModifyCallAsync(accountId, callId, request);
     }
 }
