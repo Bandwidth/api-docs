@@ -81,6 +81,8 @@ module.exports = {
             "voice/bxml/speakSentence",
             "voice/bxml/startGather",
             "voice/bxml/startRecording",
+            "voice/bxml/stopGather",
+            "voice/bxml/stopRecording",
           ],
         },
         {
