@@ -1,0 +1,158 @@
+---
+id: redirect
+title: Redirect
+slug: /voice/bxml/redirect
+description: A general overview of Bandwidth's Redirect BXML Verb
+keywords:
+  - bandwidth
+  - voice
+  - bxml
+  - redirect
+hide_title: false
+image: ../../static/img/bandwidth-logo.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+The Redirect verb is used to redirect the current XML execution to another URL.
+
+:::caution
+&lt;Redirect&gt should be the last verb in the BXML response, as any verbs after &lt;Redirect&gt; will not be executed.
+:::
+
+## Text Content
+
+There is no text content available to be set for the `<Redirect>` verb.
+
+## Attributes
+
+| Attribute              | Description |
+|:-----------------------|:------------|
+| redirectUrl            | (required) URL to request new BXML from. A [Redirect](/docs/voice/webhooks/redirect) event will be sent to this endpoint. May be a relative URL. |
+| redirectMethod         | (optional) The HTTP method to use for the request to `redirectUrl`. GET or POST. Default Value is POST. |
+| redirectFallbackUrl    | (optional) A fallback url which, if provided, will be used to retry the [Redirect](/docs/voice/webhooks/redirect) callback delivery in case `redirectUrl` fails to respond. |
+| redirectFallbackMethod | (optional) The HTTP method to use to deliver the [Redirect](/docs/voice/webhooks/redirect) callback to `redirectFallbackUrl`. GET or POST. Default value is POST. |
+| username               | (optional) The username to send in the HTTP request to `redirectUrl`. |
+| password               | (optional) The password to send in the HTTP request to `redirectUrl`. |
+| fallbackUsername       | (optional) The username to send in the HTTP request to `redirectFallbackUrl`. |
+| fallbackPassword       | (optional) The password to send in the HTTP request to `redirectFallbackUrl`. |
+| tag                    | (optional) A custom string that will be sent with this and all future callbacks unless overwritten by a future `tag` attribute or [`<Tag>`](/docs/voice/bxml/tag) verb, or cleared.<br/><br/>May be cleared by setting `tag=""`<br/><br/>Max length 256 characters. |
+
+
+## Webhooks Received
+
+| Webhooks                                  | Can reply with more BXML |
+|:------------------------------------------|:-------------------------|
+| [Redirect](/docs/voice/webhooks/redirect) | Yes                      |
+
+## Examples
+
+### Redirect a Call to New BXML Instructions
+
+<Tabs
+  groupId="bxml"
+  defaultValue="xml"
+  values={[
+    { label: 'XML', value: 'xml', },
+    { label: 'Java', value: 'java', },
+    { label: 'C#', value: 'csharp', },
+    { label: 'Ruby', value: 'ruby', },
+    { label: 'NodeJS', value: 'nodejs', },
+    { label: 'Python', value: 'python', },
+    { label: 'PHP', value: 'php', },
+  ]
+}>
+<TabItem value="xml">
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+   <Redirect redirectUrl="http://flow.url/newFlow" username='username' password='password'/>
+   <!--Username and Password are not required, but are included to demonstrate adding multiple attributes to the redirect tag-->
+</Response>
+```
+
+</TabItem>
+<TabItem value="java">
+
+```java
+Redirect redirect = Redirect.builder()
+        .redirectUrl("https://flow.url/newFlow")
+        .build();
+
+Response response = Response.builder().build()
+        .add(redirect);
+
+System.out.println(response.toBXML());
+```
+
+</TabItem>
+<TabItem value="csharp">
+
+```csharp
+Response response = new Response();
+
+Redirect redirect = new Redirect();
+redirect.RedirectUrl = "http://flow.url/newFlow";
+
+response.Add(redirect);
+
+Console.WriteLine(response.ToBXML());
+```
+
+</TabItem>
+<TabItem value="ruby">
+
+```ruby
+response = Bandwidth::Voice::Response.new()
+redirect = Bandwidth::Voice::Redirect.new({
+    :redirect_url => "http://flow.url/newFlow"
+})
+
+response.push(redirect)
+puts response.to_bxml()
+```
+
+</TabItem>
+<TabItem value="nodejs">
+
+```js
+var redirect = new BandwidthBxml.Verbs.Redirect();
+redirect.setRedirectUrl("https://flow.url/nextFlow");
+
+var response = new BandwidthBxml.Response();
+response.addVerb(redirect);
+
+console.log(response.toBxml());
+```
+
+</TabItem>
+<TabItem value="python">
+
+```python
+response = Response()
+redirect = Redirect(
+    redirect_url="http://flow.url/newFlow"
+)
+
+response.add_verb(redirect)
+print(response.to_bxml())
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+$redirect = new BandwidthLib\Voice\Bxml\Redirect();
+$redirect->redirectUrl("https://flow.url/newFlow");
+
+$response = new BandwidthLib\Voice\Bxml\Response();
+$response->addVerb($redirect);
+
+echo $response->toBxml();
+echo "\n";
+```
+
+</TabItem>
+</Tabs>

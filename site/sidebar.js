@@ -74,6 +74,7 @@ module.exports = {
             "voice/bxml/pauseRecording",
             "voice/bxml/playAudio",
             "voice/bxml/record",
+            "voice/bxml/redirect",
           ],
         },
         {
