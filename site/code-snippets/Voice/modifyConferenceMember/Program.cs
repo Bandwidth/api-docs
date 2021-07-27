@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
 using Bandwidth.Standard.Voice.Models;
 
 class Program
@@ -23,6 +24,13 @@ class Program
             Mute = true
         };
 
-        await client.Voice.APIController.ModifyConferenceMemberAsync(accountId, conferenceId, callId, detail);
+        try
+        {
+            await client.Voice.APIController.ModifyConferenceMemberAsync(accountId, conferenceId, callId, detail);
+        }
+        catch (ApiException e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
 }

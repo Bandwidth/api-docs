@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Bandwidth.Standard;
-using Bandwidth.Standard.PhoneNumberLookup.Models;
+using Bandwidth.Standard.Exceptions;
 
 class Program
 {
@@ -17,6 +17,14 @@ class Program
 
         var requestId = "8a358296-e188-4a3a-b974-8e4d12001dd8";
 
-        var response = await client.PhoneNumberLookup.APIController.GetLookupRequestStatusAsync(accountId, requestId);
+        try
+        {
+            var response = await client.PhoneNumberLookup.APIController.GetLookupRequestStatusAsync(accountId, requestId);
+            Console.WriteLine(response.Data);
+        }
+        catch (ApiException e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
 }

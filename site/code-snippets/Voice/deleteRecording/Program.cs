@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
 using Bandwidth.Standard.Voice.Models;
 
 class Program
@@ -19,6 +20,13 @@ class Program
             .VoiceBasicAuthCredentials(username, password)
             .Build();
 
-        await client.Voice.APIController.DeleteRecordingAsync(accountId, callId, recordingId);
+        try
+        {
+            await client.Voice.APIController.DeleteRecordingAsync(accountId, callId, recordingId);
+        }
+        catch (ApiException e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
 }

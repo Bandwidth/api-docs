@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
 using Bandwidth.Standard.Messaging.Models;
 
 class Program
@@ -14,6 +15,14 @@ class Program
             .MessagingBasicAuthCredentials(username, password)
             .Build();
 
-        var response = await client.Messaging.APIController.ListMediaAsync(accountId);
+        try
+        {
+            var response = await client.Messaging.APIController.ListMediaAsync(accountId);
+            Console.WriteLine(response.Data);
+        }
+        catch (ApiException e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
 }

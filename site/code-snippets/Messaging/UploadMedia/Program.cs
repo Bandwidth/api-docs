@@ -2,6 +2,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
 using Bandwidth.Standard.Http.Client;
 
 class Program
@@ -24,6 +25,13 @@ class Program
         var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(content));
         var fileStreamInfo = new FileStreamInfo(memoryStream);
 
-        await client.Messaging.APIController.UploadMediaAsync(accountId, mediaId, fileStreamInfo.FileStream.Length, fileStreamInfo, contentType);
+        try
+        {
+            await client.Messaging.APIController.UploadMediaAsync(accountId, mediaId, fileStreamInfo.FileStream.Length, fileStreamInfo, contentType);
+        }
+        catch (ApiException e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
 }

@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
 using Bandwidth.Standard.WebRtc.Models;
 
 class Program
@@ -17,6 +18,13 @@ class Program
             .WebRtcBasicAuthCredentials(username, password)
             .Build();
 
-        await client.WebRtc.APIController.AddParticipantToSessionAsync(accountId, sessionId, participantId);
+        try
+        {
+            await client.WebRtc.APIController.AddParticipantToSessionAsync(accountId, sessionId, participantId);
+        }
+        catch (ApiException e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
 }

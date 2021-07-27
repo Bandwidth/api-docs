@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
 using Bandwidth.Standard.WebRtc.Models;
 
 class Program
@@ -16,6 +17,13 @@ class Program
             .WebRtcBasicAuthCredentials(username, password)
             .Build();
 
-        await client.WebRtc.APIController.DeleteSessionAsync(accountId, sessionId);
+        try
+        {
+            await client.WebRtc.APIController.DeleteSessionAsync(accountId, sessionId);
+        }
+        catch (ApiException e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
 }

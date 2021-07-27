@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
 using Bandwidth.Standard.Voice.Models;
 
 class Program
@@ -19,6 +20,14 @@ class Program
             .VoiceBasicAuthCredentials(username, password)
             .Build();
 
-        var response = await client.Voice.APIController.GetMetadataForRecordingAsync(accountId, callId, recordingId);
+        try
+        {
+            var response = await client.Voice.APIController.GetMetadataForRecordingAsync(accountId, callId, recordingId);
+            Console.WriteLine(response.Data);
+        }
+        catch (ApiException e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
 }

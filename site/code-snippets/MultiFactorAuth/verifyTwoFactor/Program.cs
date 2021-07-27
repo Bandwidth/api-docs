@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
 using Bandwidth.Standard.TwoFactorAuth.Models;
 
 class Program
@@ -28,6 +29,14 @@ class Program
             ExpirationTimeInMinutes = expirationTimeInMinutes
         };
 
-        var response = await client.TwoFactorAuth.MFAController.CreateVerifyTwoFactorAsync(accountId, request);
+        try
+        {
+            var response = await client.TwoFactorAuth.MFAController.CreateVerifyTwoFactorAsync(accountId, request);
+            Console.WriteLine(response.Data);
+        }
+        catch (ApiException e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
 }

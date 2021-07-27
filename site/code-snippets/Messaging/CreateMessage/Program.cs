@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
 using Bandwidth.Standard.Messaging.Models;
 
 class Program
@@ -26,6 +27,14 @@ class Program
             Text = "Hello world"
         };
 
-        var response = await client.Messaging.APIController.CreateMessageAsync(accountId, request);
+        try
+        {
+            var response = await client.Messaging.APIController.CreateMessageAsync(accountId, request);
+            Console.WriteLine(response.Data);
+        }
+        catch (ApiException e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
 }

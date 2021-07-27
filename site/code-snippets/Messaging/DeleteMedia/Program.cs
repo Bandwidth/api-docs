@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
 using Bandwidth.Standard.Messaging.Models;
 
 class Program
@@ -16,6 +17,13 @@ class Program
 
         var mediaId = "media-id-123";
 
-        await client.Messaging.APIController.DeleteMediaAsync(accountId, mediaId);
+        try
+        {
+            await client.Messaging.APIController.DeleteMediaAsync(accountId, mediaId);
+        }
+        catch (ApiException e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
 }

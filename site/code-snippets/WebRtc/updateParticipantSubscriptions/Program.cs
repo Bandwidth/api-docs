@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
 using Bandwidth.Standard.WebRtc.Models;
 
 class Program
@@ -22,6 +23,13 @@ class Program
             SessionId = sessionId
         };
 
-        await client.WebRtc.APIController.UpdateParticipantSubscriptionsAsync(accountId, participantId, sessionId, subscriptions);
+        try
+        {
+            await client.WebRtc.APIController.UpdateParticipantSubscriptionsAsync(accountId, participantId, sessionId, subscriptions);
+        }
+        catch (ApiException e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
 }

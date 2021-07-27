@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
 using Bandwidth.Standard.WebRtc.Models;
 
 class Program
@@ -17,6 +18,14 @@ class Program
             .WebRtcBasicAuthCredentials(username, password)
             .Build();
 
-        var response = await client.WebRtc.APIController.GetParticipantSubscriptionsAsync(accountId, participantId, sessionId);
+        try
+        {
+            var response = await client.WebRtc.APIController.GetParticipantSubscriptionsAsync(accountId, participantId, sessionId);
+            Console.WriteLine(response.Data);
+        }
+        catch (ApiException e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
 }

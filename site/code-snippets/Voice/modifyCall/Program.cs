@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
 using Bandwidth.Standard.Voice.Models;
 
 class Program
@@ -23,6 +24,13 @@ class Program
             State = State1Enum.Completed
         };
 
-        await client.Voice.APIController.ModifyCallAsync(accountId, callId, request);
+        try
+        {
+            await client.Voice.APIController.ModifyCallAsync(accountId, callId, request);
+        }
+        catch (ApiException e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
 }

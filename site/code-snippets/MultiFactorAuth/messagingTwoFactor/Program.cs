@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
 using Bandwidth.Standard.TwoFactorAuth.Models;
 
 class Program
@@ -30,6 +31,14 @@ class Program
             Message = message
         };
 
-        var response = await client.TwoFactorAuth.MFAController.CreateMessagingTwoFactorAsync(accountId, request);
+        try
+        {
+            var response = await client.TwoFactorAuth.MFAController.CreateMessagingTwoFactorAsync(accountId, request);
+            Console.WriteLine(response.Data);
+        }
+        catch (ApiException e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
 }

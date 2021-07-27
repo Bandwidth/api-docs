@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
 using Bandwidth.Standard.Messaging.Models;
 
 class Program
@@ -16,6 +17,14 @@ class Program
 
         var mediaId = "media-id-123";
 
-        var response = await client.Messaging.APIController.GetMediaAsync(accountId, mediaId);
+        try
+        {
+            var response = await client.Messaging.APIController.GetMediaAsync(accountId, mediaId);
+            Console.WriteLine(response.Data);
+        }
+        catch (ApiException e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
 using Bandwidth.Standard.WebRtc.Models;
 
 class Program
@@ -21,6 +22,14 @@ class Program
             PublishPermissions = new List<PublishPermissionEnum>() { PublishPermissionEnum.AUDIO, PublishPermissionEnum.VIDEO }
         };
 
-        var response = await client.WebRtc.APIController.CreateParticipantAsync(accountId, participant);
+        try
+        {
+            var response = await client.WebRtc.APIController.CreateParticipantAsync(accountId, participant);
+            Console.WriteLine(response.Data);
+        }
+        catch (ApiException e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
 }

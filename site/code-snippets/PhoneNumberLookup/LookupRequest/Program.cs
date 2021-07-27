@@ -24,7 +24,7 @@ class Program
         try
         {
             var response = await client.PhoneNumberLookup.APIController.CreateLookupRequestAsync(accountId, request);
-            Console.WriteLine(response.Result);
+            Console.WriteLine(response.Data);
         }
         catch (ApiException e)
         {

@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
 using Bandwidth.Standard.WebRtc.Models;
 
 class Program
@@ -19,6 +20,14 @@ class Program
             Tag = "new-session"
         };
 
-        var response = await client.WebRtc.APIController.CreateSessionAsync(accountId, session);
+        try
+        {
+            var response = await client.WebRtc.APIController.CreateSessionAsync(accountId, session);
+            Console.WriteLine(response.Data);
+        }
+        catch (ApiException e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
 }

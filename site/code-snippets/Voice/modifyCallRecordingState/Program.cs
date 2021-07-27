@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
 using Bandwidth.Standard.Voice.Models;
 
 class Program
@@ -22,6 +23,13 @@ class Program
             State = State2Enum.PAUSED
         };
 
-        await client.Voice.APIController.ModifyCallRecordingStateAsync(accountId, callId, state);
+        try
+        {
+            await client.Voice.APIController.ModifyCallRecordingStateAsync(accountId, callId, state);
+        }
+        catch (ApiException e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
 }

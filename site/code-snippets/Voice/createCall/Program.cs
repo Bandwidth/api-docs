@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
 using Bandwidth.Standard.Voice.Models;
 
 class Program
@@ -27,6 +28,14 @@ class Program
             AnswerUrl = answerUrl
         };
 
-        var response = await client.Voice.APIController.CreateCallAsync(accountId, request);
+        try
+        {
+            var response = await client.Voice.APIController.CreateCallAsync(accountId, request);
+            Console.WriteLine(response.Data);
+        }
+        catch (ApiException e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
 }
