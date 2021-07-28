@@ -70,6 +70,7 @@ module.exports = {
             "voice/webhooks/conferenceCompleted",
             "voice/webhooks/conferenceRecordingAvailable",
             "voice/webhooks/disconnect",
+            "voice/webhooks/dtmf",
             "voice/webhooks/gather",
             "voice/webhooks/initiate",
             "voice/webhooks/recordComplete",
