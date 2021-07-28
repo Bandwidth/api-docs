@@ -62,7 +62,9 @@ module.exports = {
             "voice/webhooks/about",
             "voice/webhooks/answer",
             "voice/webhooks/bridgeComplete",
-            "voice/webhooks/bridgeTargetCompleted",
+            "voice/webhooks/bridgeTargetComplete",
+            "voice/webhooks/conferenceCompleted",
+            "voice/webhooks/conferenceCreated",
           ],
         },
         {
