@@ -58,13 +58,16 @@ module.exports = {
         {
           type: "category",
           label: "Webhooks",
-          items: [],
+          items: [
+            "voice/webhooks/about",
+            "voice/webhooks/answer",
+          ],
         },
         {
           type: "category",
           label: "BXML",
           items: [
-            "voice/bxml",
+            "voice/bxml/about",
             "voice/bxml/bridge",
             "voice/bxml/conference",
             "voice/bxml/forward",
