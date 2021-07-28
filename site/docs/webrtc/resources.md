@@ -58,7 +58,7 @@ To make things easier to find, those same Bandwidth Sample Applications are list
 | [webrtc-hello-world-video-js](https://github.com/Bandwidth-Samples/webrtc-hello-world-video-js)                     | nodejs/JavaScript       | a simple 1:1 WebRTC video application                                                                                                          |
 | [webrtc-hello-world-video-pstn-call-js](https://github.com/Bandwidth-Samples/webrtc-hello-world-video-pstn-call-js) | JavaScript              | A simple 1:1 WebRTC video application with PSTN calling                                                                                        |
 | [webrtc-voiceconf-ts](https://github.com/Bandwidth-Samples/webrtc-voiceconf-ts)                                     | JavaScript/ Node/ React | This sample uses the Magic of Bandwidth V2 voice to add a broad suite of capabilities to webRTC by anchoring the call on a V2 voice conference |
-| [webrtc-voicebridge-ts](https://github.com/Bandwidth-Samples/webrtc-voicebridge-ts)                                 | JavaScript/ Node/ React | This sample app demonstrates the use of the Programmable Voice <Bridge> verb to efficiently join webrtc and voice endpoints                    |
+| [webrtc-voicebridge-ts](https://github.com/Bandwidth-Samples/webrtc-voicebridge-ts)                                 | JavaScript/ Node/ React | This sample app demonstrates the use of the Programmable Voice Bridge verb to efficiently join webrtc and voice endpoints                    |
 
 ## Other Required Resources
 
