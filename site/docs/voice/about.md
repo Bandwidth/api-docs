@@ -2,7 +2,7 @@
 id: about
 title: About
 slug: /voice   
-description: A general overview of Bandwidth's account services
+description: A general overview of Bandwidth's Voice API
 keywords:
   - bandwidth
   - voice
