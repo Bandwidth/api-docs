@@ -8,6 +8,7 @@ const messagingSpec = fs.readFileSync('./specs/messaging.json', 'utf-8');
 // const messagingInternationalSpec = fs.readFileSync('./specs/messagingInternational.json', 'utf-8');
 const webRtcSpec = fs.readFileSync('./specs/webRtc.json', 'utf-8');
 const multiFactorAuthSpec = fs.readFileSync('./specs/multiFactorAuth.json', 'utf-8');
+const dashSpec = fs.readFileSync('./specs/dash.json', 'utf-8');
 
 module.exports = {
   title: 'Bandwidth API Docs',
@@ -69,6 +70,9 @@ module.exports = {
         }, {
           to: 'webrtc-api-reference',
           label: 'WebRTC'
+        }, {
+          to: 'dash-api-reference',
+          label: 'DASH'
         }]
       }, {
         href: 'https://github.com/Bandwidth-Samples',
@@ -155,6 +159,7 @@ module.exports = {
       // messagingInternationalSpec: JSON.parse(messagingInternationalSpec),
       webRTCSpec: JSON.parse(webRtcSpec),
       multiFactorAuthSpec: JSON.parse(multiFactorAuthSpec),
+      dashSpec: JSON.parse(dashSpec),
       // CSS Colors
       bwBlue: '#079CEE',
       voicePurple: '#9a59c5',
