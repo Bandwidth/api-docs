@@ -21,7 +21,7 @@ class Program
             .VoiceBasicAuthCredentials(username, password)
             .Build();
 
-        var request = new ApiCreateCallRequest()
+        var request = new CreateCallRequest()
         {
             ApplicationId = applicationId,
             To = to,
