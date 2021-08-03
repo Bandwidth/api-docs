@@ -15,7 +15,7 @@ module.exports = {
   tagline: 'Learn About Bandwidth\'s Product API\'s',
   url: 'https://dev.bandwidth.com',
   baseUrl: '/',
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'warn', //'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
   organizationName: 'bandwidth', // Usually your GitHub org/user name.
