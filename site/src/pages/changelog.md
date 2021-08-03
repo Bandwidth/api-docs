@@ -7,6 +7,7 @@ slug: /changelog
 
 | Date | Notes |
 |--|--|
+| July 30th, 2021 | Updated `media` description for `createMessages` to include Content-Disposition header information |
 | July 15th, 2021 | Updated Python code snippets for voice, messaging, and MFA to reflect the breaking changes in the v10.0.0 SDK |
 | July 7nd, 2021 | Updated Phone Number Lookup spec to reflect that all property names in the result section are now camelcase.|
 | July 2nd, 2021 | Updated WebRTC's parameter order definition. `sessionId` should always be passed in before `participantId` when both are present |
