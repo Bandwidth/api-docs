@@ -2,7 +2,7 @@
 id: about
 title: About
 slug: /emergency   
-description: A general overview of Bandwidth's account services
+description: A general overview of Bandwidth's Emergency Services APIs
 keywords:
   - bandwidth
   - emergency
@@ -10,28 +10,32 @@ hide_title: true
 image: ../../static/img/bandwidth-logo.png
 ---
 
-## Base API URLs
+The Emergency Services APIs at Bandwidth are hosted with our [Dashboard Service](https://dashboard.bandwidth.com/) and our [911 Access Dashboard](https://dashboard.dashcs.com/dash-board/login.jsp) service.
 
-The Emergency Services APIs at Bandwidth are hosted with our [Dashboard Service](https://dashboard.bandwidth.com/) and our [DASH](https://dashboard.dashcs.com/dash-board/login.jsp) service.
+:::caution
+Please be sure to select the correct APIs & login for the services for which your account is configured. If you are unsure of which API to use, please contact your account manager.
+:::
 
-Please be sure to select the correct APIs & login for the services for which your account is configured.
+## Bandwidth Dashboard
 
-### Bandwidth Dashboard Base API URL
+### Base URL
+
 `https://dashboard.bandwidth.com/api/`
 
-### 911 Access Dashboard (DASH) Base API URL
-`https://service.dashcs.com/dashapi/`
+### Guides
 
-## Emergency Services Guides
-
-### Bandwidth Dashboard API
 | Guide | Description |
 |:------|:------------|
 | [About Emergency Notifications] | Learn about Emergency Notifications |
 | [Config Emergency Notifications] | Walk through configuring an Emergency Notifications setup |
 
+## 911 Access Dashboard (DASH)
 
-### 911 Access Dashboard API
+### Base URL
+
+`https://service.dashcs.com/dashapi/`
+
+### Guides
 
 | Guide | Description |
 |:------|:------------|
