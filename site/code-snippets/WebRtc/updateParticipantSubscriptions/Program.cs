@@ -26,7 +26,7 @@ class Program
 
         try
         {
-            await client.WebRtc.APIController.UpdateParticipantSubscriptionsAsync(accountId, participantId, sessionId, subscriptions);
+            await client.WebRtc.APIController.UpdateParticipantSubscriptionsAsync(accountId, sessionId, participantId, subscriptions);
         }
         catch (ApiException e)
         {
