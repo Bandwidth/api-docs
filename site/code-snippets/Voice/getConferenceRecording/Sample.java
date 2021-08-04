@@ -1,7 +1,6 @@
 import com.bandwidth.BandwidthClient;
 import com.bandwidth.http.response.ApiResponse;
-import com.bandwidth.voice.models.ConferenceMemberDetail;
-import com.bandwidth.voice.models.RecordingMetadataResponse;
+import com.bandwidth.voice.models.CallRecordingMetadata;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -20,7 +19,7 @@ public class Sample {
                 .build();
 
         try {
-            CompletableFuture<ApiResponse<RecordingMetadataResponse>> completableFuture = client.getVoiceClient().getAPIController().getConferenceRecordingAsync(ACCOUNT_ID, conferenceId, recordingId);
+            CompletableFuture<ApiResponse<CallRecordingMetadata>> completableFuture = client.getVoiceClient().getAPIController().getConferenceRecordingAsync(ACCOUNT_ID, conferenceId, recordingId);
             System.out.println(completableFuture.get().getResult());
         } catch (InterruptedException | ExecutionException e) {
             System.out.println(e.getMessage());
