@@ -1,12 +1,9 @@
 import com.bandwidth.BandwidthClient;
 import com.bandwidth.http.response.ApiResponse;
-import com.bandwidth.voice.models.ConferenceDetail;
-import com.bandwidth.voice.models.RecordingMetadataResponse;
-import com.bandwidth.voice.models.TranscriptionResponse;
+import com.bandwidth.voice.models.ConferenceState;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.List;
 
 public class Sample {
     public static final String USERNAME = System.getenv("BW_USERNAME");
@@ -22,7 +19,7 @@ public class Sample {
                 .build();
 
         try {
-            CompletableFuture<ApiResponse<ConferenceDetail>> completableFuture = client.getVoiceClient().getAPIController().getConferenceAsync(ACCOUNT_ID, conferenceId);
+            CompletableFuture<ApiResponse<ConferenceState>> completableFuture = client.getVoiceClient().getAPIController().getConferenceAsync(ACCOUNT_ID, conferenceId);
             System.out.println(completableFuture.get().getResult());
         } catch (InterruptedException | ExecutionException e) {
             System.out.println(e.getMessage());
