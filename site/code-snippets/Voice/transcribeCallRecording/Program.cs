@@ -27,7 +27,7 @@ class Program
         var request = new TranscribeRecordingRequest
         {
             CallbackUrl = transcribeUrl
-        }
+        };
 
         try
         {
