@@ -18,7 +18,7 @@ public class Sample {
                 .voiceBasicAuthCredentials(USERNAME, PASSWORD)
                 .build();
 
-        TranscribeRecordingRequest request = new ApiTranscribeRecordingRequest();
+        TranscribeRecordingRequest request = new TranscribeRecordingRequest();
         request.setCallbackUrl("https://sample.com/callbacks/transcribe");
 
         try {
