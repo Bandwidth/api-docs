@@ -1,7 +1,7 @@
 const YAML = require('yaml');
 const fs = require('fs');
 const path = require('path');
-// const numbersSpec = fs.readFileSync('./specsnumbers.json', 'utf-8');
+// const numbersSpec = fs.readFileSync('./specs/numbers.json', 'utf-8');
 const phoneNumberLookupSpec = fs.readFileSync('./specs/phoneNumberLookup.json', 'utf-8');
 const voiceSpec = fs.readFileSync('./specs/voice.json', 'utf-8');
 const messagingSpec = fs.readFileSync('./specs/messaging.json', 'utf-8');
