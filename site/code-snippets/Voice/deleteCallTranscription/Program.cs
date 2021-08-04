@@ -23,7 +23,7 @@ class Program
 
         try
         {
-            await client.Voice.APIController.DeleteRecordingTranscriptionAsync(accountId, callId, recordingId);
+            await client.Voice.APIController.DeleteCallTranscriptionAsync(accountId, callId, recordingId);
         }
         catch (ApiException e)
         {
