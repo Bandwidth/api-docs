@@ -20,7 +20,7 @@ class Program
 
         try
         {
-            var response = await client.Voice.APIController.GetQueryMetadataForAccountAndConferenceAsync(accountId, conferenceId);
+            var response = await client.Voice.APIController.GetConferenceRecordingsAsync(accountId, conferenceId);
             Console.WriteLine(response.Data);
         }
         catch (ApiException e)

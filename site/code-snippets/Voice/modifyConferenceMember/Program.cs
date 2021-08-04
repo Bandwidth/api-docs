@@ -20,7 +20,7 @@ class Program
             .VoiceBasicAuthCredentials(username, password)
             .Build();
 
-        var detail = new ConferenceMemberDetail
+        var detail = new ConferenceMemberState
         {
             Mute = true
         };

@@ -28,7 +28,7 @@ class Program
 
         try
         {
-            await client.Messaging.APIController.UploadMediaAsync(accountId, mediaId, fileStreamInfo.FileStream.Length, fileStreamInfo, contentType);
+            await client.Messaging.APIController.UploadMediaAsync(accountId, mediaId, fileStreamInfo, contentType);
         }
         catch (ApiException e)
         {

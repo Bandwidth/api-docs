@@ -20,7 +20,7 @@ class Program
 
         try
         {
-            var response = await client.Voice.APIController.GetConferenceByIdAsync(accountId, conferenceId);
+            var response = await client.Voice.APIController.GetConferenceAsync(accountId, conferenceId);
             Console.WriteLine(response.Data);
         }
         catch (ApiException e)

@@ -23,7 +23,7 @@ class Program
 
         try
         {
-            var response = await client.Voice.APIController.GetStreamRecordingMediaAsync(accountId, callId, recordingId);
+            var response = await client.Voice.APIController.GetDownloadCallRecordingAsync(accountId, callId, recordingId);
             Console.WriteLine(response.Data);
         }
         catch (ApiException e)

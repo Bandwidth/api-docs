@@ -18,7 +18,7 @@ class Program
             .VoiceBasicAuthCredentials(username, password)
             .Build();
 
-        var request = new ApiModifyConferenceRequest
+        var request = new ModifyConferenceRequest
         {
             Status = StatusEnum.Completed
         };

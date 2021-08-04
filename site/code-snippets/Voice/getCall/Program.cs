@@ -21,7 +21,7 @@ class Program
 
         try
         {
-            var response = await client.Voice.APIController.GetCallStateAsync(accountId, callId);
+            var response = await client.Voice.APIController.GetCallAsync(accountId, callId);
             Console.WriteLine(response.Data);
         }
         catch (ApiException e)
