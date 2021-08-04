@@ -17,7 +17,7 @@ public class Sample {
                 .voiceBasicAuthCredentials(USERNAME, PASSWORD)
                 .build();
 
-        ApiModifyConferenceRequest request = new ModifyConferenceRequest();
+        ModifyConferenceRequest request = new ModifyConferenceRequest();
         request.setStatus(StatusEnum.COMPLETED);
 
         try {
