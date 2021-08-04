@@ -17,7 +17,7 @@ public class Sample {
                 .build();
 
         try {
-            CompletableFuture<ApiResponse<List<ConferenceDetail>>> completableFuture = client.getVoiceClient().getAPIController().getConferencesByAccountAsync(ACCOUNT_ID, null, null, null, null, null);
+            CompletableFuture<ApiResponse<List<ConferenceDetail>>> completableFuture = client.getVoiceClient().getAPIController().getConferencesAsync(ACCOUNT_ID, null, null, null, null, null);
             System.out.println(completableFuture.get().getResult());
         } catch (InterruptedException | ExecutionException e) {
             System.out.println(e.getMessage());

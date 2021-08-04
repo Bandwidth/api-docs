@@ -17,8 +17,8 @@ public class Sample {
                 .voiceBasicAuthCredentials(USERNAME, PASSWORD)
                 .build();
 
-        ModifyCallRecordingState recordingState = new ModifyCallRecordingState();
-        recordingState.setState(State2Enum.PAUSED);
+        ModifyCallRecordingState recordingState = new ModifyCallRecordingRequest();
+        recordingState.setState(State1Enum.PAUSED);
 
         try {
             CompletableFuture<ApiResponse<Void>> completableFuture = client.getVoiceClient().getAPIController().modifyCallRecordingStateAsync(ACCOUNT_ID, callId, recordingState);

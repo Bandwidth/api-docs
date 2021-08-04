@@ -1,7 +1,7 @@
 import com.bandwidth.BandwidthClient;
 import com.bandwidth.http.response.ApiResponse;
-import com.bandwidth.twofactorauth.models.TwoFactorCodeRequestSchema;
-import com.bandwidth.twofactorauth.models.TwoFactorVoiceResponse;
+import com.bandwidth.multifactorauth.models.TwoFactorCodeRequestSchema;
+import com.bandwidth.multifactorauth.models.TwoFactorVoiceResponse;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -14,7 +14,7 @@ public class Sample {
 
     public static void main(String[] args) {
         BandwidthClient client = new BandwidthClient.Builder()
-                .twoFactorAuthBasicAuthCredentials(USERNAME, PASSWORD)
+                .multiFactorAuthBasicAuthCredentials(USERNAME, PASSWORD)
                 .build();
 
         String to = System.getenv("USER_NUMBER");
@@ -32,7 +32,7 @@ public class Sample {
         request.setMessage(message);
 
         try {
-            CompletableFuture<ApiResponse<TwoFactorVoiceResponse>> completableFuture = client.getTwoFactorAuthClient().getMFAController().createVoiceTwoFactorAsync(ACCOUNT_ID, request);
+            CompletableFuture<ApiResponse<TwoFactorVoiceResponse>> completableFuture = client.getMultiFactorAuthClient().getMFAController().createVoiceTwoFactorAsync(ACCOUNT_ID, request);
             System.out.println(completableFuture.get().getResult());
         } catch (InterruptedException | ExecutionException e) {
             System.out.println(e.getMessage());

@@ -21,7 +21,7 @@ public class Sample {
                 .build();
 
         try {
-            CompletableFuture<ApiResponse<InputStream>> completableFuture = client.getVoiceClient().getAPIController().getStreamConferenceRecordingMediaAsync(ACCOUNT_ID, conferenceId, recordingId);
+            CompletableFuture<ApiResponse<InputStream>> completableFuture = client.getVoiceClient().getAPIController().getDownloadConferenceRecordingAsync(ACCOUNT_ID, conferenceId, recordingId);
             System.out.println(completableFuture.get().getResult());
         } catch (InterruptedException | ExecutionException e) {
             System.out.println(e.getMessage());

@@ -20,7 +20,7 @@ public class Sample {
         conferenceMemberDetail.setMute(true);
 
         try {
-            CompletableFuture<ApiResponse<List<RecordingMetadataResponse>>> completableFuture = client.getVoiceClient().getAPIController().getQueryMetadataForAccountAsync(ACCOUNT_ID, null, null, null, null);
+            CompletableFuture<ApiResponse<List<RecordingMetadataResponse>>> completableFuture = client.getVoiceClient().getAPIController().getQueryCallRecordingsAsync(ACCOUNT_ID, null, null, null, null);
             System.out.println(completableFuture.get().getResult());
         } catch (InterruptedException | ExecutionException e) {
             System.out.println(e.getMessage());

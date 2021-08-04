@@ -18,11 +18,11 @@ public class Sample {
                 .voiceBasicAuthCredentials(USERNAME, PASSWORD)
                 .build();
 
-        ConferenceMemberDetail conferenceMemberDetail = new ConferenceMemberDetail();
-        conferenceMemberDetail.setMute(true);
+        ConferenceMemberState conferenceMemberState = new ConferenceMemberState();
+        conferenceMemberState.setMute(true);
 
         try {
-            CompletableFuture<ApiResponse<Void>> completableFuture = client.getVoiceClient().getAPIController().modifyConferenceMemberAsync(ACCOUNT_ID, conferenceId, callId, conferenceMemberDetail);
+            CompletableFuture<ApiResponse<Void>> completableFuture = client.getVoiceClient().getAPIController().modifyConferenceMemberAsync(ACCOUNT_ID, conferenceId, callId, conferenceMemberState);
             System.out.println(completableFuture.get().getResult());
         } catch (InterruptedException | ExecutionException e) {
             System.out.println(e.getMessage());

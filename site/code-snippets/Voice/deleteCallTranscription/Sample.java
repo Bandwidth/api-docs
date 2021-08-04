@@ -22,7 +22,7 @@ public class Sample {
                 .build();
 
         try {
-            CompletableFuture<ApiResponse<Void>> completableFuture = client.getVoiceClient().getAPIController().deleteRecordingTranscriptionAsync(ACCOUNT_ID, callId, recordingId);
+            CompletableFuture<ApiResponse<Void>> completableFuture = client.getVoiceClient().getAPIController().deleteCallTranscriptionAsync(ACCOUNT_ID, callId, recordingId);
             System.out.println(completableFuture.get().getResult());
         } catch (InterruptedException | ExecutionException e) {
             System.out.println(e.getMessage());

@@ -22,7 +22,7 @@ public class Sample {
                 .voiceBasicAuthCredentials(USERNAME, PASSWORD)
                 .build();
 
-        ApiCreateCallRequest request = new ApiCreateCallRequest();
+        ApiCreateCallRequest request = new CreateCallRequest();
         request.setApplicationId(voiceApplicationId);
         request.setTo(to);
         request.setFrom(from);

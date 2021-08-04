@@ -20,7 +20,7 @@ public class Sample {
                 .build();
 
         try {
-            CompletableFuture<ApiResponse<RecordingMetadataResponse>> completableFuture = client.getVoiceClient().getAPIController().getMetadataForConferenceRecordingAsync(ACCOUNT_ID, conferenceId, recordingId);
+            CompletableFuture<ApiResponse<RecordingMetadataResponse>> completableFuture = client.getVoiceClient().getAPIController().getConferenceRecordingAsync(ACCOUNT_ID, conferenceId, recordingId);
             System.out.println(completableFuture.get().getResult());
         } catch (InterruptedException | ExecutionException e) {
             System.out.println(e.getMessage());

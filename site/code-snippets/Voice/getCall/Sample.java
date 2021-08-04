@@ -19,7 +19,7 @@ public class Sample {
                 .build();
 
         try {
-            CompletableFuture<ApiResponse<ApiCallStateResponse>> completableFuture = client.getVoiceClient().getAPIController().getCallStateAsync(ACCOUNT_ID, callId);
+            CompletableFuture<ApiResponse<ApiCallStateResponse>> completableFuture = client.getVoiceClient().getAPIController().getCallAsync(ACCOUNT_ID, callId);
             System.out.println(completableFuture.get().getResult());
         } catch (InterruptedException | ExecutionException e) {
             System.out.println(e.getMessage());

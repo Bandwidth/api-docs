@@ -18,11 +18,11 @@ public class Sample {
                 .voiceBasicAuthCredentials(USERNAME, PASSWORD)
                 .build();
 
-        ApiTranscribeRecordingRequest request = new ApiTranscribeRecordingRequest();
+        TranscribeRecordingRequest request = new ApiTranscribeRecordingRequest();
         request.setCallbackUrl("https://sample.com/callbacks/transcribe");
 
         try {
-            CompletableFuture<ApiResponse<Void>> completableFuture = client.getVoiceClient().getAPIController().createTranscribeRecordingAsync(ACCOUNT_ID, callId, recordingId, request);
+            CompletableFuture<ApiResponse<Void>> completableFuture = client.getVoiceClient().getAPIController().createTranscribeCallRecordingAsync(ACCOUNT_ID, callId, recordingId, request);
             System.out.println(completableFuture.get().getResult());
         } catch (InterruptedException | ExecutionException e) {
             System.out.println(e.getMessage());

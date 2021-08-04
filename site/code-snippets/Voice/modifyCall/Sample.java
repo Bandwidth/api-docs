@@ -20,8 +20,8 @@ public class Sample {
                 .voiceBasicAuthCredentials(USERNAME, PASSWORD)
                 .build();
 
-        ApiModifyCallRequest request = new ApiModifyCallRequest();
-        request.setState(State1Enum.COMPLETED);
+        ApiModifyCallRequest request = new ModifyCallRequest();
+        request.setState(StateEnum.COMPLETED);
 
         try {
             CompletableFuture<ApiResponse<Void>> completableFuture = client.getVoiceClient().getAPIController().modifyCallAsync(ACCOUNT_ID, callId, request);
