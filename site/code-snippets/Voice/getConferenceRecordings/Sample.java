@@ -1,6 +1,6 @@
 import com.bandwidth.BandwidthClient;
 import com.bandwidth.http.response.ApiResponse;
-import com.bandwidth.voice.models.ConferenceRecordingMetadataResponse;
+import com.bandwidth.voice.models.ConferenceRecordingMetadata;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
