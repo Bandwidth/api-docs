@@ -170,7 +170,11 @@ module.exports = {
         {
           type: "category",
           label: "Bandwidth Dashboard",
-          items: [],
+          items: [
+            "emergency/dashboard/about",
+            "emergency/dashboard/dlr",
+            "emergency/dashboard/notifications",
+          ],
         },
         {
           type: "category",
