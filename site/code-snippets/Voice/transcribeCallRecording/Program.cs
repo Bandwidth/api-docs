@@ -23,7 +23,7 @@ class Program
 
         try
         {
-            await client.Voice.APIController.CreateTranscribeRecordingAsync(accountId, callId, recordingId);
+            await client.Voice.APIController.CreateTranscribeCallRecordingAsync(accountId, callId, recordingId);
         }
         catch (ApiException e)
         {
