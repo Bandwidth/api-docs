@@ -20,7 +20,7 @@ class Program
             .VoiceBasicAuthCredentials(username, password)
             .Build();
 
-        var request = new ApiModifyCallRequest()
+        var request = new ModifyCallRequest()
         {
             State = StateEnum.Completed
         };
