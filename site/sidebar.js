@@ -169,9 +169,15 @@ module.exports = {
         "emergency/about",
         {
           type: "category",
-          label: "Guides and Tutorials",
+          label: "Dashboard",
           items: [],
         },
+        {
+          type: "category",
+          label: "911 Access Dashboard",
+          items: [],
+        },
+        "emergency/emergencyCallingApi"
       ],
     },
   ],
