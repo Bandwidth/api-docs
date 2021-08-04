@@ -1,0 +1,42 @@
+---
+id: usage
+title: Usage Guide
+slug: /emergency/dash/usage
+description: A general overview of how to utilize Bandwidth's 911 Access Dashboard API
+keywords:
+  - bandwidth
+  - emergency
+  - dash
+  - usage
+hide_title: false
+image: ../../static/img/bandwidth-logo.png
+---
+
+## Add emergency service for a customer
+
+The sequence diagram below shows a hypothetical usage scenario.
+
+  * Add some locations by calling the [addLocation](/dash-api-reference#operation/addLocation) method. You can have multiple locations for one URI. The maximum number of locations for one URI is configured in the system. Contact Bandwidth Support if you need to add more locations than the default three. Each call to [addLocation](/dash-api-reference#operation/addLocation) returns a Location that has status information so you can see if the location was GEOCODED, and an ID (locationId) that can be used later to uniquely provision or remove the location.
+  * After calling [addLocation](/dash-api-reference#operation/addLocation) a few times, use [provisionLocation](/dash-api-reference#operation/provisionLocation) to set the active location. Send in the locationId to specify what location to provision out of the locations added to the URI. The [provisionLocation](/dash-api-reference#operation/provisionLocation) call will return another status. A successful call will return PROVISIONED status.
+  * From this point, at any time you can ask the system what locations are associated with a URI, and the API will send back a collection of locations. If one of them is provisioned, it will have the status of PROVISIONED.
+  * In this example, we remove a location by sending the locationId to [removeLocation](/dash-api-reference#operation/removeLocation). The results will come back with a status of REMOVED.
+  * Next another location is provisioned. If the locationId is different than what was used before then the system automatically handles unprovisioning the original location.
+  * Finally, if the number is no longer used, call [removeURI](/dash-api-reference#operation/removeLocation) to unprovision any active location that is associated with the URI. The method will remove all the locations and the URI from the system.
+
+<img
+  src={require('../../../static/img/dash_usage_scenario.png').default}
+  alt="Account Setup 1"
+  class="center"
+/>
+
+## Preserving Manual Overrides
+
+The address you submit is the Location. The modifications we do are in the Service Location. To see the actual geocoded, parsed and possibly modified information you can make a call to getServiceLocationsByUri. You don’t normally have to call getServiceLocationsByUri to provision emergency service.
+
+We work to make the complexities of emergency provisioning as simple as possible to our API users. When you submit an address we go through multiple steps to turn that into information that we can provision for emergency service. That involves geocoding your input, parsing it into more detailed fields, and on rare occasions doing manual work to modify the address so that it can be provisioned for emergency service.
+
+It's very important for you to understand that after this manual work is done, the address you submitted serves as the key for all the override. For example, if you make a call to addLocation with slight changes to the address then all the original override work will be lost until the original work is repeated.
+
+Your subscriber calls will still route to the emergency call center but this incurs additional fees and no location information can be sent to operators handling the emergency call.
+
+For example, if the submitted location can't be provisioned due to lack of geocode information, Bandwidth Support will assist you in verifying address information. If Bandwidth confirms address information via an LOA (letter of authorization) or other verification method, then Bandwidth will manually provision the service location. You may elect to provision the original submitted location to receive confirmation via API. The 911 Access Dashboard will map the original invalid location to the manually updated service location.
