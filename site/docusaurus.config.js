@@ -9,6 +9,7 @@ const messagingSpec = fs.readFileSync('./specs/messaging.json', 'utf-8');
 const webRtcSpec = fs.readFileSync('./specs/webRtc.json', 'utf-8');
 const multiFactorAuthSpec = fs.readFileSync('./specs/multiFactorAuth.json', 'utf-8');
 const dashSpec = fs.readFileSync('./specs/dash.json', 'utf-8');
+const dashNotificationsSpec = fs.readFileSync('./specs/dashNotifications.json', 'utf-8');
 
 module.exports = {
   title: 'Bandwidth API Docs',
@@ -73,6 +74,9 @@ module.exports = {
         }, {
           to: 'dash-api-reference',
           label: 'DASH'
+        }, {
+          to: 'dash-notifications-api-reference',
+          label: 'DASH Notifications'
         }]
       }, {
         href: 'https://github.com/Bandwidth-Samples',
@@ -160,6 +164,7 @@ module.exports = {
       webRTCSpec: JSON.parse(webRtcSpec),
       multiFactorAuthSpec: JSON.parse(multiFactorAuthSpec),
       dashSpec: JSON.parse(dashSpec),
+      dashNotificationsSpec: JSON.parse(dashNotificationsSpec),
       // CSS Colors
       bwBlue: '#079CEE',
       voicePurple: '#9a59c5',
