@@ -1,12 +1,10 @@
 import com.bandwidth.BandwidthClient;
 import com.bandwidth.http.response.ApiResponse;
-import com.bandwidth.voice.models.ApiModifyCallRequest;
-import com.bandwidth.voice.models.ConferenceDetail;
-import com.bandwidth.voice.models.State1Enum;
+import com.bandwidth.voice.models.ModifyCallRequest;
+import com.bandwidth.voice.models.StateEnum;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.List;
 
 public class Sample {
     public static final String USERNAME = System.getenv("BW_USERNAME");
@@ -20,7 +18,7 @@ public class Sample {
                 .voiceBasicAuthCredentials(USERNAME, PASSWORD)
                 .build();
 
-        ApiModifyCallRequest request = new ModifyCallRequest();
+        ModifyCallRequest request = new ModifyCallRequest();
         request.setState(StateEnum.COMPLETED);
 
         try {
