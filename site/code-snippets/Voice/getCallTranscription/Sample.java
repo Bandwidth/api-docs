@@ -1,11 +1,9 @@
 import com.bandwidth.BandwidthClient;
 import com.bandwidth.http.response.ApiResponse;
-import com.bandwidth.voice.models.RecordingMetadataResponse;
 import com.bandwidth.voice.models.TranscriptionResponse;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.List;
 
 public class Sample {
     public static final String USERNAME = System.getenv("BW_USERNAME");
