@@ -22,7 +22,7 @@ class Program
 
         var request = new ApiModifyCallRequest()
         {
-            State = State1Enum.Completed
+            State = StateEnum.Completed
         };
 
         try
