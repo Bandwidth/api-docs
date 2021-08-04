@@ -17,11 +17,11 @@ public class Sample {
                 .voiceBasicAuthCredentials(USERNAME, PASSWORD)
                 .build();
 
-        ModifyCallRecordingState recordingState = new ModifyCallRecordingState();
-        recordingState.setState(State2Enum.PAUSED);
+        ModifyCallRecordingRequest recordingRequest = new ModifyCallRecordingRequest();
+        recordingRequest.setState(State1Enum.PAUSED);
 
         try {
-            CompletableFuture<ApiResponse<Void>> completableFuture = client.getVoiceClient().getAPIController().modifyCallRecordingStateAsync(ACCOUNT_ID, callId, recordingState);
+            CompletableFuture<ApiResponse<Void>> completableFuture = client.getVoiceClient().getAPIController().modifyCallRecordingStateAsync(ACCOUNT_ID, callId, recordingRequest);
             System.out.println(completableFuture.get().getResult());
         } catch (InterruptedException | ExecutionException e) {
             System.out.println(e.getMessage());

@@ -1,6 +1,6 @@
 import com.bandwidth.BandwidthClient;
 import com.bandwidth.http.response.ApiResponse;
-import com.bandwidth.voice.models.ConferenceRecordingMetadataResponse;
+import com.bandwidth.voice.models.ConferenceRecordingMetadata;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -13,14 +13,13 @@ public class Sample {
 
     public static void main(String[] args) {
         String conferenceId = "conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8";
-        String recordingId = "r-d68201ef-d53e-4c6d-a743-1c1283909d41";
 
         BandwidthClient client = new BandwidthClient.Builder()
                 .voiceBasicAuthCredentials(USERNAME, PASSWORD)
                 .build();
 
         try {
-            CompletableFuture<ApiResponse<List<ConferenceRecordingMetadataResponse>>> completableFuture = client.getVoiceClient().getAPIController().getQueryMetadataForAccountAndConferenceAsync(ACCOUNT_ID, conferenceId);
+            CompletableFuture<ApiResponse<List<ConferenceRecordingMetadata>>> completableFuture = client.getVoiceClient().getAPIController().getConferenceRecordingsAsync(ACCOUNT_ID, conferenceId);
             System.out.println(completableFuture.get().getResult());
         } catch (InterruptedException | ExecutionException e) {
             System.out.println(e.getMessage());

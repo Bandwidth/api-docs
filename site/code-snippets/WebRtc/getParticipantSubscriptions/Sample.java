@@ -11,15 +11,15 @@ public class Sample {
     public static final String ACCOUNT_ID = System.getenv("BW_ACCOUNT_ID");
 
     public static void main(String[] args) {
-        String participantId = "568749d5-04d5-483d-adf5-deac7dd3d521";
         String sessionId = "75c21163-e110-41bc-bd76-1bb428ec85d5";
+        String participantId = "568749d5-04d5-483d-adf5-deac7dd3d521";
 
         BandwidthClient client = new BandwidthClient.Builder()
                 .webRtcBasicAuthCredentials(USERNAME, PASSWORD)
                 .build();
 
         try {
-            CompletableFuture<ApiResponse<Subscriptions>> completableFuture = client.getWebRtcClient().getAPIController().getParticipantSubscriptionsAsync(ACCOUNT_ID, participantId, sessionId);
+            CompletableFuture<ApiResponse<Subscriptions>> completableFuture = client.getWebRtcClient().getAPIController().getParticipantSubscriptionsAsync(ACCOUNT_ID, sessionId, participantId);
             System.out.println(completableFuture.get().getResult());
         } catch (InterruptedException | ExecutionException e) {
             System.out.println(e.getMessage());

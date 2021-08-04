@@ -1,7 +1,7 @@
 import com.bandwidth.BandwidthClient;
 import com.bandwidth.http.response.ApiResponse;
-import com.bandwidth.voice.models.ApiCallResponse;
-import com.bandwidth.voice.models.ApiCreateCallRequest;
+import com.bandwidth.voice.models.CreateCallRequest;
+import com.bandwidth.voice.models.CreateCallResponse;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -22,14 +22,14 @@ public class Sample {
                 .voiceBasicAuthCredentials(USERNAME, PASSWORD)
                 .build();
 
-        ApiCreateCallRequest request = new ApiCreateCallRequest();
+        CreateCallRequest request = new CreateCallRequest();
         request.setApplicationId(voiceApplicationId);
         request.setTo(to);
         request.setFrom(from);
         request.setAnswerUrl(answerUrl);
 
         try {
-            CompletableFuture<ApiResponse<ApiCallResponse>> completableFuture = client.getVoiceClient().getAPIController().createCallAsync(ACCOUNT_ID, request);
+            CompletableFuture<ApiResponse<CreateCallResponse>> completableFuture = client.getVoiceClient().getAPIController().createCallAsync(ACCOUNT_ID, request);
             System.out.println(completableFuture.get().getResult());
         } catch (InterruptedException | ExecutionException e) {
             System.out.println(e.getMessage());

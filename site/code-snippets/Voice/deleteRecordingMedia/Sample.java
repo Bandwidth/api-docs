@@ -1,7 +1,5 @@
 import com.bandwidth.BandwidthClient;
 import com.bandwidth.http.response.ApiResponse;
-import com.bandwidth.voice.models.ApiCallResponse;
-import com.bandwidth.voice.models.ApiCreateCallRequest;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
