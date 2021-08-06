@@ -37,7 +37,7 @@ You are able to decide how the flow of the call will proceed based on Bxml verbs
 
 These three interaction models are described in greater detail below.
 
-## TRANSFER
+## Transfer
 
 The transfer verb creates a single PV call with two endpoints. You can set one end to WebRTC, and the other for a phone number
 
