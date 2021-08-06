@@ -79,6 +79,10 @@ module.exports = {
           label: 'DASH'
         }]
       }, {
+        to: 'sdks',
+        label: 'SDKs',
+        activeBasePath: 'sdks'
+      }, {
         href: 'https://github.com/Bandwidth-Samples',
         label: 'Samples',
         position: 'left',
