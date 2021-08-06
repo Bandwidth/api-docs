@@ -20,7 +20,6 @@ export default function sdkPage() {
         <div className="text--center">
           <Svg className={styles.sdkSvg} alt={Title} />
         </div>
-        <center>
         <div className="resource-table">
           <table>
           <thead>
@@ -49,7 +48,6 @@ export default function sdkPage() {
           </tbody>
           </table>
         </div>
-        </center>
         <br/>
         <br/>
       </Layout>

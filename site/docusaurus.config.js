@@ -51,10 +51,6 @@ module.exports = {
         label: 'Docs',
         position: 'left',
       }, {
-        to: 'sdks',
-        label: 'SDKs',
-        activeBasePath: 'sdks'
-      }, {
         label: 'API Reference',
         items: [{
           to: 'apis/numbers',
