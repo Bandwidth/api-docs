@@ -50,7 +50,11 @@ module.exports = {
         activeBasePath: 'docs',
         label: 'Docs',
         position: 'left',
-      },{
+      }, {
+        to: 'sdks',
+        label: 'SDKs',
+        activeBasePath: 'sdks'
+      }, {
         label: 'API Reference',
         items: [{
           to: 'apis/numbers',
@@ -74,10 +78,6 @@ module.exports = {
           to: 'apis/dash',
           label: 'DASH'
         }]
-      },{
-        to: 'sdks',
-        label: 'SDKs',
-        activeBasePath: 'sdks'
       }, {
         href: 'https://github.com/Bandwidth-Samples',
         label: 'Samples',
