@@ -8,7 +8,7 @@ const SdkList = [
   {
     title: 'Node',
     Svg: require('../../static/img/bw-node.svg').default,
-    link: '/docs/numbers',
+    link: '/sdks/node',
     repoLink: 'https://github.com/search?o=desc&q=org%3ABandwidth+node-&s=updated&type=Repositories'
   },
   {
@@ -20,25 +20,25 @@ const SdkList = [
   {
     title: 'Ruby',
     Svg: require('../../static/img/bw-ruby.svg').default,
-    link: '/docs/numbers',
+    link: '/sdks/ruby',
     repoLink: 'https://github.com/Bandwidth/python-sdk'
   },
   {
     title: 'Java',
     Svg: require('../../static/img/bw-java.svg').default,
-    link: '/docs/numbers',
+    link: '/sdks/java',
     repoLink: 'https://github.com/Bandwidth/python-sdk'
   },
   {
     title: 'C#',
     Svg: require('../../static/img/bw-csharp.svg').default,
-    link: '/docs/numbers',
+    link: '/sdks/csharp',
     repoLink: 'https://github.com/Bandwidth/python-sdk'
   },
   {
     title: 'PHP',
     Svg: require('../../static/img/bw-php.svg').default,
-    link: '/docs/numbers',
+    link: '/sdks/php',
     repoLink: 'https://github.com/Bandwidth/python-sdk'
   },
 ];

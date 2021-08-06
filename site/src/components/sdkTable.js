@@ -1,7 +1,6 @@
 import React from 'react';
 import Layout from '@theme/Layout';
-import useThemeContext from '@theme/hooks/useThemeContext';    // returns whether or not the theme is light or dark
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import useThemeContext from '@theme/hooks/useThemeContext';
 import styles from './skds.module.css';
 
 const GithubSvg = require('../../static/img/github.svg').default;
@@ -43,7 +42,7 @@ export default class Table extends React.Component {
       var items = this.props.data;
       var keys = this.getKeys();
       return items.map((row, index)=>{
-          if(row.link !="") {
+          if(row.link) {
             return (
               <tr>
                 <td><a href={row.link}><code>{row.label}</code></a></td><td>{row.description}</td><td><a href={row.githubLink}><GithubImageSwitcher/></a></td>
@@ -65,7 +64,7 @@ export default class Table extends React.Component {
             <table>
             <thead>
             <tr>
-            <th>Link</th>
+            <th>Resource</th>
             <th>Description</th>
             <th>Github</th>
             </tr>
