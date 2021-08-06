@@ -33,7 +33,7 @@ export default function sdkPage() {
             <tr>
               <td><a href="https://www.nuget.org/packages/Bandwidth.Sdk/"><code>bandwidth-sdk</code></a></td>
               <td>Manage Phone Calls with BXML, Create Outbound Calls, SMS Messages, MMS Messages</td>
-              <td><a href="https://github.com/Bandwidth/python-sdk"><Github/></a></td>
+              <td><a href="https://github.com/Bandwidth/csharp-sdk"><Github/></a></td>
             </tr>
             <tr>
               <td><a href="https://www.nuget.org/packages/Bandwidth.Iris/"><code>bandwidth-iris</code></a></td>

@@ -43,7 +43,7 @@ export default function sdkPage() {
             <tr>
               <td><a href="https://www.npmjs.com/package/@bandwidth/messaging"><code>@bandwidth/messaging</code></a></td>
               <td>Manage Phone Calls with BXML, Create Outbound Calls, SMS Messages, MMS Messages</td>
-              <td><a href="https://github.com/Bandwidth/ruby-sdk"><Github/></a></td>
+              <td><a href="https://github.com/Bandwidth/node-messaging"><Github/></a></td>
             </tr>
             <tr>
               <td><a href="https://www.npmjs.com/package/@bandwidth/mfa"><code>@bandwidth/mfa</code></a></td>
