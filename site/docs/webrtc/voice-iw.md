@@ -51,7 +51,7 @@ In general, the Transfer verb is used in inbound or outbound WebRTC/Voice calls 
 
 Bandwidth's Voice API will hit a provisioned callback endpoint when you receive an incoming call
 
-```
+```js
     app.post("/incomingCall", async (req, res) => { const callId = req.body.callId;
         console.log(`received incoming call ${callId} from ${req.body.from}`);
         const participant = await createParticipant("hello-world-ts-phone");
@@ -60,13 +60,13 @@ Bandwidth's Voice API will hit a provisioned callback endpoint when you receive 
 
 This generates the response payload containing the Transfer verb that is sent back to the PV API to transfer the call into the WebRTC session
 
-```
-    const bxml = WebRtcController.generateTransferBxml(participant.token);
+```js
+const bxml = WebRtcController.generateTransferBxml(participant.token);
 ```
 
 This sends the payload back to the Voice API
 
-```
+```js
     res.contentType("application/xml").send(bxml);
     console.log(`transferring call ${callId} to session ${sessionId} as participant
             ${participant.id}`);
@@ -75,7 +75,7 @@ This sends the payload back to the Voice API
 
 For an outbound call, Bandwidth's Voice API will hit a callback endpoint when an outgoing call is answered
 
-```
+```js
     app.post("/callAnswered", async (req, res) => { const callId = req.body.callId;
         console.log(`received answered callback for call ${callId} tp ${req.body.to}`);
         const participant = calls.get(callId);
@@ -87,8 +87,8 @@ For an outbound call, Bandwidth's Voice API will hit a callback endpoint when an
 
 When an outbound call is answered, the response payload contains the Transfer verb that is returned to the Voice API to transfer the call into the WebRTC session
 
-```
-    const bxml = `&lt;?xml version="1.0" encoding="UTF-8" ?>&lt;Response>
+```js
+const bxml = `&lt;?xml version="1.0" encoding="UTF-8" ?>&lt;Response>
           &lt;SpeakSentence voice="julie">Thank you. Connecting you to your conference now.&lt;/SpeakSentence>
           ${WebRtcController.generateTransferBxmlVerb(participant.token)}
         &lt;/Response>`;
@@ -96,7 +96,7 @@ When an outbound call is answered, the response payload contains the Transfer ve
 
 This sends the payload back to the Voice API
 
-```
+```js
     res.contentType("application/xml").send(bxml);
     console.log(`transferring call ${callId} to session ${sessionId} as participant
             ${participant.id}`);
@@ -117,7 +117,7 @@ Here’s [an example](https://github.com/Bandwidth-Samples/webrtc-voicebridge-ts
 
 Bandwidth's Voice API calls the webRTC infrastructure with the participant token in the UUI SIP header to allow the correlation ofV2 voice and the webRTC infrastructure
 
-```
+```js
     const callSipUri = async (participant: ParticipantInfo) => {
         const body = {
             from: voiceApplicationPhoneNumber,
@@ -142,7 +142,7 @@ Here’s a [code snippet](https://github.com/Bandwidth-Samples/webrtc-voiceconf-
 
 Bandwidth's Voice API calls the webRTC infrastructure with the participant token in the UUI SIP header to allow the correlation ofV2 voice and the webRTC infrastructure
 
-```
+```js
     const callSipUri = async (participant: ParticipantInfo) => {
         const body = {
             from: voiceApplicationPhoneNumber,
@@ -153,7 +153,7 @@ Bandwidth's Voice API calls the webRTC infrastructure with the participant token
 
 This API call links your WebRTC session with Programmable Voice
 
-```
+```js
     app.post("/bridgeCallAnswered", async (req, res) => { const callId = req.body.callId;
         console.log(
             `received answered callback for bridging call ${callId} to ${req.body.to}`
@@ -169,20 +169,20 @@ This API call links your WebRTC session with Programmable Voice
 
 Create a new conference and link it with your WebRTC session
 
-```
-    const conf = new Conference({
-        name: sessionId,
-        callIdsToCoach: undefined,
-    });
-    const speak = new SpeakSentence({
-        sentence: "Thank you. Connecting you to your conference now.",
-        voice: "julie",
-    });
-    const resp = new Response();
-    resp.add(speak);
-    resp.add(conf);
-    console.log("creating Programmable Voice conference bridge:", resp.toBxml());
-    res.contentType("application/xml").send(resp.toBxml());
+```js
+const conf = new Conference({
+  name: sessionId,
+  callIdsToCoach: undefined,
+});
+const speak = new SpeakSentence({
+  sentence: "Thank you. Connecting you to your conference now.",
+  voice: "julie",
+});
+const resp = new Response();
+resp.add(speak);
+resp.add(conf);
+console.log("creating Programmable Voice conference bridge:", resp.toBxml());
+res.contentType("application/xml").send(resp.toBxml());
 ```
 
 When your outgoing call is answered, our Voice API hits this [/callAnswered](<https://github.com/Bandwidth-Samples/webrtc-voiceconf-ts/blob/main/src/server.ts#:~:text=*/-,app.post(%22/callAnswered%22%2C%20async%20(req%2C%20res)%20%3D%3E%20%7B,%7D)%3B,-/**>) endpoint to connect you to a conference. The above snippets can be found in the [Conference repository](https://github.com/Bandwidth-Samples/webrtc-voiceconf-ts).
