@@ -1,10 +1,10 @@
 import React from 'react';
 import Layout from '@theme/Layout';
 import styles from '../../components/skds.module.css';
-import Table from '../../components/sdkTable.js';
+import Table from '../../components/sdkTable.tsx';
 
-const Title = 'Python';
-const Svg = require('../../../static/img/bw-python.svg').default;
+const Title = 'CSharp';
+const Svg = require('../../../static/img/bw-csharp.svg').default;
 
 export default class App extends React.Component {
     constructor(props){
@@ -13,13 +13,18 @@ export default class App extends React.Component {
         linksData: [
         {
           label: "bandwidth-sdk",
-          link: "https://pypi.org/project/bandwidth-sdk/",
+          link: "https://www.nuget.org/packages/Bandwidth.Sdk/",
           description: "Manage Phone Calls with BXML, Create outbound calls, SMS messages, MMS messages",
-          githubLink: "https://github.com/Bandwidth/python-sdk"
+          githubLink: "https://github.com/Bandwidth/csharp-sdk"
+        }, {
+          label: "bandwidth-iris",
+          link: "https://www.nuget.org/packages/Bandwidth.Iris/",
+          description: "Manage Phone Numbers and Account Settings",
+          githubLink: "https://github.com/Bandwidth/csharp-bandwidth-iris"
         }, {
           label: "Code Samples",
-          description: "Code Samples showing how to utilize the Bandwidth Python SDK",
-          githubLink: "https://github.com/orgs/Bandwidth-Samples/repositories?language=python"
+          description: "Code Samples showing how to utilize the Bandwidth C# SDK",
+          githubLink: "https://github.com/Bandwidth-Samples?language=c%23"
         }
       ]}
     };

@@ -1,10 +1,10 @@
 import React from 'react';
 import Layout from '@theme/Layout';
 import styles from '../../components/skds.module.css';
-import Table from '../../components/sdkTable.js';
+import Table from '../../components/sdkTable.tsx';
 
-const Title = 'PHP';
-const Svg = require('../../../static/img/bw-php.svg').default;
+const Title = 'Java';
+const Svg = require('../../../static/img/bw-java.svg').default;
 
 export default class App extends React.Component {
     constructor(props){
@@ -12,19 +12,19 @@ export default class App extends React.Component {
       this.linksList={
         linksData: [
           {
-            label: "bandwidth/sdk",
-            link: "https://packagist.org/packages/bandwidth/sdk",
+            label: "com.bandwidth.sdk/bandwidth-sdk",
+            link: "https://mvnrepository.com/artifact/com.bandwidth.sdk/bandwidth-sdk",
             description: "Manage Phone Calls with BXML, Create outbound calls, SMS messages, MMS messages",
-            githubLink: "https://github.com/Bandwidth/php-sdk"
+            githubLink: "https://github.com/Bandwidth/java-sdk"
           }, {
-            label: "bandwidth/iris",
-            link: "https://packagist.org/packages/bandwidth/iris",
+            label: "com.bandwidth.sdk/bandwidth-java-iris-sdk",
+            link: "https://mvnrepository.com/artifact/com.bandwidth.sdk/bandwidth-java-iris-sdk",
             description: "Manage Phone Numbers and Account Settings",
-            githubLink: "https://github.com/Bandwidth/php-bandwidth-iris"
+            githubLink: "https://github.com/Bandwidth/java-bandwidth-iris"
           }, {
             label: "Code Samples",
-            description: "Code Samples showing how to utilize the Bandwidth PHP SDK",
-            githubLink: "https://github.com/Bandwidth-Samples?language=php"
+            description: "Code Samples showing how to utilize the Bandwidth Java SDK",
+            githubLink: "https://github.com/Bandwidth-Samples?language=java"
           }
         ]}
       };

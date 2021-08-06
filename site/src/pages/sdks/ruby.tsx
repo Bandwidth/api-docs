@@ -3,7 +3,7 @@ import Layout from '@theme/Layout';
 import useThemeContext from '@theme/hooks/useThemeContext';    // returns whether or not the theme is light or dark
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import styles from '../../components/skds.module.css';
-import Table from '../../components/sdkTable.js';
+import Table from '../../components/sdkTable.tsx';
 
 const Title = 'Ruby';
 const Svg = require('../../../static/img/bw-ruby.svg').default;

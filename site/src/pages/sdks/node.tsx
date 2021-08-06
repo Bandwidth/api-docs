@@ -1,7 +1,7 @@
 import React from 'react';
 import Layout from '@theme/Layout';
 import styles from '../../components/skds.module.css';
-import Table from '../../components/sdkTable.js';
+import Table from '../../components/sdkTable.tsx';
 
 const Title = 'NodeJS';
 const Svg = require('../../../static/img/bw-node.svg').default;
