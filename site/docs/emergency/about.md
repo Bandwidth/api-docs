@@ -38,5 +38,5 @@ Please be sure to select the correct APIs & login for the services for which you
 
 | API Reference | Description |
 |:------|:------------|
-| [DASH API Reference](/dash-api-reference) | DASH Emergency API Reference |
-| [DASH Notifications API Reference](/dash-notifications-api-reference) | DASH Emergency Notifications API Reference |
+| [DASH API Reference](/apis/dash) | DASH Emergency API Reference |
+| [DASH Notifications API Reference](/apis/dash-notifications) | DASH Emergency Notifications API Reference |
