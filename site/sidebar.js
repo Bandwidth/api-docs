@@ -112,14 +112,12 @@ module.exports = {
         {
           type: "category",
           label: "Guides and Tutorials",
-          items: [
-            "voice/recordingGuide",
-            "voice/cnamPerDipGuide",
-          ],
+          items: ["voice/recordingGuide", "voice/cnamPerDipGuide"],
         },
         "voice/rateLimits",
         "voice/errors",
-      ]},
+      ],
+    },
     {
       type: "category",
       label: "Messaging",
@@ -151,6 +149,7 @@ module.exports = {
             "webrtc/overview",
             "webrtc/quickstart",
             "webrtc/resources",
+            "webrtc/voice-iw",
             "webrtc/callflow",
           ],
         },
