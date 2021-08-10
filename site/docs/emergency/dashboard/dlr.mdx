@@ -1,0 +1,596 @@
+---
+id: dlr
+title: Dynamic Location Routing
+slug: /emergency/dashboard/dlr
+description: A general overview of Dynamic Location Routing
+keywords:
+  - bandwidth
+  - emergency
+  - dlr
+  - dynamic location routing
+hide_title: true
+image: ../../static/img/bandwidth-logo.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+export const accountId = "{accountId}";
+export const orderId = "{orderId}";
+
+export const Highlight = ({children, color}) => (
+    <span
+      style={{
+        backgroundColor: color,
+        borderRadius: '2px',
+        color: '#fff',
+        padding: '0.2rem',
+      }}>
+      {children}
+    </span>
+  );
+
+This integration document describes how to provision a 911 DLR endpoint in the Bandwidth Dashboard using our numbers API.
+
+When setting up caller information in Dynamic Location Routing (DLR), addresses are provisioned up front. This is also known as adding locations (addresses) to your location pool. These addresses are assumed to be used in future 911 calls.
+
+Once provisioned, each address has an associated location id that is unique across your account. The location IDs can be used in subsequent API requests to provision endpoints. Endpoints represent the calling party, and are provisioned using a set of information representing an Alternate End User Identifier (AEUI).
+
+
+
+## Locations
+
+Locations can be independently provisioned in a couple of ways. You can provision a location and have Bandwidth create the location ID for you, or you can provide your own location ID. The examples below show the case where you provide your own location ID, which you'll then use later to refer to the location, either in future API operations, or when making 911 location-by-reference calls.
+
+This method allows you to assign your own identifier to the address rather than letting the Bandwidth Dashboard assigning one for you. The location id you provide must be unique across your account. The location id has the following limits:
+  * It can only contain characters in the range [A-Za-z0-9].
+  * It can't be any larger than 50 characters.
+
+### Validate the Location
+
+#### Base URL
+
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/geocodeRequest</code> <br/> <br/>
+
+> Request
+
+```xml
+POST https://dashboard.bandwidth.com/api/accounts/{accountId}/geocodeRequest
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+Content-Type: application/xml
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<RequestAddress>
+    <AddressLine1>904 E Ansun Str</AddressLine1>
+    <HousePrefix/>
+    <HouseNumber>904</HouseNumber>
+    <HouseSuffix>E</HouseSuffix>
+    <PreDirectional/>
+    <StreetName>Ansun</StreetName>
+    <StreetSuffix>Str</StreetSuffix>
+    <PostDirectional/>
+    <AddressLine2/>
+    <City>Marshalltown</City>
+    <StateCode>IA</StateCode>
+    <Zip>50158</Zip>
+    <PlusFour/>
+    <County/>
+    <Country/>
+</RequestAddress>
+```
+
+> Response
+
+<Tabs
+  groupId="dlr_locations"
+  defaultValue="200"
+  values={[
+    { label: 'Valid Address - 200 OK', value: '200', },
+    { label: 'Conflict - 409 Conflict', value: '409', },
+  ]
+}>
+<TabItem value="200">
+
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<GeocodeRequestResponse>
+    <GeocodedAddress>
+        <AddressLine1>904 E ANSON ST</AddressLine1>
+        <HouseNumber>904</HouseNumber>
+        <PreDirectional>E</PreDirectional>
+        <StreetName>ANSON</StreetName>
+        <StreetSuffix>ST</StreetSuffix>
+        <City>MARSHALLTOWN</City>
+        <StateCode>IA</StateCode>
+        <Zip>50158</Zip>
+        <PlusFour>3522</PlusFour>
+        <Country>US</Country>
+    </GeocodedAddress>
+    <RequestAddress>
+        <HouseNumber>904</HouseNumber>
+        <HouseSuffix>E</HouseSuffix>
+        <StreetName>Anson</StreetName>
+        <StreetSuffix>St</StreetSuffix>
+        <City>Marshalltown</City>
+        <StateCode>IA</StateCode>
+        <Zip>50158</Zip>
+        <Country>US</Country>
+        <AddressLine1>904 E Anson St</AddressLine1>
+    </RequestAddress>
+</GeocodeRequestResponse>
+```
+
+</TabItem>
+<TabItem value="409">
+
+The API returns a 409 error if adjustements are required to validate the address.
+
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<GeocodeRequestResponse>
+    <ErrorMessage> Some adjustments are required to allow the address to pass geocoding%3A Specified value - Street Name %3A "ANSUN" Valid value - "ANSON" Specified value - Street Suffix %3A "STR" Valid value - "ST" </ErrorMessage>
+    <GeocodedAddress>
+        <AddressLine1>904 E ANSON ST</AddressLine1>
+        <HouseNumber>904</HouseNumber>
+        <PreDirectional>E</PreDirectional>
+        <StreetName>ANSON</StreetName>
+        <StreetSuffix>ST</StreetSuffix>
+        <City>MARSHALLTOWN</City>
+        <StateCode>IA</StateCode>
+        <Zip>50158</Zip>
+        <PlusFour>3522</PlusFour>
+        <Country>US</Country>
+    </GeocodedAddress>
+    <RequestAddress>
+        <HouseNumber>904</HouseNumber>
+        <HouseSuffix>E</HouseSuffix>
+        <StreetName>Ansun</StreetName>
+        <StreetSuffix>Str</StreetSuffix>
+        <City>Marshalltown</City>
+        <StateCode>IA</StateCode>
+        <Zip>50158</Zip>
+        <Country>US</Country>
+        <AddressLine1>904 E Ansun Str</AddressLine1>
+    </RequestAddress>
+</GeocodeRequestResponse>
+```
+
+</TabItem>
+</Tabs>
+
+
+### Create a Location
+
+#### Base URL
+
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/e911s</code> <br/> <br/>
+
+> Request
+
+```xml
+POST https://dashboard.bandwidth.com/api/accounts/{accountId}/e911s
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+Content-Type: application/xml
+
+<E911Order>
+ <AdditionalAddresses>
+  <Address>
+   <LocationId>CorpOffice5thFloor</LocationId>
+   <HouseNumber>900</HouseNumber>
+   <HouseSuffix/>
+   <PreDirectional/>
+   <StreetName>Main Campus</StreetName>
+   <StreetSuffix>Drive</StreetSuffix>
+   <PostDirectional/>
+   <AddressLine2>Suite 500</AddressLine2>
+   <City>Raleigh</City>
+   <StateCode>NC</StateCode>
+   <Zip>27606</Zip>
+   <PlusFour/>
+   <County/>
+   <Country>US</Country>
+  </Address>
+ </AdditionalAddresses>
+</E911Order>
+```
+
+> Response
+
+```xml
+<E911OrderResponse>
+    <E911Order>
+        <OrderCreateDate>2021-03-10T18:59:26.091Z</OrderCreateDate>
+        <AccountId>{accountId}</AccountId>
+        <CreatedByUser>apiUser</CreatedByUser>
+        <OrderId>65c45d6a-0490-4167-8373-760ffd61a074</OrderId>
+        <LastModifiedDate>2021-03-10T18:59:26.091Z</LastModifiedDate>
+        <ProcessingStatus>RECEIVED</ProcessingStatus>
+        <AdditionalAddresses>
+            <Address>
+                <HouseNumber>900</HouseNumber>
+                <HouseSuffix></HouseSuffix>
+                <PreDirectional></PreDirectional>
+                <StreetName>Main Campus</StreetName>
+                <StreetSuffix>Drive</StreetSuffix>
+                <PostDirectional></PostDirectional>
+                <AddressLine2>Suite 500</AddressLine2>
+                <City>Raleigh</City>
+                <StateCode>NC</StateCode>
+                <Zip>27606</Zip>
+                <PlusFour></PlusFour>
+                <County></County>
+                <Country>US</Country>
+                <LocationId>CorpOffice5thFloor</LocationId>
+            </Address>
+        </AdditionalAddresses>
+        <ErrorList/>
+        <OrderType>e911</OrderType>
+    </E911Order>
+</E911OrderResponse>
+```
+
+### Checking Address Validation and Getting the Standardized Address
+
+Address validation happens asynchronously and usually takes just a few seconds. Check order status to verify address validation after successful order creation for best results.
+
+:::note
+Order Processing times can vary and are not guaranteed, please account for this if you choose to poll the `/e911s/{orderId}` endpoint for status.
+:::
+
+If you don’t want to poll for order status, you can set up an HTTP endpoint on your own servers and [subscribe](/docs/account/subscriptions) to `e911s` order status changes. Once that’s done, Bandwidth will send order events to the endpoint you specify. This removes the pain of rechecking an order to see if it’s been updated, although it does require you to run a web service. Please see “/accounts /{accountId}/subscriptions” in our dev docs for more information.
+
+For any addresses that were determined to be invalid, please refer to the ErrorList section in the response body of the GET request. If no ErrorList is present, then all addresses are valid in the order. For any valid address, Bandwidth may adjust the address you passed and convert it to a standardized version. If this happens, the response body in the GET request will indicate for each address whether it was adjusted or not. If you expect to pass the address as location-by-value in the SIP INVITE (see the Making a 933 call with a location value section below), you must use Bandwidth’s version of the standardized address in the SIP INVITE.
+
+If the order created successfully, check the status with this call:
+
+> Request
+
+```http
+GET https://dashboard.bandwidth.com/api/accounts/{accountId}/e911s/{orderId}
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```
+
+> Response
+
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<E911Order>
+    <OrderCreateDate>2021-03-10T20:52:17.218Z</OrderCreateDate>
+    <AccountId>{accountId}</AccountId>
+    <CreatedByUser>apiUser</CreatedByUser>
+    <OrderId>65c45d6a-0490-4167-8373-760ffd61a074</OrderId>
+    <LastModifiedDate>2021-03-10T20:52:17.255Z</LastModifiedDate>
+    <ProcessingStatus>ADJUSTED_COMPLETE</ProcessingStatus>
+    <AdditionalAddresses>
+        <Address>
+            <HouseNumber>900</HouseNumber>
+            <StreetName>MAIN CAMPUS</StreetName>
+            <StreetSuffix>DR</StreetSuffix>
+            <AddressLine2>STE 500</AddressLine2>
+            <City>RALEIGH</City>
+            <StateCode>NC</StateCode>
+            <Zip>27606</Zip>
+            <PlusFour></PlusFour>
+            <County></County>
+            <Country>US</Country>
+            <AddressType>E911</AddressType>
+            <LocationId>CorpOffice6thFloor</LocationId>
+            <ValidationStatus>VALID</ValidationStatus>
+            <Adjusted>true</Adjusted>
+        </Address>
+    </AdditionalAddresses>
+    <ErrorList/>
+    <OrderType>e911</OrderType>
+</E911Order>
+```
+
+## Endpoints
+
+An endpoint is a representation of the calling party, which, depending on mobility, may not initiate an emergency call from a fixed location. Each endpoint contains a set of Alternate End User Identifier (AEUI) attributes consisting of a PIDF-LO enabled flag, a unique identifier (30 characters or less), the caller’s preferred language (en or fr), caller name, and callback number. Also, a default location is required for each PIDF-LO enabled endpoint. This default location will be used for taxation purposes, and to identify a location of record for law enforcement. Provisioning of endpoints can be accomplished using one of the following methods:
+  1. Specifying the endpoint attribute set and a location id of the default address for that endpoint. The address in this case has already been provisioned. This is the recommended option.
+  1. Specifying the endpoint attribute set and the location id plus associated address info. The address in this case has not yet been provisioned.
+  1. Specifying the endpoint attribute set plus the associated address info (no location id specified). The address in this case has not yet been provisioned. Once provisioned a location id will be returned for that address.
+
+The examples below show option #1 - creating an endpoint when the location has already been provisioned.
+
+### Endpoint Attributes
+
+`PIDFLOEnabled` - Required. Needs to be set to “true”.
+
+`Identifier` - Required. The alternate end user identifier can be used as the caller identifier token in the SIP INVITE to identify the caller in place of a phone number. It’s used to identify the caller in the “From” and/or “P-Asserted-Identity” SIP headers. It must be between 10 and 30 characters, inclusive, and can contain any characters in the range [A-Za-z0-9]. **The identifier must be unique** - you can't reuse an identifier that's being used elsewhere in your account.
+
+`CallbackNumber` - Required. Callback number is the NANPA-valid phone number at which the 911 caller can be reached. The callback number will be delivered to the PSAP at emergency call time so they can use it if they need to contact the 911 caller after the initial 911 call has ended. The callback number can also be passed in the SIP messaging - in the Contact header.
+
+`CallerName` - Required. A business or caller name to associate with the endpoint. This name will be delivered to the PSAP. Similar to the callback number, the caller name can also be passed in SIP messaging in the Contact header.
+
+`PreferredLanguage` - Optional. Valid values are “en” (English) or “fr” (French). **Defaults to “en” if value not specified**.
+
+### Creating an Endpoint with an Existing Location
+
+In this example, the location identified by “CorpOffice5thFloor” has already been added to the Bandwidth Dashboard and is being associated to the endpoint.
+
+:::caution Important Note
+It is mandatory for a location to be associated associated with an endpoint for taxation reasons, but the associated location isn't necessarily used in routing a subsequent 911 call. You define both in the SIP invite at call time
+:::
+
+> Request
+
+```xml
+POST https://dashboard.bandwidth.com/api/accounts/{accountId}/e911s
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+Content-Type: application/xml
+
+<E911Order>
+ <CustomerOrderId>CustomOrderId1</CustomerOrderId>
+ <AlternateEndUserIdentifiers>
+  <AlternateEndUserIdentifier>
+   <PIDFLOEnabled>true</PIDFLOEnabled>
+   <Identifier>9zdRwdQqZW99uYr</Identifier>
+   <CallbackNumber>5555561234</CallbackNumber>
+   <CallerName>5th Floor Conference Phone</CallerName>
+   <PreferredLanguage>en</PreferredLanguage>
+   <LocationId>CorpOffice5thFloor</LocationId>
+  </AlternateEndUserIdentifier>
+ </AlternateEndUserIdentifiers>
+</E911Order>
+```
+
+> Response
+
+<Tabs
+  groupId="dlr_endpoints"
+  defaultValue="200"
+  values={[
+    { label: 'Valid Address - 200 OK', value: '200', },
+    { label: 'Bad Request - 400 Bad Request', value: '400', },
+  ]
+}>
+<TabItem value="200">
+
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<E911OrderResponse>
+    <E911Order>
+        <CustomerOrderId>CustomOrderId1</CustomerOrderId>
+        <OrderCreateDate>2021-03-10T21:14:24.620Z</OrderCreateDate>
+        <AccountId>9900778</AccountId>
+        <CreatedByUser>ajrice</CreatedByUser>
+        <OrderId>19fab1c0-5da9-4219-9a3b-e3630ccd7e9f</OrderId>
+        <LastModifiedDate>2021-03-10T21:14:24.620Z</LastModifiedDate>
+        <ProcessingStatus>RECEIVED</ProcessingStatus>
+        <AlternateEndUserIdentifiers>
+            <AlternateEndUserIdentifier>
+                <Identifier>9zdRwdQqZW99uYr</Identifier>
+                <CallbackNumber>5555561234</CallbackNumber>
+                <PIDFLOEnabled>true</PIDFLOEnabled>
+                <CallerName>5th Floor Conference Phone</CallerName>
+                <PreferredLanguage>en</PreferredLanguage>
+                <LocationId>CorpOffice5thFloor</LocationId>
+            </AlternateEndUserIdentifier>
+        </AlternateEndUserIdentifiers>
+        <ErrorList/>
+        <OrderType>e911</OrderType>
+    </E911Order>
+</E911OrderResponse>
+```
+
+</TabItem>
+<TabItem value="400">
+
+:::note
+Unsuccessful requests will return an HTTP 400 Bad Request with a response payload indicating the error, along with an error description and code.**
+:::
+
+```xml
+<E911OrderResponse>
+<E911Order>
+ <OrderCreateDate>2017-05-01T15:00:00.000Z</OrderCreateDate>
+ <AccountId>123</AccountId>
+ <CreatedByUser>api_user</CreatedByUser>
+ <OrderId>42d06090-a54f-4469-bb55-97eb5c0f3fea</OrderId>
+ <LastModifiedDate>2017-05-01T15:00:01.000Z</LastModifiedDate>
+ <CustomerOrderId>CustomOrderId1</CustomerOrderId>
+ <ProcessingStatus>FAILED</ProcessingStatus>
+ <AlternateEndUserIdentifiers>
+  <AlternateEndUserIdentifier>
+     <PIDFLOEnabled>true</PIDFLOEnabled>
+     <Identifier>9zdRwdQqZW99uYr</Identifier>
+     <CallbackNumber>5555561234</CallbackNumber>
+     <CallerName>5th Floor Conference Phone</CallerName>
+     <PreferredLanguage>en</PreferredLanguage>
+     <Address>
+      <HouseNumber>900</HouseNumber>
+      <HouseSuffix/>
+      <PreDirectional/>
+      <StreetNameMain Campus</StreetName>
+      <StreetSuffixDr</StreetSuffix>
+      <PostDirectional/>
+      <AddressLine2>Suite 200</AddressLine2>
+      <City>Raleigh</City>
+      <StateCode>NC</StateCode>
+      <Zip>27606</Zip>
+      <PlusFour/>
+      <County/>
+      <Country>US</Country>
+     </Address>
+   </AlternateEndUserIdentifier>
+ </AlternateEndUserIdentifiers>
+<ErrorList>
+ <AEUIError>
+<AlternateEndUserIdentifiers>
+   <AlternateEndUserIdentifier>
+     <PIDFLOEnabled>true</PIDFLOEnabled>
+     <Identifier>9zdRwdQqZW99uYr</Identifier>
+     <CallbackNumber>5555561234</CallbackNumber>
+     <CallerName>5th Floor Conference Phone</CallerName>
+     <PreferredLanguage>en</PreferredLanguage>
+     <Address>
+      <HouseNumber>900</HouseNumber>
+      <HouseSuffix/>
+      <PreDirectional/>
+      <StreetName>Main Campus</StreetName>
+      <StreetSuffix>Dr</StreetSuffix>
+      <PostDirectional/>
+      <AddressLine2>Suite 200</AddressLine2>
+      <City>Raleigh</City>
+      <StateCode>NC</StateCode>
+      <Zip>27606</Zip>
+      <PlusFour/>
+      <County/>
+      <Country>US</Country>
+     </Address>
+   </AlternateEndUserIdentifier>
+ </AlternateEndUserIdentifiers>
+ <Code>8033</Code>
+ <Description>This order is a duplicate of another E911 request(orderId=
+ ’4901d3bc-b5a6-401f-aea2-f8e76023faca’), and will be canceled. The state
+ of the E911 service will be reflected in the competing order.</Description>
+  </AEUIError>
+</ErrorList>
+</E911Order>
+<E911OrderResponse>
+```
+
+</TabItem>
+</Tabs>
+
+
+## Provisioning Limits and Restrictions
+
+Bandwidth allows fields to be entered with a size up to the maximum defined in the Restrictions column in the table below. However, when Bandwidth delivers the information to emergency personnel, we may apply abbreviations or truncate the field if it is greater than the recommended max size.
+
+| Field Name      | Required | Restrictions                                                                                                | Recommended Max Size |
+|-----------------|----------|-------------------------------------------------------------------------------------------------------------|----------------------|
+| HouseNumber     | No       | 6 characters max                                                                                            | n/a                  |
+| HouseSuffix     | No       | 45 characters max                                                                                           | 4                    |
+| PreDirectional  | No       | 2 characters max                                                                                            | 2                    |
+| StreetName      | Yes      | 200 characters max                                                                                          | 100                  |
+| StreetSuffix    | No       | 45 characters max                                                                                           | 10                   |
+| PostDirectional | No       | 2 characters max                                                                                            | 2                    |
+| AddressLine2    | No       | 200 characters max.  Our system will automatically abbreviate some common terms like "APARTMENT" or "FLOOR" | 60                   |
+| City            | Yes      | 100 characters max                                                                                          | 100                  |
+| StateCode       | Yes      | 2 characters max.  Must be a valid USPS state code or Canada Post province code.                            | 2                    |
+| Zip             | Yes      | 10 characters max.  Must be a valid USPS zip code or Canada Post postal code.                               | 10                   |
+| PlusFour        | No       | 10 characters max                                                                                           | 4                    |
+| Country         | Yes      | 2 characters max.  Currently only US (United States) and CA (Canada) are supported                          | 2                    |
+| CallerName      | No       | 50 characters max                                                                                           | 32                   |
+
+### Address Line 2
+
+Since PSAPs across the country are generally limited to displaying 60 characters in the Address Line 2 field, Bandwidth enforces a 60-character limit on all addresses being provisioned. If you provision 61 or more characters in the Address Line 2 field, you’ll receive one of the following errors depending on your interface:
+  * Bandwidth Dashboard UI: loc cannot exceed 60 characters.
+  * Bandwidth Dashboard API: loc cannot exceed 60 characters.
+  * Bandwidth 911 Access Dashboard UI: Could not update address for the following reason: Address Line 2 must not exceed 60 characters.
+  * Bandwidth 911 Access Dashboard API: Some inputs are missing or incorrect, please check your inputs and try again.
+
+If you encounter an error due to Address Line 2 being over 60 characters, please edit the address down.
+
+Address Line 2 can be a free form text, although the typical format is:
+
+    <unit type> <unit num> <unit type> <unit num>...
+
+To fit more information into a smaller space, we try to abbreviate it. Here are the example Address Line 2 inputs and corresponding abbreviated outputs:
+
+| Input                     | Abbreviated Output |
+|:--------------------------|:-------------------|
+| suite AA                  | STE AA             |
+| building A floor 3 Room 7 | BLDG A FL 3 RM 7   |
+| wharf 7 pier A            | WHARF 7 PIER A     |
+
+A full list of unit type abbreviations is below:
+
+| Input Unit Type           | Abbreviated Output |
+|:--------------------------|:-------------------|
+| APARTMENT                 | APT                |
+| BASEMENT                  | BSMT               |
+| BUILDING                  | BLDG               |
+| DEPARTMENT                | DEPT               |
+| FLOOR                     | FL                 |
+| FRONT                     | FRNT               |
+| HANGAR                    | HGNR               |
+| LOBBY                     | LBBY               |
+| LOT                       | LOT                |
+| LOWER                     | LOWR               |
+| OFFICE                    | OFC                |
+| PENTHOUSE                 | PH                 |
+| PIER                      | PIER               |
+| REAR                      | REAR               |
+| ROOM                      | RM                 |
+| SIDE                      | SIDE               |
+| SLIP                      | SLIP               |
+| SPACE                     | SPC                |
+| STOP                      | STOP               |
+| SUITE                     | STE                |
+| TRAILER                   | TRLR               |
+| UNIT                      | UNIT               |
+| UPPER                     | UPPR               |
+
+## Cleanup
+
+As you finish testing, or as your subscriber data changes, you may want to remove old locations or endpoints.
+
+To remove endpoints, issue a POST with the AEUIs of the endpoints you want to delete, and set the DeleteTNSpecificE911Address to “true”. The example below deletes the endpoint with identifier “9zdRwdQqZW99uYr” location created earlier in this document.
+
+:::danger
+Before you delete locations or endpoints, make sure they aren't in use. If you send Bandwidth a 911 call that uses an AEUI or location identifier that has been deleted, Bandwidth won't know how to route the call, and will send the call to our Emergency Call Center.
+:::
+
+### Base URL
+
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/e911s</code> <br/> <br/>
+
+### Examples
+
+<Tabs
+  groupId="dlr_cleanup"
+  defaultValue="delete_endpoint"
+  values={[
+    { label: 'Delete an Endpoint', value: 'delete_endpoint', },
+    { label: 'Delete a Location', value: 'delete_location', },
+  ]
+}>
+<TabItem value="delete_endpoint">
+
+This call won't delete the locations from your location pool, it just deletes the endpoints.
+
+```xml
+POST https://dashboard.bandwidth.com/api/accounts/{accountId}/e911s
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+Content-Type: application/xml
+
+<E911Order>
+ <CustomerOrderId>YourCustomOrderId2</CustomerOrderId>
+ <AlternateEndUserIdentifiers>
+  <AlternateEndUserIdentifier>
+   <Identifier>9zdRwdQqZW99uYr</Identifier>
+  </AlternateEndUserIdentifier>
+ </AlternateEndUserIdentifiers>
+ <DeleteTNSpecificE911Address>true</DeleteTNSpecificE911Address>
+</E911Order>
+```
+
+</TabItem>
+<TabItem value="delete_location">
+
+If you try to delete a location that is the primary location for an endpoint, you’ll get an error in your order. You must first delete any endpoints that use the location (or update them to use a new location) before you can delete that location.
+
+```xml
+POST https://dashboard.bandwidth.com/api/accounts/{accountId}/e911s
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+Content-Type: application/xml
+
+<E911Order>
+ <CustomerOrderId>YourCustomOrderId1</CustomerOrderId>
+ <AdditionalAddresses>
+  <Address>
+   <LocationId>CorpOffice5thFloor</LocationId>
+  </Address>
+ </AdditionalAddresses>
+ <DeleteTNSpecificE911Address>true</DeleteTNSpecificE911Address>
+</E911Order>
+```
+
+</TabItem>
+</Tabs>
+
+For more information on 911 DLR and making 933 test calls, see [this support article](https://support.bandwidth.com/hc/en-us/sections/360001336774-E911-Dynamic-Location-Routing).

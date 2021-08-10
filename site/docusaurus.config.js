@@ -1,7 +1,7 @@
 const YAML = require('yaml');
 const fs = require('fs');
 const path = require('path');
-// const numbersSpec = fs.readFileSync('./specsnumbers.json', 'utf-8');
+// const numbersSpec = fs.readFileSync('./specs/numbers.json', 'utf-8');
 const phoneNumberLookupSpec = fs.readFileSync('./specs/phoneNumberLookup.json', 'utf-8');
 const voiceSpec = fs.readFileSync('./specs/voice.json', 'utf-8');
 const messagingSpec = fs.readFileSync('./specs/messaging.json', 'utf-8');
@@ -9,6 +9,7 @@ const messagingSpec = fs.readFileSync('./specs/messaging.json', 'utf-8');
 const webRtcSpec = fs.readFileSync('./specs/webRtc.json', 'utf-8');
 const multiFactorAuthSpec = fs.readFileSync('./specs/multiFactorAuth.json', 'utf-8');
 const dashSpec = fs.readFileSync('./specs/dash.json', 'utf-8');
+const dashNotificationsSpec = fs.readFileSync('./specs/dashNotifications.json', 'utf-8');
 
 module.exports = {
   title: 'Bandwidth API Docs',
@@ -73,6 +74,9 @@ module.exports = {
         }, {
           to: 'apis/dash',
           label: 'DASH'
+        }, {
+          to: 'apis/dash-notifications',
+          label: 'DASH Notifications'
         }]
       }, {
         to: 'sdks',
@@ -164,6 +168,7 @@ module.exports = {
       webRTCSpec: JSON.parse(webRtcSpec),
       multiFactorAuthSpec: JSON.parse(multiFactorAuthSpec),
       dashSpec: JSON.parse(dashSpec),
+      dashNotificationsSpec: JSON.parse(dashNotificationsSpec),
       // CSS Colors
       bwBlue: '#079CEE',
       voicePurple: '#9a59c5',

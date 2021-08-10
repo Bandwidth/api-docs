@@ -1,0 +1,95 @@
+---
+id: soap
+title: SOAP
+slug: /emergency/dash/soap
+description: A general overview of Bandwidth's 911 Access Dashboard API SOAP API
+keywords:
+  - bandwidth
+  - emergency
+  - dash
+  - soap
+hide_title: false
+image: ../../static/img/bandwidth-logo.png
+---
+
+Because the WSDL provides detail about specific proprietary capabilities, it's secured like the rest of the API. Once you have your authentication credentials, point your SOAP-based tools to the following WSDLs:
+
+| Environment | URL                                                                              |
+|:------------|:---------------------------------------------------------------------------------|
+| Production  | `https://service.dashcs.com/dash-api/soap/emergencyprovisioning/v1?wsdl`         |
+| Staging     | `https://staging-service.dashcs.com/dash-api/soap/emergencyprovisioning/v1?wsdl` |
+
+Simple Object Access Protocol is the industry standard protocol for web services. Tooling (IDE/Frameworks/etc.) support is widespread across platforms. If you're using an environment with exceptional tooling support for SOAP this may be the best choice.
+
+It's highly recommended that you use a tool like SOAPUI. With it, you can easily see if you can authenticate correctly. It's helpful for learning the API and it could help diagnose problems. SOAPUI is open source and runs on all operating systems.
+
+Note that when you use SOAPUI it creates a default SOAP request. It will contain question mark characters in places where you might want to insert values. While testing our API with SOAPUI you should remove the question marks, otherwise they will be interpreted as actual values. If you have no data for a field, then you can remove the opening and closing XML tags.
+
+Please don't do the following in a call to the API using SOAPUI (i.e., don't leave the question marks in there for fields you aren’t using).
+
+```xml
+<address1>1850 Blake Street</address1>
+<address2>?</address2>
+<community>Denver</community>
+```
+
+## List of SOAP methods
+| SOAP Method                        |
+|:-----------------------------------|
+| getAuthenticationCheck             |
+| getURIs                            |
+| getLocationsByURI                  |
+| getProvisionedLocationByURI        |
+| getProvisionedLocationHistoryByURI |
+| validateLocation                   |
+| addLocation                        |
+| removeLocation                     |
+| removeURI                          |
+| provisionLocation                  |
+
+
+## Examples
+
+### validateLocation SOAP request
+If you pull up our emergency WSDL into the SOAPUI tool it will stub out the XML of your SOAP request. From there just fill in the information.
+
+```xml
+<soapenv:Envelope xmlns:soapenv=”http://schemas.xmlsoap.org/soap/envelope/”
+   xmlns:emer=”http://dashcs.com/api/v1/emergency”>
+   <soapenv:Header/>
+   <soapenv:Body>
+    <emer:validateLocation>
+    <location>
+      <address1>2040 Larimer</address1>
+      <community>Denver</community>
+      <state>CO</state>
+      <postalcode>80205</postalcode>
+      <type>ADDRESS</type>
+    </location>
+   </emer:validateLocation>
+ </soapenv:Body>
+</soapenv:Envelope>
+```
+
+### validateLocation SOAP response
+SOAP sends back a result inside of a SOAPenvelope:
+
+```xml
+<soap:Envelope xmlns:soap=”http://schemas.xmlsoap.org/soap/envelope/”>
+  <soap:Body>
+    <ns1:validateLocationResponse
+    xmlns:ns1=”http://dashcs.com/api/v1/emergency”>
+     <Location>
+       <address1>2040 Larimer St</address1>
+       <community>Denver</community>
+       <latitude>39.753439</latitude>
+       <legacydata>
+         <housenumber>2040</housenumber>
+         <streetname>Larimer St</streetname>
+       </legacydata>
+       <longitude>-104.991949</longitude>
+       <plusfour>2015</plusfour>
+       <postalcode>80205</postalcode>
+  </soap:Body>
+</soap:Envelope>
+```

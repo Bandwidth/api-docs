@@ -1,0 +1,244 @@
+---
+id: emergencyCallingApi
+title: Emergency Calling API
+slug: /emergency/emergencyCallingApi
+description: A general overview of Bandwidth's Emergency Calling API
+keywords:
+  - bandwidth
+  - emergency
+  - calling
+hide_title: false
+image: ../../static/img/bandwidth-logo.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+export const accountId = "{accountId}";
+
+export const Highlight = ({children, color}) => (
+    <span
+      style={{
+        backgroundColor: color,
+        borderRadius: '2px',
+        color: '#fff',
+        padding: '0.2rem',
+      }}>
+      {children}
+    </span>
+  );
+
+Bandwidth’s Emergency Calling API allows your application users to dynamically initiate a distress or “SOS” call to public safety, even from a remote location. The Emergency Calling API lets you initiate a call to public safety without the need for a SIP infrastructure or the use of standard PIDF-LO SIP extensions.
+
+Bandwidth will enable a designated 10-digit telephone number as part of this service. When enabled, you can direct any phone device (for example, a smartphone) to call this designated Emergency Calling API number. When Bandwidth receives an Emergency Calling API call on the designated number, we'll launch an HTTPS web services query to you so that you can specify the treatment for the call. Simply put, the treatment you specify can be:
+
+  1. Block or drop the call
+  1. Authorize Bandwidth to send the call to the appropriate Public Safety Answering Point (PSAP) based on the location (address) information sent in response to the web services query.
+
+## Adding endpoints and locations in the Bandwidth Dashboard
+
+While not the same as 911, the Emergency Calling API endpoints are managed using a process similar to Bandwidth’s E911 Dynamic Location Routing (DLR) offering. Please refer to the [DLR documentation](https://support.bandwidth.com/hc/en-us/articles/360006080074) for adding endpoints and locations to your account.
+
+To create endpoints, you'll identify end users of your service as well as the locations that specify where you want emergency services (police, fire, ambulance) to respond. Your end user data is stored with Bandwidth in endpoint records, which are identified by the Alternate End User IDs (AEUIs). Your locations are also stored with Bandwidth as Location Objects, which are identified by location IDs.
+
+Locations can be independently provisioned in a couple of ways. You can provision a location and have Bandwidth create the location ID for you, or you can provide your own location ID. The examples below show the case where you provide your own location ID that you'll later use to refer to the location, either in future API operations or if making 911 location-by-reference calls.
+
+### Request URL
+
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/e911s</code> <br/> <br/>
+
+This method allows you to assign your own identifier to the address rather than letting the Bandwidth Dashboard assign one for you. The location ID you provide must be unique across your account.
+
+:::note
+The location ID can only contain characters in the range [A-Za-z0-9] and can't exceed 32 characters.
+:::
+
+### Example
+
+```xml
+POST https://dashboard.bandwidth.com/api/accounts/{accountId}/e911s
+Authorization: Basic
+
+<E911Order>
+   <AdditionalAddresses>
+     <Address>
+       <LocationId>mylocationid</LocationId>
+       <HouseNumber>900</HouseNumber>
+       <HouseSuffix/>
+       <PreDirectional/>
+       <StreetName>Main Campus</StreetName>
+       <StreetSuffix>Drive</StreetSuffix>
+       <PostDirectional />
+       <AddressLine2>Suite 500</AddressLine2>
+       <City>Raleigh</City>
+       <StateCode>NC</StateCode>
+       <Zip>27606</Zip>
+       <PlusFour/>
+       <County/>
+       <Country>US</Country>
+   </Address>
+</E911Order>
+```
+
+## Implementing your Emergency Calling API service
+
+To get started, you'll need to establish an HTTP service that responds to a request from Bandwidth. Your response will contain the following:
+
+  1. The ID of the caller who initiated the request for help.
+  1. An optional registered location where help is needed. The actual location of the caller who initiates the Emergency Calling API call and the location requiring assistance from first responders doesn't have to be the same. In fact, these locations are often different.
+  1. Alternatively, or in addition, to a registered location, you can provide the latitude and longitude (lat-lon) of the location.
+  1. An optional radius used to indicate when the registered location and the provided latitude and longitude are close enough to each other to be the same location.
+
+### Request
+
+The Emergency Calling API will issue a simple GET request to your HTTP service. Using a URL you provide to us, we'll append a question mark, along with the "To" and "From" name-value that pairs with that URL. The HTTP request we submit will follow this format:
+
+`GET` `https://yourserver.example.com/path?to={called_number}&from={calling_number}`
+
+### Response
+
+Based on the information from the end user who initiates an Emergency Calling API call to Bandwidth and depending on where they're physically located (or the location of the incident), your service should respond with a JSON message with fields that indicate who the caller is and where the caller is. The JSON message can contain the following fields:
+
+| Name | Purpose | Optional/Required |
+|--|--|--|
+| aeui | Caller identifier | Required |
+| location_id | Location identifier | Optional if lat-lon given |
+| lat | Latitude, in WGS84 decimal degrees | Optional if location_id is given |
+| lon | Longitude, in WGS84 decimal degrees | Optional if location_id is given |
+| radius | Maximum allowable distance between location and lat/lon | Optional, defaults to 50 meters |
+| callback | Callback number PSAP can use to reach caller, must be in E164 format (+19195551234) and a valid US or Canadian phone number | Optional, requires your account to be configured to not require callback at provisioning time |
+| name | Name of emergency caller presented to the PSAP | Optional, requires your account to be configured to not require callback at provisioning time |
+
+
+Based on the response you provide, Bandwidth will attempt to deliver the call to the appropriate emergency authority. There are four valid responses:
+
+  1. An aeui and location_id
+  1. An aeui with lat and lon
+  1. An aeui with location_id, lat-lon, and radius
+  1. An aeui with location_id and lat-lon
+
+### Examples
+
+<Tabs
+  groupId="emergency_calling"
+  defaultValue="aeui_location_id"
+  values={[
+    { label: 'aeui and location_id', value: 'aeui_location_id', },
+    { label: 'aeui with lat and lon', value: 'aeui_lat_lon', },
+    { label: 'location_id, lat, and lon', value: 'location_id_lat_lon', },
+    { label: 'aeui with location_id, lat, lon, and radius', value: 'aeui_location_id_lat_lon_radius', },
+  ]
+}>
+<TabItem value="aeui_location_id">
+
+Bandwidth will look for the AEUI and location ID in your account. If we find both, we'll use the information in the location to determine where to send the call. We'll also send the location's address to the emergency authorities.
+
+```json
+{
+    "aeui" : "myaeui",
+    "location_id": "mylocationid"
+}
+```
+
+</TabItem>
+<TabItem value="aeui_lat_lon">
+
+Bandwidth will look for the AEUI in your account. We'll use the lat-lon values to determine where to send the call. We'll also attempt to find an address near the lat-lon you provided and send that address to the emergency authorities.
+
+```json
+{
+    "aeui" : "myaeui",
+    "lat": 35.67426,
+    "lon": -105.95283
+}
+```
+
+</TabItem>
+<TabItem value="location_id_lat_lon">
+
+Bandwidth will look for the AEUI and the location ID in your account. Assuming we find the location ID, we'll compare the locations latitude and longitude against the lat-lon values you provided in your response. If the two lat-lon pairs are within the radius you indicated, we'll assume the caller is near the location and will use the lat-lon along with the address of the location referred to by the location ID. If the two lat-lon pairs are farther apart than the radius, we'll use the lat-lon the same way we would in the `aeui with lat and lon` response.
+
+Without a radius defined in the response body object, we'll use a default radius of 50 meters to compare the lat-lon pairs.
+
+```json
+{
+    "aeui" : "myaeui",
+    "location_id": "mylocationid",
+    "lat": 35.67426,
+    "lon": -105.95283
+}
+```
+
+</TabItem>
+<TabItem value="aeui_location_id_lat_lon_radius">
+
+Bandwidth will look for the AEUI and the location ID in your account. Assuming we find the location ID, we'll compare the locations latitude and longitude against the lat-lon values you provided in your response. If the two lat-lon pairs are within the radius you indicated, we'll assume the caller is near the location and will use the lat-lon along with the address of the location referred to by the location ID. If the two lat-lon pairs are farther apart than the radius, we'll use the lat-lon the same way we would in the `aeui with lat and lon` response.
+
+This response is the same as the `location_id, lat, and lon` response, but with a provided radius.
+
+```json
+{
+    "aeui" : "myaeui",
+    "location_id": "mylocationid",
+    "lat": 35.67426,
+    "lon": -105.95283,
+    "radius": 25
+}
+```
+
+</TabItem>
+</Tabs>
+
+## Handling Timeouts and Errors
+
+Bandwidth's servers will time out if it takes longer than 450 milliseconds to receive a response from the Emergency Calling API service. This time includes any network latency between your server and ours.
+
+:::danger
+If Bandwidth doesn't receive a response before timing out, if the response returns a status code of something other than a “2XX”, “301”, “302”, or “303”, or if it's incorrectly formatted or doesn't match the required format above, the response will be rejected. By default, this call will be sent to the Bandwidth's ECC.
+:::
+
+## Rejecting robodialer and wrong number calls
+
+As indicated above, your account configuration defaults so that any error response on your side causes the call to be sent to our ECC. However, we can enable an option to reject the call if your service responds with an HTTP 404 code. Please [open a ticket](https://support.bandwidth.com/hc/en-us/requests/new) with your Bandwidth Support Team to enable this setting.
+
+Since the Emergency API phone number we provide for routing with this service is an open PSTN number, it's possible that a robodialer or misdial could initiate a 911 call. If Bandwidth sends you an unknown calling number in the request to your Emergency Calling API service, you can return an HTTP 404 error code to tell us you don't know that number. If your account is set up to reject calls on a 404 response, we'll deny the call instead of sending it to the ECC. Please [open a ticket](https://support.bandwidth.com/hc/en-us/requests/new) with your Bandwidth Support Team to enable this setting.
+
+## Registering the contact URL with Bandwidth
+
+Once your system is ready, please reach out to your Bandwidth Support Team and provide them the URL to your callback service.
+
+:::tip Authentication
+The Emergency Calling API supports basic HTTP authentication. If you require basic authentication to access your service, you must provide a username and password to your Bandwidth Support Team so that we can include that information when we send you the HTTP request.
+:::
+
+## Setting callback or caller name at call time
+
+If you can't set up your caller name or callback number for the caller when you add your endpoint to Bandwidth's systems, but do have that information at 911 (or 933) call time, your account can be configured to allow you to pass that information back to us in your API response.
+
+For example, building on the aeui and location_id response above, you could dynamically set the callback number to 15554321234, and the caller name to "JJ Smith" at the time of the call, instead of setting that when you provisioned the endpoint, using a response like this:
+
+```json
+{
+    "aeui" : "myaeui",
+    "location_id": "mylocationid",
+    "callback": "+15554321234",
+    "name": "JJ Smith"
+}
+```
+
+By default, the value of the callback and name fields in the API response, if passed, will be ignored. If you need this capability, please contact your Bandwidth Implementation Specialist to set up your account.
+
+## Sample use case
+
+In the example scenario below, an end user with an app on her mobile device is alerted to a broken window at her rental property at 100 Elm Street. Worried about a possible break in, she selects the property on the app and presses a "Call for Help" button within the app.
+
+1. To enable an effective emergency response, the app sends a message to your servers with the following information:
+    * An identifier indicating the location of the event or incident.
+    * A user identifier, such as the phone number of the caller’s mobile device or some other identifying token.
+1. Your service will then need to register and store that information in preparation for an HTTP request from Bandwidth.
+1. The app also initiates a voice call using the native dialer of the smartphone to the designated Bandwidth number.
+1. Bandwidth receives the call from the device’s native dialer and sends an HTTP request to your HTTP service. The request contains the number that initiated the call and the designated number that was called.
+1. Your service locates the event (perhaps using the number that called Bandwidth, i.e., the user's phone number) and responds to Bandwidth with the identifiers of the user who is asking for help and the location of the  event.
+1. Bandwidth captures the response information and uses it to route the call to the proper public safety authorities.
+
+Questions? Please [open a ticket](https://support.bandwidth.com/hc/en-us/requests/new) with your Bandwidth Support Team or call us at (855) 864-7776!

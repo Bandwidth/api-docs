@@ -169,9 +169,24 @@ module.exports = {
         "emergency/about",
         {
           type: "category",
-          label: "Guides and Tutorials",
-          items: [],
+          label: "Bandwidth Dashboard",
+          items: [
+            "emergency/dashboard/about",
+            "emergency/dashboard/dlr",
+            "emergency/dashboard/notifications",
+          ],
         },
+        {
+          type: "category",
+          label: "911 Access Dashboard",
+          items: [
+            "emergency/dash/about",
+            "emergency/dash/usage",
+            "emergency/dash/soap",
+            "emergency/dash/errors",
+          ],
+        },
+        "emergency/emergencyCallingApi"
       ],
     },
   ],
