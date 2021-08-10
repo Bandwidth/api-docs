@@ -75,7 +75,7 @@ module.exports = {
           to: 'apis/dash',
           label: 'DASH'
         }, {
-          to: 'dash-notifications-api-reference',
+          to: 'apis/dash-notifications',
           label: 'DASH Notifications'
         }]
       }, {

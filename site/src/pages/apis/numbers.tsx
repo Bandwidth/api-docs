@@ -9,7 +9,7 @@ export default function ApiReference() {
         <Layout>
             <main>
               <br/>
-              <div class="a">
+              <div class="numbersHeader">
                 Emojis are explicitly not allowed on any endpoint for this API.
                 <br/><br/>
                 This API expects phone numbers to be in a 10 digit format <code>XXXYYYZZZZ</code>, not in E164 format.
