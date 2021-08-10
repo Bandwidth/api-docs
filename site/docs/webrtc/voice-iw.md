@@ -12,11 +12,11 @@ image: ../../static/img/bandwidth-logo.png
 
 ## Connecting WebRTC to Programmable Voice
 
-Bandwidth has a demonstrated history of excellence in IP voice technologies, including comprehensive CPaaS Programmable Voice and Messaging capabilities. The introduction of WebRTC capabilities provides the opportunity to combine the strength and diversity of our Programmable Voice capabilities with our highly controllable WebRTC capabilities to yield a rich and flexible platform that allows our customers to extend their business with a broad range of communication capabilities.
+Bandwidth has a demonstrated history of excellence in IP voice technologies, including comprehensive CPaaS Programmable Voice and Messaging capabilities. The introduction of WebRTC provides the opportunity to combine the strength and diversity of our Programmable Voice with our highly controllable WebRTC to yield a rich and flexible platform that allows our customers to extend their business with a broad range of communication capabilities.
 
-One of the steps we have taken to enable this capability suite is to ensure that our Programmable Voice (PV) and WebRTC platforms and APIs combine their respective strengths when integrated.
+One of the steps we have taken to enable this capability suite is to ensure that our Programmable Voice (PV) and WebRTC APIs combine their respective strengths when integrated.
 
-When PV calls interwork with WebRTC communications, control of the behavior of the voice call is managed by the extensive suite of PV capabilities. Bandwidth offers “Bxml” scripts to control call events using action verbs. This gives you the ability to create flexible solutions that enable your application to create voice calls, receive voice calls, and control and monitor changes made to these calls.
+When PV calls interwork with WebRTC communications, control of the behavior of the voice call is managed by the extensive suite of PV capabilities. Bandwidth offers “BXML” scripts to control call events using action verbs. This gives you the ability to create flexible solutions that enable your application to create voice calls, receive voice calls, and control and monitor changes made to these calls.
 
 And by combining our WebRTC and programmable voice APIs, you can create composite call flows that meet your needs.
 
@@ -24,7 +24,7 @@ The interaction between PV and WebRTC is initiated under application control fro
 
 ![Summary of interconnection](../../static/img/webrtc-pv-summary.png "summary")
 
-To interconnect a WebRTC participant to the PV network capabilities, the customer application creates a WebRTC session and a participant for the session. This information is sent by your application to the PV platform which has been authorized to send a SIP invite to a WebRTC SIP URI. This URI contains a UUI header that contains a participant token which enables the system to securely identify and interconnect the voice capabilities and the WebRTC participants.
+To interconnect a WebRTC participant to the PV network capabilities, the customer application creates a WebRTC session and a participant for the session. This information is sent by your application to the PV platform which sends a SIP INVITE to a WebRTC SIP URI. This INVITE includes a UUI header that contains a participant token which enables the system to securely identify and interconnect the PV voice capabilities and the WebRTC participants.
 
 Once an answer is received on this transaction, an interconnection is established between WebRTC and Voice.
 
@@ -62,7 +62,7 @@ Bandwidth's Voice API will hit a provisioned callback endpoint when you receive 
 This generates the response payload containing the Transfer verb that is sent back to the PV API to transfer the call into the WebRTC session
 
 ```js
-const bxml = WebRtcController.generateTransferBxml(participant.token);
+const bxml = WebRtcController.generateTransferBxml(participant.token,callId);
 ```
 
 This sends the payload back to the Voice API
@@ -91,7 +91,7 @@ When an outbound call is answered, the response payload contains the Transfer ve
 ```js
 const bxml = `&lt;?xml version="1.0" encoding="UTF-8" ?>&lt;Response>
           &lt;SpeakSentence voice="julie">Thank you. Connecting you to your conference now.&lt;/SpeakSentence>
-          ${WebRtcController.generateTransferBxmlVerb(participant.token)}
+          ${WebRtcController.generateTransferBxmlVerb(participant.token,callId)}
         &lt;/Response>`;
 ```
 
@@ -116,7 +116,7 @@ Using WebRTC, you can still maintain the bridge after the voice call leaves. Var
 
 Here’s [an example](https://github.com/Bandwidth-Samples/webrtc-voicebridge-ts) of how you can use the Bridge Verb:
 
-Bandwidth's Voice API calls the webRTC infrastructure with the participant token in the UUI SIP header to allow the correlation ofV2 voice and the webRTC infrastructure
+Bandwidth's Voice API calls the WebRTC infrastructure with the participant token in the UUI SIP header to allow the correlation ofV2 voice and the WebRTC infrastructure
 
 ```js
     const callSipUri = async (participant: ParticipantInfo) => {
@@ -127,13 +127,13 @@ Bandwidth's Voice API calls the webRTC infrastructure with the participant token
             uui: `${participant.token};encoding=jwt`,
 ```
 
-This [/bridgeCallAnswered](<https://github.com/Bandwidth-Samples/webrtc-voicebridge-ts/blob/main/src/server.ts#:~:text=*/-,app.post(%22/bridgeCallAnswered%22%2C%20async%20(req%2C%20res)%20%3D%3E%20%7B,%7D)%3B,-/**>) API call links your WebRTC session with Programmable Voice. Then, Bandwidth's Voice API will hit the [/callAnswered](<https://github.com/Bandwidth-Samples/webrtc-voicebridge-ts/blob/main/src/server.ts#:~:text=app.post(%22/callAnswered,%7D)%3B>) endpoint when an outgoing call is answered. The two independent calls can be established synchronously or in parallel, providing the flexibility in management of the endpoints. For example, a single webRTC-side call can be established that connects to a series of PV-side calls, without the need to set up the entire end-end experience for each new voice caller. You can find the complete code and instructions for the sample above in the [bridge repository](https://github.com/Bandwidth-Samples/webrtc-voicebridge-ts).
+This [/bridgeCallAnswered](<https://github.com/Bandwidth-Samples/webrtc-voicebridge-ts/blob/main/src/server.ts#:~:text=*/-,app.post(%22/bridgeCallAnswered%22%2C%20async%20(req%2C%20res)%20%3D%3E%20%7B,%7D)%3B,-/**>) API call links your WebRTC session with Programmable Voice. Then, Bandwidth's Voice API will hit the [/callAnswered](<https://github.com/Bandwidth-Samples/webrtc-voicebridge-ts/blob/main/src/server.ts#:~:text=app.post(%22/callAnswered,%7D)%3B>) endpoint when an outgoing call is answered. The two independent calls can be established synchronously or in parallel, providing the flexibility in management of the endpoints. For example, a single WebRTC-side call can be established that connects to a series of PV-side calls, without the need to set up the entire end-end experience for each new voice caller. You can find the complete code and instructions for the sample above in the [bridge repository](https://github.com/Bandwidth-Samples/webrtc-voicebridge-ts).
 
 If reducing delays in interconnection of voice and WebRTC legs is important, the best option would be to use the bridge verb, which allows setting up the legs in parallel, or establishing one leg early in anticipation of the end to end call.
 
 ## Conference
 
-Although use of the Conference verbe has higher costs than the previous methods, it would be the most sustainable option for dealing with a large group of voice callers. If you expect more than two voice callers in one session, the Conference method is effective if Programmable Voice services are needed for those callers. You can have 20 calls in a conference and keep the session for 24 hours. You also have the freedom to add and remove participants from the conference.
+Although use of the Conference verb has higher costs than the previous methods, it would be the most sustainable option for dealing with a large group of voice callers. If you expect more than two voice callers in one session, the Conference method is effective if Programmable Voice services are needed for those callers. You can have 20 calls in a conference and keep the session for 24 hours. You also have the freedom to add and remove participants from the conference.
 
 ![Conference Verb Model](../../static/img/webrtc-pv-conference.png "Conference")
 
@@ -141,7 +141,7 @@ Conferencing is actively supported by both the WebRTC and Voice platforms, howev
 
 Here’s a [code snippet](https://github.com/Bandwidth-Samples/webrtc-voiceconf-ts) of how the Conference verb is used:
 
-Bandwidth's Voice API calls the webRTC infrastructure with the participant token in the UUI SIP header to allow the correlation ofV2 voice and the webRTC infrastructure
+Bandwidth's Voice API calls the WebRTC SIP interconnect with the participant token in the `UUI` SIP header, to allow the correlation of V2 voice and the WebRTC call legs.
 
 ```js
     const callSipUri = async (participant: ParticipantInfo) => {
