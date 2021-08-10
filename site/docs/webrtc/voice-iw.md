@@ -30,11 +30,11 @@ Once an answer is received on this transaction, an interconnection is establishe
 
 You are able to decide how the flow of the call will proceed based on Bxml verbs that are chosen on setting up the interconnection. Three call control verbs that can be used are: Transfer, Bridge, and Conference, each of which creates a different application experience
 
-| PV Verb used | Solution Characteristics summary                                                                                                                                                                                                  |
-| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Transfer     | The simplest application behavior, with limited opportunity to invoke services on the PV call leg.                                                                                                                                |
-| Bridge       | Suitable for single-leg interconnection where features might be required for the PV call leg, with slightly higher complexity required in the application                                                                         |
-| Conference   | Enables multiple participants on the PV side of the interconnection, and a full range of PV features and capabilities to be applied on the OV call leg. Additional costs are incurred for the use of the voice conference bridge. |
+| Programmable Voice Verb | Solution Characteristics summary |
+| --- | --- |
+| Transfer | The simplest application behavior, with limited opportunity to invoke services on the PV call leg. |
+| Bridge | Suitable for single-leg interconnection where features might be required for the PV call leg, with slightly higher complexity required in the application |
+| Conference | Enables multiple participants on the PV side of the interconnection, and a full range of PV features and capabilities to be applied on the OV call leg. Additional costs are incurred for the use of the voice conference bridge. |
 
 These three interaction models are described in greater detail below.
 
