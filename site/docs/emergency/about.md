@@ -26,8 +26,7 @@ Please be sure to select the correct APIs & login for the services for which you
 
 | Guide | Description |
 |:------|:------------|
-| [About Emergency Notifications] | Learn about Emergency Notifications |
-| [Config Emergency Notifications] | Walk through configuring an Emergency Notifications setup |
+| [About Emergency Notifications](/docs/emergency/dashboard/notifications) | Learn about Emergency Notifications |
 
 ## 911 Access Dashboard (DASH)
 
