@@ -1,6 +1,6 @@
 import com.bandwidth.BandwidthClient;
 import com.bandwidth.http.response.ApiResponse;
-import com.bandwidth.voice.models.ApiCallStateResponse;
+import com.bandwidth.voice.models.CallState;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -19,7 +19,7 @@ public class Sample {
                 .build();
 
         try {
-            CompletableFuture<ApiResponse<ApiCallStateResponse>> completableFuture = client.getVoiceClient().getAPIController().getCallStateAsync(ACCOUNT_ID, callId);
+            CompletableFuture<ApiResponse<CallState>> completableFuture = client.getVoiceClient().getAPIController().getCallAsync(ACCOUNT_ID, callId);
             System.out.println(completableFuture.get().getResult());
         } catch (InterruptedException | ExecutionException e) {
             System.out.println(e.getMessage());

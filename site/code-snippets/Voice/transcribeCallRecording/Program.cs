@@ -21,9 +21,17 @@ class Program
             .VoiceBasicAuthCredentials(username, password)
             .Build();
 
+        var baseUrl = System.Environment.GetEnvironmentVariable("BASE_CALLBACK_URL");
+        var transcribeUrl = string.Concat(baseUrl, "/callbacks/transcribe");
+
+        var request = new TranscribeRecordingRequest
+        {
+            CallbackUrl = transcribeUrl
+        };
+
         try
         {
-            await client.Voice.APIController.CreateTranscribeRecordingAsync(accountId, callId, recordingId);
+            await client.Voice.APIController.CreateTranscribeCallRecordingAsync(accountId, callId, recordingId, request);
         }
         catch (ApiException e)
         {

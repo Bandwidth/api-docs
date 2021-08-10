@@ -18,7 +18,7 @@ class Program
 
         try
         {
-            var response = await client.Voice.APIController.GetQueryMetadataForAccountAsync(accountId);
+            var response = await client.Voice.APIController.GetQueryCallRecordingsAsync(accountId);
             Console.WriteLine(response.Data);
         }
         catch (ApiException e)

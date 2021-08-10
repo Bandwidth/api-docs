@@ -19,9 +19,9 @@ class Program
             .VoiceBasicAuthCredentials(username, password)
             .Build();
 
-        var state = new ModifyCallRecordingState
+        var state = new ModifyCallRecordingRequest
         {
-            State = State2Enum.PAUSED
+            State = State1Enum.PAUSED
         };
 
         try

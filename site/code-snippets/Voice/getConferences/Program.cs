@@ -18,7 +18,7 @@ class Program
 
         try
         {
-            var response = await client.Voice.APIController.GetConferencesByAccountAsync(accountId);
+            var response = await client.Voice.APIController.GetConferencesAsync(accountId);
             Console.WriteLine(response.Data);
         }
         catch (ApiException e)

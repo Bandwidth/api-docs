@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Bandwidth.Standard;
 using Bandwidth.Standard.Exceptions;
-using Bandwidth.Standard.TwoFactorAuth.Models;
+using Bandwidth.Standard.MultiFactorAuth.Models;
 
 class Program
 {
@@ -19,7 +19,7 @@ class Program
         var message = "Your temporary {NAME} {SCOPE} code is {CODE}";
 
         var client = new BandwidthClient.Builder()
-            .TwoFactorAuthBasicAuthCredentials(username, password)
+            .MultiFactorAuthBasicAuthCredentials(username, password)
             .Build();
 
         var request = new TwoFactorCodeRequestSchema
@@ -34,7 +34,7 @@ class Program
 
         try
         {
-            var response = await client.TwoFactorAuth.MFAController.CreateVoiceTwoFactorAsync(accountId, request);
+            var response = await client.MultiFactorAuth.MFAController.CreateVoiceTwoFactorAsync(accountId, request);
             Console.WriteLine(response.Data);
         }
         catch (ApiException e)

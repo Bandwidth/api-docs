@@ -21,7 +21,7 @@ class Program
 
         try
         {
-            var response = await client.Voice.APIController.GetMetadataForConferenceRecordingAsync(accountId, conferenceId, recordingId);
+            var response = await client.Voice.APIController.GetConferenceRecordingAsync(accountId, conferenceId, recordingId);
             Console.WriteLine(response.Data);
         }
         catch (ApiException e)

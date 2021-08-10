@@ -21,7 +21,7 @@ class Program
 
         try
         {
-            var response = await client.WebRtc.APIController.GetParticipantSubscriptionsAsync(accountId, participantId, sessionId);
+            var response = await client.WebRtc.APIController.GetParticipantSubscriptionsAsync(accountId, sessionId, participantId);
             Console.WriteLine(response.Data);
         }
         catch (ApiException e)

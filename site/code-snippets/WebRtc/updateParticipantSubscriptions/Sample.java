@@ -22,7 +22,7 @@ public class Sample {
         subscriptions.setSessionId(sessionId);
 
         try {
-            CompletableFuture<ApiResponse<Void>> completableFuture = client.getWebRtcClient().getAPIController().updateParticipantSubscriptionsAsync(ACCOUNT_ID, participantId, sessionId, subscriptions);
+            CompletableFuture<ApiResponse<Void>> completableFuture = client.getWebRtcClient().getAPIController().updateParticipantSubscriptionsAsync(ACCOUNT_ID, sessionId, participantId, subscriptions);
             System.out.println(completableFuture.get().getResult());
         } catch (InterruptedException | ExecutionException e) {
             System.out.println(e.getMessage());

@@ -51,33 +51,37 @@ module.exports = {
         activeBasePath: 'docs',
         label: 'Docs',
         position: 'left',
-      },{
+      }, {
         label: 'API Reference',
         items: [{
-          to: 'numbers-api-reference',
+          to: 'apis/numbers',
           label: 'Numbers'
         }, {
-          to: 'number-lookup-api-reference',
+          to: 'apis/number-lookup',
           label: 'Phone Number Lookup'
         },{
-          to: 'voice-api-reference',
+          to: 'apis/voice',
           label: 'Voice'
         }, {
-          to: 'messaging-api-reference',
+          to: 'apis/messaging',
           label: 'Messaging'
         }, {
-          to: 'multifactorauth-api-reference',
+          to: 'apis/multifactorauth',
           label: 'Multi-Factor Authentication'
         }, {
-          to: 'webrtc-api-reference',
+          to: 'apis/webrtc',
           label: 'WebRTC'
         }, {
-          to: 'dash-api-reference',
+          to: 'apis/dash',
           label: 'DASH'
         }, {
           to: 'dash-notifications-api-reference',
           label: 'DASH Notifications'
         }]
+      }, {
+        to: 'sdks',
+        label: 'SDKs',
+        activeBasePath: 'sdks'
       }, {
         href: 'https://github.com/Bandwidth-Samples',
         label: 'Samples',
