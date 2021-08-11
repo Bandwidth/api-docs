@@ -14,7 +14,7 @@ const dashNotificationsSpec = fs.readFileSync('./specs/dashNotifications.json', 
 module.exports = {
   title: 'Bandwidth API Docs',
   tagline: 'Learn About Bandwidth\'s Product API\'s',
-  url: 'https://dev.bandwidth.com',
+  url: 'https://new.dev.bandwidth.com',
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
