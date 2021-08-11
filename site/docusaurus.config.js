@@ -40,11 +40,11 @@ module.exports = {
     // },
     sidebarCollapsible: true,
     navbar: {
-      title: 'Bandwidth',
+      title: '',
       hideOnScroll: false,
       logo: {
         alt: 'Bandwidth',
-        src: 'img/bandwidth-logo.png',
+        src: 'img/bandwidth-logo-navbar.png',
       },
       items: [{
         to: 'docs',
