@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from '@theme/Layout';
-import styles from '../../components/skds.module.css';
+import styles from '../../css/skds.module.css';
 import useThemeContext from '@theme/hooks/useThemeContext';
 
 const Title = 'Node';
@@ -20,7 +20,7 @@ export default function sdkPage() {
         <div className="text--center">
           <Svg className={styles.sdkSvg} alt={Title} />
         </div>
-        <div className="resource-table">
+        <div className={styles.sdkProductTable}>
           <table>
           <thead>
             <tr>
