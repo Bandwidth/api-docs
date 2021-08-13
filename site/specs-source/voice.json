@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "description": "Bandwidth's HTTP voice platform",
-    "version": "3.1.0",
+    "version": "3.0.1",
     "title": "Voice",
     "x-server-configuration": {
       "default-environment": "production",
@@ -2584,8 +2584,8 @@
           "uui": {
             "nullable": true,
             "type": "string",
-            "example": "eyJhbGciOiJIUzI1NiJ9.WyJoaSJd.-znkjYyCkgz4djmHUPSXl9YrJ6Nix_XvmlwKGFh5ERM;encoding=jwt, aGVsbG8gd29ybGQ=;encoding=base64",
-            "description": "When calling a SIP URI, this will be sent as the 'User-To-User' header within the initial INVITE. It must end with an 'encoding' parameter as described in https://tools.ietf.org/html/rfc7433. This header cannot exceed 256 characters, including the encoding parameter."
+            "example": "eyJhbGciOiJIUzI1NiJ9.WyJoaSJd.-znkjYyCkgz4djmHUPSXl9YrJ6Nix_XvmlwKGFh5ERM;encoding=jwt,aGVsbG8gd29ybGQ=;encoding=base64",
+            "description": "A comma-separated list of 'User-To-User' headers to be sent in the INVITE when calling a SIP URI. Each value must end with an 'encoding' parameter as described in https://tools.ietf.org/html/rfc7433. Only 'jwt' and 'base64' encodings are allowed. The entire value cannot exceed 350 characters, including parameters and separators."
           },
           "callTimeout": {
             "nullable": true,
@@ -2657,6 +2657,9 @@
           },
           "applicationId": {
             "type": "string"
+          },
+          "machineDetection": {
+            "$ref": "#/components/schemas/MachineDetectionRequest"
           }
         }
       },
@@ -2797,7 +2800,7 @@
             "nullable": true,
             "type": "string"
           },
-          "pai": {
+          "stirShaken": {
             "nullable": true,
             "type": "object",
             "additionalProperties": {
@@ -3160,6 +3163,83 @@
           }
         }
       },
+      "MachineDetectionRequest": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "sync",
+              "async"
+            ]
+          },
+          "detectionTimeout": {
+            "type": "number",
+            "format": "double",
+            "description": "Total amount of time (in seconds) before giving up"
+          },
+          "silenceTimeout": {
+            "type": "number",
+            "format": "double",
+            "description": "Amount of silence (in seconds) before giving up"
+          },
+          "speechThreshold": {
+            "type": "number",
+            "format": "double",
+            "description": "Amount of time (in seconds) for the initial greeting before defaulting to human"
+          },
+          "speechEndThreshold": {
+            "type": "number",
+            "format": "double",
+            "description": "Amount of silence (in seconds) before assuming the callee has finished speaking"
+          },
+          "delayResult": {
+            "type": "boolean"
+          },
+          "callbackUrl": {
+            "nullable": true,
+            "type": "string",
+            "format": "uri"
+          },
+          "callbackMethod": {
+            "nullable": true,
+            "type": "string",
+            "enum": [
+              "POST",
+              "GET"
+            ]
+          },
+          "fallbackUrl": {
+            "nullable": true,
+            "type": "string",
+            "format": "uri"
+          },
+          "fallbackMethod": {
+            "nullable": true,
+            "type": "string",
+            "enum": [
+              "POST",
+              "GET"
+            ]
+          },
+          "username": {
+            "nullable": true,
+            "type": "string"
+          },
+          "password": {
+            "nullable": true,
+            "type": "string"
+          },
+          "fallbackUsername": {
+            "nullable": true,
+            "type": "string"
+          },
+          "fallbackPassword": {
+            "nullable": true,
+            "type": "string"
+          }
+        }
+      },
       "TranscribeRecordingRequest": {
         "type": "object",
         "properties": {
@@ -3247,193 +3327,6 @@
           },
           "id": {
             "nullable": true,
-            "type": "string"
-          }
-        }
-      },
-      "CallCallback": {
-        "type": "object",
-        "description": "This object represents all possible fields that may be included in callbacks related to call events, including events that come from BXML verbs",
-        "properties": {
-          "eventType": {
-            "type": "string"
-          },
-          "eventTime": {
-            "type": "string"
-          },
-          "accountId": {
-            "type": "string"
-          },
-          "applicationId": {
-            "type": "string"
-          },
-          "from": {
-            "type": "string"
-          },
-          "to": {
-            "type": "string"
-          },
-          "direction": {
-            "type": "string"
-          },
-          "callId": {
-            "type": "string"
-          },
-          "callUrl": {
-            "type": "string"
-          },
-          "startTime": {
-            "type": "string"
-          },
-          "answerTime": {
-            "type": "string"
-          },
-          "transferCallerId": {
-            "type": "string"
-          },
-          "transferTo": {
-            "type": "string"
-          },
-          "cause": {
-            "type": "string"
-          },
-          "errorMessage": {
-            "type": "string"
-          },
-          "errorId": {
-            "type": "string"
-          },
-          "endTime": {
-            "type": "string"
-          },
-          "digit": {
-            "type": "string"
-          },
-          "parentCallId": {
-            "type": "string"
-          },
-          "recordingId": {
-            "type": "string"
-          },
-          "duration": {
-            "type": "string"
-          },
-          "fileFormat": {
-            "type": "string"
-          },
-          "mediaUrl": {
-            "type": "string"
-          },
-          "tag": {
-            "type": "string"
-          },
-          "channels": {
-            "type": "integer"
-          },
-          "status": {
-            "type": "string"
-          },
-          "digits": {
-            "type": "string"
-          },
-          "terminatingDigit": {
-            "type": "string"
-          },
-          "transcription": {
-            "$ref": "#/components/schemas/Transcription"
-          },
-          "diversion": {
-            "$ref": "#/components/schemas/Diversion"
-          }
-        }
-      },
-      "Transcription": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "url": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string"
-          },
-          "completedTime": {
-            "type": "string"
-          }
-        }
-      },
-      "Diversion": {
-        "type": "object",
-        "properties": {
-          "reason": {
-            "type": "string"
-          },
-          "privacy": {
-            "type": "string"
-          },
-          "unknown": {
-            "type": "string"
-          },
-          "origTo": {
-            "type": "string"
-          }
-        }
-      },
-      "ConferenceCallback": {
-        "type": "object",
-        "description": "This object represents all possible fields that may be included in callbacks related to conference events",
-        "properties": {
-          "conferenceId": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "eventType": {
-            "type": "string"
-          },
-          "eventTime": {
-            "type": "string"
-          },
-          "tag": {
-            "type": "string"
-          },
-          "callId": {
-            "type": "string"
-          },
-          "to": {
-            "type": "string"
-          },
-          "from": {
-            "type": "string"
-          },
-          "accountId": {
-            "type": "string"
-          },
-          "recordingId": {
-            "type": "string"
-          },
-          "channels": {
-            "type": "integer"
-          },
-          "startTime": {
-            "type": "string"
-          },
-          "endTime": {
-            "type": "string"
-          },
-          "duration": {
-            "type": "string"
-          },
-          "fileFormat": {
-            "type": "string"
-          },
-          "mediaUrl": {
-            "type": "string"
-          },
-          "status": {
             "type": "string"
           }
         }
