@@ -43,7 +43,7 @@ The callback URL will be invoked by Bandwidth when the above events are detected
 | Property      | Description                                                                                                       |
 | :------------ | :---------------------------------------------------------------------------------------------------------------- |
 | event         | one of `onConnect`, `onDisconnect` or `onLeave`                                                                   |
-| timestamp     | a Timestanp of the event, in milliseconds                                                                         |
+| timestamp     | a Timestamp of the event, in milliseconds                                                                         |
 | participantId | The ID of the Participant that registered the `callbackUrl`                                                       |
 | deviceId      | The id of actual device exchanging media                                                                          |
 | tag           | (optional) The `tag` specified on participant creation. If no `tag` was specified this field will not be present. |
