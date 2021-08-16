@@ -16,7 +16,9 @@ import TabItem from "@theme/TabItem";
 
 ## Subscribing to Webhooks
 
-The only API call that allows the registration of a callback / webhook is the POST to the participants resource that is used to create a new participant. The callback/webhook URL is declared in the `POST` to the `https://api.webrtc.bandwidth.com/v1/accounts/{accountId}/participants` endpoint. If the `callbackUrl` property is included in the payload, the value associated with that property is assumed to be a URL. That URL (if found to be valid) will be invoked on events that occur as part of the Participant life cycle.
+### Participant Creation (beta)
+
+The only API call that allows the registration of a callback / webhook is the POST to the participants resource that is used to create a new participant. The callback/webhook URL is declared in the `POST` to the `createParticipants` endpoint. If the `callbackUrl` property is included in the payload, the value associated with that property is assumed to be a URL. That URL (if found to be valid) will be invoked on events that occur as part of the Participant life cycle.
 
 :::note
 Participant event webhooks are currently in Beta, and must be activated by submitting a support ticket to Bandwidth.
