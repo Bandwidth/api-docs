@@ -142,6 +142,7 @@ module.exports = {
       label: "WebRTC",
       items: [
         "webrtc/about",
+        "webrtc/webhooks",
         {
           type: "category",
           label: "Guides and Tutorials",
@@ -149,7 +150,6 @@ module.exports = {
             "webrtc/overview",
             "webrtc/quickstart",
             "webrtc/resources",
-            "webrtc/webhooks",
             "webrtc/voice-iw",
             "webrtc/callflow",
           ],
