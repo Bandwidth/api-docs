@@ -33,8 +33,8 @@ Participant event webhooks may change in the future. All attempts will be made t
 The events that will trigger invocation of the specified URL are:
 
 - `onConnect` - establishment of a signaling connection to allow control of the flow of WebRTC Media.
-- `onLeave` - removal of the signalling connection, prompted by server or client action.
-- `onDisconnect` - loss of the signalling connection, possibly due to loss of IP connectivity, or departure of the client. This may be coincident with an `onLeave` event.
+- `onLeave` - removal of the signaling connection, prompted by server or client action.
+- `onDisconnect` - loss of the signaling connection, possibly due to loss of IP connectivity, or departure of the client. This may be coincident with an `onLeave` event.
 
 ## Request Payload
 
