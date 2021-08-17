@@ -18,23 +18,23 @@ import TabItem from "@theme/TabItem";
 
 ### Participant Creation (beta)
 
-The only API call that allows the registration of a callback / webhook is the POST to the participants resource that is used to create a new participant. The callback/webhook URL is declared in the `POST` to the `createParticipants` endpoint. If the `callbackUrl` property is included in the payload, the value associated with that property is assumed to be a URL. That URL (if found to be valid) will be invoked on events that occur as part of the Participant life cycle.
+The only API call that allows the registration of a callback / webhook is the `POST` to the `createParticipants` endpoint that is used to create a new Participant. If the `callbackUrl` property is included in the payload, the value associated with that property is assumed to be a URL which, if found to be valid, will be invoked on events that occur as part of the Participant life cycle.
 
 :::note
 Participant event webhooks are currently in Beta, and must be activated by submitting a support ticket to Bandwidth.
 :::
 
 :::note
-Participant event webhooks may change in the future. All attempts will be made to retain the syntax and semantics of the current implementation, but until Bandwidth completes the process of learning with our customers that the implementation is optimal, we cannot assure it. Bandwidth welcomes any and all comments on the implementation while in the Beta phase.
+Participant event webhooks may change in the future. All attempts will be made to retain the syntax and semantics of the current implementation, but until Bandwidth completes the process of learning with our customers that the implementation is optimal, we cannot guarantee it. Bandwidth welcomes any and all comments on the implementation while in the Beta phase.
 :::
 
 ## Life Cycle Events
 
 The events that will trigger invocation of the specified URL are:
 
-- 'onConnect' - establishment of the websocket connection that will allow the flow of WebRTC Media, an explicit action on the part of the websocket client.
-- 'onDisconnect' - explicit removal of the websocket connection, prompted by explicit server or client action.
-- 'onLeave' - loss of the websocket connection, possibly due to loss of IP connectivity.
+- `onConnect` - establishment of a signaling connection to allow control of the flow of WebRTC Media.
+- `onLeave` - removal of the signaling connection, prompted by server or client action.
+- `onDisconnect` - loss of the signaling connection, possibly due to loss of IP connectivity, or departure of the client. This may be coincident with an `onLeave` event.
 
 ## Request Payload
 
@@ -46,7 +46,7 @@ The callback URL will be invoked by Bandwidth when the above events are detected
 | timestamp     | a Timestamp of the event, in milliseconds                                                                         |
 | participantId | The ID of the Participant that registered the `callbackUrl`                                                       |
 | deviceId      | The id of actual device exchanging media                                                                          |
-| tag           | (optional) The `tag` specified on participant creation. If no `tag` was specified this field will not be present. |
+| tag           | (optional) The `tag` specified on Participant creation. If no `tag` was specified this field will not be present. |
 
 ## Examples
 
