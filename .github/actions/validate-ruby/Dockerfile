@@ -1,5 +1,5 @@
 # Container image that runs your code
-FROM ruby:latest
+FROM ruby:3.0.2-bullseye
 
 # We need python3 for the script
 RUN apt-get install python3
