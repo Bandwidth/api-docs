@@ -1,5 +1,5 @@
 # Container image that runs your code
-FROM ruby:2.7.3-buster
+FROM ruby:latest
 
 # We need python3 for the script
 RUN apt-get install python3
