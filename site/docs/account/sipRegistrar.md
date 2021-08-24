@@ -113,9 +113,13 @@ After generating the hash value, fill in the Hash1 and Hash2 values to create th
 #### Using the UI  {#using-the-ui}
 Select `Sip Credentials` from the account overview page on the [Bandwidth Dashboard](dashboard.bandwidth.com)
 
-<img src="../../static/img/sip_credentials.png" style="max-width:95%">
+<img
+    src='../../static/img/sip_credentials.png'
+    alt='Sip Credentials'/>
 
-<img src="../../static/img/create_sip_credentials.png" style="max-width:95%">
+<img
+    src='../../static/img/create_sip_credentials.png'
+    alt='Create Sip Credentials Page'/>
 
 #### Using the API
 You can also use the API to create SIP credentials after generating the MD5 hash value. When using the API, Bandwidth will not generate the hashes for you - you must supply your own hash values. You can create multiple SIP credentials within one API call.
