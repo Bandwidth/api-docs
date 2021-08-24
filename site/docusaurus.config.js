@@ -26,6 +26,11 @@ module.exports = {
     colorMode: {
       disableSwitch: false    // for disabling dark mode
     },
+    algolia: {
+        apiKey: '240bfd4951231197541ea28184808812',
+        indexName: 'bandwidth',
+        contextualSearch: false, // useful for versioned Docusaurus sites
+    },
     announcementBar: {
       id: 'new_docsite_flag', // Any value that will identify this message.
       content:
