@@ -14,6 +14,6 @@ keywords:
 image: ../../static/img/bandwidth-logo.png
 ---
 
-Rate limits for MFA are based on your [Voice API Rate Limits](../voice/about.md) and [Messaging API Rate Limits](../messaging/about.md).
+Rate limits for MFA are based on your [Voice API Rate Limits](../voice/about) and [Messaging API Rate Limits](../messaging/about).
 
 Additionally, rate limits apply for attempting to verifying invalid codes. Please see the `429` section under [Errors](./errors.md#http-429).
