@@ -1,24 +1,45 @@
 ---
 id: about
-title: About
-slug: /messaging   
+title: Messaging
+sidebar_label: About
+slug: /messaging
 description: A general overview of Bandwidth's Messaging API
 keywords:
   - bandwidth
   - messaging
-hide_title: true
+hide_title: false
 image: ../../static/img/bandwidth-logo.png
 ---
+
+export const Highlight = ({children, color}) => (
+    <span
+      style={{
+        backgroundColor: color,
+        borderRadius: '2px',
+        color: '#fff',
+        padding: '0.2rem',
+      }}>
+      {children}
+    </span>
+  );
+
+export const Svg = require('../../static/img/icon-messaging.svg').default;
+
+<Svg className='about-image' /> <br/>
+
+The Bandwidth Messaging API is used to send SMS and MMS messages over HTTP protocol.
 
 ## Base API URL
 
 `https://messaging.bandwidth.com/api/v2/users/{accountId}`
 
-## Message Storage
+## Message Creation/Acceptance
 
-Bandwidth's Messaging API supplies a GET method to allow you to query historical data regarding messages.
+The messaging API works off of an internal queuing system.  As such, when you <Highlight color="#079CEE">POST</Highlight> to `/messages` to create a new message, Bandwidth will reply with an `HTTP 202 - Accepted`.  This indicates that the message has been placed in the queue.
 
-Once we have successfully delivered the webhook event and receive an `HTTP 2xx` response, Bandwidth allows you to query details about those messages. **However**, Bandwidth does not store any text message content for privacy reasons - only metadata.
+As the message progresses through the internal system you will receive a Message Delivered webhook when the message has been handed off to the downstream carrier.
+
+If at any-point through the process the message fails, you will receive a detailed [`message-failed`](/docs/messaging/webhooks#message-failed) webhook with an error code describing the reason for failure.
 
 ## Message Webhooks
 
@@ -26,13 +47,11 @@ Bandwidth will attempt to deliver _every_ webhook until your server replies with
 
 After 24 hours, if your server has not returned a `HTTP 2xx` code, Bandwidth will no longer try to deliver the webhook.
 
-## Message Creation/Acceptance
+## Message Storage
 
-The messaging API works off of an internal queuing system.  As such, when you <code class="post">POST</code> to the `v2/.../messages` to create a new message, Bandwidth will reply with an `HTTP 202 - Accepted`.  This indicates that the message has been placed on the queue
+Bandwidth's Messaging API supplies a GET method to allow you to query historical data regarding messages.
 
-As the message progresses through the internal system you will receive a Message Delivered webhook when the message has been handed off to the downstream carrier.
-
-If at any-point through the process the message fails, you will receive a detailed Message Failed webhook with an error code describing the reason for failure.
+Once we have successfully delivered the webhook event and receive an `HTTP 2xx` response, Bandwidth allows you to query details about those messages. **However**, Bandwidth does not store any text message content for privacy reasons - only metadata.
 
 ## Message Segment Counts
 
