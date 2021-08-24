@@ -111,7 +111,7 @@ MD5 ("bob@somewhere.com@realmname.<randomAccountHex>.auth.bandwidth.com:realmnam
 After generating the hash value, fill in the Hash1 and Hash2 values to create the SIP credentials.
 
 #### Using the UI  {#using-the-ui}
-Select `Sip Credentials` from the account overview page on the [Bandwidth Dashboard](dashboard.bandwidth.com)
+Select `Sip Credentials` from the account overview page on the [Bandwidth Dashboard](https://dashboard.bandwidth.com)
 
 <img
     src='../../static/img/sip_credentials.png'
