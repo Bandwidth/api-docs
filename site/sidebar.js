@@ -14,6 +14,8 @@ module.exports = {
         "account/structure",
         "account/setup",
         "account/applications",
+        "account/networkBridge",
+        "account/sipRegistrar",
         "account/subscriptions",
       ],
     },
