@@ -10,28 +10,32 @@ keywords:
   - registrar
   - sip auth
   - sip credential
-  - twilio
 image: ../../static/img/bandwidth-logo.png
 ---
 
 ## Setup Your Dashboard Account For Registrar {#top}
 This guide walks through the initial setup for Bandwidth's Registrar. The Registrar allows you to use Bandwidth to create phone calls to and from our network using registered devices.
 
-You must contact [Bandwidth Customer Support](http://support.bandwidth.com/) to get your SIP domain and port number.
-
 ## Pre-Reqs {#pre-requs}
-* [Twilio Account](http://twilio.com/)
 * [Bandwidth Dashboard Account](http://bandwidth.com/)
 * Registrar activated: [_contact sales_](https://www.bandwidth.com/)
-* Your default port ex: `5006` [_contact support_](http://support.bandwidth.com/)
 
 ## Steps {#steps}
 1. [Create New Realm](#create-new-realm)
 1. [Create New SIP Credentials](#create-new-sip-credentials)
 1. [Register Device](#register-sip-device)   
-1. [Create call via Twilio with new SIP Creds](#create-call)
+1. [Create call via Voice API](#create-call)
 
-## Create New Realm {#create-new-realm}
+### Create New Realm {#create-new-realm}
+
+#### Using the UI  {#using-the-ui}
+Select `Sip Credentials` from the account overview page on the [Bandwidth Dashboard](https://dashboard.bandwidth.com)
+
+<img
+  src={require('../../static/img/sip_credentials.png').default}
+  alt="Sip Credentials"
+/>
+
 In order to route the calls through Bandwidth, you'll need to create a new realm.  Upon realm creation, it will be used as part of the `Realm` combined with `<randomAccountHex>.auth.bandwidth.com`.
 
 | Value      | Required | Description |
@@ -39,8 +43,15 @@ In order to route the calls through Bandwidth, you'll need to create a new realm
 | `Realm` | required | String identifying the realm. |
 | `Description`   | optional | A string used for a description of the realm |
 
-## Create New Sip Credentials {#create-new-sip-credentials}
-In order to route the outbound calls through Bandwidth, you'll need to create a new set of SIP credentials. To generate your own hash values, you can follow the instructions below, but if you would like Bandwidth to generate those hash values for you, you can skip ahead to the [Using the UI](#using-the-ui) section of this guide.
+
+<img
+  src={require('../../static/img/create_realm.png').default}
+  alt="Create Realm Page"
+/>
+
+
+### Create New Sip Credentials {#create-new-sip-credentials}
+In order to route the outbound calls through Bandwidth, you'll need to create a new set of SIP credentials. To generate your own hash values, you can skip ahead to the  [Using the API](#using-the-api) section of this guide.
 
 | Value      | Required | Description |
 |------------|----------|-------------|
@@ -51,12 +62,30 @@ In order to route the outbound calls through Bandwidth, you'll need to create a 
 | `Hash1`    | required | String representing a potential Hash values used to authenticate the client. The value should be computed from an MD5 Hash of: {composite-username}:{Realm}:{Password}. |
 | `Hash2`   | required | String representing a potential Hash value used to authenticate the client. The value should be computed from an MD5 Hash of {composite-username}:{Realm}:{Realm}:{Password}. |
 
-The Twilio platform requires a `SIPAuthUsername` and a `SIPAuthPassword`. These examples assume that your `username=sipauthtest` and `password=password`.
+Select `+ ADD` to add a Sip Credential
 
-### Register Device {#register-sip-device}
-After the realm and associated Sip Credential has been provisioned within the Bandwidth Dashboard, input that information into a registered device to begin sending registrations and place SIP calls.
+<img
+  src={require('../../static/img/add_sip_cred_button.png').default}
+  alt="Add Sip Credential Button"
+/>
 
-### Generate MD5 Hash {#generate-md5-hash}
+Enter a Username, Password and Realm for the Sip Credential
+
+<img
+  src={require('../../static/img/create_sip_credentials.png').default}
+  alt="Create Sip Credentials Page"
+/>
+
+The Sip Credentials and Realms will be displayed here
+
+<img
+  src={require('../../static/img/sip_registrar_realms.png').default}
+  alt="Sip Registrar Realms"
+/>
+
+#### Using the API {#using-the-api}
+
+#### Generate MD5 Hash {#generate-md5-hash}
 Either using the command line or an [online tool](http://www.miraclesalad.com/webtools/md5.php) generate the md5 hash from the username and desired password.
 
 Most *nix (mac, linux) come with MD5 hash built in. Check that MD5 is installed by opening up the terminal and typing:
@@ -76,7 +105,7 @@ Once MD5 is installed, run the command: `md5 -s {composite-username}:{Realm}:{Pa
 | `sipauthtest`      | : | `realmname.<randomAccountHex>.auth.bandwidth.com` | : | `password` |
 ```
 md5 -s sipauthtest:realmname.<randomAccountHex>.auth.bandwidth.com:password
-MD5 ("sipauthtest:realmname.<randomAccountHex>.auth.bandwidth.com:password") = fe438bddfc087dda89d29e637f5684ab
+MD5 ("sipauthtest:realmname.<randomAccountHex>.auth.bandwidth.com:password") = 93152819b63a1dc050665e544e015eec
 ```
 
 ##### Generate MD5 `Hash2` _without_ Domain
@@ -107,22 +136,8 @@ md5 -s bob@somewhere.com@realmname.<randomAccountHex>.auth.bandwidth.com:realmna
 MD5 ("bob@somewhere.com@realmname.<randomAccountHex>.auth.bandwidth.com:realmname.<randomAccountHex>.auth.bandwidth.com:password") = 39679d2a73c2e1ea719621bc0d8fdac8
 ```
 
-### Add the Newly Created Hash to Sip Credentials {#add-new-credentials}
-After generating the hash value, fill in the Hash1 and Hash2 values to create the SIP credentials.
-
-#### Using the UI  {#using-the-ui}
-Select `Sip Credentials` from the account overview page on the [Bandwidth Dashboard](https://dashboard.bandwidth.com)
-
-<img
-    src='../../static/img/sip_credentials.png'
-    alt='Sip Credentials'/>
-
-<img
-    src='../../static/img/create_sip_credentials.png'
-    alt='Create Sip Credentials Page'/>
-
-#### Using the API
-You can also use the API to create SIP credentials after generating the MD5 hash value. When using the API, Bandwidth will not generate the hashes for you - you must supply your own hash values. You can create multiple SIP credentials within one API call.
+#### Add the Newly Created Hash to Sip Credentials {#add-new-credentials}
+After generating the hash value, fill in the Hash1 and Hash2 values to create the SIP credentials. When using the API, Bandwidth will not generate the hashes for you - you must supply your own hash values. You can create multiple SIP credentials within one API call.
 
 ```http
 POST https://dashboard.bandwidth.com/api/accounts/{accountId}/sipCredentials
@@ -133,36 +148,28 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 <SipCredentials>
     <SipCredential>
         <UserName>sipauthtest</UserName>
-        <Hash1>fe438bddfc087dda89d29e637f5684ab</Hash1>
-        <Hash1b>79bb0e55551e14a2f329a282c7cf145</Hash1b>
+        <Hash1>93152819b63a1dc050665e544e015eec</Hash1>
+        <Hash1b>c3381b140fbb5e6d7c3ecab774155b6e</Hash1b>
     </SipCredential>
     <SipCredential>
         <UserName>bob</UserName>
         <Domain>somewhere.com</Domain>
-        <Realm>realmName<Realm>
+        <Realm>realmname.<randomAccountHex>.auth.bandwidth.com<Realm>
         <Hash1>817d76e91aad032a8c272229f468bfb2</Hash1>
         <Hash1b>39679d2a73c2e1ea719621bc0d8fdac8</Hash1b>
     </SipCredential>
 </SipCredentials>
 ```
 
-## Create Call Using Sip Authentication {#create-call}
+### Register Device {#register-sip-device}
+After the realm and associated Sip Credential has been provisioned within the Bandwidth Dashboard, input that information into a registered device to begin sending registrations and place SIP calls.
+
+### Create Call Using Voice API {#create-call}
 To create a call using Sip Authentication format:
 
-* `TO` field like `sip:{Desired_to_number}@realmname.<randomAccountHex>.auth.bandwidth.com:{Port}`
+* `TO` field like `sip:sipauthtest@realmname.<randomAccountHex>.auth.bandwidth.com`
 * `SipAuthUsername` as the username created above like `sipauthtest`
 * `SipAuthPassword` as the password used to create the MD5 hash like `password`
 
 ##### Format the `TO` Field to use Sip Authentication
-`sip:+17778889999@realmname.<randomAccountHex>.auth.bandwidth.com:5006`
-
-##### Curl Request to Create the Call
-```bash
-curl 'https://api.twilio.com/2010-04-01/Accounts/{AccountId}/Calls.json' -X POST \
---data-urlencode 'To=sip:+17778889999@realmname.<randomAccountHex>.auth.bandwidth.com:5006' \
---data-urlencode 'From=+15553334444' \
---data-urlencode 'Url=http://requestb.in/zolm8azo' \
---data-urlencode 'SipAuthUsername=sipauthtest' \
---data-urlencode 'SipAuthPassword=password' \
--u {AccountId}:{AuthToken}
-```
+`sip:+sipauthtest@realmname.<randomAccountHex>.auth.bandwidth.com`

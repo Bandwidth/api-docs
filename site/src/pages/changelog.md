@@ -7,6 +7,7 @@ slug: /changelog
 
 | Date | Notes |
 |--|--|
+| August 25th, 2021 | Provide corrections to Sip Registrar guide |
 | August 24th, 2021 | Added Sip Registrar guide and updated Network Bridge guide |
 | August 2nd, 2021 | Added callback objects to the voice OpenAPI spec |
 | July 30th, 2021 | Updated `media` description for `createMessages` to include Content-Disposition header information |
