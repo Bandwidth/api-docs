@@ -16,7 +16,10 @@ const Github = () => {
 
 export default function sdkPage() {
     return(
-      <Layout>
+      <Layout
+        title={`PHP SDK`}
+        description="A list of resources for the PHP SDK."
+        keywords="Bandwidth,SDK,PHP">
         <div className="text--center">
           <Svg className={styles.sdkSvg} alt={Title} />
         </div>

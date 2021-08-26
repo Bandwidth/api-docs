@@ -18,7 +18,7 @@ export default function sdkPage() {
     return(
       <Layout
         title={`Ruby SDK`}
-        description="An list of resources for the Ruby SDK."
+        description="A list of resources for the Ruby SDK."
         keywords="Bandwidth,SDK,Ruby">
         <div className="text--center">
           <Svg className={styles.sdkSvg} alt={Title} />

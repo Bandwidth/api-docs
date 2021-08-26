@@ -16,7 +16,10 @@ const Github = () => {
 
 export default function sdkPage() {
     return(
-      <Layout>
+      <Layout
+        title={`Node SDK`}
+        description="A list of resources for the Node.js SDK."
+        keywords="Bandwidth,SDK,Node,JavaScript">
         <div className="text--center">
           <Svg className={styles.sdkSvg} alt={Title} />
         </div>
