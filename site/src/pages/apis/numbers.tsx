@@ -6,7 +6,10 @@ import Iframe from 'react-iframe'
 export default function ApiReference() {
     const {siteConfig} = useDocusaurusContext();
     return (
-        <Layout>
+        <Layout
+          title={`Numbers API Reference`}
+          description="Everything you'll need to start working with our Numbers API."
+          keywords="Bandwidth,API,Numbers">
             <main>
               <br/>
               <div class="numbersHeader">

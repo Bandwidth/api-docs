@@ -19,7 +19,10 @@ const RedocConfig = () => {
 
 export default function ApiReference() {
     return (
-        <Layout>
+        <Layout
+          title={`Phone Number Lookup API Reference`}
+          description="Authentication and Number Lookup. Everything you'll need to start working with our Phone Number Lookup API."
+          keywords="Bandwidth,API,Phone,Number,Lookup">
             <main>
               <div className="RedocStandalone">
                 <RedocConfig />

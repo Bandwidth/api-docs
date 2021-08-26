@@ -19,7 +19,10 @@ const RedocConfig = () => {
 
 export default function ApiReference() {
     return (
-        <Layout>
+        <Layout
+          title={`Multi-Factor Authentication API Reference`}
+          description="Voice &amp; Messaging MFA and MFA Verification. Everything you'll need to start working with our MFA API."
+          keywords="Bandwidth,API,MFA,2FA,Authentication">
           <main>
             <div className="RedocStandalone">
               <RedocConfig />

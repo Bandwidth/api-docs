@@ -19,7 +19,10 @@ const RedocConfig = () => {
 
 export default function ApiReference() {
     return (
-        <Layout>
+        <Layout
+          title={`Voice API Reference`}
+          description="Authentication, Calls, Recordings, and Conferences. Everything you'll need to start working with our Voice API."
+          keywords="Bandwidth,API,Voice,Call,Recording,Conference">
           <main>
             <div className="RedocStandalone">
               <RedocConfig />

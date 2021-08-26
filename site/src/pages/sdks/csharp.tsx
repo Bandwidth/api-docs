@@ -17,8 +17,8 @@ const Github = () => {
 export default function sdkPage() {
     return(
       <Layout
-        title={`C Sharp SDK`}
-        description="A list of resources for the C Sharp SDK."
+        title={`C# SDK`}
+        description="A list of resources for the C# SDK."
         keywords="Bandwidth,SDK,C#">
         <div className="text--center">
           <Svg className={styles.sdkSvg} alt={Title} />
