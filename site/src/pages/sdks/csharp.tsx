@@ -19,7 +19,7 @@ export default function sdkPage() {
       <Layout
         title={`C# SDK`}
         description="A list of resources for the C# SDK."
-        keywords="Bandwidth,SDK,C#">
+        keywords="Bandwidth,SDK,C#,.NET">
         <div className="text--center">
           <Svg className={styles.sdkSvg} alt={Title} />
         </div>
