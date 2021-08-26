@@ -21,7 +21,7 @@ export default function ApiReference() {
     return (
         <Layout
           title={`International Messaging API Reference`}
-          description="Authentication, Media, and Messages. Everything you'll need to start working with our International Messaging API."
+          description="Authentication and Messages. Everything you'll need to start working with our International Messaging API."
           keywords="Bandwidth,API,Messaging,Media,International">
             <main>
               <div className="RedocStandalone">
