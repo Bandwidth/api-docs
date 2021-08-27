@@ -19,7 +19,10 @@ const RedocConfig = () => {
 
 export default function ApiReference() {
     return (
-        <Layout>
+        <Layout
+          title={`DASH Notifications API Reference`}
+          description="Authentication and Notifications. Everything you'll need to start working with our DASH Notifications API."
+          keywords="Bandwidth,API,DASH,Notification">
           <main>
             <div className="RedocStandalone">
               <RedocConfig />

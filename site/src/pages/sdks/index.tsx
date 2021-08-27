@@ -23,7 +23,8 @@ export default function Home() {
   return (
     <Layout
       title="Bandwidth SDKs"
-      description="Bandwidth API Reference, documentation, SDKs, guides, examples and more. Get everything you need to build with Bandwidth.">
+      description="Bandwidth API Reference, documentation, SDKs, guides, examples and more. Get everything you need to build with Bandwidth."
+      keywords="Bandwidth,SDK,guide,documentation,resources,Java,C#,Node,JavaScript,Python,Ruby,PHP">
       <HomepageHeader />
       <main>
         <SdkLanguages />

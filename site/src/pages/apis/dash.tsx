@@ -19,7 +19,10 @@ const RedocConfig = () => {
 
 export default function ApiReference() {
     return (
-        <Layout>
+        <Layout
+          title={`DASH API Reference`}
+          description="Authentication, URIs, and Location. Everything you'll need to start working with our DASH API."
+          keywords="Bandwidth,API,DASH,URI,Location">
           <main>
             <div className="RedocStandalone">
               <RedocConfig />

@@ -19,7 +19,10 @@ const RedocConfig = () => {
 
 export default function ApiReference() {
     return (
-        <Layout>
+        <Layout
+          title={`WebRtc API Reference`}
+          description="Authentication, Participants, and Sessions. Everything you'll need to start working with our WebRtc API."
+          keywords="Bandwidth,API,WebRtc">
           <main>
             <div className="RedocStandalone">
               <RedocConfig />

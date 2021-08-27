@@ -19,7 +19,10 @@ const RedocConfig = () => {
 
 export default function ApiReference() {
     return (
-        <Layout>
+        <Layout
+          title={`Messaging API Reference`}
+          description="Authentication, Media, and Messages. Everything you'll need to start working with our Messaging API."
+          keywords="Bandwidth,API,Messaging,Media">
             <main>
               <div className="RedocStandalone">
                 <RedocConfig />
