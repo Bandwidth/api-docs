@@ -18,7 +18,7 @@ const recordingId = 'r-abc12345-6def-abc1-2345-6defabc12345';
 
 const getCallRecording = async function() {
   try {
-      const response = await controller.getMetadataForRecording(accountId, callId, recordingId);
+      const response = await controller.getCallRecording(accountId, callId, recordingId);
       console.log(response)
   } catch(error) {
       console.error(error);

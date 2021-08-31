@@ -13,15 +13,12 @@ const controller = new ApiController(client);
 
 const accountId = BW_ACCOUNT_ID;
 
-const callId = 'c-abc12345-6defabc1-2345-6def-abc1-23456defabc1';
+const conferenceId = 'conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8';
+const recordingId = 'r-abc12345-6def-abc1-2345-6defabc12345';
 
-const getCallRecordings = async function() {
-  try {
-      const response = await controller.getCallRecordings(accountId, callId, recordingId);
-      console.log(response)
-  } catch(error) {
-      console.error(error);
-  }
+try {
+    const response = await controller.getDownloadConferenceRecording(accountId, conferenceId, recordingId);
+    console.log(response);
+} catch (error) {
+    console.error(error);
 }
-
-getCallRecordings();

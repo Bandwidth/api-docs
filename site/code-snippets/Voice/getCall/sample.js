@@ -17,7 +17,7 @@ const callId = 'c-abc12345-6defabc1-2345-6def-abc1-23456defabc1';
 
 const getCall = async function() {
   try {
-      const response = await controller.getCallState(accountId, callId);
+      const response = await controller.getCall(accountId, callId);
       console.log(response)
   } catch(error) {
       console.error(error);
