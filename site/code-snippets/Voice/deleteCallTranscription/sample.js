@@ -18,7 +18,7 @@ const recordingId = 'r-abc12345-6def-abc1-2345-6defabc12345';
 
 const deleteTranscription = async function() {
   try {
-      const response = await controller.deleteRecordingTranscription(accountId, callId, recordingId);
+      const response = await controller.deleteCallTranscription(accountId, callId, recordingId);
       console.log(response.body);
   } catch(error) {
       console.error(error);
