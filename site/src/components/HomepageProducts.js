@@ -43,6 +43,26 @@ const ProductList = [
       </>
     ),
   },
+  {
+    title: 'Multi-Factor Authentication',
+    Svg: require('../../static/img/icon-mfa.svg').default,
+    link: '/docs/mfa/about',
+    description: (
+      <>
+        The security of your users’ personal information is critical—and so is your UX. Bandwidth’s Authentication API helps you accomplish both missions quickly and easily.
+      </>
+    ),
+  },
+  {
+    title: 'WebRTC',
+    Svg: require('../../static/img/icon-WebRTC.svg').default,
+    link: '/docs/webrtc',
+    description: (
+      <>
+        Bandwidth’s WebRTC Calling API (Web Real-Time Communication) enables you to quickly add voice calling to your web-based applications without the need for any telecom infrastructure.
+      </>
+    ),
+  },
 ];
 
 function Product({Svg, title, description, link}) {
