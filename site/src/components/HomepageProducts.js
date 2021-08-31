@@ -49,7 +49,7 @@ const ProductList = [
     link: '/docs/mfa/about',
     description: (
       <>
-        The security of your users’ personal information is critical—and so is your UX. Bandwidth’s Authentication API helps you accomplish both missions quickly and easily.
+        Easily add multi-factor authentication to your software, website, or application.
       </>
     ),
   },
@@ -59,7 +59,7 @@ const ProductList = [
     link: '/docs/webrtc',
     description: (
       <>
-        Bandwidth’s WebRTC Calling API (Web Real-Time Communication) enables you to quickly add voice calling to your web-based applications without the need for any telecom infrastructure.
+        Quickly add voice calling to your web-based applications without the need for any telecom infrastructure.
       </>
     ),
   },
