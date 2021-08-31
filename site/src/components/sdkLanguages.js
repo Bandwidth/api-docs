@@ -1,6 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
-import styles from '../css/skds.module.css';
+import styles from '../css/sdks.module.css';
 
 const GithubLogo = require('../../static/img/github.png').default;
 
