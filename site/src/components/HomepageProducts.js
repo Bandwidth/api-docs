@@ -43,6 +43,26 @@ const ProductList = [
       </>
     ),
   },
+  {
+    title: 'Multi-Factor Authentication',
+    Svg: require('../../static/img/icon-mfa.svg').default,
+    link: '/docs/mfa/about',
+    description: (
+      <>
+        Easily add multi-factor authentication to your software, website, or application.
+      </>
+    ),
+  },
+  {
+    title: 'WebRTC',
+    Svg: require('../../static/img/icon-WebRTC.svg').default,
+    link: '/docs/webrtc',
+    description: (
+      <>
+        Quickly add voice calling to your web-based applications without the need for any telecom infrastructure.
+      </>
+    ),
+  },
 ];
 
 function Product({Svg, title, description, link}) {

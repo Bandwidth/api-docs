@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from '@theme/Layout';
-import styles from '../../css/skds.module.css';
+import styles from '../../css/sdks.module.css';
 import useThemeContext from '@theme/hooks/useThemeContext';
 
 const Title = 'Java';
