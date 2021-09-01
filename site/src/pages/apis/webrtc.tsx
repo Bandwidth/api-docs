@@ -7,9 +7,9 @@ export default function ApiReferencePage() {
     const {siteConfig} = useDocusaurusContext();
     return (
         <Layout
-          title={`DASH Notifications API Reference`}
-          description="Authentication and Notifications. Everything you'll need to start working with our DASH Notifications API."
-          keywords="Bandwidth,API,DASH,Notification">
+          title={`WebRtc API Reference`}
+          description="Authentication, Participants, and Sessions. Everything you'll need to start working with our WebRtc API."
+          keywords="Bandwidth,API,WebRtc">
             <ApiReference spec={siteConfig.customFields.webRTCSpec} color={siteConfig.customFields.bwBlue} />
         </Layout>
     );

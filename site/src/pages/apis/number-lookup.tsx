@@ -7,9 +7,9 @@ export default function ApiReferencePage() {
     const {siteConfig} = useDocusaurusContext();
     return (
         <Layout
-          title={`DASH Notifications API Reference`}
-          description="Authentication and Notifications. Everything you'll need to start working with our DASH Notifications API."
-          keywords="Bandwidth,API,DASH,Notification">
+          title={`Phone Number Lookup API Reference`}
+          description="Authentication and Number Lookup. Everything you'll need to start working with our Phone Number Lookup API."
+          keywords="Bandwidth,API,Phone,Number,Lookup">
             <ApiReference spec={siteConfig.customFields.phoneNumberLookupSpec} color={siteConfig.customFields.numbersMaroon} />
         </Layout>
     );
