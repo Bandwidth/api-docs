@@ -34,7 +34,7 @@ module.exports = {
         },
         googleAnalytics: {
             trackingID: 'UA-62651840-1',
-            anonymizeIP: true,
+            anonymizeIP: false,
         },
         announcementBar: {
             id: 'new_docsite_flag', // Any value that will identify this message.
