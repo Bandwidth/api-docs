@@ -32,6 +32,10 @@ module.exports = {
             indexName: 'bandwidth',
             contextualSearch: false, // useful for versioned Docusaurus sites
         },
+        googleAnalytics: {
+            trackingID: 'UA-62651840-1',
+            anonymizeIP: true,
+        },
         announcementBar: {
             id: 'new_docsite_flag', // Any value that will identify this message.
             content: 'Welcome to the new home of Bandwidth\'s Developer Documentation. To visit the old docs, <a target="_blank" href="https://dev.bandwidth.com/">click here.</a>',
