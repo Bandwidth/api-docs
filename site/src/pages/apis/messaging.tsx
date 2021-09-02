@@ -1,33 +1,16 @@
 import React from 'react';
 import Layout from '@theme/Layout';
-import useThemeContext from '@theme/hooks/useThemeContext';    // returns whether or not the theme is light or dark
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import { RedocStandalone } from 'redoc';
-import { lightTheme, darkTheme } from '../../css/redocTheme';
+import ApiReference from '../../components/ApiReference';
 
-const RedocConfig = () => {
-  const {siteConfig} = useDocusaurusContext();
-  const {isDarkTheme} = useThemeContext();
-  return <RedocStandalone spec={siteConfig.customFields.messagingSpec} options={{
-                      scrollYOffset: '.navbar', // makes the fixed sidebar and scrolling play nicey with docusaurus navbar
-                      pathInMiddlePanel: true,
-                      expandSingleSchemaField: true,
-                      menuToggle: true,
-                      theme: isDarkTheme ? darkTheme(siteConfig.customFields.messagingGreen) : lightTheme(siteConfig.customFields.messagingGreen)
-                  }}/>
-}
-
-export default function ApiReference() {
+export default function ApiReferencePage() {
+    const {siteConfig} = useDocusaurusContext();
     return (
         <Layout
           title={`Messaging API Reference`}
           description="Authentication, Media, and Messages. Everything you'll need to start working with our Messaging API."
           keywords="Bandwidth,API,Messaging,Media">
-            <main>
-              <div className="RedocStandalone">
-                <RedocConfig />
-              </div>
-            </main>
+            <ApiReference spec={siteConfig.customFields.messagingSpec} color={siteConfig.customFields.messagingGreen} />
         </Layout>
     );
 }
