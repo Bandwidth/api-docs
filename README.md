@@ -56,7 +56,7 @@ To add a new spec - there are a few steps that need to be taken:
   1. In `./site/docusaurus.config.js`, add an import statement for the new spec. Ex.: `const newSpec = fs.readFileSync('./specs/new.json', 'utf-8');`
   1. In `./site/docusaurus.config.js`, add the new spec as a custom field at the bottom of the config. Ex.: `newSpec: JSON.parse(newSpec),`
   1. In `./site/src/pages/apis`, create a `newSpec.tsx` file and populate the needed React RedocStandalone code - recommend copy/pasting the `./site/templates/apiReference.tsx` file
-    * Dont forget to update the `Title`, `Description`, and `Keywords` in the `<Layout>` tag for SEO optimization
+        * Dont forget to update the `Title`, `Description`, and `Keywords` in the `<Layout>` tag for SEO optimization
   1. In `./site/docusaurus.config.js`, add the spec to the Navbar Items object. Ex:
       ```js
       {
