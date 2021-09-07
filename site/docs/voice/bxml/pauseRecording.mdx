@@ -101,10 +101,9 @@ puts response.to_bxml()
 <TabItem value="nodejs">
 
 ```js
-var pauseRecording = new BandwidthBxml.Verbs.PauseRecording();
+const pauseRecording = new PauseRecording()
 
-var response = new BandwidthBxml.Response();
-response.addVerb(pauseRecording);
+const response = new Response(pauseRecording);
 
 console.log(response.toBxml());
 ```
@@ -399,35 +398,34 @@ puts response.to_bxml()
 <TabItem value="nodejs">
 
 ```js
-var speakSentenceStart = new BandwidthBxml.Verbs.SpeakSentence();
-speakSentenceStart.setSentence("This call is being recorded. Please wait while we transfer you.");
-speakSentenceStart.setVoice("bridget");
+const speakSentenceStart = new SpeakSentence({
+    sentence: "This call is being recorded. Please wait while we transfer you."
+});
 
-var startRecording = new BandwidthBxml.Verbs.StartRecording();
-startRecording.setRecordingAvailableUrl("https://myapp.com/noBXML");
+const startRecording = new StartRecording();
 
-var phoneNumber = new BandwidthBxml.Verbs.PhoneNumber();
-phoneNumber.setNumber("+15554567892");
-var transfer = new BandwidthBxml.Verbs.Transfer();
-transfer.addPhoneNumber(phoneNumber);
+const number = new Transfer.PhoneNumber({
+    number: "+19195551234"
+});
 
-var pauseRecording = new BandwidthBxml.Verbs.PauseRecording();
+const transfer = new Transfer({
+    phoneNumbers: [number]
+});
 
-var speakSentenceGather = new BandwidthBxml.Verbs.SpeakSentence();
-speakSentenceGather.setSentence("Press one if you want to be transferred to another number.");
-speakSentenceGather.setVoice("kate");
-var gather = new BandwidthBxml.Verbs.Gather();
-gather.setSpeakSentence(speakSentenceGather);
-gather.setMaxDigits(1);
-gather.setFirstDigitTimeout(10);
-gather.setGatherUrl("https://myapp.com/gatherCallbackBxml");
+const pauseRecording = new PauseRecording();
 
-var response = new BandwidthBxml.Response();
-response.addVerb(speakSentenceStart);
-response.addVerb(startRecording);
-response.addVerb(transfer);
-response.addVerb(pauseRecording);
-response.addVerb(gather);
+const speakSentenceGather = new SpeakSentence({
+    sentence: "This call is being recorded. Please wait while we transfer you."
+});
+
+const gather = new Gather({
+    gatherUrl: "https://myapp.com/gatherCallbackBxml",
+    firstDigitTimeout: 10,
+    maxDigits: 1,
+    audioProducers: [speakSentenceGather]
+});
+
+const response = new Response(speakSentenceStart, startRecording, transfer, pauseRecording, gather);
 
 console.log(response.toBxml());
 ```
@@ -435,24 +433,23 @@ console.log(response.toBxml());
 > BXML Response to the Gather Webhook
 
 ```js
-var resumeRecording = new BandwidthBxml.Verbs.ResumeRecording();
+const resumeRecording = new ResumeRecording();
 
-var phoneNumber = new BandwidthBxml.Verbs.PhoneNumber();
-phoneNumber.setNumber("+15554567893");
-var transfer = new BandwidthBxml.Verbs.Transfer();
-transfer.addPhoneNumber(phoneNumber);
+const number = new Transfer.PhoneNumber({
+    number: "+19195554321"
+});
 
-var stopRecording = new BandwidthBxml.Verbs.StopRecording();
+const transfer = new Transfer({
+    phoneNumbers: [number]
+});
 
-var speakSentenceEnd = new BandwidthBxml.Verbs.SpeakSentence();
-speakSentenceEnd.setSentence("Thanks for your call. Have a nice day!");
-speakSentenceEnd.setVoice("bridget");
+const stopRecording = new StopRecording();
 
-var response = new BandwidthBxml.Response();
-response.addVerb(resumeRecording);
-response.addVerb(transfer);
-response.addVerb(stopRecording);
-response.addVerb(speakSentenceEnd);
+const speakSentenceEnd = new SpeakSentence({
+    sentence: "Thanks for your call. Have a nice day!"
+})
+
+const response = new Response(resumeRecording, transfer, stopRecording);
 
 console.log(response.toBxml());
 ```
