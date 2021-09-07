@@ -7,11 +7,11 @@ const Title = 'C#';
 const Svg = require('../../../static/img/bw-csharp.svg').default;
 
 const Github = () => {
-  const {isDarkTheme} = useThemeContext();
-  const GithubSvg = require('../../../static/img/github.svg').default;
-  const GithubDarkSvg = require('../../../static/img/github-dark.svg').default;
-  const Svg = isDarkTheme ? GithubDarkSvg : GithubSvg;
-  return <Svg className={styles.githubSvg}/>;
+  // const {isDarkTheme} = useThemeContext();
+  // const GithubSvg = require('../../../static/img/github.svg').default;
+  // const GithubDarkSvg = require('../../../static/img/github-dark.svg').default;
+  // const Svg = isDarkTheme ? GithubDarkSvg : GithubSvg;
+  return <Svg className={styles.githubSvg}/>; 
 }
 
 export default function sdkPage() {
@@ -36,17 +36,17 @@ export default function sdkPage() {
             <tr>
               <td><a href="https://www.nuget.org/packages/Bandwidth.Sdk/"><code>bandwidth-sdk</code></a></td>
               <td>Manage Phone Calls with BXML, Create Outbound Calls, SMS Messages, MMS Messages</td>
-              <td><a href="https://github.com/Bandwidth/csharp-sdk"><Github/></a></td>
+              <td><a href="https://github.com/Bandwidth/csharp-sdk"></a></td>
             </tr>
             <tr>
               <td><a href="https://www.nuget.org/packages/Bandwidth.Iris/"><code>bandwidth-iris</code></a></td>
               <td>Manage Phone Numbers and Account Settings</td>
-              <td><a href="https://github.com/Bandwidth/csharp-bandwidth-iris"><Github/></a></td>
+              <td><a href="https://github.com/Bandwidth/csharp-bandwidth-iris"></a></td>
             </tr>
             <tr>
               <td>Code Samples</td>
               <td>Code Samples showing how to utilize the Bandwidth C# SDK</td>
-              <td><a href="https://github.com/orgs/Bandwidth-Samples/repositories?language=c%23"><Github/></a></td>
+              <td><a href="https://github.com/orgs/Bandwidth-Samples/repositories?language=c%23"></a></td>
             </tr>
           </tbody>
           </table>
