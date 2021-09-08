@@ -42,7 +42,7 @@ The `fullcheck` query parameter values control the components of the response pa
 
 ### Request Query Parameter
 
-| `fullcheck` value  | Description                                                                                                                                                                                                                                                                                                    |
+| `fullcheck` value  | Description                                                                                                                                                                                                                                                                                                      |
 |:-------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `false` (default)  | Return only rate center information                                                                                                                                                                                                                                                                              |
 | `true`             | Additional information will be provided on the losing carriers associated with the listed numbers                                                                                                                                                                                                                |
@@ -53,7 +53,7 @@ The `fullcheck` query parameter values control the components of the response pa
 
 | Element                                                                                       | Description                                                                                                                                                                                                                                             |
 |:----------------------------------------------------------------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| -`SupportedRateCenters` <br/> -`PartnerSupportedRateCenters` <br/> -`UnsupportedRateCenters`  | Rate Center information for the indicated set of ratecenters, containing City, State, LATA and the list of TNs for which that Rate Center applies.  <br/> The Tier information is provided for offnet rate centers.                                     |
+| -`SupportedRateCenters` <br/> -`PartnerSupportedRateCenters` <br/> -`UnsupportedRateCenters`  | Rate Center information for the indicated set of ratecenters, containing City, State, LATA and the list of TNs for which that Rate Center applies. <br/> The Tier information is provided for offnet rate centers.                                      |
 | -`SupportedLosingCarriers` <br/> -`UnsupportedLosingCarriers`                                 | Details on the Losing Carrier including name, SPID, whether or not the carrier is a wireless carrier, whether or not account number is required as part of the CSR check, and the anticipated minimum number of days before a FoC date will be granted. |
 
 ### Examples
@@ -139,55 +139,76 @@ Content-Type: application/xml; charset=utf-8
 
 The API allows a user to create a new LNP order. An order number will be auto-generated and provided to the customer. The order must pass synchronous and asynchronous validation. Synchronous validation will return validation failures immediately in the response. If synchronous validation passes, but asynchronous validation fails, the customer will not receive the error response until they check the order status.
 
-As in other asynchronous workflows, the request to port in a number is created by a <Highlight color="#079CEE">POST</Highlight> to a resource dedicated to the purpose to tracking requests – the `accounts/{accountId}/portins` resource
+As in other asynchronous workflows, the request to port in a number is created by a <Highlight color="#079CEE">POST</Highlight> to a resource dedicated to the purpose to tracking requests – the `accounts/{accountId}/portins` resource.
+
+The portins endpoint is used to manage requests to port both toll free and non-toll free telephone numbers into Bandwidth. Like many other requests, the /portins endpoint causes the creation of an order that is used to manage the porting event throughout the lifecycle of the request. The various sub-resources and methods are covered in greater detail below.
+When a port-in is created, a port-type is assigned based on the telephone numbers provided. A lot of the conditional payload elements are conditional on the basis of the port-type. Port-type can take on the following values:
+
+* MANUALOFFNET - Manual indicates that the port-in will be processed manually by Bandwidth’s Local Number Portability team. Off-net means that the telephone numbers in the port-in exist in a rate center supported by one of Bandwidth’s partners. Off-net port-ins are processed manually when the Bandwidth partner does not have APIs by which the port-in can be automated, or Bandwidth has not implemented those APIs. Orders may also be processed manually if there are more numbers in the port-in than the partner’s interface supports.
+* MANUALONNET - Manual indicates that the port-in will be processed manually by Bandwidth’s Local Number Portability team. On-net means that the telephone numbers in the port-in exist in a rate center supported by Bandwidth. On-net port-ins are processed manually only when there are more numbers in the port-in than the porting vendor’s interface supports.
+* MANUALTOLLFREE - Manual indicates that the port-in will be processed manually by Bandwidth’s Local Number Portability team. Currently all toll free port-ins are handled manually by Bandwidth’s Local Number Portability team. But Bandwidth is in the process of automating portions of toll free porting, with a goal of eventually automating the entire process.
+* AUTOMATED - Automated means that the port-in will be processed automatically using interfaces to our porting vendors. There are several sub-types of AUTOMATED as follows:
+* ON-NET - On-net means that the telephone numbers in the port-in exist in a rate center supported by Bandwidth. There are differences in on-net port-in rules depending on whether the order is for wireless to wireless vs. one of the other 3 combinations.
+* OFF-NET - Off-net means that the telephone numbers in the port-in exist in a rate center supported by one of Bandwidth’s partners. Currently only numbers in the U.S. are automated. There are differences in port-in rules depending on whether the order has achieved FOC status.
+* INTERNAL - Internal means that the telephone number is being moved from one Bandwidth account to another Bandwidth account. Internal port-in may involve on-net, off-net, or toll free telephone numbers.
 
 ### Polling vs. Webhooks
 
-Porting numbers in the Bandwidth Dashboard is asyncronous when creating an LNP "order". The orders are then processed and the order status is updated asyncronously.  Bandwidth recommends configuring your account with a subscription a instead of polling the order resource for `<OrderStatus>`.
+Porting numbers in the Bandwidth Dashboard is asyncronous when creating an LNP "order". The orders are then processed and the order status is updated asyncronously. Bandwidth recommends configuring your account with a subscription a instead of polling the order resource for `<OrderStatus>`.
 
 Order processing times can vary and are not guaranteed, so bandwidth recommends relying on a webhook update from an portins subscription.
 
 ### Request URL
+
 <Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/portins</code>
 
 ### Request Parameters
 
-| Parameter            | Required | Description |
-|----------------------|----------|-------------|
-| CustomerOrderId           | No  | Internal customer order id for tracking the order.  Only alphanumeric <br/>values, dashes and spaces are allowed. Max length is 40 characters. |
-| RequestedFocDate          | No  | Format: ISO8601 encoding such as “2013-05-10T15:14:22Z”, or "2019-10-31T17:15:00+04:00".<br/><br/>For all ports, if RequestedFocDate is specified, the date portion must be: <br/> - in the future <br/> - after the losing carrier's minimum number of days to port-out <br/> - not on a weekend or U.S. holiday <br/><br/>If RequestedFocDate is not specified, then the next available FOC date meeting the criteria above will be used.<br/><br/>For non-Triggered Ports, the "Time" portion of the RequestedFocDate may be omitted. These ports will be activated at the default activation time of 11:30.<br/>For Triggered Ports, the desired activation time should be included in the RequestedFocDate. If the time portion of `RequestedFocDate` is omitted, time defaults to 00:00:00Z, so please specify a time. |
-| AlternateSpid             | No  | Unique customer SPID associated with Bandwidth. Would be ignored in provisioning of toll free numbers for RespOrg  Exception customer. |
-| BillingTelephoneNumber    | Yes | Account or Billing telephone number for order. Porting telephone number for most wireline ports. |
-| NewBillingTelephoneNumber | No  | This field is used to specify a new billing telephone number on the losing carrier account.<br/>Cannot be the same as BillingTelephoneNumber or be present in the list of ported numbers.<br/>Would be ignored in provisioning of toll free numbers for RespOrg Exception customer. |
-| SubscriberType            | Yes | (`BUSINESS` or `RESIDENTIAL`) <br/><br/>If residential, order will be rejected if a BusinessName is entered. |
-| BusinessName              | No  | Subscriber business name. Mandatory if SubscriberType is BUSINESS |
-| FirstName                 | No  |  |
-| MiddleInitial             | No  |  |
-| LastName                  | No  |  |
-| HouseNumber               | Yes |  |
-| HousePrefix               | No  |  |
-| HouseSuffix               | No  |  |
-| PreDirectional            | No  |  |
-| StreetName                | Yes |  |
-| StreetSuffix              | No  |  |
-| PostDirectional           | No  |  |
-| AddressLine2              | No  |  |
-| City                      | Yes |  |
-| StateCode                 | Yes | 2 Digit State Code (ex. `NC`, `NY`, `AK`) |
-| Zip                       | Yes |  |
-| PlusFour                  | No  |  |
-| Country                   | No  | Derived from StateCode if omitted. |
-| LoaAuthorizingPerson      | Yes | First and last name of person who authorized LOA. |
-| AccountNumber             | No  | Account number, typically required for wireless ports. |
-| PinNumber                 | No  | PIN Number, often required for wireless ports. |
-| PhoneNumber               | Yes | Ten digit phone number with no dots or dashes. One or more is required. <br/>Use a `<PhoneNumber>` tag for each phone number in the `<ListOfPhoneNumbers>` list. |
-| SiteId                    | Yes | The ID of the Site (Sub-Account) you are porting the numbers into. |
-| PeerId                    | No  | The ID of the Sip-Peer (Location) you are porting the numbers into. Will default to the default sip-peer of the specified site if not included. |
-| PartialPort               | No  | `PartialPort` false means that all TNs associated with the Billing TN <br/>are being ported.<br/>By default all portin orders are classified as full ports. <br/>If the attribute PartialPort is specified as true, the order will be submitted as a partial port. <br/>Would be ignored in provisioning of toll free numbers for RespOrg Exception customer. |
-| Triggered                 | No  | (`true` or `false`)<br/><br/>If present and set to true, this port will be treated as one that will be manually activated. <br/>If this value is set it is assumed that the customer will manually activate the port, and that the Bandwidth Dashboard API will activate the port at a default activation time if the customer does not manually activate the port. <br/>This is not supported for wireless ports, and cannot be changed via a SUPP. <br/>Would be ignored in provisioning of toll free numbers for RespOrg Exception customer. |
-| TnAttributes              | No  |  |
-| ProcessingStatus          | No  | Including `ProcessingStatus` with a value of `DRAFT` allows you to create a port-in request in the Bandwidth Dashboard, but not process the request. <br/>Omitting `ProcessingStatus` will cause the port-in to be validated and if correct, processed right away. <br/>Be aware,however, that validation of the port-in payload occurs when the request is actually submitted by performing a PUT on the order with `ProcessingStatus` set to `SUBMITTED`. |
-| Immediately               | No  | Including Immediately with a value of true will cause an Internal port-in to complete as soon as possible, without requiring a scheduled activation time.<br/>Immediately has no meaning for port types other than Internal. |
+The table column labeled `M/O/C` is used to indicate if the element is Mandatory, Optional, or Conditional. Conditional elements are mandatory under certain conditions described in the Description column for that element. Mandatory elements are mandatory for all port-types and conditions, and Optional elements are optional for all port-types and conditions.
+
+| Parameter                         | M/O/C | Description |
+|:----------------------------------|:-----:|:------------|
+| AlternateSpid                     | O     | Even though the telephone numbers are being ported into Bandwidth’s SPID, some of Bandwidth’s wholesale customers have an alternate SPID that is used to identify the telephone number with that customer. This element is not applicable for toll free port-ins. |
+| BillingTelephoneNumber            | C     | The `BillingTelephoneNumber` is the primary telephone number associated with the invoice that the subscriber gets from the losing carrier. For wireline port-in, the BillingTelephoneNumber is typically the telephone number being ported in. This element is not applicable for toll free port-ins, but mandatory for non-toll free port-ins. |
+| BusinessName                      | C     | The `BusinessName` is mandatory for non-toll free port-ins for which the SubscriberType is set to `BUSINESS`. The `BusinessName` may be up to 25 characters in length. This element is not applicable for toll free port-ins. |
+| CustomerOrderId                   | O     | The `CustomerOrderId` is an optional field that may be provided by the customer and will remain with the order.<br/><br/>Only alphanumeric values, dashes and spaces are allowed. Max length is 40 characters. The value is opaque to Bandwidth. |
+| Immediately                       | O     | Including `Immediately` with a value of `true` will cause an Internal port-in to complete as soon as possible, without requiring a scheduled activation time.<br/><br/>`Immediately` has no meaning for port types other than Internal. |
+| LoaAuthorizingPerson              | M     | The `LoaAuthorizingPerson` is mandatory for all port-types. This is the first and last names of the person that has authorized the port. The `LoaAuthorizingPerson` value may be up to 15 characters in length. |
+| ListOfPhoneNumbers                | M     | `ListOfPhoneNumbers` is an array of `PhoneNumber`. At least one `PhoneNumber` must be provided for all port-types.
+| ListOfPhoneNumbers.PhoneNumber    | M     | Ten digit phone number with no dots or dashes. One or more is required. <br/>Use a `<PhoneNumber>` tag for each phone number in the `<ListOfPhoneNumbers>` list. |
+| NewBillingTelephoneNumber         | O     | This field is used to specify a new billing telephone number on the losing carrier account.<br/><br/>Cannot be the same as `BillingTelephoneNumber` or be present in the list of ported numbers. This element is not applicable to toll free or off-net port-in orders. |
+| PartialPort                       | O     | The `PartialPort` must be set to `true` if the intent is to **NOT** port all of the telephone numbers associated with the `BillingTelephoneNumber`.<br/><br/>If PartialPort is omitted or false, and the `ListOfPhoneNumbers` does not include all of the telephone numbers associated with the `BillingTelephoneNumber`, the port-in will be rejected.<br/><br/>PartialPort is applicable only to on-net port-types. This element is not applicable to toll free or off-net port-in orders. |
+| PeerId                            | O     | `PeerId` specifies the numeric identifier of the SIP-peer (Location) that the telephone numbers will be ported into.<br/><br/>You can find the identifier for a SIP-peer (location) by using `GET /accounts/id/sites/id/sippeers`, or by clicking on 'Accounts' on the upper right of the [Bandwidth Dashboard](Https://dashboard.bandwidth.com), then clicking 'Locations' on the navigation bar. The SIP-peer (location) identifiers are listed next to each location name. If `PeerId` is omitted, the SIP-peer (location) designated as the 'default location' for that site (sub-account) will be used. |
+| ProcessingStatus                  | O     | Including `ProcessingStatus` with a value of DRAFT allows you to create a port-in request, but not process the request. Omitting `ProcessingStatus` causes the port-in to be validated and, if correct, processed right away.<br/><br/>Be aware, however, that validation of the port-in payload occurs when the request is actually submitted by performing a PUT on the order with `ProcessingStatus` set to SUBMITTED. |
+| RequestedFocDate                  | O     | Format: ISO8601 encoding such as “2013-05-10T15:14:22Z”, or "2019-10-31T17:15:00+04:00".<br/><br/>For all ports, if `RequestedFocDate` is specified, the date portion must be:<br/> - in the future<br/> - after the losing carrier's minimum number of days to port-out<br/> - not on a weekend or U.S. holiday<br/><br/>If `RequestedFocDate` is not specified, the next available FOC date meeting the criteria above will be used. If the Time portion of the `RequestedFocDate` is omitted the port-in order will be activated at the default activation time of 11:30 AM ET. If an activation time other than 11:30 AM ET is desired, that activation time should be included in the `RequestedFocDate`. |
+| ResetAddressFields                | O     | The `ResetAddressFields` may be specified in a `PUT` request for a non-toll free port-in order if you would like to remove `ServiceAddress` elements that are not specified in the PUT payload. Default value is `false`. |
+| ServiceAddress                    | C     | The `ServiceAddress` is mandatory for all non-toll free port-ins. See sub-fields for additional details. |
+| ServiceAddress.AddressDetail1 - 3 | O     | `AddressDetail1` may be used to specify Secondary Address Unit Designators, as defined by the Postal Addressing Standards, Publication 28. Generally, `AddressDetail1` would be accompanied by `AddressValue1`.<br/><br/>`AddressDetail1`, `AddressDetail2`, and `AddressDetail3` are all available parameters. |
+| ServiceAddress.AddressLine2       | O     | `AddressLine2` is used to specify Unit, Suite, Floor, etc. in the Service Address. `AddressLine2` is optional when not needed to fully specify the `ServiceAddress`. |
+| ServiceAddress.AddressValue1 - 3  | O     | `AddressValue1` may be used to specify Secondary Address Unit Designators, as defined by the Postal Addressing Standards, Publication 28. Generally, `AddressDetail1` would be accompanied by `AddressValue1`<br/><br/>`AddressValue1`, `AddressValue2`, and `AddressValue3` are all available parameters. |
+| ServiceAddress.City               | C     | `City` is mandatory in cases where the `ServiceAddress` is mandatory. |
+| ServiceAddress.Country            | O     | `Country` is the country of the `ServiceAddress`. This value will be derived from the `StateCode`, so it should generally be omitted. |
+| ServiceAddress.HouseNumber        | C     | The `HouseNumber` is the street address number of the `ServiceAddress`. `HouseNumber` is mandatory for port-in orders in which the `ServiceAddress` is mandatory. |
+| ServiceAddress.HousePrefix        | O     | The `HouseSuffix` is the non-numeric address number suffix of the `ServiceAddress`. This element is optional when not needed to fully specify the `ServiceAddress`. |
+| ServiceAddress.HouseSuffix        | O     | The `HouseSuffix` is the non-numeric address number suffix of the `ServiceAddress`. This element is optional when not needed to fully specify the `ServiceAddress`. |
+| ServiceAddress.PlusFour           | O     | `PlusFour` is the 4 digits that are sometimes suffixed to the Zip Code. |
+| ServiceAddress.PostDirectional    | O     | The `PostDirectional` is the street name post directional of the `ServiceAddress`. This element is optional when not needed to fully specify the `ServiceAddress`. |
+| ServiceAddress.PreDirectional     | O     | The `PreDirectional` is the non-numeric street name prefix of the `ServiceAddress`. This element is optional when not needed to fully specify the `ServiceAddress`. |
+| ServiceAddress.StateCode          | C     | `StateCode` is the 2-letter abbreviation of the state of the `ServiceAddress`. `StateCode` is mandatory in cases where the `ServiceAddress` is mandatory. ex: `NC`, `NY`, or `AK` |
+| ServiceAddress.StreetName         | C     | The `StreetName` is mandatory in cases where the `ServiceAddress` is mandatory. |
+| ServiceAddress.StreetSuffix       | O     | The `StreetSuffix` is the street suffix of the `ServiceAddress`. This element is optional when not needed to fully specify the `ServiceAddress`. |
+| SiteId                            | M     | `SiteId` is mandatory for all port-types. It specifies the identifier of the site (sub-account) that the telephone numbers will be ported into.<br/><br/>You can find the identifier for a site (sub-account) by using `GET /accounts/id/sites`, or by clicking on 'Manage sub-account' for the desired sub-account on the main page of the Bandwidth Dashboard. |
+| Subscriber                        | C     | The `Subscriber` is mandatory for all non-toll free port-in orders. See sub-fields for details. |
+| Subscriber.FirstName              | O     | The `FirstName` value is applicable to non-toll free port-in orders in which the `SubscriberType` is set to RESIDENTIAL. The `FirstName` is always optional. The `FirstName` may be up to 25 characters in length. |
+| Subscriber.LastName               | C     | The `LastName` value is mandatory for non-toll free port-in orders in which the `SubscriberType` is set to RESIDENTIAL. The `LastName` may be up to 25 characters in length. |
+| Subscriber.MiddleInitial          | O     | The `MiddleInitial` value is applicable to non-toll free port-in orders in which the SubscriberType is set to RESIDENTIAL. The `MiddleInitial` is always optional. The `MiddleInitial` is 1 character in length. |
+| Subscriber.SubscriberType         | C     | The `SubscriberType` is mandatory for all non-toll free port-in orders.<br/><br/>The `SubscriberType` field may have values: `BUSINESS` or `RESIDENTIAL`. |
+| TnAttributes                      | O     | The `TnAttributes` field specifies line attributes that will apply to the ported in telephone numbers. If present, `TnAttributes` may have a value of `PROTECTED`. This element is not applicable for toll free port-types. |
+| Triggered                         | O     | The `Triggered` field must be set to `true` if you want an activation time other than the 11:30 AM ET default. The desired activation time can then be specified in the time portion of the `RequestedFocDate`. Triggered activation is not yet supported for toll free port-in orders. |
+| WirelessInfo                      | O     | Most common for telephone numbers that were formerly wireless. This element is not applicable for toll free port-ins.  |
+| WirelessInfo.AccountNumber        | O     | The `AccountNumber` is sometimes required to authorize the port-out from the losing carrier. This is most common for telephone numbers that were formerly wireless. |
+| WirelessInfo.PinNumber            | O     | The `PinNumber` is sometimes required to authorize the port-out from the losing carrier. This is most common for telephone numbers that were formerly wireless. |
+| Zip                               | C     | `Zip` is the Zip Code of the `ServiceAddress`. `Zip` is mandatory in cases where the `ServiceAddress` is mandatory. |
 
 ### Examples
 
@@ -406,6 +427,31 @@ The general approach to handling this API call is to replace the elements includ
 | TnAttributes elements                                    | Editable       | Editable      | Editable         | Editable          | Editable                  | Editable                   | Editable |
 | Immediately                                              | Disabled       | Disabled      | Disabled         | Disabled          | Disabled                  | Disabled                   | Editable |
 
+### SUPP Order Field Notes
+
+* `AccountNumber` - Element of WirelessInfo. Not applicable to toll free port-ins. Cannot be SUPPed for Automated off-net port-ins. If you want to SUPP WirelessInfo, you must include both AccountNumber and PinNumber in the payload, even if you are not changing both.
+* `AlternateSpid` - Not applicable to toll free port-ins. Can only be modified in DRAFT state. Can only be modified if it is not configured at the system level.
+* `BillingTelephoneNumber` - Not applicable to toll free port-ins. Cannot be SUPPed for Automated on-net wireless to wireless port-ins or Automated off-net port-ins after FOC received.
+* `BusinessName` - Element of Subscriber. Cannot be SUPPed for Automated on-net wireless to wireless port-ins or Automated off-net port-ins after FOC received.
+* `CustomerOrderId` - Can always be updated. This field is removed from the order if not provided in the PUT payload.
+* `Immediately` - Only applicable to Internal port-in orders. May be included in the PUT payload, but cannot be changed in a SUPP.
+* `ListOfPhoneNumbers` - Can be SUPPed only for Automated on-net port-ins and toll free port-ins. For toll free port-ins, may be SUPPed only in draft states (i.e. DRAFT, VALIDATE_DRAFT_TFNS, VALID_DRAFT_TFNS, or INVALID_DRAFT_TFNS).
+* `LoaAuthorizingPerson` - Cannot be SUPPed for Automated on-net wireless to wireless port-ins or Automated off-net port-ins.
+* `NewBillingTelephoneNumber` - Not applicable to toll free port-ins or Automated off-net port-ins. Cannot be SUPPed for Automated on-net wireless to wireless port-ins.
+* `OverrideValidation` - Applies only to internal ports. This Bandwidth internal flag forces port-out to bypass validity checking (if there are no terminal errors). This flag can be SUPPed only for orders in EXCEPTION status.
+* `PartialPort` - Not applicable to toll free port-ins. Cannot be SUPPed for Automated on-net wireless to wireless port-ins or Automated off-net port-ins.
+* `PeerId` - Can always be updated.
+* `PinNumber` - Element of WirelessInfo. Not applicable to toll free port-ins. Cannot be SUPPed for Automated off-net port-ins. If you want to SUPP WirelessInfo, you must include both AccountNumber and PinNumber in the payload, even if you are not changing both.
+* `ProcessingStatus` - May only be SUPPed for port-in orders in draft state. The only valid value is “SUBMITTED” (not case sensitive).
+* `RequestedFocDate` - Can always be updated, but subject to blackout windows if the current date is too close to an assigned FOC date.
+* `ResetAddressFields` - Not applicable to toll free port-ins. If included with a value of true, any Subscriber elements, including subscriber type, subscriber/business name elements, and service address elements, NOT included in the PUT payload will be removed from the order.
+* `ServiceAddress` - Element of Subscriber. Includes all address fields. ServiceAddress elements cannot be SUPPed for Automated on-net wireless to wireless port-ins or Automated off-net port-ins. See also, ResetAddressFields.
+* `SiteId` - Can always be updated.
+* `SubscriberName` - Element of Subscriber. Includes FirstName, MiddleInitial, and LastName. Cannot be SUPPed for Automated on-net wireless to wireless port-ins or Automated off-net port-ins after FOC received.
+* `SubscriberType` - Element of Subscriber. Cannot be SUPPed for Automated on-net wireless to wireless port-ins or Automated off-net port-ins after FOC received. If SubscriberType is set to BUSINESS, a BusinessName must be provided. If SubscriberType is set to RESIDENTIAL, a FirstName and LastName must be provided.
+* `TnAttributes` - Can be SUPPed prior to completion of the port-in request.
+* `Triggered` - May be included in the PUT payload, but cannot be changed in a SUPP.
+
 ### Request URL
 
 <Highlight color="#652B51">PUT</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/portins/{orderId}</code>
@@ -478,7 +524,7 @@ Content-Type: application/xml; charset=utf-8
 
 ## Cancel a Portin Order
 
-The API allows a user to cancel an existing LNP order. The order number that was generated in the create request must be provided, and dhe status of the order shall not be marked as `COMPLETE`.  The <Highlight color="#ff6f47">DELETE</Highlight> method is used for this purpose.
+The API allows a user to cancel an existing LNP order. The order number that was generated in the create request must be provided, and dhe status of the order shall not be marked as `COMPLETE`. The <Highlight color="#ff6f47">DELETE</Highlight> method is used for this purpose.
 
 ### Request URL
 
