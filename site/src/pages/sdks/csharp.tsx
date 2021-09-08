@@ -6,13 +6,6 @@ import useThemeContext from '@theme/hooks/useThemeContext';
 const Title = 'C#';
 const Svg = require('../../../static/img/bw-csharp.svg').default;
 
-const Github = () => {
-  // const {isDarkTheme} = useThemeContext();
-  // const GithubSvg = require('../../../static/img/github.svg').default;
-  // const GithubDarkSvg = require('../../../static/img/github-dark.svg').default;
-  // const Svg = isDarkTheme ? GithubDarkSvg : GithubSvg;
-  return <Svg className={styles.githubSvg}/>; 
-}
 
 export default function sdkPage() {
     return(
