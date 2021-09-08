@@ -2584,8 +2584,8 @@
           "uui": {
             "nullable": true,
             "type": "string",
-            "example": "eyJhbGciOiJIUzI1NiJ9.WyJoaSJd.-znkjYyCkgz4djmHUPSXl9YrJ6Nix_XvmlwKGFh5ERM;encoding=jwt, aGVsbG8gd29ybGQ=;encoding=base64",
-            "description": "When calling a SIP URI, this will be sent as the 'User-To-User' header within the initial INVITE. It must end with an 'encoding' parameter as described in https://tools.ietf.org/html/rfc7433. This header cannot exceed 256 characters, including the encoding parameter."
+            "example": "eyJhbGciOiJIUzI1NiJ9.WyJoaSJd.-znkjYyCkgz4djmHUPSXl9YrJ6Nix_XvmlwKGFh5ERM;encoding=jwt,aGVsbG8gd29ybGQ=;encoding=base64",
+            "description": "A comma-separated list of 'User-To-User' headers to be sent in the INVITE when calling a SIP URI. Each value must end with an 'encoding' parameter as described in https://tools.ietf.org/html/rfc7433. Only 'jwt' and 'base64' encodings are allowed. The entire value cannot exceed 350 characters, including parameters and separators."
           },
           "callTimeout": {
             "nullable": true,
@@ -2657,6 +2657,9 @@
           },
           "applicationId": {
             "type": "string"
+          },
+          "machineDetection": {
+            "$ref": "#/components/schemas/MachineDetectionRequest"
           }
         }
       },
@@ -2797,7 +2800,7 @@
             "nullable": true,
             "type": "string"
           },
-          "pai": {
+          "stirShaken": {
             "nullable": true,
             "type": "object",
             "additionalProperties": {
@@ -3157,6 +3160,86 @@
           "mediaUrl": {
             "type": "string",
             "format": "uri"
+          }
+        }
+      },
+      "MachineDetectionRequest": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string",
+            "description": "The machine detection mode. If set to 'async', the detection result will be sent in a 'machineDetectionComplete' callback. If set to 'sync', the 'answer' callback will wait for the machine detection to complete and will include its result. Default is 'async'.",
+            "enum": [
+              "sync",
+              "async"
+            ]
+          },
+          "detectionTimeout": {
+            "type": "number",
+            "format": "double",
+            "description": "Total amount of time (in seconds) before giving up."
+          },
+          "silenceTimeout": {
+            "type": "number",
+            "format": "double",
+            "description": "If no speech is detected in this period, a callback with a 'silence' result is sent. Default is 10 seconds."
+          },
+          "speechThreshold": {
+            "type": "number",
+            "format": "double",
+            "description": "When speech has ended and a result couldn't be determined based on the audio content itself, this value is used to determine if the speaker is a machine based on the speech duration. If the length of the speech detected is greater than or equal to this threshold, the result will be 'answering-machine'. If the length of speech detected is below this threshold, the result will be 'human'. Default is 10 seconds."
+          },
+          "speechEndThreshold": {
+            "type": "number",
+            "format": "double",
+            "description": "Amount of silence (in seconds) before assuming the callee has finished speaking."
+          },
+          "delayResult": {
+            "type": "boolean",
+            "description": "If set to 'true' and if an answering machine is detected, the 'answering-machine' callback will be delayed until the machine is done speaking or until the 'detectionTimeout' is exceeded. If false, the 'answering-machine' result is sent immediately. Default is 'false'."
+          },
+          "callbackUrl": {
+            "nullable": true,
+            "description": "The URL to send the 'machineDetectionComplete' callback when the detection is completed. Only for 'async' mode.",
+            "type": "string",
+            "format": "uri"
+          },
+          "callbackMethod": {
+            "nullable": true,
+            "type": "string",
+            "enum": [
+              "POST",
+              "GET"
+            ]
+          },
+          "fallbackUrl": {
+            "nullable": true,
+            "type": "string",
+            "format": "uri"
+          },
+          "fallbackMethod": {
+            "nullable": true,
+            "type": "string",
+            "enum": [
+              "POST",
+              "GET"
+            ]
+          },
+          "username": {
+            "nullable": true,
+            "type": "string"
+          },
+          "password": {
+            "nullable": true,
+            "type": "string"
+          },
+          "fallbackUsername": {
+            "nullable": true,
+            "type": "string"
+          },
+          "fallbackPassword": {
+            "nullable": true,
+            "type": "string"
           }
         }
       },
