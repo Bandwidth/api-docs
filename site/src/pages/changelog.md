@@ -7,6 +7,7 @@ slug: /changelog
 
 | Date | Notes |
 |--|--|
+| September 8th, 2021 | Added `MachineDetection` object to the Voice OpenAPI spec and bumped to version 3.1.0 | 
 | August 27th, 2021 | Reverted Phone Number Lookup spec to 1.0.5 |
 | August 25th, 2021 | Provide corrections to Sip Registrar guide |
 | August 24th, 2021 | Added Sip Registrar guide and updated Network Bridge guide |
