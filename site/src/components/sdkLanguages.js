@@ -2,44 +2,37 @@ import React from 'react';
 import clsx from 'clsx';
 import styles from '../css/sdks.module.css';
 
-const GithubLogo = require('../../static/img/github.png').default;
 
 const SdkList = [
   {
     title: 'Node',
     Svg: require('../../static/img/bw-node.svg').default,
-    link: '/sdks/node',
-    repoLink: 'https://github.com/search?o=desc&q=org%3ABandwidth+node-&s=updated&type=Repositories'
+    link: '/sdks/node'
   },
   {
     title: 'Python',
     Svg: require('../../static/img/bw-python.svg').default,
-    link: '/sdks/python',
-    repoLink: 'https://github.com/Bandwidth/python-sdk'
+    link: '/sdks/python'
   },
   {
     title: 'Ruby',
     Svg: require('../../static/img/bw-ruby.svg').default,
-    link: '/sdks/ruby',
-    repoLink: 'https://github.com/Bandwidth/python-sdk'
+    link: '/sdks/ruby'
   },
   {
     title: 'Java',
     Svg: require('../../static/img/bw-java.svg').default,
-    link: '/sdks/java',
-    repoLink: 'https://github.com/Bandwidth/python-sdk'
+    link: '/sdks/java'
   },
   {
     title: 'C#',
     Svg: require('../../static/img/bw-csharp.svg').default,
-    link: '/sdks/csharp',
-    repoLink: 'https://github.com/Bandwidth/python-sdk'
+    link: '/sdks/csharp'
   },
   {
     title: 'PHP',
     Svg: require('../../static/img/bw-php.svg').default,
-    link: '/sdks/php',
-    repoLink: 'https://github.com/Bandwidth/python-sdk'
+    link: '/sdks/php'
   },
 ];
 
