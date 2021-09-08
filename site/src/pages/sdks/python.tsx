@@ -1,7 +1,7 @@
 import React from 'react';
 import Layout from '@theme/Layout';
 import styles from '../../css/sdks.module.css';
-import useThemeContext from '@theme/hooks/useThemeContext';
+import GitHubLink from '../../components/GitHubLink';
 
 const Title = 'Python';
 const Svg = require('../../../static/img/bw-python.svg').default;
@@ -29,12 +29,12 @@ export default function sdkPage() {
             <tr>
               <td><a href="https://pypi.org/project/bandwidth-sdk/"><code>bandwidth-sdk</code></a></td>
               <td>Manage Phone Calls with BXML, Create Outbound Calls, SMS Messages, MMS Messages</td>
-              <td><a href="https://github.com/Bandwidth/python-sdk"></a></td>
+              <td><GitHubLink GHLink={"https://github.com/Bandwidth/python-sdk"}/></td>
             </tr>
             <tr>
               <td>Code Samples</td>
               <td>Code Samples showing how to utilize the Bandwidth Python SDK</td>
-              <td><a href="https://github.com/orgs/Bandwidth-Samples/repositories?language=python"></a></td>
+              <td><GitHubLink GHLink={"https://github.com/orgs/Bandwidth-Samples/repositories?language=python"}/></td>
             </tr>
           </tbody>
           </table>

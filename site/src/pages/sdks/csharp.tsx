@@ -1,11 +1,10 @@
 import React from 'react';
 import Layout from '@theme/Layout';
 import styles from '../../css/sdks.module.css';
-import useThemeContext from '@theme/hooks/useThemeContext';
+import GitHubLink from '../../components/GitHubLink';
 
 const Title = 'C#';
 const Svg = require('../../../static/img/bw-csharp.svg').default;
-
 
 export default function sdkPage() {
     return(
@@ -29,17 +28,17 @@ export default function sdkPage() {
             <tr>
               <td><a href="https://www.nuget.org/packages/Bandwidth.Sdk/"><code>bandwidth-sdk</code></a></td>
               <td>Manage Phone Calls with BXML, Create Outbound Calls, SMS Messages, MMS Messages</td>
-              <td><a href="https://github.com/Bandwidth/csharp-sdk"></a></td>
+              <td><GitHubLink GHLink={"https://github.com/Bandwidth/csharp-sdk"}/></td>
             </tr>
             <tr>
               <td><a href="https://www.nuget.org/packages/Bandwidth.Iris/"><code>bandwidth-iris</code></a></td>
               <td>Manage Phone Numbers and Account Settings</td>
-              <td><a href="https://github.com/Bandwidth/csharp-bandwidth-iris"></a></td>
+              <td><GitHubLink GHLink={"https://github.com/Bandwidth/csharp-bandwidth-iris"}/></td>
             </tr>
             <tr>
               <td>Code Samples</td>
               <td>Code Samples showing how to utilize the Bandwidth C# SDK</td>
-              <td><a href="https://github.com/orgs/Bandwidth-Samples/repositories?language=c%23"></a></td>
+              <td><GitHubLink GHLink={"https://github.com/orgs/Bandwidth-Samples/repositories?language=c%23"}/></td>
             </tr>
           </tbody>
           </table>
