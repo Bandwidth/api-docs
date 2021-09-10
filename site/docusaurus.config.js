@@ -7,8 +7,8 @@ const voiceSpec = fs.readFileSync('./specs/voice.json', 'utf-8');
 const messagingSpec = fs.readFileSync('./specs/messaging.json', 'utf-8');
 const webRtcSpec = fs.readFileSync('./specs/webRtc.json', 'utf-8');
 const multiFactorAuthSpec = fs.readFileSync('./specs/multiFactorAuth.json', 'utf-8');
-const dashSpec = fs.readFileSync('./specs/dash.json', 'utf-8');
-const dashNotificationsSpec = fs.readFileSync('./specs/dashNotifications.json', 'utf-8');
+const dashSpec = fs.readFileSync('./specs-ignore/dash.json', 'utf-8');
+const dashNotificationsSpec = fs.readFileSync('./specs-ignore/dashNotifications.json', 'utf-8');
 // const messagingInternationalSpec = fs.readFileSync('./specs/messagingInternational.json', 'utf-8');
 // const numbersSpec = fs.readFileSync('./specs/numbers.json', 'utf-8');
 
