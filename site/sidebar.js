@@ -125,6 +125,7 @@ module.exports = {
             items: [
                 "messaging/about",
                 "messaging/webhooks",
+                "messaging/quickStart",
                 {
                     type: "category",
                     label: "Guides and Tutorials",
