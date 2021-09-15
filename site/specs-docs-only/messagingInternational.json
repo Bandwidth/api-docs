@@ -1,0 +1,202 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "International A2P Messaging",
+        "description": "API used to send International A2P SMS",
+        "version": "0.2.0",
+        "x-server-configuration": {
+            "default-environment": "production",
+            "default-server": "default",
+            "environments": [{
+                    "name": "production",
+                    "servers": [{
+                        "name": "default",
+                        "url": "https://bulksms.ia2p.bandwidth.com:12021"
+                    }]
+                },
+                {
+                    "name": "custom",
+                    "servers": [{
+                        "name": "default",
+                        "url": "{base_url}"
+                    }]
+                }
+            ],
+            "parameters": [{
+                "name": "base_url",
+                "description": "",
+                "type": "string",
+                "example": "https://www.example.com"
+            }]
+        }
+    },
+    "servers": [{
+        "description": "Production",
+        "url": "https://bulksms.ia2p.bandwidth.com:12021"
+    }],
+    "tags": [{
+            "name": "SendSMS",
+            "description": "Endpoints for sending International A2P SMS messages"
+        }
+    ],
+    "paths": {
+        "/bulk/sendsms": {
+            "post": {
+                "tags": [
+                    "SendSMS"
+                ],
+                "summary": "Create Message",
+                "requestBody": {
+                    "description": "Create a request to send a single SMS message.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SMSRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "202": {
+                        "description": "SMS Accepted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SMSResponse"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                },
+                "x-codegen-request-body-name": "post data"
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "SMSRequest": {
+                "required": [
+                    "auth",
+                    "dcs",
+                    "dlrMask",
+                    "dlrUrl",
+                    "receiver",
+                    "sender",
+                    "text",
+                    "type"
+                ],
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "description": "Type of SMS (text, wsi)"
+                    },
+                    "sender": {
+                        "type": "string",
+                        "description": "SMS Sender"
+                    },
+                    "receiver": {
+                        "type": "string",
+                        "description": "SMS Receiver (mobile phone number in international format)\n"
+                    },
+                    "dlrMask": {
+                        "type": "integer",
+                        "description": "Delivery report mask:\n  1 - Delivered,\n  2 - Undelivered,\n  4 - Buffered\n  8 - Sent to SMSC\n  16 - Rejected.\nRecommended value is 19.\n"
+                    },
+                    "dlrUrl": {
+                        "type": "string",
+                        "description": "URL where to send callbacks\n"
+                    },
+                    "flash": {
+                        "type": "boolean",
+                        "description": "Use true for flash message, false otherwise"
+                    },
+                    "text": {
+                        "type": "string",
+                        "description": "if type=text this is message text"
+                    },
+                    "dcs": {
+                        "type": "string",
+                        "description": "if type=text this is encoding, GSM or UCS"
+                    },
+                    "url": {
+                        "type": "string",
+                        "description": "if type is wsi, URL for WAP Push"
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "if type is wsi, title of message"
+                    },
+                    "custom": {
+                        "type": "object",
+                        "properties": {},
+                        "description": "any custom object"
+                    },
+                    "auth": {
+                        "type": "object",
+                        "properties": {
+                            "$ref": "#/components/schemas/Auth"
+                        }
+                    }
+                }
+            },
+            "SMSResponse": {
+                "type": "object",
+                "properties": {
+                    "msgId": {
+                        "type": "string",
+                        "description": "If message is accepted to be sent, message ID"
+                    },
+                    "numParts": {
+                        "type": "integer",
+                        "description": "Nuber of message parts"
+                    }
+                }
+            },
+            "Auth": {
+                "required": [
+                    "password",
+                    "username"
+                ],
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "type": "string",
+                        "description": "User name"
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "Password"
+                    }
+                }
+            },
+            "Error": {
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "string",
+                        "description": "Possible Values are:\n\n101, Internal application error\n\n102, Encoding not supported\n\n103, No account with given username/password\n\n104, Sending from client's IP not allowed\n\n105, Throttling error\n\n106, Blacklisted sender\n\n107, Invalid sender\n\n108, Message too long\n\n109, Format of text/content parameter is wrong\n\n110, Mandatory parameter is missing\n\n111, Unknown message type\n\n112, Bad parameter value\n\n113, No credit on account balance\n\n114, No route for given destination\n\n115, Concatenation error\n\n116, Loop detected\n"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}
