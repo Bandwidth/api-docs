@@ -56,6 +56,7 @@ module.exports = {
             label: "Voice",
             items: [
                 "voice/about",
+                "voice/quickStart",
                 {
                     type: "category",
                     label: "Webhooks",
