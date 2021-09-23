@@ -7,9 +7,10 @@ slug: /changelog
 
 | Date | Notes |
 |--|--|
+| September 23rd, 2021 | Change `MachineDetectionRequest` schema name to `MachineDetectionConfiguration` |
 | September 21st, 2021 | Add parameters of messageDirection, carrierName and messageType to GetMessages |
 | September 15th, 2021 | Add Messaging International API Spec |
-| September 8th, 2021 | Added `MachineDetection` object to the Voice OpenAPI spec and bumped to version 3.2.0 | 
+| September 8th, 2021 | Added `MachineDetection` object to the Voice OpenAPI spec and bumped to version 3.2.0 |
 | August 27th, 2021 | Reverted Phone Number Lookup spec to 1.0.5 |
 | August 25th, 2021 | Provide corrections to Sip Registrar guide |
 | August 24th, 2021 | Added Sip Registrar guide and updated Network Bridge guide |
