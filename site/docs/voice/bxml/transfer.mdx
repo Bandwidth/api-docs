@@ -133,9 +133,8 @@ This shows how to use Bandwidth XML to transfer a phone call.
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <SpeakSentence gender="male">Transferring your call, please wait.</SpeakSentence>
-    <Transfer transferCallerId="+15554567891">
-        <PhoneNumber>+15554567892</PhoneNumber>
+    <Transfer transferCallerId="+11234567891">
+        <PhoneNumber>+11234567892</PhoneNumber>
     </Transfer>
 </Response>
 ```
@@ -144,11 +143,6 @@ This shows how to use Bandwidth XML to transfer a phone call.
 <TabItem value="java">
 
 ```java
-SpeakSentence speakSentence = SpeakSentence.builder()
-        .text("Transferring your call, please wait.")
-        .gender("male")
-        .build();
-
 PhoneNumber phoneNumber = PhoneNumber.builder()
         .phoneNumber("+11234567892")
         .build();
@@ -159,7 +153,6 @@ Transfer transfer = Transfer.builder()
         .build();
 
 Response response = Response.builder().build()
-        .add(speakSentence)
         .add(transfer);
 
 System.out.println(response.toBXML());
@@ -169,15 +162,18 @@ System.out.println(response.toBXML());
 <TabItem value="csharp">
 
 ```csharp
+PhoneNumber phoneNumber = new PhoneNumber
+{
+    Number = "+11234567892"
+};
+
+Transfer transfer = new Transfer
+{
+    TransferCallerId = "+11234567891",
+    PhoneNumbers = new PhoneNumber[] { phoneNumber }
+};
+
 Response response = new Response();
-
-PhoneNumber phoneNumber1 = new PhoneNumber();
-phoneNumber1.Number = "+11234567892";
-
-Transfer transfer = new Transfer();
-transfer.PhoneNumbers = new PhoneNumber[] { phoneNumber1 };
-transfer.TransferCallerId = "+11234567891";
-
 response.Add(transfer);
 
 Console.WriteLine(response.ToBXML());
@@ -187,16 +183,18 @@ Console.WriteLine(response.ToBXML());
 <TabItem value="ruby">
 
 ```ruby
-response = Bandwidth::Voice::Response.new()
 phone_number = Bandwidth::Voice::PhoneNumber.new({
     :number => "+11234567892"
 })
+
 transfer = Bandwidth::Voice::Transfer.new({
     :transfer_caller_id => "+11234567891",
     :phone_numbers => [phone_number]
 })
 
+response = Bandwidth::Voice::Response.new()
 response.push(transfer)
+
 puts response.to_bxml()
 ```
 
@@ -205,12 +203,12 @@ puts response.to_bxml()
 
 ```js
 const number = new Transfer.PhoneNumber({
-    number: "+17777777777"
+    number: "+11234567892"
 });
 
 const transfer = new Transfer({
-    phoneNumbers: [number],
-    transferCallerId: "+18888888888"
+    transferCallerId: "+11234567891",
+    phoneNumbers: [number]
 });
 
 const response = new Response(transfer);
@@ -225,12 +223,15 @@ console.log(response.toBxml());
 phone_number = PhoneNumber(
     number="+11234567892"
 )
+
 transfer = Transfer(
     transfer_caller_id="+11234567891",
     phone_numbers=[phone_number]
 )
 
+response = Response()
 response.add_verb(transfer)
+
 print(response.to_bxml())
 ```
 
@@ -238,17 +239,16 @@ print(response.to_bxml())
 <TabItem value="php">
 
 ```php
-$number = new BandwidthLib\Voice\Bxml\PhoneNumber("+17777777777");
+$number = new BandwidthLib\Voice\Bxml\PhoneNumber("+11234567892");
 
 $transfer = new BandwidthLib\Voice\Bxml\Transfer();
-$transfer->transferCallerId("+18888888888");
+$transfer->transferCallerId("+11234567891");
 $transfer->phoneNumbers(array($number));
 
 $response = new BandwidthLib\Voice\Bxml\Response();
 $response->addVerb($transfer);
 
 echo $response->toBxml();
-echo "\n";
 ```
 
 </TabItem>
@@ -277,8 +277,8 @@ This shows how to use Bandwidth XML to transfer a phone call with a pre-transfer
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
     <SpeakSentence voice="paul">Transferring your call, please wait.</SpeakSentence>
-    <Transfer transferCallerId="+15554567891">
-        <PhoneNumber transferAnswerUrl="http://myapp.com/announcement">+15554567892</PhoneNumber>
+    <Transfer transferCallerId="+11234567891">
+        <PhoneNumber transferAnswerUrl="http://myapp.com/announcement">+11234567892</PhoneNumber>
     </Transfer>
 </Response>
 ```
@@ -322,8 +322,8 @@ System.out.println(response.toBXML());
 
 ```java
 SpeakSentence speakSentence = SpeakSentence.builder()
-        .text("A customer would like to speak to you")
-        .voice("julie")
+        .text("A customer would like to speak to you.")
+        .voice("paul")
         .build();
 ```
 
@@ -331,19 +331,26 @@ SpeakSentence speakSentence = SpeakSentence.builder()
 <TabItem value="csharp">
 
 ```csharp
+SpeakSentence speakSentence = new SpeakSentence
+{
+    Sentence = "Transferring your call, please wait.",
+    Voice = "paul"
+};
+
+PhoneNumber phoneNumber = new PhoneNumber
+{
+    Number = "+11234567892",
+    TransferAnswerUrl = "http://myapp.com/announcement"
+};
+
+
+Transfer transfer = new Transfer
+{
+    TransferCallerId = "+11234567891",
+    PhoneNumbers = new PhoneNumber[] { phoneNumber }
+};
+
 Response response = new Response();
-
-SpeakSentence speakSentence = new SpeakSentence();
-speakSentence.Sentence = "Transferring your call, please wait.";
-
-PhoneNumber phoneNumber1 = new PhoneNumber();
-phoneNumber1.Number = "+11234567892";
-phoneNumber1.TransferAnswerUrl = "http://myapp.com/announcement";
-
-Transfer transfer = new Transfer();
-transfer.PhoneNumbers = new PhoneNumber[] { phoneNumber1 };
-transfer.TransferCallerId = "+11234567891";
-
 response.Add(speakSentence);
 response.Add(transfer);
 
@@ -353,11 +360,13 @@ Console.WriteLine(response.ToBXML());
 > The announcement BXML response from `http://myapp.com/announcement` is:
 
 ```csharp
+SpeakSentence speakSentence = new SpeakSentence
+{
+    Sentence = "A customer would like to speak to you.",
+    Voice = "paul"
+};
+
 Response response = new Response();
-
-SpeakSentence speakSentence = new SpeakSentence();
-speakSentence.Sentence = "A customer would like to speak to you.";
-
 response.Add(speakSentence);
 
 Console.WriteLine(response.ToBXML());
@@ -367,22 +376,25 @@ Console.WriteLine(response.ToBXML());
 <TabItem value="ruby">
 
 ```ruby
-response = Bandwidth::Voice::Response.new()
 speak_sentence = Bandwidth::Voice::SpeakSentence.new({
     :sentence => "Transferring your call, please wait.",
     :voice => "paul"
 })
+
 phone_number = Bandwidth::Voice::PhoneNumber.new({
     :number => "+11234567892",
     :transfer_answer_url => "http://myapp.com/announcement"
 })
+
 transfer = Bandwidth::Voice::Transfer.new({
     :transfer_caller_id => "+11234567891",
     :phone_numbers => [phone_number]
 })
 
+response = Bandwidth::Voice::Response.new()
 response.push(speak_sentence)
 response.push(transfer)
+
 puts response.to_bxml()
 ```
 
@@ -400,17 +412,18 @@ speak_sentence = Bandwidth::Voice::SpeakSentence.new({
 
 ```js
 const speakSentence = new SpeakSentence({
-    sentence: "Transferring your call, please wait."
+    sentence: "Transferring your call, please wait.",
+    voice: "paul"
 });
 
 const number = new Transfer.PhoneNumber({
-    number: "+17777777777",
+    number: "+11234567892",
     transferAnswerUrl: "http://myapp.com/announcement"
 });
 
 const transfer = new Transfer({
-    phoneNumbers: [number],
-    transferCallerId: "+18888888888"
+    transferCallerId: "+11234567891",
+    phoneNumbers: [number]
 });
 
 const response = new Response(speakSentence, transfer);
@@ -422,7 +435,8 @@ console.log(response.toBxml());
 
 ```js
 const speakSentence = new SpeakSentence({
-    sentence: "A customer would like to speak to you."
+    sentence: "A customer would like to speak to you.",
+    voice: "paul"
 });
 
 const response = new Response(speakSentence);
@@ -434,22 +448,25 @@ console.log(response.toBxml());
 <TabItem value="python">
 
 ```python
-response = Response()
 speak_sentence = SpeakSentence(
     sentence="Transferring your call, please wait.",
     voice="paul"
 )
+
 phone_number = PhoneNumber(
     number="+11234567892",
     transfer_answer_url="http://myapp.com/announcement"
 )
+
 transfer = Transfer(
     transfer_caller_id="+11234567891",
     phone_numbers=[phone_number]
 )
 
+response = Response()
 response.add_verb(speak_sentence)
 response.add_verb(transfer)
+
 print(response.to_bxml())
 ```
 
@@ -469,10 +486,10 @@ speak_sentence = SpeakSentence(
 $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Transferring your call, please wait.");
 $speakSentence->voice("paul");
 
-$number = new BandwidthLib\Voice\Bxml\PhoneNumber("+17777777777");
+$number = new BandwidthLib\Voice\Bxml\PhoneNumber("+11234567892");
 
 $transfer = new BandwidthLib\Voice\Bxml\Transfer();
-$transfer->transferCallerId("+18888888888");
+$transfer->transferCallerId("+11234567891");
 $transfer->phoneNumbers(array($number));
 
 $response = new BandwidthLib\Voice\Bxml\Response();
@@ -480,7 +497,6 @@ $response->addVerb($speakSentence);
 $response->addVerb($transfer);
 
 echo $response->toBxml();
-echo "\n";
 ```
 
 > The announcement BXML response from `http://myapp.com/announcement` is:
@@ -525,15 +541,15 @@ $speakSentence->voice("paul");
 
 ```java
 PhoneNumber phoneNumber1 = PhoneNumber.builder()
-        .phoneNumber("+11234567892")
+        .phoneNumber("+15552221234")
         .build();
 
 PhoneNumber phoneNumber2 = PhoneNumber.builder()
-        .phoneNumber("+11234567893")
+        .phoneNumber("+15552221233")
         .build();
 
 Transfer transfer = Transfer.builder()
-        .transferCallerId("+11234567891")
+        .transferCallerId("+15552221235")
         .phoneNumbers(phoneNumber1, phoneNumber2)
         .build();
 
@@ -547,18 +563,23 @@ System.out.println(response.toBXML());
 <TabItem value="csharp">
 
 ```csharp
+PhoneNumber phoneNumber1 = new PhoneNumber
+{
+    Number = "+15552221234"
+};
+
+PhoneNumber phoneNumber2 = new PhoneNumber
+{
+    Number = "+15552221233"
+};
+
+Transfer transfer = new Transfer
+{
+    TransferCallerId = "+15552221235",
+    PhoneNumbers = new PhoneNumber[] { phoneNumber1, phoneNumber2 }
+};
+
 Response response = new Response();
-
-PhoneNumber phoneNumber1 = new PhoneNumber();
-phoneNumber1.Number = "+15552221234";
-
-PhoneNumber phoneNumber2 = new PhoneNumber();
-phoneNumber2.Number = "+15552221233";
-
-Transfer transfer = new Transfer();
-transfer.PhoneNumbers = new PhoneNumber[] { phoneNumber1, phoneNumber2 };
-transfer.TransferCallerId = "+15552221235";
-
 response.Add(transfer);
 
 Console.WriteLine(response.ToBXML());
@@ -568,19 +589,22 @@ Console.WriteLine(response.ToBXML());
 <TabItem value="ruby">
 
 ```ruby
-response = Bandwidth::Voice::Response.new()
 phone_number_1 = Bandwidth::Voice::PhoneNumber.new({
     :number => "+15552221234"
 })
+
 phone_number_2 = Bandwidth::Voice::PhoneNumber.new({
     :number => "+15552221233"
 })
+
 transfer = Bandwidth::Voice::Transfer.new({
     :transfer_caller_id => "+15552221235",
     :phone_numbers => [phone_number_1, phone_number_2]
 })
 
+response = Bandwidth::Voice::Response.new()
 response.push(transfer)
+
 puts response.to_bxml()
 ```
 
@@ -589,14 +613,15 @@ puts response.to_bxml()
 
 ```js
 const number1 = new Transfer.PhoneNumber({
-    number: "+17777777777"
+    number: "+15552221234"
 });
 
 const number2 = new Transfer.PhoneNumber({
-    number: "+18888888888"
+    number: "++15552221233"
 });
 
 const transfer = new Transfer({
+    transferCallerId: "15552221235",
     phoneNumbers: [number1, number2]
 });
 
@@ -612,15 +637,19 @@ console.log(response.toBxml());
 phone_number_1 = PhoneNumber(
     number="+15552221234"
 )
+
 phone_number_2 = PhoneNumber(
     number="+15552221233"
 )
+
 transfer = Transfer(
     transfer_caller_id="+15552221235",
     phone_numbers=[phone_number_1, phone_number_2]
 )
 
+response = Response()
 response.add_verb(transfer)
+
 print(response.to_bxml())
 ```
 
@@ -628,18 +657,17 @@ print(response.to_bxml())
 <TabItem value="php">
 
 ```php
-$number1 = new BandwidthLib\Voice\Bxml\PhoneNumber("+17777777777");
-$number2 = new BandwidthLib\Voice\Bxml\PhoneNumber("+15555555555");
+$number1 = new BandwidthLib\Voice\Bxml\PhoneNumber("+15552221234");
+$number2 = new BandwidthLib\Voice\Bxml\PhoneNumber("+15552221233");
 
 $transfer = new BandwidthLib\Voice\Bxml\Transfer();
-$transfer->transferCallerId("+18888888888");
+$transfer->transferCallerId("+15552221235");
 $transfer->phoneNumbers(array($number1, $number2));
 
 $response = new BandwidthLib\Voice\Bxml\Response();
 $response->addVerb($transfer);
 
 echo $response->toBxml();
-echo "\n";
 ```
 
 </TabItem>
