@@ -550,6 +550,85 @@
                 },
                 "deprecated": false
             }
+        },
+        "/api/v3/users/{accountId}/messages": {
+            "get": {
+                "tags" : [ "Messages" ],
+                "summary": "Get Messages v3",
+                "description": "Returns a list of messages based on query parameters.",
+                "operationId": "GetMessagesV3",
+                "parameters": [{
+                    "name": "accountId",
+                    "in": "path",
+                    "required": true,
+                    "description": "User's account ID",
+                    "example": "900000",
+                    "schema": {
+                        "type": "string"
+                    }
+                }, {
+                    "name": "pageToken",
+                    "in": "query",
+                    "required": false,
+                    "description": "A base64 encoded value used for pagination of results",
+                    "example": "gdEewhcJLQRB5",
+                    "schema": {
+                        "type": "string"
+                    }
+                }, {
+                    "name": "limit",
+                    "in": "query",
+                    "required": false,
+                    "description": "The maximum records requested in search result. Default 100. The sum of limit and after cannot be more than 10000",
+                    "schema": {
+                        "type": "integer"
+                    },
+                    "example": 50
+                }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GetMessagesRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {},
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BandwidthMessagesList"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "415": {
+                        "$ref": "#/components/responses/InvalidMediaType"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    }
+                },
+                "deprecated": false
+            }
         }
     },
     "components": {
@@ -896,6 +975,61 @@
                         ],
                         "description": "The message's priority, currently for toll-free or short code SMS only. Messages with a priority value of `\"high\"` are given preference over your other traffic.",
                         "example": "default"
+                    }
+                }
+            },
+            "GetMessagesFilter": {
+                "title": "GetMessagesFilter",
+                "type": "object",
+                "properties": {
+                    "fieldName": {
+                        "type": "string",
+                        "description": "The field to filter on. One of messageId, sourceTn, destinationTn, messageStatus, messageDirection, carrierName, messageType, errorCode, fromDateTime, toDateTime",
+                        "example": "messageId"
+                    },
+                    "operator": {
+                        "type": "string",
+                        "description": "The operator to filter by. One of EQUALS, GREATER_THAN, GREATER_THAN_EQUALS, LESS_THAN, LESS_THAN_EQUALS. Note: operators other than EQUALS only work on fromDateTime and toDateTime",
+                        "example": "EQUALS"
+                    },
+                    "value": {
+                        "type": "string",
+                        "description": "The value of the specified fieldName",
+                        "example": "9e0df4ca-b18d-40d7-a59f-82fcdf5ae8e6"
+                    }
+                }
+            },
+            "GetMessagesSort": {
+                "title": "GetMessagesSort",
+                "type": "object",
+                "properties": {
+                    "fieldName": {
+                        "type": "string",
+                        "description": "The field to sort on. One of messageId, sourceTn, destinationTn, messageStatus, messageDirection, carrierName, messageType, errorCode, fromDateTime, toDateTime",
+                        "example": "messageId"
+                    },
+                    "direction": {
+                        "type": "string",
+                        "description": "The direction you want to sort. One of asc, desc",
+                        "example": "desc"
+                    }
+                }
+            },
+            "GetMessagesRequest": {
+                "title": "GetMessagesRequest",
+                "type": "object",
+                "properties": {
+                    "filters": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/GetMessagesFilter"
+                        }
+                    },
+                    "sort": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/GetMessagesSort"
+                        }
                     }
                 }
             }
