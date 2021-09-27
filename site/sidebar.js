@@ -75,6 +75,7 @@ module.exports = {
                         "voice/webhooks/dtmf",
                         "voice/webhooks/gather",
                         "voice/webhooks/initiate",
+                        "voice/webhooks/machineDetectionComplete",
                         "voice/webhooks/recordComplete",
                         "voice/webhooks/recordingAvailable",
                         "voice/webhooks/redirect",
@@ -114,7 +115,11 @@ module.exports = {
                 {
                     type: "category",
                     label: "Guides and Tutorials",
-                    items: ["voice/recordingGuide", "voice/cnamPerDipGuide"],
+                    items: [
+                        "voice/machineDetectionGuide",
+                        "voice/recordingGuide",
+                        "voice/cnamPerDipGuide"
+                    ],
                 },
                 "voice/rateLimits",
                 "voice/errors",
