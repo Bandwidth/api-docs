@@ -12,15 +12,15 @@ image: ../../static/img/bandwidth-logo.png
 
 ## Connecting WebRTC to Programmable Voice
 
-Bandwidth has a demonstrated history of excellence in IP voice technologies, including comprehensive CPaaS Programmable Voice (PV) and Messaging capabilities. The introduction of WebRTC provides the opportunity to combine the strength and diversity of our Programmable Voice (PV) offering with our highly controllable WebRTC to yield a rich and flexible platform that allows our customers to extend their business with a broad range of browser-based communication capabilities.
+Bandwidth has a demonstrated history of excellence in IP voice technologies, including comprehensive CPaaS [Programmable Voice](../voice) (PV) and Messaging capabilities. Combining WebRTC with our Programmable Voice (PV) offering yields a rich and flexible platform that allows our customers to extend their business with a broad range of browser-based communication capabilities.
 
 One of the steps we have taken to enable this capability suite is to ensure that our PV and WebRTC APIs combine their respective strengths when integrated.
 
-When PV calls interwork with WebRTC communications, the behavior of the voice call can be augmented by the extensive suite of PV capabilities. This enables your application to create voice calls, receive voice calls, insert services like recording, and control and monitor changes made to these calls. This is done with the use of "BXML" verbs supported by the PV platform.
+When PV calls interwork with WebRTC communications, the behavior of the resulting call can be augmented by the extensive suite of PV capabilities. This enables your application to create voice calls, receive voice calls, insert services like recording, and control and monitor changes made to these calls. This is done with the use of "BXML" verbs supported by the PV platform.
 
 By combining our WebRTC and programmable voice APIs, you can create composite call flows that meet your needs.
 
-To create a Programmable Voice call that involves WebRTC endpoints, your appliction establishes a connection from the Programmable Voice network to the WebRTC service.
+To create a Programmable Voice call that involves WebRTC endpoints, your appliction first establishes a connection from the Programmable Voice network to the WebRTC platform.
 
 ![Summary of interconnection](../../static/img/webrtc-pv-summary.png "summary")
 
