@@ -38,7 +38,7 @@ module.exports = {
         },
         announcementBar: {
             id: 'new_docsite_flag', // Any value that will identify this message.
-            content: 'Welcome to the new home of Bandwidth\'s Developer Documentation. To visit the old docs, <a target="_blank" href="https://dev.bandwidth.com/">click here.</a>',
+            content: 'Welcome to the new home of Bandwidth\'s Developer Documentation. Please take a minute to <a target="_blank" href="https://forms.gle/CgaaBoNRzSp1XoWbA">provide any feedback you may have</a> on our new docsite!',
             backgroundColor: '#FFFFFF', // Defaults to `#fff`.
             textColor: '#079CEE', // Defaults to `#000`.
             isCloseable: false, // Defaults to `true`.
