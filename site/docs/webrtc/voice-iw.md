@@ -137,7 +137,7 @@ Although use of the Conference verb has higher costs than the previous methods, 
 
 ![Conference Verb Model](../../static/img/webrtc-pv-conference.png "Conference")
 
-Conferencing is actively supported by both the WebRTC and Voice platforms, however, if both platforms are interconnected, and the power of PV is needed on the voice-only call legs, use of the Conference BXML verb is valuable. If fine-grained control over media in a conference scenario is needed, or of video is required in the conference, it is likely wise to use the conferencing capability inherent in the WebRTC platform and APIs.
+Conferencing is actively supported by both the WebRTC and Voice platforms, however, if both platforms are interconnected, and the power of PV is needed on the voice-only call legs, use of the Conference BXML verb is valuable. If fine-grained control over media in a conference scenario is needed, or if video is required in the conference, it is likely wise to use the conferencing capability inherent in the WebRTC platform and APIs.
 
 Here’s a [code snippet](https://github.com/Bandwidth-Samples/webrtc-voiceconf-ts) of how the Conference verb is used:
 
