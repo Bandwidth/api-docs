@@ -28,7 +28,7 @@ To interconnect a WebRTC participant to the PV network capabilities, your applic
 
 Once an answer is received on this SIP transaction, an interconnection is established between WebRTC and Voice.
 
-You are able to select differnt overall call behaviors by choosing the BXML verbs that are used in setting up the interconnection. The three call control verbs that can be used are: Transfer, Bridge, and Conference, each of which creates a different voice application experience
+You are able to select different overall call behaviors by choosing the BXML verbs that are used in setting up the interconnection. The three call control verbs that can be used are: Transfer, Bridge, and Conference, each of which creates a different voice application experience.
 
 <!-- prettier-ignore-start -->
 | Programmable Voice Verb | Solution Characteristics summary |
