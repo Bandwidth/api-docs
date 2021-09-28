@@ -104,7 +104,7 @@ This sends the payload back to the Voice API
     });
 ```
 
-There’s a limitation to what can be done with Transfer: the fact that only a single call recognized by the PV platform means that changes to that call will impact the WebRTC interconnection. Once the transfer is complete, you can redirect the call to another destination using the [TransferComplete](https://dev.bandwidth.com/voice/bxml/callbacks/transferComplete.html) callback, however this will result in the removal of the WebRTC leg of the call. To do this, you need to specify the transferCompleteUrl attribute. The above example can be found in [Hello-world repository](https://github.com/Bandwidth-Samples/webrtc-hello-world-ts).
+There’s a limitation to what can be done with Transfer: the fact that only a single call recognized by the PV platform means that changes to that call will impact the WebRTC interconnection. Once the transfer is complete, you can redirect the call to another destination using the [TransferComplete](../voice/bxml/transfer) callback, however this will result in the removal of the WebRTC leg of the call. To do this, you need to specify the transferCompleteUrl attribute. The above example can be found in [Hello-world repository](https://github.com/Bandwidth-Samples/webrtc-hello-world-ts).
 
 ## Bridge
 
