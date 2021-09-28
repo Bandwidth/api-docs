@@ -188,4 +188,4 @@ res.contentType("application/xml").send(resp.toBxml());
 
 When your outgoing call is answered, our Voice API hits this [/callAnswered](<https://github.com/Bandwidth-Samples/webrtc-voiceconf-ts/blob/main/src/server.ts#:~:text=*/-,app.post(%22/callAnswered%22%2C%20async%20(req%2C%20res)%20%3D%3E%20%7B,%7D)%3B,-/**>) endpoint to connect you to a conference. The above snippets can be found in the [Conference repository](https://github.com/Bandwidth-Samples/webrtc-voiceconf-ts).
 
-So far, you have read about only 3 of our call control verbs. There are many options available to you, and these can be found in the [developer docs](https://dev.bandwidth.com/voice/bxml/about.html).
+So far, you have read about only 3 of our call control verbs. There are many options available to you, and these can be found in the [developer docs](../voice/bxml).
