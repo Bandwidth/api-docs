@@ -14,7 +14,7 @@ const messagingInternationalSpec = fs.readFileSync('./specs-docs-only/messagingI
 
 module.exports = {
     title: 'Bandwidth API Docs',
-    tagline: 'Learn About Bandwidth\'s Product API\'s',
+    tagline: 'Learn About Bandwidth\'s Product APIs',
     url: 'https://new.dev.bandwidth.com',
     baseUrl: '/',
     onBrokenLinks: 'throw',
