@@ -9,7 +9,7 @@ const webRtcSpec = fs.readFileSync('./specs/webRtc.json', 'utf-8');
 const multiFactorAuthSpec = fs.readFileSync('./specs/multiFactorAuth.json', 'utf-8');
 const dashSpec = fs.readFileSync('./specs-docs-only/dash.json', 'utf-8');
 const dashNotificationsSpec = fs.readFileSync('./specs-docs-only/dashNotifications.json', 'utf-8');
-// const messagingInternationalSpec = fs.readFileSync('./specs/messagingInternational.json', 'utf-8');
+const messagingInternationalSpec = fs.readFileSync('./specs-docs-only/messagingInternational.json', 'utf-8');
 // const numbersSpec = fs.readFileSync('./specs/numbers.json', 'utf-8');
 
 module.exports = {
@@ -38,7 +38,7 @@ module.exports = {
         },
         announcementBar: {
             id: 'new_docsite_flag', // Any value that will identify this message.
-            content: 'Welcome to the new home of Bandwidth\'s Developer Documentation. To visit the old docs, <a target="_blank" href="https://dev.bandwidth.com/">click here.</a>',
+            content: 'Welcome to the new home of Bandwidth\'s Developer Documentation. Please take a minute to <a target="_blank" href="https://forms.gle/CgaaBoNRzSp1XoWbA">provide any feedback you may have</a> on our new docsite!',
             backgroundColor: '#FFFFFF', // Defaults to `#fff`.
             textColor: '#079CEE', // Defaults to `#000`.
             isCloseable: false, // Defaults to `true`.
@@ -74,6 +74,9 @@ module.exports = {
                 }, {
                     to: 'apis/messaging',
                     label: 'Messaging'
+                }, {
+                    to: 'apis/messaging-international',
+                    label: 'International Messaging'
                 }, {
                     to: 'apis/multifactorauth',
                     label: 'Multi-Factor Authentication'
@@ -171,7 +174,7 @@ module.exports = {
         phoneNumberLookupSpec: JSON.parse(phoneNumberLookupSpec),
         voiceSpec: JSON.parse(voiceSpec),
         messagingSpec: JSON.parse(messagingSpec),
-        // messagingInternationalSpec: JSON.parse(messagingInternationalSpec),
+        messagingInternationalSpec: JSON.parse(messagingInternationalSpec),
         webRTCSpec: JSON.parse(webRtcSpec),
         multiFactorAuthSpec: JSON.parse(multiFactorAuthSpec),
         dashSpec: JSON.parse(dashSpec),

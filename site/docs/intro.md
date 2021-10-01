@@ -14,4 +14,4 @@ image: ../../static/img/bandwidth-logo.png
 
 ## Welcome to Bandwidth's Developer Docs
 
-Here you will find a number of resources pertaining to Bandwidth's different product API's. 
+Here you will find a number of resources pertaining to Bandwidth's different product APIs. 

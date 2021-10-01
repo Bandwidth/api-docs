@@ -4,11 +4,11 @@
  * This script runs on docsite generation to modify the OpenAPI specs to support Redoc's code snippet extension.
  *
  * The code sample files are stored in the following format
- * 
+ *
  *     code-snippets/<SpecName>/<OperationId>/sample.<extension>
- * 
+ *
  * Pseudo code for the script
- * 
+ *
  * for each OpenAPI spec:
  *     read into a JSON object
  *     for each operationId:
@@ -51,7 +51,7 @@ const EXTENSION_TO_LANG = {
     "py": "Python",
     "rb": "Ruby",
     "ts": "TypeScript",
-    "js": "JavaScript"
+    "js": "Node.js"
 };
 
 var spec_name = '';

@@ -187,19 +187,21 @@ In this example, only the transfers themselves will be recorded, and the text-to
 <TabItem value="java">
 
 ```java
+SpeakSentence speakSentenceStart = SpeakSentence.builder()
+        .text("This call is being recorded.  Please wait while we transfer you.")
+        .voice("bridget")
+        .build();
+
 StartRecording startRecording = StartRecording.builder()
         .recordingAvailableUrl("https://myapp.com/noBXML")
         .build();
 
-SpeakSentence speakSentence = SpeakSentence.builder()
-        .voice("bridget")
-        .text("This call is being recorded.  Please wait while we transfer you.")
+PhoneNumber phoneNumber = PhoneNumber.builder()
+        .phoneNumber("+15554567892")
         .build();
 
 Transfer transfer = Transfer.builder()
-        .phoneNumbers(
-                PhoneNumber.builder().phoneNumber("+15554567892").build()
-        )
+        .phoneNumbers(phoneNumber)
         .build();
 
 PauseRecording pauseRecording = PauseRecording.builder().build();
@@ -207,17 +209,17 @@ PauseRecording pauseRecording = PauseRecording.builder().build();
 Gather gather = Gather.builder()
         .gatherUrl("https://myapp.com/gatherCallbackBxml")
         .maxDigits(1)
-        .firstDigitTimeout(30.0)
+        .firstDigitTimeout(10.0)
         .audioProducer(
                 SpeakSentence.builder()
-                        .voice("kate")
                         .text("Press one if you want to be transferred to another number.")
+                        .voice("kate")
                         .build()
         )
         .build();
 
 Response response = Response.builder().build()
-        .add(speakSentence)
+        .add(speakSentenceStart)
         .add(startRecording)
         .add(transfer)
         .add(pauseRecording)
@@ -231,21 +233,26 @@ System.out.println(response.toBXML());
 ```java
 ResumeRecording resumeRecording = ResumeRecording.builder().build();
 
-Transfer transfer = Transfer.builder()
-        .phoneNumbers(
-                PhoneNumber.builder().phoneNumber("+15554567893").build()
-        )
+PhoneNumber phoneNumber = PhoneNumber.builder()
+        .phoneNumber("+15554567893")
         .build();
 
-SpeakSentence speakSentence = SpeakSentence.builder()
-        .voice("bridget")
+Transfer transfer = Transfer.builder()
+        .phoneNumbers(phoneNumber)
+        .build();
+
+StopRecording stopRecording = StopRecording.builder().build();
+
+SpeakSentence speakSentenceEnd = SpeakSentence.builder()
         .text("Thanks for your call. Have a nice day!")
+        .voice("bridget")
         .build();
 
 Response response = Response.builder().build()
         .add(resumeRecording)
         .add(transfer)
-        .add(speakSentence);
+        .add(stopRecording)
+        .add(speakSentenceEnd);
 
 System.out.println(response.toBXML());
 ```
@@ -254,10 +261,10 @@ System.out.println(response.toBXML());
 <TabItem value="csharp">
 
 ```csharp
-SpeakSentence speakSentence = new SpeakSentence
+SpeakSentence speakSentenceStart = new SpeakSentence
 {
-    Voice = "bridget",
-    Sentence = "This call is being recorded. Please wait while we transfer you."
+    Sentence = "This call is being recorded. Please wait while we transfer you.",
+    Voice = "bridget"
 };
 
 StartRecording startRecording = new StartRecording
@@ -265,12 +272,14 @@ StartRecording startRecording = new StartRecording
     RecordingAvailableUrl = "https://myapp.com/noBXML"
 };
 
+PhoneNumber phoneNumber = new PhoneNumber
+{
+    Number = "+15554567892"
+};
+
 Transfer transfer = new Transfer
 {
-    PhoneNumbers = new PhoneNumber[] {new PhoneNumber
-    {
-        Number = "+15554567892"
-    } }
+    PhoneNumbers = new PhoneNumber[] { phoneNumber }
 };
 
 PauseRecording pauseRecording = new PauseRecording();
@@ -279,15 +288,16 @@ Gather gather = new Gather
 {
     GatherUrl = "https://myapp.com/gatherCallbackBxml",
     MaxDigits = 1,
+    FirstDigitTimeout = 10,
     SpeakSentence = new SpeakSentence
     {
-        Voice = "kate",
-        Sentence = "Press one if you want to be transferred to another number."
+        Sentence = "Press one if you want to be transferred to another number.",
+        Voice = "kate"
     }
 };
 
 Response response = new Response();
-response.Add(speakSentence);
+response.Add(speakSentenceStart);
 response.Add(startRecording);
 response.Add(transfer);
 response.Add(pauseRecording);
@@ -301,24 +311,29 @@ Console.WriteLine(response.ToBXML());
 ```csharp
 ResumeRecording resumeRecording = new ResumeRecording();
 
-Transfer transfer = new Transfer
+PhoneNumber phoneNumber = new PhoneNumber
 {
-    PhoneNumbers = new PhoneNumber[] {new PhoneNumber
-    {
-        Number = "+15554567893"
-    } }
+    Number = "+15554567893"
 };
 
-SpeakSentence speakSentence = new SpeakSentence
+Transfer transfer = new Transfer
 {
-    Voice = "bridget",
-    Sentence = "Thanks for your call. Have a nice day!"
+    PhoneNumbers = new PhoneNumber[] { phoneNumber }
+};
+
+StopRecording stopRecording = new StopRecording();
+
+SpeakSentence speakSentenceEnd = new SpeakSentence
+{
+    Sentence = "Thanks for your call. Have a nice day!",
+    Voice = "bridget"
 };
 
 Response response = new Response();
 response.Add(resumeRecording);
 response.Add(transfer);
-response.Add(speakSentence);
+response.Add(stop_recording);
+response.Add(speakSentenceEnd);
 
 Console.WriteLine(response.ToBXML());
 ```
@@ -339,6 +354,7 @@ start_recording = Bandwidth::Voice::StartRecording.new({
 phone_number = Bandwidth::Voice::PhoneNumber.new({
     :number => "+15554567892"
 })
+
 transfer = Bandwidth::Voice::Transfer.new({
     :phone_numbers => [phone_number]
 })
@@ -349,10 +365,11 @@ speak_sentence_gather = Bandwidth::Voice::SpeakSentence.new({
     :sentence => "Press one if you want to be transferred to another number.",
     :voice => "kate"
 })
+
 gather = Bandwidth::Voice::Gather.new({
+    :gather_url => "https://myapp.com/gatherCallbackBxml",
     :max_digits => 1,
     :first_digit_timeout => 10,
-    :gather_url => "https://myapp.com/gatherCallbackBxml",
     :speak_sentence => speak_sentence_gather
 })
 
@@ -374,6 +391,7 @@ resume_recording = Bandwidth::Voice::ResumeRecording.new()
 phone_number = Bandwidth::Voice::PhoneNumber.new({
     :number => "+15554567893"
 })
+
 transfer = Bandwidth::Voice::Transfer.new({
     :phone_numbers => [phone_number]
 })
@@ -399,29 +417,31 @@ puts response.to_bxml()
 
 ```js
 const speakSentenceStart = new SpeakSentence({
-    sentence: "This call is being recorded. Please wait while we transfer you."
+    sentence: "This call is being recorded. Please wait while we transfer you.",
+    voice: "bridget"
 });
 
 const startRecording = new StartRecording();
 
-const number = new Transfer.PhoneNumber({
-    number: "+19195551234"
+const phoneNumber = new Transfer.PhoneNumber({
+    number: "+15554567892"
 });
 
 const transfer = new Transfer({
-    phoneNumbers: [number]
+    phoneNumbers: [phoneNumber]
 });
 
 const pauseRecording = new PauseRecording();
 
 const speakSentenceGather = new SpeakSentence({
-    sentence: "This call is being recorded. Please wait while we transfer you."
+    sentence: "Press one if you want to be transferred to another number.",
+    voice: "kate"
 });
 
 const gather = new Gather({
     gatherUrl: "https://myapp.com/gatherCallbackBxml",
-    firstDigitTimeout: 10,
     maxDigits: 1,
+    firstDigitTimeout: 10,
     audioProducers: [speakSentenceGather]
 });
 
@@ -435,21 +455,22 @@ console.log(response.toBxml());
 ```js
 const resumeRecording = new ResumeRecording();
 
-const number = new Transfer.PhoneNumber({
-    number: "+19195554321"
+const phoneNumber = new Transfer.PhoneNumber({
+    number: "+15554567893"
 });
 
 const transfer = new Transfer({
-    phoneNumbers: [number]
+    phoneNumbers: [phoneNumber]
 });
 
 const stopRecording = new StopRecording();
 
 const speakSentenceEnd = new SpeakSentence({
-    sentence: "Thanks for your call. Have a nice day!"
+    sentence: "Thanks for your call. Have a nice day!",
+    voice: "bridget"
 })
 
-const response = new Response(resumeRecording, transfer, stopRecording);
+const response = new Response(resumeRecording, transfer, stopRecording, speakSentenceEnd);
 
 console.log(response.toBxml());
 ```
@@ -470,6 +491,7 @@ start_recording = StartRecording(
 phone_number = PhoneNumber(
     number="+15554567892"
 )
+
 transfer = Transfer(
     phone_numbers=[phone_number]
 )
@@ -480,6 +502,7 @@ speak_sentence_gather = SpeakSentence(
     sentence="Press one if you want to be transferred to another number.",
     voice = "kate"
 )
+
 gather = Gather(
     max_digits=1,
     first_digit_timeout=10,
@@ -505,6 +528,7 @@ resume_recording = ResumeRecording()
 phone_number = PhoneNumber(
     number="+15554567893"
 )
+
 transfer = Transfer(
     phone_numbers=[phone_number]
 )
@@ -536,6 +560,7 @@ $startRecording = new BandwidthLib\Voice\Bxml\StartRecording();
 $startRecording->recordingAvailableUrl("https://myapp.com/noBXML");
 
 $phoneNumber = new BandwidthLib\Voice\Bxml\PhoneNumber("+15554567892");
+
 $transfer = new BandwidthLib\Voice\Bxml\Transfer();
 $transfer->phoneNumbers(array($phoneNumber));
 
@@ -543,6 +568,7 @@ $pauseRecording = new BandwidthLib\Voice\Bxml\PauseRecording();
 
 $speakSentenceGather = new BandwidthLib\Voice\Bxml\SpeakSentence("Press one if you want to be transferred to another number.");
 $speakSentenceGather->voice("kate");
+
 $gather = new BandwidthLib\Voice\Bxml\Gather();
 $gather->gatherUrl("https://myapp.com/gatherCallbackBxml");
 $gather->maxDigits(1);
@@ -565,6 +591,7 @@ echo $response->toBxml();
 $resumeRecording = new BandwidthLib\Voice\Bxml\ResumeRecording();
 
 $phoneNumber = new BandwidthLib\Voice\Bxml\PhoneNumber("+15554567893");
+
 $transfer = new BandwidthLib\Voice\Bxml\Transfer();
 $transfer->phoneNumbers(array($phoneNumber));
 
