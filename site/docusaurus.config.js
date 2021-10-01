@@ -13,7 +13,7 @@ const dashNotificationsSpec = fs.readFileSync('./specs-docs-only/dashNotificatio
 // const numbersSpec = fs.readFileSync('./specs/numbers.json', 'utf-8');
 
 module.exports = {
-    title: 'Bandwidth API Docs',
+    title: 'Bandwidth API Docss',
     tagline: 'Learn About Bandwidth\'s Product API\'s',
     url: 'https://new.dev.bandwidth.com',
     baseUrl: '/',
