@@ -8,6 +8,7 @@ slug: /changelog
 | Date | Notes |
 |--|--|
 | October 15, 2021 | Added `CreateParticipant` schema and `CreateParticipantResponse` to `CreateParticipant`
+| October 1st, 2021 | Messaging: Updated DELETE /media HTTP response code. |
 | September 23rd, 2021 | Change `MachineDetectionRequest` schema name to `MachineDetectionConfiguration` |
 | September 21st, 2021 | Add parameters of messageDirection, carrierName and messageType to GetMessages |
 | September 15th, 2021 | Add Messaging International API Spec |
