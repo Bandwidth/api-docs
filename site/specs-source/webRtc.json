@@ -76,7 +76,7 @@
                "content": {
                   "application/json": {
                      "schema": {
-                        "$ref": "#/components/schemas/CreateParticipant"
+                        "$ref": "#/components/schemas/CreateParticipantRequest"
                      }
                   }
                }
@@ -87,17 +87,7 @@
                   "content": {
                      "application/json": {
                         "schema": {
-                           "type": "object",
-                           "properties": {
-                              "participant": {
-                                 "$ref": "#/components/schemas/CreateParticipantResponse"
-                              },
-                              "token": {
-                                 "type": "string",
-                                 "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyfQ.L8i6g3PfcHlioHCCPURC9pmXT7gdJpx3kOoyAfNUwCc",
-                                 "description": "Auth token for the returned participant\n\nThis should be passed to the participant so that they can connect to the platform\n"
-                              }
-                           }
+                           "$ref": "#/components/schemas/CreateParticipantResponse"
                         }
                      }
                   }
@@ -814,7 +804,9 @@
                      ]
                   },
                   "readOnly": true,
-                  "$ref": "#/components/schemas/Subscriptions"
+                  "items": {
+                     "$ref": "#/components/schemas/Subscriptions"
+                  }
                },
                "tag": {
                   "type": "string",
@@ -867,9 +859,9 @@
                },
                "sessions": {
                   "type": "array",
-                  "description": "List of session ids this participant is associated with\n\nCapped to one\n",
+                  "description": "List of session ids this participant is associated with\n\nCapped to one\nReturns empty array upon creation of Participant",
                   "example": [
-                     "..."
+                     "75c21163-e110-41bc-bd76-1bb428ec85d5"
                   ],
                   "readOnly": true,
                   "items": {
@@ -878,20 +870,22 @@
                },
                "subscriptions": {
                   "type": "object",
-                  "description": "Subscriptions for this participant",
+                  "description": "Subscriptions for this participant\n\nReturns empty object upon creation of Participant",
                   "example": {
-                     "sessionId": "...",
+                     "sessionId": "d8886aad-b956-4e1b-b2f4-d7c9f8162772",
                      "participants": [
                         {
-                           "participantId": "..."
+                           "participantId": "568749d5-04d5-483d-adf5-deac7dd3d521"
                         },
                         {
-                           "participantId": "..."
+                           "participantId": "0275e47f-dd21-4cf0-a1e1-dfdc719e73a7"
                         }
                      ]
                   },
                   "readOnly": true,
-                  "$ref": "#/components/schemas/SubscriptionsResponse"
+                  "items": {
+                     "$ref": "#/components/schemas/Subscriptions"
+                  }
                },
                "tag": {
                   "type": "string",
@@ -910,16 +904,10 @@
                }
             }
          },
-         "CreateParticipant": {
+         "CreateParticipantRequest": {
             "type": "object",
             "description": "Create a participant object",
             "properties": {
-               "id": {
-                  "type": "string",
-                  "description": "Unique id of the participant",
-                  "readOnly": true,
-                  "example": "320e2af6-13ec-498d-8b51-daba52c37853"
-               },
                "callbackUrl": {
                   "type": "string",
                   "nullable": true,
@@ -987,34 +975,6 @@
                }
             }
          },
-         "SubscriptionsResponse": {
-            "type": "object",
-            "required": [
-               "sessionId"
-            ],
-            "properties": {
-               "sessionId": {
-                  "type": "string",
-                  "description": "Session the subscriptions are associated with\n\nIf this is the only field, the subscriber will be subscribed to all participants in the session (including any participants that are later added to the session)\n",
-                  "example": "..."
-               },
-               "participants": {
-                  "type": "array",
-                  "description": "Subset of participants to subscribe to in the session. Optional.",
-                  "example": [
-                     {
-                        "participantId": "..."
-                     },
-                     {
-                        "participantId": "..."
-                     }
-                  ],
-                  "items": {
-                     "$ref": "#/components/schemas/ParticipantSubscription"
-                  }
-               }
-            }
-         },
          "ParticipantSubscription": {
             "type": "object",
             "required": [
@@ -1038,7 +998,7 @@
                "code": {
                   "type": "integer",
                   "format": "int32",
-                  "example": "500"
+                  "example": 500
                },
                "message": {
                   "type": "string",
