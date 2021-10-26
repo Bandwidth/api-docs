@@ -1,0 +1,79 @@
+---
+id: about
+title: About
+slug: /voice/webhooks
+description: A general overview of Bandwidth's Answer Webhook
+keywords:
+  - bandwidth
+  - voice
+  - webhook
+  - webhooks
+hide_title: true
+image: ../../static/img/bandwidth-logo.png
+---
+
+export const Highlight = ({children, color}) => (
+    <span
+      style={{
+        backgroundColor: color,
+        borderRadius: '2px',
+        color: '#fff',
+        padding: '0.2rem',
+      }}>
+      {children}
+    </span>
+  );
+
+# Webhooks
+
+BXML webhooks are HTTP requests made by the Bandwidth platform to endpoints specified by you in your HTTP requests, BXML and in your Voice application. Their purpose is to:
+  1. inform you of events that have happened in the call flow
+  2. receive instructions from your application on what to do next.
+
+## Synchronous Webhooks
+
+BXML webhooks are HTTP <Highlight color="#079CEE">POST</Highlight> requests by default. The request will have a JSON body that describes the event and expect an XML response consisting of [BXML verbs](/docs/voice/bxml).
+
+:::note
+HTTP <Highlight color="#00bf8c">GET</Highlight> requests may be used for webhooks by setting the appropriate `Method` attribute when specifying each 's URL. If the <Highlight color="#00bf8c">GET</Highlight> method is used, the properties are passed as query parameters. This can cause very long URLs, so <Highlight color="#079CEE">POST</Highlight> is the preferred method.
+:::
+
+We use a 15s request timeout by default when trying to deliver all s. However, you can customize that value [when creating an outbound call](/apis/voice#operation/createCall) by setting a `callbackTimeout` on the request; or with application settings for inbound calls.
+
+:::tip
+Relative URLs are allowed in BXML verb attributes and they will be resolved against the URL of the server that provided the BXML containing the relative URL. For example, if we send an [answer event](/docs/voice/webhooks/answer) to `https://example.com/answer` and the BXML sent back to us contains a [Gather](/docs/voice/bxml/gather) with a `gatherUrl=/onGatherComplete`, the [gather event](/docs/voice/webhooks/gather) will be sent to `https://example.com/onGatherComplete`.
+:::
+
+| Webhook                                           | Description                                                                                                                                                                                                  |
+|:--------------------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [Answer](/docs/voice/webhooks/answer)                               | Bandwidth API sends this when the call is answered.                                                                                                                                       |
+| [Bridge Complete](/docs/voice/webhooks/bridgeComplete)              | Bandwidth API sends this to the application when a `<Bridge>` is complete and the original call needs to continue.                                                                                           |
+| [Bridge Target Complete](/docs/voice/webhooks/bridgeTargetComplete) | Bandwidth API sends this to the application when a `<Bridge>` is complete and the target call needs to continue.                                                                                             |
+| [Gather](/docs/voice/webhooks/gather)                               | Bandwidth API sends this when a `<Gather>` is completed.                                                                                                                                                     |
+| [Initiate](/docs/voice/webhooks/initiate)                           | Bandwidth API sends this when an inbound call arrives.                                                                                                                                    |
+| [Record Complete](/docs/voice/webhooks/recordComplete)              | Bandwidth API sends this when a `<Record>` is completed. The recording is not available to download until the [Recording Available](/docs/voice/webhooks/recordingAvailable) event is received.             |
+| [Redirect](/docs/voice/webhooks/redirect)                           | Bandwidth API sends this when a `<Redirect>` is requested or when a <Highlight color="#079CEE">POST</Highlight> request is made to the [/calls/{callId}](/apis/voice#operation/modifyCall) endpoint requesting a redirect. |
+| [Transfer Answer](/docs/voice/webhooks/transferAnswer)              | Bandwidth API sends this when the `<Transfer>` is answered.                                                                                                                                 |
+| [Transfer Complete](/docs/voice/webhooks/transferComplete)          | Bandwidth API sends this when the `<Transfer>` is complete and the original call needs to continue.                                                                                         |
+| [Conference Created](/docs/voice/webhooks/conferenceCreated)        | Bandwidth API sends this when a new conference is created.                                                                                                                                                   |
+| [Conference Member Join](/docs/voice/webhooks/conferenceMemberJoin) | Bandwidth API sends this when a new member joins a conference.                                                                                                                                               |
+| [Conference Member Exit](/docs/voice/webhooks/conferenceMemberExit) | Bandwidth API sends this when a member leaves a conference.                                                                                                                                                  |
+| [Conference Redirect](/docs/voice/webhooks/conferenceRedirect)      | Bandwidth API sends this to the application when a <Highlight color="#079CEE">POST</Highlight> request is made to the [/conferences/{conferenceId}](/apis/voice#operation/modifyConferenc) endpoint requesting to modify a conference. |
+
+## Asynchronous Webhooks
+
+Asynchronous webhooks are HTTP requests made by the Bandwidth platform to endpoints specified by you in your HTTP requests and BXML. The HTTP <Highlight color="#079CEE">POST</Highlight> method is used by default. The request will have a JSON body that describes the event.  An HTTP 201 response with no content is expected.  HTTP 200 is also acceptable. If there is a response body (including BXML), it will be ignored.
+
+:::note
+HTTP <Highlight color="#00bf8c">GET</Highlight> requests may be used for webhooks by setting the appropriate `Method` attribute when specifying each 's URL. If the <Highlight color="#00bf8c">GET</Highlight> method is used, the properties are passed as query parameters. This can cause very long URLs, so <Highlight color="#079CEE">POST</Highlight> is the preferred method.
+:::
+
+| Webhook                                        | Description                                                                                                                                         |
+|:-----------------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------|
+| [Conference Completed](/docs/voice/webhooks/conferenceCompleted)                    | Bandwidth API sends this after the last member leaves the conference.                                                                               |
+| [Conference Recording Available](/docs/voice/webhooks/conferenceRecordingAvailable) | Bandwidth API sends this when a recording started by a `<StartRecording>`in a conference is available for download. |
+| [Disconnect](/docs/voice/webhooks/disconnect)                                       | Bandwidth API sends this when a call ends.                                                                                       |
+| [DTMF](/docs/voice/webhooks/dtmf)                                                   | Bandwidth API sends this for every digit detected after a `<StartGather>` is executed. |
+| [Recording Available](/docs/voice/webhooks/recordingAvailable)                      | Bandwidth API sends this when a recording started by either a `<StartRecording>` or a `<Record>` verb in a call is available for download. |
+| [Transfer Disconnect](/docs/voice/webhooks/transferDisconnect)                      | Bandwidth API sends this when any leg of a `<Transfer>` ends.                                                                                       |
+| [Transcription Available](/docs/voice/webhooks/transcriptionAvailable)              | Bandwidth API sends this when the transcription of a recording is available for download. |

@@ -19,7 +19,7 @@ $voiceClient = $client->getVoice()->getClient();
 $conferenceId = "c-1234";
 
 try {
-    $response = $voiceClient->getQueryMetadataForAccountAndConference($BW_ACCOUNT_ID, $conferenceId);
+    $response = $voiceClient->getConferenceRecordings($BW_ACCOUNT_ID, $conferenceId);
     if (count($response->getResult()) > 0) {
         print_r($response->getResult()[0]->name);
     }

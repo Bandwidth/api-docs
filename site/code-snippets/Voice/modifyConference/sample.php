@@ -18,7 +18,7 @@ $voiceClient = $client->getVoice()->getClient();
 
 $conferenceId = "conf-1234";
 
-$body = new BandwidthLib\Voice\Models\ApiModifyConferenceRequest();
+$body = new BandwidthLib\Voice\Models\ModifyConferenceRequest();
 $body->state = "active";
 
 try {

@@ -13,7 +13,7 @@ voice_client = bandwidth_client.voice_client.client
 conference_id = "conf-1234"
 
 begin
-    response = voice_client.get_conference_by_id(ENV['BW_ACCOUNT_ID'], conference_id)
+    response = voice_client.get_conference(ENV['BW_ACCOUNT_ID'], conference_id)
     print(response.data.name)
 rescue APIException => e
     puts e.response_code

@@ -1,0 +1,369 @@
+---
+id: conference
+title: Conference
+slug: /voice/bxml/conference
+description: A general overview of Bandwidth's Conference BXML Verb
+keywords:
+  - bandwidth
+  - voice
+  - bxml
+  - conference
+hide_title: false
+image: ../../static/img/bandwidth-logo.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+Used to join the current call into a conference.
+
+Conference names are created and specified by your application. Conferences are implicitly created the first time your application uses a conference name, and they are implicitly deleted when the last member leaves the conference. We will create a unique ID for the conference, so your conference names can be whatever you want. If the conference ends and then you later use the same conference name, a new unique ID will be created.
+
+To programmatically end a conference and immediately remove all members, use the [update conference](/apis/voice#operation/modifyConference) endpoint. If a conference is ended this way, removed members will continue executing their current BXML document, starting with the verb right after the `<Conference>`, if any.
+
+To programmatically remove a call from a conference while leaving other conference members in the conference, use the [update call](/apis/voice#operation/modifyCall) endpoint.
+
+:::info
+A maximum of 20 calls may be in a particular conference.
+
+A conference may last for at most 24 hours.
+:::
+
+BXML returned by responding to Bandwidths webhooks will be queued and executed in the conference in the order they are received, never overlapping. If an error happens when executing a verb, it will continue to the next verb normally.
+
+Only the following verbs are valid for conferences:
+* [`PlayAudio`](/docs/voice/bxml/playAudio)
+* [`SpeakSentence`](/docs/voice/bxml/speakSentence)
+* [`StartRecording`](/docs/voice/bxml/startRecording)
+* [`StopRecording`](/docs/voice/bxml/stopRecording)
+* [`PauseRecording`](/docs/voice/bxml/pauseRecording)
+* [`ResumeRecording`](/docs/voice/bxml/resumeRecording)
+
+BXML containing unsupported verbs will be rejected completely.
+
+## Text Content
+
+| Name        | Description |
+|:------------|:------------|
+| name        | The name of the conference with alphanumeric characters and the symbols `-`, `_`, and `.` with maximum length of 100 characters. |
+
+## Attributes
+
+| Attribute                     | Description |
+|:------------------------------|:------------|
+| mute                          | (optional) A boolean value to indicate whether the member should be on mute in the conference. When muted, a member can hear others speak, but others cannot hear them speak. Defaults to false. |
+| hold                          | (optional) A boolean value to indicate whether the member should be on hold in the conference. When on hold, a member cannot hear others, and they cannot be heard. Defaults to false. |
+| callIdsToCoach                | (optional) A comma-separated list of call ids to coach. When a call joins a conference with this attribute set, it will coach the listed calls. Those calls will be able to hear and be heard by the coach, but other calls in the conference will not hear the coach.<br/><br/>Calls may be added to the conference in any order - if the matching calls are not already in the conference, then once the matching calls are added, the coach will be able to hear and speak to the matching calls. Note that this will not add the matching calls to the conference; each call must individually execute a `<Conference>` verb to join.<br/><br/>The coach can leave and rejoin the conference, but the conference may only have one coach at a time. |
+| conferenceEventUrl            | (optional) URL to send Conference events to. The URL, method, username, and password are set by the BXML document that creates the conference, and all events related to that conference will be delivered to that same endpoint. If more calls join afterwards and also have this property (or any other webhook related properties like `username` and `password`), they will be ignored and the original webhook information will be used. This URL may be a relative endpoint. |
+| conferenceEventMethod         | (optional) The HTTP method to use for the request to `conferenceEventUrl`. GET or POST. Default value is POST. |
+| conferenceEventFallbackUrl    | (optional) A fallback url which, if provided, will be used to retry the conference webhook deliveries in case `conferenceEventUrl` fails to respond. |
+| conferenceEventFallbackMethod | (optional) The HTTP method to use to deliver the conference webhooks to `conferenceEventFallbackUrl`. GET or POST. Default value is POST. |
+| username                      | (optional) The username to send in the HTTP request to `conferenceEventUrl`. |
+| password                      | (optional) The password to send in the HTTP request to `conferenceEventUrl`. |
+| fallbackUsername              | (optional) The username to send in the HTTP request to `conferenceEventFallbackUrl`. |
+| fallbackPassword              | (optional) The password to send in the HTTP request to `conferenceEventFallbackUrl`. |
+| tag                           | (optional) A custom string that will be sent with these and all future webhooks unless overwritten by a future `tag` attribute or [`<Tag>`](/docs/voice/bxml/tag) verb, or cleared.<br/><br/>May be cleared by setting `tag=""`<br/><br/>Max length 256 characters.<br/><br/>The tag that is set for the call that creates the conference is the tag that will be sent with all webhooks related to the conference. For example, if the call that creates the conference has a tag set, and another call with a different tag joins the same conference, the first call's tag will be sent with both `conferenceMemberJoin` events. |
+| calbackTimeout               | (optional) This is the timeout (in seconds) to use when delivering webhooks for the conference. If not set, it will inherit the webhook timeout from the call that creates the conference. Can be any numeric value (including decimals) between 1 and 25. |
+
+## Webhooks Received
+
+| Webhooks                                                               | Can reply with BXML |
+|:-----------------------------------------------------------------------|:--------------------|
+| [Conference Created](/docs/voice/webhooks/conferenceCreated)           | Yes                 |
+| [Conference Member Join](/docs/voice/webhooks/conferenceMemberJoin)    | Yes                 |
+| [Conference Member Exit](/docs/voice/webhooks/conferenceMemberExit)    | Yes                 |
+| [Conference Completed](/docs/voice/webhooks/conferenceCompleted)       | No                  |
+
+
+## Examples
+
+### Join a Conference
+
+<Tabs
+  groupId="bxml"
+  defaultValue="xml"
+  values={[
+    { label: 'XML', value: 'xml', },
+    { label: 'Java', value: 'java', },
+    { label: 'C#', value: 'csharp', },
+    { label: 'Ruby', value: 'ruby', },
+    { label: 'NodeJS', value: 'nodejs', },
+    { label: 'Python', value: 'python', },
+    { label: 'PHP', value: 'php', },
+  ]
+}>
+<TabItem value="xml">
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <SpeakSentence gender="male">You will be added to your conference now.</SpeakSentence>
+    <Conference>my-conference-name</Conference>
+</Response>
+```
+
+</TabItem>
+<TabItem value="java">
+
+```java
+SpeakSentence speakSentence = SpeakSentence.builder()
+    .text("You will be added to your conference now.")
+    .gender("male")
+    .build();
+
+Conference conference = Conference.builder()
+    .name("my-conference-name")
+    .build();
+
+Response response = Response.builder().build()
+    .add(speakSentence)
+    .add(conference);
+
+System.out.println(response.toBXML());
+```
+
+</TabItem>
+<TabItem value="csharp">
+
+```csharp
+SpeakSentence speakSentence = new SpeakSentence
+{
+    Sentence = "You will be added to your conference now.",
+    Gender = "male"
+};
+
+Conference conference = new Conference {
+    Name = "my-conference-name"
+};
+
+Response response = new Response();
+response.Add(speakSentence);
+response.Add(conference);
+
+Console.WriteLine(response.ToBXML());
+```
+
+</TabItem>
+<TabItem value="ruby">
+
+```ruby
+speak_sentence = Bandwidth::Voice::SpeakSentence.new({
+    :sentence => "You will be added to your conference now.",
+    :gender => "male"
+})
+
+conference = Bandwidth::Voice::Conference.new({
+    :conference_name => 'my-conference-name'
+})
+
+response = Bandwidth::Voice::Response.new()
+response.push(speak_sentence)
+response.push(conference)
+
+puts response.to_bxml()
+```
+
+</TabItem>
+<TabItem value="nodejs">
+
+```js
+const speakSentence = new SpeakSentence({
+    sentence: "You will be added to your conference now.",
+    gender: "male"
+});
+
+const conference = new Conference({
+    name: "my-conference-name"
+});
+
+const response = new Response(speakSentence, conference);
+
+console.log(response.toBxml());
+```
+
+</TabItem>
+<TabItem value="python">
+
+```python
+speak_sentence = SpeakSentence("You will be added to your conference now.", gender="male")
+
+conference = Conference("my-conference-name")
+
+response = Response()
+response.add_verb(speak_sentence)
+response.add_verb(conference)
+
+print(response.to_bxml())
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+$speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("You will be added to your conference now.");
+$speakSentence->gender("male");
+
+$conference = new BandwidthLib\Voice\Bxml\Conference("my-conference-name");
+
+$response = new BandwidthLib\Voice\Bxml\Response();
+$response->addVerb($speakSentence);
+$response->addVerb($conference);
+
+echo $response->toBxml();
+```
+
+</TabItem>
+</Tabs>
+
+### Join a Conference as a Coach
+This shows how to add a coach in a conference.
+
+<Tabs
+  groupId="bxml"
+  defaultValue="xml"
+  values={[
+    { label: 'XML', value: 'xml', },
+    { label: 'Java', value: 'java', },
+    { label: 'C#', value: 'csharp', },
+    { label: 'Ruby', value: 'ruby', },
+    { label: 'NodeJS', value: 'nodejs', },
+    { label: 'Python', value: 'python', },
+    { label: 'PHP', value: 'php', },
+  ]
+}>
+<TabItem value="xml">
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <SpeakSentence gender="male">Welcome. You are going to coach 2 calls, please wait.</SpeakSentence>
+    <Conference callIdsToCoach="c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d,c-2a913f94-6a486f3a-3cae-4034-bcc3-f0c9fa77ca2f">my-conference-name</Conference>
+</Response>
+```
+
+</TabItem>
+<TabItem value="java">
+
+```java
+SpeakSentence speakSentence = SpeakSentence.builder()
+    .text("Welcome. You are going to coach 2 calls, please wait.")
+    .gender("male")
+    .build();
+
+List<String> ids = new ArrayList<>();
+ids.add("c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d");
+ids.add("c-2a913f94-6a486f3a-3cae-4034-bcc3-f0c9fa77ca2f");
+
+Conference conference = Conference.builder()
+    .name("my-conference-name")
+    .callIdsToCoach(ids)
+    .build();
+
+Response response = Response.builder().build()
+    .add(speakSentence)
+    .add(conference);
+
+System.out.println(response.toBXML());
+```
+
+</TabItem>
+<TabItem value="csharp">
+
+```csharp
+SpeakSentence speakSentence = new SpeakSentence
+{
+    Sentence = "Welcome. You are going to coach 2 calls, please wait.",
+    Gender = "male"
+};
+
+Conference conference = new Conference {
+    CallIdsToCoach = "c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d,c-2a913f94-6a486f3a-3cae-4034-bcc3-f0c9fa77ca2f",
+    Name = "my-conference-name"
+};
+
+Response response = new Response();
+response.Add(speakSentence);
+response.Add(conference);
+
+ Console.WriteLine(response.ToBXML());
+```
+
+</TabItem>
+<TabItem value="ruby">
+
+```ruby
+speak_sentence = Bandwidth::Voice::SpeakSentence.new({
+    :sentence => "Welcome. You are going to coach 2 calls, please wait.",
+    :gender => "male"
+})
+conference = Bandwidth::Voice::Conference.new({
+    :conference_name => 'my-conference-name',
+    :call_ids_to_coach => "c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d,c-2a913f94-6a486f3a-3cae-4034-bcc3-f0c9fa77ca2f",
+    #or
+    :call_ids_to_coach => ["c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d", "c-2a913f94-6a486f3a-3cae-4034-bcc3-f0c9fa77ca2f"]
+})
+
+response = Bandwidth::Voice::Response.new()
+response.push(speak_sentence)
+response.push(conference)
+
+puts response.to_bxml()
+```
+
+</TabItem>
+<TabItem value="nodejs">
+
+```js
+const speakSentence = new SpeakSentence({
+    sentence: "Welcome. You are going to coach 2 calls, please wait.",
+    gender: "male"
+});
+
+const conference = new Conference({
+    name: "my-conference-name",
+    callIdsToCoach: ["c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d", "c-2a913f94-6a486f3a-3cae-4034-bcc3-f0c9fa77ca2f"]
+});
+
+const response = new Response(speakSentence, conference);
+
+console.log(response.toBxml());
+```
+
+</TabItem>
+<TabItem value="python">
+
+```python
+speak_sentence = SpeakSentence("Welcome. You are going to coach 2 calls, please wait.", gender="male")
+
+conference = Conference("my-conference-name", call_ids_to_coach = "c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d,c-2a913f94-6a486f3a-3cae-4034-bcc3-f0c9fa77ca2f")
+#or
+conference = Conference("my-conference-name", call_ids_to_coach = ["c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d","c-2a913f94-6a486f3a-3cae-4034-bcc3-f0c9fa77ca2f"])
+
+response = Response()
+response.add_verb(speak_sentence)
+response.add_verb(conference)
+
+print(response.to_bxml())
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+$speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Welcome. You are going to coach 2 calls, please wait.");
+$speakSentence->gender("male");
+
+$conference = new BandwidthLib\Voice\Bxml\Conference("my-conference-name");
+$conference->callIdsToCoach("c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d,c-2a913f94-6a486f3a-3cae-4034-bcc3-f0c9fa77ca2f");
+//or
+$conference->callIdsToCoachArray(["c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d", "c-2a913f94-6a486f3a-3cae-4034-bcc3-f0c9fa77ca2f"]);
+
+$response = new BandwidthLib\Voice\Bxml\Response();
+$response->addVerb($speakSentence);
+$response->addVerb($conference);
+
+echo $response->toBxml();
+```
+
+</TabItem>
+</Tabs>

@@ -1,5 +1,5 @@
 from bandwidth.bandwidth_client import BandwidthClient
-from bandwidth.voice.models.api_modify_call_request import ApiModifyCallRequest
+from bandwidth.voice.models.modify_call_request import ModifyCallRequest
 from bandwidth.exceptions.api_exception import APIException
 
 import os
@@ -16,7 +16,7 @@ voice_client = bandwidth_client.voice_client.client
 
 call_id = "c-1234"
 
-body = ApiModifyCallRequest()
+body = ModifyCallRequest()
 body.redirect_url = "http://www.myapp.com/new"
 body.state = "active"
 

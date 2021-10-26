@@ -11,7 +11,7 @@ bandwidth_client = Bandwidth::Client.new(
 voice_client = bandwidth_client.voice_client.client
 
 begin
-    response = voice_client.get_conferences_by_account(ENV['BW_ACCOUNT_ID'])
+    response = voice_client.get_conferences(ENV['BW_ACCOUNT_ID'])
     if response.data.length > 0
         puts response.data[0].id
     end

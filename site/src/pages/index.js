@@ -29,8 +29,9 @@ export default function Home() {
   const {siteConfig} = useDocusaurusContext();
   return (
     <Layout
-      title={`${siteConfig.title} APIs`}
-      description="Bandwidth API Reference, documentation, SDKs, guides, examples and more. Get everything you need to build with Bandwidth.">
+      title={`Home`}
+      description="Bandwidth API Reference, documentation, SDKs, guides, examples and more. Get everything you need to build with Bandwidth."
+      keywords="Bandwidth,API,documentation,SDK,guide">
       <HomepageHeader />
       <main>
         <HomepageProducts />

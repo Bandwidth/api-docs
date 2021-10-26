@@ -16,7 +16,10 @@ Your Bandwidth account is your entrypoint into using Bandwidth's products and se
 
 | Guide | Description |
 |:------|:------------|
-| [Account Structure](account/guides/structure) | An overview of Bandwidth's account structure |
-| [Credentials](account/guides/credentials) | How to properly configure API credentials |
+| [Credentials](account/credentials) | How to properly configure API credentials |
+| [Structure](account/structure) | An overview of Bandwidth's account structure |
+| [Setup](account/setup) | How to set up your Bandwidth Dashboard account |
+| [Applications](account/applications) | How to configure Applications to receive messaging and voice event webhooks |
+| [Subscriptions](account/subscriptions) | How to configure Subscriptions to receive number management and porting event webhooks |
 
 </center>

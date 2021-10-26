@@ -20,7 +20,7 @@ $callId = "c-1234";
 $recordingId = "r-1234";
 
 try {
-    $response = $voiceClient->getMetadataForRecording($BW_ACCOUNT_ID, $callId, $recordingId);
+    $response = $voiceClient->getCallRecording($BW_ACCOUNT_ID, $callId, $recordingId);
     print_r($response->getResult()->applicationId);
 } catch (BandwidthLib\APIException $e) {
     print_r($e->getResponseCode());

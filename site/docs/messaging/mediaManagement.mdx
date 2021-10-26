@@ -1,0 +1,158 @@
+---
+id: mediaManagement
+title: Media
+slug: /messaging/media
+description: Manage text message media using Bandwidth's Messaging API
+keywords:
+  - bandwidth
+  - messaging
+  - media
+hide_title: false
+image: ../../static/img/bandwidth-logo.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+export const accountId = "{accountId}";
+export const mediaId = "{mediaId}";
+
+export const Highlight = ({children, color}) => (
+    <span
+      style={{
+        backgroundColor: color,
+        borderRadius: '2px',
+        color: '#fff',
+        padding: '0.2rem',
+      }}>
+      {children}
+    </span>
+  );
+
+This guide walks through the available methods for managing Media using the Bandwidth Messaging API.
+
+The Media resource lets you upload your media files to Bandwidth API servers so they can be used in applications without requiring a separate hosting provider.
+
+:::note
+You can upload files up to `3.75MB` and file storage is free for an unlimited number of files. Files are stored for up to 48 hours. The API supports the `Cache-Control` header when you upload files.
+:::
+
+Files you upload can only be accessed by you when you supply your API user's username and password - they are not available to anonymous users.
+
+## List Media Files
+
+This operation returns a list of all the media files on your account.
+
+Each request returns a maximum of 1000 media files.
+
+### Continuation-Token Header
+
+Retrieving more than 1000 media files requires use of the `Continuation-Token` header. The `Continuation-Token` is returned in the response header, and can be included in another request in the request header to continue retrieving the subsequent media files.
+
+The `Continuation-Token` does not need to be set for the 1st request.
+
+### Example
+
+> Request
+
+```http
+GET https://messaging.bandwidth.com/api/v2/users/12345/media HTTP/1.1
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```
+
+> Response
+
+```json
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+[
+  {
+    "contentLength": 561276,
+    "mediaName": "{mediaName1}",
+    "content": "https://messaging.bandwidth.com/.../media/{mediaName1}"
+  },
+  {
+    "contentLength": 2703360,
+    "mediaName": "{mediaName2}",
+    "content": "https://messaging.bandwidth.com/.../media/{mediaName2}"
+  },
+  {
+    "contentLength": 2257901,
+    "mediaName": "{mediaName3}",
+        "content": "https://messaging.bandwidth.com/.../media/{mediaName3}"
+  }
+]
+```
+
+## Download a Media File
+
+You **MUST** use your API username and password to download the media each and every time you want to access the file.
+
+:::danger
+We **DO NOT** recommend using Bandwidth's url to display/stream media files to your end-users.  Providing your account id, username, and password to users' devices is a security risk, as they could use your credentials to access your account.
+:::
+
+We recommend that you create a copy on your local server or a cloud storage service.  Doing so allows you to specify your authentication method (if any) to keep your Bandwidth account and users safe.
+
+### Example
+
+> Request
+
+```http
+GET https://messaging.bandwidth.com/api/v2/users/{accountId}/media/{mediaId} HTTP/1.1
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```
+
+> Response
+
+```json
+HTTP/1.1 200 OK
+Content-Type: application/octet-stream
+
+// The response body will be binary of your media
+```
+
+## Upload a Media File
+
+This method uploads a file over HTTP. You may add headers to the request in order to provide some control to your media-file.
+
+Bandwidth retains uploaded media for up to 48 hours.
+
+If a file being uploaded has the same name as a file that already exists under that api account, the new file will overwrite the old file.
+
+### Example
+
+> Request
+
+```http
+PUT https://messaging.bandwidth.com/api/v2/users/{accountId}/media/{file.mp3} HTTP/1.1
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+Content-Type: text/plain
+Content-Length: 60
+
+"@/filepath/file.mp3"
+```
+
+> Response
+
+```http
+HTTP 204 No Content
+```
+
+## Delete a Media File
+
+### Example
+
+> Request
+
+```http
+DELETE https://messaging.bandwidth.com/api/v2/users/{accountId}/media/{file.mp3} HTTP/1.1
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```
+
+> Response
+
+```http
+HTTP 204 No Content
+```

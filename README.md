@@ -2,6 +2,19 @@
 
 Welcome to the home of Bandwidth's API documentation! This repo contains the OpenAPI specifications that power Bandwidth's API references and SDKs, and will eventually replace https://github.com/bandwidth/bandwidth.github.io.
 
+## Table of Contents
+
+  1. [API Docs Strategy Overview](#api-docs-strategy-overview)
+  1. [SDK Docs Strategy Overview](#sdk-docs-strategy-overview)
+  1. [Contribution Guidelines Overview](#contribution-guidelines-overview)
+  1. [Docsite Generation](#docsite-generation)
+  1. [Adding a New Spec](#adding-a-new-spec)
+  1. [Adding New Documentation](#adding-new-documentation)
+  1. [Components](#components)
+  1. [Markdown](#markdown)
+  1. [PR Requirements](#pr-requirements)
+  1. [SDK Generation](#sdk-generation)
+
 ## API Docs Strategy Overview
 
 At a high level, we hope to provide 3 categories of documentation to our users, those being API references, guides, and sample apps. API references and guides will be provided within this project, while sample apps will be provided within the https://github.com/bandwidth-samples org.
@@ -42,15 +55,24 @@ To add a new spec - there are a few steps that need to be taken:
   1. Add the JSON file to the `./site/specs-source` folder
   1. In `./site/docusaurus.config.js`, add an import statement for the new spec. Ex.: `const newSpec = fs.readFileSync('./specs/new.json', 'utf-8');`
   1. In `./site/docusaurus.config.js`, add the new spec as a custom field at the bottom of the config. Ex.: `newSpec: JSON.parse(newSpec),`
-  1. In `./site/src/pages`, create a `newSpec.tsx` file and populate the needed React RedocStandalone code - recommend copy/pasting from another `{spec}.tsx` file
+  1. In `./site/src/pages/apis`, create a `newSpec.tsx` file and populate the needed React RedocStandalone code - recommend copy/pasting the `./site/templates/apiReference.tsx` file
+        * Dont forget to update the `Title`, `Description`, and `Keywords` in the `<Layout>` tag for SEO optimization
   1. In `./site/docusaurus.config.js`, add the spec to the Navbar Items object. Ex:
       ```js
       {
-        to: 'newSpec-api-reference',    // the title of the .tsx page you created without the file extension
-        label: 'Voice'    // The actual title that shows in the navbar
+        to: 'apis/newSpec',    // the title of the .tsx page you created without the file extension
+        label: 'New Spec'    // The actual title that shows in the navbar
       }
       ```
   1. Run `npm start` or reload the site and you should see the new spec under the API Reference dropdown.
+
+## Adding New Documentation
+
+To add new documentation to the site, please follow these instructions:
+
+  1. Add your .md or .mdx file to the `./site/docs/{relevantDirectory}` directory
+  1. Ensure your file has the necessary [heading and title](#markdown)
+  1. Update the `./site/sidebar.js` file with the `"{relevantDirectory}/{docTitle}"` in the relevant spot
 
 
 ## Components
@@ -71,6 +93,7 @@ To add a new spec - there are a few steps that need to be taken:
 │   ├── redoc-plugin    # the needed index.js file for the redoc-plugin
 │   ├── specs    # The source of truth for the docsites. Generally remains empty and is populated during CICD processes
 │   ├── specs-source    # Bandwidth's OpenAPI specs in .json format
+│   ├── specs-docs-only    # Bandwidth OpenAPI specs that are documented but not to be included in SDKs
 │   ├── src    # home for individual pages as well as react component and css settings
 │   ├── static    # Static files needed for the docsite (images, etc.)
 │   └── templates    # any helpful templates for new content
@@ -92,43 +115,49 @@ This file defines the configuration for the docusaurus site. It controls the nav
 
 #### sidebar.js
 
-This file defines the sidebar for the docs section of the site. Changes here will be reflected in the docs page, essentially this controls the naviagtion for the entirety of the docs section.
+This file defines the sidebar for the docs section of the site. Changes here will be reflected in the docs page, essentially this controls the navigation for the entirety of the docs section.
 
 The sidebar.js file can be configured to create multiple sidebar groups that can be hidden depending on which documentation is being viewed. Ex. only a sidebar pertaining to messaging can be shown when looking at docs related to messaging. Code ex.:
-    
-    module.exports = {
-      accountSidebar: {
-          'Account': [
-            'account/structure',
-            'account/credentials',
-          ],
-        },
-      numbersSidebar: {
-          'Numbers': [
-            'numbers/about-numbers'
-          ],
-        },
-        voiceSidebar: {
-          'Voice': [
-            'voice/about-voice'
-          ],
-        },
-        messagingSidebar: {
-          'Messaging': [
-            'messaging/about-messaging'
-          ],
-        },
-    };
 
-When looking at `account/structure` in this sidebar config - the user woild only see the other docs under the `Account` object and not anything pertaining to voice/messaging/etc.
+```
+module.exports = {
+  accountSidebar: {
+    'Account': [
+      'account/structure',
+      'account/credentials',
+    ],
+  },
+  numbersSidebar: {
+    'Numbers': [
+       'numbers/about-numbers'
+    ],
+  },
+  voiceSidebar: {
+    'Voice': [
+      'voice/about-voice'
+    ],
+  },
+  messagingSidebar: {
+    'Messaging': [
+      'messaging/about-messaging'
+    ],
+  },
+};
+```
+
+When looking at `account/structure` in this sidebar config - the user would only see the other docs under the `Account` object and not anything pertaining to voice/messaging/etc.
 
 #### /src
 
-This directory mostly was autogenerated by docusaurus. The `components/` directory contains docusaurus config, the `css/` contains the css styling, and `pages/` contains the individal page files for the site. Pages can be popualted with React code and linked to using the `docusaurus.config.js` file.
+This directory mostly was autogenerated by docusaurus. The `components/` directory contains docusaurus config, the `css/` contains the css styling, and `pages/` contains the individual page files for the site. Pages can be populated with React code and linked to using the `docusaurus.config.js` file.
 
 #### /specs-source
 
 This directory contains the unformatted OpenAPI specs. Specifically, this holds the specs before any Redoc custom code is inserted. Teams should add their specs to this directory.
+
+#### /specs-docs-only
+
+This direcotry contains unformatted OpenAPI specs that a) contain no code snippets and b) are not to be included in the SDKs. The specs here will still be rendered as long as the correct filepath is used in the docusaurus-config.js file.
 
 #### /specs
 
@@ -136,7 +165,7 @@ The formatted OpenAPI specs used as the source of truth for the docsite will be 
 
 #### /docs
 
-Markdown documents will be placed in this sub-directories here - depending on which product they apply to. Any content added here will need to be added to the `sidebar.js` folder to make it possible for users to find - otherwise the doc will be inaccessable witout a direct link.
+Markdown documents will be placed in this sub-directories here - depending on which product they apply to. Any content added here will need to be added to the `sidebar.js` file to make it possible for users to find - otherwise the doc will be inaccessible without a direct link.
 
 #### /blog
 
@@ -171,7 +200,7 @@ The Docusaurus flavored markdown also supports setting markdown attributes in th
     ---
     id: docId    <!--the document id - used as a referece in the sidebar.js folder-->
     title: Document Title    <!--Used by Docusaurus to generate the title properly (for SEO)-->
-    slug: /docs/{product}/docName    <!--generates the path after the base URL to provide a neat link for sharing-->
+    slug: /{product}/docName    <!--generates the path after the base URL to provide a neat link for sharing-->
     description: description of your document <!--becomes the <meta name="description" content="..."/> and <meta property="og:description" content="..."/> in <head>, used by search engines. If this field is not present, it will default to the first line of the contents.-->
     keywords: <!--Keywords meta tag for the document page, for search engines.-->
       - some

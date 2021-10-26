@@ -11,7 +11,7 @@ bandwidth_client = Bandwidth::Client.new(
 voice_client = bandwidth_client.voice_client.client
 
 begin
-    result = voice_client.get_query_metadata_for_account(ENV['BW_ACCOUNT_ID'])
+    result = voice_client.get_query_call_recordings(ENV['BW_ACCOUNT_ID'])
     if result.data.length > 0
         puts result.data[0].recording_id
     end

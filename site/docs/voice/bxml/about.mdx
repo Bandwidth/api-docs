@@ -1,0 +1,115 @@
+---
+id: about
+title: About
+slug: /voice/bxml
+description: A general overview of Bandwidth's Voice BXML
+keywords:
+  - bandwidth
+  - voice
+  - bxml
+hide_title: true
+image: ../../static/img/bandwidth-logo.png
+---
+
+export const Highlight = ({children, color}) => (
+    <span
+      style={{
+        backgroundColor: color,
+        borderRadius: '2px',
+        color: '#fff',
+        padding: '0.2rem',
+      }}>
+      {children}
+    </span>
+  );
+
+# BXML
+
+Bandwidth XML allows you to create a voice application as easily as you create a Web application. Using Bandwidth XML (or BXML) your application handles incoming call events using standard action verbs that are described in XML.
+
+Before we begin creating a new BXML application you’ll need two things initially setup:
+
+  1. A phone number that is allocated to your Bandwidth Application Platform account and is configured to an application. For instructions on setting up your application, read the [applications](/docs/account/applications) page
+
+  2. A public Web site that you can create content on and will handle the requests for BXML. Note that the endpoint for this site should be used to create the application in you setup above.
+
+The maximum size of a BXML document is 64 KB.
+
+  <img
+    src={require('../../../static/img/bxml_how.png').default}
+    alt="BXML How-to"
+    class="center"
+  />
+
+Note: Improperly formed or invalid BXML will cause the call to fail and generate a detailed error including the invalid BXML that is available to Bandwidth Customer Service.  Please contact Bandwidth Customer Service with any questions.
+
+###  Understanding BXML Webhook Events
+
+BXML webhooks are HTTP requests made by the Bandwidth platform to endpoints specified by you in your HTTP requests and BXML. Their purpose
+is to 1) inform you of events that have happened in the call flow and 2) receive instructions from your
+application on what to do next.
+
+BXML webhooks are HTTP <Highlight color="#079CEE">POST</Highlight> requests by default.  The request will have a JSON body that describes the event.  It
+expects an XML response consisting of BXML verbs.
+
+The first BXML webhook is made when the call is created with [<Highlight color="#079CEE">POST</Highlight> /calls](/apis/voice#operation/createCall) as
+the `answerUrl` field.  Subsequent webhooks are made by specifying event-specific `*Url` attributes on the appropriate verbs.  If a
+relative URL is provided in BXML, it is resolved relative to the request that retrieved that BXML.
+
+If BXML execution ends without performing a webhook, there is an implicit `<Hangup>` at the end of the document.
+
+### Verbs
+
+| Verb                                            | Description                                                                                           |
+|:------------------------------------------------|:------------------------------------------------------------------------------------------------------|
+| [`<Bridge>`](/docs/voice/bxml/bridge)                   | The Bridge verb is used to bridge two calls.                                                          |
+| [`<Conference>`](/docs/voice/bxml/conference)           | The Conference verb is used to add a call to a conference.                                            |
+| [`<Forward>`](/docs/voice/bxml/forward)                 | The Forward verb is used to forward an unanswered incoming call to another number.                    |
+| [`<Gather>`](/docs/voice/bxml/gather)                   | The Gather verb is used to collect DTMF digits.                                                       |
+| [`<Hangup>`](/docs/voice/bxml/hangup)                   | The Hangup verb is used to hang up or reject a call.                                                  |
+| [`<Pause>`](/docs/voice/bxml/pause)                     | The Pause verb is used to delay verb execution for a period of time.                                  |
+| [`<PauseRecording>`](/docs/voice/bxml/pauseRecording)   | The PauseRecording verb is used to pause a recording previously started by a `<StartRecording>` verb. |
+| [`<PlayAudio>`](/docs/voice/bxml/playAudio)             | The PlayAudio verb is used to play an audio file in the call.                                         |
+| [`<Record>`](/docs/voice/bxml/record)                   | The Record verb allows a segment of audio to be recorded during a call.                               |
+| [`<Redirect>`](/docs/voice/bxml/redirect)               | The Redirect verb is used to redirect the current XML execution to another URL.                       |
+| [`<ResumeRecording>`](/docs/voice/bxml/resumeRecording) | The ResumeRecording verb is used to resume a recording previously paused by a `<PauseRecording>` verb.|
+| [`<Ring>`](/docs/voice/bxml/ring)                       | The Ring verb is used to play ringing audio on a call.                                                |
+| [`<SendDtmf>`](/docs/voice/bxml/sendDtmf)               | The SendDtmf verb is used to play DTMF digits in the call.                                            |
+| [`<SpeakSentence>`](/docs/voice/bxml/speakSentence)     | The SpeakSentence verb converts text into audible speech.                                             |
+| [`<StartGather>`](/docs/voice/bxml/startGather)         | The StartGather verb is used to collect DTMF digits during the execution of other verbs. |
+| [`<StartRecording>`](/docs/voice/bxml/startRecording)   | The StartRecording verb allows a segment of a call to be recorded while other verbs are executing.    |
+| [`<StopGather>`](/docs/voice/bxml/stopGather)           | The StopGather verb stops the DTMF collection initiated by `<StartGather>`. |
+| [`<StopRecording>`](/docs/voice/bxml/stopRecording)     | The StopRecording verb stops a recording that was previously started by a `<StartRecording>`.         |
+| [`<Tag>`](/docs/voice/bxml/tag)                         | The Tag verb is used to set a new tag value without executing a webhook. |
+| [`<Transfer>`](/docs/voice/bxml/transfer)               | The Transfer verb is used to transfer the call to another number.                                     |
+
+### BXML Webhooks
+
+BXML webhooks are HTTP messages that are sent to your application server to notify you of activity related to your Bandwidth resources during a BXML usage.
+
+| Webhook                                                    | Description                                                                                                                                                                                |
+|:------------------------------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [Answer](/docs/voice/webhooks/answer)                               | Bandwidth API sends this when the call is answered.                                                                                                                                        |
+| [Bridge Complete](/docs/voice/webhooks/bridgeComplete)              | Bandwidth API sends this to the application when a `<Bridge>` is complete and the original call needs to continue.                                                                         |
+| [Bridge Target Complete](/docs/voice/webhooks/bridgeTargetComplete) | Bandwidth API sends this to the application when a `<Bridge>` is complete and the target call needs to continue.                                                                           |
+| [Gather](/docs/voice/webhooks/gather)                               | Bandwidth API sends this when a `<Gather>` is completed.                                                                                                                                   |
+| [Initiate](/docs/voice/webhooks/initiate)                           | Bandwidth API sends this when an inbound call arrives.                                                                                                                                     |
+| [Record Complete](/docs/voice/webhooks/recordComplete)              | Bandwidth API sends this when a `<Record>` is completed. The recording is not available to download until the [Recording Available](/docs/voice/webhooks/recordingAvailable) event is received.    |
+| [Redirect](/docs/voice/webhooks/redirect)                           | Bandwidth API sends this when a `<Redirect>` is requested or when a <Highlight color="#079CEE">POST</Highlight> request is made to the [/calls/{callId}](/apis/voice#operation/modifyCall) endpoint requesting a redirect.     |
+| [Transfer Answer](/docs/voice/webhooks/transferAnswer)              | Bandwidth API sends this when the `<Transfer>` is answered.                                                                                                                                  |
+| [Transfer Complete](/docs/voice/webhooks/transferComplete)          | Bandwidth API sends this when the `<Transfer>` is complete and the original call needs to continue.                                                                                        |
+| [Conference Created](/docs/voice/webhooks/conferenceCreated)        | Bandwidth API sends this when a new conference is created.                                                                                                                                 |
+| [Conference Member Join](/docs/voice/webhooks/conferenceMemberJoin) | Bandwidth API sends this when a new member joins a conference.                                                                                                                             |
+| [Conference Member Exit](/docs/voice/webhooks/conferenceMemberExit) | Bandwidth API sends this when a member leaves a conference.                                                                                                                                |
+| [Conference Redirect](/docs/voice/webhooks/conferenceRedirect)      | Bandwidth API sends this to the application when a <Highlight color="#079CEE">POST</Highlight> request is made to the [/conferences/{conferenceId}](/apis/voice#operation/modifyConference) endpoint requesting to modify a conference. |
+
+### Asynchronous Webhooks
+| Webhook                                                       | Description                                                                                                                      |
+|:---------------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------|
+| [Conference Completed](/docs/voice/webhooks/conferenceCompleted)       | Bandwidth API sends this after the last member leaves the conference. |
+| [Conference Recording Available](/docs/voice/webhooks/conferenceRecordingAvailable) | Bandwidth API sends this when a recording started by a `<StartRecording>`in a conference is available for download. |
+| [Disconnect](/docs/voice/webhooks/disconnect)                          | Bandwidth API sends this when a call ends. |
+| [DTMF](/docs/voice/webhooks/dtmf)                                      | Bandwidth API sends this for every digit detected after a `<StartGather>` is executed. |
+| [Recording Available](/docs/voice/webhooks/recordingAvailable)         | Bandwidth API sends this when a recording started by either a `<StartRecording>` or a `<Record>` verb in a call is available for download. |
+| [Transfer Disconnect](/docs/voice/webhooks/transferDisconnect)         | Bandwidth API sends this when any leg of a `<Transfer>` ends.                                                                    |
+| [Transcription Available](/docs/voice/webhooks/transcriptionAvailable) | Bandwidth API sends this when the transcription of a recording is available for download.                                        |

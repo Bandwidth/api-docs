@@ -1,0 +1,234 @@
+---
+id: createMessage
+title: Send Messages
+slug: /messaging/createMessage
+description: Send text messages with Bandwidth's Messaging API
+keywords:
+  - bandwidth
+  - messaging
+  - send
+hide_title: false
+image: ../../static/img/bandwidth-logo.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+export const accountId = "{accountId}";
+
+export const Highlight = ({children, color}) => (
+    <span
+      style={{
+        backgroundColor: color,
+        borderRadius: '2px',
+        color: '#fff',
+        padding: '0.2rem',
+      }}>
+      {children}
+    </span>
+  );
+
+This guide walks through sending text and picture messages using the Bandwidth Messaging API.
+
+## The Request
+
+```http
+POST https://messaging.bandwidth.com/api/v2/users/{accountId}/messages HTTP/1.1
+Content-Type: application/json; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+{
+    "to"            : ["+12345678902"],
+    "from"          : "+12345678901",
+    "text"          : "Hey, check this out!",
+    "applicationId" : "93de2206-9669-4e07-948d-329f4b722ee2",
+    "tag"           : "test message",
+}
+```
+
+Please visit the [API Reference](/apis/messaging#operation/CreateMessage) for details on all available request body parameters.
+
+Sending a text message is as simple as making an API <Highlight color="#079CEE">POST</Highlight> request to Bandwidth's messaging API with the following information:
+
+* Who the message is `from` (a Bandwidth number)
+* Who the message is `to` (a PSTN number)
+* The `text` of the message - what you want to say
+* The messaging `applicationId` associated with the `from` number
+* Your basic auth `username` and `password` in the `Authorization` header
+* Optional: A `media` url that links to an attachment/file you wish to send
+* Optional: A `tag` to help categorize your message
+* Optional: `priority` set to 'high' allows you to bump important conversational traffic to the front of your queue
+
+### Tags
+
+If there is a need to identify individual outbound messages, or correlate them with an ID in your own application, the `tag` field can be set to any string (max 1024 chars). The custom `tag` will be included in all callbacks for an outbound message.
+
+:::caution
+The tag field is intended for use in correlation/troubleshooting. **You should not include sensitive or personally-identifiable information in the tag field.**
+:::
+
+## The Response
+
+```json
+HTTP/1.1 202 Accepted
+Content-Type: application/json
+
+{
+    "id": "14762070468292kw2fuqty55yp2b2",
+    "owner": "+12345678901",
+    "applicationId": "93de2206-9669-4e07-948d-329f4b722ee",
+    "time": "2021-07-21T21:00:45.179Z",
+    "segmentCount": 1,
+    "direction": "out",
+    "to": [
+        "+12345678902"
+    ],
+    "from": "+12345678901",
+    "text": "Hello World",
+    "tag": "test message",
+    "priority": "default"
+}
+```
+
+Once successfully received, Bandwidth responds with an `HTTP 202 Accepted` response, confirming your message has been successfully created. You will recieve a unique `messageId` for each message sent, which can be used to query for status using our [`GET /messages`](/apis/messaging#operation/GetMessages) endpoint.
+
+Once the message has passed through Bandwidth's network, you can elect to receive [status webhooks](/docs/messaging/webhooks#outbound-message-webhooks) confirming whether or not the message was successfully delivered. Bandwidth sends these to the status callback URL defined in your [messaging application](/docs/account/setup#create-a-messaging-application).
+
+:::note
+Bandwidth does not store text message content, the content in the `text` field. After sending the API request it is inaccessable and will not be returned in subsequent status callbacks or GET requests. If you need this information, it is recommended that you log/store it in your application.
+:::
+
+## Examples
+
+Please visit the [API Reference](/apis/messaging) for code samples using the various SDKs.
+
+### Send a single message
+
+> Request
+
+```http
+POST https://messaging.bandwidth.com/api/v2/users/{accountId}/messages HTTP/1.1
+Content-Type: application/json; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+{
+    "to"            : ["+12345678902"],
+    "from"          : "+12345678901",
+    "text"          : "Hey, check this out!",
+    "applicationId" : "93de2206-9669-4e07-948d-329f4b722ee2",
+    "tag"           : "test message",
+    "priority"      : "default"
+}
+```
+
+> Response
+
+```json
+HTTP/1.1 202 Accepted
+Content-Type: application/json
+
+{
+    "id": "14762070468292kw2fuqty55yp2b2",
+    "owner": "+12345678901",
+    "applicationId": "93de2206-9669-4e07-948d-329f4b722ee",
+    "time": "2021-07-21T21:00:45.179Z",
+    "segmentCount": 1,
+    "direction": "out",
+    "to": [
+        "+12345678902"
+    ],
+    "from": "+12345678901",
+    "text": "Hello World",
+    "tag": "test message",
+    "priority": "default"
+}
+```
+
+
+### Send a group message
+
+> Request
+
+```http
+POST https://messaging.bandwidth.com/api/v2/users/{accountId}/messages HTTP/1.1
+Content-Type: application/json; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+{
+    "to"            : ["+12345678902", "+12345678903", "+12345678904"],
+    "from"          : "+12345678901",
+    "text"          : "Hey, check this out!",
+    "applicationId" : "93de2206-9669-4e07-948d-329f4b722ee2",
+    "tag"           : "test message",
+    "priority"      : "default"
+}
+```
+
+> Response
+
+```json
+HTTP/1.1 202 Accepted
+Content-Type: application/json
+
+{
+    "id": "14762070468292kw2fuqty55yp2b2",
+    "owner": "+12345678901",
+    "applicationId": "93de2206-9669-4e07-948d-329f4b722ee",
+    "time": "2021-07-21T21:00:45.179Z",
+    "segmentCount": 1,
+    "direction": "out",
+    "to": [
+        "+12345678902",
+        "+12345678903",
+        "+12345678904"
+    ],
+    "from": "+12345678901",
+    "text": "Hello World",
+    "tag": "test message",
+    "priority": "default"
+}
+```
+
+### Send a picture message
+
+> Request
+
+```http
+POST https://messaging.bandwidth.com/api/v2/users/{accountId}/messages HTTP/1.1
+Content-Type: application/json; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+{
+    "to"            : ["+12345678902"],
+    "from"          : "+12345678901",
+    "text"          : "Hey, check this out!"
+    "media"         : ["https://mySite.com/images/test_image.jpg"],
+    "applicationId" : "93de2206-9669-4e07-948d-329f4b722ee2",
+    "tag"           : "test message",
+    "priority"      : "default"
+}
+```
+
+> Response
+
+```json
+HTTP/1.1 202 Accepted
+Content-Type: application/json
+
+{
+    "id": "14762070468292kw2fuqty55yp2b2",
+    "owner": "+12345678901",
+    "applicationId": "93de2206-9669-4e07-948d-329f4b722ee",
+    "time": "2021-07-21T21:00:45.179Z",
+    "segmentCount": 1,
+    "direction": "out",
+    "to": [
+        "+12345678902"
+    ],
+    "from": "+12345678901",
+    "text": "Hey, check this out!",
+    "media": ["https://mySite.com/images/test_image.jpg"],
+    "tag": "test message",
+    "priority": "default"
+}
+```

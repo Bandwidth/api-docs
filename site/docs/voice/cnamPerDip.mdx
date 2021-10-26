@@ -1,0 +1,72 @@
+---
+id: cnamPerDipGuide
+title: CNAM Per DIP
+slug: /voice/guides/cnamPerDip
+description: How to handle rate limiting in Bandwidth's Voice API
+keywords:
+  - bandwidth
+  - voice
+  - cnam per dip
+hide_title: false
+image: ../../static/img/bandwidth-logo.png
+---
+
+export const companyId = "<companyId>";
+export const pass = "<pass>";
+export const phoneNumber = "<phoneNumber>";
+
+export const Highlight = ({children, color}) => (
+    <span
+      style={{
+        backgroundColor: color,
+        borderRadius: '2px',
+        color: '#fff',
+        padding: '0.2rem',
+      }}>
+      {children}
+    </span>
+  );
+
+Bandwidth's Caller Name (CNAM) service is a low-cost per-query service that provides the Caller Name on VoIP calls in the US and Canada.
+
+With this service, the CNAM database is queried using a simple HTTPS GET Request. Once the request is made, the calling name is returned to the customer application or dial plan.
+
+The CNAM data is managed by the phone company who provides the phone numbers to its customers. Bandwidth can not guarantee the validity of the information returned by the managing phone company.
+
+To utilize the CNAM lookup API, you will need to be setup with an account by your Account Manager.
+Please open a [support ticket](https://support.bandwidth.com/hc/en-us/requests/new) to enable this feature for your account.
+
+## Querying via HTTPS
+The simplest method of accessing the CNAM service is via an HTTPS GET request.
+The query information will be passed in the GET, and the entire response will be the CNAM data.
+Using an HTTP library that supports keep-alives, as well as HTTP pipelining, can help ensure highest performance service.
+
+Bandwidth's CNAM service will authenticate based on two factors:
+   1. The `CompanyID` passed will be checked to ensure CNAM service is enabled.
+   1. A password will be validated.
+
+### Request URL
+<Highlight color="#00bf8c">GET</Highlight> <code>https://cnam.dashcs.com/?companyId={companyId}&password={pass}&number={phoneNumber}</code>
+
+:::info
+Please ensure that the password is URL-encoded.
+:::
+
+### Request parameters
+| Parameter | Required or Optional | Type                      | Value/Notes |
+|-----------|----------------------|---------------------------|-------------|
+| companyId | Required             | Integer                   | Assigned during implementation/onboarding. |
+| password  | Required             | String                    | Assigned during implementation/onboarding. |
+| number    | Required             | String                    | 11-digit TN that's used to query CNAM information. |
+| dnis      | Optional             | String                    | 11-digit TN, if supplied, detailed billing reports per caller number can be provided. |
+| reference | Optional             | String (20-character max) | The reference parameter can be used to differentiate queries for billing purposes. For instance, if billing reports were desired on a per-reseller basis, the reseller code could be sent in the reference field. |
+| test      | Optional             | Boolean                   | If a value is supplied for the query parameter “test”, the query will be considered a test, and a random name will be returned. These queries aren't billed. |
+
+### Notes
+Phone numbers can be supplied as full E.164 numbers (starting with the country code).
+Only NANPA numbers are supported, so 10-digit numbers will automatically be prefixed with a 1.
+
+For more information follow the links below:
+  * [Caller ID Lookup/Caller Name Lookup](https://www.bandwidth.com/glossary/caller-id-lookup/)
+  * [Manage through Dashboard](https://support.bandwidth.com/hc/en-us/articles/360025716114-How-to-Identify-and-Manage-Telephone-Numbers-Enabled-with-CNAM-)
+  * [SIP Subscribe/Notify](https://support.bandwidth.com/hc/en-us/articles/360001519453-CNAM-Subscribe-Notify)

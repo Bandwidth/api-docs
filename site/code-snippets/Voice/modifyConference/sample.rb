@@ -10,13 +10,13 @@ bandwidth_client = Bandwidth::Client.new(
 
 voice_client = bandwidth_client.voice_client.client
 
-body = ApiModifyConferenceRequest.new
+body = ModifyConferenceRequest.new
 body.status = StatusEnum::ACTIVE
 
 conference_id = "conf-1234"
 
 begin
-    voice_client.modify_conference(ENV['BW_ACCOUNT_ID'], conference_id, :body => body)
+    voice_client.modify_conference(ENV['BW_ACCOUNT_ID'], conference_id, body)
 rescue APIException => e
     puts e.response_code
 end
