@@ -8,6 +8,7 @@ slug: /changelog
 | Date | Notes |
 |--|--|
 | October 21st, 2021 | Updated `Ring` to reflect `answerCall` attribute option. Typo fixes. |
+| October 15, 2021 | Added `CreateParticipant` schema and `CreateParticipantResponse` to `CreateParticipant`
 | October 1st, 2021 | Messaging: Updated DELETE /media HTTP response code. |
 | September 23rd, 2021 | Change `MachineDetectionRequest` schema name to `MachineDetectionConfiguration` |
 | September 21st, 2021 | Add parameters of messageDirection, carrierName and messageType to GetMessages |
