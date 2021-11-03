@@ -7,6 +7,7 @@ slug: /changelog
 
 | Date | Notes |
 |--|--|
+| November 3rd, 2021 | Added `sort` parameter to GetMessages |
 | October 25th, 2021 | Messaging: Clarify accepted values for telephone numbers in GET /messages.
 | October 21st, 2021 | Updated `Ring` to reflect `answerCall` attribute option. Typo fixes. |
 | October 15, 2021 | Added `CreateParticipant` schema and `CreateParticipantResponse` to `CreateParticipant`
