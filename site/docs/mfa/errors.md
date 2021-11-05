@@ -179,7 +179,7 @@ Content-Type: application/json; charset=utf-8
 
 ## 500 - INTERNAL SERVER ERROR {#http-500}
 
-Bandwidth returns a `HTTP-500` error when there is an unintended interal error on our end.
+Bandwidth returns a `HTTP-500` error when there is an unintended internal error on our end.
 
 ### Parameters
 | Parameter               | Type     | Description                                      |
