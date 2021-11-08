@@ -7,7 +7,7 @@ slug: /changelog
 
 | Date | Notes |
 |--|--|
-| November 8th, 2021 | Updated voice's 'about' page to have more info. Also fixed spelling errors in the docs. |
+| November 8th, 2021 | Updated voice's 'about' page to have more info. Also fixed spelling errors in the docs. Re-added content into `initiate` callback. ' |
 | November 3rd, 2021 | Added `sort` parameter to GetMessages |
 | October 25th, 2021 | Messaging: Clarify accepted values for telephone numbers in GET /messages.
 | October 21st, 2021 | Updated `Ring` to reflect `answerCall` attribute option. Typo fixes. |
