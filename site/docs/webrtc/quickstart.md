@@ -377,7 +377,7 @@ call into our WebRTC session.
 
 You should notice the `generateTransferBxml` call works exactly like it did in our `/incomingCall` route. Once the call is
 transferred, Bandwidth's WebRTC platform makes the phone call look like another WebRTC participant in our
-session, and will trigger each browser's `onStreamAvailable` method with the call's audio stream.
+session and will trigger each browser's `onStreamAvailable` method with the call's audio stream.
 
 Since we've already got our code set up to stream audio, we don't have to do anything else.
 
