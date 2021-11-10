@@ -7,7 +7,7 @@ slug: /changelog
 
 | Date | Notes |
 |--|--|
-| November 8th, 2021 | Fixed spelling errors in the docs. Re-added content into `initiate` callback. ' |
+| November 8th, 2021 | Fixed spelling and grammar errors in the docs. Re-added content into `initiate` callback. Fixed ambiguous writing. |
 | November 4th, 2021 | Clarify how async `MachineDetection` works
 | November 3rd, 2021 | Added `sort` parameter to GetMessages |
 | October 25th, 2021 | Messaging: Clarify accepted values for telephone numbers in GET /messages.
