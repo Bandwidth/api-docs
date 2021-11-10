@@ -53,11 +53,11 @@ More can be found on this in our [quickstart guide](/docs/webrtc/quickstart).
 
 Sessions are a concept that allows you to group multiple Participants together - depending on your use case, this may be analogous to something like a meeting, appointment, call, or event. Participants and their streams are connected to one another via subscriptions, described below.
 
-## Limitations
+### Limitations
 
 There is a limit of 20 participants in a session.
 
-## Participant-Session Membership
+### Participant-Session Membership
 
 A participant by itself cannot receive media. It must first be associated with, or a member of, a session. Only then can it receive media from other session participants. The (Add Participant to Session Endpoint)[https://new.dev.bandwidth.com/apis/webrtc#operation/addParticipantToSession] is used to add a participant to a session. The target participant and session are indicated by ID in the URL path:
 
@@ -152,17 +152,17 @@ A participant stream level subscription adds further detail to a participant bas
 }
 ```
 
-### Tags
+# Tags
 
 You can add a tag to sessions and participants to help you identify them with friendly names. Tag information is passed on to your Billing Reports, which can facilitate billing of clients if you do pass-through billing or auditing. These can also be used to allow for easier understanding or grouping of participants or sessions. 
 
-## Example uses of a Tag
+### Example uses of a Tag
 
 - Participant base meeting IDs to make it easier to associate tagged participants with a session with internal scheduling or management
 - Session-based meeting IDs make it easier to associate a session with internal scheduling or management
 - Externally safe Account UUIDs to assist with allocating costs from a Billing Report. 
 
-## Restrictions/Limitations
+### Restrictions/Limitations
 
 - Tags MUST NOT include Personally Identifying Information (PII). We recommend using UUIDs if you need to reference customers or users. 
 - No uniqueness is enforced by the WebRTC system for tags. Duplicates are acceptable.
