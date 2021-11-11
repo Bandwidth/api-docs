@@ -8,6 +8,7 @@ slug: /changelog
 | Date | Notes |
 |--|--|
 | November 10th, 2021| Revamped the "Key Concepts" page for greater clarity |
+| November 9th, 2021 | Add more content to the "about" page in voice |
 | November 4th, 2021 | Clarify how async `MachineDetection` works
 | November 3rd, 2021 | Added `sort` parameter to GetMessages |
 | October 25th, 2021 | Messaging: Clarify accepted values for telephone numbers in GET /messages.
