@@ -21,13 +21,13 @@ Bandwidth’s signaling implementation relies on session and participant objects
 
 ## Streams
 
-For any camera or microphone that you want to connect to Bandwidth WebRTC you will be working with the [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream) that it creates. MediaStreams must be tied to a DOM element on a webpage and a Participant can subscribe to more than one stream, as is the case for audio and video streams, or even multiple video streams as is often the case when screen sharing. Streams can also be aliased so that Participants can subscribe to a particular subset of Streams.
+For any camera or microphone that you want to connect to Bandwidth WebRTC you will be working with the [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream) that it creates. MediaStreams must be tied to a DOM element on a webpage and a participant can subscribe to more than one stream, as is the case for audio and video streams, or even multiple video streams as is often the case when screen sharing. Streams can also be aliased so that participants can subscribe to a particular subset of Streams.
 
 ## Participants
 
-Before you can connect a stream to WebRTC, you will need a Participant. You can basically think of a participant as a person using the system - although there can be programmatic participants. When you create a Participant you will receive a Participant ID and an authentication token in return. The token must be supplied when connecting with the Bandwidth WebRTC SDK. 
+Before you can connect a stream to WebRTC, you will need a participant. You can basically think of a participant as a person using the system - although there can be programmatic participants. When you create a participant you will receive a participant ID and an authentication token in return. The token must be supplied when connecting with the Bandwidth WebRTC SDK. 
 
-When creating a Participant using the SDK you will provide a Participant object that contains a JSON description for a tag, should you want to provide one (discussed below), and permissions - which can be AUDIO and/or VIDEO.
+When creating a participant using the SDK you will provide a participant object that contains a JSON description for a tag, should you want to provide one (discussed below), and permissions - which can be AUDIO and/or VIDEO.
 
 Permissions for an Audio-only participant:
 
@@ -51,7 +51,7 @@ More can be found on this in our [quickstart guide](/docs/webrtc/quickstart).
 
 ## Sessions
 
-Sessions are a concept that allows you to group multiple Participants together - depending on your use case, this may be analogous to something like a meeting, appointment, call, or event. Participants and their streams are connected to one another via subscriptions, described below.
+Sessions are a concept that allow you to group multiple participants together - depending on your use case, this may be analogous to something like a meeting, appointment, call, or event. participants and their streams are connected to one another via subscriptions, described below.
 
 ### Limitations
 
@@ -65,12 +65,12 @@ A participant by itself cannot receive media. It must first be associated with, 
 /sessions/{sessionId}/participants/{participantId}
 ```
 
-After adding a participant to the session a participant’s subscription information can then be updated, which describes which media streams a participant will receive. Information about participant subscriptions can be optionally supplied in the request body for the (Add Participant to Session Endpoint)[https://new.dev.bandwidth.com/apis/webrtc#operation/addParticipantToSession]. Subscriptions can also be updated via a call to a separate endpoint for updating subscriptions, the (Update Participant Subscriptions Endpoint)[https://new.dev.bandwidth.com/apis/webrtc#operation/updateParticipantSubscriptions]. Subscriptions are described in further detail below.
+After adding a participant to a session the participant’s subscription information can then be updated, which describes which media streams a participant will receive. Information about participant subscriptions can be optionally supplied in the request body for the (Add Participant to Session Endpoint)[https://new.dev.bandwidth.com/apis/webrtc#operation/addParticipantToSession]. Subscriptions can also be updated via a call to a separate endpoint for updating subscriptions, the (Update Participant Subscriptions Endpoint)[https://new.dev.bandwidth.com/apis/webrtc#operation/updateParticipantSubscriptions]. Subscriptions are described in further detail below.
 
 
 ## Subscriptions
 
-When a Participant receives the audio or video Streams from another Participant, it is via a Subscription. A subscription describes which media streams a participant will receive. Note that a participant must be a member, or part of, a Session before it can receive any media from other participants.
+When a participant receives the audio or video streams from another participant, it is via a subscription. A subscription describes which media streams a participant will receive. Note that a participant must be a member, or part of, a session before it can receive any media from other participants.
 
 Subscriptions are very flexible, allowing for the creation of custom scenarios where participants may hear or see some people and devices, but not others. Subscriptions can be created three levels:
 
@@ -78,7 +78,7 @@ Subscriptions are very flexible, allowing for the creation of custom scenarios w
 - At the Participant level
 - At the Participant Stream level
 
-Subscriptions are the “glue” that tie Participants and Sessions together, and as such a set of endpoints exist for creating, reading, or updating subscriptions, all including the session and participant ID whose subscriptions are being updated in the URL path:
+Subscriptions are the “glue” that tie participants and sessions together, and as such a set of endpoints exist for creating, reading, or updating subscriptions, all including the session and participant ID whose subscriptions are being updated in the URL path:
 
 ```
 /sessions/{sessionId}/participants/{participantId}/subscriptions
@@ -158,9 +158,9 @@ You can add a tag to sessions and participants to help you identify them with fr
 
 ### Example uses of a Tag
 
-- Participant base meeting IDs to make it easier to associate tagged participants with a session with internal scheduling or management
+- Participant based meeting IDs to make it easier to associate tagged participants with a session with internal scheduling or management
 - Session-based meeting IDs make it easier to associate a session with internal scheduling or management
-- Externally safe Account UUIDs to assist with allocating costs from a Billing Report. 
+- Externally safe account UUIDs to assist with allocating costs from a Billing Report. 
 
 ### Restrictions/Limitations
 
