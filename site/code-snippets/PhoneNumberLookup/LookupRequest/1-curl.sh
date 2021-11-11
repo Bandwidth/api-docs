@@ -1,7 +1,8 @@
-curl --location --request POST 'https://numbers.bandwidth.com/api/v1/accounts/$BW_ACCOUNT_ID/tnlookup' \
-    --header 'Authorization: Basic $cURL_AUTH' \
-    --header 'Content-Type: application/json' \
-    --data-raw '{
+curl https://numbers.bandwidth.com/api/v1/accounts/$BW_ACCOUNT_ID/tnlookup \
+    -X POST \
+    -H 'Authorization: Basic $cURL_AUTH' \
+    -H 'Content-Type: application/json' \
+    -d '{
         "tns":
         [
             "19196104420"
