@@ -17,3 +17,4 @@ curl 'https://messaging.bandwidth.com/api/v2/users/$BW_ACCOUNT_ID/messages' \
         "tag": "custom string",
         "priority": "default"
     }'
+    
