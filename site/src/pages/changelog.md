@@ -7,6 +7,7 @@ slug: /changelog
 
 | Date | Notes |
 |--|--|
+| November 9th, 2021 | Add more content to the "about" page in voice |
 | November 8th, 2021 | Fixed spelling and grammar errors in the docs. Re-added content into `initiate` callback. Fixed ambiguous writing. |
 | November 4th, 2021 | Clarify how async `MachineDetection` works
 | November 3rd, 2021 | Added `sort` parameter to GetMessages |

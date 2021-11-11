@@ -5,6 +5,7 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import styles from '../index.module.css';
 import SdkLanguages from '../../components/sdkLanguages';
+import RunInPostman from '../../components/RunInPostman';
 
 function HomepageHeader() {
   const {siteConfig} = useDocusaurusContext();
@@ -12,7 +13,10 @@ function HomepageHeader() {
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
       <div className="container">
         <h1 className="hero__title">Bandwidth SDKs</h1>
-        <p className="hero__subtitle">Build Faster with Bandwidth</p>
+      <p className="hero__subtitle">Build Faster with Bandwidth</p>
+      <div className={styles.PostmanContainer}>
+        <RunInPostman />
+      </div>
       </div>
     </header>
   );
