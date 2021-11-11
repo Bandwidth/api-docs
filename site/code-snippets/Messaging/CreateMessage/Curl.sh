@@ -5,8 +5,8 @@ curl 'https://messaging.bandwidth.com/api/v2/users/$BW_ACCOUNT_ID/messages' \
     -d '{
         "applicationId": "$BW_ACCOUNT_ID",
         "to": [
-        "$USER_NUMBER",
-        "+15552223333"
+            "$USER_NUMBER",
+            "+15552223333"
         ],
         "from": "$BW_NUMBER",
         "text": "Hello World!",
