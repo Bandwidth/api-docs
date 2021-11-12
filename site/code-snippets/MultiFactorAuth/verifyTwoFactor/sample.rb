@@ -4,8 +4,8 @@ include Bandwidth
 include Bandwidth::MultiFactorAuth
 
 bandwidth_client = Bandwidth::Client.new(
-    two_factor_auth_basic_auth_user_name: ENV['BW_USERNAME'],
-    two_factor_auth_basic_auth_password: ENV['BW_PASSWORD']
+    multi_factor_auth_basic_auth_user_name: ENV['BW_USERNAME'],
+    multi_factor_auth_basic_auth_password: ENV['BW_PASSWORD']
 )
 auth_client = bandwidth_client.two_factor_auth_client.mfa
 
