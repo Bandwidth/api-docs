@@ -1,7 +1,7 @@
 require 'bandwidth'
 
 include Bandwidth
-include Bandwidth::TwoFactorAuth
+include Bandwidth::MultiFactorAuth
 
 bandwidth_client = Bandwidth::Client.new(
     two_factor_auth_basic_auth_user_name: ENV['BW_USERNAME'],
