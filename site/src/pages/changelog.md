@@ -7,7 +7,7 @@ slug: /changelog
 
 | Date | Notes |
 |--|--|
-| November 12, 2021 | Added cURL Code Snippets for WebRTC |
+| November 12, 2021 | Added cURL Code Snippets for WebRTC and Voice |
 | November 11, 2021 | Added cURL Code Snippets for Multi-Factor Auth and Messaging |
 | November 10, 2021 | Added cURL Code Snippets for TN Lookup |
 | November 9th, 2021 | Add more content to the "about" page in voice |
