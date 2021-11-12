@@ -11,7 +11,7 @@ auth_client = bandwidth_client.multi_factor_auth_client.mfa
 
 body = TwoFactorVerifyRequestSchema.new
 body.application_id = ENV['BW_VOICE_APPLICATION_ID']
-body.to = [ENV['USER_NUMBER']]
+body.to = ENV['USER_NUMBER']
 body.scope = "scope"
 body.code = "123456"
 body.expiration_time_in_minutes = 3

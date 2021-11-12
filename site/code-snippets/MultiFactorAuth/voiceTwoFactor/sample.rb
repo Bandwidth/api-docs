@@ -11,7 +11,7 @@ auth_client = bandwidth_client.multi_factor_auth_client.mfa
 
 body = TwoFactorCodeRequestSchema.new
 body.application_id = ENV['BW_VOICE_APPLICATION_ID']
-body.to = [ENV['USER_NUMBER']]
+body.to = ENV['USER_NUMBER']
 body.from = ENV['BW_NUMBER']
 body.digits = 6
 body.scope = "scope"
