@@ -65,7 +65,7 @@ A participant by itself cannot receive media. It must first be associated with, 
 /sessions/{sessionId}/participants/{participantId}
 ```
 
-After adding a participant to a session the participant’s subscription information can then be updated, which describes which media streams a participant will receive. Information about participant subscriptions can be optionally supplied in the request body for the [Add Participant to Session Endpoint][https://new.dev.bandwidth.com/apis/webrtc#operation/addParticipantToSession]. Subscriptions can also be updated via a call to a separate endpoint for updating subscriptions, the [Update Participant Subscriptions Endpoint](https://new.dev.bandwidth.com/apis/webrtc#operation/updateParticipantSubscriptions). Subscriptions are described in further detail below.
+After adding a participant to a session the participant’s subscription information can then be updated, which describes which media streams a participant will receive. Information about participant subscriptions can be optionally supplied in the request body for the [Add Participant to Session Endpoint](https://new.dev.bandwidth.com/apis/webrtc#operation/addParticipantToSession). Subscriptions can also be updated via a call to a separate endpoint for updating subscriptions, the [Update Participant Subscriptions Endpoint](https://new.dev.bandwidth.com/apis/webrtc#operation/updateParticipantSubscriptions). Subscriptions are described in further detail below.
 
 
 ## Subscriptions
