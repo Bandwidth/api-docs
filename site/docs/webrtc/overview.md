@@ -12,7 +12,7 @@ image: ../../static/img/bandwidth-logo.png
 
 ## More details on Bandwidth WebRTC
 
-WebRTC utilizes two forms of communication: the media streams themselves and signaling. **Signaling** is responsible for:
+WebRTC utilizes two forms of communication: the media streams themselves and signaling. Signaling is responsible for:
 
 - Setting up media streams between local and remote endpoints by negotiating and exchanging connectivity and media format information.
 - Acting as a control channel where messages are exchanged about devices and streams coming and going
@@ -21,7 +21,7 @@ Bandwidth’s signaling implementation relies on session and participant objects
 
 ## Streams
 
-For any camera or microphone that you want to connect to Bandwidth WebRTC you will be working with the [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream) that it creates. MediaStreams must be tied to a DOM element on a webpage and a participant can subscribe to more than one stream, as is the case for audio and video streams, or even multiple video streams as is often the case when screen sharing. Streams can also be aliased so that participants can subscribe to a particular subset of Streams.
+For any camera or microphone that you want to connect to Bandwidth WebRTC you will be working with the [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream) that it creates. MediaStreams must be tied to a DOM element on a webpage. A participant can subscribe to more than one stream, as is the case for audio and video streams, or even multiple video streams as is often the case when screen sharing. Streams can also be aliased so that participants can subscribe to a particular subset of Streams.
 
 ## Participants
 
@@ -51,7 +51,7 @@ More can be found on this in our [quickstart guide](/docs/webrtc/quickstart).
 
 ## Sessions
 
-Sessions are a concept that allow you to group multiple participants together - depending on your use case, this may be analogous to something like a meeting, appointment, call, or event. participants and their streams are connected to one another via subscriptions, described below.
+Sessions are a concept that allow you to group multiple participants together - depending on your use case, this may be analogous to something like a meeting, appointment, call, or event. Participants and their streams are connected to one another via subscriptions, described below.
 
 ### Limitations
 
@@ -59,13 +59,13 @@ There is a limit of 20 participants in a session.
 
 ### Participant-Session Membership
 
-A participant by itself cannot receive media. It must first be associated with, or a member of, a session. Only then can it receive media from other session participants. The (Add Participant to Session Endpoint)[https://new.dev.bandwidth.com/apis/webrtc#operation/addParticipantToSession] is used to add a participant to a session. The target participant and session are indicated by ID in the URL path:
+A participant by itself cannot receive media. It must first be associated with, or a member of, a session. Only then can it receive media from other session participants. The [Add Participant to Session Endpoint](https://new.dev.bandwidth.com/apis/webrtc#operation/addParticipantToSession) is used to add a participant to a session. The participant being added and the target session are both indicated by ID in the URL path:
 
 ```
 /sessions/{sessionId}/participants/{participantId}
 ```
 
-After adding a participant to a session the participant’s subscription information can then be updated, which describes which media streams a participant will receive. Information about participant subscriptions can be optionally supplied in the request body for the (Add Participant to Session Endpoint)[https://new.dev.bandwidth.com/apis/webrtc#operation/addParticipantToSession]. Subscriptions can also be updated via a call to a separate endpoint for updating subscriptions, the (Update Participant Subscriptions Endpoint)[https://new.dev.bandwidth.com/apis/webrtc#operation/updateParticipantSubscriptions]. Subscriptions are described in further detail below.
+After adding a participant to a session the participant’s subscription information can then be updated, which describes which media streams a participant will receive. Information about participant subscriptions can be optionally supplied in the request body for the [Add Participant to Session Endpoint][https://new.dev.bandwidth.com/apis/webrtc#operation/addParticipantToSession]. Subscriptions can also be updated via a call to a separate endpoint for updating subscriptions, the [Update Participant Subscriptions Endpoint](https://new.dev.bandwidth.com/apis/webrtc#operation/updateParticipantSubscriptions). Subscriptions are described in further detail below.
 
 
 ## Subscriptions
@@ -86,7 +86,7 @@ Subscriptions are the “glue” that tie participants and sessions together, an
 
 Note that Subscriptions can be updated in real time during a voice or video call by calling these endpoints in order to change the experience based on your own business logic.
 
-The request and response bodies for these endpoints contain the subscription information for an individual participant (namely, the participant ID in the URL path). The types of subscriptions and how to specify them in the API are described below.
+The request and response bodies for these endpoints contain the subscription information for an individual participant (namely, the participant ID in the URL path). The types of subscriptions and how to specify them in the API are described below [Participant-Session Membership](#participant-session-membership).
 
 ### Session Level
 
@@ -152,7 +152,7 @@ A participant stream level subscription adds further detail to a participant bas
 }
 ```
 
-# Tags
+## Tags
 
 You can add a tag to sessions and participants to help you identify them with friendly names. Tag information is passed on to your Billing Reports, which can facilitate billing of clients if you do pass-through billing or auditing. These can also be used to allow for easier understanding or grouping of participants or sessions. 
 
@@ -169,7 +169,7 @@ You can add a tag to sessions and participants to help you identify them with fr
 - Tags are limited to 50 characters
 
 
-### Client vs Server - 3rd Party Call Control
+## Client vs Server - 3rd Party Call Control
 
 Bandwidth’s WebRTC platform utilizes Third Party Call Control, meaning that none of the participants in the call actually control the media flow. Control of the call (or Call Control) is instead managed by a third party, or the server (i.e your web application). This is done to ease coordination and increase security.
 
