@@ -74,9 +74,9 @@ When a participant receives the audio or video streams from another participant,
 
 Subscriptions are very flexible, allowing for the creation of custom scenarios where participants may hear or see some people and devices, but not others. Subscriptions can be created three levels:
 
-- At the Session level
-- At the Participant level
-- At the Participant Stream level
+- At the session level
+- At the participant level
+- At the participant stream level
 
 Subscriptions are the “glue” that tie participants and sessions together, and as such a set of endpoints exist for creating, reading, or updating subscriptions, all including the session and participant ID whose subscriptions are being updated in the URL path:
 
