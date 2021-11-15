@@ -21,7 +21,7 @@ Bandwidth’s signaling implementation relies on session and participant objects
 
 ## Streams
 
-For any camera or microphone that you want to connect to Bandwidth WebRTC you will be working with the [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream) that it creates. MediaStreams must be tied to a DOM element on a webpage. A participant can subscribe to more than one stream, as is the case for audio and video streams, or even multiple video streams as is often the case when screen sharing. Streams can also be aliased so that participants can subscribe to a particular subset of Streams.
+For any camera or microphone that you want to connect to Bandwidth WebRTC you will be working with the [MediaStream](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream) that it creates. MediaStreams must be tied to a DOM element on a webpage. A participant can subscribe to more than one stream, as is the case for audio and video streams, or even multiple video streams as is often the case when screen sharing. Streams can also be aliased so that participants can subscribe to a particular subset of streams.
 
 ## Participants
 
@@ -70,7 +70,7 @@ After adding a participant to a session the participant’s subscription informa
 
 ## Subscriptions
 
-When a participant receives the audio or video streams from another participant, it is via a subscription. A subscription describes which media streams a participant will receive. Note that a participant must be a member, or part of, a session before it can receive any media from other participants.
+When a participant receives the audio or video streams from another participant, it is via a subscription. A subscription describes which media streams a participant will receive. Note that a participant must be a member, or part of, a session before it can receive any media from other participants [(Participant-Session Membership)](#participant-session-membership).
 
 Subscriptions are very flexible, allowing for the creation of custom scenarios where participants may hear or see some people and devices, but not others. Subscriptions can be created three levels:
 
@@ -84,9 +84,9 @@ Subscriptions are the “glue” that tie participants and sessions together, an
 /sessions/{sessionId}/participants/{participantId}/subscriptions
 ```
 
-Note that Subscriptions can be updated in real time during a voice or video call by calling these endpoints in order to change the experience based on your own business logic.
+Note that subscriptions can be updated in real time during a voice or video call by calling these endpoints in order to change the experience based on your own business logic.
 
-The request and response bodies for these endpoints contain the subscription information for an individual participant (namely, the participant ID in the URL path). The types of subscriptions and how to specify them in the API are described below [Participant-Session Membership](#participant-session-membership).
+The request and response bodies for these endpoints contain the subscription information for an individual participant (namely, the participant ID in the URL path). The types of subscriptions and how to specify them in the API are described below.
 
 ### Session Level
 
