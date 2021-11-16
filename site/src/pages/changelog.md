@@ -13,7 +13,8 @@ slug: /changelog
 | November 10, 2021 | Added cURL Code Snippets for TN Lookup |
 | November 10th, 2021| Revamped the "Key Concepts" page for greater clarity |
 | November 9th, 2021 | Add more content to the "about" page in voice |
-| November 4th, 2021 | Clarify how async `MachineDetection` works |
+| November 8th, 2021 | Fixed spelling and grammar errors in the docs. Re-added content into `initiate` callback. Fixed ambiguous writing. |
+| November 4th, 2021 | Clarify how async `MachineDetection` works
 | November 3rd, 2021 | Added `sort` parameter to GetMessages |
 | October 25th, 2021 | Messaging: Clarify accepted values for telephone numbers in GET /messages |
 | October 21st, 2021 | Updated `Ring` to reflect `answerCall` attribute option. Typo fixes. |
