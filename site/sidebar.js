@@ -11,7 +11,14 @@ module.exports = {
                 "account/about",
                 "account/credentials",
                 "account/structure",
-                "account/setup",
+                {
+                    type: "category",
+                    label: "Setup",
+                    items: [
+                        "account/setup",
+                        "account/programmatic-setup",
+                    ]
+                },
                 "account/applications",
                 "account/subscriptions",
                 "account/networkBridge",
