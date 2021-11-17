@@ -1,0 +1,507 @@
+---
+id: programmatic-setup
+title: Programmatic Setup
+slug: /account/programmatic-setup
+description: Programmatically set up your Bandwidth Dashboard account
+keywords:
+  - bandwidth
+  - account
+  - setup
+  - sub-account
+  - location
+  - site
+  - sippeer
+image: ../../static/img/bandwidth-logo.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+export const accountId = "{accountId}";
+export const siteId = "{siteId}";
+export const sippeerId = "{sippeerId}";
+
+export const Highlight = ({children, color}) => (
+    <span
+      style={{
+        backgroundColor: color,
+        borderRadius: '2px',
+        color: '#fff',
+        padding: '0.2rem',
+      }}>
+      {children}
+    </span>
+  );
+
+
+This walks through how to setup and configure your Bandwidth account via Bandwidth's [Number Management](../numbers) API for use with our [HTTP Voice](../voice), and [HTTP Messaging](../messaging) APIs.
+Unless you are already comfortable with our Number Management API and Bandwidth account structures, it is recommended that you follow our [Setup Guide](../account/setup) for the Bandwidth Dashboard instead of using this programmatic guide.
+
+## Assumptions
+* You have been contracted and given access to your Bandwidth Dashboard Account
+* You have administrator access on the account to create users and change roles
+
+## Steps
+1. [Create Sub-Account](#create-a-sub-account-site)
+2. [Create a Location](#create-a-location-sip-peer)
+3. [Enable Services for Location](#enable-sms-for-location)
+    * [Enable SMS for Location](#enable-sms-for-location)
+    * [Enable MMS for Location](#enable-mms-for-location)
+    * [Enable Voice for Location](#enable-mms-for-location)
+4. [Order a Phone Number](#order-a-phone-number)
+
+
+## Create a Sub-Account (Site)
+To create a Sub-Account, also referred to as a site, follow the instructions below.
+
+### Request URL
+
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/sites</code>
+
+### Request Body Fields
+The fields below should be formatted as XML elements and put in the request body as shown in the example below.
+
+
+| Field                 | Required  | Description |
+|:----------------------|:----------|:------------|
+| `Name`                | Yes       | The name of the site. Max length of 10 characters |
+| `Description`         | No        | The description of the site |
+| `Address`             | Yes       | The address of the site. See the **Address Object Values** dropdown below |
+| `CustomerProvidedID`  | No        | Optional custom ID to assign to your application. Max length of 10 characters |
+| `CustomerName`        | No        | Optional custom name to assign to your application. Max length of 50 characters |
+
+<details style={{cursor: "pointer"}}>
+  <summary>
+    <b>Address Object Values</b>
+  </summary>
+  <table>
+    <thead>
+      <tr>
+        <th align="left">Field</th>
+        <th align="left">Type</th>
+        <th align="left">Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td align="left">HouseNumber</td>
+        <td align="left">String</td>
+        <td align="left">The number of the house</td>
+      </tr>
+      <tr>
+        <td align="left">HousePrefix</td>
+        <td align="left">String</td>
+        <td align="left">The prefix of the house</td>
+      </tr>
+      <tr>
+        <td align="left">HouseSuffix</td>
+        <td align="left">String</td>
+        <td align="left">The suffix of the house</td>
+      </tr>
+      <tr>
+        <td align="left">StreetName</td>
+        <td align="left">String</td>
+        <td align="left">The name of the street</td>
+      </tr>
+      <tr>
+        <td align="left">StreetSuffix</td>
+        <td align="left">String</td>
+        <td align="left">The suffix of the street</td>
+      </tr>
+      <tr>
+        <td align="left">AddressLine2</td>
+        <td align="left">String</td>
+        <td align="left">The optional second line of the address (apartment, extension, etc)</td>
+      </tr>
+      <tr>
+        <td align="left">City</td>
+        <td align="left">String</td>
+        <td align="left">The city of the address</td>
+      </tr>
+      <tr>
+        <td align="left">StateCode</td>
+        <td align="left">String</td>
+        <td align="left">The 2 character state code</td>
+      </tr>
+      <tr>
+        <td align="left">Zip</td>
+        <td align="left">String</td>
+        <td align="left">The 6 digit zip code</td>
+      </tr>
+      <tr>
+        <td align="left">PlusFour</td>
+        <td align="left">String</td>
+        <td align="left">The 4 digit zip code extension</td>
+      </tr>
+      <tr>
+        <td align="left">County</td>
+        <td align="left">String</td>
+        <td align="left">The county of the address</td>
+      </tr>
+      <tr>
+        <td align="left">Country</td>
+        <td align="left">String</td>
+        <td align="left">The country of the address</td>
+      </tr>
+      <tr>
+        <td align="left">AddressType</td>
+        <td align="left">String</td>
+        <td align="left">The type of the address. Must be Billing or Service</td>
+      </tr>
+    </tbody>
+  </table>
+</details>
+
+### Example
+
+<Tabs
+  groupId="create_subaccount"
+  defaultValue="request"
+  values={[
+    { label: 'Request', value: 'request', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="request">
+
+```xml
+POST https://dashboard.bandwidth.com/api/accounts/{accountId}/sites HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<Site>
+  <Name>SetupTest</Name>
+  <Description>Programmatic Setup Test</Description>
+  <CustomerName>BW</CustomerName>
+  <Address>
+    <HouseNumber>900</HouseNumber>
+    <StreetName>Main Campus Dr</StreetName>
+    <City>RALEIGH</City>
+    <StateCode>NC</StateCode>
+    <Zip>27606</Zip>
+    <AddressType>Billing</AddressType>
+  </Address>
+</Site>
+```
+
+</TabItem>
+<TabItem value="response">
+
+```xml
+HTTP/1.1 201 Created
+Content-Type: application/xml
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SiteResponse>
+    <Site>
+        <Id>12345</Id>
+        <Name>SetupTest</Name>
+        <Description>Programmatic Setup Test</Description>
+        <CustomerName>BW</CustomerName>
+        <Address>
+            <HouseNumber>900</HouseNumber>
+            <StreetName>Main Campus Dr</StreetName>
+            <City>RALEIGH</City>
+            <StateCode>NC</StateCode>
+            <Zip>27606</Zip>
+            <Country>United States</Country>
+            <AddressType>Billing</AddressType>
+        </Address>
+    </Site>
+</SiteResponse>
+```
+
+</TabItem>
+</Tabs>
+
+## Create a Location (SIP Peer)
+
+To create a Location, also referred to as a SIP Peer, follow the instructions below.
+
+### Request URL
+The `siteId` in this URL refers to the site you would like to become the parent sub account of the new location.
+It can be retrieved from the response of the site's creation request, via the Dashboard UI, or by performing a GET request on the `/sites` endpoint and looking at the `<Id>` tag for your site.
+
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/sites/{siteId}/sippeers</code>
+
+### Request Body Fields
+The fields below should be formatted as XML elements and put in the request body as shown in the example below.
+
+
+| Field             | Required  | Description |
+|:------------------|:----------|:------------|
+| `PeerName`        | Yes       | Plain text name of the Location (sippeer) |
+| `IsDefaultPeer`   | No        | Boolean: `true` or `false`. The Default SIP Peer is the default "destination" for any Telephone Numbers that are ordered for the Site in which the SIP Peer resides. Each sub-account (site) can have only 1 default SIP Peer. You can configure multiple SIP Peers on a Site |
+
+### Example
+
+<Tabs
+  groupId="create_location"
+  defaultValue="request"
+  values={[
+    { label: 'Request', value: 'request', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="request">
+
+```xml
+POST https://dashboard.bandwidth.com/api/accounts/{accountId}/sites/{siteId}/sippeers HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<SipPeer>
+  <PeerName>Setup Test SIP Peer</PeerName>
+  <IsDefaultPeer>true</IsDefaultPeer>
+</SipPeer>
+```
+
+</TabItem>
+<TabItem value="response">
+
+```xml
+HTTP/1.1 201 Created
+Content-Type: application/xml
+Location: https://{basePath}/accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}
+```
+
+</TabItem>
+</Tabs>
+
+## Enable SMS for Location
+
+In order to use HTTP messaging on your account, you need to enable SMS and MMS for each location.
+
+### Request URL
+The `sippeerId` in this URL refers to the location you would like to enable SMS on.
+It can be retrieved from the Location header of the location creation response, via the Dashbaord UI, or by performing a GET request on the `/sites/{siteId}/sippeers` endpoint and looking at the `<PeerId>` tag for your Location.
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/products/messaging/features/sms</code>
+
+### Request Body Fields
+The fields below should be formatted as XML elements and put in the request body as shown in the example below.
+
+
+| Field       | Required | Description |
+|:------------|:---------|:------------|
+| TollFree    | Yes      | Boolean: `true` or `false`. Will enable texting to and from toll-free phone numbers |
+| ShortCode   | Yes      | Boolean: `true` or `false`. Will enable texting to and from short codes |
+| Protocol    | Yes      | MUST BE SET TO `HTTP`| 
+| Zone1       | Yes      | MUST BE SET TO: `true` |
+| Zone2       | Yes      | Boolean: `true` or `false`. |
+| Zone3       | Yes      | Boolean: `true` or `false`. |
+| Zone4       | Yes      | Boolean: `true` or `false`. |
+| Zone5       | Yes      | Boolean: `true` or `false`. |
+
+### Example
+
+<Tabs
+  groupId="create_location"
+  defaultValue="request"
+  values={[
+    { label: 'Request', value: 'request', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="request">
+
+```xml
+POST https://dashboard.bandwidth.com/api/accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/products/messaging/features/sms HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<SipPeerSmsFeature>
+  <SipPeerSmsFeatureSettings>
+    <TollFree>true</TollFree>
+    <ShortCode>true</ShortCode>
+    <Protocol>HTTP</Protocol>
+    <Zone1>true</Zone1>
+    <Zone2>true</Zone2>
+    <Zone3>true</Zone3>
+    <Zone4>true</Zone4>
+    <Zone5>true</Zone5>
+  </SipPeerSmsFeatureSettings>
+  <HttpSettings />
+</SipPeerSmsFeature>
+```
+
+</TabItem>
+<TabItem value="response">
+
+```xml
+HTTP/1.1 201 Created
+Content-Type: application/xml
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SipPeerSmsFeatureResponse>
+    <SipPeerSmsFeature>
+        <SipPeerSmsFeatureSettings>
+            <TollFree>true</TollFree>
+            <ShortCode>true</ShortCode>
+            <Protocol>HTTP</Protocol>
+            <Zone1>true</Zone1>
+            <Zone2>true</Zone2>
+            <Zone3>true</Zone3>
+            <Zone4>true</Zone4>
+            <Zone5>true</Zone5>
+        </SipPeerSmsFeatureSettings>
+        <HttpSettings>
+            <ProxyPeerId>569238</ProxyPeerId>
+        </HttpSettings>
+    </SipPeerSmsFeature>
+</SipPeerSmsFeatureResponse>
+```
+
+</TabItem>
+</Tabs>
+
+## Enable MMS for Location
+
+In order to use HTTP messaging on your account, you need to enable SMS and MMS for each location.
+
+:::info
+MMS can only be enabled once SMS has been enabled. Attempting to enable MMS before SMS will result in a 400 Bad Request.
+:::
+
+### Request URL
+The `sippeerId` in this URL refers to the location you would like to enable MMS on.
+It can be retrieved from the Location header of the location creation response, via the Dashbaord UI, or by performing a GET request on the `/sites/{siteId}/sippeers` endpoint and looking at the `<PeerId>` tag for your Location.
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/products/messaging/features/mms</code>
+
+### Request Body Fields
+The fields below should be formatted as XML elements and put in the request body as shown in the example below.
+
+
+| Field       | Required | Description |
+|:------------|:---------|:------------|
+| Protocol    | Yes      | MUST BE SET TO `HTTP`| 
+
+### Example
+
+<Tabs
+  groupId="create_location"
+  defaultValue="request"
+  values={[
+    { label: 'Request', value: 'request', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="request">
+
+```xml
+POST https://dashboard.bandwidth.com/api/accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/products/messaging/features/mms HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<MmsFeature>
+  <MmsSettings>
+    <Protocol>HTTP</Protocol>
+  </MmsSettings>
+  <Protocols>
+    <HTTP>
+      <HttpSettings />
+    </HTTP>
+  </Protocols>
+</MmsFeature>
+```
+
+</TabItem>
+<TabItem value="response">
+
+```xml
+HTTP/1.1 201 Created
+Content-Type: application/xml
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<MmsFeatureResponse>
+    <MmsFeature>
+        <MmsSettings>
+            <Protocol>HTTP</Protocol>
+        </MmsSettings>
+        <Protocols>
+            <HTTP>
+                <HttpSettings>
+                    <ProxyPeerId>569238</ProxyPeerId>
+                </HttpSettings>
+            </HTTP>
+        </Protocols>
+    </MmsFeature>
+</MmsFeatureResponse>
+```
+
+</TabItem>
+</Tabs>
+
+## Enable Voice for Location
+
+
+
+### Request URL
+The `sippeerId` in this URL refers to the location you would like to enable MMS on.
+It can be retrieved from the Location header of the location creation response, via the Dashbaord UI, or by performing a GET request on the `/sites/{siteId}/sippeers` endpoint and looking at the `<PeerId>` tag for your Location.
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/products/messaging/features/mms</code>
+
+### Request Body Fields
+The fields below should be formatted as XML elements and put in the request body as shown in the example below.
+
+
+| Field       | Required | Description |
+|:------------|:---------|:------------|
+| Protocol    | Yes      | MUST BE SET TO `HTTP`| 
+
+### Example
+
+<Tabs
+  groupId="create_location"
+  defaultValue="request"
+  values={[
+    { label: 'Request', value: 'request', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="request">
+
+```xml
+POST https://dashboard.bandwidth.com/api/accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/products/messaging/features/mms HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<MmsFeature>
+  <MmsSettings>
+    <Protocol>HTTP</Protocol>
+  </MmsSettings>
+  <Protocols>
+    <HTTP>
+      <HttpSettings />
+    </HTTP>
+  </Protocols>
+</MmsFeature>
+```
+
+</TabItem>
+<TabItem value="response">
+
+```xml
+HTTP/1.1 201 Created
+Content-Type: application/xml
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<MmsFeatureResponse>
+    <MmsFeature>
+        <MmsSettings>
+            <Protocol>HTTP</Protocol>
+        </MmsSettings>
+        <Protocols>
+            <HTTP>
+                <HttpSettings>
+                    <ProxyPeerId>569238</ProxyPeerId>
+                </HttpSettings>
+            </HTTP>
+        </Protocols>
+    </MmsFeature>
+</MmsFeatureResponse>
+```
+
+</TabItem>
+</Tabs>
+
+## Order a Phone Number
