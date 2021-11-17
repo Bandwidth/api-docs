@@ -15,7 +15,7 @@ module.exports = {
                     type: "category",
                     label: "Setup",
                     items: [
-                        "account/setup",
+                        "account/dashboard-setup",
                         "account/programmatic-setup",
                     ]
                 },
