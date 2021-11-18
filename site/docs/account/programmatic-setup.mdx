@@ -50,8 +50,10 @@ Unless you are already comfortable with our Number Management API and Bandwidth 
     * [Enable MMS for Location](#enable-mms-for-location)
 4. [Order a Phone Number](#order-a-phone-number)
 5. [Create an Application](#create-an-application)
-    * [Create a Messaging Application](create-a-messaging-application)
-    * [Create a Voice Application](create-a-voice-application)
+    * [Create a Messaging Application](#create-a-messaging-application)
+        * [Assign a Messaging Application to Location](#assign-a-messaging-application-to-location)
+    * [Create a Voice Application](#create-a-voice-application)
+        * [Assign a Voice Application to Location](#assign-a-voice-application-to-location)
 
 
 ## Create a Sub-Account (Site)
@@ -390,7 +392,7 @@ For a guide on ordering phone numbers via the Bandwidth Dashboard API, [click he
 After assigning the phone number you've ordered to a location, you must create a messaging or voice application and assign it to the location that has the phone number you would like to use.
 
 ### Create a Messaging Application
-This section walks though creating a messaging application, assigning it to a location, and enabling V2 messaging on that location.
+This section walks though creating a messaging application.
 
 #### Request URL
 <Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/applications</code>
@@ -474,12 +476,12 @@ Content-Type: application/xml
 </TabItem>
 </Tabs>
 
-### Assign Messaging Application to Location
+### Assign a Messaging Application to Location
 This walks through assigning a messaging application to a location and enabling V2 messaging on that location.
 An application must be assigned to a location, the application assigned to the location will run on voice and messaging events for the numbers on the location.
 
 #### Request URL
-<Highlight color="#9a59c5">PUT</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/products/messaging/applicationSettings</code>
+<Highlight color="#9A59C5">PUT</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/products/messaging/applicationSettings</code>
 
 #### Request Body Fields
 The fields below should be formatted as XML elements and put in the request body as shown in the example below.
@@ -524,6 +526,145 @@ Content-Type: application/xml
         <HttpMessagingV2AppId>590cde45-c05d-44e3-a77a-59fd10f17c26</HttpMessagingV2AppId>
     </ApplicationsSettings>
 </ApplicationsSettingsResponse>
+```
+
+</TabItem>
+</Tabs>
+
+### Create a Voice Application
+This section walks though creating a voice application.
+
+#### Request URL
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/applications</code>
+
+#### Request Body Fields
+The fields below should be formatted as XML elements and put in the request body as shown in the example below.
+
+
+| Field                       | Required | Description |
+|:----------------------------|:---------|:------------|
+| `ServiceType`               | Yes      | Set to `Voice-V2` |
+| `AppName`                   | Yes      | Plain text name of the application |
+| `CallInitiatedCallbackUrl`  | Yes      | Url to receive _actionable_ voice events |
+| `CallStatusCallbackUrl`     | No       | Url to receive voice events NOT related to Initiated. Such as: rejected or hung up | 
+| `CallbackCreds`             | No       | Basic auth credentials to apply to your voice events |
+| `CallbackCreds.UserId`      | No       | Basic auth `UserId` |
+| `CallbackCreds.Password`    | No       | Basic auth `Password` |
+
+#### Example
+
+<Tabs
+  groupId="create_location"
+  defaultValue="request"
+  values={[
+    { label: 'Request', value: 'request', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="request">
+
+```xml
+POST https://dashboard.bandwidth.com/api/accounts/{accountId}/applications HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<Application>
+    <ServiceType>Voice-V2</ServiceType>
+    <AppName>Setup Test Voice</AppName>
+    <CallInitiatedCallbackUrl>https://yourSecureSite.com/callbacks/init</CallInitiatedCallbackUrl>
+    <CallStatusCallbackUrl>https://yourSecureSite.com/callbacks/status</CallStatusCallbackUrl>
+    <CallbackCreds>
+      <UserId>Your-User-id</UserId>
+      <Password>Your-Password</Password>
+  </CallbackCreds>
+</Application>
+```
+
+</TabItem>
+<TabItem value="response">
+
+```xml
+HTTP/1.1 201 Created
+Content-Type: application/xml
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ApplicationProvisioningResponse>
+    <Application>
+        <ApplicationId>0fff897a-3ee3-4e7e-94d7-89a067cdfe6b</ApplicationId>
+        <ServiceType>Voice-V2</ServiceType>
+        <AppName>Setup Test Voice</AppName>
+        <CallInitiatedCallbackUrl>https://yourSecureSite.com/callbacks/init</CallInitiatedCallbackUrl>
+        <CallInitiatedMethod>POST</CallInitiatedMethod>
+        <CallStatusCallbackUrl>https://yourSecureSite.com/callbacks/status</CallStatusCallbackUrl>
+        <CallStatusMethod>POST</CallStatusMethod>
+        <CallbackCreds>
+            <UserId>Your-User-id</UserId>
+        </CallbackCreds>
+    </Application>
+</ApplicationProvisioningResponse>
+```
+
+</TabItem>
+</Tabs>
+
+### Assign a Voice Application to Location
+This walks through assigning a voice application to a location and enabling HTTP Voice on that location.
+An application must be assigned to a location, the application assigned to the location will run on voice and messaging events for the numbers on the location.
+
+#### Request URL
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/products/origination/settings</code>
+
+#### Request Body Fields
+The fields below should be formatted as XML elements and put in the request body as shown in the example below.
+
+
+| Field                 | Required | Description |
+|:----------------------|:---------|:------------|
+| `VoiceProtocol`       | Yes      | MUST BE SET TO `HTTP` |
+| `HttpSettings`        | Yes      | Parent element for HTTP settings |
+| `HttpVoiceV2AppId`    | Yes      | The applicationId of the Voice `application` created above |
+
+#### Example
+
+<Tabs
+  groupId="create_location"
+  defaultValue="request"
+  values={[
+    { label: 'Request', value: 'request', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="request">
+
+```xml
+POST https://dashboard.bandwidth.com/api/accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/products/origination/settings HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<SipPeerOriginationSettings>
+  <VoiceProtocol>HTTP</VoiceProtocol>
+  <HttpSettings>
+    <HttpVoiceV2AppId>{voice-applicationId}</HttpVoiceV2AppId>
+  </HttpSettings>
+</SipPeerOriginationSettings>
+```
+
+</TabItem>
+<TabItem value="response">
+
+```xml
+HTTP/1.1 200 OK
+Content-Type: application/xml
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SipPeerOriginationSettingsResponse>
+    <SipPeerOriginationSettings>
+        <VoiceProtocol>HTTP</VoiceProtocol>
+        <HttpSettings>
+            <HttpVoiceV2AppId>0fff897a-3ee3-4e7e-94d7-89a067cdfe6b</HttpVoiceV2AppId>
+        </HttpSettings>
+    </SipPeerOriginationSettings>
+</SipPeerOriginationSettingsResponse>
 ```
 
 </TabItem>
