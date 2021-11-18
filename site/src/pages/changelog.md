@@ -7,6 +7,7 @@ slug: /changelog
 
 | Date | Notes |
 |--|--|
+| November 17, 2021 | Update application callback docs to be clear about what is sent when |
 | November 12, 2021 | Added cURL Code Snippets for WebRTC and Voice |
 | November 11, 2021 | Ensure complete cross reference for AMD results |
 | November 11, 2021 | Added cURL Code Snippets for Multi-Factor Auth and Messaging |
