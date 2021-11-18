@@ -39,9 +39,9 @@ The Bandwidth WebRTC API is documented in the API Reference section of these API
 
 ## Sample Applications
 
-We have created an extensive suite of sample applications - copy them, modifiy them, extend them, or just learn from them. They represent a variety of simple solutions in a variety of languages that you can use to get up to speed.
+We have created an extensive suite of sample applications. Feel free to copy them, modify them, extend them, or just learn from them. They represent a variety of simple solutions in a variety of languages that you can use to get up to speed.
 
-The sample applications are maintained in the [Bandwidth Samples](https://github.com/search?q=topic%3Awebrtc+org%3ABandwidth-Samples) organization on github.
+The sample applications are maintained in the [Bandwidth Samples](https://github.com/search?q=topic%3Awebrtc+org%3ABandwidth-Samples) organization on GitHub.
 
 To make things easier to find, those same Bandwidth Sample Applications are listed and described below:
 

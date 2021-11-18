@@ -20,7 +20,7 @@ When PV calls interwork with WebRTC communications, the behavior of the resultin
 
 By combining our WebRTC and programmable voice APIs, you can create composite call flows that meet your needs.
 
-To create a Programmable Voice call that involves WebRTC endpoints, your appliction first establishes a connection from the Programmable Voice network to the WebRTC platform.
+To create a Programmable Voice call that involves WebRTC endpoints, your application first establishes a connection from the Programmable Voice network to the WebRTC platform.
 
 ![Summary of interconnection](../../static/img/webrtc-pv-summary.png "summary")
 
