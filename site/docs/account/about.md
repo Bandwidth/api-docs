@@ -1,12 +1,12 @@
 ---
 id: about
-title: About
-slug: /account   
+title: Account
+slug: /account
+sidebar_label: About
 description: A general overview of Bandwidth's account services
 keywords:
   - bandwidth
   - account
-hide_title: true
 image: ../../static/img/bandwidth-logo.png
 ---
 
