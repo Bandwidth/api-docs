@@ -31,6 +31,11 @@ module.exports = {
             items: [
                 "numbers/about",
                 {
+                    type: "link",
+                    label: "API Reference",
+                    href: "/apis/numbers"
+                },
+                {
                     type: "category",
                     label: "Webhooks",
                     items: [
@@ -63,6 +68,11 @@ module.exports = {
             label: "Voice",
             items: [
                 "voice/about",
+                {
+                    type: "link",
+                    label: "API Reference",
+                    href: "/apis/voice"
+                },
                 "voice/quickStart",
                 {
                     type: "category",
@@ -137,6 +147,11 @@ module.exports = {
             label: "Messaging",
             items: [
                 "messaging/about",
+                {
+                    type: "link",
+                    label: "API Reference",
+                    href: "/apis/messaging"
+                },
                 "messaging/webhooks",
                 "messaging/quickStart",
                 {
@@ -157,6 +172,11 @@ module.exports = {
             label: "WebRTC",
             items: [
                 "webrtc/about",
+                {
+                    type: "link",
+                    label: "API Reference",
+                    href: "/apis/webrtc"
+                },
                 "webrtc/webhooks",
                 {
                     type: "category",
@@ -175,7 +195,16 @@ module.exports = {
         {
             type: "category",
             label: "Multi-Factor Authentication",
-            items: ["mfa/about", "mfa/errors", "mfa/rateLimits"],
+            items: [
+                "mfa/about",
+                {
+                    type: "link",
+                    label: "API Reference",
+                    href: "/apis/multifactorauth"
+                },
+                "mfa/errors",
+                "mfa/rateLimits"
+            ],
         },
         {
             type: "category",
@@ -196,6 +225,11 @@ module.exports = {
                     label: "911 Access Dashboard",
                     items: [
                         "emergency/dash/about",
+                        {
+                            type: "link",
+                            label: "API Reference",
+                            href: "/apis/dash"
+                        },
                         "emergency/dash/usage",
                         "emergency/dash/soap",
                         "emergency/dash/errors",
