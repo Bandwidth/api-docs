@@ -4,6 +4,7 @@ import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import styles from '../index.module.css';
+import ApiPages from '../../components/apiPages';
 
 function HomepageHeader() {
   const {siteConfig} = useDocusaurusContext();
@@ -25,6 +26,9 @@ export default function Home() {
       description="Bandwidth API Reference, documentation, SDKs, guides, examples and more. Get everything you need to build with Bandwidth."
       keywords="Bandwidth,API">
       <HomepageHeader />
+      <main>
+        <ApiPages />
+      </main>
     </Layout>
   );
 }
