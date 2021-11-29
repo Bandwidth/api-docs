@@ -31,11 +31,6 @@ module.exports = {
             items: [
                 "numbers/about",
                 {
-                    type: "link",
-                    label: "API Reference",
-                    href: "/apis/numbers"
-                },
-                {
                     type: "category",
                     label: "Webhooks",
                     items: [
@@ -61,6 +56,11 @@ module.exports = {
                     ],
                 },
                 "numbers/errors",
+                {
+                    type: "link",
+                    label: "API Reference",
+                    href: "/apis/numbers"
+                },
             ],
         },
         {
@@ -68,11 +68,6 @@ module.exports = {
             label: "Voice",
             items: [
                 "voice/about",
-                {
-                    type: "link",
-                    label: "API Reference",
-                    href: "/apis/voice"
-                },
                 "voice/quickStart",
                 {
                     type: "category",
@@ -140,6 +135,11 @@ module.exports = {
                 },
                 "voice/rateLimits",
                 "voice/errors",
+                {
+                    type: "link",
+                    label: "API Reference",
+                    href: "/apis/voice"
+                },
             ],
         },
         {
@@ -147,11 +147,6 @@ module.exports = {
             label: "Messaging",
             items: [
                 "messaging/about",
-                {
-                    type: "link",
-                    label: "API Reference",
-                    href: "/apis/messaging"
-                },
                 "messaging/webhooks",
                 "messaging/quickStart",
                 {
@@ -165,6 +160,11 @@ module.exports = {
                 },
                 "messaging/rateLimits",
                 "messaging/errors",
+                {
+                    type: "link",
+                    label: "API Reference",
+                    href: "/apis/messaging"
+                },
             ],
         },
         {
@@ -172,11 +172,6 @@ module.exports = {
             label: "WebRTC",
             items: [
                 "webrtc/about",
-                {
-                    type: "link",
-                    label: "API Reference",
-                    href: "/apis/webrtc"
-                },
                 "webrtc/webhooks",
                 {
                     type: "category",
@@ -190,6 +185,11 @@ module.exports = {
                     ],
                 },
                 "webrtc/errors",
+                {
+                    type: "link",
+                    label: "API Reference",
+                    href: "/apis/webrtc"
+                },
             ],
         },
         {
@@ -197,13 +197,13 @@ module.exports = {
             label: "Multi-Factor Authentication",
             items: [
                 "mfa/about",
+                "mfa/errors",
+                "mfa/rateLimits",
                 {
                     type: "link",
                     label: "API Reference",
                     href: "/apis/multifactorauth"
                 },
-                "mfa/errors",
-                "mfa/rateLimits"
             ],
         },
         {
@@ -225,14 +225,14 @@ module.exports = {
                     label: "911 Access Dashboard",
                     items: [
                         "emergency/dash/about",
+                        "emergency/dash/usage",
+                        "emergency/dash/soap",
+                        "emergency/dash/errors",
                         {
                             type: "link",
                             label: "API Reference",
                             href: "/apis/dash"
                         },
-                        "emergency/dash/usage",
-                        "emergency/dash/soap",
-                        "emergency/dash/errors",
                     ],
                 },
                 "emergency/emergencyCallingApi",
