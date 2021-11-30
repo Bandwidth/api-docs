@@ -192,5 +192,18 @@ module.exports = {
         black: '#090306',
         redocCodeBackground: '#263238',
     },
-    plugins: [path.resolve(__dirname, 'redoc-plugin')],
+    plugins: [
+        [
+            '@docusaurus/plugin-client-redirects',
+            {
+                redirects: [
+                    {
+                        to: '/docs/', // string
+                        from: ['/test', '/docs/test'], // string | string[]
+                    },
+                ],
+            },
+        ],
+        path.resolve(__dirname, 'redoc-plugin')
+    ],
 };
