@@ -56,6 +56,11 @@ module.exports = {
                     ],
                 },
                 "numbers/errors",
+                {
+                    type: "link",
+                    label: "API Reference",
+                    href: "https://new.dev.bandwidth.com/apis/numbers"
+                },
             ],
         },
         {
@@ -130,6 +135,11 @@ module.exports = {
                 },
                 "voice/rateLimits",
                 "voice/errors",
+                {
+                    type: "link",
+                    label: "API Reference",
+                    href: "https://new.dev.bandwidth.com/apis/voice"
+                },
             ],
         },
         {
@@ -150,6 +160,11 @@ module.exports = {
                 },
                 "messaging/rateLimits",
                 "messaging/errors",
+                {
+                    type: "link",
+                    label: "API Reference",
+                    href: "https://new.dev.bandwidth.com/apis/messaging"
+                },
             ],
         },
         {
@@ -170,12 +185,26 @@ module.exports = {
                     ],
                 },
                 "webrtc/errors",
+                {
+                    type: "link",
+                    label: "API Reference",
+                    href: "https://new.dev.bandwidth.com/apis/webrtc"
+                },
             ],
         },
         {
             type: "category",
             label: "Multi-Factor Authentication",
-            items: ["mfa/about", "mfa/errors", "mfa/rateLimits"],
+            items: [
+                "mfa/about",
+                "mfa/errors",
+                "mfa/rateLimits",
+                {
+                    type: "link",
+                    label: "API Reference",
+                    href: "https://new.dev.bandwidth.com/apis/multifactorauth"
+                },
+            ],
         },
         {
             type: "category",
@@ -199,6 +228,11 @@ module.exports = {
                         "emergency/dash/usage",
                         "emergency/dash/soap",
                         "emergency/dash/errors",
+                        {
+                            type: "link",
+                            label: "API Reference",
+                            href: "https://new.dev.bandwidth.com/apis/dash"
+                        },
                     ],
                 },
                 "emergency/emergencyCallingApi",

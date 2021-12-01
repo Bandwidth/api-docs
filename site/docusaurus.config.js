@@ -78,11 +78,11 @@ module.exports = {
                     to: 'apis/messaging-international',
                     label: 'International Messaging'
                 }, {
-                    to: 'apis/multifactorauth',
-                    label: 'Multi-Factor Authentication'
-                }, {
                     to: 'apis/webrtc',
                     label: 'WebRTC'
+                }, {
+                    to: 'apis/multifactorauth',
+                    label: 'Multi-Factor Authentication'
                 }, {
                     to: 'apis/dash',
                     label: 'DASH'
