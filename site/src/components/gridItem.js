@@ -2,12 +2,12 @@ import React from 'react';
 import clsx from 'clsx';
 import styles from '../css/apis.module.css';
 
-function Item({Svg, title, description, link}) {
+function Item({Svg, style, title, description, link}) {
   return (
     <div className={clsx('col col--4')}>
       <a href={link}>
           <div className="text--center">
-            <Svg className={styles.apiSvg} alt={title} />
+            <Svg className={style} alt={title} />
           </div>
       <div className="text--center padding-horiz--md">
         <h3>{title}</h3>
@@ -18,12 +18,12 @@ function Item({Svg, title, description, link}) {
   );
 }
 
-export default function ItemGrid(itemList) {
+export default function ItemGrid(props) {
   return (
-    <section className={styles.apis}>
+    <section className={props.className}>
       <div className="container">
         <div className="row">
-          {itemList.map((props, idx) => (
+          {props.itemList.map((props, idx) => (
             <Item key={idx} {...props} />
           ))}
         </div>
