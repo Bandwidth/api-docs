@@ -3,7 +3,7 @@ import clsx from 'clsx';
 
 function Item({Svg, style, title, description, link}) {
   return (
-    <div className={clsx('col col--4')}>
+    <div className="grid-item">
       <a href={link}>
           <div className="text--center">
             <Svg className={style} alt={title} />
