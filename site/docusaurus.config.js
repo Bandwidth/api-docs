@@ -159,6 +159,8 @@ module.exports = {
         messagingGreen: '#00bf8c',
         emergencyOrange: '#ff6f47',
         numbersMaroon: '#652B51',
+        webRtcBlue: '#194F7A',
+        mfaGreen: '#106149',
         white: '#FFFFFF',
         lightBlue: '#E6F5FD',
         grey: '#9C9A9B',

@@ -10,7 +10,7 @@ export default function ApiReferencePage() {
           title={`WebRtc API Reference`}
           description="Authentication, Participants, and Sessions. Everything you'll need to start working with our WebRtc API."
           keywords="Bandwidth,API,WebRtc">
-            <ApiReference spec={siteConfig.customFields.webRTCSpec} color={siteConfig.customFields.bwBlue} />
+            <ApiReference spec={siteConfig.customFields.webRTCSpec} color={siteConfig.customFields.webRtcBlue} />
         </Layout>
     );
 }
