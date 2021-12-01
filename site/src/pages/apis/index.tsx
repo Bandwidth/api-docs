@@ -16,7 +16,7 @@ const ApiList = [
     },
     {
         title: 'Phone Number Lookup',
-        Svg: require('../../../static/img/icon-numbers.svg').default,
+        Svg: require('../../../static/img/icon-phone-number-lookup-complex-no-bg.svg').default,
         style: apiStyles.apiSvg,
         link: '/apis/number-lookup'
     },
@@ -34,7 +34,7 @@ const ApiList = [
     },
     {
         title: 'International Messaging',
-        Svg: require('../../../static/img/icon-messaging.svg').default,
+        Svg: require('../../../static/img/icon-int-messaging-complex-no-bg.svg').default,
         style: apiStyles.apiSvg,
         link: '/apis/messaging-international'
     },
