@@ -40,25 +40,25 @@ const ApiList = [
     },
     {
         title: 'Multi-Factor Authentication',
-        Svg: require('../../../static/img/icon-mfa.svg').default,
+        Svg: require('../../../static/img/icon-multi-factor-complex-no-bg.svg').default,
         style: apiStyles.apiSvg,
         link: '/apis/multifactorauth'
     },
     {
         title: 'WebRTC',
-        Svg: require('../../../static/img/icon-WebRTC.svg').default,
+        Svg: require('../../../static/img/icon-webrtc-complex-no-bg.svg').default,
         style: apiStyles.apiSvg,
         link: '/apis/webrtc'
     },
     {
         title: 'DASH',
-        Svg: require('../../../static/img/icon-emergency-dashboard.svg').default,
+        Svg: require('../../../static/img/icon-dash-complex-no-bg.svg').default,
         style: apiStyles.apiSvg,
         link: '/apis/dash'
     },
     {
         title: 'DASH Notifications',
-        Svg: require('../../../static/img/icon-emergency-calling.svg').default,
+        Svg: require('../../../static/img/icon-dash-notifications-complex-no-bg.svg').default,
         style: apiStyles.apiSvg,
         link: '/apis/dash-notifications'
     },
