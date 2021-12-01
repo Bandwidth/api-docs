@@ -292,7 +292,7 @@ module.exports = {
                         from: '/messaging/callbacks/messageFailed',
                     },
                     {
-                        to: '/docs/mfa/about',
+                        to: '/docs/mfa',
                         from: ['/mfa',
                             '/mfa/about'],
                     },
