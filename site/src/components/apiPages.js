@@ -6,7 +6,7 @@ import styles from '../css/apis.module.css';
 const ApiList = [
     {
         title: 'Numbers',
-        Svg: require('../../static/img/icon-numbers.svg').default,
+        Svg: require('../../static/img/icon-numbers-complex.svg').default,
         link: '/apis/numbers'
     },
     {
@@ -16,12 +16,12 @@ const ApiList = [
     },
     {
         title: 'Voice',
-        Svg: require('../../static/img/complex-icon-phone-cloud.svg').default,
+        Svg: require('../../static/img/icon-voice-complex.svg').default,
         link: '/apis/voice'
     },
     {
         title: 'Messaging',
-        Svg: require('../../static/img/complex-icon-messages.svg').default,
+        Svg: require('../../static/img/icon-messaging-complex.svg').default,
         link: '/apis/messaging'
     },
     {
