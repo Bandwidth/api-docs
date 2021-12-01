@@ -10,7 +10,7 @@ import ItemGrid from '../../components/gridItem'
 const ApiList = [
     {
         title: 'Numbers',
-        Svg: require('../../../static/img/icon-numbers-complex.svg').default,
+        Svg: require('../../../static/img/icon-numbers-complex-no-bg.svg').default,
         style: apiStyles.apiSvg,
         link: '/apis/numbers'
     },
@@ -22,13 +22,13 @@ const ApiList = [
     },
     {
         title: 'Voice',
-        Svg: require('../../../static/img/icon-voice-complex.svg').default,
+        Svg: require('../../../static/img/icon-voice-complex-no-bg.svg').default,
         style: apiStyles.apiSvg,
         link: '/apis/voice'
     },
     {
         title: 'Messaging',
-        Svg: require('../../../static/img/icon-messaging-complex.svg').default,
+        Svg: require('../../../static/img/icon-messaging-complex-no-bg.svg').default,
         style: apiStyles.apiSvg,
         link: '/apis/messaging'
     },
