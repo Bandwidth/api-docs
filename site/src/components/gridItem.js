@@ -1,6 +1,5 @@
 import React from 'react';
 import clsx from 'clsx';
-import styles from '../css/apis.module.css';
 
 function Item({Svg, style, title, description, link}) {
   return (
