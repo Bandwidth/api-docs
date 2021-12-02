@@ -61,35 +61,9 @@ module.exports = {
                 label: 'Docs',
                 position: 'left',
             }, {
+                to: 'apis',
                 label: 'API Reference',
-                items: [{
-                    to: 'apis/numbers',
-                    label: 'Numbers'
-                }, {
-                    to: 'apis/number-lookup',
-                    label: 'Phone Number Lookup'
-                }, {
-                    to: 'apis/voice',
-                    label: 'Voice'
-                }, {
-                    to: 'apis/messaging',
-                    label: 'Messaging'
-                }, {
-                    to: 'apis/messaging-international',
-                    label: 'International Messaging'
-                }, {
-                    to: 'apis/webrtc',
-                    label: 'WebRTC'
-                }, {
-                    to: 'apis/multifactorauth',
-                    label: 'Multi-Factor Authentication'
-                }, {
-                    to: 'apis/dash',
-                    label: 'DASH'
-                }, {
-                    to: 'apis/dash-notifications',
-                    label: 'DASH Notifications'
-                }]
+                activeBasePath: 'apis'
             }, {
                 to: 'sdks',
                 label: 'SDKs',
@@ -185,6 +159,8 @@ module.exports = {
         messagingGreen: '#00bf8c',
         emergencyOrange: '#ff6f47',
         numbersMaroon: '#652B51',
+        webRtcBlue: '#194F7A',
+        mfaGreen: '#106149',
         white: '#FFFFFF',
         lightBlue: '#E6F5FD',
         grey: '#9C9A9B',
