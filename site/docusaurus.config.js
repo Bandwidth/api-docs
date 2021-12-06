@@ -28,7 +28,7 @@ module.exports = {
             disableSwitch: false // for disabling dark mode
         },
         algolia: {
-            apiKey: '240bfd4951231197541ea28184808812',
+            apiKey: 'a3cad027f89dc3f5f0bcb7407572217b',
             indexName: 'bandwidth',
             contextualSearch: false, // useful for versioned Docusaurus sites
         },
