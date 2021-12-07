@@ -158,6 +158,32 @@ module.exports = {
                         "messaging/mediaManagement",
                     ],
                 },
+                {
+                    type: "category",
+                    label: "Campaign Management",
+                    items: [
+                        "messaging/campaign-management/about",
+                        {
+                            type: "category",
+                            label: "10DLC CSP Campaigns",
+                            items: [
+                                "messaging/campaign-management/cspabout",
+                                "messaging/campaign-management/csp/reseller-brand-ui",
+                                "messaging/campaign-management/csp/reseller-brand-api",
+                                "messaging/campaign-management/csp/campaign-ui",
+                                "messaging/campaign-management/csp/campaign-api",
+                                "messaging/campaign-management/csp/faq",
+                            ],
+                        },
+                        {
+                            type: "category",
+                            label: "10DLC Campaign Imports",
+                            items: [
+                                "messaging/campaign-management/importsabout",
+                            ],
+                        },
+                    ],
+                },
                 "messaging/rateLimits",
                 "messaging/errors",
                 {
