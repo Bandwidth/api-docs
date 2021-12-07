@@ -16,11 +16,11 @@ If you are an SDK user, there are a pair of them that you will want: a client SD
 
 - The Bandwidth Client SDKs
 
-  | Environment                                                        | Notes                                                               |
-  | ------------------------------------------------------------------ | ------------------------------------------------------------------- |
-  | [Browser](https://www.npmjs.com/package/@bandwidth/webrtc-browser) | The Bandwidth Browser SDK                                           |
-  | [IOS](https://github.com/Bandwidth/bandwidth-webrtc-swift)         | An OSS implementation of Bandwidth WebRTC suitable for iOS devices. |
-  | [Android](https://github.com/Bandwidth/bandwidth-android)          | Bandwidth Android SDK                                               |
+| Environment                                                        | Notes                                                                                 |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------- |
+| [Browser](https://www.npmjs.com/package/@bandwidth/webrtc-browser) | The Bandwidth Browser SDK                                                             |
+| [IOS](https://github.com/Bandwidth/bandwidth-webrtc-swift)         | An OSS implementation of Bandwidth WebRTC suitable for iOS devices. Currently in Beta |
+| [Android](https://github.com/Bandwidth/bandwidth-android)          | Bandwidth Android SDK. Currently in Beta                                              |
 
 - The Bandwidth Server API SDKs
 
@@ -58,7 +58,7 @@ To make things easier to find, those same Bandwidth Sample Applications are list
 | [webrtc-hello-world-video-js](https://github.com/Bandwidth-Samples/webrtc-hello-world-video-js)                     | nodejs/JavaScript       | a simple 1:1 WebRTC video application                                                                                                          |
 | [webrtc-hello-world-video-pstn-call-js](https://github.com/Bandwidth-Samples/webrtc-hello-world-video-pstn-call-js) | JavaScript              | A simple 1:1 WebRTC video application with PSTN calling                                                                                        |
 | [webrtc-voiceconf-ts](https://github.com/Bandwidth-Samples/webrtc-voiceconf-ts)                                     | JavaScript/ Node/ React | This sample uses the Magic of Bandwidth V2 voice to add a broad suite of capabilities to webRTC by anchoring the call on a V2 voice conference |
-| [webrtc-voicebridge-ts](https://github.com/Bandwidth-Samples/webrtc-voicebridge-ts)                                 | JavaScript/ Node/ React | This sample app demonstrates the use of the Programmable Voice Bridge verb to efficiently join webrtc and voice endpoints                    |
+| [webrtc-voicebridge-ts](https://github.com/Bandwidth-Samples/webrtc-voicebridge-ts)                                 | JavaScript/ Node/ React | This sample app demonstrates the use of the Programmable Voice Bridge verb to efficiently join webrtc and voice endpoints                      |
 
 ## Other Required Resources
 
