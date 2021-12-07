@@ -180,6 +180,10 @@ module.exports = {
                             label: "10DLC Campaign Imports",
                             items: [
                                 "messaging/campaign-management/importsabout",
+                                "messaging/campaign-management/imports/imports-ui",
+                                "messaging/campaign-management/imports/imports-api",
+                                "messaging/campaign-management/imports/manage-multiple-csp",
+                                "messaging/campaign-management/imports/faq",
                             ],
                         },
                     ],
