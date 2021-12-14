@@ -7,6 +7,7 @@ slug: /changelog
 
 | Date | Notes |
 |--|--|
+| December 07, 2021 | Add documentation for outbound call queueing
 | December 6, 2021  | Clarify Bridge verb documentation |
 | November 17, 2021 | Update application callback docs to be clear about what is sent when |
 | November 12, 2021 | Added cURL Code Snippets for WebRTC and Voice |
