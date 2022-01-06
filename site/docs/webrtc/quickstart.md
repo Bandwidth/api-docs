@@ -125,7 +125,7 @@ In the example above, you may have noticed that we pass in `sessionId` when we a
 By doing that, you're telling Bandwidth WebRTC to _subscribe_ this participant to everyone else in the session, and _subscribe_ everyone in the session to this participant! You could also include a
 list of explicit participants, if you wanted to only subscribe them to one or two other people.
 
-This gives you lots of flexibility and control over what each participant receives and sends in a session. You can [read more about sessions in our API documentation](https://dev.bandwidth.com/webrtc/methods/sessions/about.html).
+This gives you lots of flexibility and control over what each participant receives and sends in a session. You can find more about sessions in our [API documentation](https://https://dev.bandwidth.com/apis/webrtc/#tag/Sessions).
 
 ### Connecting the WebRTC browser SDK and publishing media
 

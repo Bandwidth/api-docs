@@ -25,7 +25,7 @@ For any camera or microphone that you want to connect to Bandwidth WebRTC you wi
 
 ## Participants
 
-Before you can connect a stream to WebRTC, you will need a participant. You can basically think of a participant as a person using the system - although there can be programmatic participants. When you create a participant you will receive a participant ID and an authentication token in return. The token must be supplied when connecting with the Bandwidth WebRTC SDK. 
+Before you can connect a stream to WebRTC, you will need a participant. You can basically think of a participant as a person using the system - although there can be programmatic participants. When you create a participant you will receive a participant ID and an authentication token in return. The token must be supplied when connecting with the Bandwidth WebRTC SDK.
 
 When creating a participant using the SDK you will provide a participant object that contains a JSON description for a tag, should you want to provide one (discussed below), and permissions - which can be AUDIO and/or VIDEO.
 
@@ -59,13 +59,13 @@ There is a limit of 20 participants in a session.
 
 ### Participant-Session Membership
 
-A participant by itself cannot receive media. It must first be associated with, or a member of, a session. Only then can it receive media from other session participants. The [Add Participant to Session Endpoint](https://new.dev.bandwidth.com/apis/webrtc#operation/addParticipantToSession) is used to add a participant to a session. The participant being added and the target session are both indicated by ID in the URL path:
+A participant by itself cannot receive media. It must first be associated with, or a member of, a session. Only then can it receive media from other session participants. The [Add Participant to Session Endpoint](https://dev.bandwidth.com/apis/webrtc#operation/addParticipantToSession) is used to add a participant to a session. The participant being added and the target session are both indicated by ID in the URL path:
 
 ```
 /sessions/{sessionId}/participants/{participantId}
 ```
 
-After adding a participant to a session the participant’s subscription information can then be updated, which describes which media streams a participant will receive. Information about participant subscriptions can be optionally supplied in the request body for the [Add Participant to Session Endpoint](https://new.dev.bandwidth.com/apis/webrtc#operation/addParticipantToSession). Subscriptions can also be updated via a call to a separate endpoint for updating subscriptions, the [Update Participant Subscriptions Endpoint](https://new.dev.bandwidth.com/apis/webrtc#operation/updateParticipantSubscriptions). Subscriptions are described in further detail below.
+After adding a participant to a session the participant’s subscription information can then be updated, which describes which media streams a participant will receive. Information about participant subscriptions can be optionally supplied in the request body for the [Add Participant to Session Endpoint](https://dev.bandwidth.com/apis/webrtc#operation/addParticipantToSession). Subscriptions can also be updated via a call to a separate endpoint for updating subscriptions, the [Update Participant Subscriptions Endpoint](https://dev.bandwidth.com/apis/webrtc#operation/updateParticipantSubscriptions). Subscriptions are described in further detail below.
 
 
 ## Subscriptions
@@ -154,17 +154,17 @@ A participant stream level subscription adds further detail to a participant bas
 
 ## Tags
 
-You can add a tag to sessions and participants to help you identify them with friendly names. Tag information is passed on to your Billing Reports, which can facilitate billing of clients if you do pass-through billing or auditing. These can also be used to allow for easier understanding or grouping of participants or sessions. 
+You can add a tag to sessions and participants to help you identify them with friendly names. Tag information is passed on to your Billing Reports, which can facilitate billing of clients if you do pass-through billing or auditing. These can also be used to allow for easier understanding or grouping of participants or sessions.
 
 ### Example uses of a Tag
 
 - Participant based meeting IDs to make it easier to associate tagged participants with a session with internal scheduling or management
 - Session-based meeting IDs make it easier to associate a session with internal scheduling or management
-- Externally safe account UUIDs to assist with allocating costs from a Billing Report. 
+- Externally safe account UUIDs to assist with allocating costs from a Billing Report.
 
 ### Restrictions/Limitations
 
-- Tags MUST NOT include Personally Identifying Information (PII). We recommend using UUIDs if you need to reference customers or users. 
+- Tags MUST NOT include Personally Identifying Information (PII). We recommend using UUIDs if you need to reference customers or users.
 - No uniqueness is enforced by the WebRTC system for tags. Duplicates are acceptable.
 - Tags are limited to 50 characters
 
