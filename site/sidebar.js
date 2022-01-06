@@ -6,7 +6,7 @@ module.exports = {
         },
         {
             type: "category",
-            label: "Account",
+            label: "Account Management",
             items: [
                 "account/about",
                 "account/credentials",
