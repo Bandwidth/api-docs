@@ -117,7 +117,7 @@ module.exports = {
                             href: 'https://github.com/Bandwidth',
                         }, {
                             label: 'Try Sandbox',
-                            href: 'https://simulator.bandwidth.com/'
+                            href: 'https://sandbox.bandwidth.com'
                         }
                     ],
                 }
