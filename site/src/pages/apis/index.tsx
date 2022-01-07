@@ -9,18 +9,6 @@ import ItemGrid from '../../components/gridItem'
 
 const ApiList = [
     {
-        title: 'Numbers',
-        Svg: require('../../../static/img/icon-numbers-complex-no-bg.svg').default,
-        style: apiStyles.apiSvg,
-        link: '/apis/numbers'
-    },
-    {
-        title: 'Phone Number Lookup',
-        Svg: require('../../../static/img/icon-phone-number-lookup-complex-no-bg.svg').default,
-        style: apiStyles.apiSvg,
-        link: '/apis/number-lookup'
-    },
-    {
         title: 'Voice',
         Svg: require('../../../static/img/icon-voice-complex-no-bg.svg').default,
         style: apiStyles.apiSvg,
@@ -31,6 +19,18 @@ const ApiList = [
         Svg: require('../../../static/img/icon-messaging-complex-no-bg.svg').default,
         style: apiStyles.apiSvg,
         link: '/apis/messaging'
+    },
+    {
+        title: 'Numbers',
+        Svg: require('../../../static/img/icon-numbers-complex-no-bg.svg').default,
+        style: apiStyles.apiSvg,
+        link: '/apis/numbers'
+    },
+    {
+        title: 'Phone Number Lookup',
+        Svg: require('../../../static/img/icon-phone-number-lookup-complex-no-bg.svg').default,
+        style: apiStyles.apiSvg,
+        link: '/apis/number-lookup'
     },
     {
         title: 'International Messaging',
