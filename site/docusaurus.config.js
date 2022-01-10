@@ -93,7 +93,7 @@ module.exports = {
                         },
                         {
                             label: 'Legacy v1 Docs',
-                            href: 'https://old.dev.bandwidth.com/',
+                            href: 'https://v1.dev.bandwidth.com/',
                         },
                     ],
                 },
