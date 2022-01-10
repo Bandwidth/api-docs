@@ -59,7 +59,7 @@ module.exports = {
                 {
                     type: "link",
                     label: "API Reference",
-                    href: "https://new.dev.bandwidth.com/apis/numbers"
+                    href: "https://dev.bandwidth.com/apis/numbers"
                 },
             ],
         },
@@ -138,7 +138,7 @@ module.exports = {
                 {
                     type: "link",
                     label: "API Reference",
-                    href: "https://new.dev.bandwidth.com/apis/voice"
+                    href: "https://dev.bandwidth.com/apis/voice"
                 },
             ],
         },
@@ -193,7 +193,7 @@ module.exports = {
                 {
                     type: "link",
                     label: "API Reference",
-                    href: "https://new.dev.bandwidth.com/apis/messaging"
+                    href: "https://dev.bandwidth.com/apis/messaging"
                 },
             ],
         },
@@ -218,7 +218,7 @@ module.exports = {
                 {
                     type: "link",
                     label: "API Reference",
-                    href: "https://new.dev.bandwidth.com/apis/webrtc"
+                    href: "https://dev.bandwidth.com/apis/webrtc"
                 },
             ],
         },
@@ -232,7 +232,7 @@ module.exports = {
                 {
                     type: "link",
                     label: "API Reference",
-                    href: "https://new.dev.bandwidth.com/apis/multifactorauth"
+                    href: "https://dev.bandwidth.com/apis/multifactorauth"
                 },
             ],
         },
@@ -261,7 +261,7 @@ module.exports = {
                         {
                             type: "link",
                             label: "API Reference",
-                            href: "https://new.dev.bandwidth.com/apis/dash"
+                            href: "https://dev.bandwidth.com/apis/dash"
                         },
                     ],
                 },
