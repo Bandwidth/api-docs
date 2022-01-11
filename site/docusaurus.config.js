@@ -435,6 +435,10 @@ module.exports = {
                         to: '/sdks/ruby',
                         from: '/clientLib/ruby',
                     },
+                    {
+                        to: '/docs/numbers/guides/lookupNumbers',
+                        from: '/numbers/guides/tnLookup'
+                    }
                 ],
             },
         ],
