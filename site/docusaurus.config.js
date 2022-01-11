@@ -332,7 +332,7 @@ module.exports = {
                     },
                     {
                         to: '/docs/voice/guides/cnamPerDip',
-                        from: 'voice/guides/cnamService',
+                        from: '/voice/guides/cnamService',
                     },
                     {
                         to: '/docs/voice/guides/recording',
