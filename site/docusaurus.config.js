@@ -424,7 +424,7 @@ module.exports = {
                             '/node-bandwidth/index',
                             '/node-bandwidth/xml',
                             '/clientLib/node',
-                            '/messaging/about.html'],
+                            '/sdks/node.html'],
                     },
                     {
                         to: '/sdks/php',
