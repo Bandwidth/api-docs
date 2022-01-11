@@ -331,6 +331,10 @@ module.exports = {
                         from: '/howto/speakSentence',
                     },
                     {
+                        to: '/docs/voice/guides/cnamPerDip',
+                        from: '/voice/guides/cnamService',
+                    },
+                    {
                         to: '/docs/voice/guides/recording',
                         from: '/howto/voicemail',
                     },
