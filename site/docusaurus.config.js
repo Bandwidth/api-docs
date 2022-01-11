@@ -438,6 +438,22 @@ module.exports = {
                     {
                         to: '/docs/numbers/guides/lookupNumbers',
                         from: '/numbers/guides/tnLookup'
+                    },
+                    {
+                        to: '/docs/messaging/campaign-management/csp/reseller-brand-api',
+                        from: '/campaigns/csp/guides/bandwidth10dlcBrandCspApiGuide'
+                    },
+                    {
+                        to: '/docs/messaging',
+                        from: '/messaging/about.html'
+                    },
+                    {
+                        to: '/sdks/node',
+                        from: '/sdks/node.html'
+                    },
+                    {
+                        to: '/',
+                        from: '/ap-docs/methods/restApi.html'
                     }
                 ],
             },
