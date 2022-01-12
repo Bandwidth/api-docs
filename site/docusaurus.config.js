@@ -243,8 +243,13 @@ module.exports = {
                             '/messaging/about.html'],
                     },
                     {
+                        to: '/docs/messaging/campaign-management',
+                        from: ['/campaigns/about',
+                            '/campaigns/about.html'],
+                    },
+                    {
                         to: '/docs/messaging/errors',
-                        from: '/messaging/errors/codes',
+                        from: '/messaging/errors/codes', // /messaging/errors/codes.html#error-code-schema
                     },
                     {
                         to: '/docs/messaging/errors',  // /docs/messaging/errors#bandwidth-detected-client-errors
