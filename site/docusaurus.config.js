@@ -248,7 +248,7 @@ module.exports = {
                     },
                     {
                         to: '/docs/messaging/errors',
-                        from: '/messaging/errors/codes',    // /messaging/errors/codes.html#error-code-schema
+                        from: '/messaging/errors/codes', // /messaging/errors/codes.html#error-code-schema
                     },
                     {
                         to: '/docs/messaging/errors',  // /docs/messaging/errors#bandwidth-detected-client-errors
