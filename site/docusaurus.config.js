@@ -243,7 +243,8 @@ module.exports = {
                     },
                     {
                         to: '/docs/messaging/campaign-management',
-                        from: '/campaigns/about'
+                        from: ['/campaigns/about',
+                            '/campaigns/about.html'],
                     },
                     {
                         to: '/docs/messaging/errors',
