@@ -178,7 +178,7 @@ module.exports = {
                         from: ['/about',
                             '/getStarted',
                             '/tnbp',
-                            '/ap-docs/methods/restApi'],
+                            '/ap-docs/methods/restApi.html'],
                     },
                     {
                         to: '/apis/messaging',
@@ -239,7 +239,8 @@ module.exports = {
                     {
                         to: '/docs/messaging',
                         from: ['/howto/sendSMSMMS',
-                            '/messaging/about'],
+                            '/messaging/about',
+                            '/messaging/about.html'],
                     },
                     {
                         to: '/docs/messaging/campaign-management',
@@ -426,7 +427,8 @@ module.exports = {
                             '/node-bandwidth/headerParsingLib',
                             '/node-bandwidth/index',
                             '/node-bandwidth/xml',
-                            '/clientLib/node'],
+                            '/clientLib/node',
+                            '/sdks/node.html'],
                     },
                     {
                         to: '/sdks/php',
@@ -439,6 +441,14 @@ module.exports = {
                     {
                         to: '/sdks/ruby',
                         from: '/clientLib/ruby',
+                    },
+                    {
+                        to: '/docs/numbers/guides/lookupNumbers',
+                        from: '/numbers/guides/tnLookup'
+                    },
+                    {
+                        to: '/docs/messaging/campaign-management/csp/reseller-brand-api',
+                        from: '/campaigns/csp/guides/bandwidth10dlcBrandCspApiGuide'
                     },
                 ],
             },
