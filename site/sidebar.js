@@ -149,6 +149,7 @@ module.exports = {
                 "messaging/about",
                 "messaging/webhooks",
                 "messaging/quickStart",
+                "messaging/international",
                 {
                     type: "category",
                     label: "Guides and Tutorials",
