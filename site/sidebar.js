@@ -147,8 +147,8 @@ module.exports = {
             label: "Messaging",
             items: [
                 "messaging/about",
-                "messaging/webhooks",
                 "messaging/quickStart",
+                "messaging/webhooks",
                 "messaging/international",
                 {
                     type: "category",
