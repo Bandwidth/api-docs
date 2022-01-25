@@ -8,6 +8,8 @@ keywords:
   - voice
   - bxml
   - bridge
+  - transfer
+  - connect
 hide_title: false
 image: ../../static/img/bandwidth-logo.png
 ---
@@ -22,12 +24,18 @@ When the target call is bridged, any BXML being executed in it will be cancelled
 The bridge ends when one of the calls leaves the bridge.
 A call leaves the bridge when it is hung up or when it gets [redirected](/apis/voice#operation/modifyCall) to another BXML.
 
-The [Bridge Complete](/docs/voice/webhooks/bridgeComplete) and [Bridge Target Complete](/docs/voice/webhooks/bridgeTargetComplete)
-webhooks are sent when the bridge ends, to allow the call that remained in the bridge to execute new BXML.
+One of the [Bridge Complete](/docs/voice/webhooks/bridgeComplete) or [Bridge Target Complete](/docs/voice/webhooks/bridgeTargetComplete)
+webhooks is sent when the bridge ends, to allow the call that remained in the bridge to execute new BXML. For example, if the call
+that executed the Bridge verb hangs up or is [redirected](/apis/voice#operation/modifyCall) first, the
+[Bridge Target Complete](/docs/voice/webhooks/bridgeTargetComplete) webhook is sent and the BXML returned from that will
+be executed on the bridge target. In this case, the [Bridge Complete](/docs/voice/webhooks/bridgeComplete) webhook is NOT sent.
+Similarly, if the target of the Bridge verb hangs up or is [redirected](/apis/voice#operation/modifyCall) first, the
+[Bridge Complete](/docs/voice/webhooks/bridgeComplete) webhook is sent and the BXML returned from that will be executed
+on the call that executed the Bridge. In this case, the [Bridge Target Complete](/docs/voice/webhooks/bridgeTargetComplete) webhook
+is not sent.
 
 There are certain circumstances in which calls cannot be bridged, such as when the target call:
   * is outbound and is still not answered
-  * is already bridged with another call
   * is executing [Forward](/docs/voice/bxml/forward)
   * is already hung up
 
@@ -87,7 +95,7 @@ First call (c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d):
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <SpeakSentence>Wait until the second call answers</SpeakSentence>
+    <SpeakSentence>Wait until the second call answers.</SpeakSentence>
     <Pause duration="60" />
 </Response>
 ```
@@ -96,7 +104,7 @@ Second call:
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <SpeakSentence>The bridge will start now</SpeakSentence>
+    <SpeakSentence>The bridge will start now.</SpeakSentence>
     <Bridge bridgeCompleteUrl="https://bridge.url/nextBXMLForSecondCall" bridgeTargetCompleteUrl="https://bridge.url/nextBXMLForFirstCall">
         c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d
     </Bridge>
@@ -109,7 +117,7 @@ Second call:
 First call (c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d):
 ```java
 SpeakSentence speakSentence = SpeakSentence.builder()
-        .text("Wait until the second call answers").build();
+        .text("Wait until the second call answers.").build();
 
 Pause pause = Pause.builder()
         .duration(60.0).build();
@@ -124,7 +132,7 @@ System.out.println(response.toBXML());
 Second call:
 ```java
 SpeakSentence speakSentence = SpeakSentence.builder()
-        .text("The bridge will start now").build();
+        .text("The bridge will start now.").build();
 
 Bridge bridge = Bridge.builder()
         .callId("c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d")
@@ -146,7 +154,7 @@ First call (c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d):
 ```csharp
 SpeakSentence speakSentence = new SpeakSentence
 {
-    Sentence = "Wait until the second call answers"
+    Sentence = "Wait until the second call answers."
 };
 
 Pause pause = new Pause
@@ -165,7 +173,7 @@ Second call:
 ```csharp
 SpeakSentence speakSentence = new SpeakSentence
 {
-    Sentence = "The bridge will start now"
+    Sentence = "The bridge will start now."
 };
 
 Bridge bridge = new Bridge
@@ -189,8 +197,9 @@ Console.WriteLine(response.ToBXML());
 First call (c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d):
 ```ruby
 speak_sentence = Bandwidth::Voice::SpeakSentence.new({
-    :sentence => "Wait until the second call answers"
+    :sentence => "Wait until the second call answers."
 })
+
 pause = Bandwidth::Voice::Pause.new({
     :duration => 60
 })
@@ -198,14 +207,16 @@ pause = Bandwidth::Voice::Pause.new({
 response = Bandwidth::Voice::Response.new()
 response.push(speak_sentence)
 response.push(pause)
+
 puts response.to_bxml()
 ```
 
 Second call:
 ```ruby
 speak_sentence = Bandwidth::Voice::SpeakSentence.new({
-    :sentence => "The bridge will start now"
+    :sentence => "The bridge will start now."
 })
+
 bridge = Bandwidth::Voice::Bridge.new({
     :call_id => "c-c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d",
     :bridge_complete_url => "https://bridge.url/nextBXMLForSecondCall",
@@ -215,6 +226,7 @@ bridge = Bandwidth::Voice::Bridge.new({
 response = Bandwidth::Voice::Response.new()
 response.push(speak_sentence)
 response.push(bridge)
+
 puts response.to_bxml()
 ```
 
@@ -223,30 +235,32 @@ puts response.to_bxml()
 
 First call (c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d):
 ```js
-var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
-speakSentence.setSentence("Wait until the second call answers");
-var pause = new BandwidthBxml.Verbs.Pause();
-pause.setDuration(60);
+const speakSentence = new SpeakSentence({
+    sentence: "Wait until the second call answers."
+});
 
-var response = new BandwidthBxml.Response();
-response.addVerb(speakSentence);
-response.addVerb(pause);
+const pause = new Pause({
+    duration: 60
+});
+
+const response = new Response(speakSentence, pause);
 
 console.log(response.toBxml());
 ```
 
 Second call:
 ```js
-var speakSentence = new BandwidthBxml.Verbs.SpeakSentence();
-speakSentence.setSentence("The bridge will start now");
-var bridge = new BandwidthBxml.Verbs.Bridge();
-bridge.setCallId("c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d");
-bridge.setBridgeCompleteUrl("https://bridge.url/nextBXMLForSecondCall");
-bridge.setBridgeTargetCompleteUrl("https://bridge.url/nextBXMLForFirstCall");
+const speakSentence = new SpeakSentence({
+    sentence: "The bridge will start now."
+});
 
-var response = new BandwidthBxml.Response();
-response.addVerb(speakSentence);
-response.addVerb(bridge);
+const bridge = new Bridge({
+    callId: "c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d",
+    bridgeCompleteUrl: "https://bridge.url/nextBXMLForSecondCall",
+    bridgeTargetCompleteUrl: "https://bridge.url/nextBXMLForFirstCall"
+});
+
+const response = new Response(speakSentence, bridge);
 
 console.log(response.toBxml());
 ```
@@ -257,8 +271,9 @@ console.log(response.toBxml());
 First call (c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d):
 ```python
 speak_sentence = SpeakSentence(
-    sentence="Wait until the second call answers"
+    sentence="Wait until the second call answers."
 )
+
 pause = Pause(
     duration=60
 )
@@ -266,14 +281,16 @@ pause = Pause(
 response = Response()
 response.add_verb(speak_sentence)
 response.add_verb(pause)
+
 print(response.to_bxml())
 ```
 
 Second call:
 ```python
 speak_sentence = SpeakSentence(
-    sentence="The bridge will start now"
+    sentence="The bridge will start now."
 )
+
 bridge = Bridge("c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d",
     bridge_complete_url="https://bridge.url/nextBXMLForSecondCall",
     bridge_target_complete_url="https://bridge.url/nextBXMLForFirstCall"
@@ -282,6 +299,7 @@ bridge = Bridge("c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d",
 response = Response()
 response.add_verb(speak_sentence)
 response.add_verb(bridge)
+
 print(response.to_bxml())
 ```
 
@@ -290,9 +308,11 @@ print(response.to_bxml())
 
 First call (c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d):
 ```php
-$speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Wait until the second call answers");
+$speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Wait until the second call answers.");
+
 $pause = new BandwidthLib\Voice\Bxml\Pause();
 $pause->duration(60);
+
 $response = new BandwidthLib\Voice\Bxml\Response();
 $response->addVerb($speakSentence);
 $response->addVerb($pause);
@@ -302,11 +322,14 @@ echo $response->toBxml();
 
 Second call:
 ```php
+$speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence('The bridge will start now.');
+
 $bridge = new BandwidthLib\Voice\Bxml\Bridge("c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d");
 $bridge->bridgeCompleteUrl("https://bridge.url/nextBXMLForSecondCall");
 $bridge->bridgeTargetCompleteUrl("https://bridge.url/nextBXMLForFirstCall");
 
 $response = new BandwidthLib\Voice\Bxml\Response();
+$response->addVerb($speakSentence);
 $response->addVerb($bridge);
 
 echo $response->toBxml();

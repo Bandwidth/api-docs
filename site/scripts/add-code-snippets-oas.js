@@ -4,11 +4,11 @@
  * This script runs on docsite generation to modify the OpenAPI specs to support Redoc's code snippet extension.
  *
  * The code sample files are stored in the following format
- * 
+ *
  *     code-snippets/<SpecName>/<OperationId>/sample.<extension>
- * 
+ *
  * Pseudo code for the script
- * 
+ *
  * for each OpenAPI spec:
  *     read into a JSON object
  *     for each operationId:
@@ -43,15 +43,17 @@ function replace_environmental_variables(strn) {
     return strn
 }
 
-//Converts the file extension to the proper Redoc `lang` tag
+// Converts the file extension to the proper Redoc `lang` tag
+// Supported Lang tags can be found here: https://github.com/github/linguist/blob/master/lib/linguist/popular.yml
 const EXTENSION_TO_LANG = {
+    "sh": "cURL",
     "cs": "C#",
     "java": "Java",
     "php": "PHP",
     "py": "Python",
     "rb": "Ruby",
     "ts": "TypeScript",
-    "js": "JavaScript"
+    "js": "Node.js"
 };
 
 var spec_name = '';

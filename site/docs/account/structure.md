@@ -37,7 +37,7 @@ Each Account is required to have at least one default Sub-account, also known as
 
 Metaphorically speaking, if you were to look at the Account as a filing cabinet - the Sub-accounts could be best visualized as the drawers. You aren't required to have more than one, but we recommend creating at least a production and development Sub-account to safely test updates and improvements to your own application.
 
-Some use cases may call for you to create individual Sub-accounts for each of your users. It is important to note that there is a maximum of 50 Sub-accounts allowed per Account.
+Some use cases may call for you to create individual Sub-accounts for each of your users.
 
 ## Location (SIP Peer)
 Each Sub-account is required to have at least one default Location, also known as a SIP Peer. As with Sub-accounts, these terms are interchangeable, and the API mainly refers to Locations as a `SIPPEER`. A Location can best be thought of as a logical grouping of phone numbers, or a folder in the drawer of the Account filing cabinet, with the individual files being telephone numbers.

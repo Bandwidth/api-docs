@@ -18,7 +18,8 @@ const payload = {
   to: toNumber,
   code: "12345",
   scope: "scope",
-  expirationTimeInMinutes: 3
+  expirationTimeInMinutes: 3,
+  code: "123456"
 }
 
 const verifyTwoFactor = async function() {

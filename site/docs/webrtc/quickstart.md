@@ -125,7 +125,7 @@ In the example above, you may have noticed that we pass in `sessionId` when we a
 By doing that, you're telling Bandwidth WebRTC to _subscribe_ this participant to everyone else in the session, and _subscribe_ everyone in the session to this participant! You could also include a
 list of explicit participants, if you wanted to only subscribe them to one or two other people.
 
-This gives you lots of flexibility and control over what each participants receives and sends in a session. You can [read more about sessions in our API documentation](https://dev.bandwidth.com/webrtc/methods/sessions/about.html).
+This gives you lots of flexibility and control over what each participant receives and sends in a session. You can find more about sessions in our [API documentation](https://dev.bandwidth.com/apis/webrtc/#tag/Sessions).
 
 ### Connecting the WebRTC browser SDK and publishing media
 
@@ -155,7 +155,7 @@ we want the participant to publish `audio` but not `video`.
 
 Side note: even if this browser set `video: true`, they would not be able to publish video with this token! In our server's `createParticipant` call, we set our `publishPermissions` for this participant to only `AUDIO`.
 
-This gives the server-side application total control over how pariticpants interact in a WebRTC session.
+This gives the server-side application total control over how participants interact in a WebRTC session.
 
 ### Receiving audio streams in the browser
 
@@ -376,8 +376,8 @@ and, much like our inbound call, we use the `participant.token` to tell Bandwidt
 call into our WebRTC session.
 
 You should notice the `generateTransferBxml` call works exactly like it did in our `/incomingCall` route. Once the call is
-transfered, Bandwidth's WebRTC platform makes the phone call look like another WebRTC participant in our
-session, and will trigger each browser's `onStreamAvailable` method with the call's audio stream.
+transferred, Bandwidth's WebRTC platform makes the phone call look like another WebRTC participant in our
+session and will trigger each browser's `onStreamAvailable` method with the call's audio stream.
 
 Since we've already got our code set up to stream audio, we don't have to do anything else.
 

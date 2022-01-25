@@ -1,0 +1,83 @@
+---
+id: quickStart
+title: Quick Start Guide
+slug: /voice/quickStart
+description: A Quick Start Guide for using the Voice API
+keywords:
+  - bandwidth
+  - voice
+  - guide
+  - tutorial
+  - quick
+  - start
+hide_title: false
+image: ../../static/img/bandwidth-logo.png
+---
+
+This is a brief walkthrough for setting up and using a Bandwidth voice application. This guide will outline creating a call, receiving a call, and configuring a call.
+
+## Assumptions
+* You have already created and set up your [Bandwidth Dashboard](https://dashboard.bandwidth.com) account. 
+    * If you have not already done so, please look [here](/docs/account/dashboard-setup) for our Account Setup guide.
+* You have created a voice application in the Dashboard UI or using the Dashboard API. 
+    * Instructions for doing so can be found [here](/docs/account/applications).
+
+With an account and application created, we can get started using the Voice API.
+
+## Configuring Callback URLs
+The voice API can be configured to use multiple different callback URLs to direct traffic and receive input from phone calls.
+Every application requires a `CallInitiatedCallbackUrl`, as this is the URL Bandwidth sends an [initiated webhook](./webhooks/initiate.mdx) to when an inbound call to a Bandwidth number is made,
+and a BXML response is expected to continue the call.
+
+For inbound calls, Bandwidth will also send [disconnect webhooks](./webhooks/disconnect.mdx) to the configured `CallStatusCallbackUrl`. This webhook is useful for error checking and includes the cause of the disconnect, for example _rejected_ or _hung up_.
+You may choose to handle this webhook with the same server you use for standard voice webhooks, or using Pipedream, since it is a great tool for logging these callbacks.
+If you choose to handle this on a personal server, it is highly recommended to use a unique endpoint to separate these callbacks from other voice webhooks.
+
+For outbound calls, the other most widely used callback URL is the `answerUrl` in the POST request made to start a call from a Bandwidth number.
+Like the `CallInitiatedCallbackUrl` for inbound calls, Bandwidth will expect BXML in the HTTP response this URL to continue the call using BXML verbs.
+
+The `CallInitiatedCallbackUrl` and `answerUrl` can be the same or different, depending on if you would like inbound and outbound calls to be handled differently.
+
+### Creating a Personal Server
+Many of the [Bandwidth Samples](https://github.com/Bandwidth-Samples) include code for setting up a local server.
+When using a locally hosted server, you will not have a valid callback URL, an easy fix for this is hosting your local server somewhere online.
+A useful tool for hosting local sites on web accessible links is [ngrok](https://ngrok.com/). Your ngrok link can be used as the domain for your callback URLs.
+
+
+### Using Pipedream
+Pipedream is a serverless platform for connecting APIs.
+Pipedream already has integration for the Bandwidth API. All of the connected tools may be found [here](https://pipedream.com/apps/bandwidth/integrations/pipedream).
+With a Pipedream source or workflow set up, the assigned Pipedream endpoints can be set as your respective callback URLs.
+
+## Creating a Phone Call
+To create an outbound call from a Bandwidth number, you must make a POST request to our API v2 `/calls` endpoint.
+Information about this request can be found on our [Voice API](/apis/voice#operation/createCall) documentation page.
+This can be done using any of our Sample Apps, SDKs, Postman, or in a program you create.
+[Postman](https://www.postman.com/) is a useful tool for making HTTP requests without needing to write any code.
+After this call is created, Bandwidth will send a webhook to the `answerUrl`, expecting BXML in response to continue the call.
+
+## Receiving a Phone Call
+When a phone call is made to a Bandwidth number, we will send a webhook to the `CallInitiatedCallbackUrl`, expecting BXML in response to continue the call.
+An example of this POST request can be found on the [Initiate Webhook](/docs/voice/webhooks/initiate#examples) page.
+
+Your response to this POST request should look like this:
+```
+HTTP/1.1 200
+Content-Type: application/xml; charset=utf-8
+
+<Response>
+    <!-- BXML verbs to process in the call -->
+</Response>
+```
+
+
+## Configuring a Call
+After a call is initiated or answered, BXML verbs dictate what will happen on the call.
+Information on the different types of BXML verbs can be found on the [Voice BXML](/docs/voice/bxml) page.
+
+Some BXML verbs will direct a Bandwidth webhook to a URL different from the _initiated_ and _answer_ URLs.
+These different URLs should be set up on your server to be able to handle different endpoints for different BXML verbs.
+These endpoints should respond to Bandwdith webhooks with an HTTP response containing BXML telling Bandwidth how to continue the call.
+It is recommended to set up unique endpoints for unique BXML verbs to avoid clutter and unnecessary complexity.
+More information about this can be found on the [Voice Webhooks](/docs/voice/webhooks) page.
+

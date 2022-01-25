@@ -1,0 +1,666 @@
+---
+id: programmatic-setup
+title: Programmatic Setup
+slug: /account/programmatic-setup
+sidebar_label: Programmatic
+description: Programmatically set up your Bandwidth Dashboard account
+keywords:
+  - bandwidth
+  - account
+  - setup
+  - sub-account
+  - location
+  - site
+  - sippeer
+image: ../../static/img/bandwidth-logo.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+export const accountId = "{accountId}";
+export const siteId = "{siteId}";
+export const sippeerId = "{sippeerId}";
+
+export const Highlight = ({children, color}) => (
+    <span
+      style={{
+        backgroundColor: color,
+        borderRadius: '2px',
+        color: '#fff',
+        padding: '0.2rem',
+      }}>
+      {children}
+    </span>
+  );
+
+
+This walks through how to setup and configure your Bandwidth account via Bandwidth's [Number Management API](../numbers) for use with our [HTTP Voice](../voice), and [HTTP Messaging](../messaging) APIs.
+Unless you are already comfortable with our Number Management API and Bandwidth account structures, it is recommended that you follow our [Dashboard UI Setup Guide](../account/dashboard-setup) for the Bandwidth Dashboard instead of using this programmatic guide.
+
+## Assumptions
+* You have been contracted and given access to your Bandwidth Dashboard Account
+* Your account is enabled for HTTP Voice and/or Messaging
+* You have administrator access on the account to create users and change roles
+
+## Steps
+1. [Create Sub-Account](#create-a-sub-account-site)
+2. [Create a Location](#create-a-location-sip-peer)
+3. [Enable Services for Location](#enable-sms-for-location)
+    * [Enable SMS for Location](#enable-sms-for-location)
+    * [Enable MMS for Location](#enable-mms-for-location)
+4. [Order a Phone Number](#order-a-phone-number)
+5. [Create an Application](#create-an-application)
+    * [Create a Messaging Application](#create-a-messaging-application)
+        * [Assign a Messaging Application to Location](#assign-a-messaging-application-to-location)
+    * [Create a Voice Application](#create-a-voice-application)
+        * [Assign a Voice Application to Location](#assign-a-voice-application-to-location)
+
+
+## Create a Sub-Account (Site)
+To create a Sub-Account, also referred to as a site, follow the instructions below.
+
+### Request URL
+
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/sites</code>
+
+### Request Body Fields
+The fields below should be formatted as XML elements and put in the request body as shown in the example below.
+
+
+| Field                   | Required  | Description |
+|:------------------------|:----------|:------------|
+| `Name`                  | Yes       | The name of the site. Max length of 10 characters |
+| `Description`           | No        | The description of the site |
+| `CustomerProvidedID`    | No        | Optional custom ID to assign to your application. Max length of 10 characters |
+| `CustomerName`          | No        | Optional custom name to assign to your application. Max length of 50 characters |
+| `Address`               | Yes       | The address of the site |
+| `Address.HouseNumber`   | Yes       | The number of the house                                             |
+| `Address.HousePrefix`   | No        | The prefix of the house                                             |
+| `Address.HouseSuffix`   | No        | The suffix of the house                                             |
+| `Address.StreetName`    | Yes       | The name of the street                                              |
+| `Address.StreetSuffix`  | No        | The suffix of the street                                            |
+| `Address.AddressLine2`  | No        | The optional second line of the address (apartment, extension, etc) |
+| `Address.City`          | Yes       | The city of the address                                             |
+| `Address.StateCode`     | Yes       | The 2 character state code                                          |
+| `Address.Zip`           | Yes       | The 6 digit zip code                                                |
+| `Address.PlusFour`      | No        | The 4 digit zip code extension                                      |
+| `Address.County`        | No        | The county of the address                                           |
+| `Address.Country`       | No        | The country of the address                                          |
+| `Address.AddressType`   | Yes       | The type of the address. Must be Billing or Service                 |
+
+
+### Example
+
+<Tabs
+  groupId="create_subaccount"
+  defaultValue="request"
+  values={[
+    { label: 'Request', value: 'request', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="request">
+
+```xml
+POST https://dashboard.bandwidth.com/api/accounts/{accountId}/sites HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<Site>
+  <Name>SetupTest</Name>
+  <Description>Programmatic Setup Test</Description>
+  <CustomerName>BW</CustomerName>
+  <Address>
+    <HouseNumber>900</HouseNumber>
+    <StreetName>Main Campus Dr</StreetName>
+    <City>RALEIGH</City>
+    <StateCode>NC</StateCode>
+    <Zip>27606</Zip>
+    <AddressType>Billing</AddressType>
+  </Address>
+</Site>
+```
+
+</TabItem>
+<TabItem value="response">
+
+```xml
+HTTP/1.1 201 Created
+Content-Type: application/xml
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SiteResponse>
+    <Site>
+        <Id>12345</Id>
+        <Name>SetupTest</Name>
+        <Description>Programmatic Setup Test</Description>
+        <CustomerName>BW</CustomerName>
+        <Address>
+            <HouseNumber>900</HouseNumber>
+            <StreetName>Main Campus Dr</StreetName>
+            <City>RALEIGH</City>
+            <StateCode>NC</StateCode>
+            <Zip>27606</Zip>
+            <Country>United States</Country>
+            <AddressType>Billing</AddressType>
+        </Address>
+    </Site>
+</SiteResponse>
+```
+
+</TabItem>
+</Tabs>
+
+## Create a Location (SIP Peer)
+
+To create a Location, also referred to as a SIP Peer, follow the instructions below.
+
+### Request URL
+The `siteId` in this URL refers to the site you would like to become the parent sub account of the new location.
+It can be retrieved from the response of the site's creation request, via the Dashboard UI, or by performing a GET request on the `/sites` endpoint and looking at the `<Id>` tag for your site.
+
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/sites/{siteId}/sippeers</code>
+
+### Request Body Fields
+The fields below should be formatted as XML elements and put in the request body as shown in the example below.
+
+
+| Field             | Required  | Description |
+|:------------------|:----------|:------------|
+| `PeerName`        | Yes       | Plain text name of the Location (sippeer) |
+| `IsDefaultPeer`   | No        | Boolean: `true` or `false`. The Default SIP Peer is the default "destination" for any Telephone Numbers that are ordered for the Site in which the SIP Peer resides. Each sub-account (site) can have only 1 default SIP Peer. You can configure multiple SIP Peers on a Site |
+
+### Example
+
+<Tabs
+  groupId="create_location"
+  defaultValue="request"
+  values={[
+    { label: 'Request', value: 'request', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="request">
+
+```xml
+POST https://dashboard.bandwidth.com/api/accounts/{accountId}/sites/{siteId}/sippeers HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<SipPeer>
+  <PeerName>Setup Test SIP Peer</PeerName>
+  <IsDefaultPeer>true</IsDefaultPeer>
+</SipPeer>
+```
+
+</TabItem>
+<TabItem value="response">
+
+```xml
+HTTP/1.1 201 Created
+Content-Type: application/xml
+Location: https://{basePath}/accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}
+```
+
+</TabItem>
+</Tabs>
+
+## Enable SMS for Location
+
+In order to use HTTP messaging on your account, you need to enable SMS and MMS for each location.
+
+### Request URL
+The `sippeerId` in this URL refers to the location you would like to enable SMS on.
+It can be retrieved from the Location header of the location creation response, via the Dashbaord UI, or by performing a GET request on the `/sites/{siteId}/sippeers` endpoint and looking at the `<PeerId>` tag for your Location.
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/products/messaging/features/sms</code>
+
+### Request Body Fields
+The fields below should be formatted as XML elements and put in the request body as shown in the example below.
+
+
+| Field         | Required | Description |
+|:--------------|:---------|:------------|
+| `TollFree`    | Yes      | Boolean: `true` or `false`. Will enable texting to and from toll-free phone numbers |
+| `ShortCode`   | Yes      | Boolean: `true` or `false`. Will enable texting to and from short codes |
+| `Protocol`    | Yes      | MUST BE SET TO `HTTP`| 
+| `Zone1`       | Yes      | MUST BE SET TO: `true` |
+| `Zone2`       | Yes      | Boolean: `true` or `false`. |
+| `Zone3`       | Yes      | Boolean: `true` or `false`. |
+| `Zone4`       | Yes      | Boolean: `true` or `false`. |
+| `Zone5`       | Yes      | Boolean: `true` or `false`. |
+
+### Example
+
+<Tabs
+  groupId="create_location"
+  defaultValue="request"
+  values={[
+    { label: 'Request', value: 'request', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="request">
+
+```xml
+POST https://dashboard.bandwidth.com/api/accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/products/messaging/features/sms HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<SipPeerSmsFeature>
+  <SipPeerSmsFeatureSettings>
+    <TollFree>true</TollFree>
+    <ShortCode>true</ShortCode>
+    <Protocol>HTTP</Protocol>
+    <Zone1>true</Zone1>
+    <Zone2>true</Zone2>
+    <Zone3>true</Zone3>
+    <Zone4>true</Zone4>
+    <Zone5>true</Zone5>
+  </SipPeerSmsFeatureSettings>
+  <HttpSettings />
+</SipPeerSmsFeature>
+```
+
+</TabItem>
+<TabItem value="response">
+
+```xml
+HTTP/1.1 201 Created
+Content-Type: application/xml
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SipPeerSmsFeatureResponse>
+    <SipPeerSmsFeature>
+        <SipPeerSmsFeatureSettings>
+            <TollFree>true</TollFree>
+            <ShortCode>true</ShortCode>
+            <Protocol>HTTP</Protocol>
+            <Zone1>true</Zone1>
+            <Zone2>true</Zone2>
+            <Zone3>true</Zone3>
+            <Zone4>true</Zone4>
+            <Zone5>true</Zone5>
+        </SipPeerSmsFeatureSettings>
+        <HttpSettings>
+            <ProxyPeerId>569238</ProxyPeerId>
+        </HttpSettings>
+    </SipPeerSmsFeature>
+</SipPeerSmsFeatureResponse>
+```
+
+</TabItem>
+</Tabs>
+
+## Enable MMS for Location
+
+In order to use HTTP messaging on your account, you need to enable SMS and MMS for each location.
+
+:::caution Warning
+MMS can only be enabled once SMS has been enabled. Attempting to enable MMS before SMS will result in a 400 Bad Request.
+:::
+
+### Request URL
+The `sippeerId` in this URL refers to the location you would like to enable MMS on.
+It can be retrieved from the Location header of the location creation response, via the Dashbaord UI, or by performing a GET request on the `/sites/{siteId}/sippeers` endpoint and looking at the `<PeerId>` tag for your Location.
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/products/messaging/features/mms</code>
+
+### Request Body Fields
+The fields below should be formatted as XML elements and put in the request body as shown in the example below.
+
+
+| Field         | Required | Description |
+|:--------------|:---------|:------------|
+| `Protocol`    | Yes      | MUST BE SET TO `HTTP`| 
+
+### Example
+
+<Tabs
+  groupId="create_location"
+  defaultValue="request"
+  values={[
+    { label: 'Request', value: 'request', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="request">
+
+```xml
+POST https://dashboard.bandwidth.com/api/accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/products/messaging/features/mms HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<MmsFeature>
+  <MmsSettings>
+    <Protocol>HTTP</Protocol>
+  </MmsSettings>
+  <Protocols>
+    <HTTP>
+      <HttpSettings />
+    </HTTP>
+  </Protocols>
+</MmsFeature>
+```
+
+</TabItem>
+<TabItem value="response">
+
+```xml
+HTTP/1.1 201 Created
+Content-Type: application/xml
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<MmsFeatureResponse>
+    <MmsFeature>
+        <MmsSettings>
+            <Protocol>HTTP</Protocol>
+        </MmsSettings>
+        <Protocols>
+            <HTTP>
+                <HttpSettings>
+                    <ProxyPeerId>569238</ProxyPeerId>
+                </HttpSettings>
+            </HTTP>
+        </Protocols>
+    </MmsFeature>
+</MmsFeatureResponse>
+```
+
+</TabItem>
+</Tabs>
+
+
+## Order a Phone Number
+
+Ordering a phone number and assigning it to a location is necessary to get an application up and running. 
+
+For a guide on ordering phone numbers in the Bandwidth Dashboard, [click here](https://support.bandwidth.com/hc/en-us/articles/360011094753-How-do-I-search-and-order-phone-numbers-)!
+
+For a guide on ordering phone numbers via the Bandwidth Dashboard API, [click here](../numbers/guides/orderingNumbers)!
+
+
+
+## Create an Application
+After assigning the phone number you've ordered to a location, you must create a messaging or voice application and assign it to the location that has the phone number you would like to use.
+:::info
+For more information about our applications API, check out our [Applications Guide](applications).
+:::
+
+### Create a Messaging Application
+This section walks though creating a messaging application.
+
+#### Request URL
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/applications</code>
+
+#### Request Body Fields
+The fields below should be formatted as XML elements and put in the request body as shown in the example below.
+
+
+| Field                     | Required | Description |
+|:--------------------------|:---------|:------------|
+| `ServiceType`             | Yes      | Set to `Messaging-V2` |
+| `AppName`                 | Yes      | Plain text name of the application |
+| `MsgCallbackUrl`          | Yes      | Url to receive _all_ message events | 
+| `CallbackCreds`           | No       | Basic auth credentials to apply to your message events |
+| `CallbackCreds.UserId`    | No       | Basic auth `UserId` |
+| `CallbackCreds.Password`  | No       | Basic auth `Password` |
+
+#### Example
+
+<Tabs
+  groupId="create_location"
+  defaultValue="request"
+  values={[
+    { label: 'Request', value: 'request', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="request">
+
+```xml
+POST https://dashboard.bandwidth.com/api/accounts/{accountId}/applications HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<Application>
+    <ServiceType>Messaging-V2</ServiceType>
+    <AppName>Production Server</AppName>
+    <MsgCallbackUrl>https://yourSecureSite.com/callbacks</MsgCallbackUrl>
+    <CallbackCreds>
+      <UserId>Your-User-id</UserId>
+      <Password>Your-Password</Password>
+  </CallbackCreds>
+</Application>
+```
+
+</TabItem>
+<TabItem value="response">
+
+```xml
+HTTP/1.1 201 Created
+Content-Type: application/xml
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ApplicationProvisioningResponse>
+    <Application>
+        <ApplicationId>590cde45-c05d-44e3-a77a-59fd10f17c26</ApplicationId>
+        <ServiceType>Messaging-V2</ServiceType>
+        <AppName>Setup Test</AppName>
+        <CallbackUrl>https://yourSecureSite.com/callbacks</CallbackUrl>
+        <MsgCallbackUrl>https://yourSecureSite.com/callbacks</MsgCallbackUrl>
+        <InboundCallbackUrl>https://yourSecureSite.com/callbacks</InboundCallbackUrl>
+        <OutboundCallbackUrl>https://yourSecureSite.com/callbacks</OutboundCallbackUrl>
+        <RequestedCallbackTypes>
+            <CallbackType>message-failed</CallbackType>
+            <CallbackType>message-delivered</CallbackType>
+            <CallbackType>message-sending</CallbackType>
+        </RequestedCallbackTypes>
+        <CallbackCreds>
+            <UserId>Your-User-id</UserId>
+        </CallbackCreds>
+        <InboundCallbackCreds>
+            <UserId>Your-User-id</UserId>
+        </InboundCallbackCreds>
+        <OutboundCallbackCreds>
+            <UserId>Your-User-id</UserId>
+        </OutboundCallbackCreds>
+    </Application>
+</ApplicationProvisioningResponse>
+```
+
+</TabItem>
+</Tabs>
+
+### Assign a Messaging Application to Location
+This walks through assigning a messaging application to a location and enabling V2 messaging on that location.
+An application must be assigned to a location, the application assigned to the location will run on voice and messaging events for the numbers on the location.
+
+#### Request URL
+<Highlight color="#9A59C5">PUT</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/products/messaging/applicationSettings</code>
+
+#### Request Body Fields
+The fields below should be formatted as XML elements and put in the request body as shown in the example below.
+
+
+| Field                     | Required | Description |
+|:--------------------------|:---------|:------------|
+| `HttpMessagingV2AppId`    | Yes      | The application ID from the `application` created above |
+
+#### Example
+
+<Tabs
+  groupId="create_location"
+  defaultValue="request"
+  values={[
+    { label: 'Request', value: 'request', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="request">
+
+```xml
+PUT https://dashboard.bandwidth.com/api/accounts/{accountId}/applications HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<ApplicationsSettings>
+  <HttpMessagingV2AppId>590cde45-c05d-44e3-a77a-59fd10f17c26</HttpMessagingV2AppId>
+</ApplicationsSettings>
+```
+
+</TabItem>
+<TabItem value="response">
+
+```xml
+HTTP/1.1 200 OK
+Content-Type: application/xml
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ApplicationsSettingsResponse>
+    <ApplicationsSettings>
+        <HttpMessagingV2AppId>590cde45-c05d-44e3-a77a-59fd10f17c26</HttpMessagingV2AppId>
+    </ApplicationsSettings>
+</ApplicationsSettingsResponse>
+```
+
+</TabItem>
+</Tabs>
+
+### Create a Voice Application
+This section walks though creating a voice application.
+
+#### Request URL
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/applications</code>
+
+#### Request Body Fields
+The fields below should be formatted as XML elements and put in the request body as shown in the example below.
+
+
+| Field                       | Required | Description |
+|:----------------------------|:---------|:------------|
+| `ServiceType`               | Yes      | Set to `Voice-V2` |
+| `AppName`                   | Yes      | Plain text name of the application |
+| `CallInitiatedCallbackUrl`  | Yes      | Url to receive _actionable_ voice events |
+| `CallStatusCallbackUrl`     | No       | Url to receive voice events NOT related to Initiated. Such as: rejected or hung up | 
+| `CallbackCreds`             | No       | Basic auth credentials to apply to your voice events |
+| `CallbackCreds.UserId`      | No       | Basic auth `UserId` |
+| `CallbackCreds.Password`    | No       | Basic auth `Password` |
+
+#### Example
+
+<Tabs
+  groupId="create_location"
+  defaultValue="request"
+  values={[
+    { label: 'Request', value: 'request', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="request">
+
+```xml
+POST https://dashboard.bandwidth.com/api/accounts/{accountId}/applications HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<Application>
+    <ServiceType>Voice-V2</ServiceType>
+    <AppName>Setup Test Voice</AppName>
+    <CallInitiatedCallbackUrl>https://yourSecureSite.com/callbacks/init</CallInitiatedCallbackUrl>
+    <CallStatusCallbackUrl>https://yourSecureSite.com/callbacks/status</CallStatusCallbackUrl>
+    <CallbackCreds>
+      <UserId>Your-User-id</UserId>
+      <Password>Your-Password</Password>
+  </CallbackCreds>
+</Application>
+```
+
+</TabItem>
+<TabItem value="response">
+
+```xml
+HTTP/1.1 201 Created
+Content-Type: application/xml
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ApplicationProvisioningResponse>
+    <Application>
+        <ApplicationId>0fff897a-3ee3-4e7e-94d7-89a067cdfe6b</ApplicationId>
+        <ServiceType>Voice-V2</ServiceType>
+        <AppName>Setup Test Voice</AppName>
+        <CallInitiatedCallbackUrl>https://yourSecureSite.com/callbacks/init</CallInitiatedCallbackUrl>
+        <CallInitiatedMethod>POST</CallInitiatedMethod>
+        <CallStatusCallbackUrl>https://yourSecureSite.com/callbacks/status</CallStatusCallbackUrl>
+        <CallStatusMethod>POST</CallStatusMethod>
+        <CallbackCreds>
+            <UserId>Your-User-id</UserId>
+        </CallbackCreds>
+    </Application>
+</ApplicationProvisioningResponse>
+```
+
+</TabItem>
+</Tabs>
+
+### Assign a Voice Application to Location
+This walks through assigning a voice application to a location and enabling HTTP Voice on that location.
+An application must be assigned to a location, the application assigned to the location will run on voice and messaging events for the numbers on the location.
+
+#### Request URL
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/products/origination/settings</code>
+
+#### Request Body Fields
+The fields below should be formatted as XML elements and put in the request body as shown in the example below.
+
+
+| Field                 | Required | Description |
+|:----------------------|:---------|:------------|
+| `VoiceProtocol`       | Yes      | MUST BE SET TO `HTTP` |
+| `HttpSettings`        | Yes      | Parent element for HTTP settings |
+| `HttpVoiceV2AppId`    | Yes      | The applicationId of the Voice `application` created above |
+
+#### Example
+
+<Tabs
+  groupId="create_location"
+  defaultValue="request"
+  values={[
+    { label: 'Request', value: 'request', },
+    { label: 'Response', value: 'response', },
+  ]
+}>
+<TabItem value="request">
+
+```xml
+POST https://dashboard.bandwidth.com/api/accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/products/origination/settings HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<SipPeerOriginationSettings>
+  <VoiceProtocol>HTTP</VoiceProtocol>
+  <HttpSettings>
+    <HttpVoiceV2AppId>{voice-applicationId}</HttpVoiceV2AppId>
+  </HttpSettings>
+</SipPeerOriginationSettings>
+```
+
+</TabItem>
+<TabItem value="response">
+
+```xml
+HTTP/1.1 200 OK
+Content-Type: application/xml
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SipPeerOriginationSettingsResponse>
+    <SipPeerOriginationSettings>
+        <VoiceProtocol>HTTP</VoiceProtocol>
+        <HttpSettings>
+            <HttpVoiceV2AppId>0fff897a-3ee3-4e7e-94d7-89a067cdfe6b</HttpVoiceV2AppId>
+        </HttpSettings>
+    </SipPeerOriginationSettings>
+</SipPeerOriginationSettingsResponse>
+```
+
+</TabItem>
+</Tabs>

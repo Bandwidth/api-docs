@@ -18,6 +18,8 @@ import TabItem from '@theme/TabItem';
 
 If the target call leaves the [`<Bridge>`](/docs/voice/bxml/bridge), then this callback is sent to the `bridgeCompleteUrl`, and the BXML returned in it is executed on the call.
 
+Note: if this webhook is sent, the [Bridge Target Complete](/docs/voice/webhooks/bridgeTargetComplete) webhook is NOT sent.
+
 :::info
 This callback is also sent if any problem occurs that prevents the calls to be bridged.
 :::
@@ -35,6 +37,7 @@ This callback is also sent if any problem occurs that prevents the calls to be b
 | direction        | The direction of the call. Either `inbound` or `outbound`. The direction of a call never changes. |
 | callId           | The call id associated with the event. |
 | callUrl          | The URL of the call associated with the event. |
+| enqueuedTime     | (optional) If [call queueing](/apis/voice#operation/createCall) is enabled and this is an outbound call, time the call was queued, in ISO 8601 format. |
 | startTime        | Time the call was started, in ISO 8601 format. |
 | answerTime 	   | Time the call was answered, in ISO 8601 format. |
 | tag              | The `tag` specified earlier in the call. If no `tag` was specified or it was previously cleared, this field will not be present. |
@@ -55,10 +58,10 @@ Content-Type: application/xml; charset=utf-8
 
 ## Examples
 
-### Completion of a Successful Bridge 
+### Completion of a Successful Bridge
 
 ```json
-POST http://yourUrl.com/bridgeComplete
+POST http://yourUrl.example/bridgeComplete
 Content-Type: application/json
 
 {
@@ -76,10 +79,32 @@ Content-Type: application/json
 }
 ```
 
+### Completion of a Successful Bridge with Enqueued Time
+
+```json
+POST http://yourUrl.example/bridgeComplete
+Content-Type: application/json
+
+{
+	"eventType"        : "bridgeComplete",
+	"eventTime"        : "2019-07-31T13:15:35.121Z",
+	"accountId"        : "55555555",
+	"applicationId"    : "7fc9698a-b04a-468b-9e8f-91238c0d0086",
+	"from"             : "+15551112222",
+	"to"               : "+15553334444",
+	"direction"        : "outbound",
+	"callId"           : "c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d",
+	"callUrl"          : "https://voice.bandwidth.com/api/v2/accounts/55555555/calls/c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d",
+	"enqueuedTime"     : "2019-07-31T13:13:30.374Z",
+	"startTime"        : "2019-07-31T13:13:34.859Z",
+	"answerTime"       : "2019-07-31T13:13:40.644Z"
+}
+```
+
 ### Failed Bridge
 
 ```json
-POST http://yourUrl.com/bridgeComplete
+POST http://yourUrl.example/bridgeComplete
 Content-Type: application/json
 
 {
