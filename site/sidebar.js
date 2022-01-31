@@ -231,6 +231,17 @@ module.exports = {
                 "mfa/errors",
                 "mfa/rateLimits",
                 {
+                    type: "category",
+                    label: "Callbacks",
+                    items: [
+                        "mfa/callbacks/aboutMfaCallbacks",
+                        "mfa/callbacks/northAmerica/messageDeliveredNorthAmericaMfaCallbacks",
+                        "mfa/callbacks/northAmerica/messageFailedNorthAmericaMfaCallbacks",
+                        "mfa/callbacks/international/messageDeliveredInternationalMfaCallbacks",
+                        "mfa/callbacks/international/messageFailedInternationalMfaCallbacks",
+                    ],
+                },
+                {
                     type: "link",
                     label: "API Reference",
                     href: "https://dev.bandwidth.com/apis/multifactorauth"
