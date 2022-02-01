@@ -231,6 +231,17 @@ module.exports = {
                 "mfa/errors",
                 "mfa/rateLimits",
                 {
+                    type: "category",
+                    label: "Webhooks",
+                    items: [
+                        "mfa/webhooks/aboutMfaWebhooks",
+                        "mfa/webhooks/northAmerica/messageDeliveredNorthAmericaMfaWebhooks",
+                        "mfa/webhooks/northAmerica/messageFailedNorthAmericaMfaWebhooks",
+                        "mfa/webhooks/international/messageDeliveredInternationalMfaWebhooks",
+                        "mfa/webhooks/international/messageFailedInternationalMfaWebhooks",
+                    ],
+                },
+                {
                     type: "link",
                     label: "API Reference",
                     href: "https://dev.bandwidth.com/apis/multifactorauth"
