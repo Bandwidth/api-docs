@@ -213,6 +213,8 @@ The Docusaurus flavored markdown also supports setting markdown attributes in th
     image: ../../static/img/myImg.png    <!--Cover or thumbnail image that will be used when displaying the link to your post.-->
     ---
 
+The above example is YAML, so it is suggested to remove comments as well as wrap strings with special characters like `:` in quotes.
+
 ### Embedding React Components
 
 MDX supports JSX within the markdown and generates it as React componetns - making possibilites endless.
