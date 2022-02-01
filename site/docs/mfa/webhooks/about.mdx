@@ -1,0 +1,46 @@
+---
+id: aboutMfaWebhooks
+title: MFA Webhooks
+slug: /mfa/webhooks
+description: About Bandwidth's MFA Webhooks
+keywords:
+  - mfa
+  - callbacks
+  - webhooks
+  - bandwidth
+hide_title: false
+sidebar_label: About
+custom_edit_url: github.com/Bandwidth/api-docs/tree/main/site/docs/mfa/webhooks/about.mdx
+---
+# Two-Factor Authentication Webhooks
+Two-Factor Authentication (2FA) Webhooks (also known as Callbacks) rely on DLRs (Delivery Receipts) sent to the Two-Factor Authentication (2FA) platform by both Bandwidth's North America and International platform. Since these two platforms send different DLR formats, the 2FA platform standardizes them into a singular format for simplicity and ease of consumption. The 2FA platform then takes these standardized DLRs and sends them via an HTTP POST to the specified URL that was set in the `callbackUrl` field in the [initial request](../../messaging/quickStart.mdx#configuring-callback-urls). The `callbackUrl` field can be any publicly addressable url.
+
+## Message Webhooks Concepts
+- Both North America and International webhooks have the same fields and have the same format. However, some of these fields differ in values to denote between the two systems.
+- North America webhooks are retried for 24 hours if the 2FA platform is unable to deliver it to you.
+- International webhooks are not retried if the 2FA platform is unable to deliver it to you after the initial delivery attempt.
+
+## North America Webhooks
+- The 2FA platform considers any message that is sent to a phone number with the country code `+1` to be North America.
+- The type of North America webhooks are as follows:
+  - [message-delivered](./northAmerica/messageDelivered.mdx) - Message has been delivered to the carrier.
+  - [message-failed](./northAmerica/messageFailed.mdx) - Message failed to deliver.
+
+## International Webhooks
+- The 2FA platform considers any message that is sent to a phone number that does not have the country code `+1` to be international.
+- The type of international webhooks are as follows:
+  - [message-delivered](./international/messageDelivered.mdx) - Message has been delivered to the carrier.
+  - [message-failed](./international/messageFailed.mdx) - Message failed to deliver.
+
+## Two-Factor Authentication Provisioning
+When Two-Factor Authentication is enabled on your account, the 2FA platform generates a separate Application in the Bandwidth Dashboard specifically for 2FA. As part of this application, there is a field present called `Callback URL` that is auto-populated with the default Callback URL for 2FA. Having this default endpoint ensures proper logging of requests to the platform for better serviceability, as well as simplifies the sending of different types of DLRs from messaging. The 2FA platform proxies all webhooks to the destination of your choice using the value in the `callbackUrl` field.
+
+See the below image as an example of the Callback URL from the Bandwidth Dashboard.<br/>
+<br/>
+<img src="../../static/img/mfa-callbackUrlExample.png"></img>
+<br/>
+Note: The path parameter `yourAccountId` is replaced with your overall Bandwidth Account ID during provisioning.
+<br/>
+<br/>
+If you change the value in the Bandwidth Dashboard in the `Callback URL` field to something other than the default 2FA Callback URL, you will not get the standardized messages for North America webhooks nor get logging/monitoring support from the 2FA platform. International webhooks will also stop forwarding to your platform but will still log to the 2FA platform.
+<br/>

@@ -7,7 +7,7 @@ slug: /changelog
 
 | Date | Notes |
 |--|--|
-| January 31, 2022 | Added back MFA Callbacks documentation
+| January 31, 2022 | Added back MFA Webhooks (Callbacks) documentation
 | January 18, 2022 | Added downloadable CSV sample on Messaging Campaign UI and Import Campaign UI guides for Bulk TN Upload |
 | December 28, 2021 | Many updates to Voice API spec |
 | December 07, 2021 | Add documentation for outbound call queueing |

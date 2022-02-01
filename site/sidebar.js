@@ -232,13 +232,13 @@ module.exports = {
                 "mfa/rateLimits",
                 {
                     type: "category",
-                    label: "Callbacks",
+                    label: "Webhooks",
                     items: [
-                        "mfa/callbacks/aboutMfaCallbacks",
-                        "mfa/callbacks/northAmerica/messageDeliveredNorthAmericaMfaCallbacks",
-                        "mfa/callbacks/northAmerica/messageFailedNorthAmericaMfaCallbacks",
-                        "mfa/callbacks/international/messageDeliveredInternationalMfaCallbacks",
-                        "mfa/callbacks/international/messageFailedInternationalMfaCallbacks",
+                        "mfa/webhooks/aboutMfaWebhooks",
+                        "mfa/webhooks/northAmerica/messageDeliveredNorthAmericaMfaWebhooks",
+                        "mfa/webhooks/northAmerica/messageFailedNorthAmericaMfaWebhooks",
+                        "mfa/webhooks/international/messageDeliveredInternationalMfaWebhooks",
+                        "mfa/webhooks/international/messageFailedInternationalMfaWebhooks",
                     ],
                 },
                 {
