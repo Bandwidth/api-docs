@@ -47,6 +47,7 @@ module.exports = {
                         "numbers/searchingNumbers",
                         "numbers/orderingNumbers",
                         "numbers/portingNumbers",
+                        "numbers/csrLookupTool",
                         "numbers/hostingNumbers",
                         "numbers/manageNumberFeatures",
                         "numbers/searchNumbers",
