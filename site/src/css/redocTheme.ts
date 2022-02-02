@@ -13,6 +13,47 @@ const DOCUSAURUS = {
  */
 export function lightTheme(primaryColor) {
     return({
+      typography: {
+        fontFamily: 'var(--ifm-font-family-base)',
+        fontSize: 'var(--ifm-font-size-base)',
+        lineHeight: 'var(--ifm-line-height-base)',
+        fontWeightLight: 'var(--ifm-font-weight-light)',
+        fontWeightRegular: 'var(--ifm-font-weight-base)',
+        fontWeightBold: 'var(--ifm-font-weight-bold)',
+        headings: {
+          fontFamily: 'var(--ifm-font-family-base)',
+          fontWeight: 'var(--ifm-font-weight-semibold)',
+          lineHeight: 'var(--ifm-line-height-base)',
+        },
+        code: {
+          fontFamily: 'var(--ifm-font-family-monospace)',
+          lineHeight: 'var(--ifm-pre-line-height)',
+        },
+      },
+      colors: {
+        primary: {
+            main: primaryColor
+        },
+        gray: {
+          50: '#FAFAFA',
+          100: '#F5F5F5',
+        },
+        border: {
+          dark: '#ffffff',
+          light: 'rgba(0,0,0, 0.1)',
+        },
+        http: {
+          get: '#00bf8c',
+          post: '#079CEE',
+          put: '#9a59c5',
+          patch: '#652B51',
+          delete: '#ff6f47',
+        },
+      },
+      sidebar: {
+        width: '300px',
+        backgroundColor: '#ffffff',
+      },
       rightPanel: {
         backgroundColor: 'transparent',
       }
