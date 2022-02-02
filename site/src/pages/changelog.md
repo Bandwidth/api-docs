@@ -7,6 +7,7 @@ slug: /changelog
 
 | Date | Notes |
 |--|--|
+|February 2, 2022 | Removed the Staging environment from the server list for WebRTC API Specs |
 | January 31, 2022 | Added back MFA Webhooks (Callbacks) documentation
 | January 18, 2022 | Added downloadable CSV sample on Messaging Campaign UI and Import Campaign UI guides for Bulk TN Upload |
 | December 28, 2021 | Many updates to Voice API spec |
