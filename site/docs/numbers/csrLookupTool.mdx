@@ -1,0 +1,260 @@
+---
+id: csrLookupTool
+title: CSR Lookup Tool
+slug: /numbers/guides/csrLookupTool
+description: How to lookup CSR records using the Bandwidth API
+keywords:
+  - bandwidth
+  - numbers
+  - csr
+image: ../../static/img/bandwidth-logo.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+export const accountId = "{accountId}";
+export const orderId = "{orderId}";
+
+export const Highlight = ({children, color}) => (
+    <span
+      style={{
+        backgroundColor: color,
+        borderRadius: '2px',
+        color: '#fff',
+        padding: '0.2rem',
+      }}>
+      {children}
+    </span>
+  );
+
+This walks through how to programmatically lookup Customer Service Records (CSRs for short) for Phone Numbers before porting into your Bandwidth account.
+
+## Polling vs. Webhooks
+
+CSR Orders in the Bandwidth Dashboard are asynchronous when creating an "order". The orders are then processed and the order status is updated asynchronously.  Bandwidth recommends configuring your account with a subscription instead of polling the order resource for `<OrderStatus>`.
+
+Order processing times can vary and are not guaranteed, so bandwidth does __not__ recommend setting a timeout on waiting for an order to show either `COMPLETE` or `FAILED` status, but instead relying on a webhook from a CSR Orders subscription.
+
+## Create a CSR Order
+
+Before creating the order, be sure to collect any information from the end user to submit to the CSR API. Generally speaking, the more information provided, the better.
+
+### Request URL
+
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/csrs</code>
+
+### Request Parameters
+
+| Parameter | Required | Description |
+|:--------- |:--------:|:------------|
+| CustomerOrderId | No | Internal customer order id for tracking the order. Only alphanumeric values, dashes and spaces are allowed. Max length is 40 characters. |
+| WorkingOrBillingTelephoneNumber (WTN) | Yes | Working or Billing telephone number in 10-digits format NPANXXXXXX. |
+| AccountNumber | No | Identifies the main account number on your bill, assigned by the current service provider. Alphanumeric characters are supported with a max length of 20 characters. |
+| AccountTelephoneNumber | No | Identifies the account telephone number assigned by the current service provider. Alphanumeric characters are supported with a max length of 10 characters. |
+| EndUserName | No | Identifies the name of the end user associated with the telephone number being queried. Alphanumeric characters are supported with a max length of 100 characters. |
+| AuthorizingUserName | No | Identifies the name of the end user who signed the authorization. Alphanumeric characters are supported with a max length of 100 characters. |
+| CustomerCode | No | Identifies the customer code associated with the service provider. Must be numeric characters only with a max length of 3 characters. |
+| EndUserPIN | No | Identifies the end user’s personal identification number (PIN). Alphanumeric characters are supported with a max length of 50 characters. |
+| EndUserPassword | No | Identifies the end user’s password to access the CSR, if applicable. Alphanumeric characters are supported with a max length of 100 characters. |
+| AddressLine1 | No | Identifies the address line 1 portion of the service address. Alphanumeric characters are supported with a max length of 200 characters. |
+| City | No | Identifies the city of the end user where the telephone number is being serviced. Alphanumeric characters are supported with a max length of 100 characters. |
+| State | No | Identifies the abbreviation for the state or province of the end user where the telephone number is being serviced. Must be alpha characters only in the format XX with a max length of 2 characters, where XX is the state or province abbreviation. |
+| ZIPCode | No | Identifies the ZIP code, ZIP Code + extension, or postal code or the end user where the telephone number is being serviced. Alphanumeric characters are supported with a max length of 10 characters (including the dash if using ZIP Code with extension). |
+| TypeOfService | No | The type of service identifying the end user account. Must be alphabetic characters only with a max length of 50 characters. |
+
+### Examples
+
+
+> Request 
+
+```xml
+POST https://dashboard.bandwidth.com/api/accounts/{{accountId}}/csrs HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<Csr>
+  <CustomerOrderId>CustomerOrderId</CustomerOrderId>
+  <WorkingOrBillingTelephoneNumber>9198675309</WorkingOrBillingTelephoneNumber>
+  <EndUserPIN>1234</EndUserPIN>
+</Csr>
+```
+
+> Response
+
+```xml
+HTTP/1.1 200 OK
+Content-Type: application/xml
+Location: https://dashboard.bandwidth.com/api/accounts/{{accountId}}/csrs/{{orderId}}
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<CsrResponse>
+    <OrderId>18cee9d0-a5c5-4322-9a47-d04176bc924c</OrderId>
+    <Status>RECEIVED</Status>
+</CsrResponse>
+```
+
+## Fetch Order Status
+
+### Request URL
+
+<Highlight color="#00bf8c">GET</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/csrs/{orderId}</code>
+
+### Examples
+
+<Tabs
+  groupId="http_importTnOrder_search"
+  defaultValue="webhook_CsrOrder_status"
+  values={[
+    { label: 'CsrOrder Status Webhook', value: 'webhook_CsrOrder_status', },
+    { label: 'Poll for CsrOrder Status', value: 'poll_CsrOrder_status', },
+  ]
+}>
+<TabItem value="webhook_CsrOrder_status">
+
+CsrOrder Status Webhook
+
+:::info
+This is a webhook that bandwidth sends to _your_ server upon order completion/failure - there is no need to poll the resource if using this recommended method.
+:::
+
+```xml
+POST your_url.com/webhookService HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+
+<?xml version="1.0"?>
+<Notification>
+    <SubscriptionId>...</SubscriptionId>
+    <OrderType>csrs</OrderType>
+    <OrderId>b05de7e6-0cab-4c83-81bb-9379cba8efd0</OrderId>
+    <CustomerOrderId>...</CustomerOrderId>
+    <Status>COMPLETE</Status>
+</Notification>
+```
+
+</TabItem>
+<TabItem value="poll_CsrOrder_status">
+
+Poll Order Information
+> Request
+
+```http
+GET https://dashboard.bandwidth.com/api/accounts/{accountId}/csrs/b05de7e6-0cab-4c83-81bb-9379cba8efd0 HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```
+
+> Response
+
+```xml
+HTTP 200 OK
+Content-Type: application/xml; charset=utf-8
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<CsrResponse>
+  <LastModifiedBy>{api-userName}</LastModifiedBy>
+  <OrderCreateDate>2020-02-25T15:39:22.079Z</OrderCreateDate>
+  <AccountId>{accountId}</AccountId>
+  <OrderId>20ba7d26-7fa0-4716-ab45-6c8e07d37862</OrderId>
+  <LastModifiedDate>2020-02-25T15:39:41.166Z</LastModifiedDate>
+  <Status>COMPLETE</Status>
+  <CsrData>
+    <CustomerName>House of Mouse</CustomerName>
+    <ServiceAddress>
+      <UnparsedAddress>1234 Main ST Durham NC 27707</UnparsedAddress>
+      <HouseNumber>1234</HouseNumber>
+      <StreetName>Main</StreetName>
+      <StreetSuffix>ST</StreetSuffix>
+      <City>Durham</City>
+      <State>NC</State>
+      <Zip>27707</Zip>
+    </ServiceAddress>
+    <WorkingTelephoneNumber>9198675309</WorkingTelephoneNumber>
+    <WorkingTelephoneNumbersOnAccount>
+      <TelephoneNumber>9198675309</TelephoneNumber>
+    </WorkingTelephoneNumbersOnAccount>
+  </CsrData>
+</CsrResponse>
+```
+
+</TabItem>
+</Tabs>
+
+## Update an Order
+
+A <Highlight color="#9a59c5">PUT</Highlight> method provides the ability to replace the existing csr conditional data with specificed csr conditional data. To cancel CSR order, users must provide a `Status` element with `REQUESTEDCANCEL` value. Note that csr order must be a non-real time with `PROCESSING` or `ACTIONREQUIRED` status.
+
+### Request URL
+
+<Highlight color="#9a59c5">PUT</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/csrs/{orderId}</code>
+
+### Examples
+
+> Request 
+
+```xml
+PUT https://dashboard.bandwidth.com/api/accounts/{{accountId}}/csrs HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<Csr>
+    <AccountNumber>987654321</AccountNumber>
+    <AccountTelephoneNumber>9196194444</AccountTelephoneNumber>
+    <EndUserName>bandwidthGuy</EndUserName>
+    <AuthorizingUserName>importantAuthGuy</AuthorizingUserName>
+    <CustomerCode>123</CustomerCode>
+    <EndUserPIN>12345</EndUserPIN>
+    <EndUserPassword>enduserpassword123</EndUserPassword>
+    <AddressLine1>900 Main Campus Dr</AddressLine1>
+    <City>Raleigh</City>
+    <State>NC</State>
+    <ZIPCode>27612</ZIPCode>
+    <TypeOfService>residential</TypeOfService>
+    <!-- cancel csr order -->
+    <Status>REQUESTED_CANCEL</Status>
+</Csr>
+```
+
+> Response
+
+```xml 
+HTTP 200 OK
+Content-Type: application/xml; charset=utf-8
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<CsrResponse>
+    <CustomerOrderId>TEST BWDB-6506</CustomerOrderId>
+    <LastModifiedBy>systemUser</LastModifiedBy>
+    <OrderCreateDate>2020-01-13T21:14:35Z</OrderCreateDate>
+    <AccountId>14</AccountId>
+    <OrderId>5c3b8240-52b5-45a5-8d7d-42a71ebcd1ba</OrderId>
+    <LastModifiedDate>2020-01-13T16:51:21.920Z</LastModifiedDate>
+    <Status>COMPLETE</Status>
+    <AccountNumber>987654321</AccountNumber>
+    <AccountTelephoneNumber>9196194444</AccountTelephoneNumber>
+    <EndUserName>bandwidthGuy</EndUserName>
+    <AuthorizingUserName>importantAuthGuy</AuthorizingUserName>
+    <CustomerCode>123</CustomerCode>
+    <EndUserPIN>12345</EndUserPIN>
+    <EndUserPassword>enduserpassword123</EndUserPassword>
+    <AddressLine1>900 Main Campus Dr</AddressLine1>
+    <City>Raleigh</City>
+    <State>NC</State>
+    <ZIPCode>27612</ZIPCode>
+    <TypeOfService>residential</TypeOfService>
+    <CsrData>
+        <AccountNumber>123456789</AccountNumber>
+        <CustomerName>JOHN SMITH</CustomerName>
+        <ServiceAddress>
+            <UnparsedAddress>900 MAIN CAMPUS DR</UnparsedAddress>
+            <City>RALEIGH</City>
+            <State>NC</State>
+            <Zip>27616</Zip>
+        </ServiceAddress>
+        <WorkingTelephoneNumber>9196191156</WorkingTelephoneNumber>
+        <WorkingTelephoneNumbersOnAccount>
+            <TelephoneNumber>9196191156</TelephoneNumber>
+        </WorkingTelephoneNumbersOnAccount>
+    </CsrData>
+</CsrResponse>
+```
