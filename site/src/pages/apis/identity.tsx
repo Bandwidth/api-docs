@@ -10,7 +10,7 @@ export default function ApiReferencePage() {
           title={`Identity Management API Reference`}
           description="Everything you need to know to configure and manage the identities for your accounts"
           keywords="Bandwidth,API,Identity,Authentication,SSO">
-            <ApiReference spec={siteConfig.customFields.identitySpec} color={siteConfig.customFields.voicePurple} />
+            <ApiReference spec={siteConfig.customFields.identitySpec} color={siteConfig.customFields.bwBlue} />
         </Layout>
     );
 }
