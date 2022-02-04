@@ -1,53 +1,47 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Identity",
-    "version": "0.1.0",
+    "title": "Identity Management",
     "description": "Bandwidth Identity API",
-    "x-server-configuration": {
-      "default-environment": "production",
-      "default-server": "default",
-      "environments": [
-        {
-          "name": "production",
-          "servers": [
-            {
-              "name": "default",
-              "url": "https://identity.bandwidth.com"
-            }
-          ]
-        },
-        {
-          "name": "custom",
-          "servers": [
-            {
-              "name": "default",
-              "url": "{base_url}"
-            }
-          ]
-        }
-      ],
-      "parameters": [
-        {
-          "name": "base_url",
-          "description": "",
-          "type": "string",
-          "example": "https://www.example.com"
-        }
-      ]
-    }
+    "contact": {},
+    "version": "1.1.0-alpha"
   },
+  "servers": [
+    {
+      "url": "https://id.management.bandwidth.com",
+      "variables": {}
+    },
+    {
+      "url": "{base_url}",
+      "variables": {
+        "base_url": {
+          "default": "https://www.example.com",
+          "description": ""
+        }
+      }
+    },
+    {
+      "url": "https://uat.id.management.bandwidth.com",
+      "description": "User Acceptance Testing",
+      "variables": {}
+    }
+  ],
   "paths": {
     "/api/v1/idps": {
       "get": {
-        "summary": "Returns all the IdPs that the requesting user has access to.",
+        "tags": [
+          "Identity Provider Management"
+        ],
+        "summary": "getIdps",
+        "description": "Returns all the IdPs that the requesting user has access to.",
         "operationId": "getIdps",
         "parameters": [
           {
             "name": "accountId",
             "in": "query",
             "description": "Filter results by this accountId.",
-            "required": false,
+            "style": "form",
+            "explode": true,
             "schema": {
               "type": "string"
             }
@@ -56,7 +50,8 @@
             "name": "active",
             "in": "query",
             "description": "Filter results by the IdP active status.",
-            "required": false,
+            "style": "form",
+            "explode": true,
             "schema": {
               "type": "boolean"
             }
@@ -65,39 +60,48 @@
             "name": "page",
             "in": "query",
             "description": "The page number when invoking pagination. Page numbers are 0-indexed",
-            "required": false,
+            "style": "form",
+            "explode": true,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "format": "int32"
             }
           },
           {
             "name": "size",
             "in": "query",
             "description": "The size of a page when invoking pagination. Default page size is 20",
-            "required": false,
+            "style": "form",
+            "explode": true,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "format": "int32"
             }
-          }
-        ],
-        "security": [
-          {
-            "bearerAuth": []
           }
         ],
         "responses": {
           "200": {
             "description": "Successful response. A list of IdPs is returned. If there are no IdPs to return, an empty list is returned.",
+            "headers": {},
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ListOfIdps"
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/SAMLIdP"
+                      }
+                    ]
+                  },
+                  "description": ""
                 }
               }
             }
           },
           "401": {
             "description": "Unauthorized",
+            "headers": {},
             "content": {
               "application/json": {
                 "schema": {
@@ -108,6 +112,7 @@
           },
           "500": {
             "description": "An internal error occurred attempting to process a request",
+            "headers": {},
             "content": {
               "application/json": {
                 "schema": {
@@ -116,47 +121,64 @@
               }
             }
           }
-        }
-      },
-      "post": {
-        "summary": "Creates a new IdP.",
-        "operationId": "postIdps",
+        },
+        "deprecated": false,
         "security": [
           {
             "bearerAuth": []
           }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Identity Provider Management"
         ],
+        "summary": "postIdps",
+        "description": "Creates a new IdP.",
+        "operationId": "postIdps",
+        "parameters": [],
         "requestBody": {
-          "required": true,
+          "description": "",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewIdP"
+                "$ref": "#/components/schemas/NewSAMLIdP"
               }
             }
-          }
+          },
+          "required": true
         },
         "responses": {
           "201": {
             "description": "Successful Response. Returns the newly created IdP resource.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IdP"
+            "headers": {
+              "Location": {
+                "description": "The URL of the created resource.",
+                "content": {
+                  "text/plain": {
+                    "schema": {
+                      "type": "string",
+                      "description": "The URL of the created resource."
+                    }
+                  }
                 }
               }
             },
-            "headers": {
-              "Location": {
+            "content": {
+              "application/json": {
                 "schema": {
-                  "type": "string"
-                },
-                "description": "The URL of the created resource."
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/SAMLIdP"
+                    }
+                  ]
+                }
               }
             }
           },
           "400": {
             "description": "Invalid Request.",
+            "headers": {},
             "content": {
               "application/json": {
                 "schema": {
@@ -167,6 +189,7 @@
           },
           "401": {
             "description": "Unauthorized",
+            "headers": {},
             "content": {
               "application/json": {
                 "schema": {
@@ -177,6 +200,7 @@
           },
           "500": {
             "description": "An internal error occurred attempting to process a request",
+            "headers": {},
             "content": {
               "application/json": {
                 "schema": {
@@ -185,53 +209,65 @@
               }
             }
           }
-        }
-      }
-    },
-    "/api/v1/idps/{IdpId}": {
-      "parameters": [
-        {
-          "name": "IdpId",
-          "in": "path",
-          "required": true,
-          "style": "simple",
-          "description": "The IdP id.",
-          "schema": {
-            "type": "string"
-          }
-        }
-      ],
-      "put": {
-        "summary": "Modifies an IdP.",
-        "operationId": "putIdp",
+        },
+        "deprecated": false,
         "security": [
           {
             "bearerAuth": []
           }
+        ]
+      }
+    },
+    "/api/v1/idps/{IdpId}": {
+      "put": {
+        "tags": [
+          "Identity Provider Management"
+        ],
+        "summary": "putIdp",
+        "description": "Modifies an IdP.",
+        "operationId": "putIdp",
+        "parameters": [
+          {
+            "name": "IdpId",
+            "in": "path",
+            "description": "The IdP id.",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "requestBody": {
-          "required": true,
+          "description": "",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewIdP"
+                "$ref": "#/components/schemas/NewSAMLIdP"
               }
             }
-          }
+          },
+          "required": true
         },
         "responses": {
           "200": {
             "description": "Successful Response. Returns the modified IdP resource.",
+            "headers": {},
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/IdP"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/SAMLIdP"
+                    }
+                  ]
                 }
               }
             }
           },
           "400": {
             "description": "Invalid Request.",
+            "headers": {},
             "content": {
               "application/json": {
                 "schema": {
@@ -242,6 +278,7 @@
           },
           "401": {
             "description": "Unauthorized",
+            "headers": {},
             "content": {
               "application/json": {
                 "schema": {
@@ -252,6 +289,7 @@
           },
           "404": {
             "description": "IdP not found.",
+            "headers": {},
             "content": {
               "application/json": {
                 "schema": {
@@ -262,6 +300,7 @@
           },
           "409": {
             "description": "Conflict. You are attempting to modify an IdP in a way it cannot be changed",
+            "headers": {},
             "content": {
               "application/json": {
                 "schema": {
@@ -272,6 +311,7 @@
           },
           "500": {
             "description": "An internal error occurred attempting to process a request",
+            "headers": {},
             "content": {
               "application/json": {
                 "schema": {
@@ -280,29 +320,53 @@
               }
             }
           }
-        }
-      },
-      "get": {
-        "summary": "Returns the IdP with the given id.",
-        "operationId": "getIdp",
+        },
+        "deprecated": false,
         "security": [
           {
             "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Identity Provider Management"
+        ],
+        "summary": "getIdp",
+        "description": "Returns the IdP with the given id.",
+        "operationId": "getIdp",
+        "parameters": [
+          {
+            "name": "IdpId",
+            "in": "path",
+            "description": "The IdP id.",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "0ob620cjl5JqUwZ8u4x2"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "Successful response. The IdP resource, if it exists.",
+            "headers": {},
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/IdP"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/SAMLIdP"
+                    }
+                  ]
                 }
               }
             }
           },
           "401": {
             "description": "Unauthorized",
+            "headers": {},
             "content": {
               "application/json": {
                 "schema": {
@@ -313,6 +377,7 @@
           },
           "404": {
             "description": "IdP not found.",
+            "headers": {},
             "content": {
               "application/json": {
                 "schema": {
@@ -323,6 +388,7 @@
           },
           "500": {
             "description": "An internal error occurred attempting to process a request",
+            "headers": {},
             "content": {
               "application/json": {
                 "schema": {
@@ -331,22 +397,43 @@
               }
             }
           }
-        }
-      },
-      "delete": {
-        "summary": "Deletes the IdP with the given id.",
-        "operationId": "deleteIdp",
+        },
+        "deprecated": false,
         "security": [
           {
             "bearerAuth": []
           }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Identity Provider Management"
+        ],
+        "summary": "deleteIdp",
+        "description": "Deletes the IdP with the given id.",
+        "operationId": "deleteIdp",
+        "parameters": [
+          {
+            "name": "IdpId",
+            "in": "path",
+            "description": "The IdP id.",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "example": "0ob620cjl5JqUwZ8u4x2"
+            }
+          }
         ],
         "responses": {
           "204": {
-            "description": "Successful response. The IdP resource was deleted."
+            "description": "Successful response. The IdP resource was deleted.",
+            "headers": {},
+            "content": {}
           },
           "401": {
             "description": "Unauthorized",
+            "headers": {},
             "content": {
               "application/json": {
                 "schema": {
@@ -357,6 +444,7 @@
           },
           "404": {
             "description": "IdP not found.",
+            "headers": {},
             "content": {
               "application/json": {
                 "schema": {
@@ -367,6 +455,7 @@
           },
           "409": {
             "description": "A conflict on the IdP occurred",
+            "headers": {},
             "content": {
               "application/json": {
                 "schema": {
@@ -377,6 +466,7 @@
           },
           "500": {
             "description": "An internal error occurred attempting to process a request",
+            "headers": {},
             "content": {
               "application/json": {
                 "schema": {
@@ -385,162 +475,257 @@
               }
             }
           }
-        }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/.well-known/webfinger": {
+      "get": {
+        "tags": [
+          "Webfinger"
+        ],
+        "summary": "Webfinger",
+        "description": "Returns a Webfinger response for the provided resource.",
+        "operationId": "Webfinger",
+        "parameters": [
+          {
+            "name": "resource",
+            "in": "query",
+            "description": "The resource to get information about",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "example": "okta:acct:user@company.com"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response. A list of IdPs is returned. If there are no IdPs to return, an empty list is returned.",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/SAMLIdP"
+                      }
+                    ]
+                  },
+                  "description": ""
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "An internal error occurred attempting to process a request",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": []
       }
     }
   },
   "components": {
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
-      }
-    },
     "schemas": {
-      "NewIdP": {
-        "title": "New IdP",
-        "type": "object",
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/NewSamlIdP"
-          }
-        ],
-        "discriminator": {
-          "propertyName": "protocol",
-          "mapping": {
-            "SAML": "#/components/schemas/NewSamlIdP"
-          }
-        }
-      },
-      "NewSamlIdP": {
+      "NewSAMLIdP": {
         "title": "NewSAMLIdP",
-        "type": "object",
         "allOf": [
           {
-            "$ref": "#/components/schemas/NewProperties"
+            "$ref": "#/components/schemas/NewIdP"
           },
           {
-            "$ref": "#/components/schemas/SamlProperties"
+            "required": [
+              "accountId",
+              "active"
+            ],
+            "type": "object",
+            "properties": {
+              "accountId": {
+                "type": "string",
+                "description": "The Bandwidth account id that will use this Identity Provider."
+              },
+              "active": {
+                "type": "boolean",
+                "description": "Whether this IdP is active or not. Only one IdP can be active for a given accountId.",
+                "example": false
+              },
+              "usernameField": {
+                "type": "string",
+                "description": "The field in the SAML assertion that container the username"
+              },
+              "issuerUri": {
+                "type": "string",
+                "description": "URI of the Identity Provider. This value is usually the SAML Metadata EntityID of the IdP EntityDescriptor."
+              },
+              "singleSignOnUrl": {
+                "type": "string",
+                "description": "The binding-specific IdP Authentication Request Protocol endpoint that receives SAML AuthnRequest messages."
+              },
+              "signatureCertificate": {
+                "type": "string",
+                "description": "The PEM or DER encoded public key certificate of the Identity Provider used to verify SAML message and assertion signatures."
+              }
+            }
           }
         ]
       },
-      "IdP": {
-        "title": "IdP",
-        "type": "object",
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/SamlIdP"
-          }
-        ],
-        "discriminator": {
-          "propertyName": "protocol",
-          "mapping": {
-            "SAML": "#/components/schemas/SamlIdP"
-          }
-        }
-      },
-      "SamlIdP": {
-        "title": "SAML IdP",
-        "type": "object",
+      "SAMLIdP": {
+        "title": "SAMLIdP",
         "allOf": [
           {
-            "$ref": "#/components/schemas/NewProperties"
+            "$ref": "#/components/schemas/IdP"
           },
           {
-            "$ref": "#/components/schemas/GeneralProperties"
-          },
-          {
-            "$ref": "#/components/schemas/SamlProperties"
+            "required": [
+              "accountId",
+              "active",
+              "id",
+              "entityId",
+              "acsUrl"
+            ],
+            "type": "object",
+            "properties": {
+              "accountId": {
+                "type": "string",
+                "description": "The Bandwidth account id that will use this Identity Provider."
+              },
+              "active": {
+                "type": "boolean",
+                "description": "Whether this IdP is active or not. Only one IdP can be active for a given accountId.",
+                "example": false
+              },
+              "id": {
+                "type": "string",
+                "description": "The identifier for this Identity Provider."
+              },
+              "entityId": {
+                "type": "string",
+                "description": "The IdP entity id. This should be used as input to configure the source provider."
+              },
+              "acsUrl": {
+                "type": "string",
+                "description": "The consumer assertion URL. This should be used as input to configure the source provider."
+              },
+              "usernameField": {
+                "type": "string",
+                "description": "The field in the SAML assertion that container the username"
+              },
+              "issuerUri": {
+                "type": "string",
+                "description": "URI of the Identity Provider. This value is usually the SAML Metadata EntityID of the IdP EntityDescriptor."
+              },
+              "singleSignOnUrl": {
+                "type": "string",
+                "description": "The binding-specific IdP Authentication Request Protocol endpoint that receives SAML AuthnRequest messages."
+              },
+              "signatureCertificate": {
+                "type": "string",
+                "description": "The PEM or DER encoded public key certificate of the Identity Provider used to verify SAML message and assertion signatures."
+              }
+            }
           }
         ]
       },
       "NewProperties": {
-        "type": "object",
-        "properties": {
-          "accountId": {
-            "description": "The Bandwidth account id that will use this Identity Provider.",
-            "type": "string",
-            "readOnly": false
-          },
-          "protocol": {
-            "description": "The protocol used by this Identity Provider. Only SAML is supported for now.",
-            "type": "string",
-            "enum": [
-              "SAML"
-            ],
-            "default": "SAML"
-          },
-          "active": {
-            "description": "Whether this IdP is active or not. Only one IdP can be active for a given accountId.",
-            "type": "boolean",
-            "readOnly": false,
-            "default": false
-          }
-        },
+        "title": "NewProperties",
         "required": [
           "accountId",
           "protocol",
           "active"
-        ]
-      },
-      "GeneralProperties": {
+        ],
         "type": "object",
         "properties": {
-          "id": {
-            "description": "The identifier for this Identity Provider.",
+          "accountId": {
             "type": "string",
-            "readOnly": true
+            "description": "The Bandwidth account id that will use this Identity Provider."
           },
-          "entityId": {
-            "description": "The IdP entity id. This should be used as input to configure the source provider.",
+          "protocol": {
+            "enum": [
+              "SAML"
+            ],
             "type": "string",
-            "readOnly": true
+            "description": "The protocol used by this Identity Provider. Only SAML is supported for now.",
+            "example": "SAML"
           },
-          "acsUrl": {
-            "description": "The consumer assertion URL. This should be used as input to configure the source provider.",
-            "type": "string",
-            "readOnly": true
+          "active": {
+            "type": "boolean",
+            "description": "Whether this IdP is active or not. Only one IdP can be active for a given accountId.",
+            "example": false
           }
-        },
+        }
+      },
+      "GeneralProperties": {
+        "title": "GeneralProperties",
         "required": [
           "id",
           "entityId",
           "acsUrl"
-        ]
-      },
-      "SamlProperties": {
+        ],
         "type": "object",
         "properties": {
-          "usernameField": {
-            "description": "The field in the SAML assertion that container the username",
+          "id": {
             "type": "string",
-            "readOnly": false
+            "description": "The identifier for this Identity Provider."
           },
-          "issuerUri": {
-            "description": "URI of the Identity Provider. This value is usually the SAML Metadata EntityID of the IdP EntityDescriptor.",
+          "entityId": {
             "type": "string",
-            "format": "uri",
-            "readOnly": false
+            "description": "The IdP entity id. This should be used as input to configure the source provider."
           },
-          "singleSignOnUrl": {
-            "description": "The binding-specific IdP Authentication Request Protocol endpoint that receives SAML AuthnRequest messages.",
+          "acsUrl": {
             "type": "string",
-            "format": "uri",
-            "readOnly": false
-          },
-          "signatureCertificate": {
-            "description": "The PEM or DER encoded public key certificate of the Identity Provider used to verify SAML message and assertion signatures.",
-            "type": "string",
-            "readOnly": false
+            "description": "The consumer assertion URL. This should be used as input to configure the source provider."
           }
         }
       },
-      "ListOfIdps": {
-        "title": "ListOfIdps",
-        "type": "array",
-        "items": {
-          "$ref": "#/components/schemas/IdP"
+      "SamlProperties": {
+        "title": "SamlProperties",
+        "type": "object",
+        "properties": {
+          "usernameField": {
+            "type": "string",
+            "description": "The field in the SAML assertion that container the username"
+          },
+          "issuerUri": {
+            "type": "string",
+            "description": "URI of the Identity Provider. This value is usually the SAML Metadata EntityID of the IdP EntityDescriptor."
+          },
+          "singleSignOnUrl": {
+            "type": "string",
+            "description": "The binding-specific IdP Authentication Request Protocol endpoint that receives SAML AuthnRequest messages."
+          },
+          "signatureCertificate": {
+            "type": "string",
+            "description": "The PEM or DER encoded public key certificate of the Identity Provider used to verify SAML message and assertion signatures."
+          }
         }
       },
       "ErrorResponse": {
@@ -548,31 +733,254 @@
         "type": "object",
         "properties": {
           "timestamp": {
-            "description": "The timestamp in ISO 8601 format of when the error was encountered",
             "type": "string",
-            "format": "date-time",
-            "readOnly": true
+            "description": "The timestamp in ISO 8601 format of when the error was encountered",
+            "format": "date-time"
           },
           "httpStatus": {
+            "type": "integer",
             "description": "The HTTP status code returned by the server for the error encountered",
-            "type": "number",
             "format": "int32",
-            "readOnly": true,
             "example": 401
           },
           "message": {
-            "description": "A short description about the error encountered",
             "type": "string",
-            "readOnly": true
+            "description": "A short description about the error encountered"
           },
           "traceId": {
-            "description": "A unique trace ID used to identify the request and response.",
             "type": "string",
-            "readOnly": true,
+            "description": "A unique trace ID used to identify the request and response.",
             "example": "b77a5ea79036d5b9"
           }
         }
+      },
+      "ErrorResponse_Error": {
+        "title": "ErrorResponse_Error",
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "description": "The timestamp in ISO 8601 format of when the error was encountered",
+            "format": "date-time"
+          },
+          "statusCode": {
+            "type": "integer",
+            "description": "The HTTP status code returned by the server for the error encountered",
+            "format": "int32",
+            "example": 401
+          },
+          "statusText": {
+            "type": "string",
+            "description": "A short description about the error encountered"
+          },
+          "traceId": {
+            "type": "string",
+            "description": "A unique trace ID used to identify the request and response.",
+            "example": "b77a5ea79036d5b9"
+          }
+        }
+      },
+      "IdP": {
+        "title": "IdP",
+        "required": [
+          "protocol"
+        ],
+        "type": "object",
+        "properties": {
+          "protocol": {
+            "type": "string"
+          }
+        },
+        "discriminator": {
+          "propertyName": "protocol",
+          "mapping": {
+            "SAML": "SAMLIdP"
+          }
+        }
+      },
+      "NewIdP": {
+        "title": "NewIdP",
+        "required": [
+          "protocol"
+        ],
+        "type": "object",
+        "properties": {
+          "protocol": {
+            "type": "string"
+          }
+        },
+        "discriminator": {
+          "propertyName": "protocol",
+          "mapping": {
+            "SAML": "NewSAMLIdP"
+          }
+        }
+      },
+      "WebfingerIdPEnabledResponse": {
+        "title": "WebfingerIdPEnabledResponse",
+        "required": [
+          "subject",
+          "links"
+        ],
+        "type": "object",
+        "properties": {
+          "subject": {
+            "type": "string",
+            "description": "The resource",
+            "xml": {
+              "attribute": true,
+              "wrapped": false
+            }
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/webfinger_links"
+            },
+            "description": "",
+            "example": [
+              {
+                "href": "https://login.bandwidth.com/sso/idps/0oahx4rqfARaXDIas4x6?login_hint=user%40company.com#",
+                "rel": "okta:idp",
+                "properties": {
+                  "okta:idp:id": "0obhx4rqfARaXDIas4x2",
+                  "okta:idp:metadata": "https://login.bandwidth.com/api/v1/idps/0obhx4rqfARaXDIas4x2/metadata.xml",
+                  "okta:idp:type": "SAML2"
+                },
+                "titles": {
+                  "und": "Company IdP"
+                }
+              }
+            ]
+          }
+        },
+        "description": "The response from the Webfinger for a resource with BYOIdP enabled",
+        "example": {
+          "subject": "okta:acct:user@company;com",
+          "links": [
+            {
+              "href": "https://login.bandwidth.com/sso/idps/0oahx4rqfARaXDIas4x6?login_hint=user%40company.com#",
+              "rel": "okta:idp",
+              "properties": {
+                "okta:idp:id": "0obhx4rqfARaXDIas4x2",
+                "okta:idp:metadata": "https://login.bandwidth.com/api/v1/idps/0obhx4rqfARaXDIas4x2/metadata.xml",
+                "okta:idp:type": "SAML2"
+              },
+              "titles": {
+                "und": "Company IdP"
+              }
+            }
+          ]
+        }
+      },
+      "webfinger_links_titles": {
+        "title": "webfinger_links_titles",
+        "required": [
+          "und"
+        ],
+        "type": "object",
+        "properties": {
+          "und": {
+            "type": "string",
+            "description": "Title of the link of the resource",
+            "xml": {
+              "attribute": true,
+              "wrapped": false
+            }
+          }
+        },
+        "description": ""
+      },
+      "webfinger_links_properties": {
+        "title": "webfinger_links_properties",
+        "required": [
+          "okta:idp:id",
+          "okta:idp:metadata",
+          "okta:idp:type"
+        ],
+        "type": "object",
+        "properties": {
+          "okta:idp:id": {
+            "type": "string",
+            "description": "The IdP ID",
+            "xml": {
+              "attribute": true,
+              "wrapped": false
+            }
+          },
+          "okta:idp:metadata": {
+            "type": "string",
+            "description": "Link to the IdP metadata",
+            "xml": {
+              "attribute": true,
+              "wrapped": false
+            }
+          },
+          "okta:idp:type": {
+            "type": "string",
+            "description": "The IdP type or protocol",
+            "xml": {
+              "attribute": true,
+              "wrapped": false
+            },
+            "example": "SAML2"
+          }
+        },
+        "description": ""
+      },
+      "webfinger_links": {
+        "title": "webfinger_links",
+        "required": [
+          "href",
+          "rel",
+          "properties",
+          "titles"
+        ],
+        "type": "object",
+        "properties": {
+          "href": {
+            "type": "string",
+            "description": "Direct link to initiate resource login process",
+            "xml": {
+              "attribute": true,
+              "wrapped": false
+            }
+          },
+          "rel": {
+            "type": "string",
+            "xml": {
+              "attribute": true,
+              "wrapped": false
+            },
+            "example": "okta:idp"
+          },
+          "properties": {
+            "$ref": "#/components/schemas/webfinger_links_properties"
+          },
+          "titles": {
+            "$ref": "#/components/schemas/webfinger_links_titles"
+          }
+        },
+        "description": "Links for the resource in the subject"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "jwt"
       }
     }
-  }
+  },
+  "security": [],
+  "tags": [
+    {
+      "name": "Identity Provider Management",
+      "description": ""
+    },
+    {
+      "name": "Webfinger",
+      "description": ""
+    }
+  ]
 }
