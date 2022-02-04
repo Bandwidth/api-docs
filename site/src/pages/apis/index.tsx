@@ -62,6 +62,12 @@ const ApiList = [
         style: apiStyles.apiSvg,
         link: '/apis/dash-notifications'
     },
+    {
+        title: 'Identity',
+        Svg: require('../../../static/img/icon-dash-notifications-complex-no-bg.svg').default,
+        style: apiStyles.apiSvg,
+        link: '/apis/identity'
+    },
 ];
 
 function Header() {
