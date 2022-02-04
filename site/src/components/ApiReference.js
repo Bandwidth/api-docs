@@ -10,6 +10,7 @@ const RedocConfig = (props) => {
                       scrollYOffset: '.navbar', // makes the fixed sidebar and scrolling play nicey with docusaurus navbar
                       pathInMiddlePanel: true,
                       expandSingleSchemaField: true,
+                      expandResponses: "200,201,202,204",
                       menuToggle: true,
                       theme: isDarkTheme ? darkTheme(props.color) : lightTheme(props.color)
                   }}/>

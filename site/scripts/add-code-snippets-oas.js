@@ -43,8 +43,10 @@ function replace_environmental_variables(strn) {
     return strn
 }
 
-//Converts the file extension to the proper Redoc `lang` tag
+// Converts the file extension to the proper Redoc `lang` tag
+// Supported Lang tags can be found here: https://github.com/github/linguist/blob/master/lib/linguist/popular.yml
 const EXTENSION_TO_LANG = {
+    "sh": "cURL",
     "cs": "C#",
     "java": "Java",
     "php": "PHP",

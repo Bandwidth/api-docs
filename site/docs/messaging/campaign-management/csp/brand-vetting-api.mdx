@@ -1,0 +1,347 @@
+---
+id: brand-vetting-api
+title: Brand Vetting API
+sidebar_label: Brand Vetting API
+slug: /messaging/campaign-management/csp/brand-vetting-api
+description: How to re-vet and externally vet your brands using Bandwidth APIs
+keywords:
+  - bandwidth
+  - messaging
+  - campaign
+  - 10DLC
+hide_title: false
+image: ../../static/img/bandwidth-logo.png
+---
+
+export const accountId = "{accountId}";
+export const brandId = "{brandId}";
+export const type = "{type}";
+export const page = "{page}";
+export const size = "{size}";
+
+export const Highlight = ({children, color}) => (
+    <span
+        style={{
+        backgroundColor: color,
+        borderRadius: '2px',
+        color: '#fff',
+        padding: '0.2rem',
+        }}>
+        {children}
+    </span>
+);
+
+This walks through how to programmatically use external vetting providers and re-vet your brands _via APIs_ for use with our [Campaign](docs/messaging/campaign-management/csp/campaign-api), [Number Management](../../../numbers) and [Messaging](../../../messaging) API's.
+
+## Assumptions
+
+* Familiarity with [Account API Credentials](../../../account/credentials)
+* Created an [API Credential Pair within the UI](https://support.bandwidth.com/hc/en-us/articles/360039065753-Classic-How-to-Create-New-Users-in-the-Bandwidth-Dashboard)
+* Your account has Messaging and Campaign Management products enabled
+* Your account has 10dlcCampaigns product feature enabled
+* Your user has been assigned the Campaign Management user role
+* You have created an existing Brand
+* If re-vetting, existing brand must be Unverified
+
+## Important Notes
+
+* If you get a '403 Unauthorized' error response while making an HTTP Request to any of the Import endpoints,
+you will need to reach out to the Implementation team to get the Campaign Management role assigned to your API User.
+* TCR currently has rate limits set on their HTTP REST endpoints. During high volume events, it is possible our APIs will be rate limited and respond with '429 Too Many Requests'.
+* There are fees associated with both external vetting and re-vetting of brands.
+
+## API Authentication
+
+The Account Management API resources are authenticated with your [API Credentials for "Number & Account Management"](../../../account/credentials).
+
+## API Error Codes
+```http
+HTTP/1.1 400 Bad Request
+HTTP/1.1 403 Unauthorized
+HTTP/1.1 404 Not Found
+HTTP/1.1 409 Conflict
+HTTP/1.1 429 Too Many Requests
+```
+
+## Getting Started
+
+1. [Request Brand Re-vet](#request-brand-re-vet)
+2. [Request External Vetting](#request-external-vetting)
+3. [Import External Vetting Record](#import-external-vetting-record)
+4. [Fetch External Vetting Records](#fetch-external-vetting-records)
+
+## Request Brand Re-vet
+
+### Request URL
+<Highlight color="#079CEE">PUT</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/campaignManagement/10dlc/brands/{brandId}/revet</code>
+
+| Request Body               | Mandatory | Description                                                                                                                  |
+|:---------------------------|:----------|:-----------------------------------------------------------------------------------------------------------------------------|
+| NONE                       | N/A       | 	This request takes no request body                                                                                     |
+
+### Examples
+
+> Request
+
+```http
+PUT https://dashboard.bandwidth.com/api/accounts/{accountId}/campaignManagement/10dlc/brands/{brandId}/revet HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```
+
+> Response
+
+```xml
+HTTP/1.1 200 OK
+Content-Type: application/xml
+Location: https://dashboard.bandwidth.com/api/accounts/{accountId}/campaignManagement/10dlc/brands/{brandId}/revet
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<BrandRevetResponse>
+    <Brand>
+      <BrandId>BJDHM3</BrandId>
+      <CspId>CMHSJ9</CspId>
+      <EntityType>NON_PROFIT</EntityType>
+      <AltBusinessId>111111111</AltBusinessId>
+      <AltBusinessIdType>DUNS</AltBusinessIdType>
+      <BrandRelationship>MEDIUM_ACCOUNT</BrandRelationship>
+      <City>Raleigh</City>
+      <CompanyName>Bandwidth</CompanyName>
+      <Country>US</Country>
+      <DisplayName>Bandwidth</DisplayName>
+      <Ein>111111111</Ein>
+      <UniversalEin>111111111</UniversalEin>
+      <Email>Test1@bandwidth.com</Email>
+      <Phone>+18009999999</Phone>
+      <PostalCode>27606</PostalCode>
+      <State>NC</State>
+      <Street>1200 Test Road</Street>
+      <StockExchange>NASDAQ</StockExchange>
+      <StockSymbol>BAND</StockSymbol>
+      <Vertical>COMMUNICATION</Vertical>
+      <Website>https://www.bandwidth.com</Website>
+      <IsMain>true</IsMain>
+    </Brand>
+</BrandRevetResponse>
+```
+
+> Error Response
+
+```xml
+HTTP/1.1 400 Bad Request
+Content-Type: application/xml
+Location: https://dashboard.bandwidth.com/api/accounts/{accountId}/campaignManagement/10dlc/brands/{brandId}/revet
+
+<?xml version="1.0" encoding="UTF-8"?>
+<BrandRevetResponse>
+   <ResponseStatus>
+      <ErrorCode>12210</ErrorCode>
+      <Description>The Brand 'BEAQBHG'  with identity status 'VETTED_VERIFIED' not allowed to revet</Description>
+   </ResponseStatus>
+</BrandRevetResponse>
+```
+
+## Request External Vetting
+
+### Request URL
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/campaignManagement/10dlc/brands/{brandId}/vetting</code>
+
+| Request Body               | Mandatory | Description                                                                                                                  |
+|:---------------------------|:----------|:-----------------------------------------------------------------------------------------------------------------------------|
+| `EvpId`                    | Yes       | 	The External Vetting Provider ID, 'AEGIS' or 'WMC' ('CV' is not currently supported by vetting requests)                                                          |
+| `VettingClass`             | Yes       | 	Vetting Class, 'STANDARD' or 'POLITICAL'                              |
+
+### Examples
+
+> Request
+
+```xml
+POST https://dashboard.bandwidth.com/api/accounts/{accountId}/campaignManagement/10dlc/brands/{brandId}/vetting HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<BrandVetting>
+  <EvpId>WMC</EvpId>
+  <VettingId>STANDARD</VettingId>
+</BrandVetting>
+```
+
+> Response
+
+```xml
+HTTP/1.1 201 Created
+Content-Type: application/xml
+Location: https://dashboard.bandwidth.com/api/accounts/{accountId}/campaignManagement/10dlc/brands/{brandId}/vetting
+
+<?xml version="1.0" encoding="UTF-8"?>
+<BrandVettingResponse>
+   <BrandVetting>
+      <EvpId>WMC</EvpId>
+      <VettingId>0FBBD8A674134C20A7D2193CE525FDF5</VettingId>
+      <VettingClass>STANDARD</VettingClass>
+      <VettingStatus>PENDING</VettingStatus>
+      <CreateDate>2022-01-25T20:25:34.777</CreateDate>
+   </BrandVetting>
+</BrandVettingResponse>
+```
+
+> Error Response
+
+```xml
+HTTP/1.1 400 Bad Request
+Content-Type: application/xml
+Location: https://dashboard.bandwidth.com/api/accounts/{accountId}/campaignManagement/10dlc/brands/{brandId}/vetting
+
+<?xml version="1.0" encoding="UTF-8"?>
+<BrandVettingResponse>
+   <ResponseStatus>
+      <ErrorCode>12185</ErrorCode>
+      <Description>A call to the campaign registry service has failed validation.</Description>
+   </ResponseStatus>
+   <Errors>
+      <Error>
+         <Code>525</Code>
+         <Description>Vetting re-submission not allowed with same brand information.</Description>
+      </Error>
+   </Errors>
+</BrandVettingResponse>
+```
+
+## Import External Vetting Records
+
+### Request URL
+<Highlight color="#079CEE">PUT</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/campaignManagement/10dlc/brands/{brandId}/vetting</code>
+
+| Request Body               | Mandatory | Description                                                                                                                  |
+|:---------------------------|:----------|:-----------------------------------------------------------------------------------------------------------------------------|
+| `EvpId`                    | Yes       | 	The External Vetting Provider ID, 'AEGIS', 'WMC', or 'CV'                                                          |
+| `VettingId`                | Yes       | 	The ID of the vetting record you wish to import                              |
+| `VettingToken`             | Yes       | 	(Only required by AEGIS) Token supplied by AEGIS required to import                             |
+
+### Examples
+
+> Request
+
+```xml
+PUT https://dashboard.bandwidth.com/api/accounts/{accountId}/campaignManagement/10dlc/brands/{brandId}/vetting HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<?xml version="1.0" encoding="UTF-8"?>
+<BrandVetting>
+  <EvpId>AEGIS</EvpId>
+  <VettingId>531D1FD09D68401EA0E4624B8B7D4A14</VettingId>
+</BrandVetting>
+```
+
+> Response
+
+```xml
+HTTP/1.1 200 OK
+Content-Type: application/xml
+Location: https://dashboard.bandwidth.com/api/accounts/{accountId}/campaignManagement/10dlc/brands/{brandId}/vetting
+
+<?xml version="1.0" encoding="UTF-8"?>
+<BrandVettingResponse>
+   <BrandVetting>
+      <EvpId>AEGIS</EvpId>
+      <VettingId>531D1FD09D68401EA0E4624B8B7D4A14</VettingId>
+      <VettingScore>88</VettingScore>
+      <VettingClass>STANDARD</VettingClass>
+      <VettingStatus>ACTIVE</VettingStatus>
+      <CreateDate>2021-11-22T19:58:08</CreateDate>
+      <VettedDate>2021-11-22T19:58:38</VettedDate>
+   </BrandVetting>
+</BrandVettingResponse>Z
+```
+
+> Error Response
+
+```xml
+HTTP/1.1 400 Bad Request
+Content-Type: application/xml
+Location: https://dashboard.bandwidth.com/api/accounts/{accountId}/campaignManagement/10dlc/brands/{brandId}/vetting
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<CampaignSettingsResponse>
+    <ResponseStatus>
+        <ErrorCode>1003</ErrorCode>
+        <Description>Phone is required</Description>
+    </ResponseStatus>
+</CampaignSettingsResponse>
+```
+
+## Fetch External Vetting Records
+
+### Request URL
+<Highlight color="#079CEE">GET</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/campaignManagement/10dlc/brands/{brandId}/vetting</code>
+
+### Examples
+
+>Request
+
+```http
+GET https://dashboard.bandwidth.com/api/accounts/{accountId}/campaignManagement/10dlc/brands/{brandId}/vetting HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```
+
+> Response
+
+```xml
+HTTP/1.1 200 OK
+Content-Type: application/xml
+Location: https://dashboard.bandwidth.com/api/accounts/{accountId}/campaignManagement/10dlc/brands/{brandId}/vetting
+
+<?xml version="1.0" encoding="UTF-8"?>
+<BrandVettingsResponse>
+   <BrandVettings>
+      <BrandVetting>
+         <EvpId>WMC</EvpId>
+         <VettingId>531D1FD09D68401EA0E4624B8B7D4A14</VettingId>
+         <VettingScore>88</VettingScore>
+         <VettingClass>STANDARD</VettingClass>
+         <VettingStatus>ACTIVE</VettingStatus>
+         <CreateDate>2021-11-22T19:58:08</CreateDate>
+         <VettedDate>2021-11-22T19:58:38</VettedDate>
+      </BrandVetting>
+      <BrandVetting>
+         <EvpId>AEGIS</EvpId>
+         <VettingId>2ee15ee2-8e77-4c5c-ed14-08d99db075c6</VettingId>
+         <VettingScore>80</VettingScore>
+         <VettingClass>STANDARD</VettingClass>
+         <VettingStatus>ACTIVE</VettingStatus>
+         <CreateDate>2021-11-22T18:13:37</CreateDate>
+         <VettedDate>2021-11-22T18:13:37</VettedDate>
+      </BrandVetting>
+   </BrandVettings>
+</BrandVettingsResponse>
+```
+
+> Error Response
+
+```xml
+HTTP/1.1 404 Not Found
+Content-Type: application/xml
+Location: https://dashboard.bandwidth.com/api/accounts/{accountId}/campaignManagement/10dlc/brands/{brandId}/vetting
+
+<?xml version="1.0" encoding="UTF-8"?>
+<BrandVettingResponse>
+   <ResponseStatus>
+      <ErrorCode>12185</ErrorCode>
+      <Description>A call to the campaign registry service has failed validation.</Description>
+   </ResponseStatus>
+   <Errors>
+      <Error>
+         <Code>525</Code>
+         <Description>Vetting re-submission not allowed with same brand information.</Description>
+      </Error>
+   </Errors>
+</BrandVettingResponse>
+```
+
+## Next Steps
+After successful brand registration, you can register campaigns with our [campaign REST APIs](./campaign-api)
+
+---

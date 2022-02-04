@@ -16,7 +16,7 @@ const identitySpec = fs.readFileSync('./specs/identity.json', 'utf-8');
 module.exports = {
     title: 'Bandwidth API Docs',
     tagline: 'Learn About Bandwidth\'s Product APIs',
-    url: 'https://new.dev.bandwidth.com',
+    url: 'https://dev.bandwidth.com',
     baseUrl: '/',
     onBrokenLinks: 'throw',
     onBrokenMarkdownLinks: 'warn',
@@ -29,7 +29,8 @@ module.exports = {
             disableSwitch: false // for disabling dark mode
         },
         algolia: {
-            apiKey: '240bfd4951231197541ea28184808812',
+            appId: 'DJ56W2DX1L',
+            apiKey: '865921f3caf63083e8d54552b5ab7a79',
             indexName: 'bandwidth',
             contextualSearch: false, // useful for versioned Docusaurus sites
         },
@@ -62,38 +63,9 @@ module.exports = {
                 label: 'Docs',
                 position: 'left',
             }, {
+                to: 'apis',
                 label: 'API Reference',
-                items: [{
-                    to: 'apis/numbers',
-                    label: 'Numbers'
-                }, {
-                    to: 'apis/number-lookup',
-                    label: 'Phone Number Lookup'
-                }, {
-                    to: 'apis/voice',
-                    label: 'Voice'
-                }, {
-                    to: 'apis/messaging',
-                    label: 'Messaging'
-                }, {
-                    to: 'apis/messaging-international',
-                    label: 'International Messaging'
-                }, {
-                    to: 'apis/multifactorauth',
-                    label: 'Multi-Factor Authentication'
-                }, {
-                    to: 'apis/webrtc',
-                    label: 'WebRTC'
-                }, {
-                    to: 'apis/dash',
-                    label: 'DASH'
-                }, {
-                    to: 'apis/dash-notifications',
-                    label: 'DASH Notifications'
-                }, {
-                    to: 'apis/identity',
-                    label: 'Identity Management'
-                }]
+                activeBasePath: 'apis'
             }, {
                 to: 'sdks',
                 label: 'SDKs',
@@ -123,7 +95,7 @@ module.exports = {
                         },
                         {
                             label: 'Legacy v1 Docs',
-                            href: 'https://old.dev.bandwidth.com/',
+                            href: 'https://v1.dev.bandwidth.com/',
                         },
                     ],
                 },
@@ -147,7 +119,7 @@ module.exports = {
                             href: 'https://github.com/Bandwidth',
                         }, {
                             label: 'Try Sandbox',
-                            href: 'https://simulator.bandwidth.com/'
+                            href: 'https://sandbox.bandwidth.com'
                         }
                     ],
                 }
@@ -190,6 +162,8 @@ module.exports = {
         messagingGreen: '#00bf8c',
         emergencyOrange: '#ff6f47',
         numbersMaroon: '#652B51',
+        webRtcBlue: '#194F7A',
+        mfaGreen: '#106149',
         white: '#FFFFFF',
         lightBlue: '#E6F5FD',
         grey: '#9C9A9B',
@@ -197,5 +171,7 @@ module.exports = {
         black: '#090306',
         redocCodeBackground: '#263238',
     },
-    plugins: [path.resolve(__dirname, 'redoc-plugin')],
+    plugins: [
+        path.resolve(__dirname, 'redoc-plugin')
+    ],
 };

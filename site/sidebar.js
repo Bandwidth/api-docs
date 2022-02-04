@@ -6,12 +6,19 @@ module.exports = {
         },
         {
             type: "category",
-            label: "Account",
+            label: "Account Management",
             items: [
                 "account/about",
                 "account/credentials",
                 "account/structure",
-                "account/setup",
+                {
+                    type: "category",
+                    label: "Setup",
+                    items: [
+                        "account/dashboard-setup",
+                        "account/programmatic-setup",
+                    ]
+                },
                 "account/applications",
                 "account/subscriptions",
                 "account/networkBridge",
@@ -40,6 +47,7 @@ module.exports = {
                         "numbers/searchingNumbers",
                         "numbers/orderingNumbers",
                         "numbers/portingNumbers",
+                        "numbers/csrLookupTool",
                         "numbers/hostingNumbers",
                         "numbers/manageNumberFeatures",
                         "numbers/searchNumbers",
@@ -49,6 +57,11 @@ module.exports = {
                     ],
                 },
                 "numbers/errors",
+                {
+                    type: "link",
+                    label: "API Reference",
+                    href: "https://dev.bandwidth.com/apis/numbers"
+                },
             ],
         },
         {
@@ -123,6 +136,11 @@ module.exports = {
                 },
                 "voice/rateLimits",
                 "voice/errors",
+                {
+                    type: "link",
+                    label: "API Reference",
+                    href: "https://dev.bandwidth.com/apis/voice"
+                },
             ],
         },
         {
@@ -130,8 +148,9 @@ module.exports = {
             label: "Messaging",
             items: [
                 "messaging/about",
-                "messaging/webhooks",
                 "messaging/quickStart",
+                "messaging/webhooks",
+                "messaging/international",
                 {
                     type: "category",
                     label: "Guides and Tutorials",
@@ -141,8 +160,45 @@ module.exports = {
                         "messaging/mediaManagement",
                     ],
                 },
+                {
+                    type: "category",
+                    label: "Campaign Management",
+                    items: [
+                        "messaging/campaign-management/about",
+                        {
+                            type: "category",
+                            label: "10DLC CSP Campaigns",
+                            items: [
+                                "messaging/campaign-management/cspabout",
+                                "messaging/campaign-management/csp/reseller-brand-ui",
+                                "messaging/campaign-management/csp/reseller-brand-api",
+                                "messaging/campaign-management/csp/brand-vetting-ui",
+                                "messaging/campaign-management/csp/brand-vetting-api",
+                                "messaging/campaign-management/csp/campaign-ui",
+                                "messaging/campaign-management/csp/campaign-api",
+                                "messaging/campaign-management/csp/faq",
+                            ],
+                        },
+                        {
+                            type: "category",
+                            label: "10DLC Campaign Imports",
+                            items: [
+                                "messaging/campaign-management/importsabout",
+                                "messaging/campaign-management/imports/imports-ui",
+                                "messaging/campaign-management/imports/imports-api",
+                                "messaging/campaign-management/imports/manage-multiple-csp",
+                                "messaging/campaign-management/imports/faq",
+                            ],
+                        },
+                    ],
+                },
                 "messaging/rateLimits",
                 "messaging/errors",
+                {
+                    type: "link",
+                    label: "API Reference",
+                    href: "https://dev.bandwidth.com/apis/messaging"
+                },
             ],
         },
         {
@@ -163,12 +219,37 @@ module.exports = {
                     ],
                 },
                 "webrtc/errors",
+                {
+                    type: "link",
+                    label: "API Reference",
+                    href: "https://dev.bandwidth.com/apis/webrtc"
+                },
             ],
         },
         {
             type: "category",
             label: "Multi-Factor Authentication",
-            items: ["mfa/about", "mfa/errors", "mfa/rateLimits"],
+            items: [
+                "mfa/about",
+                "mfa/errors",
+                "mfa/rateLimits",
+                {
+                    type: "category",
+                    label: "Webhooks",
+                    items: [
+                        "mfa/webhooks/aboutMfaWebhooks",
+                        "mfa/webhooks/northAmerica/messageDeliveredNorthAmericaMfaWebhooks",
+                        "mfa/webhooks/northAmerica/messageFailedNorthAmericaMfaWebhooks",
+                        "mfa/webhooks/international/messageDeliveredInternationalMfaWebhooks",
+                        "mfa/webhooks/international/messageFailedInternationalMfaWebhooks",
+                    ],
+                },
+                {
+                    type: "link",
+                    label: "API Reference",
+                    href: "https://dev.bandwidth.com/apis/multifactorauth"
+                },
+            ],
         },
         {
             type: "category",
@@ -192,6 +273,11 @@ module.exports = {
                         "emergency/dash/usage",
                         "emergency/dash/soap",
                         "emergency/dash/errors",
+                        {
+                            type: "link",
+                            label: "API Reference",
+                            href: "https://dev.bandwidth.com/apis/dash"
+                        },
                     ],
                 },
                 "emergency/emergencyCallingApi",

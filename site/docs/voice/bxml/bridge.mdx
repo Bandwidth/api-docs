@@ -8,6 +8,8 @@ keywords:
   - voice
   - bxml
   - bridge
+  - transfer
+  - connect
 hide_title: false
 image: ../../static/img/bandwidth-logo.png
 ---
@@ -22,12 +24,18 @@ When the target call is bridged, any BXML being executed in it will be cancelled
 The bridge ends when one of the calls leaves the bridge.
 A call leaves the bridge when it is hung up or when it gets [redirected](/apis/voice#operation/modifyCall) to another BXML.
 
-The [Bridge Complete](/docs/voice/webhooks/bridgeComplete) and [Bridge Target Complete](/docs/voice/webhooks/bridgeTargetComplete)
-webhooks are sent when the bridge ends, to allow the call that remained in the bridge to execute new BXML.
+One of the [Bridge Complete](/docs/voice/webhooks/bridgeComplete) or [Bridge Target Complete](/docs/voice/webhooks/bridgeTargetComplete)
+webhooks is sent when the bridge ends, to allow the call that remained in the bridge to execute new BXML. For example, if the call
+that executed the Bridge verb hangs up or is [redirected](/apis/voice#operation/modifyCall) first, the
+[Bridge Target Complete](/docs/voice/webhooks/bridgeTargetComplete) webhook is sent and the BXML returned from that will
+be executed on the bridge target. In this case, the [Bridge Complete](/docs/voice/webhooks/bridgeComplete) webhook is NOT sent.
+Similarly, if the target of the Bridge verb hangs up or is [redirected](/apis/voice#operation/modifyCall) first, the
+[Bridge Complete](/docs/voice/webhooks/bridgeComplete) webhook is sent and the BXML returned from that will be executed
+on the call that executed the Bridge. In this case, the [Bridge Target Complete](/docs/voice/webhooks/bridgeTargetComplete) webhook
+is not sent.
 
 There are certain circumstances in which calls cannot be bridged, such as when the target call:
   * is outbound and is still not answered
-  * is already bridged with another call
   * is executing [Forward](/docs/voice/bxml/forward)
   * is already hung up
 

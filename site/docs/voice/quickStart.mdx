@@ -18,7 +18,7 @@ This is a brief walkthrough for setting up and using a Bandwidth voice applicati
 
 ## Assumptions
 * You have already created and set up your [Bandwidth Dashboard](https://dashboard.bandwidth.com) account. 
-    * If you have not already done so, please look [here](/docs/account/setup) for our Account Setup guide.
+    * If you have not already done so, please look [here](/docs/account/dashboard-setup) for our Account Setup guide.
 * You have created a voice application in the Dashboard UI or using the Dashboard API. 
     * Instructions for doing so can be found [here](/docs/account/applications).
 
@@ -26,17 +26,17 @@ With an account and application created, we can get started using the Voice API.
 
 ## Configuring Callback URLs
 The voice API can be configured to use multiple different callback URLs to direct traffic and receive input from phone calls.
-Every application does require a call initiated callback URL, as this is the URL Bandwidth sends an `initiated` webhook to when an inbound call to a Bandwidth number is made.
-The other most widely used callback URL is the `answerUrl` in the POST request made to start an outbound call from a Bandwidth number.
-Bandwidth will expect BXML in the HTTP response from either of these URLs to continue the call using BXML verbs.
-These URLs can be the same or different, depending on if you would like inbound and outbound calls to be handled differently.
+Every application requires a `CallInitiatedCallbackUrl`, as this is the URL Bandwidth sends an [initiated webhook](./webhooks/initiate.mdx) to when an inbound call to a Bandwidth number is made,
+and a BXML response is expected to continue the call.
 
+For inbound calls, Bandwidth will also send [disconnect webhooks](./webhooks/disconnect.mdx) to the configured `CallStatusCallbackUrl`. This webhook is useful for error checking and includes the cause of the disconnect, for example _rejected_ or _hung up_.
+You may choose to handle this webhook with the same server you use for standard voice webhooks, or using Pipedream, since it is a great tool for logging these callbacks.
+If you choose to handle this on a personal server, it is highly recommended to use a unique endpoint to separate these callbacks from other voice webhooks.
 
-### Call Status Callbacks
-Bandwidth will also send call status updates to the configured `CallStatusCallbackUrl`. These webhooks are useful for error checking and include events such as _rejected_ and _hung up_.
-You may choose to handle these webhooks with the same server you use for standard voice webhooks, or using Pipedream, since it is a great tool for logging these callbacks.
-If you choose to handle these on a personal server, it is highly recommended to use a unique endpoint to separate these callbacks from other voice webhooks.
+For outbound calls, the other most widely used callback URL is the `answerUrl` in the POST request made to start a call from a Bandwidth number.
+Like the `CallInitiatedCallbackUrl` for inbound calls, Bandwidth will expect BXML in the HTTP response this URL to continue the call using BXML verbs.
 
+The `CallInitiatedCallbackUrl` and `answerUrl` can be the same or different, depending on if you would like inbound and outbound calls to be handled differently.
 
 ### Creating a Personal Server
 Many of the [Bandwidth Samples](https://github.com/Bandwidth-Samples) include code for setting up a local server.
