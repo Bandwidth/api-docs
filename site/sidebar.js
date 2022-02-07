@@ -287,12 +287,8 @@ module.exports = {
       type: 'category',
       label: 'Identity Management',
       items: [
-        'identity/about',
-        {
-          type: 'category',
-          label: 'Guides and Tutorials ',
-          items: []
-        },
+          'identity/about',
+          'identity/identityProvidersOverview',
       ],
     }
   ],
