@@ -3,7 +3,7 @@ const core = require('@actions/core');
 
 try {
     let matrix = "{\"include\": [";
-    const specslist = fs.readdirSync('./site/specs');
+    const specslist = fs.readdirSync('./site/specs-source');
     specslist.forEach(spec => {
         matrix += "{\"specs\": \"";
         matrix += spec;
