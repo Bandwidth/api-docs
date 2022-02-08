@@ -63,7 +63,8 @@ const ApiList = [
         link: '/apis/dash-notifications'
     },
     {
-        title: 'Identity',
+        title: 'Identity Providers',
+        // TODO (ONEID-1295 - Use our own icon when available)
         Svg: require('../../../static/img/icon-dash-notifications-complex-no-bg.svg').default,
         style: apiStyles.apiSvg,
         link: '/apis/identity'
