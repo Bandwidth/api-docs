@@ -9,6 +9,13 @@ runs:
   steps:
     - name: Checkout
       uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    
+    - name: Get List of Changed Files
+      id: changed-files
+      run: echo "::set-output name=changed_files::$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | xargs)"
+      shell: bash
 
     - name: Setup Node
       uses: actions/setup-node@v2
@@ -23,3 +30,5 @@ runs:
       id: run-script
       run: node ./.github/actions/create_spec_matrix/index.js
       shell: bash
+      env:
+        CHANGED_FILES: ${{ steps.changed-files.outputs.changed_files }}

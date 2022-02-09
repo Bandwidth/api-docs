@@ -1,13 +1,15 @@
-const fs = require('fs');
 const core = require('@actions/core');
 
 try {
+    let changedFiles = process.env.CHANGED_FILES.split(' ');
     let matrix = "{\"include\": [";
-    const specslist = fs.readdirSync('./site/specs-source');
-    specslist.forEach(spec => {
-        matrix += "{\"specs\": \"";
-        matrix += spec;
-        matrix += "\"}, ";
+    changedFiles.forEach(file => {
+        if (file.startsWith("site/specs-source/")) {
+            var n = file.lastIndexOf('/');
+            matrix += "{\"specs\": \"";
+            matrix += file.substring(n + 1);
+            matrix += "\"}, ";
+        }
     });
     matrix = matrix.slice(0, -2);
     matrix += "]}";
