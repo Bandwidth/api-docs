@@ -36,13 +36,13 @@ const SdkList = [
   {
     title: 'C#',
     Svg: require('../../../static/img/csharp.svg').default,
-    style: sdkStyles.sdkSvgLandscape,
+    style: sdkStyles.sdkSvg,
     link: '/sdks/csharp'
   },
   {
     title: 'PHP',
     Svg: require('../../../static/img/php.svg').default,
-    style: sdkStyles.sdkSvgLandscape,
+    style: sdkStyles.sdkSvg,
     link: '/sdks/php'
   },
 ];
