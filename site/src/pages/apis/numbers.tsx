@@ -2,6 +2,7 @@ import React from 'react';
 import Layout from '@theme/Layout';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Iframe from 'react-iframe'
+import NumbersIframe from '../../components/NumbersIframe'
 
 export default function ApiReference() {
     const {siteConfig} = useDocusaurusContext();
@@ -24,13 +25,7 @@ export default function ApiReference() {
                 <code>https://dashboard.bandwidth.com/api/</code>
               </div>
               <div class="irisRaml">
-                <Iframe url="https://dlea6y7touldw.cloudfront.net/numbers/apiRef.html"
-                        id="irisRaml"
-                        width="100%"
-                        height="100%"
-                        display="inline"
-                        position="relative"
-                        frameBorder="0"/>
+                <NumbersIframe/>
               </div>
             </main>
         </Layout>
