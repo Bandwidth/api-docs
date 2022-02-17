@@ -4,7 +4,7 @@ import styles from '../../css/sdks.module.css';
 import GitHubLink from '../../components/GitHubLink';
 
 const Title = 'Java';
-const Svg = require('../../../static/img/bw-java.svg').default;
+const Svg = require('../../../static/img/java.svg').default;
 
 export default function sdkPage() {
     return(

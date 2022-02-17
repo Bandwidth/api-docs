@@ -11,37 +11,37 @@ import ItemGrid from '../../components/gridItem'
 const SdkList = [
   {
     title: 'Node',
-    Svg: require('../../../static/img/bw-node.svg').default,
+    Svg: require('../../../static/img/node.svg').default,
     style: sdkStyles.sdkSvg,
     link: '/sdks/node'
   },
   {
     title: 'Python',
-    Svg: require('../../../static/img/bw-python.svg').default,
+    Svg: require('../../../static/img/python.svg').default,
     style: sdkStyles.sdkSvg,
     link: '/sdks/python'
   },
   {
     title: 'Ruby',
-    Svg: require('../../../static/img/bw-ruby.svg').default,
+    Svg: require('../../../static/img/ruby.svg').default,
     style: sdkStyles.sdkSvg,
     link: '/sdks/ruby'
   },
   {
     title: 'Java',
-    Svg: require('../../../static/img/bw-java.svg').default,
+    Svg: require('../../../static/img/java.svg').default,
     style: sdkStyles.sdkSvg,
     link: '/sdks/java'
   },
   {
     title: 'C#',
-    Svg: require('../../../static/img/bw-csharp.svg').default,
+    Svg: require('../../../static/img/csharp.svg').default,
     style: sdkStyles.sdkSvg,
     link: '/sdks/csharp'
   },
   {
     title: 'PHP',
-    Svg: require('../../../static/img/bw-php.svg').default,
+    Svg: require('../../../static/img/php.svg').default,
     style: sdkStyles.sdkSvg,
     link: '/sdks/php'
   },
