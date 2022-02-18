@@ -1,4 +1,4 @@
-# Validates the spec in this repo
+# Validates the OpenAPI specs in this repo
 
 name: OAS Validate
 
@@ -10,14 +10,37 @@ on:
       - 'site/specs-source/**'
 
 jobs:
-  validate:
-    name: Spec validate
+  create-matrix:
+    name: Create Matrix From Spec Files
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.changed-files.outputs.matrix }}
     steps:
-      - name: Repo Checkout
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Get List of Changed Files
+        id: changed-files
+        run: |
+          changedFiles=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep site/specs-source | xargs -0)                                                   # creates a newline delimited list of changed files in the site/specs folder
+          IFS=$'\n'; changedFilesArray=($changedFiles); unset IFS                                                                                                                                             # set IFS to newline and create array from git diff string
+          matrix="{ \"include\": ["; for f in "${changedFilesArray[@]}"; do matrix=$matrix"{ \"specs\": \"$f\" }, "; done; matrix=${matrix%,}; matrix=$matrix"]}"; echo "::set-output name=matrix::$matrix"   # iterate thru array and format specs into stringified JSON object
+        shell: bash
+
+  validate:
+    name: Spec Validate
+    runs-on: ubuntu-latest
+    needs: create-matrix
+    strategy:
+      matrix: ${{ fromJson(needs.create-matrix.outputs.matrix) }}
+      fail-fast: false
+    steps:
+      - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Validate spec
-        uses: stoplightio/spectral-action@v0.7.0
+      - name: Validate Spec
+        uses: stoplightio/spectral-action@v0.7.3
         with:
-          file_glob: ./site/specs-source/*.{json,yml,yaml}
+          file_glob: ./${{ matrix.specs }}
