@@ -7,6 +7,7 @@ slug: /changelog
 
 | Date | Notes |
 |--|--|
+| February 16, 2022 | Added details of new http voice statistics endpoint
 | February 16, 2022 | Added new call modify endpoint with BXML to Voice API spec |
 | February 3, 2022 | Added brand vetting UI and API and added unassign campaign from TN to campaign APIs |
 | February 2, 2022 | Removed the Staging environment from the server list for WebRTC API Specs |
