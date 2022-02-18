@@ -1,0 +1,301 @@
+---
+id: mediaAndTTSGuide
+title: Play audio clips and text-to-speech on a call
+slug: /voice/guides/mediaAndTTSGuide.mdx
+description: How to play media and use Bandwidth's text-to-speech (TTS) on a call.
+keywords:
+  - bandwidth
+  - voice
+  - TTS
+  - media
+  - tutorial
+hide_title: false
+image: ../../static/img/bandwidth-logo.png
+---
+
+In this guide we will show you how to play media and use text to speech for calls. Please ensure you have followed our earlier guide on how to make an outbound call with Bandwidth.
+
+You may want to play media for on-hold music or use text-to-speech to play descriptive messages to your customers.
+Play media
+
+##Play Media
+
+The BXML PlayAudio verb is used to play an audio file in the call. After creating the call via our API, your associated voice application should contain this BXML.
+
+The audio file should already be hosted and the URL of an audio file should be included in the body of the <PlayAudio> tag.
+
+<Tabs
+    groupId="bxml"
+    defaultValue="xml"
+    values={[
+        { label: 'XML', value: 'xml', },
+        { label: 'Java', value: 'java', },
+        { label: 'C#', value: 'csharp', },
+        { label: 'Ruby', value: 'ruby', },
+        { label: 'NodeJS', value: 'nodejs', },
+        { label: 'Python', value: 'python', },
+        { label: 'PHP', value: 'php', },
+    ]
+    }>
+    <TabItem value="xml">
+
+        ```xml
+        <?xml version="1.0" encoding="UTF-8"?>
+        <Response>
+            <SpeakSentence>Hello! Here is a sponsored message.</SpeakSentence>
+            <PlayAudio>https://audio.url/audio1.wav</PlayAudio>
+            <PlayAudio>/relative_endpoint_that_delivers_mediafile</PlayAudio>
+        </Response>
+        ```
+
+    </TabItem>
+    <TabItem value="java">
+        This is a framework-independent example of how an application serving media and text-to-speech should look. Note the (pseudocode) endpoint.
+
+        To learn more, look at the code example [here](https://github.com/Bandwidth-Samples/voice-record-java/blob/main/src/main/java/com/bandwidth/controller/CallbacksController.java). Note the example linked uses Springboot.
+        ```java
+        @/incoming endpoint
+        public String incoming_endpoint {
+            Response response = new Response();
+
+            SpeakSentence tts = SpeakSentence.builder().text("Hello! I'm a text to speech!").build();
+
+            PlayAudio play_first = PlayAudio.builder().audioUri("https://IPlayAudio.test/audio1").build();
+            PlayAudio play_second = PlayAudio.builder().audioUri("/audio").build();
+
+            String bxml = response.addAll(ss1, play_first, play_second).toBXML();
+
+            return bxml;
+        }
+
+        @/audio endpoint
+        public byte[] getSound() {
+            ...retrieve and serve audio file, and add to the response...
+        }
+        ```
+        The second instance of PlayAudio (a relative endpoint) assumes there is an endpoint in the application that serves an audio file. To see an example, look [here](https://github.com/Bandwidth-Samples/voice-record-java/blob/main/src/main/java/com/bandwidth/controller/FilesController.java).
+
+    </TabItem>
+    <TabItem value="csharp">
+
+        ```csharp
+        PlayAudio playAudio1 = new PlayAudio
+        {
+            Url = "https://audio.url/audio1.wav"
+        };
+
+        PlayAudio playAudio2 = new PlayAudio
+        {
+            Url = "https://audio.url/audio2.mp3"
+        };
+
+        Response response = new Response();
+        response.Add(playAudio1);
+        response.Add(playAudio2);
+
+        Console.WriteLine(response.ToBXML());
+        ```
+
+    </TabItem>
+    <TabItem value="ruby">
+
+        ```ruby
+        play_audio_1 = Bandwidth::Voice::PlayAudio.new({
+        :url => "https://audio.url/audio1.wav"
+    })
+
+        play_audio_2 = Bandwidth::Voice::PlayAudio.new({
+        :url => "https://audio.url/audio2.mp3"
+    })
+
+        response = Bandwidth::Voice::Response.new()
+        response.push(play_audio_1)
+        response.push(play_audio_2)
+
+        puts response.to_bxml()
+        ```
+
+    </TabItem>
+    <TabItem value="nodejs">
+
+        ```js
+        const playAudio1 = new PlayAudio({
+        url: "https://audio.url/audio1.wav"
+    });
+
+        const playAudio2 = new PlayAudio({
+        url: "https://audio.url/audio2.mp3"
+    });
+
+        const response = new Response(playAudio1, playAudio2);
+
+        console.log(response.toBxml());
+        ```
+
+    </TabItem>
+    <TabItem value="python">
+
+        ```python
+        play_audio_1 = PlayAudio(
+        url="https://audio.url/audio1.wav"
+        )
+
+        play_audio_2 = PlayAudio(
+        url="https://audio.url/audio2.mp3"
+        )
+
+        response = Response()
+        response.add_verb(play_audio_1)
+        response.add_verb(play_audio_2)
+
+        print(response.to_bxml())
+        ```
+
+    </TabItem>
+    <TabItem value="php">
+
+        ```php
+        $playAudio1 = new BandwidthLib\Voice\Bxml\PlayAudio("https://audio.url/audio1.wav");
+        $playAudio2 = new BandwidthLib\Voice\Bxml\PlayAudio("https://audio.url/audio2.mp3");
+
+        $response = new BandwidthLib\Voice\Bxml\Response();
+        $response->addVerb($playAudio1);
+        $response->addVerb($playAudio2);
+
+        echo $response->toBxml();
+        ```
+
+    </TabItem>
+</Tabs>
+
+In this example, once the call is created using our API we check the specific answerUrl for a BXML response which tells us to play the media file. You also have the ability to play multiple audio files in succession.
+:::tip
+ONLY .wav and .mp3 files as are supported
+
+To ensure playback quality, Bandwidth recommends limiting audio files to less than 1 hour in length or 250 MB in size.
+:::
+
+##Text-To-Speech
+
+The SpeakSentence verb is used for text-to-speech playback on a call. Attributes of the speaker may be changed including the gender or locale of the speaker. The default speaker is a female speaker with locale en_US.
+
+<Tabs
+    groupId="bxml"
+    defaultValue="xml"
+    values={[
+        { label: 'XML', value: 'xml', },
+        { label: 'Java', value: 'java', },
+        { label: 'C#', value: 'csharp', },
+        { label: 'Ruby', value: 'ruby', },
+        { label: 'NodeJS', value: 'nodejs', },
+        { label: 'Python', value: 'python', },
+        { label: 'PHP', value: 'php', },
+    ]
+    }>
+    <TabItem value="xml">
+
+        ```xml
+        <?xml version="1.0" encoding="UTF-8"?>
+        <Response>
+            <SpeakSentence voice="jorge">
+                Hello <lang xml:lang="en-GB">Sherlock Holmes</lang>.
+                You have an appointment on <say-as interpret-as="date" format="mdy">11/12/2022</say-as>.
+            </SpeakSentence>
+        </Response>
+        ```
+
+    </TabItem>
+    <TabItem value="java">
+
+        ```java
+        SpeakSentence speakSentence = SpeakSentence.builder()
+        .text("Hello <lang xml:lang=\"en-GB\">Sherlock Holmes</lang>. You have an appointment on <say-as interpret-as="date" format="mdy">11/12/2022</say-as>.")
+    .voice("jorge")
+    .build();
+
+    Response response = Response.builder().build()
+    .add(speakSentence);
+
+    System.out.println(response.toBXML());
+    ```
+
+</TabItem>
+<TabItem value="csharp">
+
+    ```csharp
+    Response response = new Response();
+
+    SpeakSentence speakSentence = new SpeakSentence
+    {
+        Sentence = "Hello <lang xml:lang=\"en-GB\">Sherlock Holmes</lang>. You have an appointment on <say-as interpret-as="date" format="mdy">11/12/2022</say-as>.",
+        Voice = "jorge"
+    };
+
+    response.Add(speakSentence);
+
+    Console.WriteLine(response.ToBXML());
+    ```
+
+</TabItem>
+<TabItem value="ruby">
+
+    ```ruby
+    speak_sentence = Bandwidth::Voice::SpeakSentence.new({
+    :sentence => 'Hello <lang xml:lang="en-GB">Sherlock Holmes</lang>. You have an appointment on <say-as interpret-as="date" format="mdy">11/12/2022</say-as>.',
+    :voice => "jorge"
+})
+
+    response = Bandwidth::Voice::Response.new()
+    response.push(speak_sentence)
+
+    puts response.to_bxml()
+    ```
+
+</TabItem>
+<TabItem value="nodejs">
+
+    ```js
+    const speakSentence = new SpeakSentence({
+    sentence: `Hello <lang xml:lang="en-GB">Sherlock Holmes</lang>. You have an appointment on <say-as interpret-as="date" format="mdy">11/12/2022</say-as>.`,
+    voice: "jorge"
+});
+
+    const response = new Response(speakSentence);
+
+    console.log(response.toBxml());
+    ```
+
+</TabItem>
+<TabItem value="python">
+
+    ```python
+    speak_sentence = SpeakSentence(
+    sentence='Hello <lang xml:lang="en-GB">Sherlock Holmes</lang>. You have an appointment on <say-as interpret-as="date" format="mdy">11/12/2022</say-as>.',
+    voice="jorge"
+    )
+
+    response = Response()
+    response.add_verb(speak_sentence)
+
+    print(response.to_bxml())
+    ```
+
+</TabItem>
+<TabItem value="php">
+
+    ```php
+    $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence('Hello <lang xml:lang="en-GB">Sherlock Holmes</lang>. You have an appointment on <say-as interpret-as="date" format="mdy">11/12/2022</say-as>.');
+    $speakSentence->voice("jorge");
+
+    $response = new BandwidthLib\Voice\Bxml\Response();
+    $response->addVerb($speakSentence);
+
+    echo $response->toBxml();
+    ```
+
+</TabItem>
+</Tabs>
+
+In this example, once the call is created using our API we check the specific answerUrl for a BXML response which tells us to playback the specified text.
+
+SSML tags are allowed to provide you with additional functionality. In the example, the name Sherlock Holmes is said with British inflection, and the date is pronounced as "November twelfth, twenty-twenty-two" instead of the numbers being read. To see details of other SSML tags, check [speaksentence]((/docs/voice/bxml/speakSentence)).
