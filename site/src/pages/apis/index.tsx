@@ -64,8 +64,7 @@ const ApiList = [
     },
     {
         title: 'Identity Providers',
-        // TODO (ONEID-1295 - Use our own icon when available)
-        Svg: require('../../../static/img/icon-dash-notifications-complex-no-bg.svg').default,
+        Svg: require('../../../static/img/icon_product_byoidp.svg').default,
         style: apiStyles.apiSvg,
         link: '/apis/identity'
     },
