@@ -50,119 +50,159 @@ The audio file should already be hosted and the URL of an audio file should be i
 
     </TabItem>
     <TabItem value="java">
-        This is a framework-independent example of how an application serving media and text-to-speech should look. Note the (pseudocode) endpoint.
+        **Note: This application is pseudocoded. Your implementation will look different
 
         To learn more, look at the code example [here](https://github.com/Bandwidth-Samples/voice-record-java/blob/main/src/main/java/com/bandwidth/controller/CallbacksController.java). Note the example linked uses Springboot.
         ```java
-        @/incoming endpoint
-        public String incoming_endpoint {
+        @Post /play_audio endpoint
+        public String playaudio() {
             Response response = new Response();
 
-            SpeakSentence tts = SpeakSentence.builder().text("Hello! I'm a text to speech!").build();
-
             PlayAudio play_first = PlayAudio.builder().audioUri("https://IPlayAudio.test/audio1").build();
-            PlayAudio play_second = PlayAudio.builder().audioUri("/audio").build();
+            PlayAudio play_second = PlayAudio.builder().audioUri("/relative_audio").build();
 
-            String bxml = response.addAll(ss1, play_first, play_second).toBXML();
+            String bxml = response.addAll(play_first, play_second).toBXML();
 
             return bxml;
         }
 
-        @/audio endpoint
-        public byte[] getSound() {
-            ...retrieve and serve audio file, and add to the response...
+        @Get /relative_audio endpoint
+        public byte[] getAudio() {
+            ...retrieve and return audio file...
         }
         ```
         The second instance of PlayAudio (a relative endpoint) assumes there is an endpoint in the application that serves an audio file. To see an example, look [here](https://github.com/Bandwidth-Samples/voice-record-java/blob/main/src/main/java/com/bandwidth/controller/FilesController.java).
 
     </TabItem>
     <TabItem value="csharp">
+        **Note: The endpoint headers are pseudocoded. Your implementation will look different
 
         ```csharp
-        PlayAudio playAudio1 = new PlayAudio
+        @Post [/playaudio]
+        public ActionResult playAudio() {
+            PlayAudio playAudio1 = new PlayAudio {
+                Url = "https://audio.url/audio1.wav"
+            };
+
+            PlayAudio playAudio2 = new PlayAudio {
+                Url = "/relative_audio"
+            };
+
+            Response response = new Response();
+            response.Add(playAudio1);
+            response.Add(playAudio2);
+
+            return new OkObjectResult(response.ToBXML());
+        }
+
+        @Get [/relative_audio]
+        public ActionResult getAudio()
         {
-            Url = "https://audio.url/audio1.wav"
-        };
-
-        PlayAudio playAudio2 = new PlayAudio
-        {
-            Url = "https://audio.url/audio2.mp3"
-        };
-
-        Response response = new Response();
-        response.Add(playAudio1);
-        response.Add(playAudio2);
-
-        Console.WriteLine(response.ToBXML());
+            ...retrieve and return audio file...
+        }
         ```
 
     </TabItem>
     <TabItem value="ruby">
-
         ```ruby
-        play_audio_1 = Bandwidth::Voice::PlayAudio.new({
-        :url => "https://audio.url/audio1.wav"
-    })
+        **Note: The endpoint headers are pseudocoded. Your implementation will look different
 
-        play_audio_2 = Bandwidth::Voice::PlayAudio.new({
-        :url => "https://audio.url/audio2.mp3"
-    })
+        post '/playAudio' do:
+            play_audio_1 = Bandwidth::Voice::PlayAudio.new({
+                :url => "https://audio.url/audio1.wav"
+            })
 
-        response = Bandwidth::Voice::Response.new()
-        response.push(play_audio_1)
-        response.push(play_audio_2)
+            play_audio_2 = Bandwidth::Voice::PlayAudio.new({
+                :url => "/relative_audio"
+            })
 
-        puts response.to_bxml()
+            response = Bandwidth::Voice::Response.new()
+            response.push(play_audio_1)
+            response.push(play_audio_2)
+
+            return response.to_bxml()
+
+        get '/relative_audio' do:
+            ...retrieve and return audio file...
         ```
 
     </TabItem>
     <TabItem value="nodejs">
+        **Note: The endpoint headers are pseudocoded. Your implementation will look different
 
         ```js
-        const playAudio1 = new PlayAudio({
-        url: "https://audio.url/audio1.wav"
-    });
+        @post ['/playAudio'] (request, request_response) => {
+            const playAudio1 = new PlayAudio({
+                url: "https://audio.url/audio1.wav"
+            });
 
-        const playAudio2 = new PlayAudio({
-        url: "https://audio.url/audio2.mp3"
-    });
+            const playAudio2 = new PlayAudio({
+                url: "/relative_audio"
+            });
 
-        const response = new Response(playAudio1, playAudio2);
+            const response = new Response(playAudio1, playAudio2);
 
-        console.log(response.toBxml());
+            console.log(response.toBxml());
+            request_response.status(200).send(response.toBxml());
+
+        }
+
+        @get ['/relative_audio'] => {
+            ...retrieve and return audio file...
+        }
         ```
 
     </TabItem>
     <TabItem value="python">
+        **Note: The endpoint headers are pseudocoded. Your implementation will look different
 
         ```python
-        play_audio_1 = PlayAudio(
-        url="https://audio.url/audio1.wav"
-        )
+        @post '/playAudio'
+        def playAudio():
+            play_audio_1 = PlayAudio(
+                url="https://audio.url/audio1.wav"
+            )
 
-        play_audio_2 = PlayAudio(
-        url="https://audio.url/audio2.mp3"
-        )
+            play_audio_2 = PlayAudio(
+                url="/relative_audio"
+            )
 
-        response = Response()
-        response.add_verb(play_audio_1)
-        response.add_verb(play_audio_2)
+            response = Response()
+            response.add_verb(play_audio_1)
+            response.add_verb(play_audio_2)
 
-        print(response.to_bxml())
+            return response.to_bxml()
+
+        @get '/relative_audio'
+        def getAudio():
+            ...retrieve and return audio file...
+
         ```
 
     </TabItem>
     <TabItem value="php">
+        **Note: The endpoint headers are pseudocoded. Your implementation will look different
 
         ```php
-        $playAudio1 = new BandwidthLib\Voice\Bxml\PlayAudio("https://audio.url/audio1.wav");
-        $playAudio2 = new BandwidthLib\Voice\Bxml\PlayAudio("https://audio.url/audio2.mp3");
+        @post('/playAudio)
+        function playAudio(Request $request, Response $response) {
+            $playAudio1 = new BandwidthLib\Voice\Bxml\PlayAudio("https://audio.url/audio1.wav");
+            $playAudio2 = new BandwidthLib\Voice\Bxml\PlayAudio("https://audio.url/audio2.mp3");
 
-        $response = new BandwidthLib\Voice\Bxml\Response();
-        $response->addVerb($playAudio1);
-        $response->addVerb($playAudio2);
+            $response = new BandwidthLib\Voice\Bxml\Response();
+            $response->addVerb($playAudio1);
+            $response->addVerb($playAudio2);
 
-        echo $response->toBxml();
+            $bxml = $bxmlResponse->toBxml();
+            $response = $response->withStatus(200)->withHeader('Content-Type', 'application/xml');
+            $response->getBody()->write($bxml);
+            return $response;
+        }
+
+        @get('/relative_audio)
+        function getAudio(Request $request, Response $response) {
+            ...retrieve and return audio file...
+        }
         ```
 
     </TabItem>
@@ -208,89 +248,109 @@ The SpeakSentence verb is used for text-to-speech playback on a call. Attributes
     <TabItem value="java">
 
         ```java
-        SpeakSentence speakSentence = SpeakSentence.builder()
-        .text("Hello <lang xml:lang=\"en-GB\">Sherlock Holmes</lang>. You have an appointment on <say-as interpret-as="date" format="mdy">11/12/2022</say-as>.")
-    .voice("jorge")
-    .build();
+        @Post /tts endpoint
+        public String speakSentence() {
+            Response response = new Response();
 
-    Response response = Response.builder().build()
-    .add(speakSentence);
+            SpeakSentence speakSentence = SpeakSentence.builder()
+                .text("Hello <lang xml:lang=\"en-GB\">Sherlock Holmes</lang>. You have an appointment on <say-as interpret-as="date" format="mdy">11/12/2022</say-as>.")
+                .voice("jorge")
+                .build();
 
-    System.out.println(response.toBXML());
+            String bxml = response.add(speakSentence).toBXML();
+
+            return bxml;
+        }
     ```
 
 </TabItem>
 <TabItem value="csharp">
 
     ```csharp
-    Response response = new Response();
+    @Post [/tts]
+    public ActionResult speaksentence() {
+        Response response = new Response();
 
-    SpeakSentence speakSentence = new SpeakSentence
-    {
-        Sentence = "Hello <lang xml:lang=\"en-GB\">Sherlock Holmes</lang>. You have an appointment on <say-as interpret-as="date" format="mdy">11/12/2022</say-as>.",
-        Voice = "jorge"
-    };
+        SpeakSentence speakSentence = new SpeakSentence {
+            Sentence = "Hello <lang xml:lang=\"en-GB\">Sherlock Holmes</lang>. You have an appointment on <say-as interpret-as="date" format="mdy">11/12/2022</say-as>.",
+            Voice = "jorge"
+        };
 
-    response.Add(speakSentence);
+        Response response = new Response();
+        response.Add(speakSentence);
 
-    Console.WriteLine(response.ToBXML());
+        return new OkObjectResult(response.ToBXML());
+    }
     ```
 
 </TabItem>
 <TabItem value="ruby">
 
     ```ruby
-    speak_sentence = Bandwidth::Voice::SpeakSentence.new({
-    :sentence => 'Hello <lang xml:lang="en-GB">Sherlock Holmes</lang>. You have an appointment on <say-as interpret-as="date" format="mdy">11/12/2022</say-as>.',
-    :voice => "jorge"
-})
+    post '/tts' do:
+        speak_sentence = Bandwidth::Voice::SpeakSentence.new({
+            :sentence => 'Hello <lang xml:lang="en-GB">Sherlock Holmes</lang>. You have an appointment on <say-as interpret-as="date" format="mdy">11/12/2022</say-as>.',
+            :voice => "jorge"
+        })
 
-    response = Bandwidth::Voice::Response.new()
-    response.push(speak_sentence)
+        response = Bandwidth::Voice::Response.new()
+        response.push(speak_sentence)
 
-    puts response.to_bxml()
+        return response.to_bxml()
+
     ```
 
 </TabItem>
 <TabItem value="nodejs">
 
     ```js
-    const speakSentence = new SpeakSentence({
-    sentence: `Hello <lang xml:lang="en-GB">Sherlock Holmes</lang>. You have an appointment on <say-as interpret-as="date" format="mdy">11/12/2022</say-as>.`,
-    voice: "jorge"
-});
+    @post ['/playAudio'] (req, res) => {
+        const speakSentence = new SpeakSentence({
+            sentence: `Hello <lang xml:lang="en-GB">Sherlock Holmes</lang>. You have an appointment on <say-as interpret-as="date" format="mdy">11/12/2022</say-as>.`,
+            voice: "jorge"
+        });
 
-    const response = new Response(speakSentence);
+        const response = new Response(speakSentence);
 
-    console.log(response.toBxml());
+        console.log(response.toBxml());
+        request_response.status(200).send(response.toBxml());
+    }
     ```
 
 </TabItem>
 <TabItem value="python">
 
     ```python
-    speak_sentence = SpeakSentence(
-    sentence='Hello <lang xml:lang="en-GB">Sherlock Holmes</lang>. You have an appointment on <say-as interpret-as="date" format="mdy">11/12/2022</say-as>.',
-    voice="jorge"
-    )
+    @post '/playAudio'
+    def playAudio():
+        speak_sentence = SpeakSentence(
+            sentence='Hello <lang xml:lang="en-GB">Sherlock Holmes</lang>. You have an appointment on <say-as interpret-as="date" format="mdy">11/12/2022</say-as>.',
+            voice="jorge"
+        )
 
-    response = Response()
-    response.add_verb(speak_sentence)
+        response = Response()
+        response.add_verb(speak_sentence)
 
-    print(response.to_bxml())
+        return response.to_bxml()
     ```
 
 </TabItem>
 <TabItem value="php">
 
     ```php
-    $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence('Hello <lang xml:lang="en-GB">Sherlock Holmes</lang>. You have an appointment on <say-as interpret-as="date" format="mdy">11/12/2022</say-as>.');
-    $speakSentence->voice("jorge");
+    @post('/playAudio)
+    function playAudio(Request $request, Response $response) {
+        $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence('Hello <lang xml:lang="en-GB">Sherlock Holmes</lang>. You have an appointment on <say-as interpret-as="date" format="mdy">11/12/2022</say-as>.');
+        $speakSentence->voice("jorge");
 
-    $response = new BandwidthLib\Voice\Bxml\Response();
-    $response->addVerb($speakSentence);
+        $response = new BandwidthLib\Voice\Bxml\Response();
+        $response->addVerb($speakSentence);
 
-    echo $response->toBxml();
+        $bxml = $bxmlResponse->toBxml();
+        $response = $response->withStatus(200)->withHeader('Content-Type', 'application/xml');
+        $response->getBody()->write($bxml);
+        return $response;
+    }
     ```
 
 </TabItem>
