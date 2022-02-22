@@ -1,35 +1,21 @@
-import React, { useState } from 'react'; 
+import React from 'react'; 
 
 export default function SpecVersionDropdown(props) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState(null);
-
-  const toggling = () => setIsOpen(!isOpen);
-
-  const onOptionClicked = value => () => {
-    setSelectedOption(value);
-    setIsOpen(false);
-    console.log(selectedOption);
-  };
+  function versionChange(e){
+    window.location.href = e.target.value
+  }
 
   return (
-      <div className='spec_version_dropdown'> 
-        <div className='DropDownContainer'>
-            <div className='DropDownHeader' onClick={toggling}>
-                {selectedOption || props.default}
-            </div>
-            {isOpen && (
-                <div className='DropDownListContainer'>
-                    <ul className='DropDownList'>
-                        {props.options.map(option => (
-                        <li className='ListItem' onClick={onOptionClicked(option.title)} key={Math.random()}>
-                            <a href={option.link}>{option.title}</a>
-                        </li>
-                        ))}
-                    </ul>
-                </div>
-            )}
-        </div>
+      <div className='spec_version_dropdown'>
+          <form className='DropDownContainer'>
+              <label for="VersionList">Version:</label>
+              <select id='VersionList' className='DropDownList' onChange={(e) => versionChange(e)}>
+                  <option value="">{props.default}</option>
+                  {props.options.map(option => (
+                      <option className='ListItem' value={option.link}>{option.title}</option>
+                  ))}
+              </select>
+          </form>
       </div>
   );
 }
