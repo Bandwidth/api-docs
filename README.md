@@ -68,7 +68,7 @@ To add a new spec - there are a few steps that need to be taken:
 
 ### Versioned Specs 
 
-To account for versioned API Documentation we have a [Spec Version Dropdown](./site/src/components/specVersionDropdown.js) component that allows you to add a dropdown menu to the api reference page with links to the other versions of your API Specification. In order to implement this feature your spec `.tsx` pages need their own directory within the `./site/src/pages/apis` directory. 
+To account for versioned API Documentation we have a [Spec Version Dropdown](./site/src/components/SpecVersionDropdown.js) component that allows you to add a dropdown menu to the api reference page with links to the other versions of your API Specification. In order to implement this feature your spec `.tsx` pages need their own directory within the `./site/src/pages/apis` directory. 
 
 Sample Directory: 
 
