@@ -129,8 +129,7 @@ module.exports = {
                     type: "category",
                     label: "Guides and Tutorials",
                     items: [
-                        "voice/callInformationGuide",
-                        "voice/callQueueing",
+                        "voice/callQueueingGuide",
                         "voice/cnamPerDipGuide",
                         "voice/conferenceGuide",
                         "voice/interactiveVoiceResponseGuide",
@@ -139,6 +138,7 @@ module.exports = {
                         "voice/modifyInProgressCallGuide",
                         "voice/outboundCallGuide",
                         "voice/recordingGuide",
+                        "voice/callInformationGuide",
                         "voice/transferGuide",
                     ],
                 },

@@ -15,7 +15,7 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 This guide will show how to do call recording via the [Record](/docs/voice/bxml/record) and [StartRecording](/docs/voice/bxml/startRecording) verbs, and produce a transcription of those recordings.
-You can record any inbound or outbound call and request transcription of the call after completion using our API.
+You can record any inbound or outbound call and request transcription of the call after completion using our API. Please ensure you have followed our earlier guide on [how to make an outbound call](/docs/voice/guides/outboundCall) with Bandwidth.
 
 There are two ways you can record a call; with `<Record>` or with `<StartRecording>`. Both have their own use case this guide will go over.
 
@@ -39,12 +39,157 @@ If the `recordingAvailableUrl` attribute is set, this URL will receive a callbac
 
 #### Record Example
 
+<Tabs
+  groupId="bxml"
+  defaultValue="xml"
+  values={[
+    { label: 'XML', value: 'xml', },
+    { label: 'Java', value: 'java', },
+    { label: 'C#', value: 'csharp', },
+    { label: 'Ruby', value: 'ruby', },
+    { label: 'NodeJS', value: 'nodejs', },
+    { label: 'Python', value: 'python', },
+    { label: 'PHP', value: 'php', },
+  ]
+}>
+<TabItem value="xml">
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <Record recordCompleteUrl="https://myapp.com/nextBXML" maxDuration="10"/>
+    <SpeakSentence>Please say your name.</SpeakSentence>
+    <Record recordCompleteUrl="https://myapp.test/nextBXML" maxDuration="5"/>
+    <!-- Any verbs after this point would be replaced by those returned by the recordCompleteUrl -->
 </Response>
 ```
+
+</TabItem>
+<TabItem value="java">
+
+```java
+SpeakSentence speakSentence = SpeakSentence.builder()
+    .text("Please say your name.")
+    .build();
+
+Record record = Record.builder()
+    .recordCompleteUrl("/nextBXML")
+    .recordingAvailableUrl("https://myapp.com/recordingAvailable")
+    .maxDuration(5)
+    .build();
+
+Response response = Response.builder().build()
+    .add(speakSentence)
+    .add(record);
+
+return bxml;
+```
+
+</TabItem>
+<TabItem value="csharp">
+
+```csharp
+SpeakSentence speakSentence = new SpeakSentence
+{
+    Sentence = "Please say your name."
+};
+
+Record record = new Record
+{
+    RecordCompleteUrl = "/nextBXML",
+    RecordingAvailableUrl = "https://myapp.com/recordingAvailable",
+    MaxDuration = 5
+};
+
+Response response = new Response();
+response.Add(speakSentence);
+response.Add(record);
+
+return new OkObjectResult(response.ToBXML());
+```
+
+</TabItem>
+<TabItem value="ruby">
+
+```ruby
+speak_sentence = Bandwidth::Voice::SpeakSentence.new({
+    :sentence => "Please say your name."
+})
+
+record = Bandwidth::Voice::Record.new({
+    :record_complete_url => "/nextBXML",
+    :recording_available_url => "https://myapp.com/recordingAvailable",
+    :max_duration => "5"
+})
+
+response = Bandwidth::Voice::Response.new()
+response.push(speak_sentence)
+response.push(record)
+
+return response.to_bxml()
+```
+
+</TabItem>
+<TabItem value="nodejs">
+
+```js
+const speakSentence = new SpeakSentence({
+    sentence: "Please say your name."
+});
+
+const record = new Record({
+    recordCompleteUrl: "https://myapp.com/nextBXML",
+    recordingAvailableUrl: "https://myapp.com/recordingAvailable",
+    maxDuration: 10
+});
+
+const response = new Response(speakSentence, record);
+
+console.log(response.toBxml());
+```
+
+</TabItem>
+<TabItem value="python">
+
+```python
+    speak_sentence = SpeakSentence(
+    sentence="Please say your name.",
+)
+
+record = Record(
+    record_complete_url="https://myapp.com/nextBXML",
+    recording_available_url="https://myapp.com/recordingAvailable",
+    max_duration=5
+)
+
+response = Response()
+response.add_verb(speak_sentence)
+response.add_verb(play_audio)
+response.add_verb(record)
+
+print(response.to_bxml())
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+
+$speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Please say your name.");
+
+$record = new BandwidthLib\Voice\Bxml\Record();
+$record->recordCompleteUrl("https://myapp.com/nextBXML");
+$record->recordingAvailableUrl("https://myapp.com/recordingAvailable");
+$record->maxDuration(5);
+
+$response = new BandwidthLib\Voice\Bxml\Response();
+$response->addVerb($speakSentence);
+$response->addVerb($record);
+
+echo $response->toBxml();
+```
+
+</TabItem>
+</Tabs>
 
 ### StartRecording
 
@@ -52,16 +197,175 @@ The StartRecording verb starts recording in a call without pausing BXML executio
 
 Much like the Record verb, StartRecording also has a `recordingAvailableUrl` attribute to receive the recording available callback.
 
-#### StartRecording Examples
-
-##### Basic StartRecording
+<Tabs
+  groupId="bxml"
+  defaultValue="xml"
+  values={[
+    { label: 'XML', value: 'xml', },
+    { label: 'Java', value: 'java', },
+    { label: 'C#', value: 'csharp', },
+    { label: 'Ruby', value: 'ruby', },
+    { label: 'NodeJS', value: 'nodejs', },
+    { label: 'Python', value: 'python', },
+    { label: 'PHP', value: 'php', },
+  ]
+}>
+<TabItem value="xml">
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <StartRecording recordingAvailableUrl="https://myapp.com/noBXML"/>
+    <SpeakSentence>Please say your name.</SpeakSentence>
+    <Record recordCompleteUrl="https://myapp.test/nextBXML" maxDuration="5"/>
+    <!-- Any verbs after this point would be replaced by those returned by the recordCompleteUrl -->
 </Response>
 ```
+
+</TabItem>
+<TabItem value="java">
+
+```java
+@Post /answerCall endpoint
+public String recordName() {
+    SpeakSentence speakSentence = SpeakSentence.builder()
+        .text("Please say your name.")
+        .build();
+
+    Record record = Record.builder()
+        .recordCompleteUrl("/nextBXML")
+        .recordingAvailableUrl("https://myapp.com/recordingAvailable")
+        .maxDuration(5)
+        .build();
+
+    Response response = Response.builder().build()
+        .add(speakSentence)
+        .add(record);
+
+    return bxml;
+}
+
+@Post /nextBxml endpoint
+public byte[] getAudio() {
+    SpeakSentence speakSentence = SpeakSentence.builder()
+        .text("Thank you for saying your name. Goodbye!")
+        .build();
+    Hangup hangup = Hangup.builder().build();
+
+    Response response = Response.builder().build()
+        .add(speakSentence)
+        .add(hangup);
+
+    return bxml;
+
+
+}
+```
+
+</TabItem>
+<TabItem value="csharp">
+
+```csharp
+SpeakSentence speakSentence = new SpeakSentence
+{
+    Sentence = "Please say your name."
+};
+
+Record record = new Record
+{
+    RecordCompleteUrl = "https://myapp.com/nextBXML",
+    RecordingAvailableUrl = "https://myapp.com/recordingAvailable",
+    MaxDuration = 5
+};
+
+Response response = new Response();
+response.Add(speakSentence);
+response.Add(record);
+
+Console.WriteLine(response.ToBXML());
+```
+
+</TabItem>
+<TabItem value="ruby">
+
+```ruby
+speak_sentence = Bandwidth::Voice::SpeakSentence.new({
+    :sentence => "Please say your name."
+})
+
+record = Bandwidth::Voice::Record.new({
+    :record_complete_url => "https://myapp.com/nextBXML",
+    :recording_available_url => "https://myapp.com/recordingAvailable",
+    :max_duration => "5"
+})
+
+response = Bandwidth::Voice::Response.new()
+response.push(speak_sentence)
+response.push(record)
+
+puts response.to_bxml()
+```
+
+</TabItem>
+<TabItem value="nodejs">
+
+```js
+const speakSentence = new SpeakSentence({
+    sentence: "Please say your name."
+});
+
+const record = new Record({
+    recordCompleteUrl: "https://myapp.com/nextBXML",
+    recordingAvailableUrl: "https://myapp.com/recordingAvailable",
+    maxDuration: 10
+});
+
+const response = new Response(speakSentence, record);
+
+console.log(response.toBxml());
+```
+
+</TabItem>
+<TabItem value="python">
+
+```python
+speak_sentence = SpeakSentence(
+    sentence="Please say your name.",
+)
+
+record = Record(
+    record_complete_url="https://myapp.com/nextBXML",
+    recording_available_url="https://myapp.com/recordingAvailable",
+    max_duration=5
+)
+
+response = Response()
+response.add_verb(speak_sentence)
+response.add_verb(play_audio)
+response.add_verb(record)
+
+print(response.to_bxml())
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+$speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Please say your name.");
+
+$record = new BandwidthLib\Voice\Bxml\Record();
+$record->recordCompleteUrl("https://myapp.com/nextBXML");
+$record->recordingAvailableUrl("https://myapp.com/recordingAvailable");
+$record->maxDuration(5);
+
+$response = new BandwidthLib\Voice\Bxml\Response();
+$response->addVerb($speakSentence);
+$response->addVerb($record);
+
+echo $response->toBxml();
+```
+
+</TabItem>
+</Tabs>
 
 ##### StartRecording Used With StopRecording, PauseRecording, and ResumeRecording
 
@@ -79,7 +383,7 @@ Much like the Record verb, StartRecording also has a `recordingAvailableUrl` att
 </Response>
 ```
 
-##Download Recording
+### Download Recording
 
 After the call has completed you can retrieve information on the recording and download the file in .mp3 or .wav format. Recordings are stored for 30 days.
 
@@ -322,16 +626,156 @@ Transcription can succeed only for recordings of length greater than 500 millise
 
 ### Recording Transcription Example
 
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<Response>
-   <Record transcribe="true" transcriptionAvailableUrl="https://transcription.url.server/transcribe/" transcriptionAvailableMethod="POST"/>
-</Response>
-```
+<Tabs
+    groupId="bxml"
+    defaultValue="xml"
+    values={[
+        { label: 'cURL', value: 'curl', },
+        { label: 'Java', value: 'java', },
+        { label: 'C#', value: 'csharp', },
+        { label: 'Ruby', value: 'ruby', },
+        { label: 'NodeJS', value: 'nodejs', },
+        { label: 'Python', value: 'python', },
+        { label: 'PHP', value: 'php', },
+    ]
+}>
+<TabItem value="curl">
 
-###Download Transcription
+    ```curl
+    curl 'https://voice.bandwidth.com/api/v2/accounts/$BW_ACCOUNT_ID/calls/c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d/recordings/r-d68201ef-d53e-4c6d-a743-1c1283909d41' \
+    -U {BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}
+    ```
+
+</TabItem>
+<TabItem value="java">
+
+    ```java
+
+
+    ```
+
+</TabItem>
+<TabItem value="csharp">
+
+    ```csharp
+
+
+    ```
+
+</TabItem>
+<TabItem value="ruby">
+
+    ```ruby
+
+
+    ```
+
+</TabItem>
+<TabItem value="nodejs">
+
+    ```js
+
+
+    ```
+
+</TabItem>
+<TabItem value="python">
+
+    ```python
+
+
+    ```
+
+</TabItem>
+<TabItem value="php">
+
+    ```php
+
+
+    ```
+
+</TabItem>
+</Tabs>
+
+### Download Transcription
 
 After the call has completed, you can download the transcribed file in JSON format. Transcriptions are stored for 30 days.
 
+<Tabs
+    groupId="bxml"
+    defaultValue="xml"
+    values={[
+        { label: 'cURL', value: 'curl', },
+        { label: 'Java', value: 'java', },
+        { label: 'C#', value: 'csharp', },
+        { label: 'Ruby', value: 'ruby', },
+        { label: 'NodeJS', value: 'nodejs', },
+        { label: 'Python', value: 'python', },
+        { label: 'PHP', value: 'php', },
+    ]
+}>
+<TabItem value="curl">
+
+    ```curl
+    curl 'https://voice.bandwidth.com/api/v2/accounts/$BW_ACCOUNT_ID/calls/c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d/recordings/r-d68201ef-d53e-4c6d-a743-1c1283909d41' \
+    -U {BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}
+    ```
+
+</TabItem>
+<TabItem value="java">
+
+    ```java
 
 
+    ```
+
+</TabItem>
+<TabItem value="csharp">
+
+    ```csharp
+
+
+    ```
+
+</TabItem>
+<TabItem value="ruby">
+
+    ```ruby
+
+
+    ```
+
+</TabItem>
+<TabItem value="nodejs">
+
+    ```js
+
+
+    ```
+
+</TabItem>
+<TabItem value="python">
+
+    ```python
+
+
+    ```
+
+</TabItem>
+<TabItem value="php">
+
+    ```php
+
+
+    ```
+
+</TabItem>
+</Tabs>
+
+
+### Where to next?
+
+Now that you have learnt how to record and transcribe calls, check out some of the available actions in the following guides:
+- [How to gather user input (IVR)](/docs/voice/guides/interactiveVoiceResponse)
+- [How to use voicemail detection](/docs/voice/guides/machineDetection)
+- [How to create conference calls](/docs/voice/guides/conference)
