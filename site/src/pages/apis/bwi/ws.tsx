@@ -11,7 +11,7 @@ export default function ApiReferencePage() {
         {title: "V2", link: "/apis/bwi/v2"},
         {title: "Beta", link: "/apis/bwi/beta"}
       ];
-    const version = "WS"
+    const version = "Legacy"
 
     return (
         <Layout
