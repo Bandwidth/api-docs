@@ -93,12 +93,13 @@ The default version should be named `index.tsx` within the directory so that the
 ```ts
 export default function ApiReferencePage() {
     const {siteConfig} = useDocusaurusContext();
-    const options = [
+    const options = [    // The options const needs to contain all of the available pages
         {title: "Legacy", link: "/apis/bwi/ws"},
+        {title: "V1", link: "/apis/bwi"},
         {title: "V2", link: "/apis/bwi/v2"},
         {title: "Beta", link: "/apis/bwi/beta"}
       ];
-    const version = "V1"
+    const version = "V1"    // The version Const determines which option gets the selected attribute in the <select> dropdown
 
     return (
         <Layout
