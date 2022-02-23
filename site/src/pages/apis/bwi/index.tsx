@@ -8,6 +8,7 @@ export default function ApiReferencePage() {
     const {siteConfig} = useDocusaurusContext();
     const options = [
         {title: "Legacy", link: "/apis/bwi/ws"},
+        {title: "V1", link: "/apis/bwi"},
         {title: "V2", link: "/apis/bwi/v2"},
         {title: "Beta", link: "/apis/bwi/beta"}
       ];
