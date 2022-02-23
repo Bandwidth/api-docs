@@ -23,7 +23,7 @@ API references are the "facts" about the APIs, and will typically be defined by 
 
 Guides cover a wide range of possibilities, but typically any step by step process required to use a feature should be a guide. These guides should be written as markdown files, and should link out to any API reference as needed. An example of a guide would be a description of how to respond to an inbound SMS.
 
-### SDK Docs Strategy Overview
+## SDK Docs Strategy Overview
 
 Bandwidth's SDKs will contain thin READMEs that show the basics of getting started with the SDK, and link out to the full API reference. These READMEs will not contain all of the functions within the SDK; that should be defined with the API references.
 
