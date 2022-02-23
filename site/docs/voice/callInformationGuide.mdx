@@ -1,76 +1,55 @@
 ---
-id: outboundCallGuide
-title: Outbound Call Guide
-slug: /voice/guides/outboundCallGuide
-description: How to place a call to the outside world
+id: callInformationGuide
+title: Retrieve Call Information
+slug: /voice/guides/callLogGuide
+description: How to get the call information from a finished call.
 keywords:
   - bandwidth
   - voice
-  - outbound
+  - TTS
+  - media
   - tutorial
 hide_title: false
 image: ../../static/img/bandwidth-logo.png
 ---
-
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-In this guide we will show you how to make outbound calls using Bandwidth’s platform. Please ensure you have followed our [quick start guide](/docs/voice/quickstart) and ordered your first phone number.
+In this guide we will show you how to retrieve call logs Bandwidth’s platform. Please ensure you have followed our earlier guide on [how to make an outbound call](/docs/voice/guides/outboundCallGuide) with Bandwidth.
 
-You can embed outbound calling capabilities directly into your application or product using our API without having to handle legacy telecom infrastructure.
+##Retrieve Call Logs
 
-### Make an outbound call
-
-To create an outbound call from a Bandwidth number, you must make a POST request to our API v2 /calls endpoint.
-
+A call log can be retrieved during or after a call has completed. The call log is near-real time, so it may take a few minutes for your call to be accessible using this endpoint.
 
 <Tabs
-    groupId="bxml"
-    defaultValue="xml"
-    values={[
-        { label: 'Request Payload', value: 'payload', },
-        { label: 'cURL', value: 'curl', },
-        { label: 'Java', value: 'java', },
-        { label: 'C#', value: 'csharp', },
-        { label: 'Ruby', value: 'ruby', },
-        { label: 'NodeJS', value: 'nodejs', },
-        { label: 'Python', value: 'python', },
-        { label: 'PHP', value: 'php', },
-    ]
+groupId="bxml"
+defaultValue="xml"
+values={[
+    { label: 'Request Payload', value: 'payload', },
+    { label: 'cURL', value: 'curl', },
+    { label: 'Java', value: 'java', },
+    { label: 'C#', value: 'csharp', },
+    { label: 'Ruby', value: 'ruby', },
+    { label: 'NodeJS', value: 'nodejs', },
+    { label: 'Python', value: 'python', },
+    { label: 'PHP', value: 'php', },
+]
 }>
 <TabItem value="payload">
 
-    We recommend using Postman to send requests.
+```GET
+GET https://voice.bandwidth.com/api/v2/accounts/{YOUR_ACCOUNT_ID}/calls/{THE_CALL_ID} -C {BANDWIDTH_USERNAME}:{BANDWIDTH_PASSWORD}
 
-```json
-  "from": "+15555555555",
-  "to": "+15555555555, sip:john@doe.com",
-  "uui": "eyJhbGciOiJIUzI1NiJ9.WyJoaSJd.-znkjYyCkgz4djmHUPSXl9YrJ6Nix_XvmlwKGFh5ERM;encoding=jwt,aGVsbG8gd29ybGQ=;encoding=base64",
-  "callTimeout": 0,
-  "callbackTimeout": 0,
-  "answerUrl": "http://example.com",
-  "answerFallbackUrl": "http://example.com",
-  "username": "string",
-  "password": "string",
 ```
 
 </TabItem>
 <TabItem value="curl">
 
 ```cURL
-curl 'https://voice.bandwidth.com/api/v2/accounts/{BW_ACCOUNT_ID}/calls' \
-    -X POST \
-    -U {BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD} \
-    -H 'Content-Type: application/json' \
-    -d '{
-        "from": "$BW_NUMBER",
-        "to": "$USER_NUMBER, sip:john@doe.com",
-        "applicationId": "string",
-        "answerUrl": "http://example.com",
-        "username": "string",
-        "password": "string",
-    }'
+curl 'https://voice.bandwidth.com/api/v2/accounts/$BW_ACCOUNT_ID/calls/c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d' \
+    -U {BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}
 
+}'
 ```
 
 </TabItem>
@@ -79,8 +58,8 @@ curl 'https://voice.bandwidth.com/api/v2/accounts/{BW_ACCOUNT_ID}/calls' \
 ```java
 import com.bandwidth.BandwidthClient;
 import com.bandwidth.http.response.ApiResponse;
-import com.bandwidth.voice.models.CreateCallRequest;
-import com.bandwidth.voice.models.CreateCallResponse;
+import com.bandwidth.voice.models.ApiModifyCallRequest;
+import com.bandwidth.voice.models.StateEnum;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -91,30 +70,24 @@ public class Sample {
     public static final String ACCOUNT_ID = System.getenv("BW_ACCOUNT_ID");
 
     public static void main(String[] args) {
-        String voiceApplicationId = System.getenv("BW_VOICE_APPLICATION_ID");
-        String to = System.getenv("USER_NUMBER");
-        String from = System.getenv("BW_NUMBER");
-        String baseUrl = System.getenv("BASE_CALLBACK_URL");
-        String answerUrl = baseUrl.concat("/callbacks/answer");
+        String callId = {THE_CALL_ID};
 
         BandwidthClient client = new BandwidthClient.Builder()
-        .voiceBasicAuthCredentials(USERNAME, PASSWORD)
-        .build();
+            .voiceBasicAuthCredentials(USERNAME, PASSWORD)
+            .build();
 
-        CreateCallRequest request = new CreateCallRequest();
-        request.setApplicationId(voiceApplicationId);
-        request.setTo(to);
-        request.setFrom(from);
-        request.setAnswerUrl(answerUrl);
+        ApiModifyCallRequest request = new ApiModifyCallRequest();
+        request.setRedirectUrl({YOUR_REDIRECT_URL});
 
         try {
-            CompletableFuture<ApiResponse<CreateCallResponse>> completableFuture = client.getVoiceClient().getAPIController().createCallAsync(ACCOUNT_ID, request);
+            CompletableFuture<ApiResponse<Void>> completableFuture = client.getVoiceClient().getAPIController().modifyCallAsync(ACCOUNT_ID, callId, request);
             System.out.println(completableFuture.get().getResult());
         } catch (InterruptedException | ExecutionException e) {
             System.out.println(e.getMessage());
         }
     }
 }
+
 ```
 
 </TabItem>
@@ -127,10 +100,8 @@ using Bandwidth.Standard;
 using Bandwidth.Standard.Exceptions;
 using Bandwidth.Standard.Voice.Models;
 
-class Program
-{
-    static async Task Main(string[] args)
-    {
+class Program {
+    static async Task Main(string[] args) {
         var username = System.Environment.GetEnvironmentVariable("BW_USERNAME");
         var password = System.Environment.GetEnvironmentVariable("BW_PASSWORD");
         var accountId = System.Environment.GetEnvironmentVariable("BW_ACCOUNT_ID");
@@ -152,13 +123,11 @@ class Program
             AnswerUrl = answerUrl
         };
 
-        try
-        {
+        try {
             var response = await client.Voice.APIController.CreateCallAsync(accountId, request);
             Console.WriteLine(response.Data);
         }
-        catch (ApiException e)
-        {
+        catch (ApiException e) {
             Console.WriteLine(e.Message);
         }
     }
@@ -210,8 +179,8 @@ const USER_NUMBER = process.env["USER_NUMBER"];
 const VOICE_CALLBACK_URL = process.env["VOICE_CALLBACK_URL"];
 
 const client = new Client({
-  basicAuthUserName: BW_USERNAME,
-  basicAuthPassword: BW_PASSWORD
+    basicAuthUserName: BW_USERNAME,
+    basicAuthPassword: BW_PASSWORD
 });
 
 const controller = new ApiController(client);
@@ -219,19 +188,19 @@ const controller = new ApiController(client);
 const accountId = BW_ACCOUNT_ID;
 
 const makeCall = async function() {
-  try {
-    const response = await controller.createCall(accountId, {
-        applicationId: BW_VOICE_APPLICATION_ID,
-        to: USER_NUMBER,
-        from: BW_NUMBER,
-        answerUrl: VOICE_CALLBACK_URL,
-        answerMethod: 'POST',
-        callTimeout: 30
-    });
-    console.log(response.body);
-  } catch(error) {
-      console.error(error);
-  }
+    try {
+        const response = await controller.createCall(accountId, {
+            applicationId: BW_VOICE_APPLICATION_ID,
+            to: USER_NUMBER,
+            from: BW_NUMBER,
+            answerUrl: VOICE_CALLBACK_URL,
+            answerMethod: 'POST',
+            callTimeout: 30
+        });
+        console.log(response.body);
+    } catch(error) {
+        console.error(error);
+    }
 }
 
 makeCall();
@@ -267,6 +236,7 @@ body.application_id = BW_VOICE_APPLICATION_ID
 body.to = USER_NUMBER
 body.mfrom = BW_NUMBER
 body.answer_url = VOICE_CALLBACK_URL
+
 try:
     response = voice_client.create_call(BW_ACCOUNT_ID, body)
     print(response.body.call_id)
@@ -311,30 +281,16 @@ try {
 } catch (BandwidthLib\APIException $e) {
     print_r($e->getResponseCode());
 }
-
 ```
 
 </TabItem>
 </Tabs>
 
-After this call is created, Bandwidth will send a webhook to the answerUrl, expecting BXML in response to continue the call with your chosen action.
-What is BXML?
+In the example above we have placed an outbound call and then retrieved the call log. Call information is kept for 7 days after the calls are hung up. If you attempt to retrieve information for a call that is older than 7 days, you will get an HTTP 404 response.
 
-BXML webhooks are HTTP requests made by the Bandwidth platform to endpoints specified by you in your HTTP requests and BXML. Their purpose is to
-
-Inform you of events that have happened in the call flow
-Receive instructions from your application on what to do next.
-
-More information on BXML can be found here.
-Where to next?
-
-Now that you have made your first outbound call, some of the available BXML/API actions are available in the following guides:
+A call may have disconnected for several reasons for example if a call is rejected by the callee then a rejected state would appear in the disconnectCause. A list of possible values can be found here.
 
 ### Where to next?
-- [How to play media and perform text to speech](/docs/voice/mediaAndTTSGuide)
-- [How to record calls & transcribe](/docs/voice/recordingGuide)
-- [How to gather user input (IVR)](/docs/voice/interactiveVoiceResponseGuide)
-- [How to use voicemail detection](/docs/voice/machineDetectionGuide)
-- [How to create conference calls](/docs/voice/conferenceGuide)
-- [How to retrieve call logs](/docs/voice/callLogGuide)
 
+Now that you have learnt how to retrieve call logs, check out some of the available actions in the following guides:
+* [How to manage queued calls](/docs/voice/callQueueing)

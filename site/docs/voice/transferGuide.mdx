@@ -1,0 +1,424 @@
+---
+id: transferGuide
+title: Transfer Guide
+slug: /voice/guides/transferGuide
+description: How to use Bandwidth's Voice API to transfer a call to another number.
+keywords:
+  - bandwidth
+  - voice
+  - transfer
+  - call
+hide_title: false
+image: ../../static/img/bandwidth-logo.png
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+##How to transfer an inbound call
+
+In this guide we will show you how to transfer an incoming call.
+
+Transferring calls allows you to transfer the caller to the right person rather than them hanging up and calling a different number, providing an excellent tool for customer service.
+
+##Transfer a call
+
+The Transfer verb is used to transfer a party onto an existing call.
+
+<Tabs
+  groupId="bxml"
+  defaultValue="xml"
+  values={[
+    { label: 'XML', value: 'xml', },
+    { label: 'Java', value: 'java', },
+    { label: 'C#', value: 'csharp', },
+    { label: 'Ruby', value: 'ruby', },
+    { label: 'NodeJS', value: 'nodejs', },
+    { label: 'Python', value: 'python', },
+    { label: 'PHP', value: 'php', },
+  ]
+}>
+<TabItem value="xml">
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <Transfer transferCallerId="+11234567891">
+        <PhoneNumber>+11234567892</PhoneNumber>
+    </Transfer>
+</Response>
+```
+
+</TabItem>
+<TabItem value="java">
+
+```java
+PhoneNumber phoneNumber = PhoneNumber.builder()
+        .phoneNumber("+11234567892")
+        .build();
+
+Transfer transfer = Transfer.builder()
+        .transferCallerId("+11234567891")
+        .phoneNumbers(phoneNumber)
+        .build();
+
+Response response = Response.builder().build()
+        .add(transfer);
+
+System.out.println(response.toBXML());
+```
+
+</TabItem>
+<TabItem value="csharp">
+
+```csharp
+PhoneNumber phoneNumber = new PhoneNumber
+{
+    Number = "+11234567892"
+};
+
+Transfer transfer = new Transfer
+{
+    TransferCallerId = "+11234567891",
+    PhoneNumbers = new PhoneNumber[] { phoneNumber }
+};
+
+Response response = new Response();
+response.Add(transfer);
+
+Console.WriteLine(response.ToBXML());
+```
+
+</TabItem>
+<TabItem value="ruby">
+
+```ruby
+phone_number = Bandwidth::Voice::PhoneNumber.new({
+    :number => "+11234567892"
+})
+
+transfer = Bandwidth::Voice::Transfer.new({
+    :transfer_caller_id => "+11234567891",
+    :phone_numbers => [phone_number]
+})
+
+response = Bandwidth::Voice::Response.new()
+response.push(transfer)
+
+puts response.to_bxml()
+```
+
+</TabItem>
+<TabItem value="nodejs">
+
+```js
+const number = new Transfer.PhoneNumber({
+    number: "+11234567892"
+});
+
+const transfer = new Transfer({
+    transferCallerId: "+11234567891",
+    phoneNumbers: [number]
+});
+
+const response = new Response(transfer);
+
+console.log(response.toBxml());
+
+```
+
+</TabItem>
+<TabItem value="python">
+
+```python
+phone_number = PhoneNumber(
+    number="+11234567892"
+)
+
+transfer = Transfer(
+    transfer_caller_id="+11234567891",
+    phone_numbers=[phone_number]
+)
+
+response = Response()
+response.add_verb(transfer)
+
+print(response.to_bxml())
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+$number = new BandwidthLib\Voice\Bxml\PhoneNumber("+11234567892");
+
+$transfer = new BandwidthLib\Voice\Bxml\Transfer();
+$transfer->transferCallerId("+11234567891");
+$transfer->phoneNumbers(array($number));
+
+$response = new BandwidthLib\Voice\Bxml\Response();
+$response->addVerb($transfer);
+
+echo $response->toBxml();
+```
+
+</TabItem>
+</Tabs>
+
+While transferring a call you can also combine this with an announcement using our text-to-speech service with the transferAnswerUrl verb. When the called party answers, if the transferAnswerUrl is specified, the Transfer Answer callback is sent to the transferAnswerUrl and the BXML returned by that callback is executed. That BXML is executed only for the called party. At the conclusion of that BXML, the calls are bridged.
+
+
+<Tabs
+  groupId="bxml"
+  defaultValue="xml"
+  values={[
+    { value: 'xml', },
+    { value: 'java', },
+    { value: 'csharp', },
+    { value: 'ruby', },
+    { value: 'nodejs', },
+    { value: 'python', },
+    { value: 'php', },
+  ]
+}>
+<TabItem value="xml">
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <SpeakSentence voice="paul">Transferring your call, please wait.</SpeakSentence>
+    <Transfer transferCallerId="+11234567891">
+        <PhoneNumber transferAnswerUrl="http://myapp.com/announcement">+11234567892</PhoneNumber>
+    </Transfer>
+</Response>
+```
+
+> The announcement BXML response from `http://myapp.com/announcement` is:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <SpeakSentence voice="paul">A customer would like to speak to you.</SpeakSentence>
+</Response>
+```
+
+</TabItem>
+<TabItem value="java">
+
+```java
+SpeakSentence speakSentence = SpeakSentence.builder()
+        .text("Transferring your call, please wait.")
+        .voice("paul")
+        .build();
+
+PhoneNumber phoneNumber = PhoneNumber.builder()
+        .phoneNumber("+11234567892")
+        .transferAnswerUrl("http://myapp.com/announcement")
+        .build();
+
+Transfer transfer = Transfer.builder()
+        .transferCallerId("+11234567891")
+        .phoneNumbers(phoneNumber)
+        .build();
+
+Response response = Response.builder().build()
+        .add(speakSentence)
+        .add(transfer);
+
+System.out.println(response.toBXML());
+```
+
+> The announcement BXML response from `http://myapp.com/announcement` is:
+
+```java
+SpeakSentence speakSentence = SpeakSentence.builder()
+        .text("A customer would like to speak to you.")
+        .voice("paul")
+        .build();
+```
+
+</TabItem>
+<TabItem value="csharp">
+
+```csharp
+SpeakSentence speakSentence = new SpeakSentence
+{
+    Sentence = "Transferring your call, please wait.",
+    Voice = "paul"
+};
+
+PhoneNumber phoneNumber = new PhoneNumber
+{
+    Number = "+11234567892",
+    TransferAnswerUrl = "http://myapp.com/announcement"
+};
+
+
+Transfer transfer = new Transfer
+{
+    TransferCallerId = "+11234567891",
+    PhoneNumbers = new PhoneNumber[] { phoneNumber }
+};
+
+Response response = new Response();
+response.Add(speakSentence);
+response.Add(transfer);
+
+Console.WriteLine(response.ToBXML());
+```
+
+> The announcement BXML response from `http://myapp.com/announcement` is:
+
+```csharp
+SpeakSentence speakSentence = new SpeakSentence
+{
+    Sentence = "A customer would like to speak to you.",
+    Voice = "paul"
+};
+
+Response response = new Response();
+response.Add(speakSentence);
+
+Console.WriteLine(response.ToBXML());
+```
+
+</TabItem>
+<TabItem value="ruby">
+
+```ruby
+speak_sentence = Bandwidth::Voice::SpeakSentence.new({
+    :sentence => "Transferring your call, please wait.",
+    :voice => "paul"
+})
+
+phone_number = Bandwidth::Voice::PhoneNumber.new({
+    :number => "+11234567892",
+    :transfer_answer_url => "http://myapp.com/announcement"
+})
+
+transfer = Bandwidth::Voice::Transfer.new({
+    :transfer_caller_id => "+11234567891",
+    :phone_numbers => [phone_number]
+})
+
+response = Bandwidth::Voice::Response.new()
+response.push(speak_sentence)
+response.push(transfer)
+
+puts response.to_bxml()
+```
+
+> The announcement BXML response from `http://myapp.com/announcement` is:
+
+```ruby
+speak_sentence = Bandwidth::Voice::SpeakSentence.new({
+    :sentence => "A customer would like to speak to you.",
+    :voice => "paul"
+})
+```
+
+</TabItem>
+<TabItem value="nodejs">
+
+```js
+const speakSentence = new SpeakSentence({
+    sentence: "Transferring your call, please wait.",
+    voice: "paul"
+});
+
+const number = new Transfer.PhoneNumber({
+    number: "+11234567892",
+    transferAnswerUrl: "http://myapp.com/announcement"
+});
+
+const transfer = new Transfer({
+    transferCallerId: "+11234567891",
+    phoneNumbers: [number]
+});
+
+const response = new Response(speakSentence, transfer);
+
+console.log(response.toBxml());
+```
+
+> The announcement BXML response from `http://myapp.com/announcement` is:
+
+```js
+const speakSentence = new SpeakSentence({
+    sentence: "A customer would like to speak to you.",
+    voice: "paul"
+});
+
+const response = new Response(speakSentence);
+
+console.log(response.toBxml());
+```
+
+</TabItem>
+<TabItem value="python">
+
+```python
+speak_sentence = SpeakSentence(
+    sentence="Transferring your call, please wait.",
+    voice="paul"
+)
+
+phone_number = PhoneNumber(
+    number="+11234567892",
+    transfer_answer_url="http://myapp.com/announcement"
+)
+
+transfer = Transfer(
+    transfer_caller_id="+11234567891",
+    phone_numbers=[phone_number]
+)
+
+response = Response()
+response.add_verb(speak_sentence)
+response.add_verb(transfer)
+
+print(response.to_bxml())
+```
+
+> The announcement BXML response from `http://myapp.com/announcement` is:
+
+```python
+speak_sentence = SpeakSentence(
+    sentence="A customer would like to speak to you.",
+    voice="paul"
+)
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+$speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Transferring your call, please wait.");
+$speakSentence->voice("paul");
+
+$number = new BandwidthLib\Voice\Bxml\PhoneNumber("+11234567892");
+
+$transfer = new BandwidthLib\Voice\Bxml\Transfer();
+$transfer->transferCallerId("+11234567891");
+$transfer->phoneNumbers(array($number));
+
+$response = new BandwidthLib\Voice\Bxml\Response();
+$response->addVerb($speakSentence);
+$response->addVerb($transfer);
+
+echo $response->toBxml();
+```
+
+> The announcement BXML response from `http://myapp.com/announcement` is:
+
+```php
+$speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("A customer would like to speak to you.");
+$speakSentence->voice("paul");
+```
+
+</TabItem>
+</Tabs>
+
+## Where to next?
+
+Now that you have learnt how to transfer an inbound call, check out some of the available actions in the following guides:
+*[How to retrieve call info](/docs/voice/callInformationGuide)

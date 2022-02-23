@@ -129,7 +129,7 @@ module.exports = {
                     type: "category",
                     label: "Guides and Tutorials",
                     items: [
-                        "voice/callLogGuide",
+                        "voice/callInformationGuide",
                         "voice/callQueueing",
                         "voice/cnamPerDipGuide",
                         "voice/conferenceGuide",

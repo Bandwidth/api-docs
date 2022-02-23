@@ -11,20 +11,31 @@ keywords:
 hide_title: false
 image: ../../static/img/bandwidth-logo.png
 ---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-This guide will show how to do call recording via the [Record](/docs/voice/bxml/record) and [StartRecording](/docs/voice/bxml/startRecording) verbs.
+This guide will show how to do call recording via the [Record](/docs/voice/bxml/record) and [StartRecording](/docs/voice/bxml/startRecording) verbs, and produce a transcription of those recordings.
+You can record any inbound or outbound call and request transcription of the call after completion using our API.
 
-### Record
-
-The Record verb starts recording in a call and pauses all BXML execution until the recording is terminated by a timeout (`maxDuration`) or a terminating digit (`terminatingDigits`). Once the recording ends, BXML execution will continue at the next verb, or at the BXML at the `recordCompleteUrl` if this attribute is set.
-
-If the `recordingAvailableUrl` attribute is set, this URL will receive a callback once the recording is available to use.
+There are two ways you can record a call; with `<Record>` or with `<StartRecording>`. Both have their own use case this guide will go over.
 
 #### Use `<Record>` if:
 
 * You're capturing a voicemail
 * You only need a single party recording
 * You're capturing input that should pause the call until finished
+
+#### Use `<StartRecording>` if:
+
+* You want to record both ends (together or separate) of a phone call
+* You want to record a call for quality assurance
+* You need other BXML verbs to execute while a recording is going on
+
+### Record
+
+The Record verb starts recording in a call and pauses all BXML execution until the recording is terminated by a timeout (`maxDuration`) or a terminating digit (`terminatingDigits`). Once the recording ends, BXML execution will continue at the next verb, or at the BXML at the `recordCompleteUrl` if this attribute is set.
+
+If the `recordingAvailableUrl` attribute is set, this URL will receive a callback once the recording is available to use.
 
 #### Record Example
 
@@ -40,12 +51,6 @@ If the `recordingAvailableUrl` attribute is set, this URL will receive a callbac
 The StartRecording verb starts recording in a call without pausing BXML execution. The [PauseRecording](/docs/voice/bxml/pauseRecording), [ResumeRecording](/docs/voice/bxml/resumeRecording), and [StopRecording](/docs/voice/bxml/stopRecording) BXML verbs can be used to toggle the recording. Recording is terminated by either the call ending, or by a StopRecording verb.
 
 Much like the Record verb, StartRecording also has a `recordingAvailableUrl` attribute to receive the recording available callback.
-
-#### Use `<StartRecording>` if:
-
-* You want to record both ends (together or separate) of a phone call
-* You want to record a call for quality assurance
-* You need other BXML verbs to execute while a recording is going on
 
 #### StartRecording Examples
 
@@ -74,13 +79,248 @@ Much like the Record verb, StartRecording also has a `recordingAvailableUrl` att
 </Response>
 ```
 
-### Transcriptions
+##Download Recording
 
-If you want your recordings to be transcribed, you can add a `transcribe` attribute to your `Record` or `StartRecording` BXML verbs. If you want to receive a [TranscriptionAvailable](/docs/voice/webhooks/transcriptionAvailable) callback, you can additionally set the `transcriptionAvailableUrl` to a URL on your callback server and `transcriptionAvailableMethod` to its associated HTTP method (`GET` or `POST`, the default).
+After the call has completed you can retrieve information on the recording and download the file in .mp3 or .wav format. Recordings are stored for 30 days.
 
+<Tabs
+    groupId="bxml"
+    defaultValue="xml"
+    values={[
+        { label: 'cURL', value: 'curl', },
+        { label: 'Java', value: 'java', },
+        { label: 'C#', value: 'csharp', },
+        { label: 'Ruby', value: 'ruby', },
+        { label: 'NodeJS', value: 'nodejs', },
+        { label: 'Python', value: 'python', },
+        { label: 'PHP', value: 'php', },
+    ]
+}>
+<TabItem value="curl">
+
+```curl
+curl 'https://voice.bandwidth.com/api/v2/accounts/$BW_ACCOUNT_ID/calls/c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d/recordings/r-d68201ef-d53e-4c6d-a743-1c1283909d41' \
+    -U {BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}
+```
+
+</TabItem>
+<TabItem value="java">
+
+```java
+import com.bandwidth.BandwidthClient;
+import com.bandwidth.http.response.ApiResponse;
+import com.bandwidth.voice.models.CallRecordingMetadata;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
+public class Sample {
+    public static final String USERNAME = System.getenv("BW_USERNAME");
+    public static final String PASSWORD = System.getenv("BW_PASSWORD");
+    public static final String ACCOUNT_ID = System.getenv("BW_ACCOUNT_ID");
+
+    public static void main(String[] args) {
+        // Call id is returned after successfully creating a call.
+        String callId = "c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d";
+        // Recording id is returned after retrieving a recording from the call.
+        String recordingId = "r-d68201ef-d53e-4c6d-a743-1c1283909d41";
+
+        BandwidthClient client = new BandwidthClient.Builder()
+                .voiceBasicAuthCredentials(USERNAME, PASSWORD)
+                .build();
+
+        try {
+            CompletableFuture<ApiResponse<CallRecordingMetadata>> completableFuture = client.getVoiceClient().getAPIController().getCallRecordingAsync(ACCOUNT_ID, callId, recordingId);
+            System.out.println(completableFuture.get().getResult());
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
+
+```
+
+</TabItem>
+<TabItem value="csharp">
+
+```csharp
+using System;
+using System.Threading.Tasks;
+using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
+using Bandwidth.Standard.Voice.Models;
+
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        var username = System.Environment.GetEnvironmentVariable("BW_USERNAME");
+        var password = System.Environment.GetEnvironmentVariable("BW_PASSWORD");
+        var accountId = System.Environment.GetEnvironmentVariable("BW_ACCOUNT_ID");
+
+        // Call id is returned after successfully creating a call.
+        var callId = "c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d";
+        // Recording id is returned after retrieving a recording from the call.
+        var recordingId = "r-d68201ef-d53e-4c6d-a743-1c1283909d41";
+
+        var client = new BandwidthClient.Builder()
+            .VoiceBasicAuthCredentials(username, password)
+            .Build();
+
+        try
+        {
+            var response = await client.Voice.APIController.GetCallRecordingAsync(accountId, callId, recordingId);
+            Console.WriteLine(response.Data);
+        }
+        catch (ApiException e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+}
+
+```
+
+</TabItem>
+<TabItem value="ruby">
+
+```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
+bandwidth_client = Bandwidth::Client.new(
+    voice_basic_auth_user_name: ENV['BW_USERNAME'],
+    voice_basic_auth_password: ENV['BW_PASSWORD']
+)
+
+voice_client = bandwidth_client.voice_client.client
+
+call_id = "c-1234"
+recording_id = "r-1234"
+
+begin
+    response = voice_client.get_call_recording(ENV['BW_ACCOUNT_ID'], call_id, recording_id)
+    puts response.data.application_id
+rescue APIException => e
+    puts e.response_code
+end
+
+```
+
+</TabItem>
+<TabItem value="nodejs">
+
+```js
+import { Client, ApiController } from '@bandwidth/voice';
+
+const BW_USERNAME = process.env["BW_USERNAME"];
+const BW_PASSWORD = process.env["BW_PASSWORD"];
+const BW_ACCOUNT_ID = process.env["BW_ACCOUNT_ID"];
+
+const client = new Client({
+  basicAuthUserName: BW_USERNAME,
+  basicAuthPassword: BW_PASSWORD
+});
+
+const controller = new ApiController(client);
+
+const accountId = BW_ACCOUNT_ID;
+
+const callId = 'c-abc12345-6defabc1-2345-6def-abc1-23456defabc1';
+const recordingId = 'r-abc12345-6def-abc1-2345-6defabc12345';
+
+const getCallRecording = async function() {
+  try {
+      const response = await controller.getCallRecording(accountId, callId, recordingId);
+      console.log(response)
+  } catch(error) {
+      console.error(error);
+  }
+}
+
+getCallRecording();
+
+```
+
+</TabItem>
+<TabItem value="python">
+
+```python
+from bandwidth.bandwidth_client import BandwidthClient
+from bandwidth.exceptions.api_exception import APIException
+
+import os
+
+BW_USERNAME = os.environ["BW_USERNAME"]
+BW_PASSWORD = os.environ["BW_PASSWORD"]
+BW_ACCOUNT_ID = os.environ["BW_ACCOUNT_ID"]
+
+bandwidth_client = BandwidthClient(
+    voice_basic_auth_user_name=BW_USERNAME,
+    voice_basic_auth_password=BW_PASSWORD
+)
+voice_client = bandwidth_client.voice_client.client
+
+call_id = "c-1234"
+recording_id = "r-1234"
+
+try:
+    response = voice_client.get_call_recording(BW_ACCOUNT_ID, call_id, recording_id)
+    print(response.body.application_id)
+except APIException as e:
+    print(e.response_code)
+
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+
+require "vendor/autoload.php";
+
+$BW_USERNAME = getenv("BW_USERNAME");
+$BW_PASSWORD = getenv("BW_PASSWORD");
+$BW_ACCOUNT_ID = getenv("BW_ACCOUNT_ID");
+
+$config = new BandwidthLib\Configuration(
+    array(
+        'voiceBasicAuthUserName' => $BW_USERNAME,
+        'voiceBasicAuthPassword' => $BW_PASSWORD,
+    )
+);
+$client = new BandwidthLib\BandwidthClient($config);
+
+$voiceClient = $client->getVoice()->getClient();
+
+$callId = "c-1234";
+$recordingId = "r-1234";
+
+try {
+    $response = $voiceClient->getCallRecording($BW_ACCOUNT_ID, $callId, $recordingId);
+    print_r($response->getResult()->applicationId);
+} catch (BandwidthLib\APIException $e) {
+    print_r($e->getResponseCode());
+}
+```
+
+</TabItem>
+</Tabs>
+
+
+### Initiate Transcription
+
+The transcribe attribute can be added to the Record or StartRecording BXML verbs. You can also choose to request transcription of a recording after it has been completed via the API.
+
+If you want to receive a TranscriptionAvailable callback, you can additionally set the transcriptionAvailableUrl to a URL on your callback server and transcriptionAvailableMethod to its associated HTTP method (GET or POST, the default).
+
+:::tip
 Transcription can succeed only for recordings of length greater than 500 milliseconds and less than 4 hours.
+:::
 
-#### Recording Transcription Example
+### Recording Transcription Example
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -88,3 +328,10 @@ Transcription can succeed only for recordings of length greater than 500 millise
    <Record transcribe="true" transcriptionAvailableUrl="https://transcription.url.server/transcribe/" transcriptionAvailableMethod="POST"/>
 </Response>
 ```
+
+###Download Transcription
+
+After the call has completed, you can download the transcribed file in JSON format. Transcriptions are stored for 30 days.
+
+
+

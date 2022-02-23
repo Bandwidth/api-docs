@@ -1,6 +1,6 @@
 ---
 id: modifyInProgressCallGuide
-title: modify a call in progress
+title: Modify call guide
 slug: /voice/guides/modifyInProgressCall.mdx
 description: How to modify calls with a post request
 keywords:
@@ -14,22 +14,122 @@ image: ../../static/img/bandwidth-logo.png
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-In this guide we will show you how to modify the BXML for a call already in progress. Please ensure you have followed our earlier guide on how to make an outbound call with Bandwidth. It is recommended to use a request manager like POSTMAN for this tutorial.
+In this guide we will show you how to modify the BXML for a call already in progress. Please ensure you have followed our earlier guide on [how to make an outbound call](/docs/voice/guides/outboundCallGuide) with Bandwidth. It is recommended to use a request manager like POSTMAN for this tutorial, but the SDKs are also capable.
 
 Please note that modifying a call will end any verbs currently executing and will skip any subsequent ones.
 
-For this example, create a call that pauses for a minute. This will give you time to copy the callId and make the post request to redirect the call. The xml should look like:
-```xml
-<Response>
-    <Pause duration="60" />
-</Response>
-```
+For this example, create a call that pauses for a minute. This will give you time to copy the callId and make the post request to redirect the call. The call can be an inbound or outbound call, as long as it is in progress when trying to modify it.
+<Tabs
+groupId="bxml"
+defaultValue="xml"
+values={[
+    { label: 'XML', value: 'xml', },
+    { label: 'Java', value: 'java', },
+    { label: 'C#', value: 'csharp', },
+    { label: 'Ruby', value: 'ruby', },
+    { label: 'NodeJS', value: 'nodejs', },
+    { label: 'Python', value: 'python', },
+    { label: 'PHP', value: 'php', },
+]
+}>
+<TabItem value="xml">
 
-Place the call. Copy the callId from the response body.
+    ```xml
+    <?xml version="1.0" encoding="UTF-8"?>
+    <Response>
+        <Pause duration="60" />
+    </Response>
+    ```
 
-Next, send a POST request to https://voice.bandwidth.com/api/v2/accounts/{your_account_id}/calls/{the_call_id}
+</TabItem>
+<TabItem value="java">
 
-##To replace the verbs of a call:
+    ```java
+    Pause pause = Pause.builder()
+    .duration(60.0)
+    .build();
+
+    Response response = Response.builder().build()
+    .add(pause);
+
+    System.out.println(response.toBXML());
+    ```
+
+</TabItem>
+<TabItem value="csharp">
+
+    ```csharp
+    Pause pause = new Pause
+    {
+        Duration = 60
+    };
+
+    Response response = new Response();
+    response.Add(pause);
+
+    Console.WriteLine(response.ToBXML());
+    ```
+
+</TabItem>
+<TabItem value="ruby">
+
+    ```ruby
+    pause = Bandwidth::Voice::Pause.new({
+    :duration => 60
+})
+
+    response = Bandwidth::Voice::Response.new()
+    response.push(pause)
+
+    puts response.to_bxml()
+    ```
+
+</TabItem>
+<TabItem value="nodejs">
+
+    ```js
+    const pause = new Pause({
+    duration: 60
+});
+
+    const response = new Response(pause);
+
+    console.log(response.toBxml());
+    ```
+
+</TabItem>
+<TabItem value="python">
+
+    ```python
+    pause = Pause(duration=60)
+
+    response = Response()
+    response.add_verb(pause)
+
+    print(response.to_bxml())
+    ```
+
+</TabItem>
+<TabItem value="php">
+
+    ```php
+    $pause = new BandwidthLib\Voice\Bxml\Pause();
+    $pause->duration(60);
+
+    $response = new BandwidthLib\Voice\Bxml\Response();
+    $response->addVerb($pause);
+
+    echo $response->toBxml();
+    ```
+
+</TabItem>
+</Tabs>
+
+Place the call and be sure to copy the callId from the response body, or grab it with your SDK of choice.
+
+Next, send a POST request to https://voice.bandwidth.com/api/v60/accounts/{your_account_id}/calls/{the_call_id}
+
+#### To replace the verbs of a call:
 
 The body of this request should have at least redirectUrl, username (if applicable), and password (if applicable) specified. More info here.
 
@@ -46,269 +146,272 @@ The body of this request should have at least redirectUrl, username (if applicab
         { label: 'Python', value: 'python', },
         { label: 'PHP', value: 'php', },
     ]
-    }>
-    <TabItem value="payload">
+}>
+<TabItem value="payload">
 
-        ```json
-        POST https://voice.bandwidth.com/api/v2/accounts/{YOUR_ACCOUNT_ID}/calls/{THE_CALL_ID}
-        {
-            "redirectUrl": "http://example.com",
-            "username": "string",
-            "password": "string",
-        }
-        ```
+```json
+POST https://voice.bandwidth.com/api/v60/accounts/{YOUR_ACCOUNT_ID}/calls/{THE_CALL_ID}
+{
+    "redirectUrl": "http://example.com",
+    "username": "string",
+    "password": "string",
+}
 
-    </TabItem>
-    <TabItem value="curl">
-        ```cURL
-        curl 'https://voice.bandwidth.com/api/v2/accounts/{YOUR_ACCOUNT_ID}/calls/{THE_CALL_ID}' \
-            -X POST \
-            -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=' \
-            -H 'Content-Type: application/json' \
-            -d '{
-                "redirectUrl": "http://example.com",
-                "username": "string",
-                "password": "string",
-            }'
-        ```
-    </TabItem>
-    <TabItem value="java">
-        ```java
-        import com.bandwidth.BandwidthClient;
-        import com.bandwidth.http.response.ApiResponse;
-        import com.bandwidth.voice.models.ApiModifyCallRequest;
-        import com.bandwidth.voice.models.StateEnum;
+```
 
-        import java.util.concurrent.CompletableFuture;
-        import java.util.concurrent.ExecutionException;
+</TabItem>
+<TabItem value="curl">
 
-        public class Sample {
-            public static final String USERNAME = System.getenv("BW_USERNAME");
-            public static final String PASSWORD = System.getenv("BW_PASSWORD");
-            public static final String ACCOUNT_ID = System.getenv("BW_ACCOUNT_ID");
+```cURL
+curl 'https://voice.bandwidth.com/api/v60/accounts/{YOUR_ACCOUNT_ID}/calls/{THE_CALL_ID}' \
+    -X POST \
+    -U {BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD} \
+    -H 'Content-Type: application/json' \
+    -d '{
+        "redirectUrl": "http://example.com",
+        "username": "string",
+        "password": "string",
+    }'
+```
 
-            public static void main(String[] args) {
-                String callId = {THE_CALL_ID};
+</TabItem>
+<TabItem value="java">
 
-                BandwidthClient client = new BandwidthClient.Builder()
-                        .voiceBasicAuthCredentials(USERNAME, PASSWORD)
-                        .build();
+```java
+import com.bandwidth.BandwidthClient;
+import com.bandwidth.http.response.ApiResponse;
+import com.bandwidth.voice.models.ApiModifyCallRequest;
+import com.bandwidth.voice.models.StateEnum;
 
-                ApiModifyCallRequest request = new ApiModifyCallRequest();
-                request.setRedirectUrl({YOUR_REDIRECT_URL});
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
-                try {
-                    CompletableFuture<ApiResponse<Void>> completableFuture = client.getVoiceClient().getAPIController().modifyCallAsync(ACCOUNT_ID, callId, request);
-                    System.out.println(completableFuture.get().getResult());
-                } catch (InterruptedException | ExecutionException e) {
-                    System.out.println(e.getMessage());
-                }
-            }
-        }
+public class Sample {
+    public static final String USERNAME = System.getenv("BW_USERNAME");
+    public static final String PASSWORD = System.getenv("BW_PASSWORD");
+    public static final String ACCOUNT_ID = System.getenv("BW_ACCOUNT_ID");
 
-        ```
-    </TabItem>
-    <TabItem value="csharp">
+    public static void main(String[] args) {
+        String callId = {THE_CALL_ID};
 
-        ```csharp
-        using System;
-        using System.Threading.Tasks;
-        using Bandwidth.Standard;
-        using Bandwidth.Standard.Exceptions;
-        using Bandwidth.Standard.Voice.Models;
+        BandwidthClient client = new BandwidthClient.Builder()
+                .voiceBasicAuthCredentials(USERNAME, PASSWORD)
+                .build();
 
-        class Program
-        {
-            static async Task Main(string[] args)
-        {
-            var username = System.Environment.GetEnvironmentVariable("BW_USERNAME");
-            var password = System.Environment.GetEnvironmentVariable("BW_PASSWORD");
-            var accountId = System.Environment.GetEnvironmentVariable("BW_ACCOUNT_ID");
-            var applicationId = System.Environment.GetEnvironmentVariable("BW_VOICE_APPLICATION_ID");
-            var to = System.Environment.GetEnvironmentVariable("USER_NUMBER");
-            var from = System.Environment.GetEnvironmentVariable("BW_NUMBER");
-            var baseUrl = System.Environment.GetEnvironmentVariable("BASE_CALLBACK_URL");
-            var answerUrl = string.Concat(baseUrl, "/callbacks/answer");
+        ApiModifyCallRequest request = new ApiModifyCallRequest();
+        request.setRedirectUrl({YOUR_REDIRECT_URL});
 
-            var client = new BandwidthClient.Builder()
-            .VoiceBasicAuthCredentials(username, password)
-            .Build();
-
-            var request = new CreateCallRequest()
-        {
-            ApplicationId = applicationId,
-            To = to,
-            From = from,
-            AnswerUrl = answerUrl
-        };
-
-            try
-        {
-            var response = await client.Voice.APIController.CreateCallAsync(accountId, request);
-            Console.WriteLine(response.Data);
-        }
-            catch (ApiException e)
-        {
-            Console.WriteLine(e.Message);
-        }
-        }
-        }
-        ```
-
-    </TabItem>
-    <TabItem value="ruby">
-
-        ```ruby
-        require 'bandwidth'
-
-        include Bandwidth
-        include Bandwidth::Voice
-
-        bandwidth_client = Bandwidth::Client.new(
-        voice_basic_auth_user_name: ENV['BW_USERNAME'],
-        voice_basic_auth_password: ENV['BW_PASSWORD']
-        )
-
-        voice_client = bandwidth_client.voice_client.client
-
-        body = CreateCallRequest.new
-        body.from = ENV['BW_NUMBER']
-        body.to = ENV['USER_NUMBER']
-        body.answer_url = "http://www.myapp.com/hello"
-        body.application_id = "7fc9698a-b04a-468b-9e8f-91238c0d0086"
-
-        begin
-        result = voice_client.create_call(ENV['BW_ACCOUNT_ID'], body)
-        puts result.data.call_id
-        rescue APIException => e
-        puts e.response_code
-        end
-        ```
-
-    </TabItem>
-    <TabItem value="nodejs">
-
-        ```js
-        import { Client, ApiController } from '@bandwidth/voice';
-
-        const BW_USERNAME = process.env["BW_USERNAME"];
-        const BW_PASSWORD = process.env["BW_PASSWORD"];
-        const BW_ACCOUNT_ID = process.env["BW_ACCOUNT_ID"];
-        const BW_VOICE_APPLICATION_ID = process.env["BW_VOICE_APPLICATION_ID"];
-        const BW_NUMBER = process.env["BW_NUMBER"];
-        const USER_NUMBER = process.env["USER_NUMBER"];
-        const VOICE_CALLBACK_URL = process.env["VOICE_CALLBACK_URL"];
-
-        const client = new Client({
-        basicAuthUserName: BW_USERNAME,
-        basicAuthPassword: BW_PASSWORD
-    });
-
-        const controller = new ApiController(client);
-
-        const accountId = BW_ACCOUNT_ID;
-
-        const makeCall = async function() {
         try {
+            CompletableFuture<ApiResponse<Void>> completableFuture = client.getVoiceClient().getAPIController().modifyCallAsync(ACCOUNT_ID, callId, request);
+            System.out.println(completableFuture.get().getResult());
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
+
+```
+
+</TabItem>
+<TabItem value="csharp">
+
+```csharp
+using System;
+using System.Threading.Tasks;
+using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
+using Bandwidth.Standard.Voice.Models;
+
+class Program
+{
+    static async Task Main(string[] args)
+{
+    var username = System.Environment.GetEnvironmentVariable("BW_USERNAME");
+    var password = System.Environment.GetEnvironmentVariable("BW_PASSWORD");
+    var accountId = System.Environment.GetEnvironmentVariable("BW_ACCOUNT_ID");
+    var applicationId = System.Environment.GetEnvironmentVariable("BW_VOICE_APPLICATION_ID");
+    var to = System.Environment.GetEnvironmentVariable("USER_NUMBER");
+    var from = System.Environment.GetEnvironmentVariable("BW_NUMBER");
+    var baseUrl = System.Environment.GetEnvironmentVariable("BASE_CALLBACK_URL");
+    var answerUrl = string.Concat(baseUrl, "/callbacks/answer");
+
+    var client = new BandwidthClient.Builder()
+    .VoiceBasicAuthCredentials(username, password)
+    .Build();
+
+    var request = new CreateCallRequest()
+{
+    ApplicationId = applicationId,
+    To = to,
+    From = from,
+    AnswerUrl = answerUrl
+};
+
+    try
+{
+    var response = await client.Voice.APIController.CreateCallAsync(accountId, request);
+    Console.WriteLine(response.Data);
+}
+    catch (ApiException e)
+{
+    Console.WriteLine(e.Message);
+}
+}
+}
+```
+
+</TabItem>
+<TabItem value="ruby">
+
+```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
+bandwidth_client = Bandwidth::Client.new(
+voice_basic_auth_user_name: ENV['BW_USERNAME'],
+voice_basic_auth_password: ENV['BW_PASSWORD']
+)
+
+voice_client = bandwidth_client.voice_client.client
+
+body = CreateCallRequest.new
+body.from = ENV['BW_NUMBER']
+body.to = ENV['USER_NUMBER']
+body.answer_url = "http://www.myapp.com/hello"
+body.application_id = "7fc9698a-b04a-468b-9e8f-916038c0d0086"
+
+begin
+result = voice_client.create_call(ENV['BW_ACCOUNT_ID'], body)
+puts result.data.call_id
+rescue APIException => e
+puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="nodejs">
+
+```js
+import { Client, ApiController } from '@bandwidth/voice';
+
+const BW_USERNAME = process.env["BW_USERNAME"];
+const BW_PASSWORD = process.env["BW_PASSWORD"];
+const BW_ACCOUNT_ID = process.env["BW_ACCOUNT_ID"];
+const BW_VOICE_APPLICATION_ID = process.env["BW_VOICE_APPLICATION_ID"];
+const BW_NUMBER = process.env["BW_NUMBER"];
+const USER_NUMBER = process.env["USER_NUMBER"];
+const VOICE_CALLBACK_URL = process.env["VOICE_CALLBACK_URL"];
+
+const client = new Client({
+basicAuthUserName: BW_USERNAME,
+basicAuthPassword: BW_PASSWORD
+});
+
+const controller = new ApiController(client);
+
+const accountId = BW_ACCOUNT_ID;
+
+const makeCall = async function() {
+    try {
         const response = await controller.createCall(accountId, {
-        applicationId: BW_VOICE_APPLICATION_ID,
-        to: USER_NUMBER,
-        from: BW_NUMBER,
-        answerUrl: VOICE_CALLBACK_URL,
-        answerMethod: 'POST',
-        callTimeout: 30
-    });
+            applicationId: BW_VOICE_APPLICATION_ID,
+            to: USER_NUMBER,
+            from: BW_NUMBER,
+            answerUrl: VOICE_CALLBACK_URL,
+            answerMethod: 'POST',
+            callTimeout: 30
+        });
         console.log(response.body);
     } catch(error) {
         console.error(error);
     }
-    }
+}
 
-        makeCall();
+makeCall();
 
-        ```
+```
 
-    </TabItem>
-    <TabItem value="python">
+</TabItem>
+<TabItem value="python">
 
-        ```python
-        from bandwidth.bandwidth_client import BandwidthClient
-        from bandwidth.voice.models.create_call_request import CreateCallRequest
-        from bandwidth.exceptions.api_exception import APIException
+```python
+from bandwidth.bandwidth_client import BandwidthClient
+from bandwidth.voice.models.create_call_request import CreateCallRequest
+from bandwidth.exceptions.api_exception import APIException
 
-        import os
+import os
 
-        BW_USERNAME = os.environ["BW_USERNAME"]
-        BW_PASSWORD = os.environ["BW_PASSWORD"]
-        BW_ACCOUNT_ID = os.environ["BW_ACCOUNT_ID"]
-        BW_VOICE_APPLICATION_ID = os.environ["BW_VOICE_APPLICATION_ID"]
-        BW_NUMBER = os.environ["BW_NUMBER"]
-        USER_NUMBER = os.environ["USER_NUMBER"]
-        VOICE_CALLBACK_URL = os.environ["VOICE_CALLBACK_URL"]
+BW_USERNAME = os.environ["BW_USERNAME"]
+BW_PASSWORD = os.environ["BW_PASSWORD"]
+BW_ACCOUNT_ID = os.environ["BW_ACCOUNT_ID"]
+BW_VOICE_APPLICATION_ID = os.environ["BW_VOICE_APPLICATION_ID"]
+BW_NUMBER = os.environ["BW_NUMBER"]
+USER_NUMBER = os.environ["USER_NUMBER"]
+VOICE_CALLBACK_URL = os.environ["VOICE_CALLBACK_URL"]
 
-        bandwidth_client = BandwidthClient(
-        voice_basic_auth_user_name=BW_USERNAME,
-        voice_basic_auth_password=BW_PASSWORD
-        )
-        voice_client = bandwidth_client.voice_client.client
+bandwidth_client = BandwidthClient(
+    voice_basic_auth_user_name=BW_USERNAME,
+    voice_basic_auth_password=BW_PASSWORD
+)
+voice_client = bandwidth_client.voice_client.client
 
-        body = CreateCallRequest()
-        body.application_id = BW_VOICE_APPLICATION_ID
-        body.to = USER_NUMBER
-        body.mfrom = BW_NUMBER
-        body.answer_url = VOICE_CALLBACK_URL
-        try:
-        response = voice_client.create_call(BW_ACCOUNT_ID, body)
-        print(response.body.call_id)
-        except APIException as e:
-        print(e.response_code)
+body = CreateCallRequest()
+body.application_id = BW_VOICE_APPLICATION_ID
+body.to = USER_NUMBER
+body.mfrom = BW_NUMBER
+body.answer_url = VOICE_CALLBACK_URL
+try:
+    response = voice_client.create_call(BW_ACCOUNT_ID, body)
+    print(response.body.call_id)
+except APIException as e:
+    print(e.response_code)
 
-        ```
+```
 
-    </TabItem>
-    <TabItem value="php">
+</TabItem>
+<TabItem value="php">
 
-        ```php
-        <?php
+```php
+require "vendor/autoload.php";
 
-        require "vendor/autoload.php";
+$BW_USERNAME = getenv("BW_USERNAME");
+$BW_PASSWORD = getenv("BW_PASSWORD");
+$BW_ACCOUNT_ID = getenv("BW_ACCOUNT_ID");
+$BW_VOICE_APPLICATION_ID = getenv("BW_VOICE_APPLICATION_ID");
+$BW_NUMBER = getenv("BW_NUMBER");
+$USER_NUMBER = getenv("USER_NUMBER");
+$VOICE_CALLBACK_URL = getenv("VOICE_CALLBACK_URL");
 
-        $BW_USERNAME = getenv("BW_USERNAME");
-        $BW_PASSWORD = getenv("BW_PASSWORD");
-        $BW_ACCOUNT_ID = getenv("BW_ACCOUNT_ID");
-        $BW_VOICE_APPLICATION_ID = getenv("BW_VOICE_APPLICATION_ID");
-        $BW_NUMBER = getenv("BW_NUMBER");
-        $USER_NUMBER = getenv("USER_NUMBER");
-        $VOICE_CALLBACK_URL = getenv("VOICE_CALLBACK_URL");
+$config = new BandwidthLib\Configuration(
+array(
+'voiceBasicAuthUserName' => $BW_USERNAME,
+'voiceBasicAuthPassword' => $BW_PASSWORD,
+)
+);
+$client = new BandwidthLib\BandwidthClient($config);
 
-        $config = new BandwidthLib\Configuration(
-        array(
-        'voiceBasicAuthUserName' => $BW_USERNAME,
-        'voiceBasicAuthPassword' => $BW_PASSWORD,
-        )
-        );
-        $client = new BandwidthLib\BandwidthClient($config);
+$voiceClient = $client->getVoice()->getClient();
 
-        $voiceClient = $client->getVoice()->getClient();
+$body = new BandwidthLib\Voice\Models\CreateCallRequest();
+$body->from = $BW_NUMBER;
+$body->to = $USER_NUMBER;
+$body->answerUrl = $VOICE_CALLBACK_URL;
+$body->applicationId = $BW_VOICE_APPLICATION_ID;
 
-        $body = new BandwidthLib\Voice\Models\CreateCallRequest();
-        $body->from = $BW_NUMBER;
-        $body->to = $USER_NUMBER;
-        $body->answerUrl = $VOICE_CALLBACK_URL;
-        $body->applicationId = $BW_VOICE_APPLICATION_ID;
+try {
+    $response = $voiceClient->createCall($BW_ACCOUNT_ID, $body);
+    print_r($response->getResult()->callId);
+} catch (BandwidthLib\APIException $e) {
+    print_r($e->getResponseCode());
+}
+```
 
-        try {
-        $response = $voiceClient->createCall($BW_ACCOUNT_ID, $body);
-        print_r($response->getResult()->callId);
-    } catch (BandwidthLib\APIException $e) {
-        print_r($e->getResponseCode());
-    }
-
-        ```
-    </TabItem>
+</TabItem>
 </Tabs>
 
-Where to next?
+### Where to next?
 
 Now that you have learnt how to modify existing calls in progress, check out some of the available actions in the following guides:
-How to transfer an inbound call
+* [How to transfer an inbound call](/docs/voice/transferGuide)
