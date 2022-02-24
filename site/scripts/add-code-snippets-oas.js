@@ -58,7 +58,7 @@ const EXTENSION_TO_LANG = {
 
 var spec_name = '';
 var operation_id = '';
-const SPEC_SOURCE_DIRECTORY = 'specs-source/';
+const SPEC_SOURCE_DIRECTORY = 'specs/';
 const SPEC_OUTPUT_DIRECTORY = 'specs/';
 
 var files = fs.readdirSync(SPEC_SOURCE_DIRECTORY);
