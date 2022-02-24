@@ -23,7 +23,7 @@ You may want to play media for on-hold music or use text-to-speech to play descr
 
 The BXML PlayAudio verb is used to play an audio file in the call. After creating the call via our API, your associated voice application should contain this BXML.
 
-The audio file should already be hosted and the URL of an audio file should be included in the body of the `<PlayAudio>` tag. However, it may be a relative URL that is then hosted by your device.
+The audio file should already be hosted and the URL of an audio file should be included in the body of the [`<PlayAudio>`](/voice/bxml/playAudio) tag. However, it may be a relative URL that is then hosted by your device.
 
 <Tabs
     groupId="bxml"
@@ -45,7 +45,7 @@ The audio file should already be hosted and the URL of an audio file should be i
 <Response>
     <SpeakSentence>Hello! Here is a sponsored message.</SpeakSentence>
     <PlayAudio>https://audio.url/audio1.wav</PlayAudio>
-    <PlayAudio>/relative_endpoint_that_delivers_mediafile</PlayAudio>
+    <PlayAudio>/relative_audio</PlayAudio>
 </Response>
 ```
 
@@ -54,7 +54,7 @@ The audio file should already be hosted and the URL of an audio file should be i
 **Note: This application is pseudocoded. Your implementation will look different
 
 ```java
-@Post /play_audio endpoint
+@POST /play_audio endpoint
 public String playaudio() {
     Response response = new Response();
 
@@ -66,7 +66,7 @@ public String playaudio() {
     return bxml;
 }
 
-@Get /relative_audio endpoint
+@GET /relative_audio endpoint
 public byte[] getAudio() {
     ...retrieve and return audio file...
 }
@@ -78,7 +78,7 @@ The second instance of PlayAudio (a relative endpoint) assumes there is an endpo
 **Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```csharp
-@Post [/playaudio]
+@POST [/playaudio]
 public ActionResult playAudio() {
     PlayAudio playAudio1 = new PlayAudio {
         Url = "https://audio.url/audio1.wav"
@@ -95,7 +95,7 @@ public ActionResult playAudio() {
     return new OkObjectResult(response.ToBXML());
 }
 
-@Get [/relative_audio]
+@GET [/relative_audio]
 public ActionResult getAudio()
 {
     ...retrieve and return audio file...
@@ -133,7 +133,7 @@ The second instance of PlayAudio (a relative endpoint) assumes there is an endpo
 **Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```js
-@post ['/playAudio'] (request, request_response) => {
+@POST ['/playAudio'] (request, request_response) => {
     const playAudio1 = new PlayAudio({
         url: "https://audio.url/audio1.wav"
     });
@@ -149,7 +149,7 @@ The second instance of PlayAudio (a relative endpoint) assumes there is an endpo
 
 }
 
-@get ['/relative_audio'] => {
+@GET ['/relative_audio'] => {
     ...retrieve and return audio file...
 }
 ```
@@ -161,7 +161,7 @@ The second instance of PlayAudio (a relative endpoint) assumes there is an endpo
 **Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```python
-@post '/playAudio'
+@POST '/playAudio'
 def playAudio():
     play_audio_1 = PlayAudio(
         url="https://audio.url/audio1.wav"
@@ -177,7 +177,7 @@ def playAudio():
 
     return response.to_bxml()
 
-@get '/relative_audio'
+@GET '/relative_audio'
 def getAudio():
     ...retrieve and return audio file...
 
@@ -189,10 +189,10 @@ The second instance of PlayAudio (a relative endpoint) assumes there is an endpo
 **Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```php
-@post('/playAudio)
+@POST('/playAudio)
 function playAudio(Request $request, Response $response) {
     $playAudio1 = new BandwidthLib\Voice\Bxml\PlayAudio("https://audio.url/audio1.wav");
-    $playAudio2 = new BandwidthLib\Voice\Bxml\PlayAudio("https://audio.url/audio2.mp3");
+    $playAudio2 = new BandwidthLib\Voice\Bxml\PlayAudio("/relative_audio");
 
     $response = new BandwidthLib\Voice\Bxml\Response();
     $response->addVerb($playAudio1);
@@ -204,7 +204,7 @@ function playAudio(Request $request, Response $response) {
     return $response;
 }
 
-@get('/relative_audio)
+@GET('/relative_audio)
 function getAudio(Request $request, Response $response) {
     ...retrieve and return audio file...
 }
@@ -215,12 +215,12 @@ The second instance of PlayAudio (a relative endpoint) assumes there is an endpo
 </TabItem>
 </Tabs>
 
+The example above plays two audio files for the caller; one from an absolute endpoint hosted somewhere other than where the application is, and one is a relative endpoint. Note the relative endpoint needs to also be served by the application, and deliver the file.
+
 In this example, once the call is created using our API we check the specific answerUrl for a BXML response which tells us to play the media file. You also have the ability to play multiple audio files in succession.
 
 :::tip
-ONLY .wav and .mp3 files as are supported
-
-To ensure playback quality, Bandwidth recommends limiting audio files to less than 1 hour in length or 250 MB in size.
+ONLY .wav and .mp3 files are supported. To ensure playback quality, Bandwidth recommends limiting audio files to less than 1 hour in length or 250 MB in size.
 :::
 
 ### Text-To-Speech
@@ -245,7 +245,7 @@ The SpeakSentence verb is used for text-to-speech playback on a call. Attributes
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <SpeakSentence voice="jorge">
+    <SpeakSentence voice="bridget">
         Hello <lang xml:lang="en-GB">Sherlock Holmes</lang>.
         You have an appointment on <say-as interpret-as="date" format="mdy">11/12/2022</say-as>.
     </SpeakSentence>
@@ -257,13 +257,13 @@ The SpeakSentence verb is used for text-to-speech playback on a call. Attributes
 **Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```java
-@Post /tts endpoint
+@POST /tts endpoint
 public String speakSentence() {
     Response response = new Response();
 
     SpeakSentence speakSentence = SpeakSentence.builder()
     .text("Hello <lang xml:lang=\"en-GB\">Sherlock Holmes</lang>. You have an appointment on <say-as interpret-as="date" format="mdy">11/12/2022</say-as>.")
-    .voice("jorge")
+    .voice("bridget")
     .build();
 
     String bxml = response.add(speakSentence).toBXML();
@@ -277,13 +277,13 @@ public String speakSentence() {
 **Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```csharp
-@Post [/tts]
+@POST [/tts]
 public ActionResult speaksentence() {
     Response response = new Response();
 
     SpeakSentence speakSentence = new SpeakSentence {
         Sentence = "Hello <lang xml:lang=\"en-GB\">Sherlock Holmes</lang>. You have an appointment on <say-as interpret-as="date" format="mdy">11/12/2022</say-as>.",
-        Voice = "jorge"
+        Voice = "bridget"
     };
 
     Response response = new Response();
@@ -298,10 +298,10 @@ public ActionResult speaksentence() {
 **Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```
-~post '/tts' do:
+@POST '/tts' do:
     speak_sentence = Bandwidth::Voice::SpeakSentence.new({
         :sentence => 'Hello <lang xml:lang="en-GB">Sherlock Holmes</lang>. You have an appointment on <say-as interpret-as="date" format="mdy">11/12/2022</say-as>.',
-        :voice => "jorge"
+        :voice => "bridget"
     })
 
     response = Bandwidth::Voice::Response.new()
@@ -316,10 +316,10 @@ public ActionResult speaksentence() {
 **Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```js
-~POST ['/playAudio'] (req, res) => {
+@POST ['/playAudio'] (req, res) => {
     const speakSentence = new SpeakSentence({
         sentence: `Hello <lang xml:lang="en-GB">Sherlock Holmes</lang>. You have an appointment on <say-as interpret-as="date" format="mdy">11/12/2022</say-as>.`,
-        voice: "jorge"
+        voice: "bridget"
     });
 
     const response = new Response(speakSentence);
@@ -334,11 +334,11 @@ public ActionResult speaksentence() {
 **Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```python
-@post '/playAudio'
+@POST '/playAudio'
 def playAudio():
     speak_sentence = SpeakSentence(
         sentence='Hello <lang xml:lang="en-GB">Sherlock Holmes</lang>. You have an appointment on <say-as interpret-as="date" format="mdy">11/12/2022</say-as>.',
-        voice="jorge"
+        voice="bridget"
     )
 
     response = Response()
@@ -352,10 +352,10 @@ def playAudio():
 **Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```php
-@post('/playAudio)
+@POST('/playAudio)
 function playAudio(Request $request, Response $response) {
     $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence('Hello <lang xml:lang="en-GB">Sherlock Holmes</lang>. You have an appointment on <say-as interpret-as="date" format="mdy">11/12/2022</say-as>.');
-    $speakSentence->voice("jorge");
+    $speakSentence->voice("bridget");
 
     $response = new BandwidthLib\Voice\Bxml\Response();
     $response->addVerb($speakSentence);
@@ -372,7 +372,8 @@ function playAudio(Request $request, Response $response) {
 
 In this example, once the call is created using our API we check the specific answerUrl for a BXML response which tells us to playback the specified text.
 
-SSML tags are allowed to provide you with additional functionality. In the example, the name Sherlock Holmes is said with British inflection, and the date is pronounced as "November twelfth, twenty-twenty-two" instead of the numbers being read. To see details of other SSML tags, check [speaksentence](/docs/voice/bxml/speakSentence).
+Speech Synthesis Markup Language (SSML) tags allow you to use XML-based markup language for assisting the generation of synthesized speech providing you with additional functionality.
+Here, the name Sherlock Holmes is said with British inflection, and the date is pronounced as "November twelfth, twenty-twenty-two" instead of the numbers being read. All supported SSML tags can be viewed [here](/docs/voice/bxml/speaksentence).
 
 ### Where to next?
 
