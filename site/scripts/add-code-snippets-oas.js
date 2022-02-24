@@ -63,6 +63,7 @@ const SPEC_OUTPUT_DIRECTORY = 'specs/';
 
 var files = fs.readdirSync(SPEC_SOURCE_DIRECTORY);
 files.forEach(spec => {
+    console.log(filename.split('.').pop());
     var spec_json = JSON.parse(fs.readFileSync(SPEC_SOURCE_DIRECTORY + spec));
     spec_name = spec_json["info"]["title"];
 
