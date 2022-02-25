@@ -22,6 +22,7 @@
  *     save the OpenAPI spec
  */
 const fs = require('fs');
+const yaml = require('js-yaml');
 const ENV_REPLACE_DIRECTORY = '/env-replace/';
 
 var ENV_FIND_AND_REPLACE = {};
@@ -58,12 +59,18 @@ const EXTENSION_TO_LANG = {
 
 var spec_name = '';
 var operation_id = '';
-const SPEC_SOURCE_DIRECTORY = 'specs-source/';
-const SPEC_OUTPUT_DIRECTORY = 'specs/';
+const SPEC_DIRECTORY = 'specs/';
 
-var files = fs.readdirSync(SPEC_SOURCE_DIRECTORY);
+var files = fs.readdirSync(SPEC_DIRECTORY);
 files.forEach(spec => {
-    var spec_json = JSON.parse(fs.readFileSync(SPEC_SOURCE_DIRECTORY + spec));
+    let ext = spec.split('.').pop();
+    let spec_json = {};
+    if (ext == "yml" || ext == "yaml") {
+        spec_json = yaml.load(fs.readFileSync(SPEC_DIRECTORY + spec));
+    } else {
+        spec_json = JSON.parse(fs.readFileSync(SPEC_DIRECTORY + spec));
+    }
+    
     spec_name = spec_json["info"]["title"];
 
     //This results in every URL defined in the OpenAPI spec
@@ -99,5 +106,9 @@ files.forEach(spec => {
             }
         }
     }
-    fs.writeFileSync(SPEC_OUTPUT_DIRECTORY + spec, JSON.stringify(spec_json, null, 4), { flag: 'w+' });
+    if (ext == "yml" || ext == "yaml") {
+        fs.writeFileSync(SPEC_DIRECTORY + spec, yaml.dump(spec_json, null), { flag: 'w+' });
+    } else {
+        fs.writeFileSync(SPEC_DIRECTORY + spec, JSON.stringify(spec_json, null, 4), { flag: 'w+' });
+    }
 });
