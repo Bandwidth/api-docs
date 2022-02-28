@@ -14,10 +14,12 @@ image: ../../static/img/bandwidth-logo.png
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-This guide will show how to do call recording via the [Record](/docs/voice/bxml/record) and [StartRecording](/docs/voice/bxml/startRecording) verbs, and produce a transcription of those recordings.
-You can record any inbound or outbound call and request transcription of the call after completion using our API. Please ensure you have followed our earlier guide on [how to make an outbound call](/docs/voice/guides/outboundCall) with Bandwidth.
+In this guide we will show you how to record any inbound or outbound call and produce a transcription of these recordings. Please ensure you have followed our earlier guide on how to make an outbound call with Bandwidth.
 
-There are two ways you can record a call; with `<Record>` or with `<StartRecording>`. Both have their own use case this guide will go over.
+Calls may be recorded or transcribed to enhance customer experience and training, for dispute resolution or for regulatory compliance reasons.
+
+There are two ways you can record a call; with [`<Record>`](/docs/voice/bxml/record) or with [`<StartRecording>`](/docs/voice/bxml/startrecording). Please select the use case that best suits your needs.
+
 
 #### Use `<Record>` if:
 
@@ -39,163 +41,7 @@ If the `recordingAvailableUrl` attribute is set, this URL will receive a callbac
 
 #### Record Example
 
-<Tabs
-  groupId="bxml"
-  defaultValue="xml"
-  values={[
-    { label: 'XML', value: 'xml', },
-    { label: 'Java', value: 'java', },
-    { label: 'C#', value: 'csharp', },
-    { label: 'Ruby', value: 'ruby', },
-    { label: 'NodeJS', value: 'nodejs', },
-    { label: 'Python', value: 'python', },
-    { label: 'PHP', value: 'php', },
-  ]
-}>
-<TabItem value="xml">
 
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<Response>
-    <SpeakSentence>Please say your name.</SpeakSentence>
-    <Record recordCompleteUrl="https://myapp.test/nextBXML" maxDuration="5"/>
-    <!-- Any verbs after this point would be replaced by those returned by the recordCompleteUrl -->
-</Response>
-```
-
-</TabItem>
-<TabItem value="java">
-
-```java
-SpeakSentence speakSentence = SpeakSentence.builder()
-    .text("Please say your name.")
-    .build();
-
-Record record = Record.builder()
-    .recordCompleteUrl("/nextBXML")
-    .recordingAvailableUrl("https://myapp.com/recordingAvailable")
-    .maxDuration(5)
-    .build();
-
-Response response = Response.builder().build()
-    .add(speakSentence)
-    .add(record);
-
-return bxml;
-```
-
-</TabItem>
-<TabItem value="csharp">
-
-```csharp
-SpeakSentence speakSentence = new SpeakSentence
-{
-    Sentence = "Please say your name."
-};
-
-Record record = new Record
-{
-    RecordCompleteUrl = "/nextBXML",
-    RecordingAvailableUrl = "https://myapp.com/recordingAvailable",
-    MaxDuration = 5
-};
-
-Response response = new Response();
-response.Add(speakSentence);
-response.Add(record);
-
-return new OkObjectResult(response.ToBXML());
-```
-
-</TabItem>
-<TabItem value="ruby">
-
-```ruby
-speak_sentence = Bandwidth::Voice::SpeakSentence.new({
-    :sentence => "Please say your name."
-})
-
-record = Bandwidth::Voice::Record.new({
-    :record_complete_url => "/nextBXML",
-    :recording_available_url => "https://myapp.com/recordingAvailable",
-    :max_duration => "5"
-})
-
-response = Bandwidth::Voice::Response.new()
-response.push(speak_sentence)
-response.push(record)
-
-return response.to_bxml()
-```
-
-</TabItem>
-<TabItem value="nodejs">
-
-```js
-const speakSentence = new SpeakSentence({
-    sentence: "Please say your name."
-});
-
-const record = new Record({
-    recordCompleteUrl: "https://myapp.com/nextBXML",
-    recordingAvailableUrl: "https://myapp.com/recordingAvailable",
-    maxDuration: 10
-});
-
-const response = new Response(speakSentence, record);
-
-console.log(response.toBxml());
-```
-
-</TabItem>
-<TabItem value="python">
-
-```python
-    speak_sentence = SpeakSentence(
-    sentence="Please say your name.",
-)
-
-record = Record(
-    record_complete_url="https://myapp.com/nextBXML",
-    recording_available_url="https://myapp.com/recordingAvailable",
-    max_duration=5
-)
-
-response = Response()
-response.add_verb(speak_sentence)
-response.add_verb(play_audio)
-response.add_verb(record)
-
-print(response.to_bxml())
-```
-
-</TabItem>
-<TabItem value="php">
-
-```php
-
-$speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Please say your name.");
-
-$record = new BandwidthLib\Voice\Bxml\Record();
-$record->recordCompleteUrl("https://myapp.com/nextBXML");
-$record->recordingAvailableUrl("https://myapp.com/recordingAvailable");
-$record->maxDuration(5);
-
-$response = new BandwidthLib\Voice\Bxml\Response();
-$response->addVerb($speakSentence);
-$response->addVerb($record);
-
-echo $response->toBxml();
-```
-
-</TabItem>
-</Tabs>
-
-### StartRecording
-
-The StartRecording verb starts recording in a call without pausing BXML execution. The [PauseRecording](/docs/voice/bxml/pauseRecording), [ResumeRecording](/docs/voice/bxml/resumeRecording), and [StopRecording](/docs/voice/bxml/stopRecording) BXML verbs can be used to toggle the recording. Recording is terminated by either the call ending, or by a StopRecording verb.
-
-Much like the Record verb, StartRecording also has a `recordingAvailableUrl` attribute to receive the recording available callback.
 
 <Tabs
   groupId="bxml"
@@ -225,8 +71,8 @@ Much like the Record verb, StartRecording also has a `recordingAvailableUrl` att
 <TabItem value="java">
 
 ```java
-@Post /answerCall endpoint
-public String recordName() {
+@POST /tts endpoint
+public String speakSentence() {
     SpeakSentence speakSentence = SpeakSentence.builder()
         .text("Please say your name.")
         .build();
@@ -243,155 +89,142 @@ public String recordName() {
 
     return bxml;
 }
-
-@Post /nextBxml endpoint
-public byte[] getAudio() {
-    SpeakSentence speakSentence = SpeakSentence.builder()
-        .text("Thank you for saying your name. Goodbye!")
-        .build();
-    Hangup hangup = Hangup.builder().build();
-
-    Response response = Response.builder().build()
-        .add(speakSentence)
-        .add(hangup);
-
-    return bxml;
-
-
-}
 ```
 
 </TabItem>
 <TabItem value="csharp">
 
 ```csharp
-SpeakSentence speakSentence = new SpeakSentence
-{
-    Sentence = "Please say your name."
-};
+@POST [/tts]
+public ActionResult speaksentence() {
+    SpeakSentence speakSentence = new SpeakSentence
+    {
+        Sentence = "Please say your name."
+    };
 
-Record record = new Record
-{
-    RecordCompleteUrl = "https://myapp.com/nextBXML",
-    RecordingAvailableUrl = "https://myapp.com/recordingAvailable",
-    MaxDuration = 5
-};
+    Record record = new Record
+    {
+        RecordCompleteUrl = "/nextBXML",
+        RecordingAvailableUrl = "https://myapp.com/recordingAvailable",
+        MaxDuration = 5
+    };
 
-Response response = new Response();
-response.Add(speakSentence);
-response.Add(record);
+    Response response = new Response();
+    response.Add(speakSentence);
+    response.Add(record);
 
-Console.WriteLine(response.ToBXML());
+    return new OkObjectResult(response.ToBXML());
+}
 ```
 
 </TabItem>
 <TabItem value="ruby">
 
 ```ruby
-speak_sentence = Bandwidth::Voice::SpeakSentence.new({
-    :sentence => "Please say your name."
-})
+@POST '/tts' do:
+    speak_sentence = Bandwidth::Voice::SpeakSentence.new({
+        :sentence => "Please say your name."
+    })
 
-record = Bandwidth::Voice::Record.new({
-    :record_complete_url => "https://myapp.com/nextBXML",
-    :recording_available_url => "https://myapp.com/recordingAvailable",
-    :max_duration => "5"
-})
+    record = Bandwidth::Voice::Record.new({
+        :record_complete_url => "/nextBXML",
+        :recording_available_url => "https://myapp.com/recordingAvailable",
+        :max_duration => "5"
+    })
 
-response = Bandwidth::Voice::Response.new()
-response.push(speak_sentence)
-response.push(record)
+    response = Bandwidth::Voice::Response.new()
+    response.push(speak_sentence)
+    response.push(record)
 
-puts response.to_bxml()
+    return response.to_bxml()
+
 ```
 
 </TabItem>
 <TabItem value="nodejs">
 
 ```js
-const speakSentence = new SpeakSentence({
-    sentence: "Please say your name."
-});
+@POST ['/playAudio'] (req, res) => {
 
-const record = new Record({
-    recordCompleteUrl: "https://myapp.com/nextBXML",
-    recordingAvailableUrl: "https://myapp.com/recordingAvailable",
-    maxDuration: 10
-});
+    const speakSentence = new SpeakSentence({
+        sentence: "Please say your name."
+    });
 
-const response = new Response(speakSentence, record);
+    const record = new Record({
+        recordCompleteUrl: "https://myapp.com/nextBXML",
+        recordingAvailableUrl: "https://myapp.com/recordingAvailable",
+        maxDuration: 10
+    });
 
-console.log(response.toBxml());
+    const response = new Response(speakSentence, record);
+    console.log(response.toBxml());
+    request_response.status(200).send(response.toBxml());
+}
 ```
 
 </TabItem>
 <TabItem value="python">
 
 ```python
-speak_sentence = SpeakSentence(
-    sentence="Please say your name.",
-)
+@POST '/playAudio'
+def playAudio():
+    speak_sentence = SpeakSentence(
+        sentence="Please say your name.",
+    )
 
-record = Record(
+    record = Record(
     record_complete_url="https://myapp.com/nextBXML",
     recording_available_url="https://myapp.com/recordingAvailable",
-    max_duration=5
-)
+        max_duration=5
+    )
 
-response = Response()
-response.add_verb(speak_sentence)
-response.add_verb(play_audio)
-response.add_verb(record)
+    response = Response()
+    response.add_verb(speak_sentence)
+    response.add_verb(play_audio)
+    response.add_verb(record)
+    response.add_verb(speak_sentence)
 
-print(response.to_bxml())
+    return response.to_bxml()
 ```
 
 </TabItem>
 <TabItem value="php">
 
 ```php
-$speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Please say your name.");
+@POST('/playAudio)
+function playAudio(Request $request, Response $response) {
+    $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Please say your name.");
 
-$record = new BandwidthLib\Voice\Bxml\Record();
-$record->recordCompleteUrl("https://myapp.com/nextBXML");
-$record->recordingAvailableUrl("https://myapp.com/recordingAvailable");
-$record->maxDuration(5);
+    $record = new BandwidthLib\Voice\Bxml\Record();
+    $record->recordCompleteUrl("https://myapp.com/nextBXML");
 
-$response = new BandwidthLib\Voice\Bxml\Response();
-$response->addVerb($speakSentence);
-$response->addVerb($record);
+    $response = new BandwidthLib\Voice\Bxml\Response();
+    $response->addVerb($speakSentence);
+    $response->addVerb($record);
 
-echo $response->toBxml();
+    $response->addVerb($speakSentence);
+
+    $bxml = $response->toBxml();
+    $response = $response->withStatus(200)->withHeader('Content-Type', 'application/xml');
+    $response->getBody()->write($bxml);
+    return $response;
+}
 ```
 
 </TabItem>
 </Tabs>
 
-##### StartRecording Used With StopRecording, PauseRecording, and ResumeRecording
+### StartRecording
 
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<Response>
-    <StartRecording recordingAvailableUrl="https://myapp.com/noBXML"/>
-    <SpeakSentence voice="bridget">Recording is active while this sentence is being spoken.</SpeakSentence>
-    <PauseRecording/>
-    <SpeakSentence voice="bridget">Recording has been paused.</SpeakSentence>
-    <ResumeRecording/>
-    <SpeakSentence voice="bridget">Recording has been resumed and is active while this sentence is being spoken.</SpeakSentence>
-    <StopRecording/>
-    <SpeakSentence voice="bridget">Recording has been stopped.</SpeakSentence>
-</Response>
-```
+The [StartRecording](/docs/voice/bxml/startRecording) verb starts recording in a call without pausing BXML execution. The [PauseRecording](/docs/voice/bxml/pauseRecording), [ResumeRecording](/docs/voice/bxml/resumeRecording), and [StopRecording](/docs/voice/bxml/stopRecording) BXML verbs can be used to toggle the recording. Recording is terminated by either the call ending, or by a StopRecording verb.
 
-### Download Recording
-
-After the call has completed you can retrieve information on the recording and download the file in .mp3 or .wav format. Recordings are stored for 30 days.
+Much like the Record verb, StartRecording also has a `recordingAvailableUrl` attribute to receive the recording available callback.
 
 <Tabs
     groupId="bxml"
     defaultValue="xml"
     values={[
-        { label: 'cURL', value: 'curl', },
+        { label: 'XML', value: 'xml', },
         { label: 'Java', value: 'java', },
         { label: 'C#', value: 'csharp', },
         { label: 'Ruby', value: 'ruby', },
@@ -400,223 +233,291 @@ After the call has completed you can retrieve information on the recording and d
         { label: 'PHP', value: 'php', },
     ]
 }>
-<TabItem value="curl">
+<TabItem value="xml">
 
-```curl
-curl 'https://voice.bandwidth.com/api/v2/accounts/$BW_ACCOUNT_ID/calls/c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d/recordings/r-d68201ef-d53e-4c6d-a743-1c1283909d41' \
-    -U {BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <StartRecording recordingAvailableUrl="https://myapp.com/noBXML"/> //Note: This will send a callback that only notifies you that your recording is ready.
+    <SpeakSentence>Hello Secret agent. What is your message?</SpeakSentence>
+    <Pause duration="10"/>
+    <PauseRecording/>
+    <SpeakSentence>Please say your secret passcode to send. Don't worry, the recording is paused!</SpeakSentence>
+    <Pause duration="5"/>
+    <SpeakSentence>Restarting the recording now.</SpeakSentence>
+    <ResumeRecording/>
+    <SpeakSentence>Thank you agent. Good luck on your mission!</SpeakSentence>
+    <StopRecording/>
+    <SpeakSentence>Recording has been stopped.</SpeakSentence>
+</Response>
 ```
 
 </TabItem>
 <TabItem value="java">
+**Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```java
-import com.bandwidth.BandwidthClient;
-import com.bandwidth.http.response.ApiResponse;
-import com.bandwidth.voice.models.CallRecordingMetadata;
+@POST /secret_agent_endpoint endpoint
+public String record_call() {
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+    StartRecording startRecording = StartRecording.builder()
+        .recordingAvailableUrl("https://myapp.com/noBXML")
+        .build();
+    SpeakSentence intro_tts = SpeakSentence.builder()
+        .text("Hello Secret agent. What is your message?")
+        .build();
+    Pause pause1 = Pause.builder()
+        .duration(10.0)
+        .build();
 
-public class Sample {
-    public static final String USERNAME = System.getenv("BW_USERNAME");
-    public static final String PASSWORD = System.getenv("BW_PASSWORD");
-    public static final String ACCOUNT_ID = System.getenv("BW_ACCOUNT_ID");
+    PauseRecording pauseRecording = PauseRecording.builder().build();
 
-    public static void main(String[] args) {
-        // Call id is returned after successfully creating a call.
-        String callId = "c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d";
-        // Recording id is returned after retrieving a recording from the call.
-        String recordingId = "r-d68201ef-d53e-4c6d-a743-1c1283909d41";
+    SpeakSentence passcode_tts = SpeakSentence.builder()
+        .text("Please say your secret passcode to send. Don't worry, the recording is paused!")
+        .build();
+    Pause pause2 = Pause.builder()
+        .duration(5.0)
+        .build();
 
-        BandwidthClient client = new BandwidthClient.Builder()
-                .voiceBasicAuthCredentials(USERNAME, PASSWORD)
-                .build();
+    ResumeRecording resumeRecording = ResumeRecording.builder().build();
 
-        try {
-            CompletableFuture<ApiResponse<CallRecordingMetadata>> completableFuture = client.getVoiceClient().getAPIController().getCallRecordingAsync(ACCOUNT_ID, callId, recordingId);
-            System.out.println(completableFuture.get().getResult());
-        } catch (InterruptedException | ExecutionException e) {
-            System.out.println(e.getMessage());
-        }
-    }
+    SpeakSentence goodbye_tts = SpeakSentence.builder()
+        .text("Thank you agent. Good luck on your mission!")
+        .build();
+
+    StopRecording stopRecording = StopRecording.builder().build();
+
+
+    Response response = new Response();
+
+    String bxml = response.addAll(intro_tts, pause1, pauseRecording, pause2,
+        resumeRecording, goodbye_tts, stopRecording).toBXML();
+
+    return bxml;
 }
-
 ```
 
 </TabItem>
 <TabItem value="csharp">
+**Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```csharp
-using System;
-using System.Threading.Tasks;
-using Bandwidth.Standard;
-using Bandwidth.Standard.Exceptions;
-using Bandwidth.Standard.Voice.Models;
-
-class Program
-{
-    static async Task Main(string[] args)
+@POST [/secret_agent_endpoint]
+public ActionResult record_call() {
+    StartRecording startRecording = new StartRecording
     {
-        var username = System.Environment.GetEnvironmentVariable("BW_USERNAME");
-        var password = System.Environment.GetEnvironmentVariable("BW_PASSWORD");
-        var accountId = System.Environment.GetEnvironmentVariable("BW_ACCOUNT_ID");
+        RecordingAvailableUrl = "https://myapp.com/noBXML"
+    };
 
-        // Call id is returned after successfully creating a call.
-        var callId = "c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d";
-        // Recording id is returned after retrieving a recording from the call.
-        var recordingId = "r-d68201ef-d53e-4c6d-a743-1c1283909d41";
+    SpeakSentence intro_tts = new SpeakSentence
+    {
+        Sentence = "Hello Secret agent. What is your message?",
+    };
+    Pause pause1 = new Pause{Duration = 10};
 
-        var client = new BandwidthClient.Builder()
-            .VoiceBasicAuthCredentials(username, password)
-            .Build();
+    PauseRecording pauseRecording = new PauseRecording();
 
-        try
-        {
-            var response = await client.Voice.APIController.GetCallRecordingAsync(accountId, callId, recordingId);
-            Console.WriteLine(response.Data);
-        }
-        catch (ApiException e)
-        {
-            Console.WriteLine(e.Message);
-        }
-    }
+    SpeakSentence passcode_tts = new SpeakSentence
+    {
+        Sentence = "Please say your secret passcode to send. Don't worry, the recording is paused!",
+    };
+    Pause pause2 = new Pause{Duration = 5};
+
+    ResumeRecording resumeRecording = new ResumeRecording();
+
+    SpeakSentence goodbye_tts = new SpeakSentence
+    {
+        Sentence = "Thank you agent. Good luck on your mission!",
+    };
+
+    StopRecording stopRecording = new StopRecording();
+
+    Response response = new Response(startRecording, intro_tts, pause1, pauseRecording,
+        passcode_tts, pause2, resumeRecording, goodbye_tts, stopRecording);
+
+    return new OkObjectResult(response.ToBXML());
 }
-
 ```
 
 </TabItem>
 <TabItem value="ruby">
+**Note: The endpoint headers are pseudocoded. Your implementation will look different
 
-```ruby
-require 'bandwidth'
+```
+@POST '/secret_agent_endpoint' do:
+    start_recording = Bandwidth::Voice::StartRecording.new({
+        :recording_available_url => "https://myapp.com/noBXML"
+    })
+    intro_tts = Bandwidth::Voice::SpeakSentence.new({
+        :sentence => "Hello Secret agent. What is your message?",
+    })
+    pause1 = Bandwidth::Voice::Pause.new({ :duration => 10 })
 
-include Bandwidth
-include Bandwidth::Voice
+    pause_recording = Bandwidth::Voice::PauseRecording.new()
 
-bandwidth_client = Bandwidth::Client.new(
-    voice_basic_auth_user_name: ENV['BW_USERNAME'],
-    voice_basic_auth_password: ENV['BW_PASSWORD']
-)
+    passcode_tts = Bandwidth::Voice::SpeakSentence.new({
+        :sentence => "Please say your secret passcode to send. Don't worry, the recording is paused!",
+    })
+    pause2 = Bandwidth::Voice::Pause.new({ :duration => 5 })
 
-voice_client = bandwidth_client.voice_client.client
+    resume_recording = Bandwidth::Voice::ResumeRecording.new()
 
-call_id = "c-1234"
-recording_id = "r-1234"
+    goodbye_tts = Bandwidth::Voice::SpeakSentence.new({
+        :sentence => "Thank you agent. Good luck on your mission!",
+    })
 
-begin
-    response = voice_client.get_call_recording(ENV['BW_ACCOUNT_ID'], call_id, recording_id)
-    puts response.data.application_id
-rescue APIException => e
-    puts e.response_code
-end
+    stop_recording = Bandwidth::Voice::StopRecording.new()
 
+    response = Bandwidth::Voice::Response.new()
+    response.push(start_recording, intro_tts, pause1, pause_recording, passcode_tts,
+        pause2, resume_recording, goodbye_tts, stop_recording)
+
+    return response.to_bxml()
 ```
 
 </TabItem>
 <TabItem value="nodejs">
+**Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```js
-import { Client, ApiController } from '@bandwidth/voice';
+@POST ['/secret_agent_endpoint'] (req, res) => {
+    const startRecording = new StartRecording({ recordingAvailableUrl: "https://myapp.com/noBXML" });
+    const intro_tts = new SpeakSentence({
+        sentence: "Hello Secret agent. What is your message?",
+    });
+    const pause1 = new Pause({ duration: 10 });
 
-const BW_USERNAME = process.env["BW_USERNAME"];
-const BW_PASSWORD = process.env["BW_PASSWORD"];
-const BW_ACCOUNT_ID = process.env["BW_ACCOUNT_ID"];
+    const pauseRecording = new PauseRecording();
 
-const client = new Client({
-  basicAuthUserName: BW_USERNAME,
-  basicAuthPassword: BW_PASSWORD
-});
+    const passcode_tts = new SpeakSentence({
+        sentence: "Please say your secret passcode to send. Don't worry, the recording is paused!",
+    });
+    const pause2 = new Pause({ duration: 5 });
 
-const controller = new ApiController(client);
+    const resumeRecording = new ResumeRecording();
 
-const accountId = BW_ACCOUNT_ID;
+    const goodbye_tts = new SpeakSentence({
+        sentence: "Thank you agent. Good luck on your mission!",
+    });
 
-const callId = 'c-abc12345-6defabc1-2345-6def-abc1-23456defabc1';
-const recordingId = 'r-abc12345-6def-abc1-2345-6defabc12345';
+    const stopRecording = new StopRecording();
 
-const getCallRecording = async function() {
-  try {
-      const response = await controller.getCallRecording(accountId, callId, recordingId);
-      console.log(response)
-  } catch(error) {
-      console.error(error);
-  }
+    const response = new Response(startRecording, intro_tts, pause1, pauseRecording,
+        passcode_tts,pause2, resumeRecording, goodbye_tts, stopRecording);
+
+    request_response.status(200).send(response.toBxml());
 }
-
-getCallRecording();
-
 ```
 
 </TabItem>
 <TabItem value="python">
+**Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```python
-from bandwidth.bandwidth_client import BandwidthClient
-from bandwidth.exceptions.api_exception import APIException
+@POST '/secret_agent_endpoint'
+def record_call():
+    start_recording = StartRecording( recording_available_url="https://myapp.com/noBXML" )
 
-import os
+    intro_tts = SpeakSentence(
+        sentence="Hello Secret agent. What is your message?",
+    )
+    pause1 = Pause(duration=10)
 
-BW_USERNAME = os.environ["BW_USERNAME"]
-BW_PASSWORD = os.environ["BW_PASSWORD"]
-BW_ACCOUNT_ID = os.environ["BW_ACCOUNT_ID"]
+    pause_recording = PauseRecording()
 
-bandwidth_client = BandwidthClient(
-    voice_basic_auth_user_name=BW_USERNAME,
-    voice_basic_auth_password=BW_PASSWORD
-)
-voice_client = bandwidth_client.voice_client.client
+    passcode_tts = SpeakSentence(
+        sentence="Please say your secret passcode to send. Don't worry, the recording is paused!",
+    )
+    pause2 = Pause(duration=5)
 
-call_id = "c-1234"
-recording_id = "r-1234"
+    resumeRecording = ResumeRecording()
 
-try:
-    response = voice_client.get_call_recording(BW_ACCOUNT_ID, call_id, recording_id)
-    print(response.body.application_id)
-except APIException as e:
-    print(e.response_code)
+    goodbye_tts = SpeakSentence(
+        sentence="Thank you agent. Good luck on your mission!",
+    )
 
+    stop_recording = StopRecording()
+
+    response = Response()
+    response.add_verb(start_recording)
+    response.add_verb(intro_tts)
+    response.add_verb(pause1)
+    response.add_verb(pause_recording)
+    response.add_verb(passcode_tts)
+    response.add_verb(pause2)
+    response.add_verb(resumeRecording)
+    response.add_verb(goodbye_tts)
+    response.add_verb(stop_recording)
+    return response.to_bxml()
 ```
 
 </TabItem>
 <TabItem value="php">
+**Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```php
+@POST('/secret_agent_endpoint)
+function record_call(Request $request, Response $response) {
+    $startRecording = new BandwidthLib\Voice\Bxml\StartRecording();
+    $startRecording->recordingAvailableUrl("https://myapp.com/noBXML");
 
-require "vendor/autoload.php";
+    $intro_tts = new BandwidthLib\Voice\Bxml\SpeakSentence("Hello Secret agent. What is your message?");
+    $pause1 = new BandwidthLib\Voice\Bxml\Pause();
+    $pause1->duration(10);
 
-$BW_USERNAME = getenv("BW_USERNAME");
-$BW_PASSWORD = getenv("BW_PASSWORD");
-$BW_ACCOUNT_ID = getenv("BW_ACCOUNT_ID");
+    $pauseRecording = new BandwidthLib\Voice\Bxml\PauseRecording();
 
-$config = new BandwidthLib\Configuration(
-    array(
-        'voiceBasicAuthUserName' => $BW_USERNAME,
-        'voiceBasicAuthPassword' => $BW_PASSWORD,
-    )
-);
-$client = new BandwidthLib\BandwidthClient($config);
+    $passcode_tts = new BandwidthLib\Voice\Bxml\SpeakSentence("Please say your secret passcode to send. Don't worry, the recording is paused!");
+    $pause2 = new BandwidthLib\Voice\Bxml\Pause();
+    $pause2->duration(5);
 
-$voiceClient = $client->getVoice()->getClient();
+    $resumeRecording = new BandwidthLib\Voice\Bxml\ResumeRecording();
 
-$callId = "c-1234";
-$recordingId = "r-1234";
+    $goodbye_tts = new BandwidthLib\Voice\Bxml\SpeakSentence("Thank you agent. Good luck on your mission!");
 
-try {
-    $response = $voiceClient->getCallRecording($BW_ACCOUNT_ID, $callId, $recordingId);
-    print_r($response->getResult()->applicationId);
-} catch (BandwidthLib\APIException $e) {
-    print_r($e->getResponseCode());
+    $stopRecording = new BandwidthLib\Voice\Bxml\StopRecording();
+
+    $response->addVerb($startRecording);
+    $response->addVerb($intro_tts);
+    $response->addVerb($pause1);
+    $response->addVerb($pauseRecording);
+    $response->addVerb($passcode_tts);
+    $response->addVerb($pause2);
+    $response->addVerb($resumeRecording);
+    $response->addVerb($goodbye_tts);
+    $response->addVerb($stopRecording);
+
+    $bxml = $response->toBxml();
+    $response = $response->withStatus(200)->withHeader('Content-Type', 'application/xml');
+    $response->getBody()->write($bxml);
+    return $response;
 }
 ```
 
 </TabItem>
 </Tabs>
 
+The example above uses all the different forms of the controllable recording bxml, with start, pause, resume, and stop. In this scenario, the recording is started, a message is given, then the recording is paused to allow for sensitive information to be left out of the recording. Once the information is said, the recording is resumed to catch the last part of the conversation, then stopped to hang up the call.
+
+### Download Recording
+
+After the call has completed you can retrieve information on the recording and download the file in .mp3 or .wav format. Recordings are stored for 30 days. This can also be done with the [SDKs](/apis/voice#operation/downloadCallRecording).
+
+```curl
+curl 'https://voice.bandwidth.com/api/v2/accounts/$BW_ACCOUNT_ID/calls/c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d/recordings/r-d68201ef-d53e-4c6d-a743-1c1283909d41' \
+    -U {BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}
+```
 
 ### Initiate Transcription
 
-The transcribe attribute can be added to the Record or StartRecording BXML verbs. You can also choose to request transcription of a recording after it has been completed via the API.
+You can also choose to request transcription of a recording after it has been completed via the API. This can also be done with the [SDKs](/apis/voice#operation/transcribeCallRecording).
+
+```curl
+curl 'https://voice.bandwidth.com/api/v2/accounts/{accountId}/calls/{callId}/recordings/{recordingId}/transcription' \
+    -U {BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}
+```
+
+The transcribe attribute can be added to the Record or StartRecording BXML verbs to automatically generate a transcription when the recording is done.
 
 If you want to receive a TranscriptionAvailable callback, you can additionally set the transcriptionAvailableUrl to a URL on your callback server and transcriptionAvailableMethod to its associated HTTP method (GET or POST, the default).
 
@@ -630,7 +531,7 @@ Transcription can succeed only for recordings of length greater than 500 millise
     groupId="bxml"
     defaultValue="xml"
     values={[
-        { label: 'cURL', value: 'curl', },
+        { label: 'XML', value: 'xml', },
         { label: 'Java', value: 'java', },
         { label: 'C#', value: 'csharp', },
         { label: 'Ruby', value: 'ruby', },
@@ -639,139 +540,172 @@ Transcription can succeed only for recordings of length greater than 500 millise
         { label: 'PHP', value: 'php', },
     ]
 }>
-<TabItem value="curl">
+<TabItem value="xml">
 
-    ```curl
-    curl 'https://voice.bandwidth.com/api/v2/accounts/$BW_ACCOUNT_ID/calls/c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d/recordings/r-d68201ef-d53e-4c6d-a743-1c1283909d41' \
-    -U {BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}
-    ```
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <Record transcribe='true' transcriptionAvailableUrl="/transcription_callback" maxDuration="10"/>
+</Response>
+```
 
 </TabItem>
 <TabItem value="java">
+**Note: The endpoint headers are pseudocoded. Your implementation will look different
 
-    ```java
+```java
+@POST /incoming_calls endpoint
+public String transcribe_call() {
+    Record record = Record.builder()
+        .transcribe(true)
+        .transcriptionAvailableUrl("/transcription_callback")
+        .maxDuration(10)
+        .build();
 
+    Response response = new Response();
+    String bxml = response.add(record).toBXML();
 
-    ```
+    return bxml;
+}
+
+@POST /transcription_callback endpoint
+public String alert() {
+    System.out.println("Oh! A transcription!");
+}
+```
 
 </TabItem>
 <TabItem value="csharp">
+**Note: The endpoint headers are pseudocoded. Your implementation will look different
 
-    ```csharp
+```csharp
+@POST [/incoming_calls]
+public ActionResult transcribe_call() {
+    Record record = new Record
+    {
+        transcribe=true
+        transcriptionAvailableUrl = "/transcription_callback",
+        MaxDuration = 10
+    };
 
+    Response response = new Response();
+    response.Add(record);
 
-    ```
+    return new OkObjectResult(response.ToBXML());
+}
+@POST [/transcription_callback]
+public ActionResult alert() {
+    Console.WriteLine("Oh! A transcription!");
+}
+```
 
 </TabItem>
 <TabItem value="ruby">
+**Note: The endpoint headers are pseudocoded. Your implementation will look different
 
-    ```ruby
+```
+@POST '/incoming_calls' do:
 
+    record = Bandwidth::Voice::Record.new({
+        :transcribe => true,
+        :transcription_available_url => "/transcription_callback",
+        :max_duration => "10"
+    })
 
-    ```
+    response = Bandwidth::Voice::Response.new()
+    response.push(record)
+
+    return response.to_bxml()
+
+@POST '/transcription_callback' do:
+    puts "Oh! A transcription!".inspect
+```
 
 </TabItem>
 <TabItem value="nodejs">
+**Note: The endpoint headers are pseudocoded. Your implementation will look different
 
-    ```js
+```js
+@POST ['/incoming_calls'] (req, res) => {
+    const record = new Record({
+        transcribe: true,
+        transcriptionAvailableUrl: "/transcription_callback",
+        maxDuration: 10
+    });
 
+    const response = new Response(record);
 
-    ```
+    console.log(response.toBxml());
+    request_response.status(200).send(response.toBxml());
+}
+
+@POST ['/transcription_callback'] (req, res) => {
+    console.log("Oh! A transcription!");
+}
+```
 
 </TabItem>
 <TabItem value="python">
+**Note: The endpoint headers are pseudocoded. Your implementation will look different
 
-    ```python
+```python
+@POST '/incoming_calls'
+def transcribe_call():
+    record = Record(
+        transcribe=True,
+        transcription_available_url="/transcription_callback",
+        max_duration=10
+    )
 
+    response = Response()
+    response.add_verb(record)
 
-    ```
+    return response.to_bxml()
+
+@POST 'transcription_callback':
+def alert():
+    printf("Oh! A transcription!")
+```
 
 </TabItem>
 <TabItem value="php">
+**Note: The endpoint headers are pseudocoded. Your implementation will look different
 
-    ```php
+```php
+@POST('/incoming_calls)
+function transcribe_call(Request $request, Response $response) {
+    $record = new BandwidthLib\Voice\Bxml\Record();
+    $record->transcribe(true);
+    $record->transcriptionAvailableUrl("/transcription_callback");
+    $record->maxDuration(10);
 
+    $response = new BandwidthLib\Voice\Bxml\Response();
+    $response->addVerb($record);
 
-    ```
+    $bxml = $response->toBxml();
+    $response = $response->withStatus(200)->withHeader('Content-Type', 'application/xml');
+    $response->getBody()->write($bxml);
+    return $response;
+}
+
+@POST('/incoming_calls)
+function transcribe_call(Request $request, Response $response) {
+    echo "Oh! A transcription!"
+}
+```
 
 </TabItem>
 </Tabs>
+
 
 ### Download Transcription
 
-After the call has completed, you can download the transcribed file in JSON format. Transcriptions are stored for 30 days.
+After the call has completed, you can download the transcribed file in JSON format. Transcriptions are stored for 30 days. This can also be done with the [SDKs](/apis/voice#operation/getCallTranscription).
 
-<Tabs
-    groupId="bxml"
-    defaultValue="xml"
-    values={[
-        { label: 'cURL', value: 'curl', },
-        { label: 'Java', value: 'java', },
-        { label: 'C#', value: 'csharp', },
-        { label: 'Ruby', value: 'ruby', },
-        { label: 'NodeJS', value: 'nodejs', },
-        { label: 'Python', value: 'python', },
-        { label: 'PHP', value: 'php', },
-    ]
-}>
-<TabItem value="curl">
-
-    ```curl
-    curl 'https://voice.bandwidth.com/api/v2/accounts/$BW_ACCOUNT_ID/calls/c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d/recordings/r-d68201ef-d53e-4c6d-a743-1c1283909d41' \
+```curl
+curl 'https://voice.bandwidth.com/api/v2/accounts/{accountId}/calls/{callId}/recordings/{recordingId}/transcription' \
     -U {BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}
-    ```
-
-</TabItem>
-<TabItem value="java">
-
-    ```java
-
-
-    ```
-
-</TabItem>
-<TabItem value="csharp">
-
-    ```csharp
-
-
-    ```
-
-</TabItem>
-<TabItem value="ruby">
-
-    ```ruby
-
-
-    ```
-
-</TabItem>
-<TabItem value="nodejs">
-
-    ```js
-
-
-    ```
-
-</TabItem>
-<TabItem value="python">
-
-    ```python
-
-
-    ```
-
-</TabItem>
-<TabItem value="php">
-
-    ```php
-
-
-    ```
-
-</TabItem>
-</Tabs>
-
+```
 
 ### Where to next?
 
