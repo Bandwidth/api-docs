@@ -41,10 +41,8 @@ If the `recordingAvailableUrl` attribute is set, this URL will receive a callbac
 
 #### Record Example
 
-
-
 <Tabs
-  groupId="bxml"
+  groupId="record"
   defaultValue="xml"
   values={[
     { label: 'XML', value: 'xml', },
@@ -221,7 +219,7 @@ The [StartRecording](/docs/voice/bxml/startRecording) verb starts recording in a
 Much like the Record verb, StartRecording also has a `recordingAvailableUrl` attribute to receive the recording available callback.
 
 <Tabs
-    groupId="bxml"
+    groupId="record"
     defaultValue="xml"
     values={[
         { label: 'XML', value: 'xml', },
@@ -503,19 +501,404 @@ The example above uses all the different forms of the controllable recording bxm
 
 After the call has completed you can retrieve information on the recording and download the file in .mp3 or .wav format. Recordings are stored for 30 days. This can also be done with the [SDKs](/apis/voice#operation/downloadCallRecording).
 
+<Tabs
+    groupId="record"
+    defaultValue="curl1"
+    values={[
+        { label: 'cURL', value: 'curl1', },
+        { label: 'Java', value: 'java1', },
+        { label: 'C#', value: 'csharp1', },
+        { label: 'Ruby', value: 'ruby1', },
+        { label: 'NodeJS', value: 'nodejs1', },
+        { label: 'Python', value: 'python1', },
+        { label: 'PHP', value: 'php1', },
+    ]
+}>
+<TabItem value="curl1">
+
 ```curl
 curl 'https://voice.bandwidth.com/api/v2/accounts/$BW_ACCOUNT_ID/calls/c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d/recordings/r-d68201ef-d53e-4c6d-a743-1c1283909d41' \
     -U {BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}
 ```
 
+</TabItem>
+<TabItem value="java1">
+
+```java
+import com.bandwidth.BandwidthClient;
+import com.bandwidth.http.response.ApiResponse;
+import com.bandwidth.voice.models.CallRecordingMetadata;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
+public class Sample {
+
+    public static void main(String[] args) {
+        BandwidthClient client = new BandwidthClient.Builder()
+                .voiceBasicAuthCredentials(BW_USERNAME, BW_PASSWORD)
+                .build();
+
+        try {
+            CompletableFuture<ApiResponse<CallRecordingMetadata>> completableFuture = client.getVoiceClient().getAPIController().getCallRecordingAsync(ACCOUNT_ID, callId, recordingId);
+            System.out.println(completableFuture.get().getResult());
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
+
+```
+
+</TabItem>
+<TabItem value="csharp1">
+
+```csharp
+using System;
+using System.Threading.Tasks;
+using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
+using Bandwidth.Standard.Voice.Models;
+
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        var client = new BandwidthClient.Builder()
+            .VoiceBasicAuthCredentials({BW_USERNAME}, {BW_PASSWORD})
+            .Build();
+
+        try
+        {
+            var response = await client.Voice.APIController.GetCallRecordingAsync({ACCOUNT_ID}, {CALL_ID}, {RECORDING_ID});
+            Console.WriteLine(response.Data);
+        }
+        catch (ApiException e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+}
+
+```
+
+</TabItem>
+<TabItem value="ruby1">
+
+```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
+bandwidth_client = Bandwidth::Client.new(
+    voice_basic_auth_user_name: {BW_USERNAME},
+    voice_basic_auth_password: {BW_PASSWORD}
+)
+
+voice_client = bandwidth_client.voice_client.client
+
+begin
+    response = voice_client.get_call_recording({ACCOUNT_ID}, {CALL_ID}, {RECORDING_ID})
+    puts response.data.application_id
+rescue APIException => e
+    puts e.response_code
+end
+
+```
+
+</TabItem>
+<TabItem value="nodejs1">
+
+```js
+import { Client, ApiController } from '@bandwidth/voice';
+
+const client = new Client({
+  basicAuthUserName: {BW_USERNAME},
+  basicAuthPassword: {BW_PASSWORD}
+});
+
+const controller = new ApiController(client);
+
+const getCallRecording = async function() {
+  try {
+      const response = await controller.getCallRecording({ACCOUNT_ID}, {CALL_ID}, {RECORDING_ID});
+      console.log(response)
+  } catch(error) {
+      console.error(error);
+  }
+}
+
+getCallRecording();
+
+```
+
+</TabItem>
+<TabItem value="python1">
+
+```python
+from bandwidth.bandwidth_client import BandwidthClient
+from bandwidth.exceptions.api_exception import APIException
+
+import os
+
+bandwidth_client = BandwidthClient(
+    voice_basic_auth_user_name={BW_USERNAME},
+    voice_basic_auth_password={BW_PASSWORD}
+)
+voice_client = bandwidth_client.voice_client.client
+
+try:
+    response = voice_client.get_call_recording({BW_ACCOUNT_ID}, {CALL_ID}, {RECORDING_ID})
+    print(response.body.application_id)
+except APIException as e:
+    print(e.response_code)
+
+```
+
+</TabItem>
+<TabItem value="php1">
+
+```php
+require "vendor/autoload.php";
+
+$config = new BandwidthLib\Configuration(
+    array(
+        'voiceBasicAuthUserName' => {BW_USERNAME},
+        'voiceBasicAuthPassword' => {BW_PASSWORD},
+    )
+);
+$client = new BandwidthLib\BandwidthClient($config);
+
+$voiceClient = $client->getVoice()->getClient();
+
+try {
+    $response = $voiceClient->getCallRecording({ACCOUNT_ID}, {CALL_ID}, {RECORDING_ID});
+    print_r($response->getResult()->applicationId);
+} catch (BandwidthLib\APIException $e) {
+    print_r($e->getResponseCode());
+}
+```
+
+</TabItem>
+</Tabs>
+
 ### Initiate Transcription
 
 You can also choose to request transcription of a recording after it has been completed via the API. This can also be done with the [SDKs](/apis/voice#operation/transcribeCallRecording).
 
+
+<Tabs
+    groupId="record"
+    defaultValue="payload2"
+    values={[
+        { label: 'Payload', value: 'payload2', },
+        { label: 'cURL', value: 'curl2', },
+        { label: 'Java', value: 'java2', },
+        { label: 'C#', value: 'csharp2', },
+        { label: 'Ruby', value: 'ruby2', },
+        { label: 'NodeJS', value: 'nodejs2', },
+        { label: 'Python', value: 'python2', },
+        { label: 'PHP', value: 'php2', },
+    ]
+}>
+<TabItem value="payload2">
+
+```payload
+POST https://voice.bandwidth.com/api/v2/accounts/{accountId}/calls/{callId}/recordings/{recordingId}/transcription
+{
+    "callbackUrl": "http://transcription.test",
+    "username": "string",
+    "password": "string",
+}
+```
+
+</TabItem>
+<TabItem value="curl2">
+
 ```curl
 curl 'https://voice.bandwidth.com/api/v2/accounts/{accountId}/calls/{callId}/recordings/{recordingId}/transcription' \
+    -X POST \
     -U {BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}
+    -H 'Content-Type: application/json' \
+    -d '{
+        "callbackUrl": "http://example.test/transcription",
+        "username": "string",
+        "password": "string",
+    }'
 ```
+
+</TabItem>
+<TabItem value="java2">
+
+```java
+import com.bandwidth.BandwidthClient;
+import com.bandwidth.http.response.ApiResponse;
+import com.bandwidth.voice.models.TranscriptionResponse;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
+public void request_transcription() {
+
+    //Remember to fill in all variables!
+    BandwidthClient client = new BandwidthClient.Builder()
+        .voiceBasicAuthCredentials({BW_USERNAME}, {BW_PASSWORD})
+        .build();
+
+    TranscribeRecordingRequest request = new TranscribeRecordingRequest();
+    request.setCallbackUrl("http://example.test/transcription");
+
+    try {
+        CompletableFuture<ApiResponse<Void>> completableFuture = client.getVoiceClient().getAPIController()
+            .createTranscribeCallRecordingAsync({ACCOUNT_ID}, {CALL_ID}, {RECORDING_ID}, request);
+        System.out.println(completableFuture.get().getResult());
+    } catch (InterruptedException | ExecutionException e) {
+        System.out.println(e.getMessage());
+    }
+}
+```
+
+</TabItem>
+<TabItem value="csharp2">
+
+```csharp
+using System;
+using System.Threading.Tasks;
+using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
+using Bandwidth.Standard.Voice.Models;
+
+static async Task Main(string[] args) {
+    //Remember to fill in all variables!
+    var client = new BandwidthClient.Builder()
+        .VoiceBasicAuthCredentials({BW_USERNAME}, {BW_PASSWORD})
+        .Build();
+
+    var request = new TranscribeRecordingRequest
+    {
+        CallbackUrl = "http://example.test/transcription"
+    };
+
+    try {
+        var response = await client.Voice.APIController.CreateTranscribeCallRecordingAsync({ACCOUNT_ID}, {CALL_ID}, {RECORDING_ID}, request);
+        Console.WriteLine(response.Data);
+    } catch (ApiException e) {
+        Console.WriteLine(e.Message);
+    }
+}
+
+```
+
+</TabItem>
+<TabItem value="ruby2">
+
+```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
+bandwidth_client = Bandwidth::Client.new(
+    voice_basic_auth_user_name: {BW_USERNAME},
+    voice_basic_auth_password: {BW_PASSWORD}
+)
+
+voice_client = bandwidth_client.voice_client.client
+
+body = TranscribeRecordingRequest.new
+body.callback_url = "http://example.test/transcription"
+
+begin
+    response = voice_client.create_transcribe_call_recording({ACCOUNT_ID}, {CALL_ID}, {RECORDING_ID}, body)
+    puts response.data.transcripts
+rescue APIException => e
+    puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="nodejs2">
+
+```js
+import { Client, ApiController } from '@bandwidth/voice';
+
+const client = new Client({
+  basicAuthUserName: {BW_USERNAME},
+  basicAuthPassword: {BW_PASSWORD}
+});
+
+const controller = new ApiController(client);
+
+const transcribeRecording = async function() {
+  try {
+      const response = await controller.createTranscribeRecording({ACCOUNT_ID}, {CALL_ID}, {RECORDING_ID}, {
+        callbackUrl: "http://example.test/transcription"
+      });
+      console.log(response)
+  } catch(error) {
+      console.error(error);
+  }
+}
+
+transcribeRecording();
+```
+
+</TabItem>
+<TabItem value="python2">
+
+```python
+from bandwidth.bandwidth_client import BandwidthClient
+from bandwidth.voice.models.transcribe_recording_request import TranscribeRecordingRequest
+from bandwidth.exceptions.api_exception import APIException
+
+import os
+
+bandwidth_client = BandwidthClient(
+    voice_basic_auth_user_name={BW_USERNAME},
+    voice_basic_auth_password={BW_PASSWORD}
+)
+voice_client = bandwidth_client.voice_client.client
+
+body = TranscribeRecordingRequest()
+body.callback_url = "http://example.test/transcription"
+
+try:
+    voice_client.create_transcribe_call_recording({BW_ACCOUNT_ID}, {CALL_ID}, {RECORDING_ID}, body)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="php2">
+
+```php
+<?php
+
+require "vendor/autoload.php";
+
+$config = new BandwidthLib\Configuration(
+    array(
+        'voiceBasicAuthUserName' => {BW_USERNAME},
+        'voiceBasicAuthPassword' => {BW_PASSWORD},
+    )
+);
+$client = new BandwidthLib\BandwidthClient($config);
+$voiceClient = $client->getVoice()->getClient();
+
+$body = new BandwidthLib\Voice\Models\TranscribeRecordingRequest();
+$body->callbackUrl = "http://example.test/transcription";
+
+try {
+    $voiceClient->createTranscribeCallRecording({ACCOUNT_ID}, {CALL_ID}, {RECORDING_ID}, $body);
+} catch (BandwidthLib\APIException $e) {
+    print_r($e->getResponseCode());
+}
+
+```
+
+</TabItem>
+</Tabs>
 
 The transcribe attribute can be added to the Record or StartRecording BXML verbs to automatically generate a transcription when the recording is done.
 
@@ -527,8 +910,10 @@ Transcription can succeed only for recordings of length greater than 500 millise
 
 ### Recording Transcription Example
 
+If you want to be alerted of your transcription being ready, you can use the transcriptionAvailableUrl to send an event to the specified endpoint. Note that a JSON will be sent in the response body with all pertinent information for the transcription.
+
 <Tabs
-    groupId="bxml"
+    groupId="record"
     defaultValue="xml"
     values={[
         { label: 'XML', value: 'xml', },
@@ -702,10 +1087,177 @@ function transcribe_call(Request $request, Response $response) {
 
 After the call has completed, you can download the transcribed file in JSON format. Transcriptions are stored for 30 days. This can also be done with the [SDKs](/apis/voice#operation/getCallTranscription).
 
+
+<Tabs
+    groupId="record"
+    defaultValue="curl3"
+    values={[
+        { label: 'cURL', value: 'curl3', },
+        { label: 'Java', value: 'java3', },
+        { label: 'C#', value: 'csharp3', },
+        { label: 'Ruby', value: 'ruby3', },
+        { label: 'NodeJS', value: 'nodejs3', },
+        { label: 'Python', value: 'python3', },
+        { label: 'PHP', value: 'php3', },
+    ]
+}>
+<TabItem value="curl3">
+
 ```curl
 curl 'https://voice.bandwidth.com/api/v2/accounts/{accountId}/calls/{callId}/recordings/{recordingId}/transcription' \
-    -U {BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}
+-U {BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}
 ```
+
+</TabItem>
+<TabItem value="java3">
+
+```java
+import com.bandwidth.BandwidthClient;
+import com.bandwidth.http.response.ApiResponse;
+import com.bandwidth.voice.models.TranscriptionResponse;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
+public static void main(String[] args) {
+
+    //Remember to fill in all variables!
+    BandwidthClient client = new BandwidthClient.Builder()
+        .voiceBasicAuthCredentials({BW_USERNAME}, {BW_PASSWORD})
+        .build();
+
+    try {
+        CompletableFuture<ApiResponse<TranscriptionResponse>> completableFuture = client.getVoiceClient()
+            .getAPIController().getCallTranscriptionAsync({ACCOUNT_ID}, {CALL_ID}, {RECORDING_ID});
+        System.out.println(completableFuture.get().getResult());
+    } catch (InterruptedException | ExecutionException e) {
+        System.out.println(e.getMessage());
+    }
+}
+
+```
+
+</TabItem>
+<TabItem value="csharp3">
+
+```csharp
+using System;
+using System.Threading.Tasks;
+using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
+using Bandwidth.Standard.Voice.Models;
+
+static async Task Main(string[] args)
+    //Remember to fill in all variables!
+    var client = new BandwidthClient.Builder()
+        .VoiceBasicAuthCredentials({BW_USERNAME}, {BW_PASSWORD})
+        .Build();
+
+    try {
+        var response = await client.Voice.APIController.GetCallTranscriptionAsync({ACCOUNT_ID}, {CALL_ID}, {RECORDING_ID});
+        Console.WriteLine(response.Data);
+    } catch (ApiException e) {
+        Console.WriteLine(e.Message);
+    }
+}
+
+```
+
+</TabItem>
+<TabItem value="ruby3">
+
+```ruby
+bandwidth_client = Bandwidth::Client.new(
+    voice_basic_auth_user_name: {BW_USERNAME},
+    voice_basic_auth_password: {BW_PASSWORD}
+)
+
+voice_client = bandwidth_client.voice_client.client
+
+begin
+    response = voice_client.get_call_transcription({ACCOUNT_ID}, {CALL_ID}, {RECORDING_ID})
+    puts response.data.transcripts
+rescue APIException => e
+    puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="nodejs3">
+
+```js
+import { Client, ApiController } from '@bandwidth/voice';
+
+const client = new Client({
+  basicAuthUserName: {BW_USERNAME},
+  basicAuthPassword: {BW_PASSWORD}
+});
+
+const controller = new ApiController(client);
+
+const getCallTranscription = async function() {
+  try {
+      const response = await controller.getRecordingTranscription({ACCOUNT_ID}, {CALL_ID}, {RECORDING_ID});
+      console.log(response)
+  } catch(error) {
+      console.error(error);
+  }
+}
+
+getCallTranscription();
+```
+
+</TabItem>
+<TabItem value="python3">
+
+```python
+from bandwidth.bandwidth_client import BandwidthClient
+from bandwidth.exceptions.api_exception import APIException
+
+import os
+
+bandwidth_client = BandwidthClient(
+    voice_basic_auth_user_name={BW_USERNAME},
+    voice_basic_auth_password={BW_PASSWORD}
+)
+voice_client = bandwidth_client.voice_client.client
+
+try:
+    response = voice_client.get_call_transcription({ACCOUNT_ID}, {CALL_ID}, {RECORDING_ID})
+    print(response.body.transcripts)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="php3">
+
+```php
+<?php
+
+require "vendor/autoload.php";
+
+$config = new BandwidthLib\Configuration(
+    array(
+        'voiceBasicAuthUserName' => {BW_USERNAME},
+        'voiceBasicAuthPassword' => {BW_PASSWORD},
+    )
+);
+$client = new BandwidthLib\BandwidthClient($config);
+
+$voiceClient = $client->getVoice()->getClient();
+try {
+    $response = $voiceClient->getCallTranscription({ACCOUNT_ID}, {CALL_ID}, {RECORDING_ID});
+    print_r($response->getResult()->transcripts);
+} catch (BandwidthLib\APIException $e) {
+    print_r($e->getResponseCode());
+}
+
+```
+
+</TabItem>
+</Tabs>
+
 
 ### Where to next?
 
