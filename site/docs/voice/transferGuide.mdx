@@ -42,7 +42,7 @@ The Transfer verb is used to transfer a party onto an existing call.
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <Transfer transferCallerId="+11234567891">
+    <Transfer>
         <PhoneNumber>+11234567892</PhoneNumber>
     </Transfer>
 </Response>
@@ -57,7 +57,6 @@ PhoneNumber phoneNumber = PhoneNumber.builder()
         .build();
 
 Transfer transfer = Transfer.builder()
-        .transferCallerId("+11234567891")
         .phoneNumbers(phoneNumber)
         .build();
 
@@ -78,7 +77,6 @@ PhoneNumber phoneNumber = new PhoneNumber
 
 Transfer transfer = new Transfer
 {
-    TransferCallerId = "+11234567891",
     PhoneNumbers = new PhoneNumber[] { phoneNumber }
 };
 
@@ -97,7 +95,6 @@ phone_number = Bandwidth::Voice::PhoneNumber.new({
 })
 
 transfer = Bandwidth::Voice::Transfer.new({
-    :transfer_caller_id => "+11234567891",
     :phone_numbers => [phone_number]
 })
 
@@ -116,7 +113,6 @@ const number = new Transfer.PhoneNumber({
 });
 
 const transfer = new Transfer({
-    transferCallerId: "+11234567891",
     phoneNumbers: [number]
 });
 
@@ -135,7 +131,6 @@ phone_number = PhoneNumber(
 )
 
 transfer = Transfer(
-    transfer_caller_id="+11234567891",
     phone_numbers=[phone_number]
 )
 
@@ -152,7 +147,6 @@ print(response.to_bxml())
 $number = new BandwidthLib\Voice\Bxml\PhoneNumber("+11234567892");
 
 $transfer = new BandwidthLib\Voice\Bxml\Transfer();
-$transfer->transferCallerId("+11234567891");
 $transfer->phoneNumbers(array($number));
 
 $response = new BandwidthLib\Voice\Bxml\Response();
@@ -163,6 +157,8 @@ echo $response->toBxml();
 
 </TabItem>
 </Tabs>
+
+Above is a basic transfer scenario where an inbound call is transferred to a different phone number (+11234567892) instead of the number called.
 
 ### Transfer a Call with an Announcement
 
@@ -186,19 +182,19 @@ While transferring a call you can also combine this with an announcement using o
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <SpeakSentence voice="kate">Transferring your call, please wait.</SpeakSentence>
-    <Transfer transferCallerId="+11234567891">
-        <PhoneNumber transferAnswerUrl="http://myapp.com/announcement">+11234567892</PhoneNumber>
+    <SpeakSentence>Thank you for calling Scrooge and Marley! Please hold while we connect you to an associate.</SpeakSentence>
+    <Transfer transferCallerId="+15555555555">
+        <PhoneNumber transferAnswerUrl="/announcement">+15555555554</PhoneNumber>
     </Transfer>
 </Response>
 ```
 
-> The announcement BXML response from `http://myapp.com/announcement` is:
+> The announcement endpoint response from `/announcement` is:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <SpeakSentence voice="kate">Hey! There's a customer on the line.</SpeakSentence>
+    <SpeakSentence>Hey! There's a customer on the line.</SpeakSentence>
 </Response>
 ```
 
@@ -206,235 +202,260 @@ While transferring a call you can also combine this with an announcement using o
 <TabItem value="java">
 
 ```java
-@Post /play_audio endpoint
-public String playaudio() {
+@Post /incoming_calls endpoint
+public String transfer_to_bob() {
+    SpeakSentence speakSentence = SpeakSentence.builder()
+        .text("Thank you for calling Scrooge and Marley! Please hold while we connect you to an associate.")
+        .build();
 
+    PhoneNumber phoneNumber = PhoneNumber.builder()
+            .phoneNumber("+15555555554")
+            .transferAnswerUrl("/announcement")
+            .build();
+
+    Transfer transfer = Transfer.builder()
+            .transferCallerId("+15555555555")
+            .phoneNumbers(phoneNumber)
+            .build();
+
+    Response response = Response.builder().build()
+            .add(speakSentence)
+            .add(transfer);
+
+    System.out.println(response.toBXML());
+    return response.toBXML();
 }
-
-@Get /relative_audio endpoint
-public byte[] getAudio() {
-
-}
-SpeakSentence speakSentence = SpeakSentence.builder()
-        .text("Transferring your call, please wait.")
-        .voice("kate")
-        .build();
-
-PhoneNumber phoneNumber = PhoneNumber.builder()
-        .phoneNumber("+11234567892")
-        .transferAnswerUrl("http://myapp.com/announcement")
-        .build();
-
-Transfer transfer = Transfer.builder()
-        .transferCallerId("+11234567891")
-        .phoneNumbers(phoneNumber)
-        .build();
-
-Response response = Response.builder().build()
-        .add(speakSentence)
-        .add(transfer);
-
-System.out.println(response.toBXML());
 ```
 
-> The announcement BXML response from `http://myapp.com/announcement` is:
+> The announcement endpoint response from `/announcement` is:
 
 ```java
-SpeakSentence speakSentence = SpeakSentence.builder()
+
+@POST /announcement endpoint
+public byte[] alert() {
+    SpeakSentence speakSentence = SpeakSentence.builder()
         .text("Hey! There's a customer on the line.")
-        .voice("kate")
         .build();
+
+    Response response = Response.builder().build()
+        .add(speakSentence);
+
+    System.out.println(response.toBXML());
+    return response.toBXML();
+}
 ```
 
 </TabItem>
 <TabItem value="csharp">
 
 ```csharp
-@Post [/playaudio]
-public ActionResult playAudio() {
+@Post [/incoming_calls]
+public ActionResult transfer_to_bob() {
+    SpeakSentence speakSentence = new SpeakSentence
+    {
+        Sentence = "Thank you for calling Scrooge and Marley! Please hold while we connect you to an associate.",
+    };
+
+    PhoneNumber phoneNumber = new PhoneNumber
+    {
+        Number = "+15555555554",
+        TransferAnswerUrl = "/announcement"
+    };
+
+
+    Transfer transfer = new Transfer
+    {
+        TransferCallerId = "+15555555555",
+        PhoneNumbers = new PhoneNumber[] { phoneNumber }
+    };
+
     Response response = new Response();
-    response.Add(playAudio1);
-    response.Add(playAudio2);
+    response.Add(speakSentence);
+    response.Add(transfer);
+
+    Console.WriteLine(response.ToBXML());
     return new OkObjectResult(response.ToBXML());
 }
-
-@Get [/relative_audio]
-public ActionResult getAudio() {
-
-}
-SpeakSentence speakSentence = new SpeakSentence
-{
-    Sentence = "Transferring your call, please wait.",
-    Voice = "kate"
-};
-
-PhoneNumber phoneNumber = new PhoneNumber
-{
-    Number = "+11234567892",
-    TransferAnswerUrl = "http://myapp.com/announcement"
-};
-
-
-Transfer transfer = new Transfer
-{
-    TransferCallerId = "+11234567891",
-    PhoneNumbers = new PhoneNumber[] { phoneNumber }
-};
-
-Response response = new Response();
-response.Add(speakSentence);
-response.Add(transfer);
-
-Console.WriteLine(response.ToBXML());
 ```
 
-> The announcement BXML response from `http://myapp.com/announcement` is:
+> The announcement endpoint response from `/announcement` is:
 
 ```csharp
-SpeakSentence speakSentence = new SpeakSentence
-{
-    Sentence = "Hey! There's a customer on the line.",
-    Voice = "kate"
-};
+@Post [/announcement]
+public ActionResult alert() {
+    SpeakSentence speakSentence = new SpeakSentence
+    {
+        Sentence = "Hey! There's a customer on the line.",
+    };
 
-Response response = new Response();
-response.Add(speakSentence);
-
-Console.WriteLine(response.ToBXML());
+    Response response = new Response();
+    response.Add(speakSentence);
+    Console.WriteLine(response.ToBXML());
+    return new OkObjectResult(response.ToBXML());
+}
 ```
 
 </TabItem>
 <TabItem value="ruby">
 
 ```ruby
-speak_sentence = Bandwidth::Voice::SpeakSentence.new({
-    :sentence => "Transferring your call, please wait.",
-    :voice => "kate"
-})
+@POST '/incoming_calls' do:
+    speak_sentence = Bandwidth::Voice::SpeakSentence.new({
+        :sentence => "Thank you for calling Scrooge and Marley! Please hold while we connect you to an associate.",
+    })
 
-phone_number = Bandwidth::Voice::PhoneNumber.new({
-    :number => "+11234567892",
-    :transfer_answer_url => "http://myapp.com/announcement"
-})
+    phone_number = Bandwidth::Voice::PhoneNumber.new({
+        :number => "+15555555554",
+        :transfer_answer_url => "/announcement"
+    })
 
-transfer = Bandwidth::Voice::Transfer.new({
-    :transfer_caller_id => "+11234567891",
-    :phone_numbers => [phone_number]
-})
+    transfer = Bandwidth::Voice::Transfer.new({
+        :transfer_caller_id => "+15555555555",
+        :phone_numbers => [phone_number]
+    })
 
-response = Bandwidth::Voice::Response.new()
-response.push(speak_sentence)
-response.push(transfer)
+    response = Bandwidth::Voice::Response.new()
+    response.push(speak_sentence)
+    response.push(transfer)
 
-puts response.to_bxml()
+    puts response.to_bxml()
+    return response.to_bxml()
 ```
 
-> The announcement BXML response from `http://myapp.com/announcement` is:
+> The announcement endpoint response from `/announcement` is:
 
 ```ruby
-speak_sentence = Bandwidth::Voice::SpeakSentence.new({
-    :sentence => "Hey! There's a customer on the line.",
-    :voice => "kate"
-})
+@POST '/announcement' do:
+    speak_sentence = Bandwidth::Voice::SpeakSentence.new({
+        :sentence => "Hey! There's a customer on the line."
+    })
+    response = Bandwidth::Voice::Response.new()
+    response.push(speak_sentence)
+    puts response.to_bxml()
+    return response.to_bxml()
 ```
 
 </TabItem>
 <TabItem value="nodejs">
 
 ```js
-const speakSentence = new SpeakSentence({
-    sentence: "Transferring your call, please wait.",
-    voice: "kate"
-});
+@POST ['/incoming_calls'] (req, res) => {
+    const speakSentence = new SpeakSentence({
+        sentence: "Thank you for calling Scrooge and Marley! Please hold while we connect you to an associate."
+    });
 
-const number = new Transfer.PhoneNumber({
-    number: "+11234567892",
-    transferAnswerUrl: "http://myapp.com/announcement"
-});
+    const number = new Transfer.PhoneNumber({
+        number: "+15555555554",
+        transferAnswerUrl: "/announcement"
+    });
 
-const transfer = new Transfer({
-    transferCallerId: "+11234567891",
-    phoneNumbers: [number]
-});
+    const transfer = new Transfer({
+        transferCallerId: "+15555555555",
+        phoneNumbers: [number]
+    });
 
-const response = new Response(speakSentence, transfer);
+    const response = new Response(speakSentence, transfer);
 
-console.log(response.toBxml());
+    console.log(response.toBxml());
+    res.status(200).send(response.toBxml());
+}
 ```
 
-> The announcement BXML response from `http://myapp.com/announcement` is:
+> The announcement endpoint response from `/announcement` is:
 
 ```js
-const speakSentence = new SpeakSentence({
-    sentence: "Hey! There's a customer on the line.",
-    voice: "kate"
-});
+@POST ['/announcement'] (req, res) => {
+    const speakSentence = new SpeakSentence({
+        sentence: "Hey! There's a customer on the line."
+    });
 
-const response = new Response(speakSentence);
-
-console.log(response.toBxml());
+    const response = new Response(speakSentence);
+    console.log(response.toBxml());
+    res.status(200).send(response.toBxml());
+}
 ```
 
 </TabItem>
 <TabItem value="python">
 
 ```python
-speak_sentence = SpeakSentence(
-    sentence="Transferring your call, please wait.",
-    voice="kate"
-)
+@POST '/incoming_calls'
+def transfer_to_bob():
+    speak_sentence = SpeakSentence(
+        sentence="Thank you for calling Scrooge and Marley! Please hold while we connect you to an associate."
+    )
 
-phone_number = PhoneNumber(
-    number="+11234567892",
-    transfer_answer_url="http://myapp.com/announcement"
-)
+    phone_number = PhoneNumber(
+        number="+15555555554",
+        transfer_answer_url="/announcement"
+    )
 
-transfer = Transfer(
-    transfer_caller_id="+11234567891",
-    phone_numbers=[phone_number]
-)
+    transfer = Transfer(
+        transfer_caller_id="+15555555555",
+        phone_numbers=[phone_number]
+    )
 
-response = Response()
-response.add_verb(speak_sentence)
-response.add_verb(transfer)
+    response = Response()
+    response.add_verb(speak_sentence)
+    response.add_verb(transfer)
 
-print(response.to_bxml())
+    print(response.to_bxml())
+    return response.to_bxml()
 ```
 
-> The announcement BXML response from `http://myapp.com/announcement` is:
+> The announcement endpoint response from `/announcement` is:
 
 ```python
-speak_sentence = SpeakSentence(
-    sentence="Hey! There's a customer on the line.",
-    voice="kate"
-)
+@POST '/announcement'
+def alert():
+    speak_sentence = SpeakSentence(
+        sentence="Hey! There's a customer on the line."
+    )
+    response = Response()
+    response.add_verb(speak_sentence)
+    print(response.to_bxml())
+    return response.to_bxml()
 ```
 
 </TabItem>
 <TabItem value="php">
 
 ```php
-$speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Transferring your call, please wait.");
-$speakSentence->voice("kate");
+@POST('/incoming_calls)
+function transfer_to_bob(Request $request, Response $response) {
+    $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Thank you for calling Scrooge and Marley! Please hold while we connect you to an associate.");
 
-$number = new BandwidthLib\Voice\Bxml\PhoneNumber("+11234567892");
+    $number = new BandwidthLib\Voice\Bxml\PhoneNumber("+15555555554");
 
-$transfer = new BandwidthLib\Voice\Bxml\Transfer();
-$transfer->transferCallerId("+11234567891");
-$transfer->phoneNumbers(array($number));
+    $transfer = new BandwidthLib\Voice\Bxml\Transfer();
+    $transfer->transferCallerId("+15555555555");
+    $transfer->phoneNumbers(array($number));
 
-$response = new BandwidthLib\Voice\Bxml\Response();
-$response->addVerb($speakSentence);
-$response->addVerb($transfer);
+    $response = new BandwidthLib\Voice\Bxml\Response();
+    $response->addVerb($speakSentence);
+    $response->addVerb($transfer);
 
-echo $response->toBxml();
+    echo $response->toBxml();
+    $bxml = $bxmlResponse->toBxml();
+    $response = $response->withStatus(200)->withHeader('Content-Type', 'application/xml');
+    $response->getBody()->write($bxml);
+    return $response;
+}
 ```
 
-> The announcement BXML response from `http://myapp.com/announcement` is:
+> The announcement endpoint endpoint from `/announcement` is:
 
 ```php
-$speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Hey! There's a customer on the line.");
-$speakSentence->voice("kate");
+@POST('/announcement)
+function alert(Request $request, Response $response) {
+    $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Hey! There's a customer on the line.");
+    $response = new BandwidthLib\Voice\Bxml\Response();
+    
+    $response->addVerb($speakSentence);
+    $response = $response->withStatus(200)->withHeader('Content-Type', 'application/xml');
+    $response->getBody()->write($response->toBxml());
+    return $response;
+}
 ```
 
 </TabItem>
