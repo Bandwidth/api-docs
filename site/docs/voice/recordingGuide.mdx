@@ -14,7 +14,7 @@ image: ../../static/img/bandwidth-logo.png
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-In this guide we will show you how to record any inbound or outbound call and produce a transcription of these recordings. Please ensure you have followed our earlier guide on how to make an outbound call with Bandwidth.
+In this guide we will show you how to record any inbound or outbound call and produce a transcription of these recordings. Please ensure you have followed our earlier guide on [how to make an outbound call](/docs/voice/guides/outboundCall) with Bandwidth.
 
 Calls may be recorded or transcribed to enhance customer experience and training, for dispute resolution or for regulatory compliance reasons.
 
@@ -33,13 +33,13 @@ There are two ways you can record a call; with [`<Record>`](/docs/voice/bxml/rec
 * You want to record a call for quality assurance
 * You need other BXML verbs to execute while a recording is going on
 
+## Recording a Call
+
 ### Record
 
-The Record verb starts recording in a call and pauses all BXML execution until the recording is terminated by a timeout (`maxDuration`) or a terminating digit (`terminatingDigits`). Once the recording ends, BXML execution will continue at the next verb, or at the BXML at the `recordCompleteUrl` if this attribute is set.
+The [Record](/docs/voice/bxml/record) verb starts recording in a call and pauses all BXML execution until the recording is terminated by a timeout (`maxDuration`) or a terminating digit (`terminatingDigits`). Once the recording ends, BXML execution will continue at the next verb, or at the BXML at the `recordCompleteUrl` if this attribute is set.
 
 If the `recordingAvailableUrl` attribute is set, this URL will receive a callback once the recording is available to use.
-
-#### Record Example
 
 <Tabs
   groupId="record"
@@ -60,8 +60,14 @@ If the `recordingAvailableUrl` attribute is set, this URL will receive a callbac
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
     <SpeakSentence>Please say your name.</SpeakSentence>
-    <Record recordCompleteUrl="https://myapp.test/nextBXML" maxDuration="5"/>
+    <Record recordingAvailableUrl="https://myapp.com/recordingAvailable" maxDuration="10"/>
     <!-- Any verbs after this point would be replaced by those returned by the recordCompleteUrl -->
+</Response>
+```
+/nextBXML responds with...
+```xml
+<Response>
+   <SpeakSentence>Thank you.</SpeakSentence>
 </Response>
 ```
 
@@ -69,16 +75,15 @@ If the `recordingAvailableUrl` attribute is set, this URL will receive a callbac
 <TabItem value="java">
 
 ```java
-@POST /tts endpoint
-public String speakSentence() {
+@POST /record_name endpoint
+public String recordName() {
     SpeakSentence speakSentence = SpeakSentence.builder()
         .text("Please say your name.")
         .build();
 
     Record record = Record.builder()
         .recordCompleteUrl("/nextBXML")
-        .recordingAvailableUrl("https://myapp.com/recordingAvailable")
-        .maxDuration(5)
+        .maxDuration(10)
         .build();
 
     Response response = Response.builder().build()
@@ -87,14 +92,25 @@ public String speakSentence() {
 
     return bxml;
 }
+
+@POST /nextBXML endpoint
+public String thankYou() {
+    SpeakSentence speakSentence = SpeakSentence.builder()
+        .text("Thank you.")
+        .build();
+    Response response = Response.builder().build()
+        .add(speakSentence);
+    return bxml;
+}
+
 ```
 
 </TabItem>
 <TabItem value="csharp">
 
 ```csharp
-@POST [/tts]
-public ActionResult speaksentence() {
+@POST [/record_name]
+public ActionResult recordName() {
     SpeakSentence speakSentence = new SpeakSentence
     {
         Sentence = "Please say your name."
@@ -103,8 +119,7 @@ public ActionResult speaksentence() {
     Record record = new Record
     {
         RecordCompleteUrl = "/nextBXML",
-        RecordingAvailableUrl = "https://myapp.com/recordingAvailable",
-        MaxDuration = 5
+        MaxDuration = 10
     };
 
     Response response = new Response();
@@ -113,26 +128,45 @@ public ActionResult speaksentence() {
 
     return new OkObjectResult(response.ToBXML());
 }
+
+@POST [/nextBXML]
+public ActionResult thankYou() {
+    SpeakSentence speakSentence = new SpeakSentence
+    {
+        Sentence = "Thank you."
+    };
+    Response response = new Response();
+    response.Add(speakSentence);
+    return new OkObjectResult(response.ToBXML());
+}
 ```
 
 </TabItem>
 <TabItem value="ruby">
 
 ```ruby
-@POST '/tts' do:
+@POST '/record_name' do:
     speak_sentence = Bandwidth::Voice::SpeakSentence.new({
         :sentence => "Please say your name."
     })
 
     record = Bandwidth::Voice::Record.new({
         :record_complete_url => "/nextBXML",
-        :recording_available_url => "https://myapp.com/recordingAvailable",
-        :max_duration => "5"
+        :max_duration => "10"
     })
 
     response = Bandwidth::Voice::Response.new()
     response.push(speak_sentence)
     response.push(record)
+
+    return response.to_bxml()
+
+@POST '/nextBXML' do:
+    speak_sentence = Bandwidth::Voice::SpeakSentence.new({
+        :sentence => "Thank you."
+    })
+    response = Bandwidth::Voice::Response.new()
+    response.push(speak_sentence)
 
     return response.to_bxml()
 
@@ -142,19 +176,26 @@ public ActionResult speaksentence() {
 <TabItem value="nodejs">
 
 ```js
-@POST ['/playAudio'] (req, res) => {
-
+@POST ['/record_name'] (req, res) => {
     const speakSentence = new SpeakSentence({
         sentence: "Please say your name."
     });
 
     const record = new Record({
-        recordCompleteUrl: "https://myapp.com/nextBXML",
-        recordingAvailableUrl: "https://myapp.com/recordingAvailable",
+        recordCompleteUrl: "/nextBXML",
         maxDuration: 10
     });
 
     const response = new Response(speakSentence, record);
+    console.log(response.toBxml());
+    res.status(200).send(response.toBxml());
+}
+
+@POST ['/nextBXML'] (req, res) => {
+    const speakSentence = new SpeakSentence({
+        sentence: "Thank you."
+    });
+    const response = new Response(speakSentence);
     console.log(response.toBxml());
     res.status(200).send(response.toBxml());
 }
@@ -164,16 +205,15 @@ public ActionResult speaksentence() {
 <TabItem value="python">
 
 ```python
-@POST '/playAudio'
-def playAudio():
+@POST '/record_name'
+def recordName():
     speak_sentence = SpeakSentence(
         sentence="Please say your name.",
     )
 
     record = Record(
-    record_complete_url="https://myapp.com/nextBXML",
-    recording_available_url="https://myapp.com/recordingAvailable",
-        max_duration=5
+        record_complete_url="/nextBXML",
+        max_duration=10
     )
 
     response = Response()
@@ -181,20 +221,28 @@ def playAudio():
     response.add_verb(play_audio)
     response.add_verb(record)
     response.add_verb(speak_sentence)
-
     return response.to_bxml()
-```
+
+@POST '/nextBXML'
+def thankYou():
+    speak_sentence = SpeakSentence(
+        sentence="Thank you.",
+    )
+    response = Response()
+    response.add_verb(speak_sentence)
+    return response.to_bxml()
+    ```
 
 </TabItem>
 <TabItem value="php">
 
 ```php
-@POST('/playAudio)
-function playAudio(Request $request, Response $response) {
+@POST('/record_name)
+function recordName(Request $request, Response $response) {
     $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Please say your name.");
 
     $record = new BandwidthLib\Voice\Bxml\Record();
-    $record->recordCompleteUrl("https://myapp.com/nextBXML");
+    $record->recordCompleteUrl("/nextBXML");
 
     $response = new BandwidthLib\Voice\Bxml\Response();
     $response->addVerb($speakSentence);
@@ -207,10 +255,24 @@ function playAudio(Request $request, Response $response) {
     $response->getBody()->write($bxml);
     return $response;
 }
+
+@POST('/nextBXML)
+function thankYou(Request $request, Response $response) {
+    $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Thank you.");
+    $response = new BandwidthLib\Voice\Bxml\Response();
+    $response->addVerb($speakSentence);
+    $bxml = $response->toBxml();
+    $response = $response->withStatus(200)->withHeader('Content-Type', 'application/xml');
+    $response->getBody()->write($bxml);
+    return $response;
+
+}
 ```
 
 </TabItem>
 </Tabs>
+
+In this example, a [SpeakSentence](docs/voice/bxml/speakSentence) prompts the caller to say their name. The record then records the next 10 seconds, after which it will then play the BXML located at the `/recordCompleteUrl` endpoint, which says thank you.
 
 ### StartRecording
 
@@ -683,10 +745,15 @@ try {
 </TabItem>
 </Tabs>
 
-### Initiate Transcription
+## Transcribing a Call
+
+### Request Transcription
 
 You can also choose to request transcription of a recording after it has been completed via the API.
 
+:::tip
+Transcription can succeed only for recordings of length greater than 500 milliseconds and less than 4 hours.
+:::
 
 <Tabs
     groupId="record"
@@ -900,17 +967,11 @@ try {
 </TabItem>
 </Tabs>
 
-The transcribe attribute can be added to the Record or StartRecording BXML verbs to automatically generate a transcription when the recording is done.
+In this example, using our callID and recordingID we are requesting to download a specific recording. You can use this to download as many recordings as you require.
 
-If you want to receive a TranscriptionAvailable callback, you can additionally set the transcriptionAvailableUrl to a URL on your callback server and transcriptionAvailableMethod to its associated HTTP method (GET or POST, the default).
+### Initiate Transcription
 
-:::tip
-Transcription can succeed only for recordings of length greater than 500 milliseconds and less than 4 hours.
-:::
-
-### Recording Transcription Example
-
-If you want to be alerted of your transcription being ready, you can use the transcriptionAvailableUrl to send an event to the specified endpoint. Note that a JSON will be sent in the response body with all pertinent information for the transcription.
+The transcribe attribute can be added to the Record or StartRecording BXML verbs to automatically generate a transcription when the recording is done. If you want to receive a TranscriptionAvailable callback, you can additionally set the transcriptionAvailableUrl to a URL on your callback server and transcriptionAvailableMethod to its associated HTTP method (GET or POST, the default).
 
 <Tabs
     groupId="record"
@@ -1082,6 +1143,7 @@ function transcribe_call(Request $request, Response $response) {
 </TabItem>
 </Tabs>
 
+In this example, we have just built on our original Record example to add transcription to our recording and specified a callback URL.
 
 ### Download Transcription
 
@@ -1258,6 +1320,7 @@ try {
 </TabItem>
 </Tabs>
 
+In this example, using your callID and recordingID you are requesting to download a specific transcription. Similar to requesting a recording, you can use this to download as many transcriptions as you require.
 
 ### Where to next?
 
