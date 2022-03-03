@@ -18,22 +18,310 @@ In this guide we will show you how to create a conference call. Please ensure yo
 
 Conferences are implicitly created the first time your application uses a conference name. For example, if you want to call a phone number and place the called person into a conference call, your application could have the following BXML in the application at the “answerUrl” specified when making a call to the /calls API.
 
+
 <Tabs
-    groupId="bxml"
-    defaultValue="xml"
-    values={[
-        { label: 'XML', value: 'xml', },
-        { label: 'Java', value: 'java', },
-        { label: 'C#', value: 'csharp', },
-        { label: 'Ruby', value: 'ruby', },
-        { label: 'NodeJS', value: 'nodejs', },
-        { label: 'Python', value: 'python', },
-        { label: 'PHP', value: 'php', },
-    ]
+  groupId="conference"
+  defaultValue="xml"
+  values={[
+    { label: 'XML', value: 'xml', },
+    { label: 'Java', value: 'java', },
+    { label: 'C#', value: 'csharp', },
+    { label: 'Ruby', value: 'ruby', },
+    { label: 'NodeJS', value: 'nodejs', },
+    { label: 'Python', value: 'python', },
+    { label: 'PHP', value: 'php', },
+  ]
 }>
 <TabItem value="xml">
 
 ```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <SpeakSentence>Joining the conference now. .</SpeakSentence>
+    <Conference>important-meeting</Conference>
+</Response>
+```
+
+</TabItem>
+<TabItem value="conference">
+
+```java
+SpeakSentence speakSentence = SpeakSentence.builder()
+    .text("Joining the conference now.")
+    .build();
+
+Conference conference = Conference.builder()
+    .name("important-meeting")
+    .build();
+
+Response response = Response.builder().build()
+    .add(speakSentence)
+    .add(conference);
+
+System.out.println(response.toBXML());
+```
+
+</TabItem>
+<TabItem value="conference">
+
+```csharp
+SpeakSentence speakSentence = new SpeakSentence
+{
+    Sentence = "Joining the conference now.",
+};
+
+Conference conference = new Conference {
+    Name = "important-meeting"
+};
+
+Response response = new Response();
+response.Add(speakSentence);
+response.Add(conference);
+
+Console.WriteLine(response.ToBXML());
+```
+
+</TabItem>
+<TabItem value="conference">
+
+```ruby
+speak_sentence = Bandwidth::Voice::SpeakSentence.new({
+    :sentence => "Joining the conference now.",
+})
+
+conference = Bandwidth::Voice::Conference.new({
+    :conference_name => 'important-meeting'
+})
+
+response = Bandwidth::Voice::Response.new()
+response.push(speak_sentence)
+response.push(conference)
+
+puts response.to_bxml()
+```
+
+</TabItem>
+<TabItem value="conference">
+
+```js
+const speakSentence = new SpeakSentence({
+    sentence: "Joining the conference now.",
+});
+
+const conference = new Conference({
+    name: "important-meeting"
+});
+
+const response = new Response(speakSentence, conference);
+
+console.log(response.toBxml());
+```
+
+</TabItem>
+<TabItem value="conference">
+
+```python
+speak_sentence = SpeakSentence("Joining the conference now.")
+
+conference = Conference("important-meeting")
+
+response = Response()
+response.add_verb(speak_sentence)
+response.add_verb(conference)
+
+print(response.to_bxml())
+```
+
+</TabItem>
+<TabItem value="conference">
+
+```php
+$speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Joining the conference now.");
+
+$conference = new BandwidthLib\Voice\Bxml\Conference("important-meeting");
+
+$response = new BandwidthLib\Voice\Bxml\Response();
+$response->addVerb($speakSentence);
+$response->addVerb($conference);
+
+echo $response->toBxml();
+```
+
+</TabItem>
+</Tabs>
+
+This would place the call, once answered, into a conference called “important-meeting” after announcing to the called party that they will be placed in a conference. If the conference called “important-meeting” does not exist it will be created. Conversely, if you want to place an inbound call to a Programmable Voice API number into a conference, your application at the “Call initiated callback URL” could use the same BXML above to place the inbound call in a conference.
+
+### Join a conference call
+
+Joining an existing conference call uses the same Conference verb. In the example in the previous section, if the conference “important-meeting” exists, the call will be placed in the conference with the other calls already in “important-meeting”.
+
+### Join conference call as a coach
+
+In some cases your application may want to add a to the conference as a “coach”. In this case you will optionally specify the callid of the call that you want to coach. In this case the “c-example-callid” call will be able to hear the “coach” but other conference participants would not.
+
+<Tabs
+  groupId="conference"
+  defaultValue="xml"
+  values={[
+    { label: 'XML', value: 'xml', },
+    { label: 'Java', value: 'java', },
+    { label: 'C#', value: 'csharp', },
+    { label: 'Ruby', value: 'ruby', },
+    { label: 'NodeJS', value: 'nodejs', },
+    { label: 'Python', value: 'python', },
+    { label: 'PHP', value: 'php', },
+  ]
+}>
+<TabItem value="xml">
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <SpeakSentence>Welcome. You are going to coach 2 calls, please wait.</SpeakSentence>
+    <Conference callIdsToCoach="c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d,c-2a913f94-6a486f3a-3cae-4034-bcc3-f0c9fa77ca2f">my-conference-name</Conference>
+</Response>
+```
+
+</TabItem>
+<TabItem value="java">
+
+```java
+SpeakSentence speakSentence = SpeakSentence.builder()
+    .text("Welcome. You are going to coach 2 calls, please wait.")
+    .build();
+
+List<String> ids = new ArrayList<>();
+ids.add("c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d");
+ids.add("c-2a913f94-6a486f3a-3cae-4034-bcc3-f0c9fa77ca2f");
+
+Conference conference = Conference.builder()
+    .name("my-conference-name")
+    .callIdsToCoach(ids)
+    .build();
+
+Response response = Response.builder().build()
+    .add(speakSentence)
+    .add(conference);
+
+System.out.println(response.toBXML());
+```
+
+</TabItem>
+<TabItem value="csharp">
+
+```csharp
+SpeakSentence speakSentence = new SpeakSentence
+{
+    Sentence = "Welcome. You are going to coach 2 calls, please wait."
+};
+
+Conference conference = new Conference {
+    CallIdsToCoach = "c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d,c-2a913f94-6a486f3a-3cae-4034-bcc3-f0c9fa77ca2f",
+    Name = "my-conference-name"
+};
+
+Response response = new Response();
+response.Add(speakSentence);
+response.Add(conference);
+
+ Console.WriteLine(response.ToBXML());
+```
+
+</TabItem>
+<TabItem value="ruby">
+
+```ruby
+speak_sentence = Bandwidth::Voice::SpeakSentence.new({
+    :sentence => "Welcome. You are going to coach 2 calls, please wait."
+})
+conference = Bandwidth::Voice::Conference.new({
+    :conference_name => 'my-conference-name',
+    :call_ids_to_coach => "c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d,c-2a913f94-6a486f3a-3cae-4034-bcc3-f0c9fa77ca2f",
+    #or
+    :call_ids_to_coach => ["c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d", "c-2a913f94-6a486f3a-3cae-4034-bcc3-f0c9fa77ca2f"]
+})
+
+response = Bandwidth::Voice::Response.new()
+response.push(speak_sentence)
+response.push(conference)
+
+puts response.to_bxml()
+```
+
+</TabItem>
+<TabItem value="nodejs">
+
+```js
+const speakSentence = new SpeakSentence({
+    sentence: "Welcome. You are going to coach 2 calls, please wait."
+});
+
+const conference = new Conference({
+    name: "my-conference-name",
+    callIdsToCoach: ["c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d", "c-2a913f94-6a486f3a-3cae-4034-bcc3-f0c9fa77ca2f"]
+});
+
+const response = new Response(speakSentence, conference);
+
+console.log(response.toBxml());
+```
+
+</TabItem>
+<TabItem value="python">
+
+```python
+speak_sentence = SpeakSentence("Welcome. You are going to coach 2 calls, please wait.")
+
+conference = Conference("my-conference-name", call_ids_to_coach = "c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d,c-2a913f94-6a486f3a-3cae-4034-bcc3-f0c9fa77ca2f")
+
+response = Response()
+response.add_verb(speak_sentence)
+response.add_verb(conference)
+
+print(response.to_bxml())
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+$speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Welcome. You are going to coach 2 calls, please wait.");
+
+$conference = new BandwidthLib\Voice\Bxml\Conference("my-conference-name");
+$conference->callIdsToCoach("c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d,c-2a913f94-6a486f3a-3cae-4034-bcc3-f0c9fa77ca2f");
+
+$response = new BandwidthLib\Voice\Bxml\Response();
+$response->addVerb($speakSentence);
+$response->addVerb($conference);
+
+echo $response->toBxml();
+```
+
+</TabItem>
+</Tabs>
+
+## End a conference call
+
+A conference automatically ends when all participants leave the conference. Another way to end a conference is to use the “Update Conference” endpoint located here to set the conference status to “completed”. This will end the conference but BXML execution will continue for the calls. For example, using the following BXML would play a message to the participants that the conference has ended (assuming they have not hung up) if the “Update Conference” method is used.
+
+<Tabs
+    groupId="bxml"
+    defaultValue="payload"
+    values={[
+        { label: 'Payload', value: 'payload1', },
+        { label: 'cURL', value: 'curl1', },
+        { label: 'Java', value: 'java1', },
+        { label: 'C#', value: 'csharp1', },
+        { label: 'Ruby', value: 'ruby1', },
+        { label: 'NodeJS', value: 'nodejs1', },
+        { label: 'Python', value: 'python1', },
+        { label: 'PHP', value: 'php1', },
+    ]
+}>
+<TabItem value="payload1">
+
+```payload
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
 
@@ -41,12 +329,28 @@ Conferences are implicitly created the first time your application uses a confer
 ```
 
 </TabItem>
-<TabItem value="java">
+<TabItem value="curl1">
+
+```curl
+curl 'https://voice.bandwidth.com/api/v2/accounts/12345/conferences/conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8' \
+    -X POST \
+    -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=' \
+    -H 'Content-Type: application/json' \
+    -d '{
+        "status": "completed",
+        "redirectUrl": "http://example.com",
+        "username": "string",
+        "password": "string",
+    }'
+```
+
+</TabItem>
+<TabItem value="java1">
 **Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```java
-@POST /tts endpoint
-public String speakSentence() {
+@POST /joinConference endpoint
+public String addToConference() {
     Response response = new Response();
 
     String bxml = response.add(speakSentence).toBXML();
@@ -56,12 +360,12 @@ public String speakSentence() {
 ```
 
 </TabItem>
-<TabItem value="csharp">
+<TabItem value="csharp1">
 **Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```csharp
-@POST [/tts]
-public ActionResult speaksentence() {
+@POST [/joinConference]
+public ActionResult addToConference() {
 
     Response response = new Response();
     response.Add(speakSentence);
@@ -71,11 +375,11 @@ public ActionResult speaksentence() {
 ```
 
 </TabItem>
-<TabItem value="ruby">
+<TabItem value="ruby1">
 **Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```
-@POST '/tts' do:
+@POST '/joinConference' do:
 
     response = Bandwidth::Voice::Response.new()
     response.push(speak_sentence)
@@ -85,11 +389,11 @@ public ActionResult speaksentence() {
 ```
 
 </TabItem>
-<TabItem value="nodejs">
+<TabItem value="nodejs1">
 **Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```js
-@POST ['/playAudio'] (req, res) => {
+@POST ['/joinConference'] (req, res) => {
 
     const response = new Response(speakSentence);
 
@@ -99,12 +403,12 @@ public ActionResult speaksentence() {
 ```
 
 </TabItem>
-<TabItem value="python">
+<TabItem value="python1">
 **Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```python
-@POST '/playAudio'
-def playAudio():
+@POST '/joinConference'
+def addToConference():
 
     response = Response()
     response.add_verb(speak_sentence)
@@ -113,12 +417,12 @@ def playAudio():
 ```
 
 </TabItem>
-<TabItem value="php">
+<TabItem value="php1">
 **Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```php
-@POST('/playAudio)
-function playAudio(Request $request, Response $response) {
+@POST('/joinConference)
+function addToConference(Request $request, Response $response) {
 
     $response->addVerb($speakSentence);
 
@@ -132,35 +436,6 @@ function playAudio(Request $request, Response $response) {
 </TabItem>
 </Tabs>
 
-This would place the call, once answered, into a conference called “my-conference-name” after announcing to the called party that they will be placed in a conference. If the conference called “my-conference-name” does not exist it will be created. Conversely, if you want to place an inbound call to a Programmable Voice API number into a conference, your application at the “Call initiated callback URL” could use the same BXML above to place the inbound call in a conference.
-
-### Join a conference call
-
-Joining an existing conference call uses the same Conference verb. In the example in the previous section, if the conference “my-conference-name” exists, the call will be placed in the conference with the other calls already in “my-conference-name”.
-
-### Join conference call as a coach
-
-In some cases your application may want to add a to the conference as a “coach”. In this case you will optionally specify the callid of the call that you want to coach. In this case the “c-example-callid” call will be able to hear the “coach” but other conference participants would not.
-
-```
-<?xml version="1.0" encoding="UTF-8"?>
-<Response>
-   <SpeakSentence gender="male">Welcome. You are going to coach 2 calls, please wait.</SpeakSentence>
-   <Conference callIdsToCoach="c-example-callid">my-conference-name</Conference>
-</Response>
-```
-
-## End a conference call
-A conference automatically ends when all participants leave the conference. Another way to end a conference is to use the “Update Conference” endpoint located here to set the conference status to “completed”. This will end the conference but BXML execution will continue for the calls. For example, using the following BXML would play a message to the participants that the conference has ended (assuming they have not hung up) if the “Update Conference” method is used.
-
-```
-<?xml version="1.0" encoding="UTF-8"?>
-<Response>
-   <SpeakSentence gender="male">You will be added to your conference now.</SpeakSentence>
-   <Conference>my-conference-name</Conference>
-   <SpeakSentence gender="male">Your conference has now ended.</SpeakSentence>
-</Response>
-```
 
 ## Where to next?
 
