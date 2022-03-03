@@ -322,23 +322,26 @@ A conference automatically ends when all participants leave the conference. Anot
 <TabItem value="payload1">
 
 ```payload
-<?xml version="1.0" encoding="UTF-8"?>
-<Response>
+POST https://voice.bandwidth.com/api/v2/accounts/{ACCOUNT_ID}/conferences/{CONFERENCE_ID}
+{
 
-</Response>
+    "status": "completed",
+    "username": "string",
+    "password": "string",
+
+}
 ```
 
 </TabItem>
 <TabItem value="curl1">
 
 ```curl
-curl 'https://voice.bandwidth.com/api/v2/accounts/12345/conferences/conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8' \
+curl 'https://voice.bandwidth.com/api/v2/accounts/{ACCOUNT_ID}/conferences/{CONFERENCE_ID}' \
     -X POST \
     -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=' \
     -H 'Content-Type: application/json' \
     -d '{
         "status": "completed",
-        "redirectUrl": "http://example.com",
         "username": "string",
         "password": "string",
     }'
@@ -346,96 +349,183 @@ curl 'https://voice.bandwidth.com/api/v2/accounts/12345/conferences/conf-95ac8d8
 
 </TabItem>
 <TabItem value="java1">
-**Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```java
-@POST /joinConference endpoint
-public String addToConference() {
-    Response response = new Response();
+import com.bandwidth.BandwidthClient;
+import com.bandwidth.http.response.ApiResponse;
+import com.bandwidth.voice.models.*;
 
-    String bxml = response.add(speakSentence).toBXML();
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
-    return bxml;
+public class Sample {
+    public static void main(String[] args) {
+        BandwidthClient client = new BandwidthClient.Builder()
+                .voiceBasicAuthCredentials(USERNAME, PASSWORD)
+                .build();
+
+        ModifyConferenceRequest request = new ModifyConferenceRequest();
+        request.setStatus(StatusEnum.COMPLETED);
+
+        try {
+            CompletableFuture<ApiResponse<Void>> completableFuture = client.getVoiceClient().getAPIController().modifyConferenceAsync({ACCOUNT_ID}, {CONFERENCE_ID}, request);
+            System.out.println(completableFuture.get().getResult());
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }
+
 ```
 
 </TabItem>
 <TabItem value="csharp1">
-**Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```csharp
-@POST [/joinConference]
-public ActionResult addToConference() {
+using System;
+using System.Threading.Tasks;
+using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
+using Bandwidth.Standard.Voice.Models;
 
-    Response response = new Response();
-    response.Add(speakSentence);
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        var client = new BandwidthClient.Builder()
+            .VoiceBasicAuthCredentials({BW_USERNAME}, {BW_PASSWORD})
+            .Build();
 
-    return new OkObjectResult(response.ToBXML());
+        var request = new ModifyConferenceRequest
+        {
+            Status = StatusEnum.Completed
+        };
+
+        try
+        {
+            await client.Voice.APIController.ModifyConferenceAsync({ACCOUNT_ID}, {CONFERENCE_ID}, request);
+        }
+        catch (ApiException e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
 }
 ```
 
 </TabItem>
 <TabItem value="ruby1">
-**Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```
-@POST '/joinConference' do:
+require 'bandwidth'
 
-    response = Bandwidth::Voice::Response.new()
-    response.push(speak_sentence)
+include Bandwidth
+include Bandwidth::Voice
 
-    return response.to_bxml()
+bandwidth_client = Bandwidth::Client.new(
+    voice_basic_auth_user_name: {BW_USERNAME},
+    voice_basic_auth_password: {BW_PASSWORD}
+)
 
+voice_client = bandwidth_client.voice_client.client
+
+body = ModifyConferenceRequest.new
+body.status = StatusEnum::COMPLETED
+
+
+begin
+    voice_client.modify_conference({ACCOUNT_ID}, {CONFERENCE_ID}, body)
+rescue APIException => e
+    puts e.response_code
+end
 ```
 
 </TabItem>
 <TabItem value="nodejs1">
-**Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```js
-@POST ['/joinConference'] (req, res) => {
+import { Client, ApiController } from '@bandwidth/voice';
 
-    const response = new Response(speakSentence);
+const client = new Client({
+  basicAuthUserName: {BW_USERNAME},
+  basicAuthPassword: {BW_PASSWORD}
+});
 
-    console.log(response.toBxml());
-    request_response.status(200).send(response.toBxml());
+const controller = new ApiController(client);
+
+const modifyConference = async function() {
+  try {
+      const response = await controller.modifyConference({ACCOUNT_ID}, {CONFERENCE_ID}, {
+        status: 'completed',
+      });
+      console.log(response)
+  } catch(error) {
+      console.error(error);
+  }
 }
+
+modifyConference();
 ```
 
 </TabItem>
 <TabItem value="python1">
-**Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```python
-@POST '/joinConference'
-def addToConference():
+from bandwidth.bandwidth_client import BandwidthClient
+from bandwidth.voice.models.modify_conference_request import ModifyConferenceRequest
+from bandwidth.voice.models.status_enum import StatusEnum
+from bandwidth.exceptions.api_exception import APIException
 
-    response = Response()
-    response.add_verb(speak_sentence)
+import os
 
-    return response.to_bxml()
+bandwidth_client = BandwidthClient(
+    voice_basic_auth_user_name={BW_USERNAME},
+    voice_basic_auth_password={BW_PASSWORD}
+)
+voice_client = bandwidth_client.voice_client.client
+
+body = ModifyConferenceRequest()
+body.status = StatusEnum.COMPLETED
+
+try:
+    voice_client.modify_conference({ACCOUNT_ID}, {CONFERENCE_ID}, body)
+except APIException as e:
+    print(e.response_code)
+
 ```
 
 </TabItem>
 <TabItem value="php1">
-**Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```php
-@POST('/joinConference)
-function addToConference(Request $request, Response $response) {
+<?php
 
-    $response->addVerb($speakSentence);
+require "vendor/autoload.php";
 
-    $bxml = $bxmlResponse->toBxml();
-    $response = $response->withStatus(200)->withHeader('Content-Type', 'application/xml');
-    $response->getBody()->write($bxml);
-    return $response;
+$config = new BandwidthLib\Configuration(
+    array(
+        'voiceBasicAuthUserName' => {BW_USERNAME},
+        'voiceBasicAuthPassword' => {BW_PASSWORD},
+    )
+);
+$client = new BandwidthLib\BandwidthClient($config);
+
+$voiceClient = $client->getVoice()->getClient();
+
+$body = new BandwidthLib\Voice\Models\ModifyConferenceRequest();
+$body->state = "completed";
+
+try {
+    $voiceClient->modifyConference({ACCOUNT_ID}, {CONFERENCE_ID}, $body);
+} catch (BandwidthLib\APIException $e) {
+    print_r($e->getResponseCode());
 }
 ```
 
 </TabItem>
 </Tabs>
 
+The above example modifies an in-progress conference and sets its state to 'completed', which finishes the conference and boots all active members.
 
 ## Where to next?
 
