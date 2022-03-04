@@ -12,24 +12,35 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      # - name: Echo Event
+      # TODO: Investigate why this is failing.
+      # - name: Echo Event```
       #   run: | 
       #     echo "${{ toJson(github) }}"
       
-      - uses: ./.github/actions/replace_specs
-        id: replace-specs
+      - uses: ./.github/actions/replace_specs_snippets
+        id: replace-specs-snippets
         with: 
           branch-name: ${{ github.event.client_payload.branchName }}
           username: ${{ secrets.DX_GITHUB_USERNAME }}
           token: ${{ secrets.DX_GITHUB_TOKEN }}
       
-      - uses: ./.github/actions/add_pr_comment
+      - name: Comment on api-specs
+        uses: ./.github/actions/add_pr_comment
         with: 
           username: ${{ secrets.DX_GITHUB_USERNAME }}
           token: ${{ secrets.DX_GITHUB_TOKEN }}
           repo-name: api-specs
           pr-number: ${{ github.event.client_payload.prNumber }}
-          message: 'test'
+          message: 'https://bw-api-docs-${{ github.event.client_payload.branchName }}.s3-website-us-east-1.amazonaws.com/\n\nPlease note that it may take a couple minutes for your preview site to become available. See the corresponding PR opened on the docsite repository here:\nhttps://github.com/Bandwidth/api-docs/pull/${{ steps.replace-specs-snippets.outputs.pr-number }}'
+
+      - name: Comment on api-docs-code-snippets
+        uses: ./.github/actions/add_pr_comment
+        with: 
+          username: ${{ secrets.DX_GITHUB_USERNAME }}
+          token: ${{ secrets.DX_GITHUB_TOKEN }}
+          repo-name: api-docs-code-snippets
+          pr-number: ${{ github.event.client_payload.prNumber }}
+          message: 'https://bw-api-docs-${{ github.event.client_payload.branchName }}.s3-website-us-east-1.amazonaws.com/\n\nPlease note that it may take a couple minutes for your preview site to become available. See the corresponding PR opened on the docsite repository here:\nhttps://github.com/Bandwidth/api-docs/pull/${{ steps.replace-specs-snippets.outputs.pr-number }}'
   
   update: 
     if: ${{ github.event.action == 'Update' }} 
@@ -37,11 +48,11 @@ jobs:
     steps: 
       - uses: actions/checkout@v2
 
-      - name: Echo Event
-        run: | 
-          echo "${{ toJson(github) }}"
+      # - name: Echo Event
+      #   run: | 
+      #     echo "${{ toJson(github) }}"
       
-      - uses: ./.github/actions/update_specs
+      - uses: ./.github/actions/update_specs_snippets
         with: 
           branch-name: ${{ github.event.client_payload.branchName }}
           username: ${{ secrets.DX_GITHUB_USERNAME }}
@@ -53,9 +64,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Echo Event
-        run: | 
-          echo "${{ toJson(github) }}"
+      # - name: Echo Event
+      #   run: | 
+      #     echo "${{ toJson(github) }}"
       
       - name: Set PR number as env variable
         run: |
@@ -69,7 +80,7 @@ jobs:
           token: ${{ secrets.DX_GITHUB_TOKEN }}
           repo-name: api-docs
           pr-number: ${{ env.PR_NUMBER }}
-          message: 'Corresponding Pull Request on [api-specs](https://github.com/Bandwidth/api-specs/pull/${{ github.event.client_payload.prNumber }}) was merged.'
+          message: 'Corresponding Pull Request on [${{ github.event.client_payload.originRepo }}](https://github.com/Bandwidth/${{ github.event.client_payload.originRepo }}/pull/${{ github.event.client_payload.prNumber }}) was merged.'
 
   close: 
     if: ${{ github.event.action == 'Close' }} 
@@ -82,9 +93,9 @@ jobs:
       #     PR_NUMBER=$(hub pr list -h ${{ github.event.client_payload.branchName }} -f %I)
       #     hub issue update $PR_NUMBER -s closed
 
-      - name: Echo Event
-        run: | 
-          echo "${{ toJson(github) }}"
+      # - name: Echo Event
+      #   run: | 
+      #     echo "${{ toJson(github) }}"
      
       - name: Set PR number as env variable
         run: |
@@ -98,4 +109,4 @@ jobs:
           token: ${{ secrets.DX_GITHUB_TOKEN }}
           repo-name: api-docs
           pr-number: ${{ env.PR_NUMBER }}
-          message: 'Corresponding Pull Request on [api-specs](https://github.com/Bandwidth/api-specs/pull/${{ github.event.client_payload.prNumber }}) was closed.'
+          message: 'Corresponding Pull Request on [${{ github.event.client_payload.originRepo }}](https://github.com/Bandwidth/${{ github.event.client_payload.originRepo }}/pull/${{ github.event.client_payload.prNumber }}) was closed.'
