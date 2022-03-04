@@ -3,11 +3,11 @@ name: Listener
 
 on:
   repository_dispatch:
-    types: [Specs-Open, Specs-Update, Specs-Merge, Specs-Close]
+    types: [Open, Update, Merge, Close]
 
 jobs: 
   open: 
-    if: ${{ contains(github.event.action, 'Open') }}
+    if: ${{ github.event.action == 'Open' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -22,18 +22,27 @@ jobs:
           branch-name: ${{ github.event.client_payload.branchName }}
           username: ${{ secrets.DX_GITHUB_USERNAME }}
           token: ${{ secrets.DX_GITHUB_TOKEN }}
-          action: ${{ github.event.action }}
       
-      - uses: ./.github/actions/add_pr_comment
+      - name: Comment on api-specs
+        uses: ./.github/actions/add_pr_comment
         with: 
           username: ${{ secrets.DX_GITHUB_USERNAME }}
           token: ${{ secrets.DX_GITHUB_TOKEN }}
           repo-name: api-specs
           pr-number: ${{ github.event.client_payload.prNumber }}
           message: 'https://bw-api-docs-${{ github.event.client_payload.branchName }}.s3-website-us-east-1.amazonaws.com/\n\nPlease note that it may take a couple minutes for your preview site to become available. See the corresponding PR opened on the docsite repository here:\nhttps://github.com/Bandwidth/api-docs/pull/${{ steps.replace-specs.outputs.pr-number }}'
+
+      - name: Comment on api-docs-code-snippets
+        uses: ./.github/actions/add_pr_comment
+        with: 
+          username: ${{ secrets.DX_GITHUB_USERNAME }}
+          token: ${{ secrets.DX_GITHUB_TOKEN }}
+          repo-name: api-docs-code-snippets
+          pr-number: ${{ github.event.client_payload.prNumber }}
+          message: 'https://bw-api-docs-${{ github.event.client_payload.branchName }}.s3-website-us-east-1.amazonaws.com/\n\nPlease note that it may take a couple minutes for your preview site to become available. See the corresponding PR opened on the docsite repository here:\nhttps://github.com/Bandwidth/api-docs/pull/${{ steps.replace-specs.outputs.pr-number }}'
   
   update: 
-    if: ${{ contains(github.event.action, 'Update') }}
+    if: ${{ github.event.action == 'Update' }} 
     runs-on: ubuntu-latest
     steps: 
       - uses: actions/checkout@v2
@@ -49,7 +58,7 @@ jobs:
           token: ${{ secrets.DX_GITHUB_TOKEN }}
 
   merge: 
-    if: ${{ contains(github.event.action, 'Merge') }} 
+    if: ${{ github.event.action == 'Merge' }} 
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -73,7 +82,7 @@ jobs:
           message: 'Corresponding Pull Request on [api-specs](https://github.com/Bandwidth/api-specs/pull/${{ github.event.client_payload.prNumber }}) was merged.'
 
   close: 
-    if: ${{ contains(github.event.action, 'Close') }}
+    if: ${{ github.event.action == 'Close' }} 
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
