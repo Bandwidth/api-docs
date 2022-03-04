@@ -1,0 +1,64 @@
+name: Replace Specs and Snippets
+description: Replaces specs with specs from api-specs repository and code-snippets from api-docs-code-snippets repository
+inputs: 
+  branch-name: 
+    required: true
+    description: Desired Branch Name
+  username: 
+    required: true
+    description: Github Username
+  token: 
+    required: true
+    description: Github Token
+  action:
+    required: true
+    description: Repository Dispatch Action
+
+outputs: 
+  pr-number: 
+    description: "The number of the PR that was opened"
+    value: ${{ steps.output-pr-number.outputs.pr-number }}
+ 
+runs:
+    using: "composite"
+    steps:
+      - uses: actions/checkout@v2
+        with: 
+          token: ${{ inputs.token }}
+
+      - name: Create and Push Branch
+        run: |
+          git config user.email "dx@bandwidth.com"
+          git config user.name ${{ inputs.username }}
+          git checkout -b ${{ inputs.branch-name }}
+          mkdir api-specs
+          git clone --branch ${{ inputs.branch-name }} https://${{ inputs.username }}:${{ inputs.token }}@github.com/Bandwidth/api-specs api-specs
+          rm -r api-specs/.git
+          cp -TRv api-specs/external site/specs
+          rm -r api-specs
+          git add .
+          git commit -m "Clone Specs from api-specs repo"
+          git push origin ${{ inputs.branch-name }}
+        shell: bash
+
+      - name: Generate Code Snippets
+        run: |
+          node scripts/add-code-snippets-oas.js
+          git add .
+          git commit -m "Add Code Snippets to Spec Files"
+          git push
+        shell: bash
+        
+      - name: Open Pull Request
+        run: |
+          hub pull-request --base Bandwidth:main -m '${{ inputs.branch-name }}' -m 'Update API specs from upstream api-specs repository'
+        env:
+          GITHUB_TOKEN: ${{ inputs.token }}
+        shell: bash
+
+      - name: Output PR Number 
+        id: output-pr-number
+        run: echo "::set-output name=pr-number::$(hub pr list -h ${{ inputs.branch-name }} -f %I)"
+        env:
+          GITHUB_TOKEN: ${{ inputs.token }}
+        shell: bash

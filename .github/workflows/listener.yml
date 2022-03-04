@@ -3,11 +3,11 @@ name: Listener
 
 on:
   repository_dispatch:
-    types: [Open, Update, Merge, Close]
+    types: [Specs-Open, Specs-Update, Specs-Merge, Specs-Close]
 
 jobs: 
   open: 
-    if: ${{ github.event.action == 'Open' }}
+    if: ${{ contains(github.event.action, 'Open') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -16,12 +16,13 @@ jobs:
       #   run: | 
       #     echo "${{ toJson(github) }}"
       
-      - uses: ./.github/actions/replace_specs
-        id: replace-specs
+      - uses: ./.github/actions/replace_specs_snippets
+        id: replace-specs-snippets
         with: 
           branch-name: ${{ github.event.client_payload.branchName }}
           username: ${{ secrets.DX_GITHUB_USERNAME }}
           token: ${{ secrets.DX_GITHUB_TOKEN }}
+          action: ${{ github.event.action }}
       
       - uses: ./.github/actions/add_pr_comment
         with: 
@@ -32,7 +33,7 @@ jobs:
           message: 'https://bw-api-docs-${{ github.event.client_payload.branchName }}.s3-website-us-east-1.amazonaws.com/\n\nPlease note that it may take a couple minutes for your preview site to become available. See the corresponding PR opened on the docsite repository here:\nhttps://github.com/Bandwidth/api-docs/pull/${{ steps.replace-specs.outputs.pr-number }}'
   
   update: 
-    if: ${{ github.event.action == 'Update' }} 
+    if: ${{ contains(github.event.action, 'Update') }}
     runs-on: ubuntu-latest
     steps: 
       - uses: actions/checkout@v2
@@ -48,7 +49,7 @@ jobs:
           token: ${{ secrets.DX_GITHUB_TOKEN }}
 
   merge: 
-    if: ${{ github.event.action == 'Merge' }} 
+    if: ${{ contains(github.event.action, 'Merge') }} 
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -72,7 +73,7 @@ jobs:
           message: 'Corresponding Pull Request on [api-specs](https://github.com/Bandwidth/api-specs/pull/${{ github.event.client_payload.prNumber }}) was merged.'
 
   close: 
-    if: ${{ github.event.action == 'Close' }} 
+    if: ${{ contains(github.event.action, 'Close') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
