@@ -83,7 +83,7 @@ files.forEach(spec => {
 
             //operation_id is what we are matching code samples on
             operation_id = operation_object["operationId"];
-            var sample_files_directory = `specs/code-snippets/${spec_name}/${operation_id}/`;
+            var sample_files_directory = `code-snippets/${spec_name}/${operation_id}/`;
 
             //Add the x-code-samples field, default to an empty list
 
