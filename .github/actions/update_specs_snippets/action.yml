@@ -1,0 +1,66 @@
+name: Update Specs
+description: Update spec files on an existing PR with specs from api-specs repository
+inputs: 
+  branch-name: 
+    required: true
+    description: Desired Branch Name
+  username: 
+    required: true
+    description: Github Username
+  token: 
+    required: true
+    description: Github Token
+ 
+runs:
+    using: "composite"
+    steps:
+      - uses: actions/checkout@v2
+        with: 
+          token: ${{ inputs.token }}
+          ref: ${{ inputs.branch-name }}
+
+      - name: Create Branch
+        run: |
+          git config user.email "dx@bandwidth.com"
+          git config user.name ${{ inputs.username }}
+          git checkout -b ${{ inputs.branch-name }}
+        shell: bash
+
+      - name: Copy Api Specs
+        run: |
+          mkdir api-specs
+          if [ $(git ls-remote --heads https://${{ inputs.username }}:${{ inputs.token }}@github.com/Bandwidth/api-specs.git ${{ inputs.branch-name }} | wc -l) ]
+          then
+            git clone --branch ${{ inputs.branch-name }} https://${{ inputs.username }}:${{ inputs.token }}@github.com/Bandwidth/api-specs api-specs
+          else
+            git clone https://${{ inputs.username }}:${{ inputs.token }}@github.com/Bandwidth/api-specs api-specs
+          fi
+          rm -r api-specs/.git
+          cp -TRv api-specs/external site/specs
+          rm -r api-specs
+        shell: bash
+
+      - name: Copy Code Snippets
+        run: |
+          mkdir code-snippets
+          if [ $(git ls-remote --heads https://${{ inputs.username }}:${{ inputs.token }}@github.com/Bandwidth/api-docs-code-snippets.git ${{ inputs.branch-name }} | wc -l) ]
+          then
+            git clone --branch ${{ inputs.branch-name }} https://${{ inputs.username }}:${{ inputs.token }}@github.com/Bandwidth/api-docs-code-snippets code-snippets
+          else
+            git clone https://${{ inputs.username }}:${{ inputs.token }}@github.com/Bandwidth/api-docs-code-snippets code-snippets
+          fi
+          rm -r code-snippets/.git
+          cp -TRv code-snippets site/code-snippets
+          rm -r code-snippets
+        shell: bash
+
+      - name: Generate Code Snippets
+        run: |
+          ls site
+          ls site/specs
+          ls site/code-snippets
+          node code-snippets/add-code-snippets-oas.js
+          git add ./specs/*
+          git commit -m "Add Code Snippets to Spec Files"
+          git push origin ${{ inputs.branch-name }}
+        shell: bash
