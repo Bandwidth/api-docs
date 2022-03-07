@@ -53,8 +53,8 @@ If no gatherUrl attribute is specified, the gathered digits are discarded and ex
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <SpeakSentence>Input up to 5 digits.</SpeakSentence>
-    <Gather gatherUrl="/digitsCallback" repeatCount="5" interDigitTimeout="10" maxDigits="5"/>
+    <SpeakSentence>Input a digit to hear it read back to you.</SpeakSentence>
+    <Gather gatherUrl="/digitsCallback" maxDigits="1"/>
 </Response>
 ```
 And endpoint /digitsCallback should return:
@@ -64,7 +64,7 @@ And endpoint /digitsCallback should return:
 
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <SpeakSentence>You have pressed {digit}</SpeakSentence>
+    <SpeakSentence>You input the number {digit}</SpeakSentence>
 </Response>
 ```
 
@@ -76,12 +76,12 @@ And endpoint /digitsCallback should return:
 @POST /gatherDigits endpoint
 public String gatherDigits() {
     SpeakSentence speakSentence = SpeakSentence.builder()
-        .text("Input up to 5 digits.")
+        .text("Input a digit to hear it read back to you.")
         .build();
 
     Gather gather = Gather.builder()
             .gatherUrl("/digitsCallback")
-            .maxDigits(5)
+            .maxDigits(1)
             .build();
 
     Response response = Response.builder().build()
@@ -124,12 +124,13 @@ using Newtonsoft.Json.Linq;
 public ActionResult gatherDigits() {
     SpeakSentence speakSentence = new SpeakSentence
     {
-        Sentence = "Input up to 5 digits.",
+        Sentence = "Input a digit to hear it read back to you.",
     };
 
     Gather gather = new Gather
     {
         GatherUrl = "/digitsCallback",
+        MaxDigits = 1
     };
 
     Response response = new Response();
@@ -138,8 +139,8 @@ public ActionResult gatherDigits() {
     return new OkObjectResult(response.ToBXML());
 }
 
-@POST [/gatherDigits]
-public ActionResult gatherDigits() {
+@POST [/digitsCallback]
+public ActionResult digitsCallback() {
     //NOTE: This section of the application may look different depending on how your endpoints receive callback events
 
     using var reader = new StreamReader(Request.Body, Encoding.UTF8);
@@ -164,12 +165,12 @@ public ActionResult gatherDigits() {
 ```
 @POST '/gatherDigits' do:
     speak_sentence = Bandwidth::Voice::SpeakSentence.new({
-        :sentence => "Input up to 5 digits."
+        :sentence => "Input a digit to hear it read back to you."
     })
 
     gather = Bandwidth::Voice::Gather.new({
         :gather_url => "/digitsCallback",
-        :max_digits => 5,
+        :max_digits => 1,
     })
 
     response = Bandwidth::Voice::Response.new()
@@ -178,7 +179,7 @@ public ActionResult gatherDigits() {
 
     return response.to_bxml()
 
-@POST '/gatherDigits' do:
+@POST '/digitsCallback' do:
     #NOTE: This section of the application may look different depending on how your endpoints receive callback events
 
     callback_data = JSON.parse(request.body.read)
@@ -198,19 +199,19 @@ public ActionResult gatherDigits() {
 ```js
 @POST ['/gatherDigits'] (req, res) => {
     const speakSentence = new SpeakSentence({
-        sentence: "Input up to 5 digits."
+        sentence: "Input a digit to hear it read back to you."
     });
 
     const gather = new Gather({
         gatherUrl: "/digitsCallback",
-        maxDigits: 5,
+        maxDigits: 1,
     });
 
     const response = new Response(speakSentence, gather);
     request_response.status(200).send(response.toBxml());
 }
 
-@POST ['/gatherDigits'] (req, res) => {
+@POST ['/digitsCallback'] (req, res) => {
     //NOTE: This section of the application may look different depending on how your endpoints receive callback events
 
     const callback = req.body;
@@ -234,12 +235,12 @@ import json
 @POST '/gatherDigits'
 def gatherDigits():
     speak_sentence = SpeakSentence(
-        sentence="Input up to 5 digits."
+        sentence="Input a digit to hear it read back to you."
     )
 
     gather = Gather(
         gather_url="/digitsCallback",
-        maxDigits=5,
+        maxDigits=1
     )
 
     response = Response()
@@ -248,8 +249,8 @@ def gatherDigits():
 
     return response.to_bxml()
 
-@POST '/gatherDigits'
-def gatherDigits():
+@POST '/digitsCallback'
+def digitsCallback():
     #NOTE: This section of the application may look different depending on how your endpoints receive callback events
 
     callback_data = json.loads(request.data)
@@ -271,11 +272,11 @@ def gatherDigits():
 ```php
 @POST('/gatherDigits)
 function gatherDigits(Request $request, Response $response) {
-    $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Input up to 5 digits.");
+    $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Input a digit to hear it read back to you.");
 
     $gather = new BandwidthLib\Voice\Bxml\Gather();
     $gather->gatherUrl("/digitsCallback");
-    $gather->maxDigits(5);
+    $gather->maxDigits(1);
 
     $response = new BandwidthLib\Voice\Bxml\Response();
     $response->addVerb($speakSentence);
@@ -287,8 +288,8 @@ function gatherDigits(Request $request, Response $response) {
     return $response;
 }
 
-@POST('/gatherDigits)
-function gatherDigits(Request $request, Response $response) {
+@POST('/digitsCallback)
+function digitsCallback(Request $request, Response $response) {
     #NOTE: This section of the application may look different depending on how your endpoints receive callback events
     $data = $request->getParsedBody();
     $digits = $data['digits'];
@@ -307,7 +308,7 @@ function gatherDigits(Request $request, Response $response) {
 </TabItem>
 </Tabs>
 
-The above example prompts a user to input up to five digits, after which a speaksentence will read the number created back to the user.
+The above number prompts the caller to input a number, after which the gather ends and a [`<SpeakSentence>`](/docs/voice/bxml/speakSentence) says the pressed number back to the caller.
 
 To further enhance your IVR system, additional verbs can be nested inside of a [`<Gather>`](/docs/voice/bxml/gather) tag. In this new example, the sentence "Please press a digit" will be said at the start of the call *and* after each press, instead of only at the beginning of the call.
 
@@ -329,12 +330,14 @@ To further enhance your IVR system, additional verbs can be nested inside of a [
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <Gather gatherUrl="/digitsCallback" repeatCount="5" interDigitTimeout="10" maxDigits="5">
-        <SpeakSentence>Please press a digit</SpeakSentence>
+    <Gather gatherUrl="/gatherCallback" repeatCount="3">
+        <SpeakSentence>Please listen to the menu of options.</SpeakSentence>
+        <PlayAudio>http://audio.test/englishMenuOptions.mp3</PlayAudio>
+        <PlayAudio>http://audio.test/spanishMenuOptions.mp3</PlayAudio>
     </Gather>
 </Response>
-```
-And endpoint /digitsCallback should return:
+
+And endpoint /gatherCallback should return:
 
 ```xml
 //NOTE: This section of the application may look different depending on how your endpoints receive callback events
@@ -347,33 +350,40 @@ And endpoint /digitsCallback should return:
 
 </TabItem>
 <TabItem value="java">
-**Note: The endpoint headers are pseudocoded. Your implementation will look different
+**Note: This application is pseudocoded. Your implementation will look different
 
 ```java
-@POST /gatherDigits endpoint
+@Post /gatherDigits endpoint
 public String gatherDigits() {
-    SpeakSentence speakSentence = SpeakSentence.builder()
-        .text("Please press a digit.")
-        .build();
+    List<AudioProducer> list = new ArrayList<>();
+    list.add(SpeakSentence.builder()
+            .text("Please listen to the menu of options.")
+            .build());
+
+    list.add(PlayAudio.builder()
+            .audioUri("http://audio.test/englishMenuOptions.mp3")
+            .build());
+
+    list.add(PlayAudio.builder()
+            .audioUri("http://audio.test/spanishMenuOptions.mp3")
+            .build());
 
     Gather gather = Gather.builder()
-        .gatherUrl("/digitsCallback")
-        .repeatCount(5)
-        .maxDigits(1)
-        .audioProducer(speakSentence)
-        .build();
+            .gatherUrl("/gatherCallback")
+            .repeatCount(3)
+            .maxDigits(1)
+            .audioProducer(list)
+            .build();
 
     Response response = Response.builder().build()
-        .add(gather);
-    Response response = new Response();
+            .add(gather);
 
-    String bxml = response.toBXML();
+    return response.toBXML();
 
-    return bxml;
 }
 
-@POST /digitsCallback endpoint
-public String digitsCallback(VoiceCallback callback) {
+@Get /gatherCallback endpoint
+public byte[] gatherCallback() {
     //NOTE: This section of the application may look different depending on how your endpoints receive callback events
 
     String digits = callback.getDigits();
@@ -392,35 +402,36 @@ public String digitsCallback(VoiceCallback callback) {
 **Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```csharp
-using System;
-using System.Collections.Generic;
-using System.IO;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-@POST [/gatherDigits]
+@Post [/gatherDigits]
 public ActionResult gatherDigits() {
-    SpeakSentence speakSentence = new SpeakSentence
-    {
-        Sentence = "Please press a digit.",
-    };
+    List<AudioProducer> list = new ArrayList<>();
+    list.add(SpeakSentence.builder()
+            .text("Please listen to the menu of options.")
+            .build());
 
-    Gather gather = new Gather
-    {
-        GatherUrl = "/digitsCallback",
-        RepeatCount = 5,
-        MaxDigits = 1,
-        SpeakSentence = speakSentence
-    };
+    list.add(PlayAudio.builder()
+            .audioUri("http://audio.test/englishMenuOptions.mp3")
+            .build());
 
-    Response response = new Response();
-    response.Add(gather);
+    list.add(PlayAudio.builder()
+            .audioUri("http://audio.test/spanishMenuOptions.mp3")
+            .build());
+
+    Gather gather = Gather.builder()
+            .gatherUrl("/gatherCallback")
+            .repeatCount(3)
+            .audioProducer(list)
+            .build();
+
+    Response response = Response.builder().build()
+            .add(gather);
+
     return new OkObjectResult(response.ToBXML());
 }
 
-@POST [/gatherDigits]
-public ActionResult gatherDigits() {
-    //NOTE: This section of the application may look different depending on how your endpoints receive callback events
+@Get [/gatherCallback]
+public ActionResult gatherCallback() {
+        //NOTE: This section of the application may look different depending on how your endpoints receive callback events
 
     using var reader = new StreamReader(Request.Body, Encoding.UTF8);
     var body = await reader.ReadToEndAsync();
@@ -439,27 +450,32 @@ public ActionResult gatherDigits() {
 
 </TabItem>
 <TabItem value="ruby">
-**Note: The endpoint headers are pseudocoded. Your implementation will look different
+**Note: This application is pseudocoded. Your implementation will look different
 
-```
-@POST '/gatherDigits' do:
-    speak_sentence = Bandwidth::Voice::SpeakSentence.new({
-        :sentence => "Please press a digit."
+```ruby
+post '/gatherDigits' do:
+    speak_sentence_1 = Bandwidth::Voice::SpeakSentence.new({
+        :sentence => "Please listen to the menu of options."
+    })
+
+    play_audio_1 = Bandwidth::Voice::PlayAudio.new({
+        :url => "http://audio.test/englishMenuOptions.mp3"
+    })
+
+    play_audio_2 = Bandwidth::Voice::PlayAudio.new({
+        :url => "http://audio.test/spanishMenuOptions.mp3"
     })
 
     gather = Bandwidth::Voice::Gather.new({
-        :gather_url => "/digitsCallback",
-        :repeat_count => 5,
-        :max_digits => 1,
-        :speak_sentence => speak_sentence
+        :gather_url => "/gatherCallback",
+        :repeat_count => 3,
+        :nested_verbs => [speak_sentence_1, play_audio_1, play_audio_2]
     })
 
     response = Bandwidth::Voice::Response.new()
     response.push(gather)
 
-    return response.to_bxml()
-
-@POST '/gatherDigits' do:
+get '/gatherCallback' do:
     #NOTE: This section of the application may look different depending on how your endpoints receive callback events
 
     callback_data = JSON.parse(request.body.read)
@@ -477,16 +493,23 @@ public ActionResult gatherDigits() {
 **Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```js
-@POST ['/gatherDigits'] (req, res) => {
-    const speakSentence = new SpeakSentence({
-        sentence: "Please press a digit."
+@post ['/gatherDigits'] (request, request_response) => {
+    const speakSentence1 = new SpeakSentence({
+        sentence: "Please listen to the menu of options."
+    });
+
+    const playAudio1 = new PlayAudio({
+        url: "http://audio.test/englishMenuOptions.mp3"
+    });
+
+    const playAudio2 = new PlayAudio({
+        url: "http://audio.test/spanishMenuOptions.mp3"
     });
 
     const gather = new Gather({
-        gatherUrl: "/digitsCallback",
-        repeatCount: 5,
-        maxDigits: 1,
-        audioProducers: [speakSentence]
+        gatherUrl: "/gatherCallback",
+        repeatCount: 3,
+        audioProducers: [speakSentence1, playAudio1, playAudio2]
     });
 
     const response = new Response(gather);
@@ -495,9 +518,7 @@ public ActionResult gatherDigits() {
     request_response.status(200).send(response.toBxml());
 }
 
-@POST ['/gatherDigits'] (req, res) => {
-    //NOTE: This section of the application may look different depending on how your endpoints receive callback events
-
+@get ['/gatherCallback'] => {
     const callback = req.body;
     const digits = callback.digits;
     const message = "You input the number " + digits;
@@ -514,19 +535,24 @@ public ActionResult gatherDigits() {
 **Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```python
-import json
-
-@POST '/gatherDigits'
+@post '/gatherDigits'
 def gatherDigits():
-    speak_sentence = SpeakSentence(
-        sentence="Please press a digit."
+    speak_sentence_1 = SpeakSentence(
+        sentence="Please listen to the menu of options."
+    )
+
+    play_audio_1 = PlayAudio(
+        url="http://audio.test/englishMenuOptions.mp3"
+    )
+
+    play_audio_2 = PlayAudio(
+        url="http://audio.test/spanishMenuOptions.mp3"
     )
 
     gather = Gather(
-        gather_url="/digitsCallback",
-        repeat_count=5,
-        max_digits=1,
-        speak_sentence=speak_sentence
+        gather_url="/gatherCallback",
+        repeat_count=3,
+        nested_verbs=[speak_sentence_1, play_audio_1, play_audio_2]
     )
 
     response = Response()
@@ -534,8 +560,8 @@ def gatherDigits():
 
     return response.to_bxml()
 
-@POST '/gatherDigits'
-def gatherDigits():
+@get '/gatherCallback'
+def gatherCallback():
     #NOTE: This section of the application may look different depending on how your endpoints receive callback events
 
     callback_data = json.loads(request.data)
@@ -548,6 +574,7 @@ def gatherDigits():
     response.add_verb(speak_sentence)
 
     return response.to_bxml()
+
 ```
 
 </TabItem>
@@ -555,27 +582,32 @@ def gatherDigits():
 **Note: The endpoint headers are pseudocoded. Your implementation will look different
 
 ```php
-@POST('/gatherDigits)
+@post('/gatherDigits)
 function gatherDigits(Request $request, Response $response) {
-    $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Please press a digit.");
+    $speakSentence1 = new BandwidthLib\Voice\Bxml\SpeakSentence("Please listen to the menu of options.");
+
+    $playAudio1 = new BandwidthLib\Voice\Bxml\PlayAudio("http://audio.test/englishMenuOptions.mp3");
+
+    $playAudio2 = new BandwidthLib\Voice\Bxml\PlayAudio("http://audio.test/spanishMenuOptions.mp3");
 
     $gather = new BandwidthLib\Voice\Bxml\Gather();
-    $gather->gatherUrl("/digitsCallback");
-    $gather->repeatCount(5);
-    $gather->maxDigits(1);
-    $gather->speakSentence($speakSentence);
+    $gather->gatherUrl("/gatherCallback");
+    $gather->speakSentence($speakSentence1);
+    $gather->repeatCount(3);
+    $gather->playAudio($playAudio1);
+    $gather->playAudio($playAudio2);
 
     $response = new BandwidthLib\Voice\Bxml\Response();
     $response->addVerb($gather);
+    $bxml = $response->toBxml();
 
-    $bxml = $bxmlResponse->toBxml();
     $response = $response->withStatus(200)->withHeader('Content-Type', 'application/xml');
     $response->getBody()->write($bxml);
     return $response;
 }
 
-@POST('/gatherDigits)
-function gatherDigits(Request $request, Response $response) {
+@get('/gatherCallback)
+function gatherCallback(Request $request, Response $response) {
     #NOTE: This section of the application may look different depending on how your endpoints receive callback events
     $data = $request->getParsedBody();
     $digits = $data['digits'];
@@ -591,10 +623,12 @@ function gatherDigits(Request $request, Response $response) {
 }
 ```
 
+In this example, there is one SpeakSentence and two PlayAudios nested within the gather. If, after playing, the caller doesn't press a button, the audio will replay two more times.
+
 </TabItem>
 </Tabs>
 
-In the example above, the nested speaksentence now plays after every button press, instead of only at the start. This allows for more detailed instructions to be delivered to the caller, without having to manipulate the callbacks.
+In the example above,
 
 ### Where to next?
 Now that you have learnt how to build an IVR tree, check out some of the available actions in the following guides:
