@@ -24,12 +24,15 @@ runs:
           token: ${{ inputs.token }}
 
       - name: Create or Checkout Branch
+        id: branch_create
         run: |
           git config user.email "dx@bandwidth.com"
           git config user.name ${{ inputs.username }}
           if [ "$(git ls-remote --heads https://${{ inputs.username }}:${{ inputs.token }}@github.com/Bandwidth/api-docs.git ${{ inputs.branch-name }} | wc -l)" -eq 1 ]
           then
+            git fetch
             git checkout ${{ inputs.branch-name }}
+            echo "::set-output name=branch_exsits::true"
           else
             git checkout -b ${{ inputs.branch-name }}
           fi
@@ -77,6 +80,7 @@ runs:
         shell: bash
         
       - name: Open Pull Request
+        if: steps.branch_create.outputs.branch_exists == true
         run: |
           hub pull-request --base Bandwidth:main -m '${{ inputs.branch-name }}' -m 'Update API specs from upstream api-specs repository'
         env:
@@ -84,6 +88,7 @@ runs:
         shell: bash
 
       - name: Output PR Number 
+        if: steps.branch_create.outputs.branch_exists == true
         id: output-pr-number
         run: echo "::set-output name=pr-number::$(hub pr list -h ${{ inputs.branch-name }} -f %I)"
         env:
