@@ -23,11 +23,16 @@ runs:
         with: 
           token: ${{ inputs.token }}
 
-      - name: Create Branch
+      - name: Create or Checkout Branch
         run: |
           git config user.email "dx@bandwidth.com"
           git config user.name ${{ inputs.username }}
-          git checkout -b ${{ inputs.branch-name }}
+          if [ "$(git ls-remote --heads https://${{ inputs.username }}:${{ inputs.token }}@github.com/Bandwidth/api-docs.git ${{ inputs.branch-name }} | wc -l)" -eq 1 ]
+          then
+            git checkout ${{ inputs.branch-name }}
+          else
+            git checkout -b ${{ inputs.branch-name }}
+          fi
         shell: bash
 
       - name: Copy Api Specs
