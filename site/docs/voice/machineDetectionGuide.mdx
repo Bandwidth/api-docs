@@ -13,49 +13,364 @@ keywords:
 hide_title: false
 image: ../../static/img/bandwidth-logo.png
 ---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-This guide will show you how to use machine detection, using the `machineDetection` parameter in a [call creation request](/apis/voice#operation/createCall).
+In this guide we will show you how to use voicemail detection for calls. Please ensure you have followed our earlier guide on [how to make an outbound call](/docs/voice/guides/outboundCall) with Bandwidth.
 
-You can choose to use either synchronous (sync) or asynchronous (async) mode for this operation.
+Voicemail detection allows you to see if a call is answered by a person or was sent to Voicemail allowing for better use of automated call routing.  Additionally, if you design workflows and processes that are directly impacted by who’s answering the phone.
 
-## Async mode
+There are two available methods for voicemail detection, synchronous (sync) or asynchronous (async) mode.
 
-When using the async mode, once the machine detection operation is completed, you will receive a [`machineDetectionComplete`](/docs/voice/webhooks/machineDetectionComplete) callback.
+#### Use Synchronous (sync) if:
+* You don't mind the potential human callee having to hold for a moment
+*
 
-If async mode is selected, the `callbackUrl` needs to be specified. Also, you need to return proper BXML on the [`answer`](/docs/voice/webhooks/answer) callback in order for the call to not be hung up until the operation is complete.
+#### Use asynchronous (async) mode if:
+*
+* Your application wants to treat humans and answering machines the same, but note which one it was
 
-The only required parameter for async mode is the callback url:
+
+### Async mode
+
+When using the async mode, once the machine detection operation is completed, you will receive a machineDetectionComplete callback.
+
+If async mode is selected, the callbackUrl needs to be specified. Also, you need to return proper BXML on the answer callback in order for the call to not be hung up until the operation is complete hence this is a required field.
+
+<Tabs
+    groupId="bxml"
+    defaultValue="payload"
+    values={[
+        { label: 'Request Payload', value: 'payload', },
+        { label: 'cURL', value: 'curl', },
+        { label: 'Java', value: 'java', },
+        { label: 'C#', value: 'csharp', },
+        { label: 'Ruby', value: 'ruby', },
+        { label: 'NodeJS', value: 'nodejs', },
+        { label: 'Python', value: 'python', },
+        { label: 'PHP', value: 'php', },
+    ]
+}>
+<TabItem value="payload">
 
 ```json
+POST https://voice.bandwidth.com/api/v2/accounts/{accountId}
+    POST https://voice.bandwidth.com/api/v2/accounts/{accountId}
 {
-  "from"             : "+15555551212",
-  "to"               : "+15555551313",
-  "answerUrl"        : "http://www.myapp.com/hello",
-  "applicationId"    : "7fc9698a-b04a-468b-9e8f-91238c0d0086",
-  "machineDetection" : {
-    "callbackUrl": "http://www.myapp.com/machineDetectionComplete"
-  }
+    "from": "{FROM_NUMBER}",
+    "to": "{TO_NUMBER}",
+    "answerUrl": "http://example.com/answer",
+    "username": "{BANDWIDTH_USERNAME}",
+    "password": "{BANDWIDTH:PASSWORD}",
+    "machineDetection": {
+        "mode": "async",
+        "detectionTimeout": 15,
+        "silenceTimeout": 10,
+        "speechThreshold": 10,
+        "speechEndThreshold": 5,
+        "delayResult": false,
+        "callbackUrl": "http://example.com/machineDetectionCallback",
+    }
 }
 ```
 
-:::tip
-Other parameters can be configured as well, but are optional. Please see the [API reference](/apis/voice#operation/createCall) for more information.
-:::
+</TabItem>
+<TabItem value="curl">
 
-## Sync mode
+```cURL
+curl 'https://voice.bandwidth.com/api/v2/accounts/{BW_ACCOUNT_ID}/calls' \
+    -X POST \
+    -U '{BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}' \
+    -H 'Content-Type: application/json' \
+    -d '{
+    "from": "{BW_NUMBER}",
+    "to": "{$USER_NUMBER},
+    "applicationId": "{APPLICATION_ID}",
+    "answerUrl": "{ANSWER_URL}",
+    "username": "{BW_USERNAME}",
+    "password": "{BW_PASSWORD}",
+    "machineDetection": {
+        "mode": "async",
+        "detectionTimeout": 15,
+        "silenceTimeout": 10,
+        "speechThreshold": 10,
+        "speechEndThreshold": 5,
+        "delayResult": false,
+        "callbackUrl": "http://example.com/machineDetectionCallback",
+    }
+}'
+```
 
-When using the sync mode, the [`answer`](/docs/voice/webhooks/answer) callback is delayed until the machine detection operation is completed. Also, you will not receive a [`machineDetectionComplete`](/docs/voice/webhooks/machineDetectionComplete) callback in this case.
+</TabItem>
+<TabItem value="java">
 
-The only thing needed to use the sync mode is to set the mode itself, since the default is async:
+```java
+import com.bandwidth.BandwidthClient;
+import com.bandwidth.http.response.ApiResponse;
+import com.bandwidth.voice.models.CreateCallRequest;
+import com.bandwidth.voice.models.CreateCallResponse;
 
-```json
-{
-  "from"             : "+15555551212",
-  "to"               : "+15555551313",
-  "answerUrl"        : "http://www.myapp.com/hello",
-  "applicationId"    : "7fc9698a-b04a-468b-9e8f-91238c0d0086",
-  "machineDetection" : {
-    "mode": "sync"
-  }
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
+public class Sample {
+    public static final String USERNAME = System.getenv("BW_USERNAME");
+    public static final String PASSWORD = System.getenv("BW_PASSWORD");
+    public static final String ACCOUNT_ID = System.getenv("BW_ACCOUNT_ID");
+
+    public static void main(String[] args) {
+        String voiceApplicationId = System.getenv("BW_VOICE_APPLICATION_ID");
+        String to = System.getenv("USER_NUMBER");
+        String from = System.getenv("BW_NUMBER");
+        String baseUrl = System.getenv("BASE_CALLBACK_URL");
+        String answerUrl = baseUrl.concat("/answer");
+
+        BandwidthClient client = new BandwidthClient.Builder()
+            .voiceBasicAuthCredentials(USERNAME, PASSWORD)
+            .build();
+
+        MachineDetectionConfiguration amd = new MachineDetectionConfiguration();
+        amd.setMode(ModeEnum.fromString("async"));
+        amd.setCallbackUrl("http://example.com/machineDetectionCallback");
+
+        CreateCallRequest request = new CreateCallRequest();
+        request.setApplicationId(voiceApplicationId);
+        request.setTo(to);
+        request.setFrom(from);
+        request.setAnswerUrl(answerUrl);
+        request.setMachineDetection(amd);
+
+
+    try {
+            CompletableFuture<ApiResponse<CreateCallResponse>> completableFuture = client.getVoiceClient().getAPIController().createCallAsync(ACCOUNT_ID, request);
+            System.out.println(completableFuture.get().getResult());
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }
 ```
+
+</TabItem>
+<TabItem value="csharp">
+
+```csharp
+using System;
+using System.Threading.Tasks;
+using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
+using Bandwidth.Standard.Voice.Models;
+
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        var username = System.Environment.GetEnvironmentVariable("BW_USERNAME");
+        var password = System.Environment.GetEnvironmentVariable("BW_PASSWORD");
+        var accountId = System.Environment.GetEnvironmentVariable("BW_ACCOUNT_ID");
+        var applicationId = System.Environment.GetEnvironmentVariable("BW_VOICE_APPLICATION_ID");
+        var to = System.Environment.GetEnvironmentVariable("USER_NUMBER");
+        var from = System.Environment.GetEnvironmentVariable("BW_NUMBER");
+        var baseUrl = System.Environment.GetEnvironmentVariable("BASE_CALLBACK_URL");
+        var answerUrl = string.Concat(baseUrl, "/callbacks/answer");
+
+        MachineDetectionConfiguration amd = new MachineDetectionConfiguration()
+        {
+            CallbackUrl = "http://example.com/machineDetectionCallback",
+            Mode = ModeEnum.Async
+        };
+
+        var client = new BandwidthClient.Builder()
+            .VoiceBasicAuthCredentials(username, password)
+            .Build();
+
+        var request = new CreateCallRequest()
+        {
+            ApplicationId = applicationId,
+            To = to,
+            From = from,
+            AnswerUrl = answerUrl,
+            MachineDetection = amd
+        };
+
+        try
+        {
+            var response = await client.Voice.APIController.CreateCallAsync(accountId, request);
+            Console.WriteLine(response.Data);
+        }
+        catch (ApiException e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+}
+```
+
+</TabItem>
+<TabItem value="ruby">
+
+```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
+bandwidth_client = Bandwidth::Client.new(
+    voice_basic_auth_user_name: ENV['BW_USERNAME'],
+    voice_basic_auth_password: ENV['BW_PASSWORD']
+)
+
+voice_client = bandwidth_client.voice_client.client
+amd = MachineDetectionConfiguration.new
+amd.mode = ModeEnum::MODE_ENUM[0]
+
+body = CreateCallRequest.new
+body.from = ENV['BW_NUMBER']
+body.to = ENV['USER_NUMBER']
+body.answer_url = "http://www.myapp.com/hello"
+body.application_id = "7fc9698a-b04a-468b-9e8f-91238c0d0086"
+body.machine_detection = amd
+
+begin
+    result = voice_client.create_call(ENV['BW_ACCOUNT_ID'], body)
+    puts result.data.call_id
+rescue APIException => e
+    puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="nodejs">
+
+```js
+import { Client, ApiController } from '@bandwidth/voice';
+
+const BW_USERNAME = process.env["BW_USERNAME"];
+const BW_PASSWORD = process.env["BW_PASSWORD"];
+const BW_ACCOUNT_ID = process.env["BW_ACCOUNT_ID"];
+const BW_VOICE_APPLICATION_ID = process.env["BW_VOICE_APPLICATION_ID"];
+const BW_NUMBER = process.env["BW_NUMBER"];
+const USER_NUMBER = process.env["USER_NUMBER"];
+const VOICE_CALLBACK_URL = process.env["VOICE_CALLBACK_URL"];
+
+const client = new Client({
+  basicAuthUserName: BW_USERNAME,
+  basicAuthPassword: BW_PASSWORD
+});
+
+const controller = new ApiController(client);
+
+const accountId = BW_ACCOUNT_ID;
+
+const makeCall = async function() {
+  try {
+    const response = await controller.createCall(accountId, {
+        applicationId: BW_VOICE_APPLICATION_ID,
+        to: USER_NUMBER,
+        from: BW_NUMBER,
+        answerUrl: VOICE_CALLBACK_URL,
+        answerMethod: 'POST',
+        callTimeout: 30
+    });
+    console.log(response.body);
+  } catch(error) {
+      console.error(error);
+  }
+}
+
+makeCall();
+```
+
+</TabItem>
+<TabItem value="python">
+
+```python
+from bandwidth.bandwidth_client import BandwidthClient
+from bandwidth.voice.models.create_call_request import CreateCallRequest
+from bandwidth.exceptions.api_exception import APIException
+
+import os
+
+BW_USERNAME = os.environ["BW_USERNAME"]
+BW_PASSWORD = os.environ["BW_PASSWORD"]
+BW_ACCOUNT_ID = os.environ["BW_ACCOUNT_ID"]
+BW_VOICE_APPLICATION_ID = os.environ["BW_VOICE_APPLICATION_ID"]
+BW_NUMBER = os.environ["BW_NUMBER"]
+USER_NUMBER = os.environ["USER_NUMBER"]
+VOICE_CALLBACK_URL = os.environ["VOICE_CALLBACK_URL"]
+
+bandwidth_client = BandwidthClient(
+    voice_basic_auth_user_name=BW_USERNAME,
+    voice_basic_auth_password=BW_PASSWORD
+)
+voice_client = bandwidth_client.voice_client.client
+
+machine_detection_parameters = MachineDetectionConfiguration()
+machine_detection_parameters.mode = ModeEnum.ASYNC
+machine_detection_parameters.callback_url = BASE_CALLBACK_URL + "/machineDetectionCallback"
+
+body = CreateCallRequest()
+body.application_id = BW_VOICE_APPLICATION_ID
+body.to = USER_NUMBER
+body.mfrom = BW_NUMBER
+body.answer_url = VOICE_CALLBACK_URL
+body.machine_detection = machine_detection_parameters
+
+try:
+    response = voice_client.create_call(BW_ACCOUNT_ID, body)
+    print(response.body.call_id)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+require "vendor/autoload.php";
+
+$BW_USERNAME = getenv("BW_USERNAME");
+$BW_PASSWORD = getenv("BW_PASSWORD");
+$BW_ACCOUNT_ID = getenv("BW_ACCOUNT_ID");
+$BW_VOICE_APPLICATION_ID = getenv("BW_VOICE_APPLICATION_ID");
+$BW_NUMBER = getenv("BW_NUMBER");
+$USER_NUMBER = getenv("USER_NUMBER");
+$VOICE_CALLBACK_URL = getenv("VOICE_CALLBACK_URL");
+
+$config = new BandwidthLib\Configuration(
+    array(
+        'voiceBasicAuthUserName' => $BW_USERNAME,
+        'voiceBasicAuthPassword' => $BW_PASSWORD,
+    )
+);
+$client = new BandwidthLib\BandwidthClient($config);
+
+$voiceClient = $client->getVoice()->getClient();
+
+$body = new BandwidthLib\Voice\Models\CreateCallRequest();
+$body->from = $BW_NUMBER;
+$body->to = $USER_NUMBER;
+$body->answerUrl = $VOICE_CALLBACK_URL;
+$body->applicationId = $BW_VOICE_APPLICATION_ID;
+
+try {
+    $response = $voiceClient->createCall($BW_ACCOUNT_ID, $body);
+    print_r($response->getResult()->callId);
+} catch (BandwidthLib\APIException $e) {
+    print_r($e->getResponseCode());
+}
+```
+
+</TabItem>
+</Tabs>
+
+### Sync mode
+
+When using the sync mode, the answer callback is delayed until the machine detection operation is completed. Also, you will not receive a machineDetectionComplete callback in this case.
+
+The only thing needed to use the sync mode is to set the mode itself, since the default is async.
+
+
+Where to next?
+* Now that you have learnt to see if the call is answered by voicemail, check out some of the available actions in the following guides:
+* How to create conference calls
