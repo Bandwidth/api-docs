@@ -123,7 +123,7 @@ def main():
 
     convert_raml_to_openapi(raml_api, open_api)
 
-    with open('numbers.json', 'w') as w:
+    with open('../site/specs/numbers.json', 'w') as w:
         w.write(json.dumps(open_api, indent=2, default=str))
 
 
