@@ -92,9 +92,10 @@ curl 'https://voice.bandwidth.com/api/v2/accounts/{BW_ACCOUNT_ID}/calls' \
     "machineDetection": {
         "mode": "async",
         "detectionTimeout": 15,
-        "silenceTimeout": 10,
-        "speechThreshold": 10,
-        "speechEndThreshold": 5,
+        "silenceTimeout": 5,
+        "speechThreshold": 5,
+        "speechEndThreshold": 1,
+        "speechEndThresholdMachine": 3,
         "delayResult": false,
         "callbackUrl": "http://example.com/machineDetectionCallback",
     }
@@ -130,8 +131,14 @@ public class Sample {
             .build();
 
         MachineDetectionConfiguration amd = new MachineDetectionConfiguration();
-        amd.setMode(ModeEnum.fromString("async"));
+        machineDetectionConfig.setMode(ModeEnum.ASYNC);
+        machineDetectionConfig.setCallbackMethod(CallbackMethodEnum.POST);
         amd.setCallbackUrl("http://example.com/machineDetectionCallback");
+        machineDetectionConfig.setDetectionTimeout(15.0);
+        machineDetectionConfig.setSilenceTimeout(5.0);
+        machineDetectionConfig.setSpeechThreshold(5.0);
+        machineDetectionConfig.setSpeechEndThreshold(1.0);
+        machineDetectionConfig.setDelayResult(false);
 
         CreateCallRequest request = new CreateCallRequest();
         request.setApplicationId(voiceApplicationId);
@@ -139,7 +146,6 @@ public class Sample {
         request.setFrom(from);
         request.setAnswerUrl(answerUrl);
         request.setMachineDetection(amd);
-
 
     try {
             CompletableFuture<ApiResponse<CreateCallResponse>> completableFuture = client.getVoiceClient().getAPIController().createCallAsync(ACCOUNT_ID, request);
@@ -178,6 +184,7 @@ class Program
         {
             CallbackUrl = "http://example.com/machineDetectionCallback",
             Mode = ModeEnum.Async
+            CallbackMethod = "POST"
         };
 
         var client = new BandwidthClient.Builder()
@@ -288,7 +295,9 @@ makeCall();
 from bandwidth.bandwidth_client import BandwidthClient
 from bandwidth.voice.models.create_call_request import CreateCallRequest
 from bandwidth.exceptions.api_exception import APIException
-
+from bandwidth.voice.models.machine_detection_configuration import MachineDetectionConfiguration
+from bandwidth.voice.models.callback_method_enum import CallbackMethodEnum
+from bandwidth.voice.models.mode_enum import ModeEnum
 import os
 
 BW_USERNAME = os.environ["BW_USERNAME"]
@@ -307,7 +316,13 @@ voice_client = bandwidth_client.voice_client.client
 
 machine_detection_parameters = MachineDetectionConfiguration()
 machine_detection_parameters.mode = ModeEnum.ASYNC
-machine_detection_parameters.callback_url = BASE_CALLBACK_URL + "/machineDetectionCallback"
+machine_detection_parameters.callback_url = "http://example.com/machineDetectionCallback"
+machine_detection_parameters.callback_method = CallbackMethodEnum.POST
+machine_detection_parameters.detection_timeout = 15
+machine_detection_parameters.silence_timeout = 5
+machine_detection_parameters.speech_threshold = 5
+machine_detection_parameters.speech_end_threshold = 1
+machine_detection_parameters.delay_result = False
 
 body = CreateCallRequest()
 body.application_id = BW_VOICE_APPLICATION_ID
@@ -315,6 +330,10 @@ body.to = USER_NUMBER
 body.mfrom = BW_NUMBER
 body.answer_url = VOICE_CALLBACK_URL
 body.machine_detection = machine_detection_parameters
+machine_detection_parameters.detection_timeout = 6.2
+machine_detection_parameters.silence_timeout = 4.3
+machine_detection_parameters.speech_threshold = 8.0
+machine_detection_parameters.speech_end_threshold = 2.1
 
 try:
     response = voice_client.create_call(BW_ACCOUNT_ID, body)
