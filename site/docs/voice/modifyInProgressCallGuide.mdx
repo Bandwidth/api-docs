@@ -230,29 +230,25 @@ class Program
         var username = System.Environment.GetEnvironmentVariable("BW_USERNAME");
         var password = System.Environment.GetEnvironmentVariable("BW_PASSWORD");
         var accountId = System.Environment.GetEnvironmentVariable("BW_ACCOUNT_ID");
-        var applicationId = System.Environment.GetEnvironmentVariable("BW_VOICE_APPLICATION_ID");
-        var to = System.Environment.GetEnvironmentVariable("USER_NUMBER");
-        var from = System.Environment.GetEnvironmentVariable("BW_NUMBER");
-        var baseUrl = System.Environment.GetEnvironmentVariable("BASE_CALLBACK_URL");
-        var answerUrl = string.Concat(baseUrl, "/callbacks/answer");
+
+        var callId = {CALL_ID}
+
 
         var client = new BandwidthClient.Builder()
-        .VoiceBasicAuthCredentials(username, password)
-        .Build();
+            .VoiceBasicAuthCredentials(username, password)
+            .Build();
 
-        var request = new CreateCallRequest()
+
+        var request = new ModifyCallRequest()
         {
-            ApplicationId = applicationId,
-            To = to,
-            From = from,
-            AnswerUrl = answerUrl
+            State = StateEnum.Active,
+            RedirectUrl = {YOUR_REDIRECT_URL}
         };
 
         try
         {
-            var response = await client.Voice.APIController.CreateCallAsync(accountId, request);
-                Console.WriteLine(response.Data);
-            }
+            await client.Voice.APIController.ModifyCallAsync(accountId, callId, request);
+        }
         catch (ApiException e)
         {
             Console.WriteLine(e.Message);
@@ -270,22 +266,28 @@ require 'bandwidth'
 include Bandwidth
 include Bandwidth::Voice
 
+ACCOUNT_ID = ENV['BW_ACCOUNT_ID']
+
 bandwidth_client = Bandwidth::Client.new(
     voice_basic_auth_user_name: ENV['BW_USERNAME'],
     voice_basic_auth_password: ENV['BW_PASSWORD']
 )
 
+bandwidth_client = Bandwidth::Client.new(
+    voice_basic_auth_user_name: "api-username",
+    voice_basic_auth_password: "api-password"
+)
+
 voice_client = bandwidth_client.voice_client.client
 
-body = CreateCallRequest.new
-body.from = ENV['BW_NUMBER']
-body.to = ENV['USER_NUMBER']
-body.answer_url = "http://www.myapp.com/hello"
-body.application_id = "7fc9698a-b04a-468b-9e8f-916038c0d0086"
+body = ModifyCallRequest.new
+body.redirect_url = {YOUR_REDIRECT_URL}
+body.state = "active"
+
+call_id = {CALL_ID}
 
 begin
-    result = voice_client.create_call(ENV['BW_ACCOUNT_ID'], body)
-    puts result.data.call_id
+    voice_client.modify_call(ACCOUNT_ID, call_id, body)
 rescue APIException => e
     puts e.response_code
 end
@@ -300,37 +302,29 @@ import { Client, ApiController } from '@bandwidth/voice';
 const BW_USERNAME = process.env["BW_USERNAME"];
 const BW_PASSWORD = process.env["BW_PASSWORD"];
 const BW_ACCOUNT_ID = process.env["BW_ACCOUNT_ID"];
-const BW_VOICE_APPLICATION_ID = process.env["BW_VOICE_APPLICATION_ID"];
-const BW_NUMBER = process.env["BW_NUMBER"];
-const USER_NUMBER = process.env["USER_NUMBER"];
-const VOICE_CALLBACK_URL = process.env["VOICE_CALLBACK_URL"];
 
 const client = new Client({
-basicAuthUserName: BW_USERNAME,
-basicAuthPassword: BW_PASSWORD
+    basicAuthUserName: BW_USERNAME,
+    basicAuthPassword: BW_PASSWORD
 });
 
 const controller = new ApiController(client);
 
-const accountId = BW_ACCOUNT_ID;
+const callId = {CALL_ID}
 
-const makeCall = async function() {
-    try {
-        const response = await controller.createCall(accountId, {
-            applicationId: BW_VOICE_APPLICATION_ID,
-            to: USER_NUMBER,
-            from: BW_NUMBER,
-            answerUrl: VOICE_CALLBACK_URL,
-            answerMethod: 'POST',
-            callTimeout: 30
-        });
-        console.log(response.body);
-    } catch(error) {
-        console.error(error);
-    }
+const modifyCall = async function() {
+  try {
+      const response = await controller.getCallState(BW_ACCOUNT_ID, callId, {
+        state: "active",
+        redirectUrl: {YOUR_REDIRECT_URL}
+      });
+      console.log(response)
+  } catch(error) {
+      console.error(error);
+  }
 }
 
-makeCall();
+modifyCall();
 
 ```
 
@@ -347,10 +341,6 @@ import os
 BW_USERNAME = os.environ["BW_USERNAME"]
 BW_PASSWORD = os.environ["BW_PASSWORD"]
 BW_ACCOUNT_ID = os.environ["BW_ACCOUNT_ID"]
-BW_VOICE_APPLICATION_ID = os.environ["BW_VOICE_APPLICATION_ID"]
-BW_NUMBER = os.environ["BW_NUMBER"]
-USER_NUMBER = os.environ["USER_NUMBER"]
-VOICE_CALLBACK_URL = os.environ["VOICE_CALLBACK_URL"]
 
 bandwidth_client = BandwidthClient(
     voice_basic_auth_user_name=BW_USERNAME,
@@ -358,17 +348,16 @@ bandwidth_client = BandwidthClient(
 )
 voice_client = bandwidth_client.voice_client.client
 
-body = CreateCallRequest()
-body.application_id = BW_VOICE_APPLICATION_ID
-body.to = USER_NUMBER
-body.mfrom = BW_NUMBER
-body.answer_url = VOICE_CALLBACK_URL
+call_id = {CALL_ID}
+
+body = ModifyCallRequest()
+body.redirect_url = {YOUR_REDIRECT_URL}
+body.state = "active"
+
 try:
-    response = voice_client.create_call(BW_ACCOUNT_ID, body)
-    print(response.body.call_id)
+    voice_client.modify_call(BW_ACCOUNT_ID, call_id, body)
 except APIException as e:
     print(e.response_code)
-
 ```
 
 </TabItem>
@@ -380,30 +369,25 @@ require "vendor/autoload.php";
 $BW_USERNAME = getenv("BW_USERNAME");
 $BW_PASSWORD = getenv("BW_PASSWORD");
 $BW_ACCOUNT_ID = getenv("BW_ACCOUNT_ID");
-$BW_VOICE_APPLICATION_ID = getenv("BW_VOICE_APPLICATION_ID");
-$BW_NUMBER = getenv("BW_NUMBER");
-$USER_NUMBER = getenv("USER_NUMBER");
-$VOICE_CALLBACK_URL = getenv("VOICE_CALLBACK_URL");
 
 $config = new BandwidthLib\Configuration(
-array(
-'voiceBasicAuthUserName' => $BW_USERNAME,
-'voiceBasicAuthPassword' => $BW_PASSWORD,
-)
+    array(
+        'voiceBasicAuthUserName' => $BW_USERNAME,
+        'voiceBasicAuthPassword' => $BW_PASSWORD,
+    )
 );
 $client = new BandwidthLib\BandwidthClient($config);
 
 $voiceClient = $client->getVoice()->getClient();
 
-$body = new BandwidthLib\Voice\Models\CreateCallRequest();
-$body->from = $BW_NUMBER;
-$body->to = $USER_NUMBER;
-$body->answerUrl = $VOICE_CALLBACK_URL;
-$body->applicationId = $BW_VOICE_APPLICATION_ID;
+$callId = {CALL_ID};
+
+$body = new BandwidthLib\Voice\Models\ModifyCallRequest();
+$body->redirectUrl = {YOUR_REDIRECT_URL};
+$body->state = "active";
 
 try {
-    $response = $voiceClient->createCall($BW_ACCOUNT_ID, $body);
-    print_r($response->getResult()->callId);
+    $voiceClient->modifyCall($BW_ACCOUNT_ID, $callId, $body);
 } catch (BandwidthLib\APIException $e) {
     print_r($e->getResponseCode());
 }
