@@ -60,7 +60,7 @@ If the [`recordingAvailableUrl`](/docs/voice/bxml/record) attribute is set, this
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
     <SpeakSentence>Please say your name.</SpeakSentence>
-    <Record recordingAvailableUrl="https://myapp.com/recordingAvailable" maxDuration="10"/>
+    <Record recordingCompleteUrl="https://myapp.com/nextBxml" maxDuration="10"/>
     <!-- Any verbs after this point would be replaced by those returned by the recordCompleteUrl -->
 </Response>
 ```
@@ -218,9 +218,7 @@ def recordName():
 
     response = Response()
     response.add_verb(speak_sentence)
-    response.add_verb(play_audio)
     response.add_verb(record)
-    response.add_verb(speak_sentence)
     return response.to_bxml()
 
 @POST '/nextBXML'
@@ -231,7 +229,7 @@ def thankYou():
     response = Response()
     response.add_verb(speak_sentence)
     return response.to_bxml()
-    ```
+```
 
 </TabItem>
 <TabItem value="php">
@@ -243,12 +241,11 @@ function recordName(Request $request, Response $response) {
 
     $record = new BandwidthLib\Voice\Bxml\Record();
     $record->recordCompleteUrl("/nextBXML");
+    $record->maxDuration(10);
 
     $response = new BandwidthLib\Voice\Bxml\Response();
     $response->addVerb($speakSentence);
     $response->addVerb($record);
-
-    $response->addVerb($speakSentence);
 
     $bxml = $response->toBxml();
     $response = $response->withStatus(200)->withHeader('Content-Type', 'application/xml');
@@ -298,7 +295,7 @@ Much like the Record verb, [`<StartRecording>`](/docs/voice/bxml/startRecording)
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <StartRecording recordingAvailableUrl="https://myapp.com/noBXML"/> //Note: This will send a callback that only notifies you that your recording is ready.
+    <StartRecording recordingAvailableUrl="https://myapp.test/noBXML"/> //Note: This will send a callback that only notifies you that your recording is ready.
     <SpeakSentence>Hello Secret agent. What is your message?</SpeakSentence>
     <Pause duration="10"/>
     <PauseRecording/>
@@ -321,7 +318,7 @@ Much like the Record verb, [`<StartRecording>`](/docs/voice/bxml/startRecording)
 public String record_call() {
 
     StartRecording startRecording = StartRecording.builder()
-        .recordingAvailableUrl("https://myapp.com/noBXML")
+        .recordingAvailableUrl("https://myapp.test/noBXML")
         .build();
     SpeakSentence intro_tts = SpeakSentence.builder()
         .text("Hello Secret agent. What is your message?")
@@ -350,7 +347,7 @@ public String record_call() {
 
     Response response = new Response();
 
-    String bxml = response.addAll(intro_tts, pause1, pauseRecording, pause2,
+    String bxml = response.addAll(startRecording, intro_tts, pause1, pauseRecording, passcode_tts, pause2,
         resumeRecording, goodbye_tts, stopRecording).toBXML();
 
     return bxml;
@@ -366,7 +363,7 @@ public String record_call() {
 public ActionResult record_call() {
     StartRecording startRecording = new StartRecording
     {
-        RecordingAvailableUrl = "https://myapp.com/noBXML"
+        RecordingAvailableUrl = "https://myapp.test/noBXML"
     };
 
     SpeakSentence intro_tts = new SpeakSentence
@@ -406,7 +403,7 @@ public ActionResult record_call() {
 ```
 @POST '/secret_agent_endpoint' do:
     start_recording = Bandwidth::Voice::StartRecording.new({
-        :recording_available_url => "https://myapp.com/noBXML"
+        :recording_available_url => "https://myapp.test/noBXML"
     })
     intro_tts = Bandwidth::Voice::SpeakSentence.new({
         :sentence => "Hello Secret agent. What is your message?",
@@ -441,7 +438,7 @@ public ActionResult record_call() {
 
 ```js
 @POST ['/secret_agent_endpoint'] (req, res) => {
-    const startRecording = new StartRecording({ recordingAvailableUrl: "https://myapp.com/noBXML" });
+    const startRecording = new StartRecording({ recordingAvailableUrl: "https://myapp.test/noBXML" });
     const intro_tts = new SpeakSentence({
         sentence: "Hello Secret agent. What is your message?",
     });
@@ -463,7 +460,7 @@ public ActionResult record_call() {
     const stopRecording = new StopRecording();
 
     const response = new Response(startRecording, intro_tts, pause1, pauseRecording,
-        passcode_tts,pause2, resumeRecording, goodbye_tts, stopRecording);
+        passcode_tts, pause2, resumeRecording, goodbye_tts, stopRecording);
 
     res.status(200).send(response.toBxml());
 }
@@ -476,7 +473,7 @@ public ActionResult record_call() {
 ```python
 @POST '/secret_agent_endpoint'
 def record_call():
-    start_recording = StartRecording( recording_available_url="https://myapp.com/noBXML" )
+    start_recording = StartRecording( recording_available_url="https://myapp.test/noBXML" )
 
     intro_tts = SpeakSentence(
         sentence="Hello Secret agent. What is your message?",
@@ -519,7 +516,7 @@ def record_call():
 @POST('/secret_agent_endpoint)
 function record_call(Request $request, Response $response) {
     $startRecording = new BandwidthLib\Voice\Bxml\StartRecording();
-    $startRecording->recordingAvailableUrl("https://myapp.com/noBXML");
+    $startRecording->recordingAvailableUrl("https://myapp.test/noBXML");
 
     $intro_tts = new BandwidthLib\Voice\Bxml\SpeakSentence("Hello Secret agent. What is your message?");
     $pause1 = new BandwidthLib\Voice\Bxml\Pause();
