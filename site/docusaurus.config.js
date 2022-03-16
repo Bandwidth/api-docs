@@ -10,6 +10,7 @@ const multiFactorAuthSpec = fs.readFileSync('./specs/multiFactorAuth.json', 'utf
 const dashSpec = fs.readFileSync('./specs/dash.json', 'utf-8');
 const dashNotificationsSpec = fs.readFileSync('./specs/dashNotifications.json', 'utf-8');
 const messagingInternationalSpec = fs.readFileSync('./specs/messagingInternational.json', 'utf-8');
+const portingSpec = fs.readFileSync('./specs/porting.json', 'utf-8');
 // const numbersSpec = fs.readFileSync('./specs/numbers.json', 'utf-8');
 
 module.exports = {
@@ -154,6 +155,7 @@ module.exports = {
         multiFactorAuthSpec: JSON.parse(multiFactorAuthSpec),
         dashSpec: JSON.parse(dashSpec),
         dashNotificationsSpec: JSON.parse(dashNotificationsSpec),
+        portingSpec: JSON.parse(portingSpec),
         // CSS Colors
         bwBlue: '#079CEE',
         voicePurple: '#9a59c5',
