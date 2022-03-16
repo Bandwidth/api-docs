@@ -60,7 +60,7 @@ If the [`recordingAvailableUrl`](/docs/voice/bxml/record) attribute is set, this
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
     <SpeakSentence>Please say your name.</SpeakSentence>
-    <Record recordingCompleteUrl="https://myapp.com/nextBxml" maxDuration="10"/>
+    <Record recordCompleteUrl="/nextBxml" maxDuration="10"/>
     <!-- Any verbs after this point would be replaced by those returned by the recordCompleteUrl -->
 </Response>
 ```
@@ -256,13 +256,14 @@ function recordName(Request $request, Response $response) {
 @POST('/nextBXML')
 function thankYou(Request $request, Response $response) {
     $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Thank you.");
+
     $response = new BandwidthLib\Voice\Bxml\Response();
     $response->addVerb($speakSentence);
+
     $bxml = $response->toBxml();
     $response = $response->withStatus(200)->withHeader('Content-Type', 'application/xml');
     $response->getBody()->write($bxml);
     return $response;
-
 }
 ```
 
@@ -296,7 +297,7 @@ Much like the Record verb, [`<StartRecording>`](/docs/voice/bxml/startRecording)
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
     <StartRecording recordingAvailableUrl="https://myapp.test/noBXML"/> //Note: This will send a callback that only notifies you that your recording is ready.
-    <SpeakSentence>Hello Secret agent. What is your message?</SpeakSentence>
+    <SpeakSentence>Hello secret agent. What is your message?</SpeakSentence>
     <Pause duration="10"/>
     <PauseRecording/>
     <SpeakSentence>Please say your secret passcode to send. Don't worry, the recording is paused!</SpeakSentence>
@@ -321,7 +322,7 @@ public String record_call() {
         .recordingAvailableUrl("https://myapp.test/noBXML")
         .build();
     SpeakSentence intro_tts = SpeakSentence.builder()
-        .text("Hello Secret agent. What is your message?")
+        .text("Hello secret agent. What is your message?")
         .build();
     Pause pause1 = Pause.builder()
         .duration(10.0)
@@ -368,7 +369,7 @@ public ActionResult record_call() {
 
     SpeakSentence intro_tts = new SpeakSentence
     {
-        Sentence = "Hello Secret agent. What is your message?",
+        Sentence = "Hello secret agent. What is your message?",
     };
     Pause pause1 = new Pause{Duration = 10};
 
@@ -406,7 +407,7 @@ public ActionResult record_call() {
         :recording_available_url => "https://myapp.test/noBXML"
     })
     intro_tts = Bandwidth::Voice::SpeakSentence.new({
-        :sentence => "Hello Secret agent. What is your message?",
+        :sentence => "Hello secret agent. What is your message?",
     })
     pause1 = Bandwidth::Voice::Pause.new({ :duration => 10 })
 
@@ -440,7 +441,7 @@ public ActionResult record_call() {
 @POST ['/secret_agent_endpoint'] (req, res) => {
     const startRecording = new StartRecording({ recordingAvailableUrl: "https://myapp.test/noBXML" });
     const intro_tts = new SpeakSentence({
-        sentence: "Hello Secret agent. What is your message?",
+        sentence: "Hello secret agent. What is your message?",
     });
     const pause1 = new Pause({ duration: 10 });
 
@@ -476,7 +477,7 @@ def record_call():
     start_recording = StartRecording( recording_available_url="https://myapp.test/noBXML" )
 
     intro_tts = SpeakSentence(
-        sentence="Hello Secret agent. What is your message?",
+        sentence="Hello secret agent. What is your message?",
     )
     pause1 = Pause(duration=10)
 
@@ -518,7 +519,7 @@ function record_call(Request $request, Response $response) {
     $startRecording = new BandwidthLib\Voice\Bxml\StartRecording();
     $startRecording->recordingAvailableUrl("https://myapp.test/noBXML");
 
-    $intro_tts = new BandwidthLib\Voice\Bxml\SpeakSentence("Hello Secret agent. What is your message?");
+    $intro_tts = new BandwidthLib\Voice\Bxml\SpeakSentence("Hello secret agent. What is your message?");
     $pause1 = new BandwidthLib\Voice\Bxml\Pause();
     $pause1->duration(10);
 
@@ -554,7 +555,7 @@ function record_call(Request $request, Response $response) {
 </TabItem>
 </Tabs>
 
-The example above uses all the different forms of the controllable recording bxml, with StartRecording, PauseRecording, ResumeRecording, and StopRecording. In this scenario, the recording is started, a message is given, then the recording is paused to allow for sensitive information to be left out of the recording. Once the information is said, the recording is resumed to catch the last part of the conversation, then stopped to hang up the call.
+The example above uses all the different forms of the controllable recording bxml, with [`StartRecording`](/docs/voice/bxml/startRecording), [`PauseRecording`](/docs/voice/bxml/pauseRecording), [`ResumeRecording`](/docs/voice/bxml/resumeRecording), and [`StopRecording`](/docs/voice/bxml/stopRecording). In this scenario, the recording is started, a message is given, then the recording is paused to allow for sensitive information to be left out of the recording. Once the information is said, the recording is resumed to catch the last part of the conversation, then stopped to hang up the call.
 
 ### Download Recording
 
@@ -576,7 +577,7 @@ After the call has completed you can retrieve information on the recording and d
 <TabItem value="curl1">
 
 ```curl
-curl 'https://voice.bandwidth.com/api/v2/accounts/$BW_ACCOUNT_ID/calls/c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d/recordings/r-d68201ef-d53e-4c6d-a743-1c1283909d41' \
+curl 'https://voice.bandwidth.com/api/v2/accounts/$BW_ACCOUNT_ID/calls/{CALL_ID}/recordings/{RECORDING_ID}' \
     -U {BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}
 ```
 
@@ -595,11 +596,11 @@ public class Sample {
 
     public static void main(String[] args) {
         BandwidthClient client = new BandwidthClient.Builder()
-                .voiceBasicAuthCredentials(BW_USERNAME, BW_PASSWORD)
+                .voiceBasicAuthCredentials({BW_USERNAME}, {BW_PASSWORD})
                 .build();
 
         try {
-            CompletableFuture<ApiResponse<CallRecordingMetadata>> completableFuture = client.getVoiceClient().getAPIController().getCallRecordingAsync(ACCOUNT_ID, callId, recordingId);
+            CompletableFuture<ApiResponse<CallRecordingMetadata>> completableFuture = client.getVoiceClient().getAPIController().getCallRecordingAsync({ACCOUNT_ID}, {CALL_ID}, {RECORDING_ID});
             System.out.println(completableFuture.get().getResult());
         } catch (InterruptedException | ExecutionException e) {
             System.out.println(e.getMessage());
@@ -769,11 +770,11 @@ Transcription can succeed only for recordings of length greater than 500 millise
 <TabItem value="payload2">
 
 ```payload
+//Remember to add an auth header with your Bandwidth credentials
+
 POST https://voice.bandwidth.com/api/v2/accounts/{accountId}/calls/{callId}/recordings/{recordingId}/transcription
 {
     "callbackUrl": "http://transcription.test",
-    "username": "string",
-    "password": "string",
 }
 ```
 
@@ -781,14 +782,14 @@ POST https://voice.bandwidth.com/api/v2/accounts/{accountId}/calls/{callId}/reco
 <TabItem value="curl2">
 
 ```curl
+//Remember to add an auth header with your Bandwidth credentials
+
 curl 'https://voice.bandwidth.com/api/v2/accounts/{accountId}/calls/{callId}/recordings/{recordingId}/transcription' \
     -X POST \
     -U {BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}
     -H 'Content-Type: application/json' \
     -d '{
         "callbackUrl": "http://example.test/transcription",
-        "username": "string",
-        "password": "string",
     }'
 ```
 
@@ -812,6 +813,7 @@ public void request_transcription() {
 
     TranscribeRecordingRequest request = new TranscribeRecordingRequest();
     request.setCallbackUrl("http://example.test/transcription");
+    //remember to add auth for your application if needed!
 
     try {
         CompletableFuture<ApiResponse<Void>> completableFuture = client.getVoiceClient().getAPIController()
@@ -843,6 +845,7 @@ static async Task Main(string[] args) {
     {
         CallbackUrl = "http://example.test/transcription"
     };
+    //remember to add auth for your application if needed!
 
     try {
         var response = await client.Voice.APIController.CreateTranscribeCallRecordingAsync({ACCOUNT_ID}, {CALL_ID}, {RECORDING_ID}, request);
@@ -872,6 +875,7 @@ voice_client = bandwidth_client.voice_client.client
 
 body = TranscribeRecordingRequest.new
 body.callback_url = "http://example.test/transcription"
+#remember to add auth for your application if needed!
 
 begin
     response = voice_client.create_transcribe_call_recording({ACCOUNT_ID}, {CALL_ID}, {RECORDING_ID}, body)
@@ -899,7 +903,8 @@ const transcribeRecording = async function() {
       const response = await controller.createTranscribeRecording({ACCOUNT_ID}, {CALL_ID}, {RECORDING_ID}, {
         callbackUrl: "http://example.test/transcription"
       });
-      console.log(response)
+    //remember to add auth for your application if needed!
+    console.log(response)
   } catch(error) {
       console.error(error);
   }
@@ -926,6 +931,7 @@ voice_client = bandwidth_client.voice_client.client
 
 body = TranscribeRecordingRequest()
 body.callback_url = "http://example.test/transcription"
+#remember to add auth for your application if needed!
 
 try:
     voice_client.create_transcribe_call_recording({BW_ACCOUNT_ID}, {CALL_ID}, {RECORDING_ID}, body)
@@ -952,6 +958,7 @@ $voiceClient = $client->getVoice()->getClient();
 
 $body = new BandwidthLib\Voice\Models\TranscribeRecordingRequest();
 $body->callbackUrl = "http://example.test/transcription";
+#remember to add auth for your application if needed!
 
 try {
     $voiceClient->createTranscribeCallRecording({ACCOUNT_ID}, {CALL_ID}, {RECORDING_ID}, $body);
@@ -1131,7 +1138,7 @@ function transcribe_call(Request $request, Response $response) {
     return $response;
 }
 
-@POST('/incoming_calls)
+@POST('/transcription_callback)
 function transcribe_call(Request $request, Response $response) {
     echo "Oh! A transcription!"
 }
@@ -1164,7 +1171,7 @@ After the call has completed, you can download the transcribed file in JSON form
 
 ```curl
 curl 'https://voice.bandwidth.com/api/v2/accounts/{accountId}/calls/{callId}/recordings/{recordingId}/transcription' \
--U {BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}
+    -U {BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}
 ```
 
 </TabItem>
