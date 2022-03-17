@@ -18,6 +18,12 @@ In this guide we will show you how to modify the BXML for a call already in prog
 
 Bandwidth’s [`/calls`](/apis/voice/#operation/createCall) API provides the capability of modifying the call flow by sending new BXML to an active call. An example of when you may want to modify an active call is an inbound call center application where you place a customer in a “waiting room” by playing hold music while waiting for an agent to become available. Once an agent becomes available you can send replacement BXML for the call to be transferred to the available agent. As an enhancement you could send BXML in the interim to indicate to the caller the estimated time until an agent is available by playing text to speech and resuming the hold music.
 
+### Modify a Live Call
+
+You can modify both an inbound or outbound live call by providing a new set of instructions via BXML. Please note that modifying a call will end any verbs currently executing and will skip any subsequent ones.
+
+You will need to interrupt an active call by calling our REST API endpoint. In this example, we will create an outbound call that pauses for 1 minute. This will give you time to copy the `callId` and modify the call.
+
 <Tabs
 groupId="bxml"
 defaultValue="xml"
@@ -124,13 +130,11 @@ echo $response->toBxml();
 </TabItem>
 </Tabs>
 
-Place the call and be sure to copy the `callId` from the response body, or grab it with your SDK of choice.
+When the outbound call is placed, you will need to make a note of the `callId` for this call as it will be used to modify the active call.
 
-Next, send a `POST` request to [`https://voice.bandwidth.com/api/v60/accounts/{your_account_id}/calls/{the_call_id}`](/apis/voice/#operation/modifyCall)
+#### API for Call Modification
 
-#### To replace the verbs of a call:
-
-The body of this request should have at least redirectUrl, username (if applicable), and password (if applicable) specified. More info here.
+In this example, the BXML that is in the redirectUrl will immediately replace all verbs present on the current call with the new text-to-speech sentence.
 
 <Tabs
     groupId="bxml"
@@ -153,9 +157,19 @@ The body of this request should have at least redirectUrl, username (if applicab
 
 POST https://voice.bandwidth.com/api/v60/accounts/{YOUR_ACCOUNT_ID}/calls/{THE_CALL_ID}
 {
-    "redirectUrl": "http://example.com",
+    "redirectUrl": "/goodbyeMessage",
 }
+```
 
+>/goodbyeMessage should serve the following:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+   <SpeakSentence>
+      Thank you for holding! Goodbye!
+   </SpeakSentence>
+</Response>
 ```
 
 </TabItem>
@@ -169,8 +183,19 @@ curl 'https://voice.bandwidth.com/api/v60/accounts/{YOUR_ACCOUNT_ID}/calls/{THE_
     -U {BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD} \
     -H 'Content-Type: application/json' \
     -d '{
-        "redirectUrl": "http://example.com",
+        "redirectUrl": "/goodbyeMessage",
     }'
+```
+
+>/goodbyeMessage should serve the following:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+   <SpeakSentence>
+      Thank you for holding! Goodbye!
+   </SpeakSentence>
+</Response>
 ```
 
 </TabItem>
@@ -198,7 +223,7 @@ public class Sample {
                 .build();
 
         ApiModifyCallRequest request = new ApiModifyCallRequest();
-        request.setRedirectUrl({YOUR_REDIRECT_URL});
+        request.setRedirectUrl("/goodbyeMessage");
         //remember to add auth for your application if needed!
 
     try {
@@ -209,7 +234,23 @@ public class Sample {
         }
     }
 }
+```
 
+>/goodbyeMessage should serve the following:
+
+```java
+//Note: This application is pseudocoded. Your implementation will look different
+
+@Post /goodbyeMessage endpoint
+public String goodbyeMessage() {
+    SpeakSentence speakSentence = SpeakSentence.builder()
+        .text("Thank you for holding! Goodbye!")
+        .build();
+
+    Response response = Response.builder().build()
+            .add(speakSentence);
+    return response.toBXML()
+}
 ```
 
 </TabItem>
@@ -240,7 +281,7 @@ class Program
         var request = new ModifyCallRequest()
         {
             State = StateEnum.Active,
-            RedirectUrl = {YOUR_REDIRECT_URL}
+            RedirectUrl = "/goodbyeMessage"
             //remember to add auth for your application if needed!
         };
 
@@ -253,6 +294,23 @@ class Program
             Console.WriteLine(e.Message);
         }
     }
+}
+```
+
+>/goodbyeMessage should serve the following:
+
+```csharp
+//Note: This application is pseudocoded. Your implementation will look different
+
+@Post [/goodbyeMessage]
+public ActionResult goodbyeMessage() {
+    SpeakSentence speakSentence = new SpeakSentence
+    {
+        Sentence = "Thank you for holding! Goodbye!"
+    };
+    Response response = new Response();
+    response.Add(speakSentence);
+    return new OkObjectResult(response.ToBXML());
 }
 ```
 
@@ -280,7 +338,7 @@ bandwidth_client = Bandwidth::Client.new(
 voice_client = bandwidth_client.voice_client.client
 
 body = ModifyCallRequest.new
-body.redirect_url = {YOUR_REDIRECT_URL}
+body.redirect_url = "/goodbyeMessage"
 body.state = "active"
 #remember to add auth for your application if needed!
 
@@ -291,6 +349,21 @@ begin
 rescue APIException => e
     puts e.response_code
 end
+```
+
+>/goodbyeMessage should serve the following:
+
+```ruby
+#Note: This application is pseudocoded. Your implementation will look different
+
+post '/goodbyeMessage' do:
+    speak_sentence = Bandwidth::Voice::SpeakSentence.new({
+        :sentence => "Thank you for holding! Goodbye!"
+    })
+    response = Bandwidth::Voice::Response.new()
+    response.push(speak_sentence)
+    return response.to_bxml()
+
 ```
 
 </TabItem>
@@ -316,7 +389,7 @@ const modifyCall = async function() {
   try {
       const response = await controller.getCallState(BW_ACCOUNT_ID, callId, {
         state: "active",
-        redirectUrl: {YOUR_REDIRECT_URL}
+        redirectUrl: "/goodbyeMessage"
         //remember to add auth for your application if needed!
         });
       console.log(response)
@@ -327,6 +400,21 @@ const modifyCall = async function() {
 
 modifyCall();
 
+```
+
+>/goodbyeMessage should serve the following:
+
+```js
+//Note: This application is pseudocoded. Your implementation will look different
+
+@post ['/goodbyeMessage'] (request, request_response) => {
+    const speakSentence = new SpeakSentence({
+        sentence: "Thank you for holding! Goodbye!"
+    });
+    const response = new Response(speakSentence);
+    console.log(response.toBxml());
+    request_response.status(200).send(response.toBxml());
+}
 ```
 
 </TabItem>
@@ -352,7 +440,7 @@ voice_client = bandwidth_client.voice_client.client
 call_id = {CALL_ID}
 
 body = ModifyCallRequest()
-body.redirect_url = {YOUR_REDIRECT_URL}
+body.redirect_url = "/goodbyeMessage"
 body.state = "active"
 #remember to add auth for your application if needed!
 
@@ -360,6 +448,21 @@ try:
     voice_client.modify_call(BW_ACCOUNT_ID, call_id, body)
 except APIException as e:
     print(e.response_code)
+```
+
+>/goodbyeMessage should serve the following:
+
+```python
+#Note: This application is pseudocoded. Your implementation will look different
+
+@post '/goodbyeMessage'
+def goodbyeMessage():
+    speak_sentence = SpeakSentence(
+        sentence="Thank you for holding! Goodbye!"
+    )
+    response = Response()
+    response.add_verb(speak_sentence)
+    return response.to_bxml()
 ```
 
 </TabItem>
@@ -385,7 +488,7 @@ $voiceClient = $client->getVoice()->getClient();
 $callId = {CALL_ID};
 
 $body = new BandwidthLib\Voice\Models\ModifyCallRequest();
-$body->redirectUrl = {YOUR_REDIRECT_URL};
+$body->redirectUrl = "/goodbyeMessage";
 $body->state = "active";
 #remember to add auth for your application if needed!
 
@@ -393,6 +496,20 @@ try {
     $voiceClient->modifyCall($BW_ACCOUNT_ID, $callId, $body);
 } catch (BandwidthLib\APIException $e) {
     print_r($e->getResponseCode());
+}
+```
+
+>/goodbyeMessage should serve the following:
+
+```php
+#Note: This application is pseudocoded. Your implementation will look different
+
+@post('/goodbyeMessage)
+function goodbyeMessage(Request $request, Response $response) {
+    $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Thank you for holding! Goodbye!");
+    $response = new BandwidthLib\Voice\Bxml\Response();
+    $response->addVerb($speakSentence);
+    return $response->toBxml();
 }
 ```
 
