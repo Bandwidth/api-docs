@@ -31,7 +31,6 @@ Bandwidth's SDKs will contain thin READMEs that show the basics of getting start
 
 1) If you're adding a new OpenAPI spec, you will need to change the `docusaurus.config.js` file to both add a new item in the navbar items as well as add the spec as a custom field. You will need to create a new page for the spec under the `./site/src/pages` directory as well.
 1) If you're adding a new markdown file and/or markdown directory, make sure to update the `sidebar.js` file in the `./site` directory
-1) If your changes should come with a changelog update, make sure to update the changelog file. Otherwise, include the `no-changelog` tag on your PR.
 
 ## Docsite Generation
 
@@ -265,10 +264,6 @@ The below adds a language switcher in line with text in an MDX file:
 
 
 ## PR Requirements
-
-### Changelog Rules
-
-Any changes to the `./site/specs` or `./site/docs` directories requires an update to `./site/src/pages/changelog.md`. If updating this isn't relevant, you must add the `no-changelog` label to your PR.
 
 ## SDK Generation
 
