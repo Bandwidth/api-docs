@@ -92,6 +92,25 @@ def convert_responses(resource):
         responses[response.code] = r
     return responses
 
+def convert_request(resource):
+	requestBody = {}
+	if hasattr(resource, 'body') and resource.body is not None:
+	    request_content = {}
+	    for mime_type in resource.body:
+                    examples = {}
+                    for mimetype, body in mime_type.raw.items():
+                        for name, xml in body.items():
+                           examples[name] = {
+		                   "description": name,
+		                   "value": pretty_print_xml(xml)
+		                }
+		           #todo: add <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+		           #todo: split multiple examples into multiple objects, fix XML syntax errors
+                    request_content[mime_type.mime_type] = {
+		        "examples": examples
+		}
+	    requestBody["content"] = request_content
+	return requestBody
 
 def convert_raml_to_openapi(raml_api, open_api):
     for resource in raml_api.resources:
@@ -109,6 +128,7 @@ def convert_raml_to_openapi(raml_api, open_api):
                 "description": resource.description.html,
                 "operationId": f"{method.upper()} {path}",
                 "parameters": params,
+                "requestBody": convert_request(resource),
                 "responses": convert_responses(resource)
             }
             if path not in open_api['paths']:
