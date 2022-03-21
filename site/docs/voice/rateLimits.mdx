@@ -1,24 +1,51 @@
 ---
 id: rateLimits
-title: Rate Limits and Call Queues
+title: Rate Limits
 slug: /voice/rateLimits
 description: How to handle rate limiting in Bandwidth's Voice API
 keywords:
   - bandwidth
   - voice
   - rate limits
+  - call queueing
 hide_title: false
 image: ../../static/img/bandwidth-logo.png
 ---
 
-Rate limits for the Voice API are set by account by your customer account manager. By default, rate limits are set to 5 CPS and 100 active sessions. If you think you may need additional voice capacity, please open a ticket with our Account Management team.
+### Default Voice Rate Limits
 
-If a rate limit is hit when creating an outbound call the API will return a HTTP-429 informing the reason with the message `Account call creation rate limit exceeded` or `Account concurrent call limit exceeded`.
+The Bandwidth Voice API sets a default rate limit of 5 calls per second (CPS) and 100 active sessions.
 
-If a rate limit is hit during a `<Forward>`, the call will be allowed, but will still count against the limit, so subsequent calls may be rate limited.
+The calls per second (CPS) rate limit is the number of inbound and outbound calls per second your account can process. If you think you may need additional voice capacity, please open a ticket with our Account Management team.
 
-If a rate limit is hit during a `<Transfer>`, the error will be sent to `transferCompleteUrl` also informing the reason in the `errorMessage` field.
+#### 429 - Too Many Requests
 
-As an alternative to hard rate limiting for outbound calls, you may have your account manager enable outbound call queueing. Your queue size is limited to a maximum of 5 minutes worth of outbound calls at your dequeing rate. More details on queueing calls can be found in the [calls api](/apis/voice#operation/createCall) documentation
+If a rate limit is hit when creating an outbound call you will receive a 429 - Too Many Requests error.
 
-There are no notifications when inbound calls are rejected due to rate limits.
+You will also receive a message informing you of the reason for reaching this rate limit which can be:
+- Account call creation rate limit exceeded
+- Account concurrent call limit exceeded
+
+```
+429 Too Many Requests
+{
+    'description': 'Account call creation rate limit exceeded',
+    'id': '',
+    'type': 'error'
+}
+```
+
+If a rate limit is hit during a [`<Forward>`](/docs/voice/bxml/forward), the call will be allowed, but will still count against the limit, so subsequent calls may be rate limited.
+
+If a rate limit is hit during a [`<Transfer>`](/docs/voice/bxml/transfer), the error will be sent to the transferCompleteUrl also informing the reason in the errorMessage field.
+
+### Managing Calls
+
+Bandwidth has introduced Outbound Call Queuing capabilities to help you manage your outbound call queue. This ensures your calls are not rejected if you exceed your calls per second (CPS) limits.
+
+The amount of calls that can be in the outbound call queue is 5 minutes based on your provisioned CPS limit. For example, if your account is provisioned for 5 CPS, your queue capacity would be 5 CPS x 60 seconds x 5 minutes or 1500 calls.
+
+For more information about rate limits and managing your queue, please visit the following:
+- [How to Manage Queued Calls](/docs/voice/guides/callQueueing)
+
+
