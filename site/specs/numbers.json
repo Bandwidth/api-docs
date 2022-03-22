@@ -1061,19 +1061,21 @@
         "tags": [
           "/accounts"
         ],
-        "description": "<p>Request a collection of BDRs be aggregated and ZIPped ready for distribution.  The payload for the POST declares the date range for the request.</p>\n",
-        "operationId": "POST /accounts/{accountId}/bdrs",
+        "description": "<p><b>Note - this API is being replaced with the /billingreports API - we strongly recommend that you use that endpoint.</b></p> <p>This API allows the retrieval of a ZIP file containing BDR records for a specified date range. These BDR records are delivered as a ZIP compressed comma separated values (CSV) file. The general flow of the API calls required to retrieve these records is: <ol>  <li>POST a request to the /bdrs resource, describing the date range for which the BDR records are wished. This will initiate the construction of the zip file.</li> <li>Examine the response from the POST. If the payload is understandable and valid then a 202 accepted HTTP result code will be returned indicating that the response file is being created.</li> <li>Retrieve the Location Header from the Response to the POST. This location header will contain the resource ID for the collection of BDRs that will be returned once complete. Note that the fact that the ID has been issued does not mean that the ZIP file is complete.</li> <li>Interrogate the resource ID to check the status of the request. If a 303 See Other response is received then the Location Header will contain the resource path to the file. A typical browser response will be to download the file. If a 200 OK is returned then the request is considered valid, but the file is not ready for distribution.</li> <li>Fetching the file can be done by issuing a GET to the resources path in the Location Header mentioned above</li></ol>",
+        "operationId": "CreateBDR",
+        "summary": "Create BDR in range",
         "parameters": [
           {
             "name": "accountId",
-            "description": "",
             "in": "path",
             "required": true,
+            "style": "simple",
+            "explode": false,
+            "description": "User's account ID",
+            "example": "900000",
             "schema": {
-              "type": "string",
-              "default": null
-            },
-            "example": null
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -1081,7 +1083,6 @@
             "application/xml": {
               "examples": {
                 "example": {
-                  "description": "example",
                   "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<Bdr>\n    <StartDate>2015-04-01</StartDate>\n    <EndDate>2015-04-30</EndDate>\n</Bdr>\n"
                 }
               }
@@ -1090,25 +1091,23 @@
         },
         "responses": {
           "202": {
-            "description": "<p>A 202 Accepted means that the request has been received and will be processed.  Processing the request takes time, so this does not indicate that the information is available, it simply indicates that the request has started processing. <br>\nThe response also includes header information in the Location Header that can be used for retrieving the state of the request.<br>\nAn informative payload is also included in success and failure cases.</p>\n",
+            "description": "A 202 Accepted means that the request has been received and will be processed.  Processing the request takes time, so this does not indicate that the information is available, it simply indicates that the request has started processing. \nThe response also includes header information in the Location Header that can be used for retrieving the state of the request.\nAn informative payload is also included in success and failure cases.\n",
             "content": {
               "application/xml": {
                 "examples": {
                   "example": {
-                    "description": "example",
                     "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BdrCreationResponse>\n     <Info>Your BDR archive is currently being constructed</Info>\n</BdrCreationResponse>\n"
                   }
                 }
               }
             }
           },
-          "404": {
-            "description": "<p>A 400 response indicates that there was an error in processing the payload, perhaps something like incorrectly formatted or chosen dates. </p>\n",
+          "400": {
+            "description": "A 400 response indicates that there was an error in processing the payload, perhaps something like incorrectly formatted or chosen dates.\n",
             "content": {
               "application/xml": {
                 "examples": {
                   "example": {
-                    "description": "example",
                     "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BdrCreationResponse>\n    <ResponseStatus>\n        <ErrorCode>15501</ErrorCode>\n        <Description>Invalid date range. Start date 2015-06-01 must be before end date 2015-04-30</Description>\n    </ResponseStatus>\n</BdrCreationResponse>\n"
                   }
                 }
@@ -1123,8 +1122,9 @@
         "tags": [
           "/accounts"
         ],
-        "description": "<p>A GET on the BDR ID will return a \"still processing\" indication if the file creation has not completed, or will redirect to the file to be downloaded.</p>\n",
-        "operationId": "GET /accounts/{accountId}/bdrs/{bdrid}",
+        "description": "</p>The bdr id resource will query the status of the bdr file that is being generated. There are essentially two responses...</p><ul><li>not yet ready</li><li>ready, in which case the request is redirected to the URL to actually download the file.</li></ul> <p>A GET on the BDR ID will return a still processing indication if the file creation has not completed, or will redirect to the file to be downloaded.</p>",
+        "operationId": "GetBDRStatus",
+        "summary": "Retrieve BDR status or redirect to download",
         "parameters": [
           {
             "name": "accountId",
@@ -1132,10 +1132,9 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "default": null
+              "type": "string"
             },
-            "example": null
+            "example": "900000"
           },
           {
             "name": "bdrid",
@@ -1143,21 +1142,18 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "default": null
-            },
-            "example": null
+              "type": "string"
+            }
           }
         ],
         "requestBody": {},
         "responses": {
           "200": {
-            "description": "<p>A 200 OK means that the request is valid, but that the file is not yet ready. The payload indicates the status.</p>\n",
+            "description": "A 200 OK means that the request is valid, but that the file is not yet ready. The payload indicates the status.\n",
             "content": {
               "application/xml": {
                 "examples": {
                   "example": {
-                    "description": "example",
                     "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BdrCreationResponse>\n     <Info>The requested BDR archive is still being constructed, please check back later</Info>\n</BdrCreationResponse>\n"
                   }
                 }
@@ -1165,10 +1161,10 @@
             }
           },
           "303": {
-            "description": "<p>A 303 response indicates that the file is ready.  The 303 should redirect the request to the URL in the Location header, which will, in most cases, initiate the file download. </p>\n"
+            "description": "A 303 response indicates that the file is ready.  The 303 should redirect the request to the URL in the Location header, which will, in most cases, initiate the file download.\n"
           },
           "400": {
-            "description": "<p>A 400 indicates that the BDR id is malformed. </p>\n",
+            "description": "A 400 indicates that the BDR id is malformed. </p>\n",
             "content": {
               "application/xml": {
                 "examples": {
@@ -1181,7 +1177,7 @@
             }
           },
           "404": {
-            "description": "<p>A 404 indicates that the BDR id cannot be found. </p>\n",
+            "description": "A 404 indicates that the BDR id cannot be found.\n",
             "content": {
               "application/xml": {
                 "examples": {
@@ -1201,8 +1197,9 @@
         "tags": [
           "/accounts"
         ],
-        "description": "<p>A GET on the /file resource subtending a BDR ID will cause the download of the file.  Executing this resource path within a browser will cause the download of the file.</p>\n",
-        "operationId": "GET /accounts/{accountId}/bdrs/{bdrid}/file",
+        "description": "A GET on the /file resource subtending a BDR ID will cause the download of the file.  Executing this resource path within a browser will cause the download of the file.",
+        "operationId": "DownloadBDR",
+        "summary": "Download BDR",
         "parameters": [
           {
             "name": "accountId",
@@ -1210,10 +1207,9 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "default": null
+              "type": "string"
             },
-            "example": null
+            "example": "900000"
           },
           {
             "name": "bdrid",
@@ -1221,16 +1217,14 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "default": null
-            },
-            "example": null
+              "type": "string"
+            }
           }
         ],
         "requestBody": {},
         "responses": {
           "200": {
-            "description": "<p>A 200 OK indicates that the request for the file download was accepted and will be processed.</p>\n"
+            "description": "A 200 OK indicates that the request for the file download was accepted and will be processed."
           }
         }
       }
@@ -1240,8 +1234,9 @@
         "tags": [
           "/accounts"
         ],
-        "description": "<p>Retrieve billing report instances within the account scope and billing type.\nThe valid Billing Types are...</p>\n\n<ul>\n<li>BDR</li>\n<li>MDR</li>\n<li>INVOICE</li>\n<li>STMTBDR</li>\n<li>DIDSNAP</li>\n<li>DIDSNAP_MSG</li>\n<li>RECORDINGBDR</li>\n<li>RECORDINGSTMTBDR</li>\n<li>TRANSCRIPTIONBDR</li>\n<li>TRANSCRIPTIONSTMTBDR</li>\n<li>CNAMBDR</li>\n<li>CNAMSTMTBDR</li>\n<li>CONFBDR</li>\n<li>CONFSTMTBDR</li>\n<li>TFPEERINGSTMTBDR</li>\n<li>TNLOOKUPBDR</li>\n<li>TNLOOKUPSTMTBDR</li>\n<li>MSG_CAMPAIGN_REGISTRY_BDR</li>\n<li>MSG_CAMPAIGN_CARRIER_ACTIVATION_BDR</li>\n<li>AMDBDR</li>\n<li>AMDSTMTBDR</li>\n<li>SIPURIBDR</li>\n<li>SIPURISTMTBDR</li>\n</ul>\n",
-        "operationId": "GET /accounts/{accountId}/billingreports",
+        "description": "Retrieve billing report instances within the account scope and billing type. The valid Billing Types are...<ul><li>BDR</li><li>MDR</li><li>INVOICE</li><li>STMTBDR</li><li>DIDSNAP</li><li>DIDSNAP_MSG</li><li>RECORDINGBDR</li><li>RECORDINGSTMTBDR</li><li>TRANSCRIPTIONBDR</li><li>TRANSCRIPTIONSTMTBDR</li><li>CNAMBDR</li><li>CNAMSTMTBDR</li><li>CONFBDR</li><li>CONFSTMTBDR</li><li>TFPEERINGSTMTBDR</li><li>TNLOOKUPBDR</li><li>TNLOOKUPSTMTBDR</li><li>MSG_CAMPAIGN_REGISTRY_BDR</li><li>MSG_CAMPAIGN_CARRIER_ACTIVATION_BDR</li><li>AMDBDR</li><li>AMDSTMTBDR</li><li>SIPURIBDR</li><li>SIPURISTMTBDR</li></ul>",
+        "operationId": "GetBillingReportByType",
+        "summary": "Retrieve billing report by billing type",
         "parameters": [
           {
             "name": "accountId",
@@ -1249,19 +1244,18 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "default": null
+              "type": "string"
             },
-            "example": null
+            "example": "900000"
           },
           {
             "name": "kind",
-            "description": "<p>One of billing report types DIDSNAP, DIDSNAP<em>MSG. Empty parameter will return all reports of types DIDSNAP, DIDSNAP</em>MSG.</p>\n",
+            "description": "One of billing report types DIDSNAP, DIDSNAP_MSG. Empty parameter will return all reports of types DIDSNAP, DIDSNAP_MSG.",
             "in": "query",
             "required": false,
             "schema": {
               "type": "string",
-              "default": null
+              "default": "kind=DIDSNAP,DIDSNAP_MSG"
             },
             "example": "DIDSNAP"
           }
@@ -1269,12 +1263,11 @@
         "requestBody": {},
         "responses": {
           "200": {
-            "description": "<p>The list of all billing report instances. (Not supported for BDR, MDR, INVOICE, STMTBDR, RECORDINGBDR, RECORDINGSTMTBDR, TRANSCRIPTIONBDR, TRANSCRIPTIONSTMTBDR, CNAMBDR, CNAMSTMTBDR, CONFBDR, CONFSTMTBDR, TFPEERINGSTMTBDR, AMDBDR, AMDSTMTBDR, SIPURIBDR, SIPURISTMTBDR, TTSBDR, TTSSTMTBDR as status history not implemented yet for these billing types)</p>\n",
+            "description": "The list of all billing report instances. (Not supported for BDR, MDR, INVOICE, STMTBDR, RECORDINGBDR, RECORDINGSTMTBDR, TRANSCRIPTIONBDR, TRANSCRIPTIONSTMTBDR, CNAMBDR, CNAMSTMTBDR, CONFBDR, CONFSTMTBDR, TFPEERINGSTMTBDR, AMDBDR, AMDSTMTBDR, SIPURIBDR, SIPURISTMTBDR, TTSBDR, TTSSTMTBDR as status history not implemented yet for these billing types)\n",
             "content": {
               "application/xml": {
                 "examples": {
                   "example": {
-                    "description": "example",
                     "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BillingReportsRetrievalResponse>\n    <BillingReportList>\n        <BillingReport>\n            <BillingReportId>5f8734f0-d7c3-445c-b1e2-cdbb620e4ff7</BillingReportId>\n            <BillingReportKind>DIDSNAP</BillingReportKind>\n            <UserId>jbm</UserId>\n            <ReportStatus>PROCESSING</ReportStatus>\n            <Description>The requested report archive is still being constructed, please check back later.</Description>\n            <CreatedDate>2017-11-01 14:12:16</CreatedDate>\n            <DateRange>\n                <StartDate>2017-01-01</StartDate>\n                <EndDate>2017-09-30</EndDate>\n            </DateRange>\n        </BillingReport>\n        <BillingReport>\n            <BillingReportId>7680a54a-b1f1-4d43-8af6-bf3a701ad202</BillingReportId>\n            <BillingReportKind>DIDSNAP</BillingReportKind>\n            <UserId>jbm</UserId>\n            <ReportStatus>COMPLETE</ReportStatus>\n            <Description>The requested report archive is failed</Description>\n            <CreatedDate>2017-11-06 14:22:21</CreatedDate>\n            <DateRange>\n                 <StartDate>2017-05-01</StartDate>\n                 <EndDate>2017-10-31</EndDate>\n            </DateRange>\n        </BillingReport>\n    </BillingReportList>\n</BillingReportsRetrievalResponse>\n"
                   }
                 }
@@ -1282,10 +1275,10 @@
             }
           },
           "204": {
-            "description": "<p>Billing report data for requested time frame hasn't been provided yet.</p>\n"
+            "description": "Billing report data for requested time frame hasn't been provided yet."
           },
           "400": {
-            "description": "<p>A 400 response indicates that report type is incorrect.</p>\n"
+            "description": "A 400 response indicates that report type is incorrect."
           }
         }
       },
@@ -1293,8 +1286,9 @@
         "tags": [
           "/accounts"
         ],
-        "description": "<p>The payload for the POST declares the date range and type for the desired reports. The valid Types are... <ul> <li>BDR - Billing Detail Records - per call information</li> <li>MDR - Message Detail Records - per messagin information</li> <li>INVOICE - A copy of the invoice file or files for the specified date range</li> <li>STMTBDR - BDR records that are aligned with the invoice</li> <li>DIDSNAP - a list of telephone numbers aligned as closely as we can with the billing window</li> <li>DIDSNAP_MSG - a list of telephone numbers with active messaging</li> </ul></p>\n",
-        "operationId": "POST /accounts/{accountId}/billingreports",
+        "description": "The payload for the POST declares the date range and type for the desired reports. The valid types are: <ul> <li>BDR - Billing Detail Records - per call information</li> <li>MDR - Message Detail Records - per messagin information</li> <li>INVOICE - A copy of the invoice file or files for the specified date range</li> <li>STMTBDR - BDR records that are aligned with the invoice</li> <li>DIDSNAP - a list of telephone numbers aligned as closely as we can with the billing window</li> <li>DIDSNAP_MSG - a list of telephone numbers with active messaging</li> </ul>\n",
+        "operationId": "CreateBillingReport",
+        "summary": "Create billing report in range",
         "parameters": [
           {
             "name": "accountId",
@@ -1302,10 +1296,9 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "default": null
+              "type": "string"
             },
-            "example": null
+            "example": "900000"
           }
         ],
         "requestBody": {
@@ -1313,7 +1306,6 @@
             "application/xml": {
               "examples": {
                 "example": {
-                  "description": "example",
                   "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BillingReport>\n    <Type>BDR</Type>\n    <DateRange>\n       <StartDate>2013-05-21</StartDate>\n       <EndDate>2013-05-29</EndDate>\n    </DateRange>\n</BillingReport>\n"
                 }
               }
@@ -1322,12 +1314,11 @@
         },
         "responses": {
           "201": {
-            "description": "<p>A 201 response means that the response file is currently being constructed. Constructing the file takes time, so this does not indicate that the information is available.<br>\nThe response also includes header information in the Location Header that can be used for retrieving the state of the report.<br>\nAn informative payload is also included in success and failure cases.</p>\n",
+            "description": "A 201 response means that the response file is currently being constructed. Constructing the file takes time, so this does not indicate that the information is available.<br>\nThe response also includes header information in the Location Header that can be used for retrieving the state of the report.<br>\nAn informative payload is also included in success and failure cases.",
             "content": {
               "application/xml": {
                 "examples": {
                   "example": {
-                    "description": "example",
                     "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BillingReportCreationResponse>\n    <ReportStatus>RECEIVED</ReportStatus>\n    <Description>The report archive is currently being constructed.</Description>\n</BillingReportCreationResponse>\n"
                   }
                 }
@@ -1335,12 +1326,11 @@
             }
           },
           "404": {
-            "description": "<p>A 400 response indicates that there was an error in processing the payload, perhaps something like incorrectly formatted or chosen dates.</p>\n",
+            "description": "A 400 response indicates that there was an error in processing the payload, perhaps something like incorrectly formatted or chosen dates.",
             "content": {
               "application/xml": {
                 "examples": {
                   "example": {
-                    "description": "example",
                     "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BillingReportCreationResponse>\n    <ResponseStatus>\n        <ErrorCode>15501</ErrorCode>\n        <Description>Invalid date range. Start date 2014-05-21 must be before end date 2013-05-29</Description>\n    </ResponseStatus>\n</BillingReportCreationResponse>\n"
                   }
                 }
@@ -1356,7 +1346,8 @@
           "/accounts"
         ],
         "description": "<p>The resource will query the status of the report that is being generated.</p>\n",
-        "operationId": "GET /accounts/{accountId}/billingreports/{reportid}",
+        "operationId": "GetBillingReportStatus",
+        "summary": "Retrieve billing report status or redirect to download",
         "parameters": [
           {
             "name": "accountId",
@@ -1364,32 +1355,28 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "default": null
+              "type": "string"
             },
-            "example": null
+            "example": "900000"
           },
           {
-            "name": "reportid",
+            "name": "bdrid",
             "description": "",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "default": null
-            },
-            "example": null
+              "type": "string"
+            }
           }
         ],
         "requestBody": {},
         "responses": {
           "200": {
-            "description": "<p>A 200 indicates that the request is valid. The payload indicates the report status: <br></p>\n\n<ul>\n    <li><b>PROCESSING</b> - The requested report archive is still being constructed, please check back later.</li>\n    <li><b>COMPLETED</b> - The report archive is constructed.</li>\n</ul>\n\n<p>For <b>COMPLETED</b> report, fetching the file can be done by issuing a GET request to the resource path in the Location Header.</p>\n",
+            "description": "<p>A 200 indicates that the request is valid. The payload indicates the report status: <br></p>\n\n<ul>\n    <li><b>PROCESSING</b> - The requested report archive is still being constructed, please check back later.</li>\n    <li><b>COMPLETED</b> - The report archive is constructed.</li>\n</ul>\n\n<p>For <b>COMPLETED</b> report, fetching the file can be done by issuing a GET request to the resource path in the Location Header.</p>",
             "content": {
               "application/xml": {
                 "examples": {
                   "example": {
-                    "description": "example",
                     "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BillingReportRetrievalResponse>\n    <ReportStatus>COMPLETED</ReportStatus>\n     <Description>The report archive is constructed.</Description>\n</BillingReportRetrievalResponse>\n"
                   }
                 }
@@ -1397,12 +1384,11 @@
             }
           },
           "400": {
-            "description": "<p>A 400 indicates that the report ID is malformed.</p>\n",
+            "description": "A 400 indicates that the report ID is malformed.",
             "content": {
               "application/xml": {
                 "examples": {
                   "example": {
-                    "description": "example",
                     "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BillingReportRetrievalResponse>\n    <ResponseStatus>\n        <ErrorCode>1008</ErrorCode>\n        <Description>'9b428b4c-159b-465f-9667-' is not a valid UUID</Description>\n    </ResponseStatus>\n</BillingReportRetrievalResponse>\n"
                   }
                 }
@@ -1410,12 +1396,11 @@
             }
           },
           "404": {
-            "description": "<p>A 404 indicates that the requested report cannot be found.</p>\n",
+            "description": "A 404 indicates that the requested report cannot be found.",
             "content": {
               "application/xml": {
                 "examples": {
                   "example": {
-                    "description": "example",
                     "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BillingReportRetrievalResponse>\n    <ResponseStatus>\n        <ErrorCode>15603</ErrorCode>\n        <Description>The requested report was not found.</Description>\n    </ResponseStatus>\n</BillingReportRetrievalResponse>\n"
                   }
                 }
@@ -1431,7 +1416,8 @@
           "/accounts"
         ],
         "description": "<p>A GET on the /file resource subtending a report ID will cause the download of the file.  Executing this resource path within a browser will cause the download of the file.</p>\n",
-        "operationId": "GET /accounts/{accountId}/billingreports/{reportid}/file",
+        "operationId": "DownloadBillingReport",
+        "summary": "Download billing report",
         "parameters": [
           {
             "name": "accountId",
@@ -1439,35 +1425,31 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "default": null
+              "type": "string"
             },
-            "example": null
+            "example": "900000"
           },
           {
-            "name": "reportid",
+            "name": "bdrid",
             "description": "",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "default": null
-            },
-            "example": null
+              "type": "string"
+            }
           }
         ],
         "requestBody": {},
         "responses": {
           "200": {
-            "description": "<p>A 200 OK indicates that the request for the file download was accepted and will be processed.</p>\n"
+            "description": "A 200 OK indicates that the request for the file download was accepted and will be processed."
           },
           "400": {
-            "description": "<p>A 400 indicates that the report ID is malformed.</p>\n",
+            "description": "A 400 indicates that the report ID is malformed.",
             "content": {
               "application/xml": {
                 "examples": {
                   "example": {
-                    "description": "example",
                     "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BillingReportArchiveRetrievalResponse>\n    <ResponseStatus>\n        <ErrorCode>1008</ErrorCode>\n        <Description>'9b428b4c-159b-465f-9667-' is not a valid UUID</Description>\n    </ResponseStatus>\n</BillingReportArchiveRetrievalResponse>\n"
                   }
                 }
@@ -1475,12 +1457,11 @@
             }
           },
           "404": {
-            "description": "<p>A 404 indicates that the requested report cannot be found.</p>\n",
+            "description": "A 404 indicates that the requested report cannot be found.",
             "content": {
               "application/xml": {
                 "examples": {
                   "example": {
-                    "description": "example",
                     "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BillingReportArchiveRetrievalResponse>\n    <ResponseStatus>\n        <ErrorCode>15603</ErrorCode>\n        <Description>The requested report was not found.</Description>\n    </ResponseStatus>\n</BillingReportArchiveRetrievalResponse>\n"
                   }
                 }
