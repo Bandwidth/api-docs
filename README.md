@@ -23,7 +23,7 @@ API references are the "facts" about the APIs, and will typically be defined by 
 
 Guides cover a wide range of possibilities, but typically any step by step process required to use a feature should be a guide. These guides should be written as markdown files, and should link out to any API reference as needed. An example of a guide would be a description of how to respond to an inbound SMS.
 
-### SDK Docs Strategy Overview
+## SDK Docs Strategy Overview
 
 Bandwidth's SDKs will contain thin READMEs that show the basics of getting started with the SDK, and link out to the full API reference. These READMEs will not contain all of the functions within the SDK; that should be defined with the API references.
 
@@ -64,6 +64,53 @@ To add a new spec - there are a few steps that need to be taken:
       }
       ```
   1. Run `npm start` or reload the site and you should see the new spec under the API Reference dropdown.
+
+### Versioned Specs 
+
+To account for versioned API Documentation we have a [Spec Version Dropdown](./site/src/components/SpecVersionDropdown.js) component that allows you to add a dropdown menu to the api reference page with links to the other versions of your API Specification. In order to implement this feature your spec `.tsx` pages need their own directory within the `./site/src/pages/apis` directory. 
+
+Sample Directory: 
+
+```sh
+# ./site/src/pages
+.
+└── apis
+    ├── bwi    # A Directory for versioned API Specs
+    │   ├── beta.tsx
+    │   ├── index.tsx    # The default/production API spec. URL stub will be /apis/bwi
+    │   ├── v2.tsx
+    │   └── ws.tsx
+    ├── index.tsx
+    ├── messaging.tsx
+    ├── number-lookup.tsx
+    ├── numbers.tsx
+    └── voice.tsx
+```
+
+The default version should be named `index.tsx` within the directory so that the URL shows neatly, and then you would add the following sippet to the individual pages (and adjust the default and list accordingly depending on the page.)
+
+```ts
+export default function ApiReferencePage() {
+    const {siteConfig} = useDocusaurusContext();
+    const options = [    // The options const needs to contain all of the available pages
+        {title: "Legacy", link: "/apis/bwi/ws"},
+        {title: "V1", link: "/apis/bwi"},
+        {title: "V2", link: "/apis/bwi/v2"},
+        {title: "Beta", link: "/apis/bwi/beta"}
+      ];
+    const version = "V1"    // The version Const determines which option gets the selected attribute in the <select> dropdown
+
+    return (
+        <Layout
+          title={`Bandwidth International API Reference`}
+          description=""
+          keywords="Bandwidth,API,International,Voxbone">
+            <SpecVersionDropdown options={options} default={version} />
+            <ApiReference spec={siteConfig.customFields.bwiSpec} color={siteConfig.customFields.voxbonePurple} />
+        </Layout>
+    );
+}
+```
 
 ## Adding New Documentation
 
