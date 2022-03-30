@@ -96,10 +96,6 @@ module.exports = {
                             activeBasePath: 'changelog',
                             label: 'Changelog',
                         },
-                        {
-                            label: 'Legacy v1 Docs',
-                            href: 'https://v1.dev.bandwidth.com/',
-                        },
                     ],
                 },
                 {
