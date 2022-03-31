@@ -1,1369 +1,805 @@
 {
-    "openapi": "3.0.0",
-    "info": {
-        "title": "Porting",
-        "version": "1.0",
-        "description": "<b>NOTE: </b>This spec is written using OpenAPI version 3.1.0. The documentation generator does not support 3.1.0, so it is temporarily marked as 3.0.0 until Redoc supports v3.1.0\n\nBandwidth understands that number porting is a powerful tool that enables you to bring all your existing voice services under one umbrella. By porting-in your phone numbers to Bandwidth, you mitigate the disruption that comes from changing numbers.\n\nWith our new Number Porting API, we hope to make this process as smooth as possible! This service allows you to check number portability, submit port-in orders, view statuses, and update in-flight ports.",
-        "summary": "Number Porting",
-        "contact": {
-            "email": "support@bandwidth.com"
-        }
-    },
-    "servers": [
-        {
-            "url": "http://localhost:3000"
-        }
-    ],
-    "paths": {
-        "/porting/portInOrders": {
-            "get": {
-                "summary": "List Port-In Orders",
-                "operationId": "getPortInOrders",
-                "tags": [],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "description": "",
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object",
-                                            "properties": {
-                                                "portInOrders": {
-                                                    "type": "array",
-                                                    "description": "All port-in orders.",
-                                                    "items": {
-                                                        "$ref": "#/components/schemas/PortInOrder"
-                                                    }
-                                                },
-                                                "totalElements": {
-                                                    "type": "integer",
-                                                    "description": "Number of port-in orders in total."
-                                                },
-                                                "totalPages": {
-                                                    "type": "integer",
-                                                    "description": "Number of pages in total."
-                                                }
-                                            }
-                                        },
-                                        "pagination": {
-                                            "$ref": "#/components/schemas/Pagination"
-                                        }
-                                    }
-                                },
-                                "examples": {}
-                            }
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Porting",
+    "version": "1.0",
+    "description": "<b>NOTE: </b>This spec is written using OpenAPI version 3.1.0. The documentation generator does not support 3.1.0, so it is temporarily marked as 3.0.0 until Redoc supports v3.1.0\n\nBandwidth understands that number porting is a powerful tool that enables you to bring all your existing voice services under one umbrella. By porting-in your phone numbers to Bandwidth, you mitigate the disruption that comes from changing numbers.\n\nWith our new Number Porting API, we hope to make this process as smooth as possible! This service allows you to check number portability, submit port-in orders, view statuses, and update in-flight ports.",
+    "summary": "Number Porting",
+    "contact": {
+      "email": "support@bandwidth.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "paths": {
+    "/porting/portInOrders": {
+      "get": {
+        "summary": "List Port-In Orders",
+        "operationId": "getPortInOrders",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "portInOrders": {
+                          "type": "array",
+                          "description": "All port-in orders.",
+                          "items": {
+                            "$ref": "#/components/schemas/PortInOrder"
+                          }
+                        },
+                        "totalElements": {
+                          "type": "integer",
+                          "description": "Number of port-in orders in total."
+                        },
+                        "totalPages": {
+                          "type": "integer",
+                          "description": "Number of pages in total."
                         }
+                      }
                     },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "403": {
-                        "description": "Forbidden"
+                    "pagination": {
+                      "$ref": "#/components/schemas/Pagination"
                     }
+                  }
                 },
-                "parameters": [
-                    {
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "MISSING_DATA",
-                                "SUBMITTED",
-                                "CHANGES_REQUESTED",
-                                "PENDING_CARRIER_APPROVAL",
-                                "ACCEPTED_BY_CARRIER",
-                                "READY_FOR_CONFIGURATION",
-                                "COMPLETED",
-                                "REJECTED",
-                                "PROCESSING_CANCELLATION",
-                                "CANCELED",
-                                "DRAFT"
-                            ]
-                        },
-                        "in": "query",
-                        "name": "status",
-                        "description": "The status of your existing port-in order."
-                    },
-                    {
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "name": "numberToPort",
-                        "description": "The number you are porting."
-                    },
-                    {
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "GEOGRAPHIC",
-                                "SHARED_COST",
-                                "TOLL_FREE",
-                                "NATIONAL",
-                                "SPECIAL",
-                                "MOBILE",
-                                "INUM"
-                            ]
-                        },
-                        "in": "query",
-                        "name": "type",
-                        "description": "The type of number you are porting."
-                    },
-                    {
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "name": "countryCodeA3",
-                        "description": "ISO 3166-1 standard 3-letter country code."
-                    },
-                    {
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "name": "currentProviderName",
-                        "description": "The losing carrier who's currently the operator on the number to be ported in."
-                    },
-                    {
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "name": "customerReference",
-                        "description": "Parameter that can be used for your own reference, e.g. to uniquely identify one of your customers."
-                    },
-                    {
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "name": "orderId",
-                        "description": "Port-in order ID."
-                    },
-                    {
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "name": "supportRef",
-                        "description": "Reference of the support ticket associated to the port-in order."
-                    },
-                    {
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "name": "createdDate",
-                        "description": "Timestamp representing when the initial port-in order was created."
-                    },
-                    {
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "name": "expectedPortCompleteDate",
-                        "description": "Estimated completion timestamp, calculated by adding lead time to date of submission. Only present once an order has state SUBMITTED."
-                    },
-                    {
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "name": "preferredPortInDate",
-                        "description": "Date you requested for the porting to be completed in YYYY-MM-DD format."
-                    },
-                    {
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "name": "submittedDate",
-                        "description": "Timestamp representing when the order was submitted - only present when relevant."
-                    },
-                    {
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "name": "offset",
-                        "description": "Parameter specifies at what record to begin the resultset"
-                    },
-                    {
-                        "schema": {
-                            "type": "string"
-                        },
-                        "in": "query",
-                        "name": "limit",
-                        "description": "Parameter specifies how many results to retrieve"
-                    }
-                ],
-                "description": "Allows you to check all existing porting orders for your account using available filters for example the number or current status."
-            },
-            "post": {
-                "summary": "Create a draft port-in order",
-                "operationId": "postporting-portInOrders",
-                "tags": [],
-                "responses": {
-                    "201": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object",
-                                            "properties": {
-                                                "portInOrder": {
-                                                    "$ref": "#/components/schemas/PortInOrder"
-                                                }
-                                            }
-                                        },
-                                        "links": {
-                                            "type": "array",
-                                            "description": "Indicates all actions you can do with this port-in order based on its status.",
-                                            "items": {
-                                                "$ref": "#/components/schemas/Link"
-                                            }
-                                        }
-                                    }
-                                },
-                                "examples": {}
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "description": "",
-                                    "type": "object",
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "uniqueItems": true,
-                                            "minItems": 1,
-                                            "description": "Error explanations.",
-                                            "items": {
-                                                "$ref": "#/components/schemas/Error"
-                                            }
-                                        }
-                                    },
-                                    "required": [
-                                        "errors"
-                                    ]
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    }
-                },
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "phoneNumbers": {
-                                        "type": "array",
-                                        "description": "Array of telephone numbers in E164 format.",
-                                        "items": {
-                                            "type": "string",
-                                            "minLength": 1,
-                                            "maxLength": 999
-                                        }
-                                    },
-                                    "numbersOwner": {
-                                        "$ref": "#/components/schemas/NumbersOwner"
-                                    },
-                                    "preferredPortInDate": {
-                                        "type": "string",
-                                        "format": "date-time",
-                                        "description": "Date that you prefer to have numbers to be available in Bandwidth."
-                                    },
-                                    "customerReference": {
-                                        "type": "string",
-                                        "description": "Parameter that can be used for your own reference, e.g. to uniquely identify one of your customers."
-                                    },
-                                    "currentProviderName": {
-                                        "type": "string",
-                                        "description": "The losing carrier who's currently the operator on the number to be ported in."
-                                    }
-                                },
-                                "required": [
-                                    "phoneNumbers",
-                                    "numbersOwner"
-                                ]
-                            },
-                            "examples": {
-                                "CreateOrderExample": {
-                                    "value": {
-                                        "currentProviderName": "BT",
-                                        "phoneNumbers": [
-                                            "+3228090000",
-                                            "+3228090001"
-                                        ],
-                                        "preferredPortInDate": "2021-11-19T15:45:09.913+00:00",
-                                        "customerReference": "P345679078",
-                                        "numbersOwner": {
-                                            "buildingNumber": 489,
-                                            "city": "Brussels",
-                                            "companyName": "Voxbone",
-                                            "countryCodeA3": "BEL",
-                                            "ownership": "BUSINESS",
-                                            "postalCode": "1050",
-                                            "streetName": "Rue Vanderkindere",
-                                            "companyVatNumber": "BE0478928788"
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "description": "Allows you to create a porting order in a pending state without documents. These documents must be uploaded for this porting order to be processed successfully.\n\nAll porting orders are created in a pending state and will be automatically cancelled after 30 days."
-            },
-            "parameters": []
-        },
-        "/porting/portInOrders/{portInOrderId}": {
-            "parameters": [
-                {
-                    "schema": {
-                        "type": "integer"
-                    },
-                    "name": "portInOrderId",
-                    "in": "path",
-                    "required": true,
-                    "description": "Port-in order ID"
-                }
-            ],
-            "get": {
-                "summary": "Check a port-in order",
-                "operationId": "getporting-portInOrder",
-                "tags": [],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "description": "",
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object",
-                                            "properties": {
-                                                "portIn": {
-                                                    "$ref": "#/components/schemas/PortInOrder"
-                                                }
-                                            }
-                                        },
-                                        "links": {
-                                            "type": "array",
-                                            "description": "Indicates all actions you can do with this port-in order based on its status.",
-                                            "items": {
-                                                "$ref": "#/components/schemas/Link"
-                                            }
-                                        }
-                                    }
-                                },
-                                "examples": {}
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "404": {
-                        "description": "Not Found"
-                    }
-                },
-                "parameters": [],
-                "description": "Allows you to check the status of an existing port-in order."
-            },
-            "delete": {
-                "summary": "Delete a draft port-in order",
-                "operationId": "deleteporting-portInOrders-:portInOrder",
-                "tags": [],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/Error"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/Error"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "description": "Allows you to delete a port-in order in draft. For a cancellation, please use PATCH endpoint."
-            },
-            "patch": {
-                "summary": "Submit/Modify/Request cancellation of a port-in order",
-                "operationId": "patchporting-portInOrders-:portInOrder",
-                "tags": [],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object",
-                                            "properties": {
-                                                "portIn": {
-                                                    "$ref": "#/components/schemas/PortInOrder"
-                                                }
-                                            }
-                                        },
-                                        "links": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/Link"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/Error"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/components/schemas/PortInOrder"
-                                        }
-                                    }
-                                },
-                                "examples": {
-                                    "SubmitResponseExample": {
-                                        "value": {
-                                            "data": {
-                                                "currentProviderName": "string",
-                                                "numbersToPort": [
-                                                    {
-                                                        "phoneNumber": "+3228090000"
-                                                    },
-                                                    {
-                                                        "phoneNumber": "+3228090001"
-                                                    }
-                                                ],
-                                                "preferredPortInDate": "2021-10-19T15:45:09.913+00:00",
-                                                "customerReference": "string",
-                                                "numbersOwner": {
-                                                    "buildingNumber": 123,
-                                                    "city": "string",
-                                                    "companyName": "string",
-                                                    "countryCodeA3": "FRA",
-                                                    "postalCode": "string",
-                                                    "streetName": "string",
-                                                    "title": "MS",
-                                                    "companyVatNumber": "string",
-                                                    "ownership": "PERSONAL"
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/Error"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "description": "",
-                                "type": "object",
-                                "properties": {
-                                    "status": {
-                                        "type": "string",
-                                        "minLength": 1,
-                                        "enum": [
-                                            "SUBMITTED",
-                                            "PROCESSING_CANCELLATION"
-                                        ],
-                                        "description": "Status of a port-in order. Change to \"SUBMITTED\" For submitting an order, change to \"PROCESSING_CANCELLATION\" to request cancellation of a port-in order."
-                                    },
-                                    "numbersOwner": {
-                                        "$ref": "#/components/schemas/NumbersOwner"
-                                    },
-                                    "currentProviderName": {
-                                        "type": "string",
-                                        "minLength": 1,
-                                        "description": "The losing carrier who's currently the operator on the number to be ported in."
-                                    },
-                                    "preferredPortInDate": {
-                                        "type": "string",
-                                        "minLength": 1,
-                                        "format": "date-time",
-                                        "description": "Date that you prefer to have numbers to be available in Bandwidth."
-                                    },
-                                    "phoneNumbers": {
-                                        "type": "array",
-                                        "description": "Array of telephone numbers in E164 format.",
-                                        "items": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            },
-                            "examples": {}
-                        }
-                    },
-                    "description": ""
-                },
-                "description": "Allows you to submit or modify a draft port-in order, or to request the cancellation of a submitted port-in order."
+                "examples": {}
+              }
             }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
         },
-        "/porting/validations": {
-            "post": {
-                "summary": "Check number portability",
-                "operationId": "postporting-validator",
-                "tags": [],
-                "responses": {
-                    "201": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "description": "Success response for number portability check",
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object",
-                                            "properties": {
-                                                "requirements": {
-                                                    "type": "object",
-                                                    "description": "All required information and documents to provide in order to port your numbers.",
-                                                    "properties": {
-                                                        "business": {
-                                                            "$ref": "#/components/schemas/BusinessRequirement"
-                                                        },
-                                                        "personal": {
-                                                            "$ref": "#/components/schemas/PersonalRequirement"
-                                                        }
-                                                    }
-                                                },
-                                                "totalFees": {
-                                                    "$ref": "#/components/schemas/Fees"
-                                                },
-                                                "currency": {
-                                                    "type": "string",
-                                                    "description": "Currency for porting fees - this is configured in your profile."
-                                                },
-                                                "numbersToPort": {
-                                                    "type": "array",
-                                                    "description": "List of phone numbers that you requested us to port.",
-                                                    "items": {
-                                                        "$ref": "#/components/schemas/PhoneNumberDetails"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "examples": {}
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/Error"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Email Already Taken"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    }
-                },
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "description": "",
-                                "type": "object",
-                                "properties": {
-                                    "phoneNumbers": {
-                                        "type": "array",
-                                        "description": "Array of telephone numbers in E164 format.",
-                                        "items": {
-                                            "type": "string",
-                                            "minLength": 1,
-                                            "maxLength": 999,
-                                            "example": "+33123456789"
-                                        }
-                                    }
-                                },
-                                "required": [
-                                    "phoneNumbers"
-                                ]
-                            },
-                            "examples": {
-                                "ValidatorOrderExample": {
-                                    "value": {
-                                        "phoneNumbers": [
-                                            "+3228090000",
-                                            "+3228090001",
-                                            "+3228090002"
-                                        ]
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "description": ""
-                },
-                "description": "Check if a set of numbers is portable to Bandwidth. Bandwidth internally detects the number type, area code and country code and you can retrieve porting pricing fees and submission requirements."
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "MISSING_DATA",
+                "SUBMITTED",
+                "CHANGES_REQUESTED",
+                "PENDING_CARRIER_APPROVAL",
+                "ACCEPTED_BY_CARRIER",
+                "READY_FOR_CONFIGURATION",
+                "COMPLETED",
+                "REJECTED",
+                "PROCESSING_CANCELLATION",
+                "CANCELED",
+                "DRAFT"
+              ]
             },
-            "parameters": []
-        },
-        "/porting/{portInOrderId}/documents": {
-            "post": {
-                "summary": "Upload documents for a port-in order",
-                "operationId": "post-porting-:portInOrderID-documents",
-                "tags": [],
-                "responses": {
-                    "201": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object",
-                                            "properties": {
-                                                "documents": {
-                                                    "type": "array",
-                                                    "description": "Array of documents",
-                                                    "items": {
-                                                        "$ref": "#/components/schemas/Document"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/Error"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    }
-                },
-                "description": "You are required to upload all the relevant documents for your existing port-in order to be successful depending on the number you are trying to port and which country the number belongs to. You can see the required documents from checking a numbers portability requirements.",
-                "requestBody": {
-                    "content": {
-                        "multipart/form-data": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "documents": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "object",
-                                            "properties": {
-                                                "documentType": {
-                                                    "type": "string",
-                                                    "enum": [
-                                                        "LOA",
-                                                        "COB",
-                                                        "POA",
-                                                        "LEG_ID",
-                                                        "COURT",
-                                                        "SIG_ID",
-                                                        "TRADE",
-                                                        "TAX",
-                                                        "OFF_SGN",
-                                                        "DIREC",
-                                                        "INCORP",
-                                                        "CSR",
-                                                        "FORM"
-                                                    ]
-                                                },
-                                                "documentContent": {
-                                                    "type": "string",
-                                                    "format": "binary"
-                                                }
-                                            },
-                                            "required": [
-                                                "documentType",
-                                                "documentContent"
-                                            ]
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "description": ""
-                },
-                "parameters": []
+            "in": "query",
+            "name": "status",
+            "description": "The status of your existing port-in order."
+          },
+          {
+            "schema": {
+              "type": "string"
             },
-            "parameters": [
-                {
-                    "schema": {
-                        "type": "string"
-                    },
-                    "name": "portInOrderId",
-                    "in": "path",
-                    "required": true
-                }
-            ]
-        },
-        "/porting/{portInOrderId}/documents/{documentId}": {
-            "get": {
-                "summary": "Retrieve an uploaded document",
-                "tags": [],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object",
-                                            "properties": {
-                                                "document": {
-                                                    "$ref": "#/components/schemas/Document"
-                                                }
-                                            }
-                                        },
-                                        "links": {
-                                            "type": "array",
-                                            "description": "Indicates all actions you can do with this port-in order based on its status.",
-                                            "items": {
-                                                "$ref": "#/components/schemas/Link"
-                                            }
-                                        }
-                                    }
-                                },
-                                "examples": {}
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "errors": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/Error"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    }
-                },
-                "operationId": "get-porting-:portInOrderID-documents",
-                "description": "Allows you to download specific documents you have uploaded to review for a specific port-in order."
+            "in": "query",
+            "name": "numberToPort",
+            "description": "The number you are porting."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "GEOGRAPHIC",
+                "SHARED_COST",
+                "TOLL_FREE",
+                "NATIONAL",
+                "SPECIAL",
+                "MOBILE",
+                "INUM"
+              ]
             },
-            "parameters": [
-                {
-                    "schema": {
-                        "type": "string"
-                    },
-                    "name": "portInOrderId",
-                    "in": "path",
-                    "required": true
-                },
-                {
-                    "schema": {
-                        "type": "string"
-                    },
-                    "name": "documentId",
-                    "in": "path",
-                    "required": true
-                }
-            ]
-        }
-    },
-    "components": {
-        "schemas": {
-            "PortInOrder": {
-                "description": "Port-in order details for a number or a set of numbers.",
-                "type": "object",
-                "examples": [],
-                "title": "",
-                "properties": {
-                    "portInOrderId": {
-                        "type": "integer",
-                        "description": "ID generated when you create a port-in order."
-                    },
-                    "currentProviderName": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "The losing carrier who's currently the operator on the number to be ported in."
-                    },
-                    "numbersToPort": {
-                        "type": "array",
-                        "minItems": 1,
-                        "maxItems": 999,
-                        "description": "The number in E164 format.",
-                        "items": {
-                            "$ref": "#/components/schemas/PhoneNumberDetails"
+            "in": "query",
+            "name": "type",
+            "description": "The type of number you are porting."
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "countryCodeA3",
+            "description": "ISO 3166-1 standard 3-letter country code."
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "currentProviderName",
+            "description": "The losing carrier who's currently the operator on the number to be ported in."
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "customerReference",
+            "description": "Parameter that can be used for your own reference, e.g. to uniquely identify one of your customers."
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "orderId",
+            "description": "Port-in order ID."
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "supportRef",
+            "description": "Reference of the support ticket associated to the port-in order."
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "createdDate",
+            "description": "Timestamp representing when the initial port-in order was created."
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "expectedPortCompleteDate",
+            "description": "Estimated completion timestamp, calculated by adding lead time to date of submission. Only present once an order has state SUBMITTED."
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "preferredPortInDate",
+            "description": "Date you requested for the porting to be completed in YYYY-MM-DD format."
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "submittedDate",
+            "description": "Timestamp representing when the order was submitted - only present when relevant."
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "offset",
+            "description": "Parameter specifies at what record to begin the resultset"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "limit",
+            "description": "Parameter specifies how many results to retrieve"
+          }
+        ],
+        "description": "Allows you to check all existing porting orders for your account using available filters for example the number or current status."
+      },
+      "post": {
+        "summary": "Create a draft port-in order",
+        "operationId": "postporting-portInOrders",
+        "tags": [],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "portInOrder": {
+                          "$ref": "#/components/schemas/PortInOrder"
                         }
+                      }
                     },
-                    "numbersOwner": {
-                        "$ref": "#/components/schemas/NumbersOwner"
-                    },
-                    "customerReference": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "Parameter that can be used for your own reference, e.g. to uniquely identify one of your customers.",
-                        "maxLength": 60
-                    },
-                    "supportRef": {
-                        "type": "string",
-                        "description": "Reference of a port order - to use when you contact our support or our porting teams. Eg: PRT25168668606830"
-                    },
-                    "supportTicket": {
-                        "$ref": "#/components/schemas/SupportTicket"
-                    },
-                    "status": {
-                        "type": "string",
-                        "enum": [
-                            "MISSING_DATA",
-                            "SUBMITTED",
-                            "CHANGES_ORDERED",
-                            "PENDING_CARRIER_APPROVAL",
-                            "ACCEPTED_BY_CARRIER",
-                            "READY_FOR_CONFIGURATION",
-                            "COMPLETED",
-                            "REJECTED",
-                            "PROCESSING_CANCELLATION",
-                            "CANCELED",
-                            "DRAFT"
-                        ],
-                        "description": "Status of a port-in order."
-                    },
-                    "currency": {
-                        "type": "string",
-                        "minLength": 3,
-                        "maxLength": 3,
-                        "description": "Currency of port-in fees."
-                    },
-                    "preferredPortInDate": {
-                        "type": "string",
-                        "minLength": 1,
-                        "format": "date-time",
-                        "description": "Specific date you would prefer the port-into be completed."
-                    },
-                    "createdDate": {
-                        "type": "string",
-                        "format": "date-time",
-                        "description": "Creation date of the port-in order."
-                    },
-                    "lastUpdate": {
-                        "type": "string",
-                        "format": "date-time",
-                        "description": "Last update date of the port-in order."
-                    },
-                    "submittedDate": {
-                        "type": "string",
-                        "format": "date-time",
-                        "description": "Timestamp representing when the order was submitted - only present when relevant."
-                    },
-                    "documents": {
-                        "type": "array",
-                        "description": "Required documents for a port-in order.",
-                        "items": {
-                            "$ref": "#/components/schemas/Document"
-                        }
-                    },
-                    "totalFees": {
-                        "$ref": "#/components/schemas/Fees"
+                    "links": {
+                      "type": "array",
+                      "description": "Indicates all actions you can do with this port-in order based on its status.",
+                      "items": {
+                        "$ref": "#/components/schemas/Link"
+                      }
                     }
+                  }
                 },
-                "required": [
-                    "currentProviderName",
-                    "numbersToPort",
-                    "numbersOwner"
-                ]
-            },
-            "NumbersOwner": {
-                "description": "Owner of the numbers.",
-                "type": "object",
-                "title": "NumbersOwner",
-                "examples": [
-                    {
-                        "ownership": "BUSINESS",
-                        "complementaryAddressInformation": "In attention to Mr. Smith",
-                        "buildingNumber": "489",
-                        "streetName": "Rue Vanderkindere",
-                        "city": "Brussels",
-                        "countryCodeA3": "BEL",
-                        "postalCode": "1050",
-                        "companyName": "Voxbone",
-                        "companyVatNumber": "BE0478928788"
-                    }
-                ],
-                "properties": {
-                    "ownership": {
-                        "type": "string",
-                        "minLength": 1,
-                        "enum": [
-                            "BUSINESS",
-                            "PERSONAL"
-                        ],
-                        "description": "Type of ownership of the number to be ported."
-                    },
-                    "complementaryAddressInformation": {
-                        "type": "string",
-                        "description": "Is used to indicate \"In attention to someone\"."
-                    },
-                    "floor": {
-                        "description": "Building number for the end user's address.",
-                        "type": "number"
-                    },
-                    "buildingIdentifier": {
-                        "type": [
-                            "number",
-                            "string"
-                        ],
-                        "description": "Building number for the end user's address. E.g. Can put 54 or 54A."
-                    },
-                    "buildingName": {
-                        "type": "string",
-                        "description": "Building number for the end user's address."
-                    },
-                    "streetName": {
-                        "type": "string",
-                        "description": "Street name for the end user's address."
-                    },
-                    "streetIdentifier": {
-                        "type": "string",
-                        "description": "Street code for the end user's address. E.g. addresses in Japan"
-                    },
-                    "postalCode": {
-                        "type": "string",
-                        "description": "Postal code for the end user's address."
-                    },
-                    "municipalityIdentifier": {
-                        "type": "string",
-                        "description": "Municipality code for the end user's address. E.g. 50026 for Pisa in Italia."
-                    },
-                    "city": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "City name for the end user's address."
-                    },
-                    "state": {
-                        "type": "string",
-                        "description": "State of the end user's address."
-                    },
-                    "countryCodeA3": {
-                        "type": "string",
-                        "minLength": 3,
-                        "maxLength": 3,
-                        "description": "ISO 3166-1 standard 3-letter country code."
-                    },
-                    "title": {
-                        "type": "string",
-                        "enum": [
-                            "MR",
-                            "MS"
-                        ],
-                        "description": "Title of the end user or company legal representative."
-                    },
-                    "firstName": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "First name of personal end user or company legal representative."
-                    },
-                    "middleName": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "Middle name of the personal end user or company legal representative."
-                    },
-                    "lastName": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "Surname of personal end user or company legal representative."
-                    },
-                    "dateOfBirth": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "Date of birth of personal end user or company legal representative."
-                    },
-                    "companyName": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "Registered company name. Only present for business ownership type."
-                    },
-                    "companyVatNumber": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "Registered VAT number - only present for business ownership."
-                    },
-                    "companyRegistrationNumber": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "Registration number - only present for business ownership."
-                    },
-                    "mailBox": {
-                        "$ref": "#/components/schemas/MailBox"
-                    }
-                },
-                "required": [
-                    "ownership",
-                    "city",
-                    "countryCodeA3"
-                ]
-            },
-            "MailBox": {
-                "description": "Virtual or physical mailbox of the owner of the number.",
-                "type": "object",
-                "title": "MailBox",
-                "examples": [],
-                "properties": {
-                    "buildingIdentifier": {
-                        "type": [
-                            "number",
-                            "string"
-                        ],
-                        "description": "Building number for the end user's mailbox. E.g. Can put 54 or 54A."
-                    },
-                    "buildingName": {
-                        "type": "string",
-                        "description": "Building number for the end user's mailbox."
-                    },
-                    "complementaryAddressInformation": {
-                        "type": "string",
-                        "description": "Is used to indicate \"In attention to someone\"."
-                    },
-                    "streetName": {
-                        "type": "string",
-                        "description": "Street name for the end user's mailbox."
-                    },
-                    "streetIdentifier": {
-                        "type": "string",
-                        "description": "Street code for the end user's mailbox. E.g. addresses in Japan"
-                    },
-                    "postalCode": {
-                        "type": "string",
-                        "description": "Postal code for the end user's mailbox."
-                    },
-                    "municipalityIdentifier": {
-                        "type": "string",
-                        "description": "Municipality code for the end user's mailbox. E.g. 50026 for Pisa in Italia."
-                    },
-                    "city": {
-                        "type": "string",
-                        "description": "City name for the end user's mailbox.",
-                        "minLength": 1
-                    },
-                    "state": {
-                        "type": "string",
-                        "description": "State of the end user's mailbox."
-                    },
-                    "countryCodeA3": {
-                        "type": "string",
-                        "minLength": 3,
-                        "maxLength": 3,
-                        "description": "ISO 3166-1 standard 3-letter country code."
-                    }
-                },
-                "required": [
-                    "city",
-                    "countryCodeA3"
-                ]
-            },
-            "PhoneNumberDetails": {
-                "description": "Telephone numbers to port and related porting details",
-                "type": "object",
-                "examples": [],
-                "properties": {
-                    "phoneNumber": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "Phone number in E164 format that the portability check response is executed against. E.g: +19995550123, +33123456789."
-                    },
-                    "type": {
-                        "type": "string",
-                        "minLength": 1,
-                        "enum": [
-                            "GEOGRAPHIC",
-                            "SHARED_COST",
-                            "TOLL_FREE",
-                            "NATIONAL",
-                            "SPECIAL",
-                            "MOBILE",
-                            "INUM"
-                        ],
-                        "description": "Type of phone number. E.g. Geographic, Toll-free."
-                    },
-                    "countryCodeA3": {
-                        "type": "string",
-                        "minLength": 3,
-                        "maxLength": 3,
-                        "description": "ISO 3166-1 standard 3-letter country code."
-                    },
-                    "countryCallingCode": {
-                        "type": "integer",
-                        "description": "Country calling code. E.g. 44 for UK"
-                    },
-                    "areaCode": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "Phone area code."
-                    },
-                    "leadTime": {
-                        "type": "number",
-                        "description": "Amount of time it takes to complete a order in a happy flow from the moment of submission."
-                    },
-                    "internalMigration": {
-                        "type": "boolean",
-                        "description": "Indicates if the port is an internal migration (means the number is already in our network)."
-                    },
-                    "fees": {
-                        "$ref": "#/components/schemas/Fees"
-                    },
-                    "portable": {
-                        "type": "boolean",
-                        "description": "Indicates if the number is portable."
-                    },
-                    "notPortableReason": {
+                "examples": {}
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "uniqueItems": true,
+                      "minItems": 1,
+                      "description": "Error explanations.",
+                      "items": {
                         "$ref": "#/components/schemas/Error"
+                      }
                     }
+                  },
+                  "required": [
+                    "errors"
+                  ]
                 }
-            },
-            "Fees": {
-                "description": "Fees that you have to pay for a number or a set of numbers. The currency will depend on your configuration.",
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
                 "type": "object",
-                "examples": [
-                    {
-                        "portFees": 1,
-                        "cancellationFees": 2.3,
-                        "didMonthlyFees": 5.7
-                    }
-                ],
                 "properties": {
-                    "portFees": {
-                        "type": "number",
-                        "description": "Fees for porting-in a number or a set of numbers."
-                    },
-                    "cancellationFees": {
-                        "type": "number",
-                        "description": "Cancellation fees of a submitted number or a set of numbers."
-                    },
-                    "phoneNumberMonthlyFees": {
-                        "type": "number",
-                        "description": "Monthly recurring charge for owning a number or a set of numbers."
+                  "phoneNumbers": {
+                    "type": "array",
+                    "description": "Array of telephone numbers in E164 format.",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 999
                     }
+                  },
+                  "numbersOwner": {
+                    "$ref": "#/components/schemas/NumbersOwner"
+                  },
+                  "preferredPortInDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Date that you prefer to have numbers to be available in Bandwidth."
+                  },
+                  "customerReference": {
+                    "type": "string",
+                    "description": "Parameter that can be used for your own reference, e.g. to uniquely identify one of your customers."
+                  },
+                  "currentProviderName": {
+                    "type": "string",
+                    "description": "The losing carrier who's currently the operator on the number to be ported in."
+                  }
                 },
                 "required": [
-                    "portFees",
-                    "cancellationFees",
-                    "phoneNumberMonthlyFees"
+                  "phoneNumbers",
+                  "numbersOwner"
                 ]
-            },
-            "Link": {
-                "description": "All actions that you can do for a port-in order, document or a support ticket or a comment in a support ticket.",
-                "type": "object",
-                "examples": [
-                    {
-                        "rel": "cancel",
-                        "href": "https://api.preprod.voxbone.com/beta/porting-api/251593",
-                        "type": "DELETE"
+              },
+              "examples": {
+                "CreateOrderExample": {
+                  "value": {
+                    "currentProviderName": "BT",
+                    "phoneNumbers": [
+                      "+3228090000",
+                      "+3228090001"
+                    ],
+                    "preferredPortInDate": "2021-11-19T15:45:09.913+00:00",
+                    "customerReference": "P345679078",
+                    "numbersOwner": {
+                      "buildingNumber": 489,
+                      "city": "Brussels",
+                      "companyName": "Voxbone",
+                      "countryCodeA3": "BEL",
+                      "ownership": "BUSINESS",
+                      "postalCode": "1050",
+                      "streetName": "Rue Vanderkindere",
+                      "companyVatNumber": "BE0478928788"
                     }
-                ],
-                "properties": {
-                    "rel": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "Reference of the action."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Allows you to create a porting order in a pending state without documents. These documents must be uploaded for this porting order to be processed successfully.\n\nAll porting orders are created in a pending state and will be automatically cancelled after 30 days."
+      },
+      "parameters": []
+    },
+    "/porting/portInOrders/{portInOrderId}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "integer"
+          },
+          "name": "portInOrderId",
+          "in": "path",
+          "required": true,
+          "description": "Port-in order ID"
+        }
+      ],
+      "get": {
+        "summary": "Check a port-in order",
+        "operationId": "getporting-portInOrder",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "portIn": {
+                          "$ref": "#/components/schemas/PortInOrder"
+                        }
+                      }
                     },
-                    "href": {
-                        "type": "string",
-                        "minLength": 1,
-                        "format": "uri",
-                        "description": "Url to perform the action."
+                    "links": {
+                      "type": "array",
+                      "description": "Indicates all actions you can do with this port-in order based on its status.",
+                      "items": {
+                        "$ref": "#/components/schemas/Link"
+                      }
+                    }
+                  }
+                },
+                "examples": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "parameters": [],
+        "description": "Allows you to check the status of an existing port-in order."
+      },
+      "delete": {
+        "summary": "Delete a draft port-in order",
+        "operationId": "deleteporting-portInOrders-:portInOrder",
+        "tags": [],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Allows you to delete a port-in order in draft. For a cancellation, please use PATCH endpoint."
+      },
+      "patch": {
+        "summary": "Submit/Modify/Request cancellation of a port-in order",
+        "operationId": "patchporting-portInOrders-:portInOrder",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "portIn": {
+                          "$ref": "#/components/schemas/PortInOrder"
+                        }
+                      }
                     },
-                    "type": {
-                        "type": "string",
-                        "minLength": 1,
-                        "enum": [
-                            "GET",
-                            "DELETE"
+                    "links": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Link"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/PortInOrder"
+                    }
+                  }
+                },
+                "examples": {
+                  "SubmitResponseExample": {
+                    "value": {
+                      "data": {
+                        "currentProviderName": "string",
+                        "numbersToPort": [
+                          {
+                            "phoneNumber": "+3228090000"
+                          },
+                          {
+                            "phoneNumber": "+3228090001"
+                          }
                         ],
-                        "description": "Type of action"
+                        "preferredPortInDate": "2021-10-19T15:45:09.913+00:00",
+                        "customerReference": "string",
+                        "numbersOwner": {
+                          "buildingNumber": 123,
+                          "city": "string",
+                          "companyName": "string",
+                          "countryCodeA3": "FRA",
+                          "postalCode": "string",
+                          "streetName": "string",
+                          "title": "MS",
+                          "companyVatNumber": "string",
+                          "ownership": "PERSONAL"
+                        }
+                      }
                     }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "description": "",
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "minLength": 1,
+                    "enum": [
+                      "SUBMITTED",
+                      "PROCESSING_CANCELLATION"
+                    ],
+                    "description": "Status of a port-in order. Change to \"SUBMITTED\" For submitting an order, change to \"PROCESSING_CANCELLATION\" to request cancellation of a port-in order."
+                  },
+                  "numbersOwner": {
+                    "$ref": "#/components/schemas/NumbersOwner"
+                  },
+                  "currentProviderName": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "The losing carrier who's currently the operator on the number to be ported in."
+                  },
+                  "preferredPortInDate": {
+                    "type": "string",
+                    "minLength": 1,
+                    "format": "date-time",
+                    "description": "Date that you prefer to have numbers to be available in Bandwidth."
+                  },
+                  "phoneNumbers": {
+                    "type": "array",
+                    "description": "Array of telephone numbers in E164 format.",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "examples": {}
+            }
+          },
+          "description": ""
+        },
+        "description": "Allows you to submit or modify a draft port-in order, or to request the cancellation of a submitted port-in order."
+      }
+    },
+    "/porting/validations": {
+      "post": {
+        "summary": "Check number portability",
+        "operationId": "postporting-validator",
+        "tags": [],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "Success response for number portability check",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "requirements": {
+                          "type": "object",
+                          "description": "All required information and documents to provide in order to port your numbers.",
+                          "properties": {
+                            "business": {
+                              "$ref": "#/components/schemas/BusinessRequirement"
+                            },
+                            "personal": {
+                              "$ref": "#/components/schemas/PersonalRequirement"
+                            }
+                          }
+                        },
+                        "totalFees": {
+                          "$ref": "#/components/schemas/Fees"
+                        },
+                        "currency": {
+                          "type": "string",
+                          "description": "Currency for porting fees - this is configured in your profile."
+                        },
+                        "numbersToPort": {
+                          "type": "array",
+                          "description": "List of phone numbers that you requested us to port.",
+                          "items": {
+                            "$ref": "#/components/schemas/PhoneNumberDetails"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "examples": {}
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Email Already Taken"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "description": "",
+                "type": "object",
+                "properties": {
+                  "phoneNumbers": {
+                    "type": "array",
+                    "description": "Array of telephone numbers in E164 format.",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 999,
+                      "example": "+33123456789"
+                    }
+                  }
                 },
                 "required": [
-                    "rel",
-                    "href",
-                    "type"
+                  "phoneNumbers"
                 ]
-            },
-            "Document": {
-                "description": "Required documents for porting-in a number or a set of numbers.",
-                "type": "object",
-                "examples": [
-                    {
-                        "type": "LOA",
-                        "description": "Letter of authority",
-                        "status": "PENDING_VALIDATION",
-                        "documentId": 255005
+              },
+              "examples": {
+                "ValidatorOrderExample": {
+                  "value": {
+                    "phoneNumbers": [
+                      "+3228090000",
+                      "+3228090001",
+                      "+3228090002"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "description": ""
+        },
+        "description": "Check if a set of numbers is portable to Bandwidth. Bandwidth internally detects the number type, area code and country code and you can retrieve porting pricing fees and submission requirements."
+      },
+      "parameters": []
+    },
+    "/porting/{portInOrderId}/documents": {
+      "post": {
+        "summary": "Upload documents for a port-in order",
+        "operationId": "post-porting-:portInOrderID-documents",
+        "tags": [],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "documents": {
+                          "type": "array",
+                          "description": "Array of documents",
+                          "items": {
+                            "$ref": "#/components/schemas/Document"
+                          }
+                        }
+                      }
                     }
-                ],
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "description": "You are required to upload all the relevant documents for your existing port-in order to be successful depending on the number you are trying to port and which country the number belongs to. You can see the required documents from checking a numbers portability requirements.",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
                 "properties": {
-                    "documentId": {
-                        "type": "integer",
-                        "description": "Generated ID for an uploaded document."
-                    },
-                    "type": {
-                        "type": "string",
-                        "minLength": 1,
-                        "enum": [
+                  "documents": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "documentType": {
+                          "type": "string",
+                          "enum": [
                             "LOA",
                             "COB",
                             "POA",
@@ -1377,399 +813,956 @@
                             "INCORP",
                             "CSR",
                             "FORM"
-                        ],
-                        "description": "Type of a document."
-                    },
-                    "description": {
-                        "type": "string",
-                        "minLength": 1,
-                        "format": "binary",
-                        "description": "Description of a document."
-                    },
-                    "content": {
-                        "type": "string",
-                        "format": "binary",
-                        "description": "Content of a file in binary"
-                    },
-                    "status": {
-                        "type": "string",
-                        "minLength": 1,
-                        "enum": [
-                            "PENDING_VALIDATION",
-                            "VALID",
-                            "INVALID"
-                        ],
-                        "description": "Status of a document - any new uploaded document will be marked as PENDING_VALIDATION and needed to be validated by our porting team."
-                    }
-                },
-                "required": [
-                    "type"
-                ]
-            },
-            "Comment": {
-                "title": "Comment",
-                "type": "object",
-                "examples": [
-                    {
-                        "id": "R6776898",
-                        "dateCreated": "2021-11-20",
-                        "description": "Hi there, The cancellation request for your port has been successfully processed."
-                    }
-                ],
-                "description": "Comments from porting team.",
-                "properties": {
-                    "id": {
-                        "type": "string",
-                        "description": "Id of the comment."
-                    },
-                    "dateCreated": {
-                        "type": "string",
-                        "description": "Created date of the comment.",
-                        "format": "date-time"
-                    },
-                    "description": {
-                        "type": "string",
-                        "description": "Description of the comment."
-                    }
-                },
-                "required": [
-                    "id",
-                    "dateCreated",
-                    "description"
-                ]
-            },
-            "SupportTicket": {
-                "title": "SupportTicket",
-                "type": "object",
-                "examples": [
-                    {
-                        "link": {
-                            "rel": "self",
-                            "href": "https://support.voxbone.com/hc/en-us/requests/295782",
-                            "type": "GET"
+                          ]
                         },
-                        "comments": [
-                            {
-                                "id": "R6776898",
-                                "dateCreated": "2021-11-20",
-                                "description": "Hi there, The cancellation request for your port has been successfully processed."
-                            }
-                        ]
-                    }
-                ],
-                "description": "Support ticket associated to the port-in order.",
-                "properties": {
-                    "link": {
-                        "$ref": "#/components/schemas/Link"
-                    },
-                    "comments": {
-                        "type": "array",
-                        "description": "Any comments in the support tickets.",
-                        "items": {
-                            "$ref": "#/components/schemas/Comment"
+                        "documentContent": {
+                          "type": "string",
+                          "format": "binary"
                         }
+                      },
+                      "required": [
+                        "documentType",
+                        "documentContent"
+                      ]
                     }
+                  }
                 }
-            },
-            "BusinessRequirement": {
-                "description": "All requirements (documents and end user's information) customers have to provide for porting-in a number.",
-                "type": "object",
-                "examples": [],
-                "title": "BusinessRequirement",
-                "properties": {
-                    "complementaryAddressInformation": {
-                        "type": "string",
-                        "description": "Is used to indicate \"In attention to someone\"."
-                    },
-                    "floor": {
-                        "description": "Building number for the end user's address.",
-                        "type": "number"
-                    },
-                    "buildingIdentifier": {
-                        "type": [
-                            "number",
-                            "string"
-                        ],
-                        "description": "Building number for the end user's address. E.g. Can put 54 or 54A."
-                    },
-                    "buildingName": {
-                        "type": "string",
-                        "description": "Building number for the end user's address."
-                    },
-                    "streetName": {
-                        "type": "string",
-                        "description": "Street name for the end user's address."
-                    },
-                    "streetIdentifier": {
-                        "type": "string",
-                        "description": "Street code for the end user's address. E.g. addresses in Japan"
-                    },
-                    "postalCode": {
-                        "type": "string",
-                        "description": "Postal code for the end user's address."
-                    },
-                    "municipalityIdentifier": {
-                        "type": "string",
-                        "description": "Municipality code for the end user's address. E.g. 50026 for Pisa in Italia."
-                    },
-                    "city": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "City name for the end user's address."
-                    },
-                    "state": {
-                        "type": "string",
-                        "description": "State of the end user's address."
-                    },
-                    "countryCodeA3": {
-                        "type": "string",
-                        "minLength": 3,
-                        "maxLength": 3,
-                        "description": "ISO 3166-1 standard 3-letter country code."
-                    },
-                    "title": {
-                        "type": "string",
-                        "enum": [
-                            "MR",
-                            "MS"
-                        ],
-                        "description": "Title of the end user or company legal representative."
-                    },
-                    "firstName": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "First name of personal end user or company legal representative."
-                    },
-                    "middleName": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "Middle name of the personal end user or company legal representative."
-                    },
-                    "lastName": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "Surname of personal end user or company legal representative."
-                    },
-                    "dateOfBirth": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "Date of birth of personal end user or company legal representative."
-                    },
-                    "companyName": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "Registered company name. Only present for business ownership type."
-                    },
-                    "companyVatNumber": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "Registered VAT number - only present for business ownership."
-                    },
-                    "companyRegistrationNumber": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "Registration number - only present for business ownership."
-                    },
-                    "mailBox": {
-                        "$ref": "#/components/schemas/MailBox"
-                    },
-                    "documents": {
-                        "type": "array",
-                        "uniqueItems": true,
-                        "minItems": 1,
-                        "description": "Required documents.",
-                        "items": {
-                            "$ref": "#/components/schemas/DocumentRequirement"
-                        }
-                    }
-                }
-            },
-            "PersonalRequirement": {
-                "description": "All requirements (documents and end user's information) customers have to provide for porting-in a number.",
-                "type": "object",
-                "examples": [],
-                "properties": {
-                    "complementaryAddressInformation": {
-                        "type": "string",
-                        "description": "Is used to indicate \"In attention to someone\"."
-                    },
-                    "floor": {
-                        "description": "Building number for the end user's address.",
-                        "type": "number"
-                    },
-                    "buildingIdentifier": {
-                        "type": [
-                            "number",
-                            "string"
-                        ],
-                        "description": "Building number for the end user's address. E.g. Can put 54 or 54A."
-                    },
-                    "buildingName": {
-                        "type": "string",
-                        "description": "Building number for the end user's address."
-                    },
-                    "streetName": {
-                        "type": "string",
-                        "description": "Street name for the end user's address."
-                    },
-                    "streetIdentifier": {
-                        "type": "string",
-                        "description": "Street code for the end user's address. E.g. addresses in Japan"
-                    },
-                    "postalCode": {
-                        "type": "string",
-                        "description": "Postal code for the end user's address."
-                    },
-                    "municipalityIdentifier": {
-                        "type": "string",
-                        "description": "Municipality code for the end user's address. E.g. 50026 for Pisa in Italia."
-                    },
-                    "city": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "City name for the end user's address."
-                    },
-                    "state": {
-                        "type": "string",
-                        "description": "State of the end user's address."
-                    },
-                    "countryCodeA3": {
-                        "type": "string",
-                        "minLength": 3,
-                        "maxLength": 3,
-                        "description": "ISO 3166-1 standard 3-letter country code."
-                    },
-                    "title": {
-                        "type": "string",
-                        "enum": [
-                            "MR",
-                            "MS"
-                        ],
-                        "description": "Title of the end user or company legal representative."
-                    },
-                    "firstName": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "First name of personal end user or company legal representative."
-                    },
-                    "middleName": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "Middle name of the personal end user or company legal representative."
-                    },
-                    "lastName": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "Surname of personal end user or company legal representative."
-                    },
-                    "dateOfBirth": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "Date of birth of personal end user or company legal representative."
-                    },
-                    "mailBox": {
-                        "$ref": "#/components/schemas/MailBox"
-                    },
-                    "documents": {
-                        "type": "array",
-                        "uniqueItems": true,
-                        "minItems": 1,
-                        "items": {
-                            "$ref": "#/components/schemas/DocumentRequirement"
-                        }
-                    }
-                }
-            },
-            "DocumentRequirement": {
-                "description": "Documents that customers have to provide for porting-in a number.",
-                "type": "object",
-                "examples": [],
-                "properties": {
-                    "type": {
-                        "type": "string",
-                        "minLength": 1
-                    },
-                    "description": {
-                        "type": "string",
-                        "minLength": 1
-                    },
-                    "sourceDocument": {
-                        "type": "string",
-                        "minLength": 1
-                    },
-                    "supportedFileTypes": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    }
-                },
-                "required": [
-                    "type",
-                    "description",
-                    "supportedFileTypes"
-                ]
-            },
-            "Error": {
-                "description": "Generated error due to a bad request.",
-                "type": "object",
-                "examples": [
-                    {
-                        "source": {
-                            "field": "numberToPort"
-                        },
-                        "description": "Invalid phone number: jnk",
-                        "code": "XXX-XXXX"
-                    }
-                ],
-                "properties": {
-                    "description": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "Description of the issue."
-                    },
-                    "code": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "Error code."
-                    },
-                    "source": {
-                        "type": "object",
-                        "description": "Contains references to the source of the error,",
-                        "properties": {
-                            "field": {
-                                "type": "string",
-                                "minLength": 1,
-                                "description": "Missing field or field having the issue."
-                            }
-                        }
-                    }
-                },
-                "required": [
-                    "description"
-                ]
-            },
-            "Pagination": {
-                "title": "Pagination",
-                "type": "object",
-                "properties": {
-                    "nextToken": {
-                        "type": "number",
-                        "description": "Represents going to the “next” page. This parameter will be absent if there isn't any next pagination."
-                    },
-                    "previousToken": {
-                        "type": "number",
-                        "description": "Represents going to the “previous” page. This parameter will be absent if there isn't any previous pagination."
-                    }
-                }
+              }
             }
+          },
+          "description": ""
         },
-        "securitySchemes": {
-            "ApiKeyAuth": {
-                "type": "apiKey",
-                "in": "header",
-                "name": "X-API-Key"
-            }
+        "parameters": []
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "portInOrderId",
+          "in": "path",
+          "required": true
         }
+      ]
+    },
+    "/porting/{portInOrderId}/documents/{documentId}": {
+      "get": {
+        "summary": "Retrieve an uploaded document",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "document": {
+                          "$ref": "#/components/schemas/Document"
+                        }
+                      }
+                    },
+                    "links": {
+                      "type": "array",
+                      "description": "Indicates all actions you can do with this port-in order based on its status.",
+                      "items": {
+                        "$ref": "#/components/schemas/Link"
+                      }
+                    }
+                  }
+                },
+                "examples": {}
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "operationId": "get-porting-:portInOrderID-documents",
+        "description": "Allows you to download specific documents you have uploaded to review for a specific port-in order."
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "portInOrderId",
+          "in": "path",
+          "required": true
+        },
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "documentId",
+          "in": "path",
+          "required": true
+        }
+      ]
     }
+  },
+  "components": {
+    "schemas": {
+      "PortInOrder": {
+        "description": "Port-in order details for a number or a set of numbers.",
+        "type": "object",
+        "examples": [],
+        "title": "",
+        "properties": {
+          "portInOrderId": {
+            "type": "integer",
+            "description": "ID generated when you create a port-in order."
+          },
+          "currentProviderName": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The losing carrier who's currently the operator on the number to be ported in."
+          },
+          "numbersToPort": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 999,
+            "description": "The number in E164 format.",
+            "items": {
+              "$ref": "#/components/schemas/PhoneNumberDetails"
+            }
+          },
+          "numbersOwner": {
+            "$ref": "#/components/schemas/NumbersOwner"
+          },
+          "customerReference": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Parameter that can be used for your own reference, e.g. to uniquely identify one of your customers.",
+            "maxLength": 60
+          },
+          "supportRef": {
+            "type": "string",
+            "description": "Reference of a port order - to use when you contact our support or our porting teams. Eg: PRT25168668606830"
+          },
+          "supportTicket": {
+            "$ref": "#/components/schemas/SupportTicket"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "MISSING_DATA",
+              "SUBMITTED",
+              "CHANGES_ORDERED",
+              "PENDING_CARRIER_APPROVAL",
+              "ACCEPTED_BY_CARRIER",
+              "READY_FOR_CONFIGURATION",
+              "COMPLETED",
+              "REJECTED",
+              "PROCESSING_CANCELLATION",
+              "CANCELED",
+              "DRAFT"
+            ],
+            "description": "Status of a port-in order."
+          },
+          "currency": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 3,
+            "description": "Currency of port-in fees."
+          },
+          "preferredPortInDate": {
+            "type": "string",
+            "minLength": 1,
+            "format": "date-time",
+            "description": "Specific date you would prefer the port-into be completed."
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation date of the port-in order."
+          },
+          "lastUpdate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update date of the port-in order."
+          },
+          "submittedDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp representing when the order was submitted - only present when relevant."
+          },
+          "documents": {
+            "type": "array",
+            "description": "Required documents for a port-in order.",
+            "items": {
+              "$ref": "#/components/schemas/Document"
+            }
+          },
+          "totalFees": {
+            "$ref": "#/components/schemas/Fees"
+          }
+        },
+        "required": [
+          "currentProviderName",
+          "numbersToPort",
+          "numbersOwner"
+        ]
+      },
+      "NumbersOwner": {
+        "description": "Owner of the numbers.",
+        "type": "object",
+        "title": "NumbersOwner",
+        "examples": [
+          {
+            "ownership": "BUSINESS",
+            "complementaryAddressInformation": "In attention to Mr. Smith",
+            "buildingNumber": "489",
+            "streetName": "Rue Vanderkindere",
+            "city": "Brussels",
+            "countryCodeA3": "BEL",
+            "postalCode": "1050",
+            "companyName": "Voxbone",
+            "companyVatNumber": "BE0478928788"
+          }
+        ],
+        "properties": {
+          "ownership": {
+            "type": "string",
+            "minLength": 1,
+            "enum": [
+              "BUSINESS",
+              "PERSONAL"
+            ],
+            "description": "Type of ownership of the number to be ported."
+          },
+          "complementaryAddressInformation": {
+            "type": "string",
+            "description": "Is used to indicate \"In attention to someone\"."
+          },
+          "floor": {
+            "description": "Building number for the end user's address.",
+            "type": "number"
+          },
+          "buildingIdentifier": {
+            "type": [
+              "number",
+              "string"
+            ],
+            "description": "Building number for the end user's address. E.g. Can put 54 or 54A."
+          },
+          "buildingName": {
+            "type": "string",
+            "description": "Building number for the end user's address."
+          },
+          "streetName": {
+            "type": "string",
+            "description": "Street name for the end user's address."
+          },
+          "streetIdentifier": {
+            "type": "string",
+            "description": "Street code for the end user's address. E.g. addresses in Japan"
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "Postal code for the end user's address."
+          },
+          "municipalityIdentifier": {
+            "type": "string",
+            "description": "Municipality code for the end user's address. E.g. 50026 for Pisa in Italia."
+          },
+          "city": {
+            "type": "string",
+            "minLength": 1,
+            "description": "City name for the end user's address."
+          },
+          "state": {
+            "type": "string",
+            "description": "State of the end user's address."
+          },
+          "countryCodeA3": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 3,
+            "description": "ISO 3166-1 standard 3-letter country code."
+          },
+          "title": {
+            "type": "string",
+            "enum": [
+              "MR",
+              "MS"
+            ],
+            "description": "Title of the end user or company legal representative."
+          },
+          "firstName": {
+            "type": "string",
+            "minLength": 1,
+            "description": "First name of personal end user or company legal representative."
+          },
+          "middleName": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Middle name of the personal end user or company legal representative."
+          },
+          "lastName": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Surname of personal end user or company legal representative."
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Date of birth of personal end user or company legal representative."
+          },
+          "companyName": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Registered company name. Only present for business ownership type."
+          },
+          "companyVatNumber": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Registered VAT number - only present for business ownership."
+          },
+          "companyRegistrationNumber": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Registration number - only present for business ownership."
+          },
+          "mailBox": {
+            "$ref": "#/components/schemas/MailBox"
+          }
+        },
+        "required": [
+          "ownership",
+          "city",
+          "countryCodeA3"
+        ]
+      },
+      "MailBox": {
+        "description": "Virtual or physical mailbox of the owner of the number.",
+        "type": "object",
+        "title": "MailBox",
+        "examples": [],
+        "properties": {
+          "buildingIdentifier": {
+            "type": [
+              "number",
+              "string"
+            ],
+            "description": "Building number for the end user's mailbox. E.g. Can put 54 or 54A."
+          },
+          "buildingName": {
+            "type": "string",
+            "description": "Building number for the end user's mailbox."
+          },
+          "complementaryAddressInformation": {
+            "type": "string",
+            "description": "Is used to indicate \"In attention to someone\"."
+          },
+          "streetName": {
+            "type": "string",
+            "description": "Street name for the end user's mailbox."
+          },
+          "streetIdentifier": {
+            "type": "string",
+            "description": "Street code for the end user's mailbox. E.g. addresses in Japan"
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "Postal code for the end user's mailbox."
+          },
+          "municipalityIdentifier": {
+            "type": "string",
+            "description": "Municipality code for the end user's mailbox. E.g. 50026 for Pisa in Italia."
+          },
+          "city": {
+            "type": "string",
+            "description": "City name for the end user's mailbox.",
+            "minLength": 1
+          },
+          "state": {
+            "type": "string",
+            "description": "State of the end user's mailbox."
+          },
+          "countryCodeA3": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 3,
+            "description": "ISO 3166-1 standard 3-letter country code."
+          }
+        },
+        "required": [
+          "city",
+          "countryCodeA3"
+        ]
+      },
+      "PhoneNumberDetails": {
+        "description": "Telephone numbers to port and related porting details",
+        "type": "object",
+        "examples": [],
+        "properties": {
+          "phoneNumber": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Phone number in E164 format that the portability check response is executed against. E.g: +19995550123, +33123456789."
+          },
+          "type": {
+            "type": "string",
+            "minLength": 1,
+            "enum": [
+              "GEOGRAPHIC",
+              "SHARED_COST",
+              "TOLL_FREE",
+              "NATIONAL",
+              "SPECIAL",
+              "MOBILE",
+              "INUM"
+            ],
+            "description": "Type of phone number. E.g. Geographic, Toll-free."
+          },
+          "countryCodeA3": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 3,
+            "description": "ISO 3166-1 standard 3-letter country code."
+          },
+          "countryCallingCode": {
+            "type": "integer",
+            "description": "Country calling code. E.g. 44 for UK"
+          },
+          "areaCode": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Phone area code."
+          },
+          "leadTime": {
+            "type": "number",
+            "description": "Amount of time it takes to complete a order in a happy flow from the moment of submission."
+          },
+          "internalMigration": {
+            "type": "boolean",
+            "description": "Indicates if the port is an internal migration (means the number is already in our network)."
+          },
+          "fees": {
+            "$ref": "#/components/schemas/Fees"
+          },
+          "portable": {
+            "type": "boolean",
+            "description": "Indicates if the number is portable."
+          },
+          "notPortableReason": {
+            "$ref": "#/components/schemas/Error"
+          }
+        }
+      },
+      "Fees": {
+        "description": "Fees that you have to pay for a number or a set of numbers. The currency will depend on your configuration.",
+        "type": "object",
+        "examples": [
+          {
+            "portFees": 1,
+            "cancellationFees": 2.3,
+            "didMonthlyFees": 5.7
+          }
+        ],
+        "properties": {
+          "portFees": {
+            "type": "number",
+            "description": "Fees for porting-in a number or a set of numbers."
+          },
+          "cancellationFees": {
+            "type": "number",
+            "description": "Cancellation fees of a submitted number or a set of numbers."
+          },
+          "phoneNumberMonthlyFees": {
+            "type": "number",
+            "description": "Monthly recurring charge for owning a number or a set of numbers."
+          }
+        },
+        "required": [
+          "portFees",
+          "cancellationFees",
+          "phoneNumberMonthlyFees"
+        ]
+      },
+      "Link": {
+        "description": "All actions that you can do for a port-in order, document or a support ticket or a comment in a support ticket.",
+        "type": "object",
+        "examples": [
+          {
+            "rel": "cancel",
+            "href": "https://api.preprod.voxbone.com/beta/porting-api/251593",
+            "type": "DELETE"
+          }
+        ],
+        "properties": {
+          "rel": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Reference of the action."
+          },
+          "href": {
+            "type": "string",
+            "minLength": 1,
+            "format": "uri",
+            "description": "Url to perform the action."
+          },
+          "type": {
+            "type": "string",
+            "minLength": 1,
+            "enum": [
+              "GET",
+              "DELETE"
+            ],
+            "description": "Type of action"
+          }
+        },
+        "required": [
+          "rel",
+          "href",
+          "type"
+        ]
+      },
+      "Document": {
+        "description": "Required documents for porting-in a number or a set of numbers.",
+        "type": "object",
+        "examples": [
+          {
+            "type": "LOA",
+            "description": "Letter of authority",
+            "status": "PENDING_VALIDATION",
+            "documentId": 255005
+          }
+        ],
+        "properties": {
+          "documentId": {
+            "type": "integer",
+            "description": "Generated ID for an uploaded document."
+          },
+          "type": {
+            "type": "string",
+            "minLength": 1,
+            "enum": [
+              "LOA",
+              "COB",
+              "POA",
+              "LEG_ID",
+              "COURT",
+              "SIG_ID",
+              "TRADE",
+              "TAX",
+              "OFF_SGN",
+              "DIREC",
+              "INCORP",
+              "CSR",
+              "FORM"
+            ],
+            "description": "Type of a document."
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "format": "binary",
+            "description": "Description of a document."
+          },
+          "content": {
+            "type": "string",
+            "format": "binary",
+            "description": "Content of a file in binary"
+          },
+          "status": {
+            "type": "string",
+            "minLength": 1,
+            "enum": [
+              "PENDING_VALIDATION",
+              "VALID",
+              "INVALID"
+            ],
+            "description": "Status of a document - any new uploaded document will be marked as PENDING_VALIDATION and needed to be validated by our porting team."
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "Comment": {
+        "title": "Comment",
+        "type": "object",
+        "examples": [
+          {
+            "id": "R6776898",
+            "dateCreated": "2021-11-20",
+            "description": "Hi there, The cancellation request for your port has been successfully processed."
+          }
+        ],
+        "description": "Comments from porting team.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Id of the comment."
+          },
+          "dateCreated": {
+            "type": "string",
+            "description": "Created date of the comment.",
+            "format": "date-time"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the comment."
+          }
+        },
+        "required": [
+          "id",
+          "dateCreated",
+          "description"
+        ]
+      },
+      "SupportTicket": {
+        "title": "SupportTicket",
+        "type": "object",
+        "examples": [
+          {
+            "link": {
+              "rel": "self",
+              "href": "https://support.voxbone.com/hc/en-us/requests/295782",
+              "type": "GET"
+            },
+            "comments": [
+              {
+                "id": "R6776898",
+                "dateCreated": "2021-11-20",
+                "description": "Hi there, The cancellation request for your port has been successfully processed."
+              }
+            ]
+          }
+        ],
+        "description": "Support ticket associated to the port-in order.",
+        "properties": {
+          "link": {
+            "$ref": "#/components/schemas/Link"
+          }
+        }
+      },
+      "BusinessRequirement": {
+        "description": "All requirements (documents and end user's information) customers have to provide for porting-in a number.",
+        "type": "object",
+        "examples": [],
+        "title": "BusinessRequirement",
+        "properties": {
+          "complementaryAddressInformation": {
+            "type": "string",
+            "description": "Is used to indicate \"In attention to someone\"."
+          },
+          "floor": {
+            "description": "Building number for the end user's address.",
+            "type": "number"
+          },
+          "buildingIdentifier": {
+            "type": [
+              "number",
+              "string"
+            ],
+            "description": "Building number for the end user's address. E.g. Can put 54 or 54A."
+          },
+          "buildingName": {
+            "type": "string",
+            "description": "Building number for the end user's address."
+          },
+          "streetName": {
+            "type": "string",
+            "description": "Street name for the end user's address."
+          },
+          "streetIdentifier": {
+            "type": "string",
+            "description": "Street code for the end user's address. E.g. addresses in Japan"
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "Postal code for the end user's address."
+          },
+          "municipalityIdentifier": {
+            "type": "string",
+            "description": "Municipality code for the end user's address. E.g. 50026 for Pisa in Italia."
+          },
+          "city": {
+            "type": "string",
+            "minLength": 1,
+            "description": "City name for the end user's address."
+          },
+          "state": {
+            "type": "string",
+            "description": "State of the end user's address."
+          },
+          "countryCodeA3": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 3,
+            "description": "ISO 3166-1 standard 3-letter country code."
+          },
+          "title": {
+            "type": "string",
+            "enum": [
+              "MR",
+              "MS"
+            ],
+            "description": "Title of the end user or company legal representative."
+          },
+          "firstName": {
+            "type": "string",
+            "minLength": 1,
+            "description": "First name of personal end user or company legal representative."
+          },
+          "middleName": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Middle name of the personal end user or company legal representative."
+          },
+          "lastName": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Surname of personal end user or company legal representative."
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Date of birth of personal end user or company legal representative."
+          },
+          "companyName": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Registered company name. Only present for business ownership type."
+          },
+          "companyVatNumber": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Registered VAT number - only present for business ownership."
+          },
+          "companyRegistrationNumber": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Registration number - only present for business ownership."
+          },
+          "mailBox": {
+            "$ref": "#/components/schemas/MailBox"
+          },
+          "documents": {
+            "type": "array",
+            "uniqueItems": true,
+            "minItems": 1,
+            "description": "Required documents.",
+            "items": {
+              "$ref": "#/components/schemas/DocumentRequirement"
+            }
+          }
+        }
+      },
+      "PersonalRequirement": {
+        "description": "All requirements (documents and end user's information) customers have to provide for porting-in a number.",
+        "type": "object",
+        "examples": [],
+        "properties": {
+          "complementaryAddressInformation": {
+            "type": "string",
+            "description": "Is used to indicate \"In attention to someone\"."
+          },
+          "floor": {
+            "description": "Building number for the end user's address.",
+            "type": "number"
+          },
+          "buildingIdentifier": {
+            "type": [
+              "number",
+              "string"
+            ],
+            "description": "Building number for the end user's address. E.g. Can put 54 or 54A."
+          },
+          "buildingName": {
+            "type": "string",
+            "description": "Building number for the end user's address."
+          },
+          "streetName": {
+            "type": "string",
+            "description": "Street name for the end user's address."
+          },
+          "streetIdentifier": {
+            "type": "string",
+            "description": "Street code for the end user's address. E.g. addresses in Japan"
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "Postal code for the end user's address."
+          },
+          "municipalityIdentifier": {
+            "type": "string",
+            "description": "Municipality code for the end user's address. E.g. 50026 for Pisa in Italia."
+          },
+          "city": {
+            "type": "string",
+            "minLength": 1,
+            "description": "City name for the end user's address."
+          },
+          "state": {
+            "type": "string",
+            "description": "State of the end user's address."
+          },
+          "countryCodeA3": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 3,
+            "description": "ISO 3166-1 standard 3-letter country code."
+          },
+          "title": {
+            "type": "string",
+            "enum": [
+              "MR",
+              "MS"
+            ],
+            "description": "Title of the end user or company legal representative."
+          },
+          "firstName": {
+            "type": "string",
+            "minLength": 1,
+            "description": "First name of personal end user or company legal representative."
+          },
+          "middleName": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Middle name of the personal end user or company legal representative."
+          },
+          "lastName": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Surname of personal end user or company legal representative."
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Date of birth of personal end user or company legal representative."
+          },
+          "mailBox": {
+            "$ref": "#/components/schemas/MailBox"
+          },
+          "documents": {
+            "type": "array",
+            "uniqueItems": true,
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/DocumentRequirement"
+            }
+          }
+        }
+      },
+      "DocumentRequirement": {
+        "description": "Documents that customers have to provide for porting-in a number.",
+        "type": "object",
+        "examples": [],
+        "properties": {
+          "type": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sourceDocument": {
+            "type": "string",
+            "minLength": 1
+          },
+          "supportedFileTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "type",
+          "description",
+          "supportedFileTypes"
+        ]
+      },
+      "Error": {
+        "description": "Generated error due to a bad request.",
+        "type": "object",
+        "examples": [
+          {
+            "source": {
+              "field": "numberToPort"
+            },
+            "description": "Invalid phone number: jnk",
+            "code": "XXX-XXXX"
+          }
+        ],
+        "properties": {
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Description of the issue."
+          },
+          "code": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Error code."
+          },
+          "source": {
+            "type": "object",
+            "description": "Contains references to the source of the error,",
+            "properties": {
+              "field": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Missing field or field having the issue."
+              }
+            }
+          }
+        },
+        "required": [
+          "description"
+        ]
+      },
+      "Pagination": {
+        "title": "Pagination",
+        "type": "object",
+        "properties": {
+          "nextToken": {
+            "type": "number",
+            "description": "Represents going to the “next” page. This parameter will be absent if there isn't any next pagination."
+          },
+          "previousToken": {
+            "type": "number",
+            "description": "Represents going to the “previous” page. This parameter will be absent if there isn't any previous pagination."
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
 }
