@@ -52,6 +52,7 @@ module.exports = {
                         "numbers/manageNumberFeatures",
                         "numbers/searchNumbers",
                         "numbers/disconnectNumbers",
+                        "numbers/bulkportins",
                         "numbers/lookupNumbers",
                         "numbers/downloadingReports",
                     ],
