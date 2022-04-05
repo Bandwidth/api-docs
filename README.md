@@ -2,7 +2,10 @@
 
 Welcome to the home of Bandwidth's API documentation! This repo contains the OpenAPI specifications that power Bandwidth's API references and SDKs, and will eventually replace https://github.com/bandwidth/bandwidth.github.io.
 
-# THIS REPOSITORY IS NO LONGER THE SOURCE OF TRUTH FOR EXTERNAL API SPEC FILES OR CODE SNIPPETS. PLEASE DO NOT MAKE CHANGES TO EITHER OF THOSE IN THIS REPOSITORY. Api specs now reside in the api-specs repository and code snippets in the api-docs-code-snippets repository.
+| ⚠️ Please do not modify API Specs in this repository ⚠️ | 
+|:---:|
+
+API specs now reside in the [api-specs](https://github.com/Bandwidth/api-specs) repository and code snippets in the [api-docs-code-snippets](https://github.com/Bandwidth/api-docs-code-snippets) repository.
 
 ## Table of Contents
 
@@ -50,7 +53,7 @@ nmp run serve    # host the static site in the /site/build folder
 
 ## Adding a New Spec
 
-To add a new spec, please head over to our [api-specs](https://github.com/Bandwidth/api-specs) repository, as this is the source of truth for all of Bandwidth's internal and external API Specs. You may also follow the guide [here](https://bandwidth-jira.atlassian.net/wiki/spaces/DX/pages/4098359409/How+to+Update+API+Specifications+and+Contribute+to+Developer+Documentation) that exaplains in detail how to add new spec files to the `api-specs` repo.
+To add a new spec (or update an existing spec), please head over to our [api-specs](https://github.com/Bandwidth/api-specs) repository, as this is the source of truth for all of Bandwidth's internal and external API Specs. You may also follow the guide [here](https://bandwidth-jira.atlassian.net/wiki/spaces/DX/pages/4098359409/How+to+Update+API+Specifications+and+Contribute+to+Developer+Documentation) that exaplains in detail how to add new spec files to the `api-specs` repo.
 
 ### Versioned Specs 
 
