@@ -2,7 +2,7 @@
 
 Welcome to the home of Bandwidth's API documentation! This repo contains the OpenAPI specifications that power Bandwidth's API references and SDKs, and will eventually replace https://github.com/bandwidth/bandwidth.github.io.
 
-# **THIS REPOSITORY IS NO LONGER THE SOURCE OF TRUTH FOR API SPEC FILES OR CODE SNIPPETS. PLEASE DO NOT MAKE CHANGES TO EITHER OF THOSE IN THIS REPOSITORY. Api specs now reside in the api-specs repository and code snippets in the api-docs-code-snippets repository.
+# THIS REPOSITORY IS NO LONGER THE SOURCE OF TRUTH FOR API SPEC FILES OR CODE SNIPPETS. PLEASE DO NOT MAKE CHANGES TO EITHER OF THOSE IN THIS REPOSITORY. Api specs now reside in the api-specs repository and code snippets in the api-docs-code-snippets repository.
 
 ## Table of Contents
 
