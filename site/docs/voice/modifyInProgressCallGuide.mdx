@@ -1,0 +1,522 @@
+---
+id: modifyInProgressCallGuide
+title: How to Modify Calls in Progress
+slug: /voice/guides/modifyInProgressCall
+description: How to modify calls with a post request
+keywords:
+  - bandwidth
+  - voice
+  - modify
+  - tutorial
+hide_title: false
+image: ../../static/img/bandwidth-logo.png
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+In this guide we will show you how to modify the BXML for a call already in progress. Please ensure you have followed our earlier guide on [how to make an outbound call](/docs/voice/guides/outboundCall) with Bandwidth. It is recommended to use a request manager like [`POSTMAN`](https://www.postman.com/) for this tutorial, but the SDKs are also capable.
+
+Bandwidth’s [`/calls`](/apis/voice/#operation/createCall) API provides the capability of modifying the call flow by sending new BXML to an active call. An example of when you may want to modify an active call is an inbound call center application where you place a customer in a “waiting room” by playing hold music while waiting for an agent to become available. Once an agent becomes available you can send replacement BXML for the call to be transferred to the available agent. As an enhancement you could send BXML in the interim to indicate to the caller the estimated time until an agent is available by playing text to speech and resuming the hold music.
+
+## Modify a Live Call
+
+You can modify both an inbound or outbound live call by providing a new set of instructions via BXML. Please note that modifying a call will end any verbs currently executing and will skip any subsequent ones.
+
+You will need to interrupt an active call by calling our REST API endpoint. In this example, we will create an outbound call that pauses for 1 minute. This will give you time to copy the `callId` and modify the call.
+
+<Tabs
+groupId="bxml"
+defaultValue="xml"
+values={[
+    { label: 'XML', value: 'xml', },
+    { label: 'Java', value: 'java', },
+    { label: 'C#', value: 'csharp', },
+    { label: 'Ruby', value: 'ruby', },
+    { label: 'NodeJS', value: 'nodejs', },
+    { label: 'Python', value: 'python', },
+    { label: 'PHP', value: 'php', },
+]
+}>
+<TabItem value="xml">
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <Pause duration="60" />
+</Response>
+```
+
+</TabItem>
+<TabItem value="java">
+
+```java
+Pause pause = Pause.builder()
+.duration(60.0)
+.build();
+
+Response response = Response.builder().build()
+.add(pause);
+
+System.out.println(response.toBXML());
+```
+
+</TabItem>
+<TabItem value="csharp">
+
+```csharp
+Pause pause = new Pause
+{
+    Duration = 60
+};
+
+Response response = new Response();
+response.Add(pause);
+
+Console.WriteLine(response.ToBXML());
+```
+
+</TabItem>
+<TabItem value="ruby">
+
+```ruby
+pause = Bandwidth::Voice::Pause.new({
+    :duration => 60
+})
+
+response = Bandwidth::Voice::Response.new()
+response.push(pause)
+
+puts response.to_bxml()
+```
+
+</TabItem>
+<TabItem value="nodejs">
+
+```js
+const pause = new Pause({
+    duration: 60
+});
+
+const response = new Response(pause);
+
+console.log(response.toBxml());
+```
+
+</TabItem>
+<TabItem value="python">
+
+```python
+pause = Pause(duration=60)
+
+response = Response()
+response.add_verb(pause)
+
+print(response.to_bxml())
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+$pause = new BandwidthLib\Voice\Bxml\Pause();
+$pause->duration(60);
+
+$response = new BandwidthLib\Voice\Bxml\Response();
+$response->addVerb($pause);
+
+echo $response->toBxml();
+```
+
+</TabItem>
+</Tabs>
+
+When the outbound call is placed, you will need to make a note of the `callId` for this call as it will be used to modify the active call.
+
+### API for Call Modification
+
+In this example, the BXML that is in the `redirectUrl` will immediately replace all verbs present on the current call with the new text-to-speech sentence.
+
+<Tabs
+    groupId="bxml"
+    defaultValue="payload"
+    values={[
+        { label: 'Request Payload', value: 'payload', },
+        { label: 'cURL', value: 'curl', },
+        { label: 'Java', value: 'java', },
+        { label: 'C#', value: 'csharp', },
+        { label: 'Ruby', value: 'ruby', },
+        { label: 'NodeJS', value: 'nodejs', },
+        { label: 'Python', value: 'python', },
+        { label: 'PHP', value: 'php', },
+    ]
+}>
+<TabItem value="payload">
+
+```payload
+//Note: remember to add auth for your application if needed!
+
+POST https://voice.bandwidth.com/api/v60/accounts/{YOUR_ACCOUNT_ID}/calls/{THE_CALL_ID}
+{
+    "redirectUrl": "/goodbyeMessage",
+}
+```
+
+>/goodbyeMessage should serve the following:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+   <SpeakSentence>
+      Thank you for holding! Goodbye!
+   </SpeakSentence>
+</Response>
+```
+
+</TabItem>
+<TabItem value="curl">
+
+```cURL
+//Note: remember to add auth for your application if needed!
+
+curl 'https://voice.bandwidth.com/api/v60/accounts/{YOUR_ACCOUNT_ID}/calls/{THE_CALL_ID}' \
+    -X POST \
+    -U {BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD} \
+    -H 'Content-Type: application/json' \
+    -d '{
+        "redirectUrl": "/goodbyeMessage",
+    }'
+```
+
+>/goodbyeMessage should serve the following:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+   <SpeakSentence>
+      Thank you for holding! Goodbye!
+   </SpeakSentence>
+</Response>
+```
+
+</TabItem>
+<TabItem value="java">
+
+```java
+import com.bandwidth.BandwidthClient;
+import com.bandwidth.http.response.ApiResponse;
+import com.bandwidth.voice.models.ApiModifyCallRequest;
+import com.bandwidth.voice.models.StateEnum;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
+public class Sample {
+    public static final String USERNAME = System.getenv("BW_USERNAME");
+    public static final String PASSWORD = System.getenv("BW_PASSWORD");
+    public static final String ACCOUNT_ID = System.getenv("BW_ACCOUNT_ID");
+
+    public static void main(String[] args) {
+        String callId = {THE_CALL_ID};
+
+        BandwidthClient client = new BandwidthClient.Builder()
+                .voiceBasicAuthCredentials(USERNAME, PASSWORD)
+                .build();
+
+        ApiModifyCallRequest request = new ApiModifyCallRequest();
+        request.setRedirectUrl("/goodbyeMessage");
+        //remember to add auth for your application if needed!
+
+    try {
+            CompletableFuture<ApiResponse<Void>> completableFuture = client.getVoiceClient().getAPIController().modifyCallAsync(ACCOUNT_ID, callId, request);
+            System.out.println(completableFuture.get().getResult());
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
+```
+
+>/goodbyeMessage should serve the following:
+
+```java
+//Note: This application is pseudocoded. Your implementation will look different
+
+@Post /goodbyeMessage endpoint
+public String goodbyeMessage() {
+    SpeakSentence speakSentence = SpeakSentence.builder()
+        .text("Thank you for holding! Goodbye!")
+        .build();
+
+    Response response = Response.builder().build()
+            .add(speakSentence);
+    return response.toBXML()
+}
+```
+
+</TabItem>
+<TabItem value="csharp">
+
+```csharp
+using System;
+using System.Threading.Tasks;
+using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
+using Bandwidth.Standard.Voice.Models;
+
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        var username = System.Environment.GetEnvironmentVariable("BW_USERNAME");
+        var password = System.Environment.GetEnvironmentVariable("BW_PASSWORD");
+        var accountId = System.Environment.GetEnvironmentVariable("BW_ACCOUNT_ID");
+
+        var callId = {CALL_ID}
+
+
+        var client = new BandwidthClient.Builder()
+            .VoiceBasicAuthCredentials(username, password)
+            .Build();
+
+        var request = new ModifyCallRequest()
+        {
+            State = StateEnum.Active,
+            RedirectUrl = "/goodbyeMessage"
+            //remember to add auth for your application if needed!
+        };
+
+        try
+        {
+            await client.Voice.APIController.ModifyCallAsync(accountId, callId, request);
+        }
+        catch (ApiException e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+}
+```
+
+>/goodbyeMessage should serve the following:
+
+```csharp
+//Note: This application is pseudocoded. Your implementation will look different
+
+@Post [/goodbyeMessage]
+public ActionResult goodbyeMessage() {
+    SpeakSentence speakSentence = new SpeakSentence
+    {
+        Sentence = "Thank you for holding! Goodbye!"
+    };
+    Response response = new Response();
+    response.Add(speakSentence);
+    return new OkObjectResult(response.ToBXML());
+}
+```
+
+</TabItem>
+<TabItem value="ruby">
+
+```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
+ACCOUNT_ID = ENV['BW_ACCOUNT_ID']
+
+bandwidth_client = Bandwidth::Client.new(
+    voice_basic_auth_user_name: ENV['BW_USERNAME'],
+    voice_basic_auth_password: ENV['BW_PASSWORD']
+)
+
+bandwidth_client = Bandwidth::Client.new(
+    voice_basic_auth_user_name: "api-username",
+    voice_basic_auth_password: "api-password"
+)
+
+voice_client = bandwidth_client.voice_client.client
+
+body = ModifyCallRequest.new
+body.redirect_url = "/goodbyeMessage"
+body.state = "active"
+#remember to add auth for your application if needed!
+
+call_id = {CALL_ID}
+
+begin
+    voice_client.modify_call(ACCOUNT_ID, call_id, body)
+rescue APIException => e
+    puts e.response_code
+end
+```
+
+>/goodbyeMessage should serve the following:
+
+```ruby
+#Note: This application is pseudocoded. Your implementation will look different
+
+post '/goodbyeMessage' do:
+    speak_sentence = Bandwidth::Voice::SpeakSentence.new({
+        :sentence => "Thank you for holding! Goodbye!"
+    })
+    response = Bandwidth::Voice::Response.new()
+    response.push(speak_sentence)
+    return response.to_bxml()
+
+```
+
+</TabItem>
+<TabItem value="nodejs">
+
+```js
+import { Client, ApiController } from '@bandwidth/voice';
+
+const BW_USERNAME = process.env["BW_USERNAME"];
+const BW_PASSWORD = process.env["BW_PASSWORD"];
+const BW_ACCOUNT_ID = process.env["BW_ACCOUNT_ID"];
+
+const client = new Client({
+    basicAuthUserName: BW_USERNAME,
+    basicAuthPassword: BW_PASSWORD
+});
+
+const controller = new ApiController(client);
+
+const callId = {CALL_ID}
+
+const modifyCall = async function() {
+  try {
+      const response = await controller.getCallState(BW_ACCOUNT_ID, callId, {
+        state: "active",
+        redirectUrl: "/goodbyeMessage"
+        //remember to add auth for your application if needed!
+        });
+      console.log(response)
+  } catch(error) {
+      console.error(error);
+  }
+}
+
+modifyCall();
+
+```
+
+>/goodbyeMessage should serve the following:
+
+```js
+//Note: This application is pseudocoded. Your implementation will look different
+
+@post ['/goodbyeMessage'] (request, request_response) => {
+    const speakSentence = new SpeakSentence({
+        sentence: "Thank you for holding! Goodbye!"
+    });
+    const response = new Response(speakSentence);
+    console.log(response.toBxml());
+    request_response.status(200).send(response.toBxml());
+}
+```
+
+</TabItem>
+<TabItem value="python">
+
+```python
+from bandwidth.bandwidth_client import BandwidthClient
+from bandwidth.voice.models.create_call_request import CreateCallRequest
+from bandwidth.exceptions.api_exception import APIException
+
+import os
+
+BW_USERNAME = os.environ["BW_USERNAME"]
+BW_PASSWORD = os.environ["BW_PASSWORD"]
+BW_ACCOUNT_ID = os.environ["BW_ACCOUNT_ID"]
+
+bandwidth_client = BandwidthClient(
+    voice_basic_auth_user_name=BW_USERNAME,
+    voice_basic_auth_password=BW_PASSWORD
+)
+voice_client = bandwidth_client.voice_client.client
+
+call_id = {CALL_ID}
+
+body = ModifyCallRequest()
+body.redirect_url = "/goodbyeMessage"
+body.state = "active"
+#remember to add auth for your application if needed!
+
+try:
+    voice_client.modify_call(BW_ACCOUNT_ID, call_id, body)
+except APIException as e:
+    print(e.response_code)
+```
+
+>/goodbyeMessage should serve the following:
+
+```python
+#Note: This application is pseudocoded. Your implementation will look different
+
+@post '/goodbyeMessage'
+def goodbyeMessage():
+    speak_sentence = SpeakSentence(
+        sentence="Thank you for holding! Goodbye!"
+    )
+    response = Response()
+    response.add_verb(speak_sentence)
+    return response.to_bxml()
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+require "vendor/autoload.php";
+
+$BW_USERNAME = getenv("BW_USERNAME");
+$BW_PASSWORD = getenv("BW_PASSWORD");
+$BW_ACCOUNT_ID = getenv("BW_ACCOUNT_ID");
+
+$config = new BandwidthLib\Configuration(
+    array(
+        'voiceBasicAuthUserName' => $BW_USERNAME,
+        'voiceBasicAuthPassword' => $BW_PASSWORD,
+    )
+);
+$client = new BandwidthLib\BandwidthClient($config);
+
+$voiceClient = $client->getVoice()->getClient();
+
+$callId = {CALL_ID};
+
+$body = new BandwidthLib\Voice\Models\ModifyCallRequest();
+$body->redirectUrl = "/goodbyeMessage";
+$body->state = "active";
+#remember to add auth for your application if needed!
+
+try {
+    $voiceClient->modifyCall($BW_ACCOUNT_ID, $callId, $body);
+} catch (BandwidthLib\APIException $e) {
+    print_r($e->getResponseCode());
+}
+```
+
+>/goodbyeMessage should serve the following:
+
+```php
+#Note: This application is pseudocoded. Your implementation will look different
+
+@post('/goodbyeMessage)
+function goodbyeMessage(Request $request, Response $response) {
+    $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Thank you for holding! Goodbye!");
+    $response = new BandwidthLib\Voice\Bxml\Response();
+    $response->addVerb($speakSentence);
+    return $response->toBxml();
+}
+```
+
+</TabItem>
+</Tabs>
+
+## Where to next?
+
+Now that you have learnt how to modify existing calls in progress, check out some of the available actions in the following guides:
+* [How to transfer an inbound call](/docs/voice/guides/transfer)
