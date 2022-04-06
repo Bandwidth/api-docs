@@ -44,7 +44,6 @@ module.exports = {
                     type: "category",
                     label: "Guides and Tutorials",
                     items: [
-                        "numbers/applications",
                         "numbers/searchingNumbers",
                         "numbers/orderingNumbers",
                         "numbers/portingNumbers",
