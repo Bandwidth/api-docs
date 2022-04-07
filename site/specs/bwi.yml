@@ -1489,6 +1489,47 @@ paths:
       Allows you to list your carts and retrieve their attributes
       (cartIdentifier, customerReference, description), and their content (list
       of products - orderProducts - that are currently in the cart).
+  /ordering/cart/{cartIdentifier}/product/{orderProductId}:
+    post:
+      tags:
+        - Ordering
+      summary: Remove product(s) from cart or change quantity
+      description: Set quantity to 0 if you want to remove the product from the cart.
+      operationId: removeFromCart
+      parameters:
+        - name: cartIdentifier
+          in: path
+          description: The identifier of the cart.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: orderProductId
+          in: path
+          description: The identifier of the product.
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/RemoveFromCartRequest'
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            text/xml:
+              schema:
+                $ref: '#/components/schemas/RemoveFromCartResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RemoveFromCartResponse'
+      x-codegen-request-body-name: body
+    x-summary: Manage product quantities in existing cart
+    x-description: Remove a product from your cart, or change the ordered quantity.
   /ordering/cart/{cartIdentifier}:
     get:
       tags:
@@ -1575,6 +1616,7 @@ paths:
             schema:
               $ref: '#/components/schemas/AddToCartRequest'
         required: false
+        description: ''
       responses:
         '200':
           description: successful operation
@@ -1582,6 +1624,7 @@ paths:
             text/xml:
               schema:
                 $ref: '#/components/schemas/AddToCartResponse'
+              examples: {}
             application/json:
               schema:
                 $ref: '#/components/schemas/AddToCartResponse'
@@ -1591,47 +1634,6 @@ paths:
       Allows you to add items (orderProducts) to a specific cart before checking
       out the cart. Different product types (DID, CAPACITY or CREDIT_PACKAGE)
       can be added into one single cart.
-  /ordering/cart/{cartIdentifier}/product/{orderProductId}:
-    post:
-      tags:
-        - Ordering
-      summary: Remove product(s) from cart or change quantity
-      description: Set quantity to 0 if you want to remove the product from the cart.
-      operationId: removeFromCart
-      parameters:
-        - name: cartIdentifier
-          in: path
-          description: The identifier of the cart.
-          required: true
-          schema:
-            type: integer
-            format: int32
-        - name: orderProductId
-          in: path
-          description: The identifier of the product.
-          required: true
-          schema:
-            type: integer
-            format: int32
-      requestBody:
-        content:
-          '*/*':
-            schema:
-              $ref: '#/components/schemas/RemoveFromCartRequest'
-        required: true
-      responses:
-        '200':
-          description: successful operation
-          content:
-            text/xml:
-              schema:
-                $ref: '#/components/schemas/RemoveFromCartResponse'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RemoveFromCartResponse'
-      x-codegen-request-body-name: body
-    x-summary: Manage product quantities in existing cart
-    x-description: Remove a product from your cart, or change the ordered quantity.
   /ordering/accountbalance:
     get:
       tags:
@@ -5414,6 +5416,7 @@ components:
       description: CreditPackageCartItem corresponds to prepaid credits.
     DidCartItem:
       type: object
+      description: DidCartItem corresponds to DIDs (VoxDID or Vox800).
       properties:
         didGroupId:
           type: integer
@@ -5426,7 +5429,13 @@ components:
           type: integer
           description: Amount of DIDs from that DID group.
           format: int32
-      description: DidCartItem corresponds to DIDs (VoxDID or Vox800).
+        telephoneNumberList:
+          default: -10000000
+          oneOf:
+            - properties:
+                <TelephoneNumber>   </TelephoneNumber>:
+                  type: number
+          type: object
     RemoveFromCartResponse:
       type: object
       properties:
@@ -5441,10 +5450,6 @@ components:
             - WARNING
             - ERROR
     RemoveFromCartRequest:
-      required:
-        - cartIdentifier
-        - orderProductId
-        - quantity
       type: object
       properties:
         cartIdentifier:
@@ -5463,6 +5468,17 @@ components:
             orderProductId will be removed from the Cart. Note that capacity
             must be removed in multiple of 10.
           format: int32
+        telephoneNumberList:
+          type: array
+          items:
+            type: object
+            properties:
+              <TelephoneNumber> </TelephoneNumber>:
+                type: integer
+      required:
+        - cartIdentifier
+        - orderProductId
+        - quantity
     AccountBalance:
       type: object
       properties:
@@ -5580,11 +5596,18 @@ components:
           description: Quantiy of product added to cart.
           format: int32
         didgroupId:
-          type: integer
           description: >-
             The ID of the DIDgroup that the DID added to the cart belongs to. A
             listDidGroup method is available to get information on DID groups.
           format: int32
+          type: integer
+        telephoneNumberList:
+          default: -10000000
+          type: array
+          items:
+            type: number
+            format: int32
+            default: -100000000
     ListOrderResponse:
       type: object
       properties:
