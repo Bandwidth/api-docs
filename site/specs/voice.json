@@ -341,7 +341,7 @@
                     "Calls"
                 ],
                 "summary": "Modify Call",
-                "description": "Interrupts and replaces an active call's BXML document. Two content types may be used: JSON, which allows hanging up the call or triggering a callback to fetch the new BXML; and XML, which allows sending the new BXML immediately.",
+                "description": "Interrupts and replaces an active call's BXML document.",
                 "operationId": "modifyCall",
                 "parameters": [
                     {
@@ -367,12 +367,6 @@
                         "application/json": {
                             "schema": {
                                 "$ref": "#/components/schemas/ModifyCallRequest"
-                            }
-                        },
-                        "application/xml": {
-                            "schema": {
-                                "type": "string",
-                                "description": "A valid BXML document to replace the call's current BXML."
                             }
                         }
                     }
@@ -483,6 +477,121 @@
                         "source": "require 'bandwidth'\n\ninclude Bandwidth\ninclude Bandwidth::Voice\n\nbandwidth_client = Bandwidth::Client.new(\n    voice_basic_auth_user_name: \"api-username\",\n    voice_basic_auth_password: \"api-password\"\n)\n\nvoice_client = bandwidth_client.voice_client.client\n\nbody = ModifyCallRequest.new\nbody.redirect_url = \"http://www.myapp.com/new\"\nbody.state = \"active\"\n\ncall_id = \"c-1234\"\n\nbegin\n    voice_client.modify_call(\"12345\", call_id, body)\nrescue APIException => e\n    puts e.response_code\nend\n"
                     }
                 ]
+            }
+        },
+		"/api/v2/accounts/{accountId}/calls/{callId}/bxml": {
+            "put": {
+                "tags": [
+                    "Calls"
+                ],
+                "summary": "Modify Call Bxml",
+                "description": "Interrupts and replaces an active call's BXML document, sending the new BXML.",
+                "operationId": "modifyCall",
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "callId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/xml": {
+                            "schema": {
+                                "type": "string",
+                                "description": "A valid BXML document to replace the call's current BXML."
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Call successfully modified"
+                    },
+                    "400": {
+                        "description": "Something's not quite right... Your request is invalid. Please fix it before trying again.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Your credentials are invalid. Please use your Bandwidth dashboard credentials to authenticate to the API."
+                    },
+                    "403": {
+                        "description": "User unauthorized to perform this action.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The resource specified cannot be found or does not belong to you.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "415": {
+                        "description": "We don't support that media type. If a request body is required, please send it to us as `application/json`.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "You're sending requests to this endpoint too frequently. Please slow your request rate down and try again.",
+                        "headers": {
+                            "Retry-After": {
+                                "description": "When you should try your request again",
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Something unexpected happened. Please try again.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/api/v2/accounts/{accountId}/statistics": {
@@ -2364,6 +2473,121 @@
                         "source": "require 'bandwidth'\n\ninclude Bandwidth\ninclude Bandwidth::Voice\n\nbandwidth_client = Bandwidth::Client.new(\n    voice_basic_auth_user_name: \"api-username\",\n    voice_basic_auth_password: \"api-password\"\n)\n\nvoice_client = bandwidth_client.voice_client.client\n\nbody = ModifyConferenceRequest.new\nbody.status = StatusEnum::ACTIVE\n\nconference_id = \"conf-1234\"\n\nbegin\n    voice_client.modify_conference(\"12345\", conference_id, body)\nrescue APIException => e\n    puts e.response_code\nend\n"
                     }
                 ]
+            }
+        },
+		"/api/v2/accounts/{accountId}/conferences/{conferenceId}/bxml": {
+            "put": {
+                "tags": [
+                    "Conferences"
+                ],
+                "summary": "Update Conference",
+                "description": "Modify the conference state.",
+                "operationId": "modifyConference",
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "conferenceId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/xml": {
+                            "schema": {
+                                "type": "string",
+                                "description": "A valid BXML document to replace the call's current BXML."
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": "Conference successfully modified"
+                    },
+                    "400": {
+                        "description": "Something's not quite right... Your request is invalid. Please fix it before trying again.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Your credentials are invalid. Please use your Bandwidth dashboard credentials to authenticate to the API."
+                    },
+                    "403": {
+                        "description": "User unauthorized to perform this action.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The resource specified cannot be found or does not belong to you.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "415": {
+                        "description": "We don't support that media type. If a request body is required, please send it to us as `application/json`.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "You're sending requests to this endpoint too frequently. Please slow your request rate down and try again.",
+                        "headers": {
+                            "Retry-After": {
+                                "description": "When you should try your request again",
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Something unexpected happened. Please try again.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiError"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/api/v2/accounts/{accountId}/conferences/{conferenceId}/members/{memberId}": {
