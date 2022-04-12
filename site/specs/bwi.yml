@@ -57,20 +57,32 @@ info:
 
     |:---:|:---:|:---|
 
+
     |`WS`|Our previous API version which uses basic authentication and is soon
+
     to be deprecated. We recommend switching to
+
     [v1](https://dev.bandwidth.com/apis/bwi/) as soon as possible.|[Click
+
     here](https://dev.bandwidth.com/apis/bwi/ws/)|
 
+
     |`v1`|Our current API, which includes number ordering, compliance,
+
     configuration and inventory management to support your Voice and SMS
+
     communications.|Currently viewing|
 
+
     |`v2`|Our next version cutting edge API including our Reporting API.|[Click
+
     here](https://dev.bandwidth.com/apis/bwi/v2/)|
 
+
     |`beta`|Early access to new, innovative APIs we are developing including CLI
+
     Whitelisting & Number Porting.|[Click
+
     here](https://dev.bandwidth.com/apis/bwi/beta/)|
 
 
@@ -1190,6 +1202,18 @@ paths:
             type: integer
             format: int32
           example: 20
+        - schema:
+            type: string
+          in: query
+          name: quantity
+          description: the quantity of numbers you want to return in your results
+        - schema:
+            type: string
+          in: query
+          name: consecutive
+          description: >-
+            Indicating if you want the numbers returned in your results to
+            consecutive only, or not
       responses:
         '200':
           description: successful operation
@@ -1197,6 +1221,75 @@ paths:
             text/xml:
               schema:
                 $ref: '#/components/schemas/ListDidGroupResponse'
+              examples:
+                example:
+                  value: |-
+                    {
+                      "didGroups": [
+                        {
+                          "didGroupId": 1073,
+                          "countryCodeA3": "NLD",
+                          "stateId": {},
+                          "didType": "GEOGRAPHIC",
+                          "cityName": "AMSTERDAM",
+                          "areaCode": "20",
+                          "rateCenter": {},
+                          "stock": 11,
+                          "setup100": 0,
+                          "monthly100": 110,
+                          "available": true,
+                          "regulationRequirement": {
+                            "addressType": "LOCAL",
+                            "proofRequired": false
+                          "telephoneNumberList":
+                              <TelephoneNumber>31208908042</TelephoneNumber>
+                              <TelephoneNumber>31208908043</TelephoneNumber>
+                              <TelephoneNumber>31208908044</TelephoneNumber>
+                              <TelephoneNumber>31208908045</TelephoneNumber>
+                              <TelephoneNumber>31208908046</TelephoneNumber>
+                              <TelephoneNumber>31208908047</TelephoneNumber>
+                              <TelephoneNumber>31208908048</TelephoneNumber>
+                              <TelephoneNumber>31208908049</TelephoneNumber>
+                              <TelephoneNumber>31208908050</TelephoneNumber>
+                              <TelephoneNumber>31208908051</TelephoneNumber>
+                              <TelephoneNumber>31208908052</TelephoneNumber>        
+                          },
+                          "features": [
+                            {
+                              "featureId": 6,
+                              "name": "VoxFax",
+                              "description": "VoxFax"
+                            },
+                            {
+                              "featureId": 50,
+                              "name": "Voice",
+                              "description": "Voice"
+                            },
+                            {
+                              "featureId": 51,
+                              "name": "VoxOUT International",
+                              "description": "Used to build the coverage pages in the public website"
+                            },
+                            {
+                              "featureId": 5,
+                              "name": "T.38",
+                              "description": "T.38"
+                            },
+                            {
+                              "featureId": 29,
+                              "name": "VoxOUT Emergency",
+                              "description": "Feature that allows the VoxDID to access emergency services"
+                            },
+                            {
+                              "featureId": 52,
+                              "name": "VoxOUT National",
+                              "description": "Used to build the coverage pages in the public website"
+                            }
+                          ]
+                        }
+                      ],
+                      "resultCount": 1
+                    }
             application/json:
               schema:
                 $ref: '#/components/schemas/ListDidGroupResponse'
@@ -1238,6 +1331,7 @@ paths:
                         name: VoxOUT National
                         description: Used to build the coverage pages in the public website
                 resultCount: 1
+      x-internal: false
     x-summary: >-
       Get stock, pricing, activation requirements, available features and other
       details on numbers
@@ -1407,6 +1501,47 @@ paths:
       Allows you to list your carts and retrieve their attributes
       (cartIdentifier, customerReference, description), and their content (list
       of products - orderProducts - that are currently in the cart).
+  /ordering/cart/{cartIdentifier}/product/{orderProductId}:
+    post:
+      tags:
+        - Ordering
+      summary: Remove product(s) from cart or change quantity
+      description: Set quantity to 0 if you want to remove the product from the cart.
+      operationId: removeFromCart
+      parameters:
+        - name: cartIdentifier
+          in: path
+          description: The identifier of the cart.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: orderProductId
+          in: path
+          description: The identifier of the product.
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/RemoveFromCartRequest'
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            text/xml:
+              schema:
+                $ref: '#/components/schemas/RemoveFromCartResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RemoveFromCartResponse'
+      x-codegen-request-body-name: body
+    x-summary: Manage product quantities in existing cart
+    x-description: Remove a product from your cart, or change the ordered quantity.
   /ordering/cart/{cartIdentifier}:
     get:
       tags:
@@ -1493,6 +1628,7 @@ paths:
             schema:
               $ref: '#/components/schemas/AddToCartRequest'
         required: false
+        description: ''
       responses:
         '200':
           description: successful operation
@@ -1500,6 +1636,7 @@ paths:
             text/xml:
               schema:
                 $ref: '#/components/schemas/AddToCartResponse'
+              examples: {}
             application/json:
               schema:
                 $ref: '#/components/schemas/AddToCartResponse'
@@ -1509,47 +1646,6 @@ paths:
       Allows you to add items (orderProducts) to a specific cart before checking
       out the cart. Different product types (DID, CAPACITY or CREDIT_PACKAGE)
       can be added into one single cart.
-  /ordering/cart/{cartIdentifier}/product/{orderProductId}:
-    post:
-      tags:
-        - Ordering
-      summary: Remove product(s) from cart or change quantity
-      description: Set quantity to 0 if you want to remove the product from the cart.
-      operationId: removeFromCart
-      parameters:
-        - name: cartIdentifier
-          in: path
-          description: The identifier of the cart.
-          required: true
-          schema:
-            type: integer
-            format: int32
-        - name: orderProductId
-          in: path
-          description: The identifier of the product.
-          required: true
-          schema:
-            type: integer
-            format: int32
-      requestBody:
-        content:
-          '*/*':
-            schema:
-              $ref: '#/components/schemas/RemoveFromCartRequest'
-        required: true
-      responses:
-        '200':
-          description: successful operation
-          content:
-            text/xml:
-              schema:
-                $ref: '#/components/schemas/RemoveFromCartResponse'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RemoveFromCartResponse'
-      x-codegen-request-body-name: body
-    x-summary: Manage product quantities in existing cart
-    x-description: Remove a product from your cart, or change the ordered quantity.
   /ordering/accountbalance:
     get:
       tags:
@@ -5332,6 +5428,7 @@ components:
       description: CreditPackageCartItem corresponds to prepaid credits.
     DidCartItem:
       type: object
+      description: DidCartItem corresponds to DIDs (VoxDID or Vox800).
       properties:
         didGroupId:
           type: integer
@@ -5344,7 +5441,13 @@ components:
           type: integer
           description: Amount of DIDs from that DID group.
           format: int32
-      description: DidCartItem corresponds to DIDs (VoxDID or Vox800).
+        telephoneNumberList:
+          default: -10000000
+          oneOf:
+            - properties:
+                <TelephoneNumber>   </TelephoneNumber>:
+                  type: number
+          type: object
     RemoveFromCartResponse:
       type: object
       properties:
@@ -5359,10 +5462,6 @@ components:
             - WARNING
             - ERROR
     RemoveFromCartRequest:
-      required:
-        - cartIdentifier
-        - orderProductId
-        - quantity
       type: object
       properties:
         cartIdentifier:
@@ -5381,6 +5480,17 @@ components:
             orderProductId will be removed from the Cart. Note that capacity
             must be removed in multiple of 10.
           format: int32
+        telephoneNumberList:
+          type: array
+          items:
+            type: object
+            properties:
+              <TelephoneNumber> </TelephoneNumber>:
+                type: integer
+      required:
+        - cartIdentifier
+        - orderProductId
+        - quantity
     AccountBalance:
       type: object
       properties:
@@ -5498,11 +5608,18 @@ components:
           description: Quantiy of product added to cart.
           format: int32
         didgroupId:
-          type: integer
           description: >-
             The ID of the DIDgroup that the DID added to the cart belongs to. A
             listDidGroup method is available to get information on DID groups.
           format: int32
+          type: integer
+        telephoneNumberList:
+          default: -10000000
+          type: array
+          items:
+            type: integer
+            format: int32
+            default: -100000000
     ListOrderResponse:
       type: object
       properties:
