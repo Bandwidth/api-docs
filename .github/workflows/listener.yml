@@ -12,10 +12,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      # TODO: Investigate why this is failing.
-      # - name: Echo Event```
-      #   run: | 
-      #     echo "${{ toJson(github) }}"
+      - name: Pass branch name to env
+        run: |
+          BRANCH_NAME=${{ github.event.client_payload.branchName }}
+          BRANCH_NAME=$(echo "$BRANCH_NAME" | tr '[:upper:]' '[:lower:]')
+          BRANCH_NAME=$(echo "$BRANCH_NAME" | sed -e "s/[^a-z0-9]/-/g")
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
       
       - uses: ./.github/actions/replace_specs_snippets
         id: replace-specs-snippets
@@ -33,17 +35,13 @@ jobs:
           token: ${{ secrets.DX_GITHUB_TOKEN }}
           repo-name: ${{ github.event.client_payload.originRepo }}
           pr-number: ${{ github.event.client_payload.prNumber }}
-          message: 'Preview site: http://bw-api-docs-${{ github.event.client_payload.branchName }}.s3-website-us-east-1.amazonaws.com/\nPlease note that it may take a couple minutes for your preview site to become available.\n\nSee the corresponding PR opened on the docsite repository (no action required):\nhttps://github.com/Bandwidth/api-docs/pull/${{ steps.replace-specs-snippets.outputs.pr-number }}'
+          message: 'Preview site: http://bw-api-docs-${{ env.BRANCH_NAME }}.s3-website-us-east-1.amazonaws.com/\nPlease note that it may take a couple minutes for your preview site to become available.\n\nSee the corresponding PR opened on the docsite repository (no action required):\nhttps://github.com/Bandwidth/api-docs/pull/${{ steps.replace-specs-snippets.outputs.pr-number }}'
 
   merge: 
     if: ${{ github.event.action == 'Merge' }} 
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
-      # - name: Echo Event
-      #   run: | 
-      #     echo "${{ toJson(github) }}"
       
       - name: Set PR number as env variable
         run: |
@@ -69,10 +67,6 @@ jobs:
       # - run: | 
       #     PR_NUMBER=$(hub pr list -h ${{ github.event.client_payload.branchName }} -f %I)
       #     hub issue update $PR_NUMBER -s closed
-
-      # - name: Echo Event
-      #   run: | 
-      #     echo "${{ toJson(github) }}"
      
       - name: Set PR number as env variable
         run: |
