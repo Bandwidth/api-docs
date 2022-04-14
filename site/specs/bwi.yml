@@ -485,22 +485,19 @@ tags:
       1. createCart will return a cartIdentifier (listCart as well if you’ve
       already got an existing cart)
 
-      2. To buy numbers, get the associated didGroupId for a country/area code
-      from listDidGroup method (Inventory module)
+      2. To buy numbers, you can either:
+        a) Get the associated didGroupId for a country/area code from listDidGroup method (Inventory module), and add a certain quantity of DIDs (didCartItem) from a didGroupId to the CartIdentifier using addToCart
+        b) Provide a list of telephone numbers you've searched and found in the Voxbone inventory, for sale.
+      3. Check your funds with accountBalance
 
-      3. Add a certain quantity of DIDs (didCartItem) from a didGroupId to the
-      CartIdentifier using addToCart
-
-      4. Check your funds with accountBalance
-
-      5. Make sure that the cart value (setup100 + monthly100 will be charged)
+      4. Make sure that the cart value (setup100 + monthly100 will be charged)
       is not higher than your account Balance. If not, add funds via our portal.
 
-      6. Re-iterate the last 3 operations until you wish to check-out your cart
+      5. Re-iterate the last 3 operations until you wish to check-out your cart
       using checkoutCart. Once checkoutCart method is called on a cart, an
       associated order will be created.
 
-      7. Use the listOrder method to retrieve your orders and their status
+      6. Use the listOrder method to retrieve your orders and their status
       (carts can lead to 1 or multiple order(s)). When running the checkoutCart
       operation, the response contains a list of productCheckout elements. These
       elements give you an orderReference for each product type contained in
@@ -776,6 +773,18 @@ paths:
         and to get didGroupIds. When adding numbers to your cart (to purchhase)
         you will need either the list of numbers, or the didGroupId to select a
         quantity of. these are required parameters in the ordering process.
+
+
+        Coming Q2 2022:
+
+        - Ability to search for a quantity of numbers to return
+
+        - Ability to search for a consecutive range of numbers
+
+        - Query paremeters: 'quantity' and 'consecutive'
+
+        - Response: Phone numbers to select from as opposed to just the
+        didGroupID. Attribute: 'telephoneNumberList', 'TelephoneNumber'
       operationId: listDidGroup
       parameters:
         - name: countryCodeA3
@@ -919,7 +928,7 @@ paths:
                           "regulationRequirement": {
                             "addressType": "LOCAL",
                             "proofRequired": false
-                          "telephoneNumberList":
+                          "TelephoneNumberList":
                               <TelephoneNumber>31208908042</TelephoneNumber>
                               <TelephoneNumber>31208908043</TelephoneNumber>
                               <TelephoneNumber>31208908044</TelephoneNumber>
@@ -1170,6 +1179,7 @@ paths:
             text/xml:
               schema:
                 $ref: '#/components/schemas/CreateCartResponse'
+              examples: {}
             application/json:
               schema:
                 $ref: '#/components/schemas/CreateCartResponse'
@@ -1183,8 +1193,11 @@ paths:
     post:
       tags:
         - Ordering
-      summary: Remove product(s) from cart or change quantity
-      description: Set quantity to 0 if you want to remove the product from the cart.
+      summary: Remove number(s) and product(s) from cart or change quantity
+      description: >-
+        Set quantity to 0 if you want to remove the product from the cart. You
+        are able to remove from your cart one or many numbers placed in the
+        'TelephoneNumberList' should you choose.
       operationId: removeFromCart
       parameters:
         - name: cartIdentifier
@@ -1280,7 +1293,7 @@ paths:
     post:
       tags:
         - Ordering
-      summary: Add products to cart
+      summary: Add Numbers and products to cart
       description: >-
         Only one product can be added per addToCart request. The system will
         automatically create a new orderProductId (or add the items to an
@@ -1289,6 +1302,16 @@ paths:
         should update your capacity forecast (in the portal). The delivery of
         capacity is not in real-time and requires validation from our operation
         team.
+
+
+        Numbers added to your cart via 'TelephoneNumberList' will be held
+        in-cart for 10 minutes maximum if the cart does not process a purchase
+        via the 'Checkout Cart' API. If the cart does not checkout within 10
+        minutes of the number(s) being placed in the cart, then the number(s)
+        will be placed back in the Voxbone inventory. This action does not occur
+        if you are adding a quantity from a didGroup. Numbers placed in a
+        'TelephoneNumberList' in cart are not visible to other customers
+        searching the Voxbone Inventory.
       operationId: addToCart
       parameters:
         - name: cartIdentifier
@@ -4821,6 +4844,13 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Feature'
+        TelephoneNumberList:
+          type:
+            - string
+            - object
+          properties:
+            TelephoneNumber:
+              type: integer
     Feature:
       type: object
       properties:
@@ -5106,7 +5136,7 @@ components:
       description: CreditPackageCartItem corresponds to prepaid credits.
     DidCartItem:
       type: object
-      description: DidCartItem corresponds to DIDs (VoxDID or Vox800).
+      description: DidCartItem corresponds to DIDs
       properties:
         didGroupId:
           type: integer
@@ -5119,13 +5149,14 @@ components:
           type: integer
           description: Amount of DIDs from that DID group.
           format: int32
-        telephoneNumberList:
+        TelephoneNumberList:
           default: -10000000
-          oneOf:
-            - properties:
-                <TelephoneNumber>   </TelephoneNumber>:
-                  type: number
-          type: object
+          type: array
+          items:
+            type: object
+            properties:
+              TelephoneNumber:
+                type: string
     RemoveFromCartResponse:
       type: object
       properties:
@@ -5158,12 +5189,12 @@ components:
             orderProductId will be removed from the Cart. Note that capacity
             must be removed in multiple of 10.
           format: int32
-        telephoneNumberList:
+        TelephoneNumberList:
           type: array
           items:
             type: object
             properties:
-              <TelephoneNumber> </TelephoneNumber>:
+              TelephoneNumber:
                 type: integer
       required:
         - cartIdentifier
@@ -5291,7 +5322,7 @@ components:
             listDidGroup method is available to get information on DID groups.
           format: int32
           type: integer
-        telephoneNumberList:
+        TelephoneNumberList:
           default: -10000000
           type: array
           items:
