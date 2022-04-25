@@ -923,7 +923,7 @@ paths:
           name: e164Pattern
           description: >-
             You can search for a specific number in the Voxbone inventory with a
-            specific pattern e.g. %25123 (number contains 123). %-sign
+            specific pattern e.g. %123 (number contains 123). %-sign
       responses:
         '200':
           description: successful operation
@@ -1499,7 +1499,7 @@ paths:
           name: e164Pattern
           description: >-
             You can search for an order via a specific Number within the
-            fulfilled order via a specific pattern e.g. %25123 (number contains
+            fulfilled order via a specific pattern e.g. %123 (number contains
             123). %-sign needs to be escaped using %25
         - schema:
             type: string
@@ -4822,70 +4822,52 @@ components:
     DidGroup:
       type: object
       x-examples:
-        example inventory search:
+        example-1:
           didGroupId: 1073
           countryCodeA3: NLD
-          stateId: {}
+          stateId: '{}'
           didType: GEOGRAPHIC
           cityName: AMSTERDAM
           areaCode: '20'
-          rateCenter: {}
+          rateCenter: string
           stock: 11
           setup100: 0
           monthly100: 110
           available: true
           regulationRequirement:
-            addressType: WORLDWIDE
-            proofRequired: true
+            addressType: LOCAL
+            proofRequired: false
           features:
-            - featureId: 6
-              name: VoxFax
-              description: VoxFax
-            - featureId: 50
-              name: Voice
-              description: Voice
-            - featureId: 51
-              name: VoxOUT International
-              description: Used to build the coverage pages in the public website
-            - featureId: 5
-              name: T.38
-              description: T.38
-            - featureId: 29
-              name: VoxOUT Emergency
-              description: Feature that allows the VoxDID to access emergency services
-            - featureId: 52
-              name: VoxOUT National
-              description: Used to build the coverage pages in the public website
+            - featureId: 0
+              name: string
+              description: string
           phoneNumbers:
-            phoneNumber:
-              - phoneNumber: '+31208908042'
-              - phoneNumber: '+31208908043'
-              - phoneNumber: '+31208908044'
-              - phoneNumber: '+31208908045'
-              - phoneNumber: '+31208908046'
-              - phoneNumber: '+31208908047'
-              - phoneNumber: '+31208908048'
-              - phoneNumber: '+31208908049'
-              - phoneNumber: '+31208908050'
-              - phoneNumber: '+31208908051'
-              - phoneNumber: '+31208908052'
-              - null
+            - >-
+              [{phoneNumber: "+31208908115"}, {phoneNumber: "+31208908116"},
+              {phoneNumber: "+31208908117"}, {phoneNumber: "+31208908118"},
+              {phoneNumber: "+31208908119"}, {phoneNumber: "+31208908120"},
+              {phoneNumber: "+31208908121"}, {phoneNumber: "+31208908122"},
+              {phoneNumber: "+31208908123"}, {phoneNumber: "+31208908124"},
+              {phoneNumber: "+31208908125"}, {phoneNumber: "+31208908126"}]
       x-internal: false
       properties:
         didGroupId:
           type: integer
           description: The ID of the DID group.
           format: int32
+          example: 1073
         countryCodeA3:
           type: string
           description: >-
             Indicates the country code of the DID group in its ISO 3166-1
             alpha-3 format (e.g. 'GBR' for United Kingdom, 'USA' for United
             States of America, 'BEL' for Belgium, etc.).
+          example: NLD
         stateId:
           type: integer
           description: The ID of the state of the DID group, if the country has any state.
           format: int32
+          example: '{}'
         didType:
           type: string
           description: The DID type of the DID group.
@@ -4897,12 +4879,15 @@ components:
             - INUM
             - SHARED_COST
             - SPECIAL
+          example: GEOGRAPHIC
         cityName:
           type: string
           description: The name of the city of the DID group.
+          example: AMSTERDAM
         areaCode:
           type: string
           description: The area code of the DID group.
+          example: '20'
         rateCenter:
           type: string
           description: >-
@@ -4917,12 +4902,14 @@ components:
             Note that even if the stock is null, it is still possible to order
             DIDs. In that case the order is not fulfilled in real time.
           format: int32
+          example: 11
         setup100:
           type: integer
           description: >-
             The price of the DID setup multiplied by 100 (i.e. expressed in
             cents) in the currency of the account.
           format: int32
+          example: 0
         monthly100:
           type: integer
           description: >-
@@ -4931,11 +4918,13 @@ components:
             month of ordering is fully due and that when a DID order is placed
             both the setup and the monthly are charged.
           format: int32
+          example: 110
         available:
           type: boolean
           description: >-
             Returns information about whether this DIDGroup is available or out
             of stock (true/false).
+          default: true
         regulationRequirement:
           $ref: '#/components/schemas/RegulationRequirementModel'
         features:
@@ -4943,11 +4932,16 @@ components:
           items:
             $ref: '#/components/schemas/Feature'
         phoneNumbers:
-          type: object
-          properties:
-            phoneNumber:
-              type: array
-              items: {}
+          type: array
+          items:
+            type: string
+            example: >-
+              [{phoneNumber: "+31208908115"}, {phoneNumber: "+31208908116"},
+              {phoneNumber: "+31208908117"}, {phoneNumber: "+31208908118"},
+              {phoneNumber: "+31208908119"}, {phoneNumber: "+31208908120"},
+              {phoneNumber: "+31208908121"}, {phoneNumber: "+31208908122"},
+              {phoneNumber: "+31208908123"}, {phoneNumber: "+31208908124"},
+              {phoneNumber: "+31208908125"}, {phoneNumber: "+31208908126"}]
     Feature:
       type: object
       properties:
@@ -5022,9 +5016,11 @@ components:
             - WORLDWIDE
             - NATIONAL
             - LOCAL
+          example: LOCAL
         proofRequired:
           type: boolean
           description: Whether a proof of address is required.
+          default: false
     ListFeatureResponse:
       type: object
       properties:
@@ -5272,6 +5268,7 @@ components:
     DidCartItem:
       type: object
       description: DidCartItem corresponds to DIDs
+      x-examples: {}
       properties:
         didGroupId:
           type: integer
@@ -5280,17 +5277,24 @@ components:
             valid ID for the DID group of the DIDs. Note that you can specify
             multiple ids by repeating the query parameter.
           format: int32
+          example: -100000000
         quantity:
           type: integer
           description: Amount of DIDs from that DID group.
           format: int32
+          example: 0
         phoneNumbers:
           default: -10000000
-          type: object
-          properties:
-            phoneNumber:
-              type: array
-              items: {}
+          type: array
+          items:
+            type: string
+            example: >-
+              [{phoneNumber: "+31208908115"}, {phoneNumber: "+31208908116"},
+              {phoneNumber: "+31208908117"}, {phoneNumber: "+31208908118"},
+              {phoneNumber: "+31208908119"}, {phoneNumber: "+31208908120"},
+              {phoneNumber: "+31208908121"}, {phoneNumber: "+31208908122"},
+              {phoneNumber: "+31208908123"}, {phoneNumber: "+31208908124"},
+              {phoneNumber: "+31208908125"}, {phoneNumber: "+31208908126"}]
     RemoveFromCartResponse:
       type: object
       properties:
@@ -5304,8 +5308,17 @@ components:
             - PARTIAL
             - WARNING
             - ERROR
+      x-examples: {}
     RemoveFromCartRequest:
       type: object
+      x-examples:
+        example-1:
+          cartIdentifier: -2147483648
+          orderProductId: -2147483648
+          quantity: -2147483648
+          phoneNumbers:
+            phoneNumber:
+              - null
       properties:
         cartIdentifier:
           type: integer
@@ -5324,23 +5337,12 @@ components:
             must be removed in multiple of 10.
           format: int32
         phoneNumbers:
-          type: object
-          properties:
-            phoneNumber:
-              type: array
-              items: {}
+          type: array
+          items:
+            type: string
       required:
         - cartIdentifier
         - orderProductId
-        - quantity
-      x-examples:
-        example-1:
-          cartIdentifier: -2147483648
-          orderProductId: -2147483648
-          quantity: -2147483648
-          phoneNumbers:
-            phoneNumber:
-              - null
     AccountBalance:
       type: object
       properties:
@@ -5424,6 +5426,19 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/OrderProduct'
+      x-examples:
+        example-1:
+          cartIdentifier: -2147483648
+          customerReference: string
+          description: string
+          dateAdded: string
+          orderProducts:
+            - orderProductId: 0
+              productType: DID
+              productDescription: string
+              quantity: 0
+              didgroupId: 0
+              phoneNumbers: -10000000
     ListCartResponse:
       type: object
       properties:
@@ -5437,8 +5452,17 @@ components:
           format: int32
           xml:
             attribute: true
+      x-examples: {}
     OrderProduct:
       type: object
+      x-examples:
+        example-1:
+          orderProductId: -2147483648
+          productType: DID
+          productDescription: string
+          quantity: -2147483648
+          didgroupId: -2147483648
+          phoneNumbers: -10000000
       properties:
         orderProductId:
           type: integer
@@ -5466,19 +5490,9 @@ components:
           type: integer
         phoneNumbers:
           default: -10000000
-          type: object
-          properties:
-            phoneNumber:
-              type: array
-              items: {}
-      x-examples:
-        example-1:
-          orderProductId: -2147483648
-          productType: DID
-          productDescription: string
-          quantity: -2147483648
-          didgroupId: -2147483648
-          phoneNumbers: -10000000
+          type: array
+          items:
+            type: string
     ListOrderResponse:
       type: object
       properties:
@@ -5494,6 +5508,7 @@ components:
             attribute: true
     Order:
       type: object
+      x-examples: {}
       properties:
         userName:
           type: string
@@ -5544,29 +5559,9 @@ components:
             rateCenter:
               type: string
             phoneNumbers:
-              type: object
-              properties:
-                phoneNumber:
-                  type: string
-      x-examples:
-        example-1:
-          userName: string
-          orderId: -2147483648
-          reference: string
-          dateAdded: string
-          dateCanceled: string
-          status: CREATED
-          customerReference: string
-          didGroups:
-            didGroupId: string
-            countryCodeA3: string
-            stateId: string
-            didType: string
-            cityName: string
-            areaCode: string
-            rateCenter: string
-            phoneNumbers:
-              phoneNumber: string
+              type: array
+              items:
+                type: string
     CreateCartResponse:
       required:
         - cart
