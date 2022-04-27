@@ -46,4 +46,4 @@ Essentially, if you have basic authentication enabled for a webhook, Bandwidth w
 
 Once the proper 401 HTTP response is received, Bandwidth will send a second request that includes an authorization header and webhook body. The authorization header will include the credentials given in either the application settings or subscription creation, encoded in base64.
 
-It is important to note that if the WWW-AUTHENTICATE header is not received alongside the 401 response, Bandwidth will **not** try a second request and your the callback will not be received by your server. More information about this pracice can be found [here](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication).
+It is important to note that if the WWW-AUTHENTICATE header is not received alongside the 401 response, Bandwidth will **not** try a second request and your the callback will not be received by your server. More information about this practice can be found [here](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication).
