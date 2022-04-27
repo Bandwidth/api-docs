@@ -37,3 +37,13 @@ If the customer's endpoint is unavailable, the Bandwidth Dashboard API webhook s
 | Event | Description |
 |:------|:------------|
 | [Portout Validation Webhooks](webhooks/portoutValidationWebhook) | Bandwidth sends this event when a Portout request is initiated on a number in your account. Please contact [support](https://support.bandwidth.com) to enable Portout Validation. |
+
+## Authentication
+
+Bandwidth allows you to enable basic authentication on the webhooks received from the different services. For messaging and voice, credentials would be set on the messaging or voice application created in the Bandwidth Dashboard. In a subscription, the basic authentication credentials would be set in the POST request to [create a subscription](./../account/subscriptions.mdx). To authenticate, Bandwidth follows the basic HTTP authentication framework outlined in RFC 7235.
+
+Essentially, if you have basic authentication enabled for a webhook, Bandwidth will send a request with no authorization header attached and expect a 401 response that includes a WWW-AUTHENTICATE header containing a challenge. An example of that header could look like WWW-AUTHENTICATE: Basic realm="".
+
+Once the proper 401 HTTP response is received, Bandwidth will send a second request that includes an authorization header and webhook body. The authorization header will include the credentials given in either the application settings or subscription creation, encoded in base64.
+
+It is important to note that if the WWW-AUTHENTICATE header is not received alongside the 401 response, Bandwidth will **not** try a second request and your the callback will not be received by your server. More information about this pracice can be found [here](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication).
