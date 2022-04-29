@@ -2,7 +2,7 @@ const YAML = require('yaml');
 const fs = require('fs');
 const path = require('path');
 
-const numbersSpec = fs.readFileSync('./specs/numbers.json', 'utf-8');
+const numbersSpec = fs.readFileSync('./specs-temp/numbers.json', 'utf-8');
 const phoneNumberLookupSpec = fs.readFileSync('./specs/phoneNumberLookup.json', 'utf-8');
 const voiceSpec = fs.readFileSync('./specs/voice.json', 'utf-8');
 const messagingSpec = fs.readFileSync('./specs/messaging.json', 'utf-8');
@@ -11,7 +11,6 @@ const multiFactorAuthSpec = fs.readFileSync('./specs/multiFactorAuth.json', 'utf
 const dashSpec = fs.readFileSync('./specs/dash.json', 'utf-8');
 const dashNotificationsSpec = fs.readFileSync('./specs/dashNotifications.json', 'utf-8');
 const messagingInternationalSpec = fs.readFileSync('./specs/messagingInternational.json', 'utf-8');
-// const numbersSpec = fs.readFileSync('./specs/numbers.json', 'utf-8');
 
 module.exports = {
     title: 'Bandwidth API Docs',
@@ -147,10 +146,10 @@ module.exports = {
     ],
     customFields: {
         numbersSpec: JSON.parse(numbersSpec),
-      phoneNumberLookupSpec: JSON.parse(phoneNumberLookupSpec),
-      voiceSpec: JSON.parse(voiceSpec),
-      messagingSpec: JSON.parse(messagingSpec),
-       messagingInternationalSpec: JSON.parse(messagingInternationalSpec),
+        phoneNumberLookupSpec: JSON.parse(phoneNumberLookupSpec),
+        voiceSpec: JSON.parse(voiceSpec),
+        messagingSpec: JSON.parse(messagingSpec),
+         messagingInternationalSpec: JSON.parse(messagingInternationalSpec),
         webRTCSpec: JSON.parse(webRtcSpec),
         multiFactorAuthSpec: JSON.parse(multiFactorAuthSpec),
         dashSpec: JSON.parse(dashSpec),
