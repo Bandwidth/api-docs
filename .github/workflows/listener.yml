@@ -28,6 +28,27 @@ jobs:
           origin-repo: ${{ github.event.client_payload.originRepo }}
           author: ${{ github.event.client_payload.author }}
       
+      - name: Open Pull Request
+        if: steps.replace-specs-snippets.outputs.needs_pr
+        run: |
+          hub pull-request --base Bandwidth:main $(if ${{ github.event.client_payload.draftPr }} ; then echo "-d" ; fi) -m '${{ inputs.branch-name }}' -m 'Update API specs from upstream api-specs repository. Opened By: @${{ inputs.author }}'
+        env:
+          GITHUB_TOKEN: ${{ inputs.token }}
+      
+      - name: Output PR Number
+        run: |
+          PR_NUMBER=$(hub pr list -h ${{ inputs.branch-name }} -f %I)
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+
+      - name: Check and Update PR status
+        if: steps.replace-specs-snippets.outputs.needs_pr==false
+        run: |
+          if ${{ github.event.client_payload.draftPr }}
+          then
+            if [ $(echo hub pr ${{ inputs.branch-name }} -h ${{ inputs.branch-name }}  -f %pS) == "open" ]
+            then
+
+      
       - name: Comment on Corresponding Repo
         uses: ./.github/actions/add_pr_comment
         with: 
@@ -35,7 +56,7 @@ jobs:
           token: ${{ secrets.DX_GITHUB_TOKEN }}
           repo-name: ${{ github.event.client_payload.originRepo }}
           pr-number: ${{ github.event.client_payload.prNumber }}
-          message: 'Preview site: http://bw-api-docs-${{ env.BRANCH_NAME }}.s3-website-us-east-1.amazonaws.com/\nPlease note that it may take a couple minutes for your preview site to become available.\n\nSee the corresponding PR opened on the docsite repository (no action required):\nhttps://github.com/Bandwidth/api-docs/pull/${{ steps.replace-specs-snippets.outputs.pr-number }}'
+          message: 'Preview site: http://bw-api-docs-${{ env.BRANCH_NAME }}.s3-website-us-east-1.amazonaws.com/\nPlease note that it may take a couple minutes for your preview site to become available.\n\nSee the corresponding PR opened on the docsite repository (no action required):\nhttps://github.com/Bandwidth/api-docs/pull/${{ env.PR_NUMBER }}'
 
   merge: 
     if: ${{ github.event.action == 'Merge' }} 

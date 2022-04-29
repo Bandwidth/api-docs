@@ -18,9 +18,10 @@ inputs:
     description: Origin PR Author
 
 outputs: 
-  pr-number: 
-    description: "The number of the PR that was opened"
-    value: ${{ steps.output-pr-number.outputs.pr-number }}
+  needs-pr: 
+    description: "Whether or not a PR needs to be opened for the corresponding branch"
+    value: ${{ steps.branch_create.outputs.needs_pr }}
+
  
 runs:
     using: "composite"
@@ -83,19 +84,4 @@ runs:
           git add ./specs/*
           git commit -m "Add Code Snippets to Spec Files"
           git push origin ${{ inputs.branch-name }}
-        shell: bash
-        
-      - name: Open Pull Request
-        if: steps.branch_create.outputs.needs_pr
-        run: |
-          hub pull-request --base Bandwidth:main -m '${{ inputs.branch-name }}' -m 'Update API specs from upstream api-specs repository. Opened By: @${{ inputs.author }}'
-        env:
-          GITHUB_TOKEN: ${{ inputs.token }}
-        shell: bash
-
-      - name: Output PR Number 
-        id: output-pr-number
-        run: echo "::set-output name=pr-number::$(hub pr list -h ${{ inputs.branch-name }} -f %I)"
-        env:
-          GITHUB_TOKEN: ${{ inputs.token }}
         shell: bash
