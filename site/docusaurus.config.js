@@ -2,6 +2,7 @@ const YAML = require('yaml');
 const fs = require('fs');
 const path = require('path');
 
+const numbersSpec = fs.readFileSync('./specs-temp/numbers.json', 'utf-8');
 const phoneNumberLookupSpec = fs.readFileSync('./specs/phoneNumberLookup.json', 'utf-8');
 const voiceSpec = fs.readFileSync('./specs/voice.json', 'utf-8');
 const messagingSpec = fs.readFileSync('./specs/messaging.json', 'utf-8');
@@ -13,7 +14,6 @@ const messagingInternationalSpec = fs.readFileSync('./specs/messagingInternation
 const bwiSpec = fs.readFileSync('./specs/bwi.yml', 'utf-8');
 const bwiSpec_v2 = fs.readFileSync('./specs/bwi_v2.yml', 'utf-8');
 const bwiSpec_beta = fs.readFileSync('./specs/bwi_beta.yml', 'utf-8');
-// const numbersSpec = fs.readFileSync('./specs/numbers.json', 'utf-8');
 
 module.exports = {
     title: 'Bandwidth API Docs',
@@ -144,7 +144,7 @@ module.exports = {
         ],
     ],
     customFields: {
-        // numbersSpec: JSON.parse(numbersSpec),
+        numbersSpec: JSON.parse(numbersSpec),
         phoneNumberLookupSpec: JSON.parse(phoneNumberLookupSpec),
         voiceSpec: JSON.parse(voiceSpec),
         messagingSpec: JSON.parse(messagingSpec),
