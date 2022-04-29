@@ -1,6 +1,9 @@
 # API-Docs
 
-Welcome to the home of Bandwidth's API documentation! This repo contains the OpenAPI specifications that power Bandwidth's API references and SDKs, and will eventually replace https://github.com/bandwidth/bandwidth.github.io.
+| ⚠️ Please do not modify API Specs in this repository ⚠️ | 
+|:---:|
+
+API specs now reside in the [api-specs](https://github.com/Bandwidth/api-specs) repository and code snippets in the [api-docs-code-snippets](https://github.com/Bandwidth/api-docs-code-snippets) repository.
 
 ## Table of Contents
 
@@ -23,13 +26,12 @@ API references are the "facts" about the APIs, and will typically be defined by 
 
 Guides cover a wide range of possibilities, but typically any step by step process required to use a feature should be a guide. These guides should be written as markdown files, and should link out to any API reference as needed. An example of a guide would be a description of how to respond to an inbound SMS.
 
-### SDK Docs Strategy Overview
+## SDK Docs Strategy Overview
 
 Bandwidth's SDKs will contain thin READMEs that show the basics of getting started with the SDK, and link out to the full API reference. These READMEs will not contain all of the functions within the SDK; that should be defined with the API references.
 
 ## Contribution Guidelines Overview
 
-1) If you're adding a new OpenAPI spec, you will need to change the `docusaurus.config.js` file to both add a new item in the navbar items as well as add the spec as a custom field. You will need to create a new page for the spec under the `./site/src/pages` directory as well.
 1) If you're adding a new markdown file and/or markdown directory, make sure to update the `sidebar.js` file in the `./site` directory
 
 ## Docsite Generation
@@ -49,21 +51,54 @@ nmp run serve    # host the static site in the /site/build folder
 
 ## Adding a New Spec
 
-To add a new spec - there are a few steps that need to be taken:
+To add a new spec (or update an existing spec), please head over to our [api-specs](https://github.com/Bandwidth/api-specs) repository, as this is the source of truth for all of Bandwidth's internal and external API Specs. You may also follow the guide [here](https://bandwidth-jira.atlassian.net/wiki/spaces/DX/pages/4098359409/How+to+Update+API+Specifications+and+Contribute+to+Developer+Documentation) that exaplains in detail how to add new spec files to the `api-specs` repo.
 
-  1. Add the JSON file to the `./site/specs-source` folder
-  1. In `./site/docusaurus.config.js`, add an import statement for the new spec. Ex.: `const newSpec = fs.readFileSync('./specs/new.json', 'utf-8');`
-  1. In `./site/docusaurus.config.js`, add the new spec as a custom field at the bottom of the config. Ex.: `newSpec: JSON.parse(newSpec),`
-  1. In `./site/src/pages/apis`, create a `newSpec.tsx` file and populate the needed React RedocStandalone code - recommend copy/pasting the `./site/templates/apiReference.tsx` file
-        * Dont forget to update the `Title`, `Description`, and `Keywords` in the `<Layout>` tag for SEO optimization
-  1. In `./site/docusaurus.config.js`, add the spec to the Navbar Items object. Ex:
-      ```js
-      {
-        to: 'apis/newSpec',    // the title of the .tsx page you created without the file extension
-        label: 'New Spec'    // The actual title that shows in the navbar
-      }
-      ```
-  1. Run `npm start` or reload the site and you should see the new spec under the API Reference dropdown.
+### Versioned Specs 
+
+To account for versioned API Documentation we have a [Spec Version Dropdown](./site/src/components/SpecVersionDropdown.js) component that allows you to add a dropdown menu to the api reference page with links to the other versions of your API Specification. In order to implement this feature your spec `.tsx` pages need their own directory within the `./site/src/pages/apis` directory. This will be done for you by the DevX team after you update your changes on the `api-specs` repo.
+
+Sample Directory: 
+
+```sh
+# ./site/src/pages
+.
+└── apis
+    ├── bwi    # A Directory for versioned API Specs
+    │   ├── beta.tsx
+    │   ├── index.tsx    # The default/production API spec. URL stub will be /apis/bwi
+    │   ├── v2.tsx
+    │   └── ws.tsx
+    ├── index.tsx
+    ├── messaging.tsx
+    ├── number-lookup.tsx
+    ├── numbers.tsx
+    └── voice.tsx
+```
+
+The default version should be named `index.tsx` within the directory so that the URL shows neatly, and then you would add the following sippet to the individual pages (and adjust the default and list accordingly depending on the page.)
+
+```ts
+export default function ApiReferencePage() {
+    const {siteConfig} = useDocusaurusContext();
+    const options = [    // The options const needs to contain all of the available pages
+        {title: "Legacy", link: "/apis/bwi/ws"},
+        {title: "V1", link: "/apis/bwi"},
+        {title: "V2", link: "/apis/bwi/v2"},
+        {title: "Beta", link: "/apis/bwi/beta"}
+      ];
+    const version = "V1"    // The version Const determines which option gets the selected attribute in the <select> dropdown
+
+    return (
+        <Layout
+          title={`Bandwidth International API Reference`}
+          description=""
+          keywords="Bandwidth,API,International,Voxbone">
+            <SpecVersionDropdown options={options} default={version} />
+            <ApiReference spec={siteConfig.customFields.bwiSpec} color={siteConfig.customFields.voxbonePurple} />
+        </Layout>
+    );
+}
+```
 
 ## Adding New Documentation
 
@@ -149,13 +184,9 @@ When looking at `account/structure` in this sidebar config - the user would only
 
 This directory mostly was autogenerated by docusaurus. The `components/` directory contains docusaurus config, the `css/` contains the css styling, and `pages/` contains the individual page files for the site. Pages can be populated with React code and linked to using the `docusaurus.config.js` file.
 
-#### /specs-source
-
-This directory contains the unformatted OpenAPI specs. Specifically, this holds the specs before any Redoc custom code is inserted. Teams should add their specs to this directory.
-
 #### /specs
 
-The formatted OpenAPI specs used as the source of truth for the docsite will be placed in this directory. It is intentionally left empty outside of the `_keep` file (which only exists to keep the directory within git).
+The formatted OpenAPI specs with added code snippets **only** for rendering on the doc site. This is no longer the source of truth for our OpenAPI specs. **Please do not make spec changes in this folder.**
 
 #### /docs
 
@@ -172,14 +203,6 @@ Custom templates for any additions that people may need to use.
 #### /scripts
 
 Scripts for the docsite. Includes things like code snippet validation, and code snippet insertion into the OpenAPI specs.
-
-#### /code-snippets
-
-Includes code snippets for the docsite in various languages. These must be added in the format `<MainSpec>/<OperationId>/filename.<extension>`. Operation IDs are case sensitive.
-
-These code snippets must include environmental variables defined in the appropriate `site/scripts/env-replace/<language>.json` file.
-
-Code snippet validation is done on PRs to the docsite. Currently these use dummy values on the API, so they all pretty much 401 or 400. Future plans may include doing real valid requests, but that is currently out of scope.
 
 ### Postman
 
