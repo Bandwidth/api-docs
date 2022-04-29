@@ -149,7 +149,7 @@ module.exports = {
         phoneNumberLookupSpec: JSON.parse(phoneNumberLookupSpec),
         voiceSpec: JSON.parse(voiceSpec),
         messagingSpec: JSON.parse(messagingSpec),
-         messagingInternationalSpec: JSON.parse(messagingInternationalSpec),
+        messagingInternationalSpec: JSON.parse(messagingInternationalSpec),
         webRTCSpec: JSON.parse(webRtcSpec),
         multiFactorAuthSpec: JSON.parse(multiFactorAuthSpec),
         dashSpec: JSON.parse(dashSpec),
