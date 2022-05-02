@@ -3,7 +3,7 @@ name: Listener
 
 on:
   repository_dispatch:
-    types: [Open, Update, Merge, Close]
+    types: [Open, Update, Merge, Close, Draft]
 
 jobs: 
   open-update: 
@@ -39,38 +39,6 @@ jobs:
         run: |
           PR_NUMBER=$(hub pr list -h ${{ github.event.client_payload.branchName }} -f %I)
           echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
-        env: 
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Check and Update Draft Status
-        if: steps.replace-specs-snippets.outputs.needs_pr==false
-        run: |
-          PR_STATE=$(hub pr list -h ${{ github.event.client_payload.branchName }}  -f %pS)
-          if ${{ github.event.client_payload.draftPr }}
-          then
-            if [ "$PR_STATE" == "open" ]
-            then
-              id=$(gh pr view --json id -q '.id')
-              number=${{ env.PR_NUMBER }}
-              MUTATION='
-                mutation($id: ID!) {
-                  convertPullRequestToDraft(input: { pullRequestId: $id }) {
-                    pullRequest {
-                      id
-                      number
-                      isDraft
-                    }
-                  }
-                }
-              '
-              gh api graphql -F id="${id}" -f query="${MUTATION}" >/dev/null
-            fi 
-          else
-            if [ "$PR_STATE" == "draft" ]
-            then
-              gh pr ready
-            fi 
-          fi
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -127,3 +95,40 @@ jobs:
           repo-name: api-docs
           pr-number: ${{ env.PR_NUMBER }}
           message: 'Corresponding Pull Request on [${{ github.event.client_payload.originRepo }}](https://github.com/Bandwidth/${{ github.event.client_payload.originRepo }}/pull/${{ github.event.client_payload.prNumber }}) was closed.'
+  
+  change_draft_status: 
+    if: ${{ github.event.action == 'Draft' }} 
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+    
+      - name: Check and Update Draft Status
+        run: |
+          PR_STATE=$(hub pr list -h ${{ github.event.client_payload.branchName }}  -f %pS)
+          if ${{ github.event.client_payload.draftPr }}
+          then
+            if [ "$PR_STATE" == "open" ]
+            then
+              id=$(gh pr view ${{ github.event.client_payload.branchName }} --json id -q '.id')
+              number=$(gh pr view ${{ github.event.client_payload.branchName }} --json number -q '.number')
+              MUTATION='
+                mutation($id: ID!) {
+                  convertPullRequestToDraft(input: { pullRequestId: $id }) {
+                    pullRequest {
+                      id
+                      number
+                      isDraft
+                    }
+                  }
+                }
+              '
+              gh api graphql -F id="${id}" -f query="${MUTATION}" >/dev/null
+            fi 
+          else
+            if [ "$PR_STATE" == "draft" ]
+            then
+              gh pr ready ${{ github.event.client_payload.branchName }}
+            fi 
+          fi
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
