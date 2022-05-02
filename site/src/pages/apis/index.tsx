@@ -33,6 +33,12 @@ const ApiList = [
         link: '/apis/number-lookup'
     },
     {
+        title: 'Subscriptions',
+        Svg: require('../../../static/img/complex-icon-subscriptions.svg').default,
+        style: apiStyles.apiSvg,
+        link: '/apis/subscriptions'
+    },
+    {
         title: 'International Messaging',
         Svg: require('../../../static/img/icon-int-messaging-complex-no-bg.svg').default,
         style: apiStyles.apiSvg,

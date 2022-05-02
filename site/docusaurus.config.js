@@ -10,6 +10,7 @@ const multiFactorAuthSpec = fs.readFileSync('./specs/multiFactorAuth.json', 'utf
 const dashSpec = fs.readFileSync('./specs/dash.json', 'utf-8');
 const dashNotificationsSpec = fs.readFileSync('./specs/dashNotifications.json', 'utf-8');
 const messagingInternationalSpec = fs.readFileSync('./specs/messagingInternational.json', 'utf-8');
+const subscriptionsSpec = fs.readFileSync('./specs/notification-service-subscription.yml', 'utf-8')
 const bwiSpec = fs.readFileSync('./specs/bwi.yml', 'utf-8');
 const bwiSpec_v2 = fs.readFileSync('./specs/bwi_v2.yml', 'utf-8');
 const bwiSpec_beta = fs.readFileSync('./specs/bwi_beta.yml', 'utf-8');
@@ -153,6 +154,7 @@ module.exports = {
         multiFactorAuthSpec: JSON.parse(multiFactorAuthSpec),
         dashSpec: JSON.parse(dashSpec),
         dashNotificationsSpec: JSON.parse(dashNotificationsSpec),
+        subscriptionsSpec: YAML.parse(subscriptionsSpec),
         bwiSpec: YAML.parse(bwiSpec),
         bwiSpec_v2: YAML.parse(bwiSpec_v2),
         bwiSpec_beta: YAML.parse(bwiSpec_beta),
