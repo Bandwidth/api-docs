@@ -40,15 +40,38 @@ jobs:
           PR_NUMBER=$(hub pr list -h ${{ inputs.branch-name }} -f %I)
           echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
 
-      - name: Check and Update PR status
+      - name: Check and Update Draft Status
         if: steps.replace-specs-snippets.outputs.needs_pr==false
         run: |
+          PR_STATE=$(hub pr list -h ${{ inputs.branch-name }}  -f %pS)
           if ${{ github.event.client_payload.draftPr }}
           then
-            if [ $(echo hub pr ${{ inputs.branch-name }} -h ${{ inputs.branch-name }}  -f %pS) == "open" ]
+            if [ "$PR_STATE" == "open" ]
             then
+              id=$(gh pr view --json id -q '.id')
+              number=${{ env.PR_NUMBER }}
+              MUTATION='
+                mutation($id: ID!) {
+                  convertPullRequestToDraft(input: { pullRequestId: $id }) {
+                    pullRequest {
+                      id
+                      number
+                      isDraft
+                    }
+                  }
+                }
+              '
+              gh api graphql -F id="${id}" -f query="${MUTATION}" >/dev/null
+            fi 
+          else
+            if [ "$PR_STATE" == "draft" ]
+            then
+              gh pr ready
+            fi 
+          fi
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      
       - name: Comment on Corresponding Repo
         uses: ./.github/actions/add_pr_comment
         with: 
