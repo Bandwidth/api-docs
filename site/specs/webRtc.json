@@ -721,7 +721,7 @@
                     }
                 ],
                 "requestBody": {
-                    "description": "Optional set of subscriptions to set on the participant.\nCalling this endpoint with no/empty body will only add the participant to the session.\n\nNOTE: the request body for this endpoint is OPTIONAL and provided as a convenience to avoid calls to this and the Update Participant Subscriptions endpoint.",
+                    "description": "Optional set of subscriptions to set on the participant.\nCalling this endpoint with no/empty body will only add the participant to the session.\n\nNOTE: the request body for this endpoint is OPTIONAL and provided as a convenience to avoid additional calls to the Update Participant Subscriptions endpoint.",
                     "required": false,
                     "content": {
                         "application/json": {
@@ -985,7 +985,7 @@
                     "Sessions"
                 ],
                 "summary": "Update Participant Subscriptions",
-                "description": "Update a participant's subscriptions.\n\nThis is a full update that will replace the participant's subscriptions. First call `getParticipantSubscriptions` if you need the current subscriptions. Call this function with no `Subscriptions` object to remove all subscriptions.\n",
+                "description": "Update a participant's subscriptions.\n\nThis is a full update that will replace the participant's subscriptions. It allows subscription to the entire Session, a subset list of Participants in that Session, or specific media streams on any of the listed Participants.\n\nFirst call `getParticipantSubscriptions` if you need the current subscriptions.\n\nCalling this API with no `Subscriptions` object to remove all subscriptions.\n",
                 "operationId": "updateParticipantSubscriptions",
                 "parameters": [
                     {
@@ -1240,13 +1240,17 @@
                     },
                     "participants": {
                         "type": "array",
-                        "description": "Subset of participants to subscribe to in the session. Optional.\n\nReturns empty upon creation of a Participant",
+                        "description": "(optional) A list of participants  in the session that will be subscribed to.\n\nReturns empty if used during the creation of a Participant",
                         "example": [
                             {
                                 "participantId": "568749d5-04d5-483d-adf5-deac7dd3d521"
                             },
                             {
-                                "participantId": "0275e47f-dd21-4cf0-a1e1-dfdc719e73a7"
+                                "participantId": "0275e47f-dd21-4cf0-a1e1-dfdc719e73a7",
+                                "streamAliases": [
+                                    "alias_1",
+                                    "alias_2"
+                                ]
                             }
                         ],
                         "items": {
@@ -1263,12 +1267,12 @@
                 "properties": {
                     "participantId": {
                         "type": "string",
-                        "description": "Participant the subscriber should be subscribed to",
+                        "description": "The Participant the subscriber will be subscribed to",
                         "example": "568749d5-04d5-483d-adf5-deac7dd3d521"
                     },
                     "streamAliases": {
                         "type": "array",
-                        "description": "Stream aliases of the participant the subscriber should be subscribed to. (if empty all aliases are assumed)",
+                        "description": "(optional) An array of specific streamAliases owned by the Participant that the subscriber will be subscribed to.\n\nBackground: A streamAlias is created by a WebRTC client when it connects and declares a name for the related stream. The client is responsible for informing the application of any created streamAliases to enable the application to subscribe to specific streamAliases.\n\nSubscribing to a streamAlias that does not exist is undefined\n\nIf the array is empty all aliases are assumed.",
                         "example": [
                             "alias_1",
                             "alias_2"
