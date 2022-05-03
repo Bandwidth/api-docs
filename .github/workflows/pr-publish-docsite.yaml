@@ -15,70 +15,117 @@ jobs:
     name: Publish Temp Docsite
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
-      with:
-        node-version: '14'
-    - name: Generate Static Site
-      run: |
-          cd site
-          yarn install --frozen-lockfile
-          npm run build
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
-    - name: Create Bucket Name
-      id: create_name
-      run: |
-        BUCKET_NAME=bw-api-docs-${GITHUB_HEAD_REF#refs/heads/}
-        BUCKET_NAME=$(echo "$BUCKET_NAME" | tr '[:upper:]' '[:lower:]') #convert to lowercase for AWS bucket (can't be uppercase)
-        BUCKET_NAME=$(echo "$BUCKET_NAME" | sed -e "s/[^a-z0-9]/-/g") #replace all remaining non alphanumerics with -
-        echo $BUCKET_NAME
-        echo "::set-output name=bucket_name::$BUCKET_NAME"
-    - name: Create Bucket
-      run: |
-        echo $BUCKET_NAME
-        aws s3 mb s3://$BUCKET_NAME --region us-east-1
-        aws s3 website s3://$BUCKET_NAME --index-document index.html
-      env:
-        BUCKET_NAME: ${{ steps.create_name.outputs.bucket_name }}
-    - name: Put Lifecycle
-      run: |
-        cat >lifecycle.xml <<EOL
-          {
-            "Rules": [
-                {
-                    "Expiration": {
-                        "Days": 30
-                    },
-                    "ID": "Expire Old Objects",
-                    "Prefix": "",
-                    "Status": "Enabled",
-                    "NoncurrentVersionExpiration": {
-                        "NoncurrentDays": 30
-                    },
-                    "AbortIncompleteMultipartUpload": {
-                        "DaysAfterInitiation": 30
-                    }
-                }
-            ]
-        }
-        EOL
-        aws s3api put-bucket-lifecycle --bucket $BUCKET_NAME --lifecycle-configuration file://lifecycle.xml
-      env:
-        BUCKET_NAME: ${{ steps.create_name.outputs.bucket_name }}
-    - name: Sync zip to Bucket
-      run: |
-        aws s3 sync ./site/build s3://$BUCKET_NAME --acl public-read
-      env:
-        BUCKET_NAME: ${{ steps.create_name.outputs.bucket_name }}
-    - name: Comment on PR
-      uses: mshick/add-pr-comment@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        message: http://${{ steps.create_name.outputs.bucket_name }}.s3-website-us-east-1.amazonaws.com/
-        allow-repeats: true
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Generate Static Site
+        run: |
+            cd site
+            yarn install --frozen-lockfile
+            npm run build
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Create Bucket Name
+        id: create_name
+        run: |
+          BUCKET_NAME=bw-api-docs-${GITHUB_HEAD_REF#refs/heads/}
+          BUCKET_NAME=$(echo "$BUCKET_NAME" | tr '[:upper:]' '[:lower:]') #convert to lowercase for AWS bucket (can't be uppercase)
+          BUCKET_NAME=$(echo "$BUCKET_NAME" | sed -e "s/[^a-z0-9]/-/g") #replace all remaining non alphanumerics with -
+          echo $BUCKET_NAME
+          echo "::set-output name=bucket_name::$BUCKET_NAME"
+      - name: Create Bucket
+        run: |
+          echo $BUCKET_NAME
+          aws s3 mb s3://$BUCKET_NAME --region us-east-1
+          aws s3 website s3://$BUCKET_NAME --index-document index.html
+        env:
+          BUCKET_NAME: ${{ steps.create_name.outputs.bucket_name }}
+      - name: Put Lifecycle
+        run: |
+          cat >lifecycle.xml <<EOL
+            {
+              "Rules": [
+                  {
+                      "Expiration": {
+                          "Days": 30
+                      },
+                      "ID": "Expire Old Objects",
+                      "Prefix": "",
+                      "Status": "Enabled",
+                      "NoncurrentVersionExpiration": {
+                          "NoncurrentDays": 30
+                      },
+                      "AbortIncompleteMultipartUpload": {
+                          "DaysAfterInitiation": 30
+                      }
+                  }
+              ]
+          }
+          EOL
+          aws s3api put-bucket-lifecycle --bucket $BUCKET_NAME --lifecycle-configuration file://lifecycle.xml
+        env:
+          BUCKET_NAME: ${{ steps.create_name.outputs.bucket_name }}
+      - name: Sync zip to Bucket
+        run: |
+          aws s3 sync ./site/build s3://$BUCKET_NAME --acl public-read
+        env:
+          BUCKET_NAME: ${{ steps.create_name.outputs.bucket_name }}
+      - name: Comment on PR
+        uses: mshick/add-pr-comment@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          message: http://${{ steps.create_name.outputs.bucket_name }}.s3-website-us-east-1.amazonaws.com/
+          allow-repeats: true
+  
+  alert_if_failure: 
+    name: Alert for failure 
+    needs: [publish]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: actions/checkout@v2
+
+      - name: Get Branch Name
+        run: | 
+          echo "BRANCH_NAME=${GITHUB_HEAD_REF#refs/heads/}" >> $GITHUB_ENV
+
+      - name: Check for Cooresponding api-specs PR
+        run: |
+          response=$(curl \
+            -H "Accept: application/vnd.github.v3+json" \
+            -u ${{ secrets.DX_GITHUB_USERNAME }}:${{ secrets.DX_GITHUB_TOKEN }} \
+            https://api.github.com/repos/Bandwidth/api-specs/pulls?head=Bandwidth:$BRANCH_NAME)
+
+          url=$(echo $response | jq '.[0].url')
+          number=$(echo $response | jq '.[0].number')
+          
+          if [ -z $number ]; then 
+            echo "No Cooresponding PR found on api-specs";
+          else 
+            echo "URL=$url" >> $GITHUB_ENV;
+            echo "SPECS_PR_NUMBER=$number" >> $GITHUB_ENV;
+            echo "RESULT=true" >> $GITHUB_ENV;
+          fi
+     
+      - name: Get Docs PR Number
+        if: ${{ env.RESULT == 'true' }}
+        run: |
+          echo "DOCS_PR_NUMBER=$(hub pr list -h ${{ env.BRANCH_NAME }} -f %I)" >> $GITHUB_ENV
+        env: 
+          GITHUB_TOKEN: ${{ secrets.DX_GITHUB_TOKEN }}
+
+      - name: Make PR Comment
+        if: ${{ env.RESULT == 'true' }}
+        uses: ./.github/actions/add_pr_comment
+        with: 
+          username: ${{ secrets.DX_GITHUB_USERNAME }}
+          token: ${{ secrets.DX_GITHUB_TOKEN }}
+          repo-name: api-specs
+          pr-number: ${{ env.SPECS_PR_NUMBER }}
+          message: 'Error generating staging site - please see [corresponding PR](https://github.com/Bandwidth/api-docs/pull/${{ env.DOCS_PR_NUMBER }}) on api-docs.'
