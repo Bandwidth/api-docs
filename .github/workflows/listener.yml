@@ -3,7 +3,7 @@ name: Listener
 
 on:
   repository_dispatch:
-    types: [Open, Update, Merge, Close]
+    types: [Open, Update, Merge, Close, Draft]
 
 jobs: 
   open-update: 
@@ -28,6 +28,20 @@ jobs:
           origin-repo: ${{ github.event.client_payload.originRepo }}
           author: ${{ github.event.client_payload.author }}
       
+      - name: Open Pull Request
+        if: steps.replace-specs-snippets.outputs.needs_pr
+        run: |
+          hub pull-request --base Bandwidth:main $(if ${{ github.event.client_payload.draftPr }} ; then echo "-d" ; fi) -m '${{ github.event.client_payload.branchName }}' -m 'Update API specs from upstream api-specs repository. Opened By: @${{ inputs.author }}'
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Output PR Number
+        run: |
+          PR_NUMBER=$(hub pr list -h ${{ github.event.client_payload.branchName }} -f %I)
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Comment on Corresponding Repo
         uses: ./.github/actions/add_pr_comment
         with: 
@@ -35,7 +49,7 @@ jobs:
           token: ${{ secrets.DX_GITHUB_TOKEN }}
           repo-name: ${{ github.event.client_payload.originRepo }}
           pr-number: ${{ github.event.client_payload.prNumber }}
-          message: 'Preview site: http://bw-api-docs-${{ env.BRANCH_NAME }}.s3-website-us-east-1.amazonaws.com/\nPlease note that it may take a couple minutes for your preview site to become available.\n\nSee the corresponding PR opened on the docsite repository (no action required):\nhttps://github.com/Bandwidth/api-docs/pull/${{ steps.replace-specs-snippets.outputs.pr-number }}'
+          message: 'Preview site: http://bw-api-docs-${{ env.BRANCH_NAME }}.s3-website-us-east-1.amazonaws.com/\nPlease note that it may take a couple minutes for your preview site to become available.\n\nSee the corresponding PR opened on the docsite repository (no action required):\nhttps://github.com/Bandwidth/api-docs/pull/${{ env.PR_NUMBER }}'
 
   merge: 
     if: ${{ github.event.action == 'Merge' }} 
@@ -81,3 +95,40 @@ jobs:
           repo-name: api-docs
           pr-number: ${{ env.PR_NUMBER }}
           message: 'Corresponding Pull Request on [${{ github.event.client_payload.originRepo }}](https://github.com/Bandwidth/${{ github.event.client_payload.originRepo }}/pull/${{ github.event.client_payload.prNumber }}) was closed.'
+  
+  change_draft_status: 
+    if: ${{ github.event.action == 'Draft' }} 
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+    
+      - name: Check and Update Draft Status
+        run: |
+          PR_STATE=$(hub pr list -h ${{ github.event.client_payload.branchName }}  -f %pS)
+          if ${{ github.event.client_payload.draftPr }}
+          then
+            if [ "$PR_STATE" == "open" ]
+            then
+              id=$(gh pr view ${{ github.event.client_payload.branchName }} --json id -q '.id')
+              number=$(gh pr view ${{ github.event.client_payload.branchName }} --json number -q '.number')
+              MUTATION='
+                mutation($id: ID!) {
+                  convertPullRequestToDraft(input: { pullRequestId: $id }) {
+                    pullRequest {
+                      id
+                      number
+                      isDraft
+                    }
+                  }
+                }
+              '
+              gh api graphql -F id="${id}" -f query="${MUTATION}" >/dev/null
+            fi 
+          else
+            if [ "$PR_STATE" == "draft" ]
+            then
+              gh pr ready ${{ github.event.client_payload.branchName }}
+            fi 
+          fi
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
