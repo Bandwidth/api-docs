@@ -7,8 +7,11 @@ slug: /changelog
 
 | Date | Notes |
 |--|--|
-| February 3rd, 2022 | Added brand vetting UI and API and added unassign campaign from TN to campaign APIs |
-|February 2, 2022 | Removed the Staging environment from the server list for WebRTC API Specs |
+| March 18, 2022 | Added new guides to Voice API section and updated old ones |
+| February 16, 2022 | Added details of new http voice statistics endpoint |
+| February 16, 2022 | Added new call modify endpoint with BXML to Voice API spec |
+| February 3, 2022 | Added brand vetting UI and API and added unassign campaign from TN to campaign APIs |
+| February 2, 2022 | Removed the Staging environment from the server list for WebRTC API Specs |
 | January 31, 2022 | Added back MFA Webhooks (Callbacks) documentation
 | January 18, 2022 | Added downloadable CSV sample on Messaging Campaign UI and Import Campaign UI guides for Bulk TN Upload |
 | December 28, 2021 | Many updates to Voice API spec |

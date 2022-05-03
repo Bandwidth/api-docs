@@ -63,6 +63,12 @@ const ApiList = [
         link: '/apis/dash-notifications'
     },
     {
+        title: 'Bandwidth International',
+        Svg: require('../../../static/img/bwi-globe.svg').default,
+        style: apiStyles.apiSvg,
+        link: '/apis/bwi'
+    },
+    {
         title: 'Identity Providers',
         Svg: require('../../../static/img/icon_product_byoidp.svg').default,
         style: apiStyles.apiSvg,

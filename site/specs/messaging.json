@@ -1,0 +1,1210 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Messaging",
+        "description": "Bandwidth's HTTP Messaging platform\n## Base Path\n<code>https://messaging.bandwidth.com/api/v2</code>",
+        "contact": {},
+        "version": "4.2.8",
+        "x-server-configuration": {
+            "default-environment": "production",
+            "default-server": "default",
+            "environments": [
+                {
+                    "name": "production",
+                    "servers": [
+                        {
+                            "name": "default",
+                            "url": "https://messaging.bandwidth.com/api/v2"
+                        }
+                    ]
+                },
+                {
+                    "name": "custom",
+                    "servers": [
+                        {
+                            "name": "default",
+                            "url": "{base_url}"
+                        }
+                    ]
+                }
+            ],
+            "parameters": [
+                {
+                    "name": "base_url",
+                    "description": "",
+                    "type": "string",
+                    "example": "https://www.example.com"
+                }
+            ]
+        }
+    },
+    "servers": [
+        {
+            "url": "https://messaging.bandwidth.com/api/v2",
+            "variables": {}
+        }
+    ],
+    "paths": {
+        "/users/{accountId}/media": {
+            "get": {
+                "tags": [
+                    "Media"
+                ],
+                "summary": "List Media",
+                "description": "Gets a list of your media files. No query parameters are supported.",
+                "operationId": "ListMedia",
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "path",
+                        "required": true,
+                        "style": "simple",
+                        "explode": false,
+                        "description": "User's account ID",
+                        "example": "900000",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "Continuation-Token",
+                        "in": "header",
+                        "style": "simple",
+                        "explode": false,
+                        "description": "Continuation token used to retrieve subsequent media.",
+                        "example": "12345",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "Continuation-Token": {
+                                "description": "Continuation token used to retrieve subsequent media.",
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Media"
+                                    },
+                                    "description": "successful operation"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "415": {
+                        "$ref": "#/components/responses/InvalidMediaType"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    }
+                },
+                "deprecated": false,
+                "x-codeSamples": [
+                    {
+                        "lang": "cURL",
+                        "source": "curl 'https://messaging.bandwidth.com/api/v2/users/12345/media' \\\n    -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ='\n"
+                    },
+                    {
+                        "lang": "C#",
+                        "source": "using System;\nusing System.Threading.Tasks;\nusing Bandwidth.Standard;\nusing Bandwidth.Standard.Exceptions;\nusing Bandwidth.Standard.Messaging.Models;\n\nclass Program\n{\n    static async Task Main(string[] args)\n    {\n        var username = \"api-username\";\n        var password = \"api-pasword\";\n        var accountId = \"12345\";\n\n        var client = new BandwidthClient.Builder()\n            .MessagingBasicAuthCredentials(username, password)\n            .Build();\n\n        try\n        {\n            var response = await client.Messaging.APIController.ListMediaAsync(accountId);\n            Console.WriteLine(response.Data);\n        }\n        catch (ApiException e)\n        {\n            Console.WriteLine(e.Message);\n        }\n    }\n}\n"
+                    },
+                    {
+                        "lang": "Java",
+                        "source": "import com.bandwidth.BandwidthClient;\nimport com.bandwidth.http.response.ApiResponse;\nimport com.bandwidth.messaging.models.Media;\n\nimport java.util.concurrent.CompletableFuture;\nimport java.util.concurrent.ExecutionException;\nimport java.util.List;\n\npublic class Sample {\n    public static final String USERNAME = \"api-username\";\n    public static final String PASSWORD = \"api-password\";\n    public static final String ACCOUNT_ID = \"12345\";\n\n    public static void main(String[] args) {\n        BandwidthClient client = new BandwidthClient.Builder()\n                .messagingBasicAuthCredentials(USERNAME, PASSWORD)\n                .build();\n\n        try {\n            CompletableFuture<ApiResponse<List<Media>>> completableFuture = client.getMessagingClient().getAPIController().listMediaAsync(ACCOUNT_ID, null);\n            System.out.println(completableFuture.get().getResult());\n        } catch (InterruptedException | ExecutionException e) {\n            System.out.println(e.getMessage());\n        }\n    }\n}\n"
+                    },
+                    {
+                        "lang": "Node.js",
+                        "source": "import { Client, ApiController } from '@bandwidth/messaging';\nimport * as fs from 'fs';\n\nconst BW_USERNAME = \"api-username\";\nconst BW_PASSWORD = \"api-password\";\nconst BW_ACCOUNT_ID = \"12345\";\n\nconst client = new Client({\n  basicAuthUserName: BW_USERNAME,\n  basicAuthPassword: BW_PASSWORD\n});\n\nconst controller = new ApiController(client);\n\nconst listMedia = async function() {\n  try {\n    const response = await controller.listMedia(BW_ACCOUNT_ID);\n    console.log(response.result)\n  } catch (error) {\n  console.error(error);\n}};\n\nlistMedia();\n"
+                    },
+                    {
+                        "lang": "PHP",
+                        "source": "<?php\n\nrequire \"vendor/autoload.php\";\n\napi-username = \"api-username\";\napi-password = \"api-pasword\";\n12345 = \"12345\";\n\n$config = new BandwidthLib\\Configuration(\n    array(\n        'messagingBasicAuthUserName' => $BW_USERNAME,\n        'messagingBasicAuthPassword' => $BW_PASSWORD,\n    )\n);\n$client = new BandwidthLib\\BandwidthClient($config);\n\n$messagingClient = $client->getMessaging()->getClient();\n\ntry {\n    $response = $messagingClient->listMedia($BW_ACCOUNT_ID);\n    if (count($response->getResult()) > 0) {\n        print_r($response->getResult()[0]->mediaName);\n    }\n} catch (BandwidthLib\\APIException $e) {\n    print_r($e->getResponseCode());\n}\n"
+                    },
+                    {
+                        "lang": "Python",
+                        "source": "from bandwidth.bandwidth_client import BandwidthClient\nfrom bandwidth.exceptions.api_exception import APIException\n\nimport os\n\nBW_USERNAME = \"api-username\"\nBW_PASSWORD = \"api-password\"\nBW_ACCOUNT_ID = \"12345\"\n\nbandwidth_client = BandwidthClient(\n    messaging_basic_auth_user_name=BW_USERNAME,\n    messaging_basic_auth_password=BW_PASSWORD\n)\nmessaging_client = bandwidth_client.messaging_client.client\n\ntry:\n    response = messaging_client.list_media(BW_ACCOUNT_ID)\n    print(response.body)\nexcept APIException as e:\n    print(e.response_code)\n"
+                    },
+                    {
+                        "lang": "Ruby",
+                        "source": "require 'bandwidth'\n\ninclude Bandwidth\ninclude Bandwidth::Messaging\n\nbandwidth_client = Bandwidth::Client.new(\n    messaging_basic_auth_user_name: \"api-username\",\n    messaging_basic_auth_password: \"api-password\"\n)\nmessaging_client = bandwidth_client.messaging_client.client\n\nbegin\n  media = messaging_client.list_media(\"12345\")\n  media.data.each { |item|\n    puts item.media_name\n  }\nrescue APIException => e\n  puts e.response_code\nend\n"
+                    }
+                ]
+            }
+        },
+        "/users/{accountId}/media/{mediaId}": {
+            "get": {
+                "tags": [
+                    "Media"
+                ],
+                "summary": "Get Media",
+                "description": "Downloads a media file you previously uploaded.",
+                "operationId": "GetMedia",
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "path",
+                        "required": true,
+                        "style": "simple",
+                        "explode": false,
+                        "description": "User's account ID",
+                        "example": "900000",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "mediaId",
+                        "in": "path",
+                        "required": true,
+                        "style": "simple",
+                        "explode": false,
+                        "description": "Media ID to retrieve",
+                        "example": "0a610655-ba58",
+                        "schema": {
+                            "pattern": ".+",
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {},
+                        "content": {
+                            "application/octet-stream": {
+                                "schema": {
+                                    "type": "string",
+                                    "description": "successful operation",
+                                    "format": "binary"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "415": {
+                        "$ref": "#/components/responses/InvalidMediaType"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    }
+                },
+                "deprecated": false,
+                "x-codeSamples": [
+                    {
+                        "lang": "cURL",
+                        "source": "curl 'https://messaging.bandwidth.com/api/v2/users/12345/media/media-id-123' \\\n    -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ='\n"
+                    },
+                    {
+                        "lang": "C#",
+                        "source": "using System;\nusing System.Threading.Tasks;\nusing Bandwidth.Standard;\nusing Bandwidth.Standard.Exceptions;\nusing Bandwidth.Standard.Messaging.Models;\n\nclass Program\n{\n    static async Task Main(string[] args)\n    {\n        var username = \"api-username\";\n        var password = \"api-pasword\";\n        var accountId = \"12345\";\n\n        var client = new BandwidthClient.Builder()\n            .MessagingBasicAuthCredentials(username, password)\n            .Build();\n\n        var mediaId = \"media-id-123\";\n\n        try\n        {\n            var response = await client.Messaging.APIController.GetMediaAsync(accountId, mediaId);\n            Console.WriteLine(response.Data);\n        }\n        catch (ApiException e)\n        {\n            Console.WriteLine(e.Message);\n        }\n    }\n}\n"
+                    },
+                    {
+                        "lang": "Java",
+                        "source": "import com.bandwidth.BandwidthClient;\nimport com.bandwidth.http.response.ApiResponse;\n\nimport java.util.concurrent.CompletableFuture;\nimport java.util.concurrent.ExecutionException;\nimport java.io.InputStream;\n\npublic class Sample {\n    public static final String USERNAME = \"api-username\";\n    public static final String PASSWORD = \"api-password\";\n    public static final String ACCOUNT_ID = \"12345\";\n\n    public static void main(String[] args) {\n        String mediaId = \"media-id-123\";\n\n        BandwidthClient client = new BandwidthClient.Builder()\n                .messagingBasicAuthCredentials(USERNAME, PASSWORD)\n                .build();\n\n        try {\n            CompletableFuture<ApiResponse<InputStream>> completableFuture = client.getMessagingClient().getAPIController().getMediaAsync(ACCOUNT_ID, mediaId);\n            System.out.println(completableFuture.get().getResult());\n        } catch (InterruptedException | ExecutionException e) {\n            System.out.println(e.getMessage());\n        }\n    }\n}\n"
+                    },
+                    {
+                        "lang": "Node.js",
+                        "source": "import { Client, ApiController } from '@bandwidth/messaging';\nimport * as fs from 'fs';\n\nconst BW_USERNAME = \"api-username\";\nconst BW_PASSWORD = \"api-password\";\nconst BW_ACCOUNT_ID = \"12345\";\nconst mediaId = \"media-id-123.pdf\";\n\nconst client = new Client({\n  basicAuthUserName: BW_USERNAME,\n  basicAuthPassword: BW_PASSWORD\n});\n\nconst controller = new ApiController(client);\n\nconst getMedia = async function() {\n  try {\n    const response = await controller.getMedia(BW_ACCOUNT_ID, mediaId);\n    const chunks = [];\n    for await (let chunk of response.result) {\n        chunks.push(chunk);\n    }\n    fs.writeFileSync('file-to-write.pdf', chunks[0], 'binary');\n  } catch (error) {\n  console.error(error);\n}};\n\ngetMedia();\n"
+                    },
+                    {
+                        "lang": "PHP",
+                        "source": "<?php\n\nrequire \"vendor/autoload.php\";\n\napi-username = \"api-username\";\napi-password = \"api-pasword\";\n12345 = \"12345\";\n\n$config = new BandwidthLib\\Configuration(\n    array(\n        'messagingBasicAuthUserName' => $BW_USERNAME,\n        'messagingBasicAuthPassword' => $BW_PASSWORD,\n    )\n);\n$client = new BandwidthLib\\BandwidthClient($config);\n\n$messagingClient = $client->getMessaging()->getClient();\n\n$mediaFileName = \"media-id-123\";\n\ntry {\n    $response = $messagingClient->getMedia($BW_ACCOUNT_ID, $mediaFileName);\n    $downloadedMediaFile = $response->getResult();\n} catch (BandwidthLib\\APIException $e) {\n    print_r($e->getResponseCode());\n}\n"
+                    },
+                    {
+                        "lang": "Python",
+                        "source": "from bandwidth.bandwidth_client import BandwidthClient\nfrom bandwidth.exceptions.api_exception import APIException\n  \nimport os\n\nBW_USERNAME = \"api-username\"\nBW_PASSWORD = \"api-password\"\nBW_ACCOUNT_ID = \"12345\"\n\nbandwidth_client = BandwidthClient(\n    messaging_basic_auth_user_name=BW_USERNAME,\n    messaging_basic_auth_password=BW_PASSWORD\n)\nmessaging_client = bandwidth_client.messaging_client.client\n\nmedia_file_name = 'media-id-123'\n\ntry:\n    response = messaging_client.get_media(BW_ACCOUNT_ID, media_file_name)\n    downloaded_media_file = response.body\nexcept APIException as e:\n    print(e.response_code)\n"
+                    },
+                    {
+                        "lang": "Ruby",
+                        "source": "require 'bandwidth'\n\ninclude Bandwidth\ninclude Bandwidth::Messaging\n\nbandwidth_client = Bandwidth::Client.new(\n    messaging_basic_auth_user_name: \"api-username\",\n    messaging_basic_auth_password: \"api-password\"\n)\nmessaging_client = bandwidth_client.messaging_client.client\n\nbegin\n  downloaded_media = messaging_client.get_media(\"12345\", ENV['MEDIA_ID'])\n  f = File.open(\"file_to_write\", \"wb\")\n  f.puts(downloaded_media.data)\n  f.close()\nrescue APIException => e\n  puts e.response_code\nend\n"
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Media"
+                ],
+                "summary": "Upload Media",
+                "description": "Uploads a file the normal HTTP way. You may add headers to the request in order to provide some control to your media-file.",
+                "operationId": "UploadMedia",
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "path",
+                        "required": true,
+                        "style": "simple",
+                        "explode": false,
+                        "description": "User's account ID",
+                        "example": "900000",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "mediaId",
+                        "in": "path",
+                        "required": true,
+                        "style": "simple",
+                        "explode": false,
+                        "description": "The user supplied custom media ID",
+                        "example": "my-media-id",
+                        "schema": {
+                            "pattern": ".+",
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "Content-Type",
+                        "in": "header",
+                        "style": "simple",
+                        "explode": false,
+                        "description": "The media type of the entity-body",
+                        "example": "audio/wav",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "Cache-Control",
+                        "in": "header",
+                        "style": "simple",
+                        "explode": false,
+                        "description": "General-header field is used to specify directives that MUST be obeyed by all caching mechanisms along the request/response chain.",
+                        "example": "no-cache",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "x-send-file-in-body": true,
+                    "content": {
+                        "application/octet-stream": {
+                            "schema": {
+                                "type": "string",
+                                "format": "binary"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "204": {
+                        "description": "successful operation",
+                        "headers": {}
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "415": {
+                        "$ref": "#/components/responses/InvalidMediaType"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    }
+                },
+                "deprecated": false,
+                "x-codeSamples": [
+                    {
+                        "lang": "cURL",
+                        "source": "curl 'https://messaging.bandwidth.com/api/v2/users/12345/media/media-id-123' \\\n    -X PUT \\\n    -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ='\n"
+                    },
+                    {
+                        "lang": "C#",
+                        "source": "using System;\nusing System.IO;\nusing System.Text;\nusing System.Threading.Tasks;\nusing Bandwidth.Standard;\nusing Bandwidth.Standard.Exceptions;\nusing Bandwidth.Standard.Http.Client;\n\nclass Program\n{\n    static async Task Main(string[] args)\n    {\n        var username = \"api-username\";\n        var password = \"api-pasword\";\n        var accountId = \"12345\";\n\n        var client = new BandwidthClient.Builder()\n            .MessagingBasicAuthCredentials(username, password)\n            .Build();\n\n        var mediaId = \"media-id-123\";\n                    \n        var content = \"Hello world\";\n        var contentType = \"text/plain\";\n\n        var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(content));\n        var fileStreamInfo = new FileStreamInfo(memoryStream);\n\n        try\n        {\n            await client.Messaging.APIController.UploadMediaAsync(accountId, mediaId, fileStreamInfo, contentType);\n        }\n        catch (ApiException e)\n        {\n            Console.WriteLine(e.Message);\n        }\n    }\n}\n"
+                    },
+                    {
+                        "lang": "Java",
+                        "source": "import com.bandwidth.BandwidthClient;\nimport com.bandwidth.http.response.ApiResponse;\nimport com.bandwidth.utilities.FileWrapper;\n\nimport java.io.File;\nimport java.util.concurrent.CompletableFuture;\nimport java.util.concurrent.ExecutionException;\n\npublic class Sample {\n    public static final String USERNAME = \"api-username\";\n    public static final String PASSWORD = \"api-password\";\n    public static final String ACCOUNT_ID = \"12345\";\n\n    public static void main(String[] args) {\n        BandwidthClient client = new BandwidthClient.Builder()\n                .messagingBasicAuthCredentials(USERNAME, PASSWORD)\n                .build();\n\n        String mediaId = \"media-id-123\";\n        FileWrapper fileWrapper = new FileWrapper(new File(\"/path/to/file\"));\n\n        try {\n            CompletableFuture<ApiResponse<Void>> completableFuture = client.getMessagingClient().getAPIController().uploadMediaAsync(ACCOUNT_ID, mediaId, fileWrapper, \"content/type\", \"no-cache\");\n            System.out.println(completableFuture.get().getResult());\n        } catch (InterruptedException | ExecutionException e) {\n            System.out.println(e.getMessage());\n        }\n    }\n}\n"
+                    },
+                    {
+                        "lang": "Node.js",
+                        "source": "import { Client, ApiController, Environment } from '@bandwidth/messaging';\nimport * as fs from 'fs';\n\nconst BW_USERNAME = \"api-username\";\nconst BW_PASSWORD = \"api-password\";\nconst BW_ACCOUNT_ID = \"12345\";\nconst mediaId = \"abc123.pdf\";\nconst contentType = \"application/octet-stream\";\nconst cacheControl = \"no-cache\";\nconst contents = Buffer.alloc(8); // Any binary string will work for the upload. This includes file contents\n\nconst client = new Client({\n  basicAuthUserName: BW_USERNAME,\n  basicAuthPassword: BW_PASSWORD,\n});\n\nconst controller = new ApiController(client);\n\nconst uploadMedia = async function() {\n  try {\n    const response = await controller.uploadMedia(BW_ACCOUNT_ID, mediaId, contents, contentType, cacheControl);\n    console.log(response.statusCode)\n  } catch (error) {\n  console.error(error);\n}};\n\nuploadMedia();\n"
+                    },
+                    {
+                        "lang": "PHP",
+                        "source": "<?php\n\nrequire \"vendor/autoload.php\";\n\napi-username = \"api-username\";\napi-password = \"api-pasword\";\n12345 = \"12345\";\n\n$config = new BandwidthLib\\Configuration(\n    array(\n        'messagingBasicAuthUserName' => $BW_USERNAME,\n        'messagingBasicAuthPassword' => $BW_PASSWORD,\n    )\n);\n$client = new BandwidthLib\\BandwidthClient($config);\n\n$messagingClient = $client->getMessaging()->getClient();\n\n$mediaFileName = \"sample_file_name\";\n$mediaFile = \"12345\"; //Any binary string will work for the upload. This includes file contents\n\ntry {\n    $messagingClient->uploadMedia($BW_ACCOUNT_ID, $mediaFileName, $mediaFile);\n} catch (BandwidthLib\\APIException $e) {\n    print_r($e->getResponseCode());\n}\n"
+                    },
+                    {
+                        "lang": "Python",
+                        "source": "from bandwidth.bandwidth_client import BandwidthClient\nfrom bandwidth.exceptions.api_exception import APIException\n\nimport os\n\nBW_USERNAME = \"api-username\"\nBW_PASSWORD = \"api-password\"\nBW_ACCOUNT_ID = \"12345\"\n\nbandwidth_client = BandwidthClient(\n    messaging_basic_auth_user_name=BW_USERNAME,\n    messaging_basic_auth_password=BW_PASSWORD\n)\nmessaging_client = bandwidth_client.messaging_client.client\n\nmedia_file_name = 'sample_file_name'\nmedia_file = b'12345' #Any binary string will work for the upload. This includes file contents\n\ntry:\n    messaging_client.upload_media(BW_ACCOUNT_ID, media_file_name, media_file)\nexcept APIException as e:\n    print(e.response_code)\n"
+                    },
+                    {
+                        "lang": "Ruby",
+                        "source": "require 'bandwidth'\n\ninclude Bandwidth\ninclude Bandwidth::Messaging\n\nbandwidth_client = Bandwidth::Client.new(\n    messaging_basic_auth_user_name: \"api-username\",\n    messaging_basic_auth_password: \"api-password\"\n)\nmessaging_client = bandwidth_client.messaging_client.client\n\nbegin\n  #f = File.open(\"some_file\", \"rb\")\n  #file_content = f.read\n  file_content = \"12345\"\n  messaging_client.upload_media(\n    \"12345\",\n    ENV['MEDIA_ID'],\n    file_content,\n    :content_type => \"application/octet-stream\",\n    :cache_control => \"no-cache\"\n  )\n  f.close()\nrescue APIException => e\n  puts e.response_code\nend\n"
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Media"
+                ],
+                "summary": "Delete Media",
+                "description": "Deletes a media file from Bandwidth API server. Make sure you don't have any application scripts still using the media before you delete. If you accidentally delete a media file, you can immediately upload a new file with the same name.",
+                "operationId": "DeleteMedia",
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "path",
+                        "required": true,
+                        "style": "simple",
+                        "explode": false,
+                        "description": "User's account ID",
+                        "example": "900000",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "mediaId",
+                        "in": "path",
+                        "required": true,
+                        "style": "simple",
+                        "explode": false,
+                        "description": "The media ID to delete",
+                        "example": "tjdla-4562ld",
+                        "schema": {
+                            "pattern": ".+",
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "successful operation",
+                        "headers": {}
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "415": {
+                        "$ref": "#/components/responses/InvalidMediaType"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    }
+                },
+                "deprecated": false,
+                "x-codeSamples": [
+                    {
+                        "lang": "cURL",
+                        "source": "curl 'https://messaging.bandwidth.com/api/v2/users/12345/media/media-id-123' \\\n    -X DELETE \\\n    -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ='\n"
+                    },
+                    {
+                        "lang": "C#",
+                        "source": "using System;\nusing System.Threading.Tasks;\nusing Bandwidth.Standard;\nusing Bandwidth.Standard.Exceptions;\nusing Bandwidth.Standard.Messaging.Models;\n\nclass Program\n{\n    static async Task Main(string[] args)\n    {\n        var username = \"api-username\";\n        var password = \"api-pasword\";\n        var accountId = \"12345\";\n\n        var client = new BandwidthClient.Builder()\n            .MessagingBasicAuthCredentials(username, password)\n            .Build();\n\n        var mediaId = \"media-id-123\";\n\n        try\n        {\n            await client.Messaging.APIController.DeleteMediaAsync(accountId, mediaId);\n        }\n        catch (ApiException e)\n        {\n            Console.WriteLine(e.Message);\n        }\n    }\n}\n"
+                    },
+                    {
+                        "lang": "Java",
+                        "source": "import com.bandwidth.BandwidthClient;\nimport com.bandwidth.http.response.ApiResponse;\nimport com.bandwidth.messaging.models.BandwidthMessage;\nimport com.bandwidth.messaging.models.MessageRequest;\n\nimport java.util.concurrent.CompletableFuture;\nimport java.util.concurrent.ExecutionException;\nimport java.util.Collections;\n\npublic class Sample {\n    public static final String USERNAME = \"api-username\";\n    public static final String PASSWORD = \"api-password\";\n    public static final String ACCOUNT_ID = \"12345\";\n\n    public static void main(String[] args) {\n        String mediaId = \"media-id-123\";\n\n        BandwidthClient client = new BandwidthClient.Builder()\n                .messagingBasicAuthCredentials(USERNAME, PASSWORD)\n                .build();\n\n        try {\n            CompletableFuture<ApiResponse<Void>> completableFuture = client.getMessagingClient().getAPIController().deleteMediaAsync(ACCOUNT_ID, mediaId);\n            System.out.println(completableFuture.get().getResult());\n        } catch (InterruptedException | ExecutionException e) {\n            System.out.println(e.getMessage());\n        }\n    }\n}\n"
+                    },
+                    {
+                        "lang": "Node.js",
+                        "source": "import { Client, ApiController } from '@bandwidth/messaging';\n\nconst BW_USERNAME = \"api-username\";\nconst BW_PASSWORD = \"api-password\";\nconst BW_ACCOUNT_ID = \"12345\";\nconst mediaId = 'abc12345-6def-abc1-2345-6defabc123451.mp3';\n\nconst client = new Client({\n  basicAuthUserName: BW_USERNAME,\n  basicAuthPassword: BW_PASSWORD\n});\n\nconst controller = new ApiController(client);\n\nconst deleteMedia = async function() {\n  try {\n    const response = await controller.deleteMedia(BW_ACCOUNT_ID, mediaId);\n    console.log(response.statusCode);\n  } catch (error) {\n  console.error(error);\n}};\n\ndeleteMedia();\n"
+                    },
+                    {
+                        "lang": "PHP",
+                        "source": "<?php\n  \nrequire \"vendor/autoload.php\";\n\napi-username = \"api-username\";\napi-password = \"api-pasword\";\n12345 = \"12345\";\n1234-asdf = \"1234-asdf\";\n+15554443333 = \"+15554443333\";\n+15553334444 = \"+15553334444\";\n\n$config = new BandwidthLib\\Configuration(\n    array(\n        'messagingBasicAuthUserName' => $BW_USERNAME,\n        'messagingBasicAuthPassword' => $BW_PASSWORD,\n    )\n);\n$client = new BandwidthLib\\BandwidthClient($config);\n\n$messagingClient = $client->getMessaging()->getClient();\n\n$mediaId = \"m-1234\";\n\ntry {\n    $messagingClient->deleteMedia($BW_ACCOUNT_ID, $mediaId);\n} catch (BandwidthLib\\APIException $e) {\n    print_r($e->getResponseCode());\n}\n"
+                    },
+                    {
+                        "lang": "Python",
+                        "source": "from bandwidth.bandwidth_client import BandwidthClient\nfrom bandwidth.exceptions.api_exception import APIException\n\nimport os\n\nBW_USERNAME = \"api-username\"\nBW_PASSWORD = \"api-password\"\nBW_ACCOUNT_ID = \"12345\"\n\nbandwidth_client = BandwidthClient(\n    messaging_basic_auth_user_name=BW_USERNAME,\n    messaging_basic_auth_password=BW_PASSWORD\n)\nmessaging_client = bandwidth_client.messaging_client.client\n\nmedia_id = \"m-1234\"\n\ntry:\n    messaging_client.delete_media(BW_ACCOUNT_ID, media_id)\nexcept APIException as e:\n    print(e.response_code)\n"
+                    },
+                    {
+                        "lang": "Ruby",
+                        "source": "require 'bandwidth'\n\ninclude Bandwidth\ninclude Bandwidth::Messaging\n\nbandwidth_client = Bandwidth::Client.new(\n    messaging_basic_auth_user_name: \"api-username\",\n    messaging_basic_auth_password: \"api-password\"\n)\nmessaging_client = bandwidth_client.messaging_client.client\n\nbegin\n  messaging_client.delete_media(\"12345\", ENV['MEDIA_ID'])\nrescue APIException => e\n  puts e.response_code\nend\n"
+                    }
+                ]
+            }
+        },
+        "/users/{accountId}/messages": {
+            "get": {
+                "tags": [
+                    "Messages"
+                ],
+                "summary": "Get Messages",
+                "description": "Gets a list of messages based on query parameters.",
+                "operationId": "GetMessages",
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "path",
+                        "required": true,
+                        "description": "User's account ID",
+                        "example": "900000",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "messageId",
+                        "in": "query",
+                        "required": false,
+                        "description": "The ID of the message to search for. Special characters need to be encoded using URL encoding",
+                        "example": "9e0df4ca-b18d-40d7-a59f-82fcdf5ae8e6",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sourceTn",
+                        "in": "query",
+                        "required": false,
+                        "description": "The phone number that sent the message. Accepted values are: a single full phone number, a comma separated list of full phone numbers (maximum of 10), or a single partial phone number (minimum of 5 characters, e.g. '%2B1919')",
+                        "example": "%2B15554443333",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "destinationTn",
+                        "in": "query",
+                        "required": false,
+                        "description": "The phone number that received the message. Accepted values are: a single full phone number, a comma separated list of full phone numbers (maximum of 10), or a single partial phone number (minimum of 5 characters, e.g. '%2B1919')",
+                        "example": "%2B15554443333",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "messageStatus",
+                        "in": "query",
+                        "required": false,
+                        "description": "The status of the message. One of RECEIVED, QUEUED, SENDING, SENT, FAILED, DELIVERED, ACCEPTED, UNDELIVERED",
+                        "example": "RECEIVED",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "messageDirection",
+                        "in": "query",
+                        "required": false,
+                        "description": "The direction of the message. One of INBOUND, OUTBOUND",
+                        "example": "OUTBOUND",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "carrierName",
+                        "in": "query",
+                        "required": false,
+                        "description": "The name of the carrier used for this message. Possible values include, but are not limited to, Verizon and TMobile. Special characters need to be encoded using URL encoding (i.e. AT&T should be passed as AT%26T)",
+                        "example": "Verizon",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "messageType",
+                        "in": "query",
+                        "required": false,
+                        "description": "The type of the message. One of mms, sms",
+                        "example": "mms",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "errorCode",
+                        "in": "query",
+                        "required": false,
+                        "description": "The error code of the message",
+                        "example": 9902,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "fromDateTime",
+                        "in": "query",
+                        "required": false,
+                        "description": "The start of the date range to search in ISO 8601 format. Uses the message receive time. The date range to search in is currently 14 days.",
+                        "example": "2016-09-14T18:20:16.000Z",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "toDateTime",
+                        "in": "query",
+                        "required": false,
+                        "description": "The end of the date range to search in ISO 8601 format. Uses the message receive time. The date range to search in is currently 14 days.",
+                        "example": "2016-09-14T18:20:16.000Z",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "required": false,
+                        "description": "The field and direction to sort by, combined with a colon. Direction is one of asc, desc",
+                        "example": "sourceTn:desc",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "pageToken",
+                        "in": "query",
+                        "required": false,
+                        "description": "A base64 encoded value used for pagination of results",
+                        "example": "gdEewhcJLQRB5",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "description": "The maximum records requested in search result. Default 100. The sum of limit and after cannot be more than 10000",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 50
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {},
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BandwidthMessagesList"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "415": {
+                        "$ref": "#/components/responses/InvalidMediaType"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    }
+                },
+                "deprecated": false,
+                "x-codeSamples": [
+                    {
+                        "lang": "cURL",
+                        "source": "curl 'https://messaging.bandwidth.com/api/v2/users/12345/messages?sourceTn=+15554443333' \\\n    -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ='\n"
+                    },
+                    {
+                        "lang": "C#",
+                        "source": "using System;\nusing System.Threading.Tasks;\nusing Bandwidth.Standard;\nusing Bandwidth.Standard.Exceptions;\nusing Bandwidth.Standard.Messaging.Models;\n\nclass Program\n{\n    static async Task Main(string[] args)\n    {\n        var username = \"api-username\";\n        var password = \"api-pasword\";\n        var accountId = \"12345\";\n        var bandwidthNumber = \"+15554443333\";\n\n        var client = new BandwidthClient.Builder()\n            .MessagingBasicAuthCredentials(username, password)\n            .Build();\n\n        try\n        {\n            var response = await client.Messaging.APIController.GetMessagesAsync(accountId, sourceTn: bandwidthNumber);\n            Console.WriteLine(response.Data);\n        }\n        catch (ApiException e)\n        {\n            Console.WriteLine(e.Message);\n        }\n    }\n}\n"
+                    },
+                    {
+                        "lang": "Java",
+                        "source": "import com.bandwidth.BandwidthClient;\nimport com.bandwidth.http.response.ApiResponse;\nimport com.bandwidth.messaging.models.BandwidthMessagesList;\n\nimport java.util.concurrent.CompletableFuture;\nimport java.util.concurrent.ExecutionException;\n\npublic class Sample {\n    public static final String USERNAME = \"api-username\";\n    public static final String PASSWORD = \"api-password\";\n    public static final String ACCOUNT_ID = \"12345\";\n\n    public static void main(String[] args) {\n        String bandwidthNumber = \"+15554443333\";\n\n        BandwidthClient client = new BandwidthClient.Builder()\n                .messagingBasicAuthCredentials(USERNAME, PASSWORD)\n                .build();\n\n        try {\n            CompletableFuture<ApiResponse<BandwidthMessagesList>> completableFuture = client.getMessagingClient().getAPIController().getMessagesAsync(ACCOUNT_ID, null, bandwidthNumber, null, null, null, null, null, null, null);\n            System.out.println(completableFuture.get().getResult());\n        } catch (InterruptedException | ExecutionException e) {\n            System.out.println(e.getMessage());\n        }\n    }\n}\n"
+                    },
+                    {
+                        "lang": "Node.js",
+                        "source": "import { Client, ApiController } from '@bandwidth/messaging';\n\nconst BW_USERNAME = \"api-username\";\nconst BW_PASSWORD = \"api-password\";\nconst BW_ACCOUNT_ID = \"12345\";\nconst messageId = \"1589228074636lm4k2je7j7jklbn2\";\n\nconst client = new Client({\n  basicAuthUserName: BW_USERNAME,\n  basicAuthPassword: BW_PASSWORD\n});\n\nconst controller = new ApiController(client);\n\nconst getMessage = async function() {\n  try {\n    const response = await controller.getMessages(BW_ACCOUNT_ID, messageId);\n    console.log(response.body)\n  } catch (error) {\n  console.error(error);\n}};\n\ngetMessage();\n"
+                    },
+                    {
+                        "lang": "PHP",
+                        "source": "<?php\n\nrequire \"vendor/autoload.php\";\n\napi-username = \"api-username\";\napi-password = \"api-pasword\";\n12345 = \"12345\";\n+15554443333 = \"+15554443333\";\n\n$config = new BandwidthLib\\Configuration(\n    array(\n        'messagingBasicAuthUserName' => $BW_USERNAME,\n        'messagingBasicAuthPassword' => $BW_PASSWORD,\n    )\n);\n$client = new BandwidthLib\\BandwidthClient($config);\n\n$messagingClient = $client->getMessaging()->getClient();\n\ntry {\n    $response = $messagingClient->getMessages($BW_ACCOUNT_ID, $sourceTn = $BW_NUMBER);\n    print_r($response->getResult()->totalCount);\n} catch (BandwidthLib\\APIException $e) {\n    print_r($e->getResponseCode());\n}\n"
+                    },
+                    {
+                        "lang": "Python",
+                        "source": "from bandwidth.bandwidth_client import BandwidthClient\nfrom bandwidth.exceptions.api_exception import APIException\n\nimport os\n\nBW_USERNAME = \"api-username\"\nBW_PASSWORD = \"api-password\"\nBW_ACCOUNT_ID = \"12345\"\n\nbandwidth_client = BandwidthClient(\n    messaging_basic_auth_user_name=BW_USERNAME,\n    messaging_basic_auth_password=BW_PASSWORD\n)\nmessaging_client = bandwidth_client.messaging_client.client\n\nsource_tn = \"+15554443333\"\n\ntry:\n    response = messaging_client.get_messages(BW_ACCOUNT_ID, source_tn=source_tn)\n    print(response.body.total_count)\nexcept APIException as e:\n    print(e.response_code)\n"
+                    },
+                    {
+                        "lang": "Ruby",
+                        "source": "require 'bandwidth'\n\ninclude Bandwidth\ninclude Bandwidth::Messaging\n\nbandwidth_client = Bandwidth::Client.new(\n    messaging_basic_auth_user_name: \"api-username\",\n    messaging_basic_auth_password: \"api-password\"\n)\nmessaging_client = bandwidth_client.messaging_client.client\n\nbegin\n  result = messaging_client.get_messages(\"12345\", :source_tn => \"+15554443333\")\n  puts result.data.total_count\nrescue APIException => e\n  puts e.response_code\nend\n"
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Messages"
+                ],
+                "summary": "Create Message",
+                "description": "Endpoint for sending text messages and picture messages using V2 messaging.",
+                "operationId": "CreateMessage",
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "path",
+                        "required": true,
+                        "style": "simple",
+                        "explode": false,
+                        "description": "User's account ID",
+                        "example": "900000",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MessageRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "202": {
+                        "description": "successful operation",
+                        "headers": {},
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BandwidthMessage"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/BadRequest"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/NotFound"
+                    },
+                    "415": {
+                        "$ref": "#/components/responses/InvalidMediaType"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequests"
+                    }
+                },
+                "deprecated": false,
+                "x-codeSamples": [
+                    {
+                        "lang": "cURL",
+                        "source": "curl 'https://messaging.bandwidth.com/api/v2/users/12345/messages' \\\n    -X POST \\\n    -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=' \\\n    -H 'Content-Type: application/json' \\\n    -d '{\n        \"applicationId\": \"$BW_ACCOUNT_ID\",\n        \"to\": [\n            \"+15553334444\",\n            \"+15552223333\"\n        ],\n        \"from\": \"+15554443333\",\n        \"text\": \"Hello World!\",\n        \"media\": [\n            \"https://dev.bandwidth.com/images/bandwidth-logo.png\",\n            \"https://dev.bandwidth.com/images/github_logo.png\"\n        ],\n        \"tag\": \"custom string\",\n        \"priority\": \"default\"\n    }'\n"
+                    },
+                    {
+                        "lang": "C#",
+                        "source": "using System;\nusing System.Collections.Generic;\nusing System.Threading.Tasks;\nusing Bandwidth.Standard;\nusing Bandwidth.Standard.Exceptions;\nusing Bandwidth.Standard.Messaging.Models;\n\nclass Program\n{\n    static async Task Main(string[] args)\n    {\n        var username = \"api-username\";\n        var password = \"api-pasword\";\n        var accountId = \"12345\";\n        var applicationId = \"1234-asdf\";\n        var bandwidthNumber = \"+15554443333\";\n        var userNumber = \"+15553334444\";\n\n        var client = new BandwidthClient.Builder()\n            .MessagingBasicAuthCredentials(username, password)\n            .Build();\n\n        var request = new MessageRequest()\n        {\n            ApplicationId = applicationId,\n            To = new List<string> { userNumber },\n            From = bandwidthNumber,\n            Text = \"Hello world\"\n        };\n\n        try\n        {\n            var response = await client.Messaging.APIController.CreateMessageAsync(accountId, request);\n            Console.WriteLine(response.Data);\n        }\n        catch (ApiException e)\n        {\n            Console.WriteLine(e.Message);\n        }\n    }\n}\n"
+                    },
+                    {
+                        "lang": "Java",
+                        "source": "import com.bandwidth.BandwidthClient;\nimport com.bandwidth.http.response.ApiResponse;\nimport com.bandwidth.messaging.models.BandwidthMessage;\nimport com.bandwidth.messaging.models.MessageRequest;\n\nimport java.util.concurrent.CompletableFuture;\nimport java.util.concurrent.ExecutionException;\nimport java.util.Collections;\n\npublic class Sample {\n    public static final String USERNAME = \"api-username\";\n    public static final String PASSWORD = \"api-password\";\n    public static final String ACCOUNT_ID = \"12345\";\n\n    public static void main(String[] args) {\n        String messagingApplicationId = \"1234-asdf\";\n        String to = \"+15553334444\";\n        String from = \"+15554443333\";\n\n        BandwidthClient client = new BandwidthClient.Builder()\n                .messagingBasicAuthCredentials(USERNAME, PASSWORD)\n                .build();\n\n        MessageRequest request = new MessageRequest();\n        request.setApplicationId(messagingApplicationId);\n        request.setTo(Collections.singletonList(to));\n        request.setFrom(from);\n        request.setText(\"Hello world\");\n\n        try {\n            CompletableFuture<ApiResponse<BandwidthMessage>> completableFuture = client.getMessagingClient().getAPIController().createMessageAsync(ACCOUNT_ID, request);\n            System.out.println(completableFuture.get().getResult());\n        } catch (InterruptedException | ExecutionException e) {\n            System.out.println(e.getMessage());\n        }\n    }\n}\n"
+                    },
+                    {
+                        "lang": "Node.js",
+                        "source": "import { Client, ApiController } from '@bandwidth/messaging';\n\nconst BW_USERNAME = \"api-username\";\nconst BW_PASSWORD = \"api-password\";\nconst BW_ACCOUNT_ID = \"12345\";\nconst BW_MESSAGING_APPLICATION_ID = \"1234-asdf\";\nconst BW_NUMBER = \"+15554443333\";\nconst USER_NUMBER = \"+15553334444\";\n\nconst client = new Client({\n  basicAuthUserName: BW_USERNAME,\n  basicAuthPassword: BW_PASSWORD\n});\n\nconst controller = new ApiController(client);\n\nconst accountId = BW_ACCOUNT_ID;\n\nconst sendMessage = async function() {\n  try {\n    const response = await controller.createMessage(accountId, {\n        applicationId: BW_MESSAGING_APPLICATION_ID,\n        to: [USER_NUMBER],\n        from: BW_NUMBER,\n        text: 'The quick brown fox jumps over the lazy dog.'\n    });\n    console.log(response.body);\n  } catch (error) {\n  console.error(error);\n}};\n\nsendMessage();\n"
+                    },
+                    {
+                        "lang": "PHP",
+                        "source": "<?php\n\nrequire \"vendor/autoload.php\";\n\napi-username = \"api-username\";\napi-password = \"api-pasword\";\n12345 = \"12345\";\n1234-asdf = \"1234-asdf\";\n+15554443333 = \"+15554443333\";\n+15553334444 = \"+15553334444\";\n\n$config = new BandwidthLib\\Configuration(\n    array(\n        'messagingBasicAuthUserName' => $BW_USERNAME,\n        'messagingBasicAuthPassword' => $BW_PASSWORD,\n    )\n);\n$client = new BandwidthLib\\BandwidthClient($config);\n\n$messagingClient = $client->getMessaging()->getClient();\n\n$body = new BandwidthLib\\Messaging\\Models\\MessageRequest();\n$body->from = $BW_NUMBER;\n$body->to = array($USER_NUMBER);\n$body->applicationId = $BW_MESSAGING_APPLICATION_ID;\n$body->text = \"Hello world\";\n\ntry {\n    $response = $messagingClient->createMessage($BW_ACCOUNT_ID, $body);\n    print_r($response->getResult()->id);\n} catch (BandwidthLib\\APIException $e) {\n    print_r($e->getResponseCode());\n}\n"
+                    },
+                    {
+                        "lang": "Python",
+                        "source": "from bandwidth.bandwidth_client import BandwidthClient\nfrom bandwidth.messaging.models.message_request import MessageRequest\nfrom bandwidth.exceptions.api_exception import APIException\n\nimport os\n\nBW_USERNAME = \"api-username\"\nBW_PASSWORD = \"api-password\"\nBW_ACCOUNT_ID = \"12345\"\nBW_MESSAGING_APPLICATION_ID = \"1234-asdf\"\nBW_NUMBER = \"+15554443333\"\nUSER_NUMBER = \"+15553334444\"\n\nbandwidth_client = BandwidthClient(\n    messaging_basic_auth_user_name=BW_USERNAME,\n    messaging_basic_auth_password=BW_PASSWORD\n)\nmessaging_client = bandwidth_client.messaging_client.client\n\nbody = MessageRequest()\nbody.application_id = BW_MESSAGING_APPLICATION_ID\nbody.to = [USER_NUMBER]\nbody.mfrom = BW_NUMBER\nbody.text = \"Hello world\"\ntry:\n    response = messaging_client.create_message(BW_ACCOUNT_ID, body)\n    print(response.body.id)\nexcept APIException as e:\n    print(e.response_code)\n"
+                    },
+                    {
+                        "lang": "Ruby",
+                        "source": "require 'bandwidth'\n\ninclude Bandwidth\ninclude Bandwidth::Messaging\n\nbandwidth_client = Bandwidth::Client.new(\n    messaging_basic_auth_user_name: \"api-username\",\n    messaging_basic_auth_password: \"api-password\"\n)\nmessaging_client = bandwidth_client.messaging_client.client\n\nbody = MessageRequest.new\nbody.application_id = \"1234-asdf\"\nbody.to = [\"+15553334444\"]\nbody.from = \"+15554443333\"\nbody.text = 'Hey, check this out!'\nbody.tag = '{\"test\": \"message\"}'\nbegin\n    result = messaging_client.create_message(\"12345\", body)\n    puts 'messageId: ' + result.data.id\nrescue APIException => e\n    puts e.response_code\nend\n"
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "BandwidthMessagesList": {
+                "title": "BandwidthMessagesList",
+                "type": "object",
+                "properties": {
+                    "totalCount": {
+                        "type": "integer",
+                        "description": "Total number of messages matched by the search",
+                        "example": 100
+                    },
+                    "pageInfo": {
+                        "$ref": "#/components/schemas/PageInfo"
+                    },
+                    "messages": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/BandwidthMessageItem"
+                        }
+                    }
+                }
+            },
+            "BandwidthMessageItem": {
+                "title": "BandwidthMessageItem",
+                "type": "object",
+                "properties": {
+                    "messageId": {
+                        "type": "string",
+                        "description": "The message id",
+                        "example": "1589228074636lm4k2je7j7jklbn2"
+                    },
+                    "accountId": {
+                        "type": "string",
+                        "description": "The account id of the message",
+                        "example": "12345"
+                    },
+                    "sourceTn": {
+                        "type": "string",
+                        "description": "The source phone number of the message",
+                        "example": "+15554443333"
+                    },
+                    "destinationTn": {
+                        "type": "string",
+                        "description": "The recipient phone number of the message",
+                        "example": "+15554442222"
+                    },
+                    "messageStatus": {
+                        "type": "string",
+                        "description": "The status of the message",
+                        "example": "DLR_EXPIRED"
+                    },
+                    "messageDirection": {
+                        "type": "string",
+                        "description": "The direction of the message relative to Bandwidth. INBOUND or OUTBOUND",
+                        "example": "OUTBOUND"
+                    },
+                    "messageType": {
+                        "type": "string",
+                        "description": "The type of message. sms or mms",
+                        "example": "sms"
+                    },
+                    "segmentCount": {
+                        "type": "integer",
+                        "description": "The number of segments the message was sent as",
+                        "example": 1
+                    },
+                    "errorCode": {
+                        "type": "integer",
+                        "description": "The numeric error code of the message",
+                        "example": 9902
+                    },
+                    "receiveTime": {
+                        "type": "string",
+                        "description": "The ISO 8601 datetime of the message",
+                        "example": "2020-04-07T14:03:07.000Z"
+                    },
+                    "carrierName": {
+                        "type": "string",
+                        "description": "The name of the carrier. Not currently supported for MMS, coming soon",
+                        "example": "other"
+                    },
+                    "messageSize": {
+                        "type": "integer",
+                        "description": "The size of the message including message content and headers",
+                        "example": 27
+                    },
+                    "messageLength": {
+                        "type": "integer",
+                        "description": "The length of the message content",
+                        "example": 18
+                    },
+                    "attachmentCount": {
+                        "type": "integer",
+                        "description": "The number of attachments the message has",
+                        "example": 1
+                    },
+                    "recipientCount": {
+                        "type": "integer",
+                        "description": "The number of recipients the message has",
+                        "example": 1
+                    },
+                    "campaignClass": {
+                        "type": "string",
+                        "description": "The campaign class of the message, if it has one",
+                        "example": "T"
+                    }
+                }
+            },
+            "PageInfo": {
+                "title": "PageInfo",
+                "type": "object",
+                "properties": {
+                    "prevPage": {
+                        "type": "string",
+                        "description": "The link to the previous page for pagination",
+                        "example": "https://messaging.bandwidth.com/api/v2/users/{accountId}/messages?messageStatus=DLR_EXPIRED&nextPage=DLAPE902"
+                    },
+                    "nextPage": {
+                        "type": "string",
+                        "description": "The link to the next page for pagination",
+                        "example": "https://messaging.bandwidth.com/api/v2/users/{accountId}/messages?messageStatus=DLR_EXPIRED&prevPage=GL83PD3C"
+                    },
+                    "prevPageToken": {
+                        "type": "string",
+                        "description": "The isolated pagination token for the previous page",
+                        "example": "DLAPE902"
+                    },
+                    "nextPageToken": {
+                        "type": "string",
+                        "description": "The isolated pagination token for the next page",
+                        "example": "GL83PD3C"
+                    }
+                }
+            },
+            "MessagingException": {
+                "title": "MessagingException",
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "type",
+                    "description"
+                ]
+            },
+            "Media": {
+                "title": "Media",
+                "type": "object",
+                "properties": {
+                    "content": {
+                        "type": "string"
+                    },
+                    "contentLength": {
+                        "type": "integer"
+                    },
+                    "mediaName": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Tag": {
+                "title": "Tag",
+                "type": "object",
+                "properties": {
+                    "key": {
+                        "type": "string"
+                    },
+                    "value": {
+                        "type": "string"
+                    }
+                }
+            },
+            "DeferredResult": {
+                "title": "DeferredResult",
+                "type": "object",
+                "properties": {
+                    "result": {
+                        "type": "object"
+                    },
+                    "setOrExpired": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "BandwidthCallbackMessage": {
+                "title": "BandwidthCallbackMessage",
+                "type": "object",
+                "properties": {
+                    "time": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string"
+                    },
+                    "to": {
+                        "type": "string"
+                    },
+                    "errorCode": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "$ref": "#/components/schemas/BandwidthMessage"
+                    }
+                }
+            },
+            "BandwidthMessage": {
+                "title": "BandwidthMessage",
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "The id of the message",
+                        "example": "1589228074636lm4k2je7j7jklbn2"
+                    },
+                    "owner": {
+                        "type": "string",
+                        "description": "The Bandwidth phone number associated with the message",
+                        "example": "+15554443333"
+                    },
+                    "applicationId": {
+                        "type": "string",
+                        "description": "The application ID associated with the message",
+                        "example": "93de2206-9669-4e07-948d-329f4b722ee2"
+                    },
+                    "time": {
+                        "type": "string",
+                        "description": "The datetime stamp of the message in ISO 8601",
+                        "example": "2016-09-14T18:20:16Z"
+                    },
+                    "segmentCount": {
+                        "type": "integer",
+                        "description": "The number of segments the original message from the user is broken into before sending over to carrier networks",
+                        "example": 2
+                    },
+                    "direction": {
+                        "type": "string",
+                        "description": "The direction of the message relative to Bandwidth. Can be in or out",
+                        "example": "in"
+                    },
+                    "to": {
+                        "uniqueItems": true,
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "The phone number recipients of the message",
+                        "example": [
+                            "+15552223333"
+                        ]
+                    },
+                    "from": {
+                        "type": "string",
+                        "description": "The phone number the message was sent from",
+                        "example": "+15553332222"
+                    },
+                    "media": {
+                        "uniqueItems": true,
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "The list of media URLs sent in the message. Including a `filename` field in the `Content-Disposition` header of the media linked with a URL will set the displayed file name. This is a best practice to ensure that your media has a readable file name.",
+                        "example": [
+                            "https://dev.bandwidth.com/images/bandwidth-logo.png"
+                        ]
+                    },
+                    "text": {
+                        "type": "string",
+                        "description": "The contents of the message",
+                        "example": "Hello world"
+                    },
+                    "tag": {
+                        "type": "string",
+                        "description": "The custom string set by the user",
+                        "example": "custom tag"
+                    },
+                    "priority": {
+                        "type": "string",
+                        "description": "The priority specified by the user",
+                        "example": "default"
+                    }
+                }
+            },
+            "MessageRequest": {
+                "title": "MessageRequest",
+                "type": "object",
+                "required": [
+                    "applicationId",
+                    "to",
+                    "from"
+                ],
+                "properties": {
+                    "applicationId": {
+                        "type": "string",
+                        "description": "The ID of the Application your from number is associated with in the Bandwidth Phone Number Dashboard.",
+                        "example": "93de2206-9669-4e07-948d-329f4b722ee2"
+                    },
+                    "to": {
+                        "uniqueItems": true,
+                        "type": "array",
+                        "description": "The phone number(s) the message should be sent to in E164 format",
+                        "example": [
+                            "+15554443333",
+                            "+15552223333"
+                        ],
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "from": {
+                        "type": "string",
+                        "description": "One of your telephone numbers the message should come from in E164 format",
+                        "example": "+15551113333"
+                    },
+                    "text": {
+                        "type": "string",
+                        "description": "The contents of the text message. Must be 2048 characters or less.",
+                        "example": "Hello world"
+                    },
+                    "media": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "A list of URLs to include as media attachments as part of the message.",
+                        "example": [
+                            "https://dev.bandwidth.com/images/bandwidth-logo.png",
+                            "https://dev.bandwidth.com/images/github_logo.png"
+                        ]
+                    },
+                    "tag": {
+                        "type": "string",
+                        "description": "A custom string that will be included in callback events of the message. Max 1024 characters",
+                        "example": "custom string"
+                    },
+                    "priority": {
+                        "type": "string",
+                        "enum": [
+                            "default",
+                            "high"
+                        ],
+                        "description": "The message's priority, currently for toll-free or short code SMS only. Messages with a priority value of `\"high\"` are given preference over your other traffic.",
+                        "example": "default"
+                    }
+                }
+            }
+        },
+        "responses": {
+            "BadRequest": {
+                "description": "400 Request is malformed or invalid",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/MessagingException"
+                        }
+                    }
+                }
+            },
+            "Unauthorized": {
+                "description": "401 The specified user does not have access to the account",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/MessagingException"
+                        }
+                    }
+                }
+            },
+            "Forbidden": {
+                "description": "403 The user does not have access to this API",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/MessagingException"
+                        }
+                    }
+                }
+            },
+            "NotFound": {
+                "description": "404 Path not found",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/MessagingException"
+                        }
+                    }
+                }
+            },
+            "InvalidMediaType": {
+                "description": "415 The content-type of the request is incorrect",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/MessagingException"
+                        }
+                    }
+                }
+            },
+            "TooManyRequests": {
+                "description": "429 The rate limit has been reached",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/MessagingException"
+                        }
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "httpBasic": {
+                "type": "http",
+                "scheme": "basic"
+            }
+        }
+    },
+    "security": [
+        {
+            "httpBasic": []
+        }
+    ],
+    "tags": []
+}

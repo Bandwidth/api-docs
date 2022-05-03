@@ -1,5 +1,5 @@
-## For the Committer
+**⚠️Please do not make any changes to spec files in this repository!⚠️**
 
-All PRs on this repo that change any API sources of truth (markdown files, OpenAPI specs) require a changelog added to the `site/src/pages/changelog.md` file. If this PR does not require changelog updates, you need to add the `no-changelog` tag to this PR before opening it.
+**All spec changes should be done in the [api-specs](https://github.com/Bandwidth/api-specs) repository.**
 
-Please confirm that you have either updated `site/src/pages/changelog.md` or added the `no-changelog` tag.
+**Please follow the [Guide](https://bandwidth-jira.atlassian.net/wiki/spaces/DX/pages/4098359409/How+to+Update+API+Specifications+and+Contribute+to+Developer+Documentation) for contributing to our developer documentation.**
