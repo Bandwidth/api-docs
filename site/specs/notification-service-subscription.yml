@@ -52,6 +52,7 @@ paths:
         - $ref: '#/components/parameters/SubscriptionSource'
         - $ref: '#/components/parameters/SubscriptionTypes'
         - $ref: '#/components/parameters/UserName'
+        - $ref: '#/components/parameters/SubscriptionStatus'
     post:
       tags:
         - Subscription
@@ -159,7 +160,7 @@ paths:
       operationId: replaceSubscription
       responses:
         '200':
-          $ref: '#/components/responses/Subscription-Response'
+          description: OK
         '400':
           description: Bad Request
         '401':
@@ -174,7 +175,85 @@ paths:
       requestBody:
         $ref: '#/components/requestBodies/Existing-Subscription'
 components:
-  schemas: {}
+  schemas:
+    callback:
+      title: callback
+      type: object
+      properties:
+        id:
+          type: string
+      x-examples:
+        Example Callback Object:
+          callback:
+            url: some-url
+            publicKey: key
+      description: Example Callback Object
+    subscription-status-enum:
+      title: Subscription Status Enum
+      type: string
+      description: The Status of the Subscription
+      enum:
+        - ACTIVE
+        - INACTIVE
+      example: ACTIVE
+    subscription:
+      title: Subscription Response
+      properties:
+        subscriptionId:
+          type: string
+          minLength: 1
+        dateOfLastModification:
+          type: string
+          minLength: 1
+        product:
+          $ref: '#/components/schemas/product-enum'
+        eventType:
+          $ref: '#/components/schemas/event-type-enum'
+        entityId:
+          type: string
+          minLength: 1
+        subscriptionStatus:
+          $ref: '#/components/schemas/subscription-status-enum'
+        tags:
+          $ref: '#/components/schemas/tags'
+        notifyStates:
+          type: array
+          items:
+            type: object
+        notificationChannel:
+          oneOf:
+            - allOf:
+                - $ref: '#/components/schemas/callback'
+    tags:
+      title: Tag Elements
+      type: array
+      properties:
+        items:
+          type: object
+          properties:
+            tag:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                value:
+                  type: string
+                  minLength: 1
+    event-type-enum:
+      title: event-type-enum
+      type: string
+      description: The Event Type of the Subscription
+      enum:
+        - portinOrderStatus
+      example: portinOrderStatus
+    product-enum:
+      title: product-enum
+      type: string
+      description: The Product of the Subscription
+      enum:
+        - porting
+      example: porting
   securitySchemes:
     bearerAuth:
       type: http
@@ -188,29 +267,6 @@ components:
           schema:
             description: ''
             type: object
-            x-examples:
-              example-1:
-                links: []
-                data:
-                  subscriptions:
-                    - subscription:
-                        subscriptionId: string
-                        dateOfLastModification: '2019-08-24T14:15:22Z'
-                        source: porting
-                        eventType: portin
-                        entityId: unique-id-value
-                        subscriptionStatus: ACTIVE
-                        tags:
-                          - tag:
-                              name: tag-name
-                              value: tag-value
-                        notifyStates: []
-                        notificationChannels:
-                          callbacks:
-                            - “callback”:
-                                url: some-url
-                                publicKey: key
-                errors: []
             properties:
               links:
                 type: array
@@ -222,78 +278,9 @@ components:
                   subscriptions:
                     type: array
                     uniqueItems: true
-                    minItems: 1
+                    minItems: 0
                     items:
-                      type: object
-                      properties:
-                        subscription:
-                          type: object
-                          properties:
-                            subscriptionId:
-                              type: string
-                              minLength: 1
-                            dateOfLastModification:
-                              type: string
-                              minLength: 1
-                            source:
-                              type: string
-                              minLength: 1
-                            eventType:
-                              type: string
-                              minLength: 1
-                            entityId:
-                              type: string
-                              minLength: 1
-                            subscriptionStatus:
-                              type: string
-                              minLength: 1
-                            tags:
-                              type: array
-                              uniqueItems: true
-                              minItems: 1
-                              items:
-                                type: object
-                                properties:
-                                  tag:
-                                    type: object
-                                    properties:
-                                      name:
-                                        type: string
-                                        minLength: 1
-                                      value:
-                                        type: string
-                                        minLength: 1
-                                    required:
-                                      - name
-                                      - value
-                            notifyStates:
-                              type: array
-                              items:
-                                type: object
-                            notificationChannels:
-                              type: object
-                              required:
-                                - callbacks
-                              properties:
-                                callbacks:
-                                  type: array
-                                  uniqueItems: true
-                                  minItems: 1
-                                  items:
-                                    type: object
-                                    properties:
-                                      “callback”:
-                                        type: object
-                                        properties:
-                                          url:
-                                            type: string
-                                            minLength: 1
-                                          publicKey:
-                                            type: string
-                                            minLength: 1
-                                        required:
-                                          - url
-                                          - publicKey
+                      $ref: '#/components/schemas/subscription'
               errors:
                 type: array
                 items:
@@ -307,7 +294,7 @@ components:
                     - subscription:
                         subscriptionId: string
                         dateOfLastModification: '2019-08-24T14:15:22Z'
-                        source: porting
+                        product: porting
                         eventType: portin
                         entityId: unique-id-value
                         subscriptionStatus: ACTIVE
@@ -316,11 +303,10 @@ components:
                               name: tag-name
                               value: tag-value
                         notifyStates: []
-                        notificationChannels:
-                          callbacks:
-                            - “callback”:
-                                url: some-url
-                                publicKey: key
+                        notificationChannel:
+                          callback:
+                            url: some-url
+                            publicKey: key
                 errors: []
     Subscription-Response:
       description: Example Subscription Response
@@ -329,95 +315,13 @@ components:
           schema:
             description: ''
             type: object
-            x-examples:
-              example-1:
-                links: []
-                data:
-                  subscriptionId: string
-                  dateOfLastModification: '2019-08-24T14:15:22Z'
-                  source: porting
-                  eventType: portin
-                  entityId: unique-id-value
-                  subscriptionStatus: ACTIVE
-                  tags:
-                    - tag:
-                        name: tag-name
-                        value: tag-value
-                  notifyStates: []
-                  notificationChannels:
-                    callbacks:
-                      - “callback”:
-                          url: some-url
-                          publicKey: key
-                errors: []
             properties:
               links:
                 type: array
                 items:
                   type: object
               data:
-                type: object
-                properties:
-                  subscriptionId:
-                    type: string
-                    minLength: 1
-                  dateOfLastModification:
-                    type: string
-                    minLength: 1
-                  source:
-                    type: string
-                    minLength: 1
-                  eventType:
-                    type: string
-                    minLength: 1
-                  entityId:
-                    type: string
-                    minLength: 1
-                  subscriptionStatus:
-                    type: string
-                    minLength: 1
-                  tags:
-                    type: array
-                    uniqueItems: true
-                    minItems: 1
-                    items:
-                      type: object
-                      properties:
-                        tag:
-                          type: object
-                          properties:
-                            name:
-                              type: string
-                              minLength: 1
-                            value:
-                              type: string
-                              minLength: 1
-                  notifyStates:
-                    type: array
-                    items:
-                      type: object
-                  notificationChannels:
-                    type: object
-                    properties:
-                      callbacks:
-                        type: array
-                        uniqueItems: true
-                        minItems: 1
-                        items:
-                          type: object
-                          properties:
-                            “callback”:
-                              type: object
-                              properties:
-                                url:
-                                  type: string
-                                  minLength: 1
-                                publicKey:
-                                  type: string
-                                  minLength: 1
-                              required:
-                                - url
-                                - publicKey
+                $ref: '#/components/schemas/subscription'
               errors:
                 type: array
                 items:
@@ -429,8 +333,8 @@ components:
                 data:
                   subscriptionId: string
                   dateOfLastModification: '2019-08-24T14:15:22Z'
-                  source: porting
-                  eventType: portin
+                  product: porting
+                  eventType: portinOrderStatus
                   entityId: unique-id-value
                   subscriptionStatus: ACTIVE
                   tags:
@@ -438,92 +342,43 @@ components:
                         name: tag-name
                         value: tag-value
                   notifyStates: []
-                  notificationChannels:
-                    callbacks:
-                      - “callback”:
-                          url: some-url
-                          publicKey: key
+                  notificationChannel:
+                    callback:
+                      url: some-url
+                      publicKey: key
                 errors: []
   requestBodies:
     New-Subscription:
       content:
         application/json:
           schema:
-            description: ''
+            description: Request body for a New Subscription
             type: object
-            x-examples:
-              example-1:
-                source: porting
-                eventType: portin
-                entityId: unique-id-value
-                subscriptionStatus: ACTIVE
-                tags:
-                  - tag:
-                      name: tag-name
-                      value: tag-value
-                notifyStates: []
-                notificationChannels:
-                  callbacks:
-                    - “callback”:
-                        url: some-url
-                        publicKey: key
             properties:
-              source:
-                type: string
-                minLength: 1
+              product:
+                $ref: '#/components/schemas/product-enum'
               eventType:
-                type: string
-                minLength: 1
+                $ref: '#/components/schemas/event-type-enum'
               entityId:
                 type: string
                 minLength: 1
               subscriptionStatus:
-                type: string
-                minLength: 1
+                $ref: '#/components/schemas/subscription-status-enum'
               tags:
-                type: array
-                uniqueItems: true
-                minItems: 1
-                items:
-                  type: object
-                  properties:
-                    tag:
-                      type: object
-                      properties:
-                        name:
-                          type: string
-                          minLength: 1
-                        value:
-                          type: string
-                          minLength: 1
+                $ref: '#/components/schemas/tags'
               notifyStates:
                 type: array
                 items:
                   type: object
-              notificationChannels:
-                type: object
-                properties:
-                  callbacks:
-                    type: array
-                    uniqueItems: true
-                    minItems: 1
-                    items:
-                      type: object
-                      properties:
-                        “callback”:
-                          type: object
-                          properties:
-                            url:
-                              type: string
-                              minLength: 1
-                            publicKey:
-                              type: string
-                              minLength: 1
+              notificationChannel:
+                oneOf:
+                  - allOf:
+                      - $ref: '#/components/schemas/callback'
           examples:
             'Example New Subscription ':
               value:
-                source: porting
-                eventType: portin
+                product: porting
+                eventType: portinOrderStatus
                 entityId: unique-id-value
                 subscriptionStatus: ACTIVE
                 tags:
@@ -531,96 +386,21 @@ components:
                       name: tag-name
                       value: tag-value
                 notifyStates: []
-                notificationChannels:
-                  callbacks:
-                    - “callback”:
-                        url: some-url
-                        publicKey: key
+                notificationChannel:
+                  callback:
+                    url: some-url
+                    publicKey: key
       description: Request Body for New Subscription
     Existing-Subscription:
       content:
         application/json:
           schema:
-            description: ''
-            type: object
-            x-examples:
-              example-1:
-                source: porting
-                eventType: portin
-                entityId: unique-id-value
-                subscriptionStatus: ACTIVE
-                tags:
-                  - tag:
-                      name: tag-name
-                      value: tag-value
-                notifyStates: []
-                notificationChannels:
-                  callbacks:
-                    - “callback”:
-                        url: some-url
-                        publicKey: key
-            properties:
-              source:
-                type: string
-                minLength: 1
-              eventType:
-                type: string
-                minLength: 1
-              entityId:
-                type: string
-                minLength: 1
-              subscriptionStatus:
-                type: string
-                minLength: 1
-              tags:
-                type: array
-                uniqueItems: true
-                minItems: 1
-                items:
-                  type: object
-                  properties:
-                    tag:
-                      type: object
-                      properties:
-                        name:
-                          type: string
-                          minLength: 1
-                        value:
-                          type: string
-                          minLength: 1
-              notifyStates:
-                type: array
-                items:
-                  type: object
-              notificationChannels:
-                type: object
-                required:
-                  - callbacks
-                properties:
-                  callbacks:
-                    type: array
-                    uniqueItems: true
-                    minItems: 1
-                    items:
-                      type: object
-                      properties:
-                        “callback”:
-                          type: object
-                          properties:
-                            url:
-                              type: string
-                              minLength: 1
-                            publicKey:
-                              type: string
-                              minLength: 1
-                          required:
-                            - url
-                            - publicKey
+            $ref: '#/components/schemas/subscription'
           examples:
             Example Existing Subscription:
               value:
-                source: porting
-                eventType: portin
+                product: porting
+                eventType: portinOrderStatus
                 entityId: unique-id-value
                 subscriptionStatus: ACTIVE
                 tags:
@@ -628,11 +408,10 @@ components:
                       name: tag-name
                       value: tag-value
                 notifyStates: []
-                notificationChannels:
-                  callbacks:
-                    - “callback”:
-                        url: some-url
-                        publicKey: key
+                notificationChannel:
+                  callback:
+                    url: some-url
+                    publicKey: key
       description: Request Body for Existing Subscription
   parameters:
     SubscriptionId:
@@ -669,3 +448,10 @@ components:
       schema:
         type: string
       description: System UserName of User
+    SubscriptionStatus:
+      name: SubscriptionStatus
+      in: query
+      required: false
+      schema:
+        type: string
+      description: Active/Inactive
