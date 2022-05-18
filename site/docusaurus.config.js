@@ -47,7 +47,6 @@ module.exports = {
         // prism: {
         //   additionalLanguages: ['java', 'csharp', 'php', 'ruby'],
         // },
-        sidebarCollapsible: true,
         navbar: {
             title: '',
             hideOnScroll: false,
@@ -128,6 +127,7 @@ module.exports = {
                 docs: {
                     sidebarPath: require.resolve('./sidebar.js'),
                     editUrl: 'https://github.com/Bandwidth/api-docs/edit/main/site/',
+                    sidebarCollapsible: true,
                 },
                 blog: {
                     showReadingTime: true,
