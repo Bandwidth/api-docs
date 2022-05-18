@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from '@theme/Layout';
-import {useColorMode} from '@docusaurus/theme-common';
+import { useColorMode } from '@docusaurus/theme-common';
 import { RedocStandalone } from 'redoc';
 import { lightTheme, darkTheme } from '../css/redocTheme';
 
