@@ -36,10 +36,6 @@ module.exports = {
             indexName: 'bandwidth',
             contextualSearch: false, // useful for versioned Docusaurus sites
         },
-        googleAnalytics: {
-            trackingID: 'UA-62651840-1',
-            anonymizeIP: false,
-        },
         announcementBar: {
             id: 'new_docsite_flag', // Any value that will identify this message.
             content: 'Welcome to the new home of Bandwidth\'s Developer Documentation. Please take a minute to <a target="_blank" href="https://forms.gle/CgaaBoNRzSp1XoWbA">provide any feedback you may have</a> on our new docsite!',
@@ -139,6 +135,10 @@ module.exports = {
                 },
                 theme: {
                     customCss: require.resolve('./src/css/custom.css'),
+                },
+                googleAnalytics: {
+                    trackingID: 'UA-62651840-1',
+                    anonymizeIP: false,
                 },
             }
         ],
