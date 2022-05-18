@@ -182,11 +182,8 @@ module.exports = {
                             label: "10DLC CSP Campaigns",
                             items: [
                                 "messaging/campaign-management/cspabout",
-                                "messaging/campaign-management/csp/reseller-brand-ui",
                                 "messaging/campaign-management/csp/reseller-brand-api",
-                                "messaging/campaign-management/csp/brand-vetting-ui",
                                 "messaging/campaign-management/csp/brand-vetting-api",
-                                "messaging/campaign-management/csp/campaign-ui",
                                 "messaging/campaign-management/csp/campaign-api",
                                 "messaging/campaign-management/csp/faq",
                             ],
