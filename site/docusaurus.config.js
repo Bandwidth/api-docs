@@ -12,8 +12,8 @@ const dashSpec = fs.readFileSync('./specs/dash.json', 'utf-8');
 const dashNotificationsSpec = fs.readFileSync('./specs/dashNotifications.json', 'utf-8');
 const messagingInternationalSpec = fs.readFileSync('./specs/messagingInternational.json', 'utf-8');
 const globalSpec = fs.readFileSync('./specs/global.yml', 'utf-8');
-const globalSpec_v2 = fs.readFileSync('./specs/global_v2.yml', 'utf-8');
-const globalSpec_beta = fs.readFileSync('./specs/global_beta.yml', 'utf-8');
+const globalSpec_v2 = fs.readFileSync('./specs/global-v2.yml', 'utf-8');
+const globalSpec_beta = fs.readFileSync('./specs/global-beta.yml', 'utf-8');
 
 module.exports = {
     title: 'Bandwidth API Docs',
