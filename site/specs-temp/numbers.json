@@ -7732,7 +7732,7 @@
         "tags": [
           "/accounts"
         ],
-        "description": "Retrieves the moveTns orders for the given account ID. A maximum of 1,000 orders can be retrieved per request. If no date range or specific query parameter (marked by <b class=\"required\">*</b> below) is provided, the order results will be limited to the last two years",
+        "description": "Retrieves the moveTns orders for the given account ID. A maximum of 1,000 orders can be retrieved per request. If no date range or specific query parameter is provided, the order results will be limited to the last two years",
         "summary": "List Move Telephone Numbers orders",
         "operationId": "ReadMoveTnsOrders",
         "parameters": [
@@ -7758,9 +7758,9 @@
           },
           {
             "name": "tn",
-            "description": "<b class=\"required\">*</b> A Telephone Number (TN) that is referenced in the order",
+            "description": "A Telephone Number (TN) that is referenced in the order",
             "in": "query",
-            "required": false,
+            "required": true,
             "schema": {
               "type": "string"
             },
@@ -7768,9 +7768,9 @@
           },
           {
             "name": "customerOrderId",
-            "description": "<b class=\"required\">*</b> The Customer Order ID is an ID assigned by the account owner to provide a reference number for the importTnOrder",
+            "description": "The Customer Order ID is an ID assigned by the account owner to provide a reference number for the importTnOrder",
             "in": "query",
-            "required": false,
+            "required": true,
             "schema": {
               "type": "string"
             },
@@ -7822,9 +7822,12 @@
             "description": "The descriptive payload for the moveTnsOrder query provides information about the orders found by the query, including the data associated with the order, the state of the order, and a list of the successfully imported Telephone Numbers, and description of any encountered errors",
             "content": {
               "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/MoveTnsOrders"
+                },
                 "examples": {
                   "example": {
-                    "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<MoveTnsOrders>\n <TotalCount>2</TotalCount>\n <MoveTnsOrderSummary>\n <accountId>1234567</accountId>\n <SourceAccountId>15</SourceAccountId>\n <CountOfTNs>1</CountOfTNs>\n <CustomerOrderId>CustomerOrderId</CustomerOrderId>\n <userId>systemUser</userId>\n <lastModifiedDate>2022-01-24T11:08:09.770Z</lastModifiedDate>\n <OrderDate>2022-01-24T11:08:09.770Z</OrderDate>\n <OrderType>move_tn_orders</OrderType>\n <OrderStatus>COMPLETE</OrderStatus>\n <OrderId>211a103c-5f9c-4117-8833-c574bdc390fd</OrderId>\n </MoveTnsOrderSummary>\n <MoveTnsOrderSummary>\n <accountId>14</accountId>\n <SourceAccountId>15</SourceAccountId>\n <CountOfTNs>2</CountOfTNs>\n <CustomerOrderId>CustomerOrderId</CustomerOrderId>\n <userId>systemUser</userId>\n <lastModifiedDate>2022-01-24T10:43:16.934Z</lastModifiedDate>\n <OrderDate>2022-01-24T10:43:16.934Z</OrderDate>\n <OrderType>move_tn_orders</OrderType>\n <OrderStatus>PARTIAL</OrderStatus>\n <OrderId>8dc32f09-2329-4c73-b702-526f46b02712</OrderId>\n </MoveTnsOrderSummary>\n </MoveTnsOrders>\n"
+                    "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<MoveTnsOrders>\n   <TotalCount>2</TotalCount>\n   <MoveTnsOrderSummary>\n      <accountId>1234567</accountId>\n      <SourceAccountId>15</SourceAccountId>\n      <CountOfTNs>1</CountOfTNs>\n      <CustomerOrderId>CustomerOrderId</CustomerOrderId>\n      <userId>systemUser</userId>\n      <lastModifiedDate>2022-01-24T11:08:09.770Z</lastModifiedDate>\n      <OrderDate>2022-01-24T11:08:09.770Z</OrderDate>\n      <OrderType>move_tn_orders</OrderType>\n      <OrderStatus>COMPLETE</OrderStatus>\n      <OrderId>211a103c-5f9c-4117-8833-c574bdc390fd</OrderId>\n   </MoveTnsOrderSummary>\n   <MoveTnsOrderSummary>\n      <accountId>14</accountId>\n      <SourceAccountId>15</SourceAccountId>\n      <CountOfTNs>2</CountOfTNs>\n      <CustomerOrderId>CustomerOrderId</CustomerOrderId>\n      <userId>systemUser</userId>\n      <lastModifiedDate>2022-01-24T10:43:16.934Z</lastModifiedDate>\n      <OrderDate>2022-01-24T10:43:16.934Z</OrderDate>\n      <OrderType>move_tn_orders</OrderType>\n      <OrderStatus>PARTIAL</OrderStatus>\n      <OrderId>8dc32f09-2329-4c73-b702-526f46b02712</OrderId>\n   </MoveTnsOrderSummary>\n</MoveTnsOrders>"
                   }
                 }
               }
@@ -7855,57 +7858,11 @@
           "content": {
             "application/xml": {
               "schema": {
-                "title": "MoveTnsOrder",
-                "type": "object",
-                "required": [
-                  "TelephoneNumbers",
-                  "SiteId"
-                ],
-                "properties": {
-                  "TelephoneNumbers": {
-                    "description": "List of telephone numbers to be moved",
-                    "type": "array",
-                    "minItems": 1,
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "TelephoneNumber": {
-                          "description": "Ten digit phone number with no dots or dashes",
-                          "type": "integer"
-                        }
-                      }
-                    }
-                  },
-                  "SiteId": {
-                    "description": "A site id to which telephone number will be moved",
-                    "type": "integer"
-                  },
-                  "CustomerOrderId": {
-                    "description": "Internal customer order id for tracking the order. Only alphanumeric values, dashes and spaces are allowed. Max length is 40 characters",
-                    "type": "string"
-                  },
-                  "SipPeerId": {
-                    "description": "A sippeer id of provided site to which telephone number will be moved",
-                    "type": "integer"
-                  },
-                  "SourceAccountId": {
-                    "description": "Id of source account, in the case of moving numbers across accounts",
-                    "type": "integer"
-                  },
-                  "E911ServiceAction": {
-                    "description": "Only valid when moving to a different account using SourceAccountId. When set to move (default) the E911 service information (if applied to the number) will be moved with the number to the new account. When set to delete the E911 service will be removed from the number",
-                    "type": "string",
-                    "enum": [
-                      "move",
-                      "delete"
-                    ],
-                    "default": "move"
-                  }
-                }
+               "$ref" : "#/components/schemas/MoveTnsOrderRequest"
               },
               "examples": {
                 "example": {
-                  "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<MoveTnsOrder>\n    <CustomerOrderID>ICPA123ABC</CustomerOrderID>\n    <SourceAccountId>12346159</SourceAccountId>\n    <E911ServiceAction>move</E911ServiceAction>\n    <SiteId>743</SiteId>\n    <SipPeerId>303716</SipPeerId>\n    <TelephoneNumbers>\n        <TelephoneNumber>9199918388</TelephoneNumber>\n        <TelephoneNumber>4158714245</TelephoneNumber>\n        <TelephoneNumber>4352154439</TelephoneNumber>\n        <TelephoneNumber>4352154466</TelephoneNumber>\n    </TelephoneNumbers>\n</MoveTnsOrder>\n"
+                  "value": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<MoveTnsOrder>\n   <CustomerOrderID>ICPA123ABC</CustomerOrderID>\n   <SourceAccountId>12346159</SourceAccountId>\n   <E911ServiceAction>move</E911ServiceAction>\n   <SiteId>743</SiteId>\n   <SipPeerId>303716</SipPeerId>\n   <TelephoneNumbers>\n      <TelephoneNumber>9199918388</TelephoneNumber>\n      <TelephoneNumber>4158714245</TelephoneNumber>\n      <TelephoneNumber>4352154439</TelephoneNumber>\n      <TelephoneNumber>4352154466</TelephoneNumber>\n   </TelephoneNumbers>\n</MoveTnsOrder>"
                 }
               }
             }
@@ -7916,9 +7873,12 @@
             "description": "The order has been created. An order ID will be specified in the payload and header",
             "content": {
               "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/MoveTnsOrderResponse"
+                },
                 "examples": {
                   "example": {
-                    "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<MoveTnsOrderResponse>\n <MoveTnsOrder>\n <OrderCreateDate>2020-09-15T16:36:22.076Z</OrderCreateDate>\n <AccountId>9999999</AccountId>\n <SourceAccountId>6555555</SourceAccountId>\n <CreatedByUser>systemUser</CreatedByUser>\n <OrderId>093a9f9b-1a78-4e47-b6e2-776a484596f4</OrderId>\n <LastModifiedDate>2020-09-15T16:36:22.096Z</LastModifiedDate>\n <SiteId>483</SiteId>\n <TelephoneNumbers>\n <TelephoneNumber>2032081004</TelephoneNumber>\n <TelephoneNumber>2032081005</TelephoneNumber>\n </TelephoneNumbers>\n <ProcessingStatus>RECEIVED</ProcessingStatus>\n <SipPeerId>500025</SipPeerId>\n </MoveTnsOrder>\n </MoveTnsOrderResponse>\n"
+                    "value": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<MoveTnsOrderResponse>\n   <MoveTnsOrder>\n      <OrderCreateDate>2020-09-15T16:36:22.076Z</OrderCreateDate>\n      <AccountId>9999999</AccountId>\n      <SourceAccountId>6555555</SourceAccountId>\n      <CreatedByUser>systemUser</CreatedByUser>\n      <OrderId>093a9f9b-1a78-4e47-b6e2-776a484596f4</OrderId>\n      <LastModifiedDate>2020-09-15T16:36:22.096Z</LastModifiedDate>\n      <SiteId>483</SiteId>\n      <TelephoneNumbers>\n         <TelephoneNumber>2032081004</TelephoneNumber>\n         <TelephoneNumber>2032081005</TelephoneNumber>\n      </TelephoneNumbers>\n      <ProcessingStatus>RECEIVED</ProcessingStatus>\n      <SipPeerId>500025</SipPeerId>\n   </MoveTnsOrder>\n</MoveTnsOrderResponse>"
                   }
                 }
               }
@@ -7930,7 +7890,7 @@
               "application/xml": {
                 "examples": {
                   "example": {
-                    "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<MoveTnsOrderResponse>\n <ProcessingStatus>FAILED</ProcessingStatus>\n <Errors>\n <Code>7309</Code>\n <Description>The site id was not supplied or is invalid.</Description>\n </Errors>\n <Errors>\n <Code>7312</Code>\n <Description>The sippeer id is invalid.</Description>\n </Errors>\n </MoveTnsOrderResponse>\n"
+                    "value": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<MoveTnsOrderResponse>\n   <ProcessingStatus>FAILED</ProcessingStatus>\n   <Errors>\n      <Code>7309</Code>\n      <Description>The site id was not supplied or is invalid.</Description>\n   </Errors>\n   <Errors>\n      <Code>7312</Code>\n      <Description>The sippeer id is invalid.</Description>\n   </Errors>\n</MoveTnsOrderResponse>"
                   }
                 }
               }
@@ -7974,9 +7934,12 @@
             "description": "The information has been successfully retrieved and displayed in the payload",
             "content": {
               "application/xml": {
+                "schema": {
+                  "$ref" : "#/components/schemas/MoveTnsOrderPayload"
+                },
                 "examples": {
                   "example": {
-                    "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<MoveTnsOrder>\n <OrderCreateDate>2020-08-10T02:58:04.615Z</OrderCreateDate>\n <AccountId>9900012</AccountId>\n <SourceAccountId>9900013</SourceAccountId>\n <CreatedByUser>jdb</CreatedByUser>\n <OrderId>bf1305b8-8998-1111-2222-51ba3ce52d4e</OrderId>\n <CustomerOrderId>123-456-789-abc</CustomerOrderId>\n <LastModifiedDate>2018-01-09T02:58:05.298Z</LastModifiedDate>\n <SiteId>65487</SiteId>\n <SipPeerId>885544</SipPeerId>\n <TelephoneNumbers>\n <TelephoneNumber>2106078250</TelephoneNumber>\n <TelephoneNumber>2109678273</TelephoneNumber>\n <TelephoneNumber>2109678331</TelephoneNumber>\n <TelephoneNumber>2109678337</TelephoneNumber>\n <TelephoneNumber>2266401468</TelephoneNumber>\n </TelephoneNumbers>\n <ProcessingStatus>PARTIAL</ProcessingStatus>\n <Errors>\n <Error>\n <Code>7518</Code>\n <Description>Telephone Number Not Active.</Description>\n <TelephoneNumbers>\n <TelephoneNumber>2262665583</TelephoneNumber>\n </TelephoneNumbers>\n </Error>\n </Errors>\n </MoveTnsOrder>\n"
+                    "value": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<MoveTnsOrder>\n   <OrderCreateDate>2020-08-10T02:58:04.615Z</OrderCreateDate>\n   <AccountId>9900012</AccountId>\n   <SourceAccountId>9900013</SourceAccountId>\n   <CreatedByUser>jdb</CreatedByUser>\n   <OrderId>bf1305b8-8998-1111-2222-51ba3ce52d4e</OrderId>\n   <CustomerOrderId>123-456-789-abc</CustomerOrderId>\n   <LastModifiedDate>2018-01-09T02:58:05.298Z</LastModifiedDate>\n   <SiteId>65487</SiteId>\n   <SipPeerId>885544</SipPeerId>\n   <TelephoneNumbers>\n      <TelephoneNumber>2106078250</TelephoneNumber>\n      <TelephoneNumber>2109678273</TelephoneNumber>\n      <TelephoneNumber>2109678331</TelephoneNumber>\n      <TelephoneNumber>2109678337</TelephoneNumber>\n      <TelephoneNumber>2266401468</TelephoneNumber>\n   </TelephoneNumbers>\n   <ProcessingStatus>PARTIAL</ProcessingStatus>\n   <Errors>\n      <Error>\n         <Code>7518</Code>\n         <Description>Telephone Number Not Active.</Description>\n         <TelephoneNumbers>\n            <TelephoneNumber>2262665583</TelephoneNumber>\n         </TelephoneNumbers>\n      </Error>\n   </Errors>\n</MoveTnsOrder>"
                   }
                 }
               }
@@ -8020,9 +7983,12 @@
             "description": "The history has been successfully retrieved and displayed in the payload",
             "content": {
               "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderHistoryWrapper"
+                },
                 "examples": {
                   "example": {
-                    "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<OrderHistoryWrapper>\n <OrderHistory>\n <OrderDate>2020-09-17T08:56:39.607Z</OrderDate>\n <Note>Move TNs order has been received by the system.</Note>\n <Author>admin</Author>\n <Status>received</Status>\n </OrderHistory>\n <OrderHistory>\n <OrderDate>2020-09-17T08:56:39.743Z</OrderDate>\n <Note>Move TNs order processing has started.</Note>\n <Author>admin</Author>\n <Status>processing</Status>\n </OrderHistory>\n <OrderHistory>\n <OrderDate>2020-09-17T08:56:39.820Z</OrderDate>\n <Note>Move TNs order is complete.</Note>\n <Author>admin</Author>\n <Status>complete</Status>\n </OrderHistory>\n </OrderHistoryWrapper>\n"
+                    "value": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<OrderHistoryWrapper>\n   <OrderHistory>\n      <OrderDate>2020-09-17T08:56:39.607Z</OrderDate>\n      <Note>Move TNs order has been received by the system.</Note>\n      <Author>admin</Author>\n      <Status>received</Status>\n   </OrderHistory>\n   <OrderHistory>\n      <OrderDate>2020-09-17T08:56:39.743Z</OrderDate>\n      <Note>Move TNs order processing has started.</Note>\n      <Author>admin</Author>\n      <Status>processing</Status>\n   </OrderHistory>\n   <OrderHistory>\n      <OrderDate>2020-09-17T08:56:39.820Z</OrderDate>\n      <Note>Move TNs order is complete.</Note>\n      <Author>admin</Author>\n      <Status>complete</Status>\n   </OrderHistory>\n</OrderHistoryWrapper>"
                   }
                 }
               }
@@ -18550,7 +18516,7 @@
           "Longitude": {
             "type": "string"
           },
-          "AddressType" : {
+          "AddressType": {
             "$ref": "#/components/schemas/AddressType"
           }
         }
@@ -19300,6 +19266,367 @@
           },
           "Description": {
             "type": "string"
+          }
+        }
+      },
+      "MoveTnsOrders": {
+        "type": "object",
+        "properties": {
+          "TotalCount": {
+            "type": "integer"
+          },
+          "Links": {
+            "$ref": "#/components/schemas/PaginationLinks"
+          },
+          "MoveTnsOrderSummary": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderSummary"
+            }
+          }
+        }
+      },
+      "OrderSummary": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "integer"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "OrderId": {
+            "type": "string"
+          },
+          "lastModifiedDate": {
+            "type": "string"
+          },
+          "CountOfTNs": {
+            "type": "integer"
+          },
+          "LastModifiedNote": {
+            "$ref": "#/components/schemas/Note"
+          },
+          "SuppCount": {
+            "type": "integer"
+          },
+          "OrderType": {
+            "type": "string"
+          },
+          "CustomerOrderId": {
+            "type": "string"
+          },
+          "OrderDate": {
+            "type": "string"
+          },
+          "OrderStatus": {
+            "type": "string"
+          },
+          "TelephoneNumberDetails": {
+            "$ref": "#/components/schemas/TelephoneNumberDetails"
+          }
+        }
+      },
+      "TelephoneNumberDetails": {
+        "type": "object",
+        "properties": {
+          "States": {
+            "type": "array",
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "$ref": "#/components/schemas/StateWithCount"
+            }
+          },
+          "RateCenters": {
+            "type": "array",
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "$ref": "#/components/schemas/RateCenterWithCount"
+            }
+          },
+          "Cities": {
+            "type": "array",
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "$ref": "#/components/schemas/CityWithCount"
+            }
+          },
+          "Tiers": {
+            "type": "array",
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "$ref": "#/components/schemas/Tiers"
+            }
+          },
+          "Vendors": {
+            "type": "array",
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "$ref": "#/components/schemas/Vendors"
+            }
+          }
+        }
+      },
+      "StateWithCount": {
+        "type": "object",
+        "properties": {
+          "State": {
+            "type": "string"
+          },
+          "Count": {
+            "type": "integer"
+          }
+        }
+      },
+      "RateCenterWithCount": {
+        "type": "object",
+        "properties": {
+          "RateCenter": {
+            "type": "string"
+          },
+          "Count": {
+            "type": "integer"
+          }
+        }
+      },
+      "CityWithCount": {
+        "type": "object",
+        "properties": {
+          "City": {
+            "type": "string"
+          },
+          "Count": {
+            "type": "integer"
+          }
+        }
+      },
+      "Tiers": {
+        "type": "object",
+        "properties": {
+          "Tier": {
+            "type": "string"
+          },
+          "Count": {
+            "type": "integer"
+          }
+        }
+      },
+      "Vendors": {
+        "type": "object",
+        "properties": {
+          "VendorName": {
+            "type": "string"
+          },
+          "VendorId": {
+            "type": "integer"
+          },
+          "Count": {
+            "type": "integer"
+          }
+        }
+      },
+      "PaginationLinks": {
+        "type": "object",
+        "properties": {
+          "first": {
+            "type": "string"
+          },
+          "next": {
+            "type": "string"
+          },
+          "previous": {
+            "type": "string"
+          },
+          "last": {
+            "type": "string"
+          }
+        }
+      },
+      "MoveTnsOrderRequest": {
+        "title": "MoveTnsOrder",
+        "type": "object",
+        "required": [
+          "TelephoneNumbers",
+          "SiteId"
+        ],
+        "properties": {
+          "TelephoneNumbers": {
+            "description": "List of telephone numbers to be moved",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "TelephoneNumber": {
+                  "description": "Ten digit phone number with no dots or dashes",
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "SiteId": {
+            "description": "A site id to which telephone number will be moved",
+            "type": "integer"
+          },
+          "CustomerOrderId": {
+            "description": "Internal customer order id for tracking the order. Only alphanumeric values, dashes and spaces are allowed. Max length is 40 characters",
+            "type": "string"
+          },
+          "SipPeerId": {
+            "description": "A sippeer id of provided site to which telephone number will be moved",
+            "type": "integer"
+          },
+          "SourceAccountId": {
+            "description": "Id of source account, in the case of moving numbers across accounts",
+            "type": "integer"
+          },
+          "E911ServiceAction": {
+            "description": "Only valid when moving to a different account using SourceAccountId. When set to move (default) the E911 service information (if applied to the number) will be moved with the number to the new account. When set to delete the E911 service will be removed from the number",
+            "type": "string",
+            "enum": [
+              "move",
+              "delete"
+            ],
+            "default": "move"
+          }
+        }
+      },
+      "MoveTnsOrderResponse": {
+        "type": "object",
+        "properties": {
+          "MoveTnsOrder": {
+            "$ref": "#/components/schemas/MoveTnsOrderPayload"
+          }
+        }
+      },
+      "MoveTnsOrderPayload": {
+        "title": "MoveTnsOrder",
+        "type": "object",
+        "properties": {
+          "OrderId": {
+            "type": "string"
+          },
+          "AccountId": {
+            "type": "integer"
+          },
+          "LastModifiedDate": {
+            "type": "string"
+          },
+          "CreatedByUser": {
+            "type": "string"
+          },
+          "CustomerOrderId": {
+            "type": "string"
+          },
+          "SiteId": {
+            "type": "integer"
+          },
+          "SourceAccountId": {
+            "type": "integer"
+          },
+          "SipPeerId": {
+            "type": "integer"
+          },
+          "OrderCreateDate": {
+            "type": "string"
+          },
+          "TelephoneNumbers": {
+            "type": "array",
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "type": "string",
+              "xml": {
+                "name": "TelephoneNumber"
+              }
+            }
+          },
+          "ProcessingStatus": {
+            "type": "string",
+            "enum": [
+              "RECEIVED",
+              "PROCESSING",
+              "COMPLETE",
+              "PARTIAL",
+              "FAILED"
+            ]
+          },
+          "Errors": {
+            "type": "array",
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "$ref": "#/components/schemas/TelephoneNumberGroupError"
+            }
+          }
+        }
+      },
+      "TelephoneNumberGroupError" : {
+        "type" : "object",
+        "properties" : {
+          "Code" : {
+            "type" : "integer"
+          },
+          "Description" : {
+            "type" : "string"
+          },
+          "TelephoneNumbers" : {
+            "type" : "array",
+            "xml" : {
+              "wrapped" : true
+            },
+            "items" : {
+              "type" : "string",
+              "xml" : {
+                "name" : "TelephoneNumber"
+              }
+            }
+          }
+        }
+      },
+      "OrderHistory" : {
+        "type" : "object",
+        "properties" : {
+          "OrderDate" : {
+            "type" : "string"
+          },
+          "Note" : {
+            "type" : "string"
+          },
+          "Author" : {
+            "type" : "string"
+          },
+          "Difference" : {
+            "type": "string"
+          },
+          "Status" : {
+            "type" : "string"
+          }
+        }
+      },
+      "OrderHistoryWrapper" : {
+        "type" : "object",
+        "properties" : {
+          "orderHistories" : {
+            "type" : "array",
+            "xml" : {
+              "name" : "OrderHistory"
+            },
+            "items" : {
+              "$ref" : "#/components/schemas/OrderHistory"
+            }
           }
         }
       }
