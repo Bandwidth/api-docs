@@ -150,7 +150,7 @@ module.exports = {
         messagingSpec: JSON.parse(messagingSpec),
         messagingInternationalSpec: JSON.parse(messagingInternationalSpec),
         webRTCSpec: JSON.parse(webRtcSpec),
-        multiFactorAuthSpec: JSON.parse(multiFactorAuthSpec),
+        multiFactorAuthSpec: YAML.parse(multiFactorAuthSpec),
         dashSpec: JSON.parse(dashSpec),
         dashNotificationsSpec: JSON.parse(dashNotificationsSpec),
         globalSpec: YAML.parse(globalSpec),
