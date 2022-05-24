@@ -25,7 +25,6 @@ module.exports = {
     favicon: 'img/favicon.ico',
     organizationName: 'bandwidth', 
     projectName: 'api-docs', 
-    trailingSlash: true,
     themeConfig: {
         image: 'img/bandwidth.png', // used for meta tag
         colorMode: {
