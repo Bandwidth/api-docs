@@ -43,10 +43,6 @@ module.exports = {
             textColor: '#079CEE', // Defaults to `#000`.
             isCloseable: false, // Defaults to `true`.
         },
-        // this is broken
-        // prism: {
-        //   additionalLanguages: ['java', 'csharp', 'php', 'ruby'],
-        // },
         navbar: {
             title: '',
             hideOnScroll: false,
