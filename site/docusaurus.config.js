@@ -71,8 +71,7 @@ module.exports = {
             },{
                 href: 'https://github.com/Bandwidth',
                 position: 'right', 
-                className: 'header-github-link',
-                'aria-label': 'GitHub repository',
+                className: 'header-github-link'
             }]
         },
         footer: {
