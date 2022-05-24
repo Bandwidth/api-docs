@@ -23,8 +23,8 @@ module.exports = {
     onBrokenLinks: 'throw',
     onBrokenMarkdownLinks: 'warn',
     favicon: 'img/favicon.ico',
-    organizationName: 'bandwidth', // Usually your GitHub org/user name.
-    projectName: 'api-docs', // Usually your repo name.
+    organizationName: 'bandwidth', 
+    projectName: 'api-docs', 
     trailingSlash: false,
     themeConfig: {
         image: 'img/bandwidth.png', // used for meta tag
@@ -68,6 +68,11 @@ module.exports = {
                 href: 'https://github.com/Bandwidth-Samples',
                 label: 'Samples',
                 position: 'left',
+            },{
+                href: 'https://github.com/Bandwidth',
+                position: 'right', 
+                className: 'header-github-link',
+                'aria-label': 'GitHub repository',
             }]
         },
         footer: {
