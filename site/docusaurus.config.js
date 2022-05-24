@@ -25,6 +25,7 @@ module.exports = {
     favicon: 'img/favicon.ico',
     organizationName: 'bandwidth', // Usually your GitHub org/user name.
     projectName: 'api-docs', // Usually your repo name.
+    trailingSlash: false,
     themeConfig: {
         image: 'img/bandwidth.png', // used for meta tag
         colorMode: {
@@ -115,9 +116,10 @@ module.exports = {
             ],
             copyright: `Copyright © ${new Date().getFullYear()} Bandwidth Inc.`,
         },
-        prism: {
-            additionalLanguages: ['csharp', 'java', 'ruby', 'php'],
-          },
+        // Now this breaks redoc :sad: 
+        // prism: {
+        //     additionalLanguages: ['csharp', 'java', 'ruby', 'php'],
+        //   },
     },
     presets: [
         [
