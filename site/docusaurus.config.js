@@ -115,6 +115,9 @@ module.exports = {
             ],
             copyright: `Copyright © ${new Date().getFullYear()} Bandwidth Inc.`,
         },
+        prism: {
+            additionalLanguages: ['csharp', 'java', 'ruby', 'php'],
+          },
     },
     presets: [
         [
