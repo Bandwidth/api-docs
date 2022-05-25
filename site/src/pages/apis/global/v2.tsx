@@ -7,19 +7,19 @@ import SpecVersionDropdown from '../../../components/SpecVersionDropdown';
 export default function ApiReferencePage() {
     const {siteConfig} = useDocusaurusContext();
     const options = [
-      {title: "V1", link: "/apis/bwi"},
-      {title: "V2", link: "/apis/bwi/v2"},
-      {title: "Beta", link: "/apis/bwi/beta"}
+      {title: "V1", link: "/apis/global"},
+      {title: "V2", link: "/apis/global/v2"},
+      {title: "Beta", link: "/apis/global/beta"}
     ];
     const version = "V2"
 
     return (
         <Layout
-          title={`Bandwidth International V2 API Reference`}
+          title={`Global API V2 Reference`}
           description=""
-          keywords="Bandwidth,API,International,Voxbone">
+          keywords="Bandwidth,API,Global,Voxbone">
             <SpecVersionDropdown options={options} default={version} />
-            <ApiReference spec={siteConfig.customFields.bwiSpec_v2} color={siteConfig.customFields.voxbonePurple} />
+            <ApiReference spec={siteConfig.customFields.globalSpec_v2} color={siteConfig.customFields.voxbonePurple} />
         </Layout>
     );
 }
