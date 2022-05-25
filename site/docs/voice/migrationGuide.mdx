@@ -606,7 +606,7 @@ class Example
 
         var response = new VoiceResponse();
         response.Dial(415-123-4567);
-        response..Say(Goodbye);
+        response.Say(Goodbye);
 
         Console.WriteLine(response.ToString());
     }
@@ -694,7 +694,6 @@ This shows how to use Bandwidth XML to transfer a phone call with a pre-transfer
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <SpeakSentence>Thank you for calling Scrooge and Marley! Please hold while we connect you to an associate.</SpeakSentence>
     <Transfer transferCallerId="+15555555555">
         <PhoneNumber transferAnswerUrl="/announcement">+15555555554</PhoneNumber>
     </Transfer>
@@ -714,10 +713,6 @@ This shows how to use Bandwidth XML to transfer a phone call with a pre-transfer
 ```java
 @Post /incoming_calls endpoint
 public String transfer_to_bob() {
-    SpeakSentence speakSentence = SpeakSentence.builder()
-        .text("Thank you for calling Scrooge and Marley! Please hold while we connect you to an associate.")
-        .build();
-
     PhoneNumber phoneNumber = PhoneNumber.builder()
             .phoneNumber("+15555555554")
             .transferAnswerUrl("/announcement")
@@ -729,7 +724,6 @@ public String transfer_to_bob() {
             .build();
 
     Response response = Response.builder().build()
-            .add(speakSentence)
             .add(transfer);
 
     System.out.println(response.toBXML());
@@ -756,11 +750,6 @@ public byte[] alert() {
 ```csharp
 @Post [/incoming_calls]
 public ActionResult transfer_to_bob() {
-    SpeakSentence speakSentence = new SpeakSentence
-    {
-        Sentence = "Thank you for calling Scrooge and Marley! Please hold while we connect you to an associate.",
-    };
-
     PhoneNumber phoneNumber = new PhoneNumber
     {
         Number = "+15555555554",
@@ -775,7 +764,6 @@ public ActionResult transfer_to_bob() {
     };
 
     Response response = new Response();
-    response.Add(speakSentence);
     response.Add(transfer);
 
     Console.WriteLine(response.ToBXML());
@@ -801,10 +789,6 @@ public ActionResult alert() {
 
 ```ruby
 @POST '/incoming_calls' do:
-    speak_sentence = Bandwidth::Voice::SpeakSentence.new({
-        :sentence => "Thank you for calling Scrooge and Marley! Please hold while we connect you to an associate.",
-    })
-
     phone_number = Bandwidth::Voice::PhoneNumber.new({
         :number => "+15555555554",
         :transfer_answer_url => "/announcement"
@@ -816,7 +800,6 @@ public ActionResult alert() {
     })
 
     response = Bandwidth::Voice::Response.new()
-    response.push(speak_sentence)
     response.push(transfer)
 
     puts response.to_bxml()
@@ -837,10 +820,6 @@ public ActionResult alert() {
 
 ```js
 @POST ['/incoming_calls'] (req, res) => {
-    const speakSentence = new SpeakSentence({
-        sentence: "Thank you for calling Scrooge and Marley! Please hold while we connect you to an associate."
-    });
-
     const number = new Transfer.PhoneNumber({
         number: "+15555555554",
         transferAnswerUrl: "/announcement"
@@ -851,7 +830,7 @@ public ActionResult alert() {
         phoneNumbers: [number]
     });
 
-    const response = new Response(speakSentence, transfer);
+    const response = new Response(transfer);
 
     console.log(response.toBxml());
     res.status(200).send(response.toBxml());
@@ -874,10 +853,6 @@ public ActionResult alert() {
 ```python
 @POST '/incoming_calls'
 def transfer_to_bob():
-    speak_sentence = SpeakSentence(
-        sentence="Thank you for calling Scrooge and Marley! Please hold while we connect you to an associate."
-    )
-
     phone_number = PhoneNumber(
         number="+15555555554",
         transfer_answer_url="/announcement"
@@ -889,7 +864,6 @@ def transfer_to_bob():
     )
 
     response = Response()
-    response.add_verb(speak_sentence)
     response.add_verb(transfer)
 
     print(response.to_bxml())
@@ -912,8 +886,6 @@ def alert():
 ```php
 @POST('/incoming_calls)
 function transfer_to_bob(Request $request, Response $response) {
-    $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Thank you for calling Scrooge and Marley! Please hold while we connect you to an associate.");
-
     $number = new BandwidthLib\Voice\Bxml\PhoneNumber("+15555555554");
 
     $transfer = new BandwidthLib\Voice\Bxml\Transfer();
@@ -921,7 +893,6 @@ function transfer_to_bob(Request $request, Response $response) {
     $transfer->phoneNumbers(array($number));
 
     $response = new BandwidthLib\Voice\Bxml\Response();
-    $response->addVerb($speakSentence);
     $response->addVerb($transfer);
 
     echo $response->toBxml();
