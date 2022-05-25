@@ -67,13 +67,7 @@ const ApiList = [
         Svg: require('../../../static/img/icon-dash-notifications-complex-no-bg.svg').default,
         style: apiStyles.apiSvg,
         link: '/apis/dash-notifications'
-    },
-    {
-        title: 'Bandwidth International',
-        Svg: require('../../../static/img/bwi-globe.svg').default,
-        style: apiStyles.apiSvg,
-        link: '/apis/bwi'
-    },
+    }
 ];
 
 function Header() {
