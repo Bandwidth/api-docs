@@ -11,9 +11,9 @@ const multiFactorAuthSpec = fs.readFileSync('./specs/multiFactorAuth.json', 'utf
 const dashSpec = fs.readFileSync('./specs/dash.json', 'utf-8');
 const dashNotificationsSpec = fs.readFileSync('./specs/dashNotifications.json', 'utf-8');
 const messagingInternationalSpec = fs.readFileSync('./specs/messagingInternational.json', 'utf-8');
-const bwiSpec = fs.readFileSync('./specs/bwi.yml', 'utf-8');
-const bwiSpec_v2 = fs.readFileSync('./specs/bwi_v2.yml', 'utf-8');
-const bwiSpec_beta = fs.readFileSync('./specs/bwi_beta.yml', 'utf-8');
+const globalSpec = fs.readFileSync('./specs/global.yml', 'utf-8');
+const globalSpec_v2 = fs.readFileSync('./specs/global-v2.yml', 'utf-8');
+const globalSpec_beta = fs.readFileSync('./specs/global-beta.yml', 'utf-8');
 
 module.exports = {
     title: 'Bandwidth API Docs',
@@ -153,9 +153,9 @@ module.exports = {
         multiFactorAuthSpec: JSON.parse(multiFactorAuthSpec),
         dashSpec: JSON.parse(dashSpec),
         dashNotificationsSpec: JSON.parse(dashNotificationsSpec),
-        bwiSpec: YAML.parse(bwiSpec),
-        bwiSpec_v2: YAML.parse(bwiSpec_v2),
-        bwiSpec_beta: YAML.parse(bwiSpec_beta),
+        globalSpec: YAML.parse(globalSpec),
+        globalSpec_v2: YAML.parse(globalSpec_v2),
+        globalSpec_beta: YAML.parse(globalSpec_beta),
         // CSS Colors
         bwBlue: '#079CEE',
         voicePurple: '#9a59c5',
