@@ -60,10 +60,6 @@ module.exports = {
                 src: 'img/bandwidth-logo-navbar.png',
             },
             items: [{
-                label: 'US & Canada',
-                position: 'left',
-                className: 'regionLabel',
-            },{
                 to: 'docs',
                 activeBasePath: 'docs',
                 label: 'Docs',
@@ -80,14 +76,6 @@ module.exports = {
                 href: 'https://github.com/Bandwidth-Samples',
                 label: 'Samples',
                 position: 'left',
-            }, {
-                label: 'Global',
-                position: 'right',
-                className: 'regionLabel',
-            }, {
-                href: 'https://dev.bandwidth.com/apis/global/',
-                label: 'Docs & API Reference',
-                position: 'right',
             }]
         },
         footer: {
