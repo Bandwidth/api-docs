@@ -133,7 +133,6 @@ module.exports = {
                     label: "Guides and Tutorials",
                     items: [
                         "voice/quickStart",
-                        "voice/migrationGuide",
                         "voice/outboundCallGuide",
                         "voice/mediaAndTTSGuide",
                         "voice/recordingGuide",
@@ -144,6 +143,7 @@ module.exports = {
                         "voice/transferGuide",
                         "voice/callInformationGuide",
                         "voice/callQueueingGuide",
+                        "voice/migrationGuide",
                         "voice/cnamPerDipGuide",
                     ],
                 },
