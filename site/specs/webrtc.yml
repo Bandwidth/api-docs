@@ -1,0 +1,2635 @@
+openapi: 3.0.3
+info:
+  version: 1.0.5
+  title: WebRtc
+  description: |-
+    Bandwidth WebRTC API
+    ## Base Path
+    <code>https://api.webrtc.bandwidth.com/v1</code>
+  contact:
+    name: Bandwidth Edge Services
+    email: edge-services@bandwidth.com
+    url: https://support.bandwidth.com
+servers:
+  - url: https://api.webrtc.bandwidth.com/v1
+    description: Production WebRTC APIs
+paths:
+  /accounts/{accountId}/participants:
+    post:
+      tags:
+        - Participants
+      summary: Create Participant
+      description: >
+        Create a new participant under this account.
+
+
+        Participants are idempotent, so relevant parameters must be set in this
+        function if desired.
+      operationId: createParticipant
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+      requestBody:
+        description: Participant parameters
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createParticipantRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createParticipantResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      x-codeSamples:
+        - lang: cURL
+          source: >
+            curl
+            'https://api.webrtc.bandwidth.com/v1/accounts/12345/participants' \
+                -X POST \
+                -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=' \
+                -H 'Content-Type: application/json' \
+                -d '{
+                    "callbackUrl": "https://example.com/callback",
+                    "publishPermissions": [
+                        "VIDEO",
+                        "AUDIO"
+                    ],
+                    "tag": "participant1",
+                    "deviceApiVersion": "V3"
+                }'
+        - lang: C#
+          source: "\uFEFFusing System;\nusing System.Collections.Generic;\nusing System.Threading.Tasks;\nusing Bandwidth.Standard;\nusing Bandwidth.Standard.Exceptions;\nusing Bandwidth.Standard.WebRtc.Models;\n\nclass Program\n{\n    static async Task Main(string[] args)\n    {\n        var username = \"api-username\";\n        var password = \"api-pasword\";\n        var accountId = \"12345\";\n\n        var client = new BandwidthClient.Builder()\n            .WebRtcBasicAuthCredentials(username, password)\n            .Build();\n\n        var participant = new Participant()\n        {\n            PublishPermissions = new List<PublishPermissionEnum>() { PublishPermissionEnum.AUDIO, PublishPermissionEnum.VIDEO }\n        };\n\n        try\n        {\n            var response = await client.WebRtc.APIController.CreateParticipantAsync(accountId, participant);\n            Console.WriteLine(response.Data);\n        }\n        catch (ApiException e)\n        {\n            Console.WriteLine(e.Message);\n        }\n    }\n}\n"
+        - lang: Java
+          source: |
+            import com.bandwidth.BandwidthClient;
+            import com.bandwidth.http.response.ApiResponse;
+            import com.bandwidth.webrtc.models.AccountsParticipantsResponse;
+            import com.bandwidth.webrtc.models.Participant;
+            import com.bandwidth.webrtc.models.PublishPermissionEnum;
+
+            import java.util.concurrent.CompletableFuture;
+            import java.util.concurrent.ExecutionException;
+            import java.util.Arrays;
+            import java.util.List;
+
+            public class Sample {
+                public static final String USERNAME = "api-username";
+                public static final String PASSWORD = "api-password";
+                public static final String ACCOUNT_ID = "12345";
+
+                public static void main(String[] args) {
+                    BandwidthClient client = new BandwidthClient.Builder()
+                            .webRtcBasicAuthCredentials(USERNAME, PASSWORD)
+                            .build();
+
+                    Participant participant = new Participant();
+                    List<PublishPermissionEnum> publishPermissions = Arrays.asList(PublishPermissionEnum.AUDIO, PublishPermissionEnum.VIDEO);
+                    participant.setPublishPermissions(publishPermissions);
+
+                    try {
+                        CompletableFuture<ApiResponse<AccountsParticipantsResponse>> completableFuture = client.getWebRtcClient().getAPIController().createParticipantAsync(ACCOUNT_ID, participant);
+                    } catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                }
+            }
+        - lang: Node.js
+          source: |
+            import { Client, ApiController } from '@bandwidth/webrtc';
+
+            const BW_USERNAME = "api-username";
+            const BW_PASSWORD = "api-password";
+            const BW_ACCOUNT_ID = "12345";
+
+            const client = new Client({
+              basicAuthUserName: BW_USERNAME,
+              basicAuthPassword: BW_PASSWORD
+            });
+
+            const controller = new ApiController(client);
+
+            const accountId = BW_ACCOUNT_ID;
+
+            const createParticipant = async function() {
+              try {
+                const response = await controller.createParticipant(accountId, {
+                  callbackUrl: "http://www.myapp.com/new",
+                  publishPermissions: ["AUDIO"]
+                })
+                console.log(response.body);
+              } catch(error) {
+                console.error(error);
+              }
+            }
+
+            createParticipant();
+        - lang: PHP
+          source: |
+            <?php
+              
+            require "vendor/autoload.php";
+
+            api-username = "api-username";
+            api-password = "api-pasword";
+            12345 = "12345";
+
+            $config = new BandwidthLib\Configuration(
+                array(
+                    'webRtcBasicAuthUserName' => $BW_USERNAME,
+                    'webRtcBasicAuthPassword' => $BW_PASSWORD,
+                )
+            );
+            $client = new BandwidthLib\BandwidthClient($config);
+
+            $webRtcClient = $client->getWebRtc()->getClient();
+
+            $body = new BandwidthLib\WebRtc\Models\Participant();
+            $body->publishPermissions = array("AUDIO", "VIDEO");
+            $body->deviceApiVersion = "V3";
+
+            try {
+                $response = $webRtcClient->createParticipant($BW_ACCOUNT_ID, $body);
+                print_r($response->getResult()->participant->id);
+            } catch (BandwidthLib\APIException $e) {
+                print_r($e->getResponseCode());
+            }
+        - lang: Python
+          source: |
+            from bandwidth.bandwidth_client import BandwidthClient
+            from bandwidth.exceptions.api_exception import APIException
+            from bandwidth.webrtc.models.participant import Participant
+
+            import os
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = BandwidthClient(
+                web_rtc_basic_auth_user_name=BW_USERNAME,
+                web_rtc_basic_auth_password=BW_PASSWORD
+            )
+
+            web_rtc_client = bandwidth_client.web_rtc_client.client
+
+            body = Participant()
+            body.publish_permissions = ["AUDIO", "VIDEO"]
+            body.device_api_version = "V3"
+
+            try:
+                response = web_rtc_client.create_participant(BW_ACCOUNT_ID, body)
+                print(response.body.participant.id)
+            except APIException as e:
+                print(e.response_code)
+        - lang: Ruby
+          source: |
+            require 'bandwidth'
+
+            include Bandwidth
+            include Bandwidth::WebRtc
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = Bandwidth::Client.new(
+                web_rtc_basic_auth_user_name: BW_USERNAME,
+                web_rtc_basic_auth_password: BW_PASSWORD
+            )
+
+            web_rtc_client = bandwidth_client.web_rtc_client.client
+
+            body = Participant.new
+            body.publish_permissions = ["AUDIO", "VIDEO"]
+            body.device_api_version = "V3"
+
+            begin
+                response = web_rtc_client.create_participant(BW_ACCOUNT_ID, :body => body)
+                puts response.data.participant.id
+            rescue APIException => e
+                puts e.response_code
+            end
+  /accounts/{accountId}/participants/{participantId}:
+    get:
+      tags:
+        - Participants
+      summary: Get Participant
+      description: Get participant by ID.
+      operationId: getParticipant
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/participantId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/participant'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      x-codeSamples:
+        - lang: cURL
+          source: >
+            curl
+            'https://api.webrtc.bandwidth.com/v1/accounts/12345/participants/320e2af6-13ec-498d-8b51-daba52c37853'
+            \
+                -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ='
+        - lang: C#
+          source: |-
+            using System;
+            using System.Threading.Tasks;
+            using Bandwidth.Standard;
+            using Bandwidth.Standard.Exceptions;
+            using Bandwidth.Standard.WebRtc.Models;
+
+            class Program
+            {
+                static async Task Main(string[] args)
+                {
+                    var username = "api-username";
+                    var password = "api-pasword";
+                    var accountId = "12345";
+
+                    var participantId = "320e2af6-13ec-498d-8b51-daba52c37853";
+
+                    var client = new BandwidthClient.Builder()
+                        .WebRtcBasicAuthCredentials(username, password)
+                        .Build();
+
+                    try
+                    {
+                        var response = await client.WebRtc.APIController.GetParticipantAsync(accountId, participantId);
+                        Console.WriteLine(response.Data);
+                    }
+                    catch (ApiException e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+            }
+        - lang: Java
+          source: |
+            import com.bandwidth.BandwidthClient;
+            import com.bandwidth.http.response.ApiResponse;
+            import com.bandwidth.webrtc.models.Participant;
+
+            import java.util.concurrent.CompletableFuture;
+            import java.util.concurrent.ExecutionException;
+
+            public class Sample {
+                public static final String USERNAME = "api-username";
+                public static final String PASSWORD = "api-password";
+                public static final String ACCOUNT_ID = "12345";
+
+                public static void main(String[] args) {
+                    String participantId = "568749d5-04d5-483d-adf5-deac7dd3d521";
+
+                    BandwidthClient client = new BandwidthClient.Builder()
+                            .webRtcBasicAuthCredentials(USERNAME, PASSWORD)
+                            .build();
+
+                    try {
+                        CompletableFuture<ApiResponse<Participant>> completableFuture = client.getWebRtcClient().getAPIController().getParticipantAsync(ACCOUNT_ID, participantId);
+                        System.out.println(completableFuture.get().getResult());
+                    } catch (InterruptedException | ExecutionException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }
+        - lang: Node.js
+          source: |
+            import { Client, ApiController } from '@bandwidth/webrtc';
+
+            const BW_USERNAME = "api-username";
+            const BW_PASSWORD = "api-password";
+            const BW_ACCOUNT_ID = "12345";
+
+            const client = new Client({
+              basicAuthUserName: BW_USERNAME,
+              basicAuthPassword: BW_PASSWORD
+            });
+
+            const controller = new ApiController(client);
+
+            const accountId = BW_ACCOUNT_ID;
+            const participantId = "320e2af6-13ec-498d-8b51-daba52c37853"
+
+            const getParticipant = async function() {
+              try {
+                const response = await controller.getParticipant(accountId, participantId)
+                console.log(response.body);
+              } catch(error) {
+                console.error(error);
+              }
+            }
+
+            getParticipant();
+        - lang: PHP
+          source: |
+            <?php
+              
+            require "vendor/autoload.php";
+
+            api-username = "api-username";
+            api-password = "api-pasword";
+            12345 = "12345";
+
+            $config = new BandwidthLib\Configuration(
+                array(
+                    'webRtcBasicAuthUserName' => $BW_USERNAME,
+                    'webRtcBasicAuthPassword' => $BW_PASSWORD,
+                )
+            );
+            $client = new BandwidthLib\BandwidthClient($config);
+
+            $webRtcClient = $client->getWebRtc()->getClient();
+
+            $participantId = "1234-qwer";
+
+            try {
+                $response = $webRtcClient->getParticipant($BW_ACCOUNT_ID, $participantId);
+                print_r($response->getResult()->id);
+            } catch (BandwidthLib\APIException $e) {
+                print_r($e->getResponseCode());
+            }
+        - lang: Python
+          source: |
+            from bandwidth.bandwidth_client import BandwidthClient
+            from bandwidth.exceptions.api_exception import APIException
+
+            import os
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = BandwidthClient(
+                web_rtc_basic_auth_user_name=BW_USERNAME,
+                web_rtc_basic_auth_password=BW_PASSWORD
+            )
+
+            web_rtc_client = bandwidth_client.web_rtc_client.client
+
+            participant_id = "1234-abcd"
+
+            try:
+                response = web_rtc_client.get_participant(BW_ACCOUNT_ID, participant_id)
+                print(response.body.id)
+            except APIException as e:
+                print(e.response_code)
+        - lang: Ruby
+          source: |
+            require 'bandwidth'
+
+            include Bandwidth
+            include Bandwidth::WebRtc
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = Bandwidth::Client.new(
+                web_rtc_basic_auth_user_name: BW_USERNAME,
+                web_rtc_basic_auth_password: BW_PASSWORD
+            )
+
+            web_rtc_client = bandwidth_client.web_rtc_client.client
+
+            participant_id = "1234-abcd"
+
+            begin
+                response = web_rtc_client.get_participant(BW_ACCOUNT_ID, participant_id)
+                puts response.data.id
+            rescue APIException => e
+                puts e.response_code
+            end
+    delete:
+      tags:
+        - Participants
+      summary: Delete Participant
+      description: Delete participant by ID.
+      operationId: deleteParticipant
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/participantId'
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      x-codeSamples:
+        - lang: cURL
+          source: >
+            curl
+            'https://api.webrtc.bandwidth.com/v1/accounts/12345/participants/320e2af6-13ec-498d-8b51-daba52c37853'
+            \
+                -X DELETE \
+                -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ='
+        - lang: C#
+          source: |
+            using System;
+            using System.Threading.Tasks;
+            using Bandwidth.Standard;
+            using Bandwidth.Standard.Exceptions;
+            using Bandwidth.Standard.WebRtc.Models;
+
+            class Program
+            {
+                static async Task Main(string[] args)
+                {
+                    var username = "api-username";
+                    var password = "api-pasword";
+                    var accountId = "12345";
+
+                    var participantId = "320e2af6-13ec-498d-8b51-daba52c37853";
+
+                    var client = new BandwidthClient.Builder()
+                        .WebRtcBasicAuthCredentials(username, password)
+                        .Build();
+
+                    try
+                    {
+                        await client.WebRtc.APIController.DeleteParticipantAsync(accountId, participantId);
+                    }
+                    catch (ApiException e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+            }
+        - lang: Java
+          source: |
+            import com.bandwidth.BandwidthClient;
+            import com.bandwidth.http.response.ApiResponse;
+
+            import java.util.concurrent.CompletableFuture;
+            import java.util.concurrent.ExecutionException;
+
+            public class Sample {
+                public static final String USERNAME = "api-username";
+                public static final String PASSWORD = "api-password";
+                public static final String ACCOUNT_ID = "12345";
+
+                public static void main(String[] args) {
+                    BandwidthClient client = new BandwidthClient.Builder()
+                            .webRtcBasicAuthCredentials(USERNAME, PASSWORD)
+                            .build();
+
+                    String participantId = "568749d5-04d5-483d-adf5-deac7dd3d521";
+
+                    try {
+                        CompletableFuture<ApiResponse<Void>> completableFuture = client.getWebRtcClient().getAPIController().deleteParticipantAsync(ACCOUNT_ID, participantId);
+                        System.out.println(completableFuture.get().getResult());
+                    } catch (InterruptedException | ExecutionException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }
+        - lang: Node.js
+          source: |
+            import { Client, ApiController } from '@bandwidth/webrtc';
+
+            const BW_USERNAME = "api-username";
+            const BW_PASSWORD = "api-password";
+            const BW_ACCOUNT_ID = "12345";
+
+            const client = new Client({
+              basicAuthUserName: BW_USERNAME,
+              basicAuthPassword: BW_PASSWORD
+            });
+
+            const controller = new ApiController(client);
+
+            const accountId = BW_ACCOUNT_ID;
+            const participantId = "320e2af6-13ec-498d-8b51-daba52c37853"
+
+            const deleteParticipant = async function() {
+              try {
+                const response = await controller.deleteParticipant(accountId, participantId)
+                console.log(response.body);
+              } catch(error) {
+                console.error(error);
+              }
+            }
+
+            deleteParticipant();
+        - lang: PHP
+          source: |
+            <?php
+
+            require "vendor/autoload.php";
+
+            api-username = "api-username";
+            api-password = "api-pasword";
+            12345 = "12345";
+
+            $config = new BandwidthLib\Configuration(
+                array(
+                    'webRtcBasicAuthUserName' => $BW_USERNAME,
+                    'webRtcBasicAuthPassword' => $BW_PASSWORD,
+                )
+            );
+            $client = new BandwidthLib\BandwidthClient($config);
+
+            $webRtcClient = $client->getWebRtc()->getClient();
+
+            $participantId = "1234-abcd";
+
+            try {
+                $webRtcClient->deleteParticipant($BW_ACCOUNT_ID, $participantId);
+            } catch (BandwidthLib\APIException $e) {
+                print_r($e->getResponseCode());
+            }
+        - lang: Python
+          source: |
+            from bandwidth.bandwidth_client import BandwidthClient
+            from bandwidth.exceptions.api_exception import APIException
+
+            import os
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = BandwidthClient(
+                web_rtc_basic_auth_user_name=BW_USERNAME,
+                web_rtc_basic_auth_password=BW_PASSWORD
+            )
+            web_rtc_client = bandwidth_client.web_rtc_client.client
+
+            participant_id = "1234-abcd"
+
+            try:
+                web_rtc_client.delete_participant(BW_ACCOUNT_ID, participant_id)
+            except APIException as e:
+                print(e.response_code)
+        - lang: Ruby
+          source: |
+            require 'bandwidth'
+
+            include Bandwidth
+            include Bandwidth::WebRtc
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = Bandwidth::Client.new(
+                web_rtc_basic_auth_user_name: BW_USERNAME,
+                web_rtc_basic_auth_password: BW_PASSWORD
+            )
+
+            web_rtc_client = bandwidth_client.web_rtc_client.client
+
+            participant_id = "1234-abcd"
+
+            begin
+                web_rtc_client.delete_participant(BW_ACCOUNT_ID, participant_id)
+            rescue APIException => e
+                puts e.response_code
+            end
+  /accounts/{accountId}/sessions:
+    post:
+      tags:
+        - Sessions
+      summary: Create Session
+      description: >
+        Create a new session.
+
+
+        Sessions are idempotent, so relevant parameters must be set in this
+        function if desired.
+      operationId: createSession
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+      requestBody:
+        description: Session parameters
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/session'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/session'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      x-codeSamples:
+        - lang: cURL
+          source: |
+            curl 'https://api.webrtc.bandwidth.com/v1/accounts/12345/sessions' \
+                -X POST \
+                -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=' \
+                -H 'Content-Type: application/json' \
+                -d '{
+                    "tag": "session1"
+                }'
+        - lang: C#
+          source: |-
+            using System;
+            using System.Threading.Tasks;
+            using Bandwidth.Standard;
+            using Bandwidth.Standard.Exceptions;
+            using Bandwidth.Standard.WebRtc.Models;
+
+            class Program
+            {
+                static async Task Main(string[] args)
+                {
+                    var username = "api-username";
+                    var password = "api-pasword";
+                    var accountId = "12345";
+
+                    var client = new BandwidthClient.Builder()
+                        .WebRtcBasicAuthCredentials(username, password)
+                        .Build();
+
+                    var session = new Session()
+                    {
+                        Tag = "new-session"
+                    };
+
+                    try
+                    {
+                        var response = await client.WebRtc.APIController.CreateSessionAsync(accountId, session);
+                        Console.WriteLine(response.Data);
+                    }
+                    catch (ApiException e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+            }
+        - lang: Java
+          source: |
+            import java.util.concurrent.CompletableFuture;
+            import java.util.concurrent.ExecutionException;
+
+            import com.bandwidth.*;
+            import com.bandwidth.webrtc.models.*;
+            import com.bandwidth.http.response.ApiResponse;
+
+            public class Sample {
+                public static final String USERNAME = "api-username";
+                public static final String PASSWORD = "api-password";
+                public static final String ACCOUNT_ID = "12345";
+
+                public static void main(String[] args) {
+                    BandwidthClient client = new BandwidthClient.Builder()
+                            .webRtcBasicAuthCredentials(USERNAME, PASSWORD)
+                            .build();
+
+                    Session session = new Session();
+                    session.setTag("new-session");
+
+                    try {
+                        CompletableFuture<ApiResponse<Session>> completableFuture = client.getWebRtcClient().getAPIController().createSessionAsync(ACCOUNT_ID, session);
+                        System.out.println(completableFuture.get().getResult());
+                    } catch (InterruptedException | ExecutionException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }
+        - lang: Node.js
+          source: |
+            import { Client, ApiController } from '@bandwidth/webrtc';
+
+            const BW_USERNAME = "api-username";
+            const BW_PASSWORD = "api-password";
+            const BW_ACCOUNT_ID = "12345";
+
+            const client = new Client({
+              basicAuthUserName: BW_USERNAME,
+              basicAuthPassword: BW_PASSWORD
+            });
+
+            const controller = new ApiController(client);
+
+            const accountId = BW_ACCOUNT_ID;
+
+            const createSession = async function() {
+              try {
+                const response = await controller.createSession(accountId, {
+                  tag: '{"SessionName": "my_session"}'
+                })
+                console.log(response.body);
+              } catch(error) {
+                console.error(error);
+              }
+            }
+
+            createSession();
+        - lang: PHP
+          source: |
+            <?php
+
+            require "vendor/autoload.php";
+
+            api-username = "api-username";
+            api-password = "api-pasword";
+            12345 = "12345";
+
+            $config = new BandwidthLib\Configuration(
+                array(
+                    'webRtcBasicAuthUserName' => $BW_USERNAME,
+                    'webRtcBasicAuthPassword' => $BW_PASSWORD,
+                )
+            );
+            $client = new BandwidthLib\BandwidthClient($config);
+
+            $webRtcClient = $client->getWebRtc()->getClient();
+
+            $body = new BandwidthLib\WebRtc\Models\Session();
+            $body->tag = "tag";
+
+            try {
+                $response = $webRtcClient->createSession($BW_ACCOUNT_ID, $body);
+                print_r($response->getResult()->id);
+            } catch (BandwidthLib\APIException $e) {
+                print_r($e->getResponseCode());
+            }
+        - lang: Python
+          source: |
+            from bandwidth.bandwidth_client import BandwidthClient
+            from bandwidth.exceptions.api_exception import APIException
+            from bandwidth.webrtc.models.session import Session
+
+            import os
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = BandwidthClient(
+                web_rtc_basic_auth_user_name=BW_USERNAME,
+                web_rtc_basic_auth_password=BW_PASSWORD
+            )
+            web_rtc_client = bandwidth_client.web_rtc_client.client
+
+            body = Session()
+            body.tag = "tag"
+
+            try:
+                response = web_rtc_client.create_session(BW_ACCOUNT_ID, body)
+                print(response.body.id)
+            except APIException as e:
+                print(e.response_code)
+        - lang: Ruby
+          source: |
+            require 'bandwidth'
+
+            include Bandwidth
+            include Bandwidth::WebRtc
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = Bandwidth::Client.new(
+                web_rtc_basic_auth_user_name: BW_USERNAME,
+                web_rtc_basic_auth_password: BW_PASSWORD
+            )
+
+            web_rtc_client = bandwidth_client.web_rtc_client.client
+
+            body = Session.new
+            body.tag = "tag"
+
+            begin
+                response = web_rtc_client.create_session(BW_ACCOUNT_ID, :body => body)
+                puts response.data.id
+            rescue APIException => e
+                puts e.response_code
+            end
+  /accounts/{accountId}/sessions/{sessionId}:
+    get:
+      tags:
+        - Sessions
+      summary: Get Session
+      description: Get session by ID.
+      operationId: getSession
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/sessionId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/session'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      x-codeSamples:
+        - lang: cURL
+          source: >
+            curl
+            'https://api.webrtc.bandwidth.com/v1/accounts/12345/sessions/75c21163-e110-41bc-bd76-1bb428ec85d5'
+            \
+                -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ='
+        - lang: C#
+          source: |
+            using System;
+            using System.Threading.Tasks;
+            using Bandwidth.Standard;
+            using Bandwidth.Standard.Exceptions;
+            using Bandwidth.Standard.WebRtc.Models;
+
+            class Program
+            {
+                static async Task Main(string[] args)
+                {
+                    var username = "api-username";
+                    var password = "api-pasword";
+                    var accountId = "12345";
+
+                    var sessionId = "75c21163-e110-41bc-bd76-1bb428ec85d5"; // Returned via WebRTC's create session request.
+
+                    var client = new BandwidthClient.Builder()
+                        .WebRtcBasicAuthCredentials(username, password)
+                        .Build();
+
+                    try
+                    {
+                        var response = await client.WebRtc.APIController.GetSessionAsync(accountId, sessionId);
+                        Console.WriteLine(response.Data);
+                    }
+                    catch (ApiException e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+            }
+        - lang: Java
+          source: |
+            import com.bandwidth.BandwidthClient;
+            import com.bandwidth.http.response.ApiResponse;
+            import com.bandwidth.webrtc.models.Session;
+
+            import java.util.concurrent.CompletableFuture;
+            import java.util.concurrent.ExecutionException;
+
+            public class Sample {
+                public static final String USERNAME = "api-username";
+                public static final String PASSWORD = "api-password";
+                public static final String ACCOUNT_ID = "12345";
+
+                public static void main(String[] args) {
+                    String sessionId = "75c21163-e110-41bc-bd76-1bb428ec85d5";
+
+                    BandwidthClient client = new BandwidthClient.Builder()
+                            .webRtcBasicAuthCredentials(USERNAME, PASSWORD)
+                            .build();
+
+                    try {
+                        CompletableFuture<ApiResponse<Session>> completableFuture = client.getWebRtcClient().getAPIController().getSessionAsync(ACCOUNT_ID, sessionId);
+                        System.out.println(completableFuture.get().getResult());
+                    } catch (InterruptedException | ExecutionException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }
+        - lang: Node.js
+          source: |
+            import { Client, ApiController } from '@bandwidth/webrtc';
+
+            const BW_USERNAME = "api-username";
+            const BW_PASSWORD = "api-password";
+            const BW_ACCOUNT_ID = "12345";
+
+            const client = new Client({
+              basicAuthUserName: BW_USERNAME,
+              basicAuthPassword: BW_PASSWORD
+            });
+
+            const controller = new ApiController(client);
+
+            const accountId = BW_ACCOUNT_ID;
+            const sessionId = "75c21163-e110-41bc-bd76-1bb428ec85d5"
+
+            const getSession = async function() {
+              try {
+                const response = await controller.getSession(accountId, sessionId)
+                console.log(response.body);
+              } catch(error) {
+                console.error(error);
+              }
+            }
+
+            getSession();
+        - lang: PHP
+          source: |
+            <?php
+
+            require "vendor/autoload.php";
+
+            api-username = "api-username";
+            api-password = "api-pasword";
+            12345 = "12345";
+
+            $config = new BandwidthLib\Configuration(
+                array(
+                    'webRtcBasicAuthUserName' => $BW_USERNAME,
+                    'webRtcBasicAuthPassword' => $BW_PASSWORD,
+                )
+            );
+            $client = new BandwidthLib\BandwidthClient($config);
+
+            $webRtcClient = $client->getWebRtc()->getClient();
+
+            $sessionId = "1234-qwer";
+
+            try {
+                $response = $webRtcClient->getSession($BW_ACCOUNT_ID, $sessionId);
+                print_r($response->getResult()->id);
+            } catch (BandwidthLib\APIException $e) {
+                print_r($e->getResponseCode());
+            }
+        - lang: Python
+          source: |
+            from bandwidth.bandwidth_client import BandwidthClient
+            from bandwidth.exceptions.api_exception import APIException
+
+            import os
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = BandwidthClient(
+                web_rtc_basic_auth_user_name=BW_USERNAME,
+                web_rtc_basic_auth_password=BW_PASSWORD
+            )
+
+            web_rtc_client = bandwidth_client.web_rtc_client.client
+
+            session_id = "1234-abcd"
+
+            try:
+                response = web_rtc_client.get_session(BW_ACCOUNT_ID, session_id)
+                print(response.body.id)
+            except APIException as e:
+                print(e.response_code)
+        - lang: Ruby
+          source: |
+            require 'bandwidth'
+
+            include Bandwidth
+            include Bandwidth::WebRtc
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = Bandwidth::Client.new(
+                web_rtc_basic_auth_user_name: BW_USERNAME,
+                web_rtc_basic_auth_password: BW_PASSWORD
+            )
+
+            web_rtc_client = bandwidth_client.web_rtc_client.client
+
+            session_id = "1234-abcd"
+
+            begin
+                response = web_rtc_client.get_session(BW_ACCOUNT_ID, session_id)
+                print(response.data.id)
+            rescue APIException => e
+                print(e.response_code)
+            end
+    delete:
+      tags:
+        - Sessions
+      summary: Delete Session
+      description: Delete session by ID.
+      operationId: deleteSession
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/sessionId'
+      responses:
+        '204':
+          description: No Content
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      x-codeSamples:
+        - lang: cURL
+          source: >
+            curl
+            'https://api.webrtc.bandwidth.com/v1/accounts/12345/sessions/75c21163-e110-41bc-bd76-1bb428ec85d5'
+            \
+                -X DELETE \
+                -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ='
+        - lang: C#
+          source: |
+            using System;
+            using System.Threading.Tasks;
+            using Bandwidth.Standard;
+            using Bandwidth.Standard.Exceptions;
+            using Bandwidth.Standard.WebRtc.Models;
+
+            class Program
+            {
+                static async Task Main(string[] args)
+                {
+                    var username = "api-username";
+                    var password = "api-pasword";
+                    var accountId = "12345";
+
+                    var sessionId = "75c21163-e110-41bc-bd76-1bb428ec85d5"; // Returned via WebRTC's create session request.
+
+                    var client = new BandwidthClient.Builder()
+                        .WebRtcBasicAuthCredentials(username, password)
+                        .Build();
+
+                    try
+                    {
+                        await client.WebRtc.APIController.DeleteSessionAsync(accountId, sessionId);
+                    }
+                    catch (ApiException e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+            }
+        - lang: Java
+          source: |
+            import com.bandwidth.BandwidthClient;
+            import com.bandwidth.http.response.ApiResponse;
+
+            import java.util.concurrent.CompletableFuture;
+            import java.util.concurrent.ExecutionException;
+
+            public class Sample {
+                public static final String USERNAME = "api-username";
+                public static final String PASSWORD = "api-password";
+                public static final String ACCOUNT_ID = "12345";
+
+                public static void main(String[] args) {
+                    BandwidthClient client = new BandwidthClient.Builder()
+                            .webRtcBasicAuthCredentials(USERNAME, PASSWORD)
+                            .build();
+
+                    String sessionId = "75c21163-e110-41bc-bd76-1bb428ec85d5";
+
+                    try {
+                        CompletableFuture<ApiResponse<Void>> completableFuture = client.getWebRtcClient().getAPIController().deleteSessionAsync(ACCOUNT_ID, sessionId);
+                        System.out.println(completableFuture.get().getResult());
+                    } catch (InterruptedException | ExecutionException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }
+        - lang: Node.js
+          source: |
+            import { Client, ApiController } from '@bandwidth/webrtc';
+
+            const BW_USERNAME = "api-username";
+            const BW_PASSWORD = "api-password";
+            const BW_ACCOUNT_ID = "12345";
+
+            const client = new Client({
+              basicAuthUserName: BW_USERNAME,
+              basicAuthPassword: BW_PASSWORD
+            });
+
+            const controller = new ApiController(client);
+
+            const accountId = BW_ACCOUNT_ID;
+            const sessionId = "75c21163-e110-41bc-bd76-1bb428ec85d5"
+
+            const deleteSession = async function() {
+              try {
+                const response = await controller.deleteSession(accountId, sessionId)
+                console.log(response.body);
+              } catch(error) {
+                console.error(error);
+              }
+            }
+
+            deleteSession();
+        - lang: PHP
+          source: |+
+            <?php
+
+            require "vendor/autoload.php";
+
+            api-username = "api-username";
+            api-password = "api-pasword";
+            12345 = "12345";
+
+            $config = new BandwidthLib\Configuration(
+                array(
+                    'webRtcBasicAuthUserName' => $BW_USERNAME,
+                    'webRtcBasicAuthPassword' => $BW_PASSWORD,
+                )
+            );
+            $client = new BandwidthLib\BandwidthClient($config);
+
+            $webRtcClient = $client->getWebRtc()->getClient();
+
+            $sessionId = "1234-qwer";
+
+            try {
+                $webRtcClient->deleteSession($BW_ACCOUNT_ID, $sessionId);
+            } catch (BandwidthLib\APIException $e) {
+                print_r($e->getResponseCode());
+            }
+
+        - lang: Python
+          source: |
+            from bandwidth.bandwidth_client import BandwidthClient
+            from bandwidth.exceptions.api_exception import APIException
+
+            import os
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = BandwidthClient(
+                web_rtc_basic_auth_user_name=BW_USERNAME,
+                web_rtc_basic_auth_password=BW_PASSWORD
+            )
+            web_rtc_client = bandwidth_client.web_rtc_client.client
+
+            session_id = "1234-abcd"
+
+            try:
+                web_rtc_client.delete_session(BW_ACCOUNT_ID, session_id)
+            except APIException as e:
+                print(e.response_code)
+        - lang: Ruby
+          source: |
+            require 'bandwidth'
+
+            include Bandwidth
+            include Bandwidth::WebRtc
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = Bandwidth::Client.new(
+                web_rtc_basic_auth_user_name: BW_USERNAME,
+                web_rtc_basic_auth_password: BW_PASSWORD
+            )
+
+            web_rtc_client = bandwidth_client.web_rtc_client.client
+
+            session_id = "1234-abcd"
+
+            begin
+                web_rtc_client.delete_session(BW_ACCOUNT_ID, session_id)
+            rescue APIException => e
+                puts e.response_code
+            end
+  /accounts/{accountId}/sessions/{sessionId}/participants:
+    get:
+      tags:
+        - Sessions
+      summary: List Participants in Session
+      description: List participants in a session.
+      operationId: listSessionParticipants
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/sessionId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/participant'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      x-codeSamples:
+        - lang: cURL
+          source: >
+            curl
+            'https://api.webrtc.bandwidth.com/v1/accounts/12345/sessions/75c21163-e110-41bc-bd76-1bb428ec85d5/participants'
+            \
+                -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ='
+        - lang: C#
+          source: |
+            using System;
+            using System.Threading.Tasks;
+            using Bandwidth.Standard;
+            using Bandwidth.Standard.Exceptions;
+            using Bandwidth.Standard.WebRtc.Models;
+
+            class Program
+            {
+                static async Task Main(string[] args)
+                {
+                    var username = "api-username";
+                    var password = "api-pasword";
+                    var accountId = "12345";
+
+                    var sessionId = "75c21163-e110-41bc-bd76-1bb428ec85d5"; // Returned via WebRTC's create session request.
+
+                    var client = new BandwidthClient.Builder()
+                        .WebRtcBasicAuthCredentials(username, password)
+                        .Build();
+
+                    try
+                    {
+                        var response = await client.WebRtc.APIController.ListSessionParticipantsAsync(accountId, sessionId);
+                        Console.WriteLine(response.Data);
+                    }
+                    catch (ApiException e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+            }
+        - lang: Java
+          source: |
+            import com.bandwidth.BandwidthClient;
+            import com.bandwidth.http.response.ApiResponse;
+            import com.bandwidth.webrtc.models.Participant;
+
+            import java.util.concurrent.CompletableFuture;
+            import java.util.concurrent.ExecutionException;
+            import java.util.List;
+
+            public class Sample {
+                public static final String USERNAME = "api-username";
+                public static final String PASSWORD = "api-password";
+                public static final String ACCOUNT_ID = "12345";
+
+                public static void main(String[] args) {
+                    String sessionId = "75c21163-e110-41bc-bd76-1bb428ec85d5";
+
+                    BandwidthClient client = new BandwidthClient.Builder()
+                            .webRtcBasicAuthCredentials(USERNAME, PASSWORD)
+                            .build();
+
+                    try {
+                        CompletableFuture<ApiResponse<List<Participant>>> completableFuture = client.getWebRtcClient().getAPIController().listSessionParticipantsAsync(ACCOUNT_ID, sessionId);
+                        System.out.println(completableFuture.get().getResult());
+                    } catch (InterruptedException | ExecutionException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }
+        - lang: Node.js
+          source: |
+            import { Client, ApiController } from '@bandwidth/webrtc';
+
+            const BW_USERNAME = "api-username";
+            const BW_PASSWORD = "api-password";
+            const BW_ACCOUNT_ID = "12345";
+
+            const client = new Client({
+              basicAuthUserName: BW_USERNAME,
+              basicAuthPassword: BW_PASSWORD
+            });
+
+            const controller = new ApiController(client);
+
+            const accountId = BW_ACCOUNT_ID;
+            const sessionId = "75c21163-e110-41bc-bd76-1bb428ec85d5"
+
+            const listSessionParticipants = async function() {
+              try {
+                const response = await controller.listSessionParticipants(accountId, sessionId)
+                console.log(response.body);
+              } catch(error) {
+                console.error(error);
+              }
+            }
+
+            listSessionParticipants();
+        - lang: PHP
+          source: |
+            <?php
+
+            require "vendor/autoload.php";
+
+            api-username = "api-username";
+            api-password = "api-pasword";
+            12345 = "12345";
+
+            $config = new BandwidthLib\Configuration(
+                array(
+                    'webRtcBasicAuthUserName' => $BW_USERNAME,
+                    'webRtcBasicAuthPassword' => $BW_PASSWORD,
+                )
+            );
+            $client = new BandwidthLib\BandwidthClient($config);
+
+            $webRtcClient = $client->getWebRtc()->getClient();
+
+            $sessionId = "1234-qwer";
+
+            try {
+                $response = $webRtcClient->listSessionParticipants($BW_ACCOUNT_ID, $sessionId);
+                print_r($response->getResult());
+            } catch (BandwidthLib\APIException $e) {
+                print_r($e->getResponseCode());
+            }
+        - lang: Python
+          source: |
+            from bandwidth.bandwidth_client import BandwidthClient
+            from bandwidth.exceptions.api_exception import APIException
+
+            import os
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = BandwidthClient(
+                web_rtc_basic_auth_user_name=BW_USERNAME,
+                web_rtc_basic_auth_password=BW_PASSWORD
+            )
+
+            web_rtc_client = bandwidth_client.web_rtc_client.client
+
+            session_id = "1234-abcd"
+
+            try:
+                response = web_rtc_client.list_session_participants(BW_ACCOUNT_ID, session_id)
+                print(response.body)
+            except APIException as e:
+                print(e.response_code)
+        - lang: Ruby
+          source: |
+            require 'bandwidth'
+
+            include Bandwidth
+            include Bandwidth::WebRtc
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = Bandwidth::Client.new(
+                web_rtc_basic_auth_user_name: BW_USERNAME,
+                web_rtc_basic_auth_password: BW_PASSWORD
+            )
+
+            web_rtc_client = bandwidth_client.web_rtc_client.client
+
+            session_id = "1234-abcd"
+
+            begin
+                response = web_rtc_client.list_session_participants(BW_ACCOUNT_ID, session_id)
+                puts response.end
+            rescue APIException => e
+                puts e.response_code
+            end
+  /accounts/{accountId}/sessions/{sessionId}/participants/{participantId}:
+    put:
+      tags:
+        - Sessions
+      summary: Add Participant to Session
+      description: |
+        Add a participant to a session.
+
+        Subscriptions can optionally be provided as part of this call.
+      operationId: addParticipantToSession
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/sessionId'
+        - $ref: '#/components/parameters/participantId'
+      requestBody:
+        description: >-
+          Optional set of subscriptions to set on the participant.
+
+          Calling this endpoint with no/empty body will only add the participant
+          to the session.
+
+
+          NOTE: the request body for this endpoint is OPTIONAL and provided as a
+          convenience to avoid additional calls to the Update Participant
+          Subscriptions endpoint.
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/subscriptions'
+      responses:
+        '204':
+          description: No Content
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      x-codeSamples:
+        - lang: cURL
+          source: >
+            curl
+            'https://api.webrtc.bandwidth.com/v1/accounts/12345/sessions/75c21163-e110-41bc-bd76-1bb428ec85d5/participants/568749d5-04d5-483d-adf5-deac7dd3d521'
+            \
+                -X PUT \
+                -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=' \
+                -H 'Content-Type: application/json' \
+                -d '{
+                    "sessionId": "d8886aad-b956-4e1b-b2f4-d7c9f8162772",
+                    "participants": [
+                        {
+                            "participantId": "568749d5-04d5-483d-adf5-deac7dd3d521"
+                        },
+                        {
+                            "participantId": "0275e47f-dd21-4cf0-a1e1-dfdc719e73a7"
+                        }
+                    ]
+                }'
+        - lang: C#
+          source: |
+            using System;
+            using System.Threading.Tasks;
+            using Bandwidth.Standard;
+            using Bandwidth.Standard.Exceptions;
+            using Bandwidth.Standard.WebRtc.Models;
+
+            class Program
+            {
+                static async Task Main(string[] args)
+                {
+                    var username = "api-username";
+                    var password = "api-pasword";
+                    var accountId = "12345";
+
+                    var sessionId = "75c21163-e110-41bc-bd76-1bb428ec85d5"; // Returned via WebRTC's create session request.
+                    var participantId = "568749d5-04d5-483d-adf5-deac7dd3d521"; // Returned via WebRTC's create participant request.
+
+                    var client = new BandwidthClient.Builder()
+                        .WebRtcBasicAuthCredentials(username, password)
+                        .Build();
+
+                    try
+                    {
+                        await client.WebRtc.APIController.AddParticipantToSessionAsync(accountId, sessionId, participantId);
+                    }
+                    catch (ApiException e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+            }
+        - lang: Java
+          source: |
+            import com.bandwidth.BandwidthClient;
+            import com.bandwidth.http.response.ApiResponse;
+
+            import java.util.concurrent.CompletableFuture;
+            import java.util.concurrent.ExecutionException;
+
+            public class Sample {
+                public static final String USERNAME = "api-username";
+                public static final String PASSWORD = "api-password";
+                public static final String ACCOUNT_ID = "12345";
+
+                public static void main(String[] args) {
+                    String sessionId = "75c21163-e110-41bc-bd76-1bb428ec85d5"; // Returned via WebRTC's create session request.
+                    String participantId = "568749d5-04d5-483d-adf5-deac7dd3d521"; // Returned via WebRTC's create participant request.
+
+                    BandwidthClient client = new BandwidthClient.Builder()
+                            .webRtcBasicAuthCredentials(USERNAME, PASSWORD)
+                            .build();
+
+                    try {
+                        CompletableFuture<ApiResponse<Void>> completableFuture = client.getWebRtcClient().getAPIController().addParticipantToSessionAsync(ACCOUNT_ID, sessionId, participantId, null);
+                        System.out.println(completableFuture.get().getResult());
+                    } catch (InterruptedException | ExecutionException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }
+        - lang: Node.js
+          source: |
+            import { Client, ApiController } from '@bandwidth/webrtc';
+
+            const BW_USERNAME = "api-username";
+            const BW_PASSWORD = "api-password";
+            const BW_ACCOUNT_ID = "12345";
+
+            const client = new Client({
+              basicAuthUserName: BW_USERNAME,
+              basicAuthPassword: BW_PASSWORD
+            });
+
+            const controller = new ApiController(client);
+
+            const accountId = BW_ACCOUNT_ID;
+            const sessionId = "75c21163-e110-41bc-bd76-1bb428ec85d5"
+            const participantId = "320e2af6-13ec-498d-8b51-daba52c37853"
+
+            const addParticipantToSession = async function() {
+              try {
+                const response = await controller.addParticipantToSession(accountId, sessionId, participantId)
+                console.log(response.body);
+              } catch(error) {
+                console.error(error);
+              }
+            }
+
+            addParticipantToSession();
+        - lang: PHP
+          source: |
+            <?php
+
+            require "vendor/autoload.php";
+
+            api-username = "api-username";
+            api-password = "api-pasword";
+            12345 = "12345";
+
+            $config = new BandwidthLib\Configuration(
+                array(
+                    'webRtcBasicAuthUserName' => $BW_USERNAME,
+                    'webRtcBasicAuthPassword' => $BW_PASSWORD,
+                )
+            );
+            $client = new BandwidthLib\BandwidthClient($config);
+
+            $webRtcClient = $client->getWebRtc()->getClient();
+
+            $sessionId = "1234-abcd";
+            $participantId = "4321-dcba";
+
+            try {
+                $webRtcClient->addParticipantToSession($BW_ACCOUNT_ID, $sessionId, $participantId);
+            } catch (BandwidthLib\APIException $e) {
+                print_r($e->getResponseCode());
+            }
+        - lang: Python
+          source: |
+            from bandwidth.bandwidth_client import BandwidthClient
+            from bandwidth.exceptions.api_exception import APIException
+
+            import os
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = BandwidthClient(
+                web_rtc_basic_auth_user_name=BW_USERNAME,
+                web_rtc_basic_auth_password=BW_PASSWORD
+            )
+            web_rtc_client = bandwidth_client.web_rtc_client.client
+
+            session_id = "1234-abcd"
+            participant_id = "4321-dcba"
+
+            try:
+                web_rtc_client.add_participant_to_session(BW_ACCOUNT_ID, session_id, participant_id)
+            except APIException as e:
+                print(e.response_code)
+        - lang: Ruby
+          source: |
+            require 'bandwidth'
+
+            include Bandwidth
+            include Bandwidth::WebRtc
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = Bandwidth::Client.new(
+                web_rtc_basic_auth_user_name: BW_USERNAME,
+                web_rtc_basic_auth_password: BW_PASSWORD
+            )
+
+            web_rtc_client = bandwidth_client.web_rtc_client.client
+
+            session_id = "1234-abcd"
+            participant_id = "4321-dcba"
+
+            begin
+                web_rtc_client.add_participant_to_session(BW_ACCOUNT_ID, session_id, participant_id)
+            rescue APIException => e
+                puts e.response_code
+            end
+    delete:
+      tags:
+        - Sessions
+      summary: Remove Participant from Session
+      description: >
+        Remove a participant from a session.
+
+
+        This will automatically remove any subscriptions the participant has
+        associated with this session.
+      operationId: removeParticipantFromSession
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/sessionId'
+        - $ref: '#/components/parameters/participantId'
+      responses:
+        '204':
+          description: No Content
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      x-codeSamples:
+        - lang: cURL
+          source: >
+            curl
+            'https://api.webrtc.bandwidth.com/v1/accounts/12345/sessions/75c21163-e110-41bc-bd76-1bb428ec85d5/participants/568749d5-04d5-483d-adf5-deac7dd3d521'
+            \
+                -X DELETE \
+                -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ='
+        - lang: C#
+          source: |-
+            using System;
+            using System.Threading.Tasks;
+            using Bandwidth.Standard;
+            using Bandwidth.Standard.Exceptions;
+            using Bandwidth.Standard.WebRtc.Models;
+
+            class Program
+            {
+                static async Task Main(string[] args)
+                {
+                    var username = "api-username";
+                    var password = "api-pasword";
+                    var accountId = "12345";
+
+                    var sessionId = "75c21163-e110-41bc-bd76-1bb428ec85d5"; // Returned via WebRTC's create session request.
+                    var participantId = "568749d5-04d5-483d-adf5-deac7dd3d521"; // Returned via WebRTC's create participant request.
+
+                    var client = new BandwidthClient.Builder()
+                        .WebRtcBasicAuthCredentials(username, password)
+                        .Build();
+
+                    try
+                    {
+                        await client.WebRtc.APIController.RemoveParticipantFromSessionAsync(accountId, sessionId, participantId);
+                    }
+                    catch (ApiException e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+            }
+        - lang: Java
+          source: |
+            import com.bandwidth.BandwidthClient;
+            import com.bandwidth.http.response.ApiResponse;
+
+            import java.util.concurrent.CompletableFuture;
+            import java.util.concurrent.ExecutionException;
+
+            public class Sample {
+                public static final String USERNAME = "api-username";
+                public static final String PASSWORD = "api-password";
+                public static final String ACCOUNT_ID = "12345";
+
+                public static void main(String[] args) {
+                    String sessionId = "75c21163-e110-41bc-bd76-1bb428ec85d5";
+                    String participantId = "568749d5-04d5-483d-adf5-deac7dd3d521";
+
+                    BandwidthClient client = new BandwidthClient.Builder()
+                            .webRtcBasicAuthCredentials(USERNAME, PASSWORD)
+                            .build();
+
+                    try {
+                        CompletableFuture<ApiResponse<Void>> completableFuture = client.getWebRtcClient().getAPIController().removeParticipantFromSessionAsync(ACCOUNT_ID, sessionId, participantId);
+                        System.out.println(completableFuture.get().getResult());
+                    } catch (InterruptedException | ExecutionException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }
+        - lang: Node.js
+          source: |
+            import { Client, ApiController } from '@bandwidth/webrtc';
+
+            const BW_USERNAME = "api-username";
+            const BW_PASSWORD = "api-password";
+            const BW_ACCOUNT_ID = "12345";
+
+            const client = new Client({
+              basicAuthUserName: BW_USERNAME,
+              basicAuthPassword: BW_PASSWORD
+            });
+
+            const controller = new ApiController(client);
+
+            const accountId = BW_ACCOUNT_ID;
+            const sessionId = "75c21163-e110-41bc-bd76-1bb428ec85d5"
+            const participantId = "320e2af6-13ec-498d-8b51-daba52c37853"
+
+            const removeParticipantFromSession = async function() {
+              try {
+                const response = await controller.removeParticipantFromSession(accountId, sessionId, participantId)
+                console.log(response.body);
+              } catch(error) {
+                console.error(error);
+              }
+            }
+
+            removeParticipantFromSession();
+        - lang: PHP
+          source: |
+            <?php
+
+            require "vendor/autoload.php";
+
+            api-username = "api-username";
+            api-password = "api-pasword";
+            12345 = "12345";
+
+            $config = new BandwidthLib\Configuration(
+                array(
+                    'webRtcBasicAuthUserName' => $BW_USERNAME,
+                    'webRtcBasicAuthPassword' => $BW_PASSWORD,
+                )
+            );
+            $client = new BandwidthLib\BandwidthClient($config);
+
+            $webRtcClient = $client->getWebRtc()->getClient();
+
+            $sessionId = "1234-abcd";
+            $participantId = "4321-dcba";
+
+            try {
+                $webRtcClient->removeParticipantFromSession($BW_ACCOUNT_ID, $sessionId, $participantId);
+            } catch (BandwidthLib\APIException $e) {
+                print_r($e->getResponseCode());
+            }
+        - lang: Python
+          source: |
+            from bandwidth.bandwidth_client import BandwidthClient
+            from bandwidth.exceptions.api_exception import APIException
+
+            import os
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = BandwidthClient(
+                web_rtc_basic_auth_user_name=BW_USERNAME,
+                web_rtc_basic_auth_password=BW_PASSWORD
+            )
+
+            web_rtc_client = bandwidth_client.web_rtc_client.client
+
+            session_id = "1234-abcd"
+            participant_id = "4312-dbca"
+
+            try:
+                web_rtc_client.remove_participant_from_session(BW_ACCOUNT_ID, session_id, participant_id)
+            except APIException as e:
+                print(e.response_code)
+        - lang: Ruby
+          source: |
+            require 'bandwidth'
+
+            include Bandwidth
+            include Bandwidth::WebRtc
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = Bandwidth::Client.new(
+                web_rtc_basic_auth_user_name: BW_USERNAME,
+                web_rtc_basic_auth_password: BW_PASSWORD
+            )
+
+            web_rtc_client = bandwidth_client.web_rtc_client.client
+
+            session_id = "1234-abcd"
+            participant_id = "4312-dbca"
+
+            begin
+                web_rtc_client.remove_participant_from_session(BW_ACCOUNT_ID, session_id, participant_id)
+            rescue APIException => e
+                puts e.response_code
+            end
+  /accounts/{accountId}/sessions/{sessionId}/participants/{participantId}/subscriptions:
+    get:
+      tags:
+        - Sessions
+      summary: Get Participant Subscriptions
+      description: Get a participant's subscriptions.
+      operationId: getParticipantSubscriptions
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/sessionId'
+        - $ref: '#/components/parameters/participantId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/subscriptions'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      x-codeSamples:
+        - lang: cURL
+          source: >
+            curl
+            'https://api.webrtc.bandwidth.com/v1/accounts/12345/sessions/75c21163-e110-41bc-bd76-1bb428ec85d5/participants/568749d5-04d5-483d-adf5-deac7dd3d521/subscriptions'
+            \
+                -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ='
+        - lang: C#
+          source: |
+            using System;
+            using System.Threading.Tasks;
+            using Bandwidth.Standard;
+            using Bandwidth.Standard.Exceptions;
+            using Bandwidth.Standard.WebRtc.Models;
+
+            class Program
+            {
+                static async Task Main(string[] args)
+                {
+                    var username = "api-username";
+                    var password = "api-pasword";
+                    var accountId = "12345";
+
+                    var sessionId = "75c21163-e110-41bc-bd76-1bb428ec85d5"; // Returned via WebRTC's create session request.
+                    var participantId = "568749d5-04d5-483d-adf5-deac7dd3d521"; // Returned via WebRTC's create participant request.
+
+                    var client = new BandwidthClient.Builder()
+                        .WebRtcBasicAuthCredentials(username, password)
+                        .Build();
+
+                    try
+                    {
+                        var response = await client.WebRtc.APIController.GetParticipantSubscriptionsAsync(accountId, sessionId, participantId);
+                        Console.WriteLine(response.Data);
+                    }
+                    catch (ApiException e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+            }
+        - lang: Java
+          source: |
+            import com.bandwidth.BandwidthClient;
+            import com.bandwidth.http.response.ApiResponse;
+            import com.bandwidth.webrtc.models.Subscriptions;
+
+            import java.util.concurrent.CompletableFuture;
+            import java.util.concurrent.ExecutionException;
+
+            public class Sample {
+                public static final String USERNAME = "api-username";
+                public static final String PASSWORD = "api-password";
+                public static final String ACCOUNT_ID = "12345";
+
+                public static void main(String[] args) {
+                    String sessionId = "75c21163-e110-41bc-bd76-1bb428ec85d5";
+                    String participantId = "568749d5-04d5-483d-adf5-deac7dd3d521";
+
+                    BandwidthClient client = new BandwidthClient.Builder()
+                            .webRtcBasicAuthCredentials(USERNAME, PASSWORD)
+                            .build();
+
+                    try {
+                        CompletableFuture<ApiResponse<Subscriptions>> completableFuture = client.getWebRtcClient().getAPIController().getParticipantSubscriptionsAsync(ACCOUNT_ID, sessionId, participantId);
+                        System.out.println(completableFuture.get().getResult());
+                    } catch (InterruptedException | ExecutionException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }
+        - lang: Node.js
+          source: |
+            import { Client, ApiController } from '@bandwidth/webrtc';
+
+            const BW_USERNAME = "api-username";
+            const BW_PASSWORD = "api-password";
+            const BW_ACCOUNT_ID = "12345";
+
+            const client = new Client({
+              basicAuthUserName: BW_USERNAME,
+              basicAuthPassword: BW_PASSWORD
+            });
+
+            const controller = new ApiController(client);
+
+            const accountId = BW_ACCOUNT_ID;
+            const sessionId = "75c21163-e110-41bc-bd76-1bb428ec85d5"
+            const participantId = "320e2af6-13ec-498d-8b51-daba52c37853"
+
+            const getParticipantSubscriptions = async function() {
+              try {
+                const response = await controller.getParticipantSubscriptions(accountId, sessionId, participantId)
+                console.log(response.body);
+              } catch(error) {
+                console.error(error);
+              }
+            }
+
+            getParticipantSubscriptions();
+        - lang: PHP
+          source: |
+            <?php
+
+            require "vendor/autoload.php";
+
+            api-username = "api-username";
+            api-password = "api-pasword";
+            12345 = "12345";
+
+            $config = new BandwidthLib\Configuration(
+                array(
+                    'webRtcBasicAuthUserName' => $BW_USERNAME,
+                    'webRtcBasicAuthPassword' => $BW_PASSWORD,
+                )
+            );
+            $client = new BandwidthLib\BandwidthClient($config);
+
+            $webRtcClient = $client->getWebRtc()->getClient();
+
+            $participantId = "1234-abcd";
+            $sessionId = "4321-dcba";
+
+            try {
+                $response = $webRtcClient->getParticipantSubscriptions($BW_ACCOUNT_ID, $sessionId, $participantId);
+                print_r($response->getResult());
+            } catch (BandwidthLib\APIException $e) {
+                print_r($e->getResponseCode());
+            }
+        - lang: Python
+          source: |
+            from bandwidth.bandwidth_client import BandwidthClient
+            from bandwidth.exceptions.api_exception import APIException
+
+            import os
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = BandwidthClient(
+                web_rtc_basic_auth_user_name=BW_USERNAME,
+                web_rtc_basic_auth_password=BW_PASSWORD
+            )
+
+            web_rtc_client = bandwidth_client.web_rtc_client.client
+
+            participant_id = "1234-abcd"
+            session_id = "4321-dcba"
+
+            try:
+                response = web_rtc_client.get_participant_subscriptions(BW_ACCOUNT_ID, session_id, participant_id)
+                print(response.body)
+            except APIException as e:
+                print(e.response_code)
+        - lang: Ruby
+          source: |
+            require 'bandwidth'
+
+            include Bandwidth
+            include Bandwidth::WebRtc
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = Bandwidth::Client.new(
+                web_rtc_basic_auth_user_name: BW_USERNAME,
+                web_rtc_basic_auth_password: BW_PASSWORD
+            )
+
+            web_rtc_client = bandwidth_client.web_rtc_client.client
+
+            participant_id = "1234-abcd"
+            session_id = "4321-dcba"
+
+            begin
+                response = web_rtc_client.get_participant_subscriptions(BW_ACCOUNT_ID, session_id, participant_id)
+                puts response.data
+            rescue APIException => e
+                puts e.response_code
+            end
+    put:
+      tags:
+        - Sessions
+      summary: Update Participant Subscriptions
+      description: >
+        Update a participant's subscriptions.
+
+
+        This is a full update that will replace the participant's subscriptions.
+        It allows subscription to the entire Session, a subset list of
+        Participants in that Session, or specific media streams on any of the
+        listed Participants.
+
+
+        First call `getParticipantSubscriptions` if you need the current
+        subscriptions.
+
+
+        Calling this API with no `Subscriptions` object to remove all
+        subscriptions.
+      operationId: updateParticipantSubscriptions
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/sessionId'
+        - $ref: '#/components/parameters/participantId'
+      requestBody:
+        description: Initial state
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/subscriptions'
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      x-codeSamples:
+        - lang: cURL
+          source: >
+            curl
+            'https://api.webrtc.bandwidth.com/v1/accounts/12345/sessions/75c21163-e110-41bc-bd76-1bb428ec85d5/participants/568749d5-04d5-483d-adf5-deac7dd3d521/subscriptions'
+            \
+                -X PUT \
+                -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=' \
+                -H 'Content-Type: application/json' \
+                -d '{
+                    "sessionId": "d8886aad-b956-4e1b-b2f4-d7c9f8162772",
+                    "participants": [
+                        {
+                            "participantId": "568749d5-04d5-483d-adf5-deac7dd3d521"
+                        },
+                        {
+                            "participantId": "0275e47f-dd21-4cf0-a1e1-dfdc719e73a7"
+                        }
+                    ]
+                }'
+        - lang: C#
+          source: |
+            using System;
+            using System.Threading.Tasks;
+            using Bandwidth.Standard;
+            using Bandwidth.Standard.Exceptions;
+            using Bandwidth.Standard.WebRtc.Models;
+
+            class Program
+            {
+                static async Task Main(string[] args)
+                {
+                    var username = "api-username";
+                    var password = "api-pasword";
+                    var accountId = "12345";
+
+                    var sessionId = "75c21163-e110-41bc-bd76-1bb428ec85d5"; // Returned via WebRTC's create session request.
+                    var participantId = "568749d5-04d5-483d-adf5-deac7dd3d521"; // Returned via WebRTC's create participant request.
+
+                    var client = new BandwidthClient.Builder()
+                        .WebRtcBasicAuthCredentials(username, password)
+                        .Build();
+
+                    var subscriptions = new Subscriptions()
+                    {
+                        SessionId = sessionId
+                    };
+
+                    try
+                    {
+                        await client.WebRtc.APIController.UpdateParticipantSubscriptionsAsync(accountId, sessionId, participantId, subscriptions);
+                    }
+                    catch (ApiException e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+            }
+        - lang: Java
+          source: |
+            import com.bandwidth.BandwidthClient;
+            import com.bandwidth.http.response.ApiResponse;
+            import com.bandwidth.webrtc.models.Subscriptions;
+
+            import java.util.concurrent.CompletableFuture;
+            import java.util.concurrent.ExecutionException;
+
+            public class Sample {
+                public static final String USERNAME = "api-username";
+                public static final String PASSWORD = "api-password";
+                public static final String ACCOUNT_ID = "12345";
+
+                public static void main(String[] args) {
+                    String sessionId = "75c21163-e110-41bc-bd76-1bb428ec85d5";
+                    String participantId = "568749d5-04d5-483d-adf5-deac7dd3d521";
+
+                    BandwidthClient client = new BandwidthClient.Builder()
+                            .webRtcBasicAuthCredentials(USERNAME, PASSWORD)
+                            .build();
+
+                    Subscriptions subscriptions = new Subscriptions();
+                    subscriptions.setSessionId(sessionId);
+
+                    try {
+                        CompletableFuture<ApiResponse<Void>> completableFuture = client.getWebRtcClient().getAPIController().updateParticipantSubscriptionsAsync(ACCOUNT_ID, sessionId, participantId, subscriptions);
+                        System.out.println(completableFuture.get().getResult());
+                    } catch (InterruptedException | ExecutionException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }
+        - lang: Node.js
+          source: |
+            import { Client, ApiController } from '@bandwidth/webrtc';
+
+            const BW_USERNAME = "api-username";
+            const BW_PASSWORD = "api-password";
+            const BW_ACCOUNT_ID = "12345";
+
+            const client = new Client({
+              basicAuthUserName: BW_USERNAME,
+              basicAuthPassword: BW_PASSWORD
+            });
+
+            const controller = new ApiController(client);
+
+            const accountId = BW_ACCOUNT_ID;
+            const sessionId = "75c21163-e110-41bc-bd76-1bb428ec85d5"
+            const participantId = "320e2af6-13ec-498d-8b51-daba52c37853"
+            const body = {  "sessionId": "75c21163-e110-41bc-bd76-1bb428ec85d5",
+                            "participants": [{
+                                "participantId": "568749d5-04d5-483d-adf5-deac7dd3d521"
+                              }, {
+                                "participantId": "0275e47f-dd21-4cf0-a1e1-dfdc719e73a7"
+                              }]
+                          }
+
+            const updateParticipantSubscriptions = async function() {
+              try {
+                const response = await controller.updateParticipantSubscriptions(accountId, sessionId, participantId, body)
+                console.log(response.body);
+              } catch(error) {
+                console.error(error);
+              }
+            }
+
+            updateParticipantSubscriptions();
+        - lang: PHP
+          source: |
+            <?php
+              
+            require "vendor/autoload.php";
+
+            api-username = "api-username";
+            api-password = "api-pasword";
+            12345 = "12345";
+
+            $config = new BandwidthLib\Configuration(
+                array(
+                    'webRtcBasicAuthUserName' => $BW_USERNAME,
+                    'webRtcBasicAuthPassword' => $BW_PASSWORD,
+                )
+            );
+            $client = new BandwidthLib\BandwidthClient($config);
+
+            $webRtcClient = $client->getWebRtc()->getClient();
+
+            $body = new BandwidthLib\WebRtc\Models\Subscriptions();
+            $body->sessionId = "1234-abcd";
+
+            $sessionId = "1234-abcd";
+            $participantId = "4321-dcba";
+
+            try {
+                $webRtcClient->updateParticipantSubscriptions($BW_ACCOUNT_ID, $sessionId, $participantId, $body);
+            } catch (BandwidthLib\APIException $e) {
+                print_r($e->getResponseCode());
+            }
+        - lang: Python
+          source: |
+            from bandwidth.bandwidth_client import BandwidthClient
+            from bandwidth.exceptions.api_exception import APIException
+            from bandwidth.webrtc.models.subscriptions import Subscriptions
+
+            import os
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = BandwidthClient(
+                web_rtc_basic_auth_user_name=BW_USERNAME,
+                web_rtc_basic_auth_password=BW_PASSWORD
+            )
+
+            web_rtc_client = bandwidth_client.web_rtc_client.client
+
+            body = Subscriptions()
+            body.session_id = "1234-abcd"
+
+            session_id = "1234-abcd"
+            participant_id = "4321-dcba"
+
+            try:
+                web_rtc_client.update_participant_subscriptions(BW_ACCOUNT_ID, session_id, participant_id, body)
+            except APIException as e:
+                print(e.response_code)
+        - lang: Ruby
+          source: |+
+            require 'bandwidth'
+
+            include Bandwidth
+            include Bandwidth::WebRtc
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = Bandwidth::Client.new(
+                web_rtc_basic_auth_user_name: BW_USERNAME,
+                web_rtc_basic_auth_password: BW_PASSWORD
+            )
+
+            web_rtc_client = bandwidth_client.web_rtc_client.client
+
+            body = Subscriptions.new
+            body.session_id = "1234-abcd"
+
+            session_id = "1234-abcd"
+            participant_id = "4321-dcba"
+
+            begin
+                web_rtc_client.update_participant_subscriptions(BW_ACCOUNT_ID, session_id, participant_id, :body => body)
+                #NOTE: This is currently improperly defined
+            rescue APIException => e
+                puts e.response_code
+            end
+
+components:
+  schemas:
+    session:
+      type: object
+      description: A session object
+      properties:
+        id:
+          type: string
+          description: Unique id of the session
+          example: 75c21163-e110-41bc-bd76-1bb428ec85d5
+          readOnly: true
+        tag:
+          type: string
+          description: User defined tag to associate with the session
+          example: session1
+    participant:
+      type: object
+      description: A participant object
+      properties:
+        id:
+          type: string
+          description: Unique id of the participant
+          readOnly: true
+          example: 320e2af6-13ec-498d-8b51-daba52c37853
+        callbackUrl:
+          type: string
+          nullable: true
+          description: Full callback url to use for notifications about this participant
+          example: https://example.com/callback
+        publishPermissions:
+          type: array
+          description: Defines if this participant can publish audio or video
+          example:
+            - VIDEO
+            - AUDIO
+          uniqueItems: true
+          items:
+            type: string
+            enum:
+              - AUDIO
+              - VIDEO
+        sessions:
+          type: array
+          description: |-
+            List of session ids this participant is associated with
+
+            Capped to one
+
+            Upon creation of a Participant, returns as an empty array
+          example:
+            - 75c21163-e110-41bc-bd76-1bb428ec85d5
+          readOnly: true
+          items:
+            type: string
+        subscriptions:
+          $ref: '#/components/schemas/subscriptions'
+        tag:
+          type: string
+          description: User defined tag to associate with the participant
+          example: participant1
+        deviceApiVersion:
+          type: string
+          description: Optional field to define the device api version of this participant
+          example: V3
+          default: V2
+          enum:
+            - V3
+            - V2
+    createParticipantResponse:
+      type: object
+      description: Response generated when a Participant is created
+      properties:
+        participant:
+          $ref: '#/components/schemas/participant'
+        token:
+          type: string
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyfQ.L8i6g3PfcHlioHCCPURC9pmXT7gdJpx3kOoyAfNUwCc
+          description: >
+            Auth token for the returned participant
+
+
+            This should be passed to the participant so that they can connect to
+            the platform
+    createParticipantRequest:
+      type: object
+      description: Create a participant object
+      properties:
+        callbackUrl:
+          type: string
+          nullable: true
+          description: Full callback url to use for notifications about this participant
+          example: https://example.com/callback
+        publishPermissions:
+          type: array
+          description: Defines if this participant can publish audio or video
+          example:
+            - VIDEO
+            - AUDIO
+          uniqueItems: true
+          items:
+            type: string
+            enum:
+              - AUDIO
+              - VIDEO
+        tag:
+          type: string
+          description: User defined tag to associate with the participant
+          example: participant1
+        deviceApiVersion:
+          type: string
+          description: Optional field to define the device api version of this participant
+          example: V3
+          default: V2
+          enum:
+            - V3
+            - V2
+    subscriptions:
+      type: object
+      readOnly: true
+      required:
+        - sessionId
+      properties:
+        sessionId:
+          type: string
+          description: >-
+            Session the subscriptions are associated with
+
+
+            If this is the only field, the subscriber will be subscribed to all
+            participants in the session (including any participants that are
+            later added to the session)
+
+
+            Upon creation of a Participant, returns as an empty object
+          example: d8886aad-b956-4e1b-b2f4-d7c9f8162772
+        participants:
+          type: array
+          description: >-
+            (optional) A list of participants  in the session that will be
+            subscribed to.
+
+
+            Returns empty if used during the creation of a Participant
+          example:
+            - participantId: 568749d5-04d5-483d-adf5-deac7dd3d521
+            - participantId: 0275e47f-dd21-4cf0-a1e1-dfdc719e73a7
+              streamAliases:
+                - alias_1
+                - alias_2
+          items:
+            $ref: '#/components/schemas/participantSubscription'
+    participantSubscription:
+      type: object
+      required:
+        - participantId
+      properties:
+        participantId:
+          type: string
+          description: The Participant the subscriber will be subscribed to
+          example: 568749d5-04d5-483d-adf5-deac7dd3d521
+        streamAliases:
+          type: array
+          description: >-
+            (optional) An array of specific streamAliases owned by the
+            Participant that the subscriber will be subscribed to.
+
+
+            Background: A streamAlias is created by a WebRTC client when it
+            connects and declares a name for the related stream. The client is
+            responsible for informing the application of any created
+            streamAliases to enable the application to subscribe to specific
+            streamAliases.
+
+
+            Subscribing to a streamAlias that does not exist is undefined
+
+
+            If the array is empty all aliases are assumed.
+          example:
+            - alias_1
+            - alias_2
+          uniqueItems: true
+          items:
+            type: string
+    requestError:
+      type: object
+      properties:
+        error:
+          type: string
+          description: A message describing the error with your request.
+        requestId:
+          type: string
+          description: The associated requestId from AWS.
+    unauthorizedRequest:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Unauthorized
+          example: Unauthorized
+    forbiddenRequest:
+      type: object
+      properties:
+        message:
+          type: string
+          description: >-
+            The message containing the reason behind the request being
+            forbidden.
+          example: Missing Authentication Token
+  responses:
+    badRequestError:
+      description: Bad Request
+      headers: {}
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/requestError'
+    unauthorizedError:
+      description: Unauthorized
+      headers: {}
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/unauthorizedRequest'
+    forbiddenError:
+      description: Forbidden
+      headers: {}
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/forbiddenRequest'
+    notFoundError:
+      description: Not Found
+      headers: {}
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/requestError'
+    tooManyRequestsError:
+      description: Too Many Requests
+      headers: {}
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/requestError'
+    internalServerError:
+      description: Internal Server Error
+      headers: {}
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/requestError'
+  parameters:
+    accountId:
+      name: accountId
+      in: path
+      description: Account ID
+      required: true
+      schema:
+        type: string
+    sessionId:
+      name: sessionId
+      in: path
+      description: Session ID
+      required: true
+      schema:
+        type: string
+    participantId:
+      name: participantId
+      in: path
+      description: Participant ID
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    token:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - basicAuth: []
+  - token: []
+tags:
+  - name: Participants
+  - name: Sessions
