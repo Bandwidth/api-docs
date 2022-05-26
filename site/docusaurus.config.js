@@ -85,7 +85,7 @@ module.exports = {
                 position: 'right',
                 className: 'regionLabel',
             }, {
-                href: 'https://dev.bandwidth.com/apis/global/',
+                to: 'apis/global',
                 label: 'Docs & API Reference',
                 position: 'right',
                 target: '_self',
