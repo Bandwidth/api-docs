@@ -88,6 +88,7 @@ module.exports = {
                 href: 'https://dev.bandwidth.com/apis/global/',
                 label: 'Docs & API Reference',
                 position: 'right',
+                target: '_self',
             }]
         },
         footer: {
