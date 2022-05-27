@@ -60,7 +60,7 @@ module.exports = {
                 src: 'img/bandwidth-logo-navbar.png',
             },
             items: [{
-                label: 'US & Canada',
+                label: 'US & Canada APIs',
                 position: 'left',
                 className: 'regionLabel',
             },{
@@ -80,8 +80,8 @@ module.exports = {
                 href: 'https://github.com/Bandwidth-Samples',
                 label: 'Samples',
                 position: 'left',
-            }, {
-                label: 'Global',
+            },{
+                label: 'Global APIs',
                 position: 'right',
                 className: 'regionLabel',
             }, {
@@ -89,7 +89,10 @@ module.exports = {
                 label: 'Docs & API Reference',
                 position: 'right',
                 target: '_self',
-            }]
+            },
+            {
+                position: 'right',
+            }],
         },
         footer: {
             style: "dark",
