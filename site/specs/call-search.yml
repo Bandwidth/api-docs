@@ -1,0 +1,301 @@
+openapi: 3.0.1
+info:
+  title: Call Search
+  version: 0.0.1
+  description: API that allows users to query call logs.
+security:
+  - callAuth:
+      - read
+      - write
+paths:
+  /accounts/{accountId}/calls:
+    get:
+      tags:
+        - Call Search
+      description: >-
+        Returns a list of call events. Note: at least one query parameter needs
+        to be specified for the query to be valid.
+      parameters:
+        - name: accountId
+          in: path
+          description: CRM ID of the account to get calls from.
+          required: true
+          schema:
+            type: integer
+            example: 1234567
+        - name: callId
+          in: query
+          description: 'Filter Type: Exact Match, any valid call ID'
+          schema:
+            type: string
+            example: 12345678980abcdefghijklmnopqrstuvwxyz
+        - name: startTime
+          in: query
+          description: >
+            Filter Type: Range, use gte or lte. Example:
+            gte:2022-05-26T12:00:00Z
+          schema:
+            type: string
+            example: '2022-05-26T12:00:00Z'
+        - name: endTime
+          in: query
+          description: >
+            Filter Type: Range, use gte or lte. Example:
+            lte:2022-05-26T12:05:00Z
+          schema:
+            type: string
+            example: '2022-05-26T12:00:50Z'
+        - name: answerTime
+          in: query
+          description: >
+            Filter Type: Range, use gte or lte. Example:
+            gte:2022-05-26T12:00:00Z
+          schema:
+            type: string
+            example: '2022-05-26T12:00:00Z'
+        - name: callingNumber
+          in: query
+          description: >
+            Filter Type: Exact Match, Multimatch, Prefix Match. Example: Exact
+            Match: 15555551234, Multimatch: 15555551234,15555554321, Prefix:
+            155555512*
+          schema:
+            type: integer
+            example: 8185559876
+        - name: callingNumberType
+          in: query
+          description: |
+            Filter Type: Exact Match, any valid call number type
+          schema:
+            type: string
+            example: nanpa-us
+        - name: calledNumber
+          in: query
+          description: >
+            Filter Type: Exact Match, Multimatch, Prefix Match. Example: Exact
+            Match: 15555551234, Multimatch: 15555551234,15555554321, Prefix:
+            155555512*
+          schema:
+            type: integer
+            example: 8185551234
+        - name: calledNumberType
+          in: query
+          description: |
+            Filter Type: Exact Match, any valid call number type
+          schema:
+            type: string
+            example: nanpa-us
+        - name: callDirection
+          in: query
+          description: |
+            Filter Type: Exact Match, any valid call direction type
+          schema:
+            type: string
+            example: inbound
+        - name: callType
+          in: query
+          description: |
+            Filter Type: Exact Match, any valid call type
+          schema:
+            type: string
+            example: local
+        - name: callResult
+          in: query
+          description: |
+            Filter Type: Exact Match, any valid call result type
+          schema:
+            type: string
+            example: completed
+        - name: sipResponseCode
+          in: query
+          description: |
+            Filter Type: Exact Match. Examples: 200, 300, 400, 500
+          schema:
+            type: integer
+            example: 200
+        - name: sort
+          in: query
+          description: >
+            The field and direction to sort by, combined with a colon. Direction
+            is one of asc, desc.
+          schema:
+            type: string
+            example: sort=endTime:desc
+        - name: offset
+          in: query
+          description: |
+            Return records starting at the nth record.
+          schema:
+            type: integer
+            example: offset=1
+        - name: limit
+          in: query
+          description: |
+            The maximum records to return per page. Default 100.
+          schema:
+            type: integer
+            example: limit=50
+      responses:
+        '200':
+          description: Success
+          headers:
+            Link:
+              description: RFC 5988 compliant pagination Link headers
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Call'
+                example:
+                  links:
+                    - rel: next
+                      href: >-
+                        https://insights.bandwidth.com/api/v1/accounts/1234567/calls?callResult=completed&offset=1&limit=1&sort=endTime:desc
+                  data:
+                    totalCount: 2
+                    calls:
+                      - callId: 12345678980abcdefghijklmnopqrstuvwxyz
+                        startTime: '2022-05-26T17:05:48.960Z'
+                        endTime: '2022-05-26T17:27:44.400Z'
+                        answerTime: '2022-05-26T17:05:48.960Z'
+                        duration: 1315410
+                        callingNumber: '+18185559876'
+                        callingNumberType: nanpa-us
+                        calledNumber: '+18185551234'
+                        calledNumberType: nanpa-us
+                        callDirection: inbound
+                        postDialDelay: 0
+                        callType: local
+                        callResult: completed
+                        sipResponseCode: 200
+                  errors: []
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedAccount'
+        '403':
+          $ref: '#/components/responses/UnknownAccount'
+      security:
+        - callAuth:
+            - write:call
+            - read:call
+components:
+  responses:
+    BadRequest:
+      description: Request is invalid
+    UnauthorizedAccount:
+      description: Unauthorized Account
+    UnknownAccount:
+      description: Unknown Account
+  schemas:
+    Call:
+      type: object
+      properties:
+        callId:
+          type: string
+          description: Unique identifier for a call.
+        startTime:
+          type: string
+          description: >-
+            Timestamp of when the call started, conforming to RFC 3339 format.
+            The time zone is always UTC.
+        endTime:
+          type: string
+          description: >-
+            Timestamp of when the call ended, conforming to RFC 3339 format. The
+            time zone is always UTC.
+        answerTime:
+          type: string
+          description: >-
+            Timestamp of when the call was answered, conforming to RFC 3339
+            format. The time zone is always UTC.
+        duration:
+          type: integer
+          description: Length of the call in milliseconds.
+        callingNumber:
+          type: integer
+          description: Phone number of the caller who initiated the call.
+        callingNumberType:
+          type: string
+          description: Number type of the caller who initiated the call.
+          $ref: '#/components/schemas/NumberType'
+        calledNumber:
+          type: integer
+          description: Phone number of the caller who received the call.
+        calledNumberType:
+          type: string
+          description: Number type of the caller who received the call.
+          $ref: '#/components/schemas/NumberType'
+        callDirection:
+          type: string
+          description: Direction of call.
+          $ref: '#/components/schemas/CallDirection'
+        postDialDelay:
+          type: integer
+          description: >-
+            The measurement of how long it takes for a calling party to hear a
+            ringback tone after initiating a call.
+        callType:
+          type: string
+          description: Type of call.
+          $ref: '#/components/schemas/CallType'
+        callResult:
+          type: string
+          description: If call is completed.
+          $ref: '#/components/schemas/CallResult'
+        sipResponseCode:
+          type: integer
+          description: >-
+            The message generated by a user agent server (UAS) or SIP server to
+            reply to a request generated by a client.
+    NumberType:
+      type: string
+      enum:
+        - emergency
+        - information
+        - international
+        - intl-block
+        - n11
+        - nanpa-invalid
+        - nanpa-intl
+        - nanpa-us
+        - operator
+        - tollfree-oos
+        - unknown
+    CallDirection:
+      type: string
+      enum:
+        - inbound
+        - inbound-forwarded
+        - outbound
+        - outbound-forwarded
+    CallType:
+      type: string
+      enum:
+        - emergency
+        - inbound-tfoos
+        - information
+        - international
+        - international-internal
+        - interstate
+        - intrastate
+        - intl-block
+        - local
+        - operator
+        - other-n11
+        - sipuri-ext
+        - tollfree-in
+        - tollfree-out
+        - undetermined
+    CallResult:
+      type: string
+      enum:
+        - complete
+        - incomplete
+  securitySchemes:
+    callAuth:
+      type: http
+      scheme: basic
