@@ -67,10 +67,14 @@ module.exports = {
                 href: 'https://github.com/Bandwidth-Samples',
                 label: 'Samples',
                 position: 'left',
-            },{
+            }, {
                 href: 'https://github.com/Bandwidth',
                 position: 'right', 
                 className: 'header-github-link'
+            }, {
+                href: 'https://dashboard.bandwidth.com/portal/r/',
+                position: 'right', 
+                className: 'header-dashboard-link'
             }]
         },
         footer: {
