@@ -70,11 +70,18 @@ module.exports = {
             }, {
                 href: 'https://github.com/Bandwidth',
                 position: 'right', 
-                className: 'header-github-link'
+                className: 'header-github-link bw-link',
+                title: 'Github Organization'
+            }, {
+                href: 'https://github.com/Bandwidth/postman',
+                position: 'right', 
+                className: 'header-postman-link bw-link',
+                title: 'Postman Collection'
             }, {
                 href: 'https://dashboard.bandwidth.com/portal/r/',
                 position: 'right', 
-                className: 'header-dashboard-link'
+                className: 'header-dashboard-link bw-link',
+                title: 'Dashboard Login'
             }]
         },
         footer: {

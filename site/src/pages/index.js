@@ -1,31 +1,62 @@
 import React from 'react';
-import clsx from 'clsx';
 import Layout from '@theme/Layout';
-import Link from '@docusaurus/Link';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import styles from './index.module.css';
-import HomepageProducts from '../components/HomepageProducts';
+import homeStyles from '../css/home.module.css';
+import twoColumnStyles from '../css/twoColumn.module.css';
 import AnimatedGlobe from '../components/AnimatedGlobe';
+import ProductGrid from '../components/ProductGrid';
 
+const productList = [
+  {
+    title: 'Numbers',
+    Svg: require('../../static/img/icon-numbers.svg').default,
+    link: '/docs/numbers',
+  },
+  {
+    title: 'Voice',
+    Svg: require('../../static/img/icon-voice.svg').default,
+    link: '/docs/voice',
+  },
+  {
+    title: 'Messaging',
+    Svg: require('../../static/img/icon-messaging.svg').default,
+    link: '/docs/messaging',
+  },
+  {
+    title: 'Emergency',
+    Svg: require('../../static/img/icon-emergency.svg').default,
+    link: '/docs/emergency',
+  },
+  {
+    title: 'Multi-Factor Authentication',
+    Svg: require('../../static/img/icon-mfa.svg').default,
+    link: '/docs/mfa/about',
+  },
+  {
+    title: 'WebRTC',
+    Svg: require('../../static/img/icon-WebRTC.svg').default,
+    link: '/docs/webrtc',
+  },
+];
 
 export default function Home() {
-  const {siteConfig} = useDocusaurusContext();
   return (
     <Layout
       title={`Home`}
       description="Bandwidth API Reference, documentation, SDKs, guides, examples and more. Get everything you need to build with Bandwidth."
       keywords="Bandwidth,API,documentation,SDK,guide">
-      <div className={styles.left}>
-        <div className={styles.title}>
-          <h1>Bandwidth API Documentation</h1>
-          <h2>Learn about Bandwidth's product APIs</h2>
+      <div className={twoColumnStyles.landing}>
+        <div className={twoColumnStyles.left}>
+          <div className={twoColumnStyles.title}>
+            <h1>Bandwidth API Documentation</h1>
+            <h2>Learn about Bandwidth's product APIs</h2>
+          </div>
+          <div className={homeStyles.globe}>
+            <AnimatedGlobe />
+          </div>
         </div>
-        <div className={styles.globe}>
-          <AnimatedGlobe />
+        <div className={twoColumnStyles.right}>
+          <ProductGrid productList={productList}/>
         </div>
-      </div>
-      <div className={styles.right}>
-        <HomepageProducts />
       </div>
     </Layout>
   );
