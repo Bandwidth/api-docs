@@ -1,6 +1,7 @@
 import React from 'react';
 import Layout from '@theme/Layout';
 import twoColumnStyles from '../../css/twoColumn.module.css';
+import sdkStyles from '../../css/sdks.module.css';
 import ProductGrid from '../../components/ProductGrid';
 
 const sdkList = [
@@ -48,6 +49,7 @@ export default function Apis() {
                         <h1>Bandwidth SDKs</h1>
                         <h2>Build with Bandwidth</h2>
                     </div>
+                    <div className={sdkStyles.image}></div>
                 </div>
                 <div className={twoColumnStyles.right}>
                     <ProductGrid productList={sdkList}/>

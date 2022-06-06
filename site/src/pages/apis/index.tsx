@@ -1,5 +1,6 @@
 import React from 'react';
 import Layout from '@theme/Layout';
+import apiStyles from '../../css/apis.module.css';
 import twoColumnStyles from '../../css/twoColumn.module.css';
 import ProductGrid from '../../components/ProductGrid';
 
@@ -63,6 +64,7 @@ export default function Apis() {
                         <h1>Bandwidth API References</h1>
                         <h2>Complete API Reference Documentation</h2>
                     </div>
+                    <div className={apiStyles.image}></div>
                 </div>
                 <div className={twoColumnStyles.right}>
                     <ProductGrid productList={apiList}/>
