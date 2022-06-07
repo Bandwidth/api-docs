@@ -15,7 +15,7 @@ image: ../../static/img/bandwidth-logo.png
 In this diagram we will review the interactions you will need in order to establish a working WebRTC session. To simplify the diagram, we are showing only one web browser in the session, but adding more merely follows the same pattern.
 
 <img
-  src='../../img/webrtc_callflow1.png'
+  src='../../img/webrtc-callflow-1.png'
   alt="Connecting a WebRTC endpoint"
   class="center"
 />
@@ -37,7 +37,7 @@ At the conclusion of the session, the browser javascript should call disconnect(
 Establishing a connection between the WebRTC Session and the Bandwidth Programmable Voice network uses the Voice APIs to establish calls on the voice network side, and then transfers or bridges that call to the WebRTC session.
 
 <img
-  src='../../img/webrtc_callflow2.png'
+  src='../../img/webrtc-callflow-2.png'
   alt="Connecting a WebRTC endpoint"
   class="center"
 />

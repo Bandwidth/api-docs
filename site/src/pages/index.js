@@ -33,7 +33,7 @@ const productList = [
   },
   {
     title: 'WebRTC',
-    Svg: require('../../static/img/icon-WebRTC.svg').default,
+    Svg: require('../../static/img/icon-webrtc.svg').default,
     link: '/docs/webrtc',
   },
 ];
