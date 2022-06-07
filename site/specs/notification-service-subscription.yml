@@ -1,4 +1,4 @@
-openapi: 3.0.0
+openapi: 3.0.3
 info:
   title: Subscription API
   version: '1.0'
@@ -181,11 +181,16 @@ components:
           url: some-url
           publicKey: key
       description: Callback Object
-      x-example:
-        example-1:
-          callback:
-            url: some-url
-            publicKey: key
+    email:
+      title: email
+      type: object
+      description: Email Object
+      example:
+        email:
+          address: jdoe@abc.com
+      properties:
+        address:
+          type: string
     subscriptionStatusEnum:
       title: Subscription Status Enum
       type: string
@@ -224,13 +229,18 @@ components:
           items:
             $ref: '#/components/schemas/eventStatusEnum'
         notificationChannel:
-          type: array
-          maxItems: 1
-          items:
-            $ref: '#/components/schemas/callback'
+          $ref: '#/components/schemas/notificationChannel'
       required:
         - product
         - notificationChannel
+    notificationChannel:
+      title: Notification Channel
+      type: array
+      maxItems: 1
+      items:
+        anyOf:
+          - $ref: '#/components/schemas/callback'
+          - $ref: '#/components/schemas/email'
     patchSubscription:
       title: Patch Subscription
       description: Data representing a Patch Subscription
@@ -257,10 +267,7 @@ components:
           items:
             $ref: '#/components/schemas/eventStatusEnum'
         notificationChannel:
-          type: array
-          maxItems: 1
-          items:
-            $ref: '#/components/schemas/callback'
+          $ref: '#/components/schemas/notificationChannel'
       x-examples:
         example-1:
           eventType: PORTIN_ORDER_STATUS
@@ -965,9 +972,7 @@ components:
                   - DRAFT
                   - COMPLETED
                 notificationChannel:
-                  - callback:
-                      url: some-url
-                      publicKey: key
+                  - $ref: '#/components/schemas/notificationChannel'
       description: Request Body for PATCH Subscription
     putSubscription:
       content:
@@ -989,9 +994,7 @@ components:
                   - DRAFT
                   - COMPLETED
                 notificationChannel:
-                  - callback:
-                      url: some-url
-                      publicKey: key
+                  - $ref: '#/components/schemas/notificationChannel'
       description: Request Body for Existing Subscription
   parameters:
     subscriptionId:
