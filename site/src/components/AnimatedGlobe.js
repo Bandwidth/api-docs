@@ -615,4 +615,4 @@ export default function AnimatedGlobe() {
             </defs>
         </svg>
     );
-  }
+}
