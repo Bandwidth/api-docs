@@ -4,7 +4,7 @@ import { RedocStandalone } from 'redoc';
 import { lightTheme, darkTheme } from '../css/redocTheme';
 
 const RedocConfig = (props) => {
-  const {colorMode, setColorMode} = useColorMode();
+  const {colorMode} = useColorMode();
   return <RedocStandalone spec={props.spec} options={{
                       scrollYOffset: '.navbar', // makes the fixed sidebar and scrolling play nicely with docusaurus navbar
                       pathInMiddlePanel: true,
