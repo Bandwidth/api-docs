@@ -2,7 +2,7 @@ import React from 'react';
 import Layout from '@theme/Layout';
 import twoColumnStyles from '../../css/twoColumn.module.css';
 import sdkStyles from '../../css/sdks.module.css';
-import ProductGrid from '../../components/ProductGrid';
+import ItemGrid from '../../components/ItemGrid';
 
 const sdkList = [
     {
@@ -52,7 +52,7 @@ export default function Apis() {
                     <div className={sdkStyles.image}></div>
                 </div>
                 <div className={twoColumnStyles.right}>
-                    <ProductGrid productList={sdkList}/>
+                    <ItemGrid itemList={sdkList}/>
                 </div>
             </div>
         </Layout>

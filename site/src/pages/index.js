@@ -3,7 +3,7 @@ import Layout from '@theme/Layout';
 import homeStyles from '../css/home.module.css';
 import twoColumnStyles from '../css/twoColumn.module.css';
 import AnimatedGlobe from '../components/AnimatedGlobe';
-import ProductGrid from '../components/ProductGrid';
+import ItemGrid from '../components/ItemGrid';
 
 const productList = [
   {
@@ -55,7 +55,7 @@ export default function Home() {
           </div>
         </div>
         <div className={twoColumnStyles.right}>
-          <ProductGrid productList={productList}/>
+          <ItemGrid itemList={productList}/>
         </div>
       </div>
     </Layout>

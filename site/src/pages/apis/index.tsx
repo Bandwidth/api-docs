@@ -2,7 +2,7 @@ import React from 'react';
 import Layout from '@theme/Layout';
 import apiStyles from '../../css/apis.module.css';
 import twoColumnStyles from '../../css/twoColumn.module.css';
-import ProductGrid from '../../components/ProductGrid';
+import ItemGrid from '../../components/ItemGrid';
 
 const apiList = [
     {
@@ -67,7 +67,7 @@ export default function Apis() {
                     <div className={apiStyles.image}></div>
                 </div>
                 <div className={twoColumnStyles.right}>
-                    <ProductGrid productList={apiList}/>
+                    <ItemGrid itemList={apiList}/>
                 </div>
             </div>
         </Layout>
