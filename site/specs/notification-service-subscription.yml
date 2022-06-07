@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.0.0
 info:
   title: Subscription API
   version: '1.0'
@@ -138,11 +138,13 @@ paths:
           $ref: '#/components/responses/forbiddenResponse'
         '404':
           $ref: '#/components/responses/notFoundResponse'
+        '409':
+          $ref: '#/components/responses/conflictResponse'
         '500':
           $ref: '#/components/responses/internalErrorResponse'
       description: Update Subscription
       requestBody:
-        $ref: '#/components/requestBodies/existingSubscription'
+        $ref: '#/components/requestBodies/patchSubscription'
     put:
       tags:
         - Subscription
@@ -163,7 +165,7 @@ paths:
           $ref: '#/components/responses/internalErrorResponse'
       description: Rewrite Subscription
       requestBody:
-        $ref: '#/components/requestBodies/existingSubscription'
+        $ref: '#/components/requestBodies/putSubscription'
 components:
   schemas:
     callback:
@@ -175,11 +177,15 @@ components:
         publicKey:
           type: string
       example:
-        Example Callback Object:
+        callback:
+          url: some-url
+          publicKey: key
+      description: Callback Object
+      x-example:
+        example-1:
           callback:
             url: some-url
             publicKey: key
-      description: Example Callback Object
     subscriptionStatusEnum:
       title: Subscription Status Enum
       type: string
@@ -188,8 +194,11 @@ components:
         - ACTIVE
         - INACTIVE
       example: ACTIVE
+      x-examples:
+        example-1: ACTIVE
     subscription:
       title: Subscription
+      description: Data representing a Subscription
       type: object
       properties:
         product:
@@ -222,13 +231,56 @@ components:
       required:
         - product
         - notificationChannel
+    patchSubscription:
+      title: Patch Subscription
+      description: Data representing a Patch Subscription
+      type: object
+      properties:
+        eventType:
+          $ref: '#/components/schemas/eventTypeEnum'
+        entityId:
+          description: >-
+            Unique Id of object/action prcessed which generates Event for
+            Notification
+          type: string
+          minLength: 1
+          example: q3434-132414
+        subscriptionStatus:
+          $ref: '#/components/schemas/subscriptionStatusEnum'
+        tags:
+          title: Tag Elements
+          type: array
+          items:
+            $ref: '#/components/schemas/tag'
+        notifyStates:
+          type: array
+          items:
+            $ref: '#/components/schemas/eventStatusEnum'
+        notificationChannel:
+          type: array
+          maxItems: 1
+          items:
+            $ref: '#/components/schemas/callback'
+      x-examples:
+        example-1:
+          eventType: PORTIN_ORDER_STATUS
+          entityId: q3434-132414
+          subscriptionStatus: ACTIVE
+          tags:
+            - name: string
+              value: string
+          notifyStates:
+            - ACCEPTED_BY_CARRIER
+          notificationChannel:
+            - callback:
+                url: some-url
+                publicKey: key
     responseSubscription:
       title: Subscription Response
       allOf:
         - type: object
           properties:
             subscriptionId:
-              description: Unique Id of the Subscription
               type: string
               example: adfaf-134afd
             dateOfLastModification:
@@ -267,6 +319,7 @@ components:
         - REJECTED
         - SUBMITTED
     tag:
+      description: Tag Information
       title: Tag Element
       type: object
       properties:
@@ -274,6 +327,9 @@ components:
           type: string
         value:
           type: string
+      example:
+        name: string
+        value: string
   securitySchemes:
     bearerAuth:
       type: http
@@ -488,6 +544,78 @@ components:
                   - type: resource-permissions
                     description: User does not have permissions to access this resource.
                     code: optional-but-recommended-error-code
+                    id: optional-error-id
+                    meta: null
+    conflictResponse:
+      description: 409 Conflict Response
+      content:
+        application/json:
+          schema:
+            description: ''
+            type: object
+            example:
+              links: []
+              data: null
+              errors:
+                - type: invalid-parameter-value
+                  description: '''limit'' parameter cannot be negative.'
+                  code: optional-but-recommended-error-code
+                  source:
+                    parameter: limit
+                  id: optional-error-id
+                  meta: null
+            properties:
+              links:
+                type: array
+                items:
+                  type: object
+              data: {}
+              errors:
+                type: array
+                uniqueItems: true
+                minItems: 1
+                items:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      minLength: 1
+                    description:
+                      type: string
+                      minLength: 1
+                    code:
+                      type: string
+                      minLength: 1
+                    source:
+                      type: object
+                      properties:
+                        parameter:
+                          type: string
+                          minLength: 1
+                      required:
+                        - parameter
+                    id:
+                      type: string
+                      minLength: 1
+                    meta: {}
+                  required:
+                    - type
+                    - description
+                    - code
+                    - id
+            required:
+              - errors
+          examples:
+            Example 409 Conflict Response:
+              value:
+                links: []
+                data: null
+                errors:
+                  - type: invalid-parameter-value
+                    description: '''limit'' parameter cannot be negative.'
+                    code: optional-but-recommended-error-code
+                    source:
+                      parameter: limit
                     id: optional-error-id
                     meta: null
     badRequestResponse:
@@ -818,13 +946,36 @@ components:
                       url: some-url
                       publicKey: key
       description: Request Body for New Subscription
-    existingSubscription:
+    patchSubscription:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/patchSubscription'
+          examples:
+            Example Existing Subscription:
+              value:
+                eventType: PORTIN_ORDER_STATUS
+                entityId: unique-id-value
+                subscriptionStatus: ACTIVE
+                tags:
+                  - tag:
+                      name: tag-name
+                      value: tag-value
+                notifyStates:
+                  - DRAFT
+                  - COMPLETED
+                notificationChannel:
+                  - callback:
+                      url: some-url
+                      publicKey: key
+      description: Request Body for PATCH Subscription
+    putSubscription:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/subscription'
           examples:
-            Example Existing Subscription:
+            Example PUT Subscription:
               value:
                 product: PORTING
                 eventType: PORTIN_ORDER_STATUS
@@ -863,7 +1014,7 @@ components:
       required: false
       schema:
         type: string
-      description: EventTypes Subscribed to
+      description: EventType Subscribed to
     userName:
       name: userName
       in: query
