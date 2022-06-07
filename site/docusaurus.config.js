@@ -123,7 +123,7 @@ module.exports = {
             ],
             copyright: `Copyright © ${new Date().getFullYear()} Bandwidth Inc.`,
         },
-        // Now this breaks redoc :sad: 
+        // Now this breaks redoc :sad: (Now missing prism dependency as well)
         // prism: {
         //     additionalLanguages: ['csharp', 'java', 'ruby', 'php'],
         //   },
