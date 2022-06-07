@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from '@theme/Layout';
-import styles from '../../css/sdks.module.css';
+import sdkStyles from '../../css/sdks.module.css';
 import GitHubLink from '../../components/GitHubLink';
 
 const Title = 'PHP';
@@ -14,9 +14,9 @@ export default function sdkPage() {
         description="A list of resources for the PHP SDK."
         keywords="Bandwidth,SDK,PHP">
         <div className="text--center">
-          <Svg className={styles.sdkSvg} alt={Title} />
+          <Svg className={sdkStyles.sdkSvg} alt={Title} />
         </div>
-        <div className={styles.sdkProductTable}>
+        <div className={sdkStyles.sdkProductTable}>
           <table>
           <thead>
             <tr>

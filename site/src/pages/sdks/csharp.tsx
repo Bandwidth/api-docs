@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from '@theme/Layout';
-import styles from '../../css/sdks.module.css';
+import sdkStyles from '../../css/sdks.module.css';
 import GitHubLink from '../../components/GitHubLink';
 
 const Title = 'C#';
@@ -13,9 +13,9 @@ export default function sdkPage() {
         description="A list of resources for the C# SDK."
         keywords="Bandwidth,SDK,C#,.NET">
         <div className="text--center">
-          <Svg className={styles.sdkSvg} alt={Title} />
+          <Svg className={sdkStyles.sdkSvg} alt={Title} />
         </div>
-        <div className={styles.sdkProductTable}>
+        <div className={sdkStyles.sdkProductTable}>
           <table>
           <thead>
             <tr>
