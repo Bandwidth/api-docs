@@ -143,6 +143,7 @@ module.exports = {
                         "voice/transferGuide",
                         "voice/callInformationGuide",
                         "voice/callQueueingGuide",
+                        "voice/migrationGuide",
                         "voice/cnamPerDipGuide",
                     ],
                 },

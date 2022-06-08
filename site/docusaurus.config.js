@@ -24,8 +24,8 @@ module.exports = {
     onBrokenLinks: 'throw',
     onBrokenMarkdownLinks: 'warn',
     favicon: 'img/favicon.ico',
-    organizationName: 'bandwidth', // Usually your GitHub org/user name.
-    projectName: 'api-docs', // Usually your repo name.
+    organizationName: 'bandwidth', 
+    projectName: 'api-docs', 
     themeConfig: {
         image: 'img/bandwidth.png', // used for meta tag
         colorMode: {
@@ -37,10 +37,6 @@ module.exports = {
             indexName: 'bandwidth',
             contextualSearch: false, // useful for versioned Docusaurus sites
         },
-        googleAnalytics: {
-            trackingID: 'UA-62651840-1',
-            anonymizeIP: false,
-        },
         announcementBar: {
             id: 'new_docsite_flag', // Any value that will identify this message.
             content: 'Welcome to the new home of Bandwidth\'s Developer Documentation. Please take a minute to <a target="_blank" href="https://forms.gle/CgaaBoNRzSp1XoWbA">provide any feedback you may have</a> on our new docsite!',
@@ -48,11 +44,6 @@ module.exports = {
             textColor: '#079CEE', // Defaults to `#000`.
             isCloseable: false, // Defaults to `true`.
         },
-        // this is broken
-        // prism: {
-        //   additionalLanguages: ['java', 'csharp', 'php', 'ruby'],
-        // },
-        sidebarCollapsible: true,
         navbar: {
             title: '',
             hideOnScroll: false,
@@ -77,6 +68,10 @@ module.exports = {
                 href: 'https://github.com/Bandwidth-Samples',
                 label: 'Samples',
                 position: 'left',
+            },{
+                href: 'https://github.com/Bandwidth',
+                position: 'right', 
+                className: 'header-github-link'
             }]
         },
         footer: {
@@ -125,6 +120,10 @@ module.exports = {
             ],
             copyright: `Copyright © ${new Date().getFullYear()} Bandwidth Inc.`,
         },
+        // Now this breaks redoc :sad: 
+        // prism: {
+        //     additionalLanguages: ['csharp', 'java', 'ruby', 'php'],
+        //   },
     },
     presets: [
         [
@@ -133,6 +132,7 @@ module.exports = {
                 docs: {
                     sidebarPath: require.resolve('./sidebar.js'),
                     editUrl: 'https://github.com/Bandwidth/api-docs/edit/main/site/',
+                    sidebarCollapsible: true,
                 },
                 blog: {
                     showReadingTime: true,
@@ -140,6 +140,10 @@ module.exports = {
                 },
                 theme: {
                     customCss: require.resolve('./src/css/custom.css'),
+                },
+                googleAnalytics: {
+                    trackingID: 'UA-62651840-1',
+                    anonymizeIP: false,
                 },
             }
         ],
