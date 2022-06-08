@@ -2,6 +2,7 @@ const YAML = require('yaml');
 const fs = require('fs');
 const path = require('path');
 
+const numbersSpec = fs.readFileSync('./specs-temp/numbers.json', 'utf-8');
 const phoneNumberLookupSpec = fs.readFileSync('./specs/phoneNumberLookup.json', 'utf-8');
 const voiceSpec = fs.readFileSync('./specs/voice.json', 'utf-8');
 const messagingSpec = fs.readFileSync('./specs/messaging.json', 'utf-8');
@@ -10,11 +11,9 @@ const multiFactorAuthSpec = fs.readFileSync('./specs/multiFactorAuth.json', 'utf
 const dashSpec = fs.readFileSync('./specs/dash.json', 'utf-8');
 const dashNotificationsSpec = fs.readFileSync('./specs/dashNotifications.json', 'utf-8');
 const messagingInternationalSpec = fs.readFileSync('./specs/messagingInternational.json', 'utf-8');
-const bwiSpec = fs.readFileSync('./specs/bwi.yml', 'utf-8');
-const bwiSpec_ws = fs.readFileSync('./specs/bwi_ws.yml', 'utf-8');
-const bwiSpec_v2 = fs.readFileSync('./specs/bwi_v2.yml', 'utf-8');
-const bwiSpec_beta = fs.readFileSync('./specs/bwi_beta.yml', 'utf-8');
-// const numbersSpec = fs.readFileSync('./specs/numbers.json', 'utf-8');
+const globalSpec = fs.readFileSync('./specs/global.yml', 'utf-8');
+const globalSpec_v2 = fs.readFileSync('./specs/global-v2.yml', 'utf-8');
+const globalSpec_beta = fs.readFileSync('./specs/global-beta.yml', 'utf-8');
 
 module.exports = {
     title: 'Bandwidth API Docs',
@@ -24,8 +23,8 @@ module.exports = {
     onBrokenLinks: 'throw',
     onBrokenMarkdownLinks: 'warn',
     favicon: 'img/favicon.ico',
-    organizationName: 'bandwidth', // Usually your GitHub org/user name.
-    projectName: 'api-docs', // Usually your repo name.
+    organizationName: 'bandwidth', 
+    projectName: 'api-docs', 
     themeConfig: {
         image: 'img/bandwidth.png', // used for meta tag
         colorMode: {
@@ -37,10 +36,6 @@ module.exports = {
             indexName: 'bandwidth',
             contextualSearch: false, // useful for versioned Docusaurus sites
         },
-        googleAnalytics: {
-            trackingID: 'UA-62651840-1',
-            anonymizeIP: false,
-        },
         announcementBar: {
             id: 'new_docsite_flag', // Any value that will identify this message.
             content: 'Welcome to the new home of Bandwidth\'s Developer Documentation. Please take a minute to <a target="_blank" href="https://forms.gle/CgaaBoNRzSp1XoWbA">provide any feedback you may have</a> on our new docsite!',
@@ -48,11 +43,6 @@ module.exports = {
             textColor: '#079CEE', // Defaults to `#000`.
             isCloseable: false, // Defaults to `true`.
         },
-        // this is broken
-        // prism: {
-        //   additionalLanguages: ['java', 'csharp', 'php', 'ruby'],
-        // },
-        sidebarCollapsible: true,
         navbar: {
             title: '',
             hideOnScroll: false,
@@ -77,6 +67,10 @@ module.exports = {
                 href: 'https://github.com/Bandwidth-Samples',
                 label: 'Samples',
                 position: 'left',
+            },{
+                href: 'https://github.com/Bandwidth',
+                position: 'right', 
+                className: 'header-github-link'
             }]
         },
         footer: {
@@ -125,6 +119,10 @@ module.exports = {
             ],
             copyright: `Copyright © ${new Date().getFullYear()} Bandwidth Inc.`,
         },
+        // Now this breaks redoc :sad: 
+        // prism: {
+        //     additionalLanguages: ['csharp', 'java', 'ruby', 'php'],
+        //   },
     },
     presets: [
         [
@@ -133,6 +131,7 @@ module.exports = {
                 docs: {
                     sidebarPath: require.resolve('./sidebar.js'),
                     editUrl: 'https://github.com/Bandwidth/api-docs/edit/main/site/',
+                    sidebarCollapsible: true,
                 },
                 blog: {
                     showReadingTime: true,
@@ -141,11 +140,15 @@ module.exports = {
                 theme: {
                     customCss: require.resolve('./src/css/custom.css'),
                 },
+                googleAnalytics: {
+                    trackingID: 'UA-62651840-1',
+                    anonymizeIP: false,
+                },
             }
         ],
     ],
     customFields: {
-        // numbersSpec: JSON.parse(numbersSpec),
+        numbersSpec: JSON.parse(numbersSpec),
         phoneNumberLookupSpec: JSON.parse(phoneNumberLookupSpec),
         voiceSpec: JSON.parse(voiceSpec),
         messagingSpec: JSON.parse(messagingSpec),
@@ -154,10 +157,9 @@ module.exports = {
         multiFactorAuthSpec: JSON.parse(multiFactorAuthSpec),
         dashSpec: JSON.parse(dashSpec),
         dashNotificationsSpec: JSON.parse(dashNotificationsSpec),
-        bwiSpec: YAML.parse(bwiSpec),
-        bwiSpec_ws: YAML.parse(bwiSpec_ws),
-        bwiSpec_v2: YAML.parse(bwiSpec_v2),
-        bwiSpec_beta: YAML.parse(bwiSpec_beta),
+        globalSpec: YAML.parse(globalSpec),
+        globalSpec_v2: YAML.parse(globalSpec_v2),
+        globalSpec_beta: YAML.parse(globalSpec_beta),
         // CSS Colors
         bwBlue: '#079CEE',
         voicePurple: '#9a59c5',
