@@ -116,20 +116,26 @@ components:
         to:
           type: string
           description: The phone number to send the 2fa code to.
+          pattern: ^\+[1-9]\d{1,14}$
           example: '+19195551234'
         from:
           type: string
           description: The application phone number, the sender of the 2fa code.
+          pattern: ^\+[1-9]\d{1,14}$
+          maxLength: 32
           example: '+19195554321'
         applicationId:
           type: string
           description: The application unique ID, obtained from Bandwidth.
+          maxLength: 50
           example: 66fd98ae-ac8d-a00f-7fcd-ba3280aeb9b1
         scope:
           type: string
           description: >-
             An optional field to denote what scope or action the 2fa code is
             addressing.  If not supplied, defaults to "2FA".
+          maxLength: 25
+          default: 2FA
           example: 2FA
         message:
           type: string
@@ -141,12 +147,15 @@ components:
             actual 2fa code.  Name is replaced with the application name,
             configured during provisioning of 2fa.  The scope value is the same
             value sent during the call and partitioned by the server.
+          maxLength: 2048
           example: Your temporary {NAME} {SCOPE} code is {CODE}
         digits:
-          type: number
+          type: integer
           description: >-
             The number of digits for your 2fa code.  The valid number ranges
             from 2 to 8, inclusively.
+          minimum: 4
+          maximum: 8
           example: 6
       required:
         - to
@@ -203,7 +212,7 @@ components:
       properties:
         valid:
           type: boolean
-    requestError:
+    mfaRequestError:
       type: object
       properties:
         error:
@@ -212,14 +221,14 @@ components:
         requestId:
           type: string
           description: The associated requestId from AWS.
-    unauthorizedRequest:
+    mfaUnauthorizedRequestError:
       type: object
       properties:
         message:
           type: string
           description: Unauthorized
           example: Unauthorized
-    forbiddenRequest:
+    mfaForbiddenRequestError:
       type: object
       properties:
         message:
@@ -235,35 +244,35 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/requestError'
+            $ref: '#/components/schemas/mfaRequestError'
     unauthorizedError:
       description: Unauthorized
       headers: {}
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/unauthorizedRequest'
+            $ref: '#/components/schemas/mfaUnauthorizedRequestError'
     forbiddenError:
       description: Forbidden
       headers: {}
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/forbiddenRequest'
+            $ref: '#/components/schemas/mfaForbiddenRequestError'
     tooManyRequestsError:
       description: Too Many Requests
       headers: {}
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/requestError'
+            $ref: '#/components/schemas/mfaRequestError'
     internalServerError:
       description: Internal Server Error
       headers: {}
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/requestError'
+            $ref: '#/components/schemas/mfaRequestError'
   parameters:
     accountId:
       name: accountId
