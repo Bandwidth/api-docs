@@ -3,6 +3,7 @@ import Layout from '@theme/Layout';
 import apiStyles from '../../css/apis.module.css';
 import twoColumnStyles from '../../css/twoColumn.module.css';
 import ItemGrid from '../../components/ItemGrid';
+import { Player } from '@lottiefiles/react-lottie-player';
 
 const apiList = [
     {
@@ -64,7 +65,9 @@ export default function Apis() {
                         <h1>Bandwidth API References</h1>
                         <h2>Complete API Reference Documentation</h2>
                     </div>
-                    <div className={apiStyles.image}></div>
+                    <div className={apiStyles.image}>
+                        <Player src="https://assets3.lottiefiles.com/packages/lf20_ko8ud57v.json"  background="transparent"  style={{ width: '100%', height: '100%' }} loop autoplay></Player>
+                    </div>
                 </div>
                 <div className={twoColumnStyles.right}>
                     <ItemGrid itemList={apiList}/>
