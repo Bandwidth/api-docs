@@ -51,7 +51,7 @@
                     "Calls"
                 ],
                 "summary": "Create Call",
-                "description": "Creates an outbound phone call.\n\nAll calls are initially queued. Your outbound calls will initiated at a specific dequeueing rate, enabling your application to \"fire and forget\" when creating calls. Queued calls may not be modified until they are dequeued and placed, but may be removed from your queue on demand.\n\n<b>Please note: </b> Calls submitted to your queue will be placed approximately in order, but exact ordering is not guaranteed.",
+                "description": "Creates an outbound phone call.\n\nCalls are created immediately unless your account has outbound call queueing enabled. When enabled, your outbound calls will be queued and initiated at a specific dequeueing rate, enabling your application to \"fire and forget\" when creating calls. Queued calls may not be modified until they are dequeued and placed, but may be removed from your queue on demand.\n\nTo enable call queueing on your account, contact our Account Management team.\n\n<b>Please note: </b> Calls submitted to your queue will be placed aproximately in order, but exact ordering is not guaranteed.",
                 "operationId": "createCall",
                 "parameters": [
                     {
@@ -341,7 +341,7 @@
                     "Calls"
                 ],
                 "summary": "Modify Call",
-                "description": "Interrupts and replaces an active call's BXML document.",
+                "description": "Interrupts and replaces an active call's BXML document or hangs up the call",
                 "operationId": "modifyCall",
                 "parameters": [
                     {
@@ -477,224 +477,6 @@
                         "source": "require 'bandwidth'\n\ninclude Bandwidth\ninclude Bandwidth::Voice\n\nbandwidth_client = Bandwidth::Client.new(\n    voice_basic_auth_user_name: \"api-username\",\n    voice_basic_auth_password: \"api-password\"\n)\n\nvoice_client = bandwidth_client.voice_client.client\n\nbody = ModifyCallRequest.new\nbody.redirect_url = \"http://www.myapp.com/new\"\nbody.state = \"active\"\n\ncall_id = \"c-1234\"\n\nbegin\n    voice_client.modify_call(\"12345\", call_id, body)\nrescue APIException => e\n    puts e.response_code\nend\n"
                     }
                 ]
-            }
-        },
-        "/api/v2/accounts/{accountId}/calls/{callId}/bxml": {
-            "put": {
-                "tags": [
-                    "Calls"
-                ],
-                "summary": "Modify Call Bxml",
-                "description": "Interrupts and replaces an active call's BXML document, sending the new BXML.",
-                "operationId": "modifyCallBxml",
-                "parameters": [
-                    {
-                        "name": "accountId",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "callId",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/xml": {
-                            "schema": {
-                                "type": "string",
-                                "description": "A valid BXML document to replace the call's current BXML."
-                            },
-                            "examples": {
-                                "speakSentence": {
-                                    "summary": "SpeakSentence example.",
-                                    "value": "<Bxml>\n  <SpeakSentence>This is a test sentence.</SpeakSentence>\n</Bxml>"
-                                },
-                                "redirectUrl": {
-                                    "summary": "RedirectUrl example.",
-                                    "value": "<Bxml>\n  <Redirect redirectUrl=\"https://test.com\" redirectMethod=\"GET\"/>\n</Bxml>"
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "204": {
-                        "description": "Call successfully modified"
-                    },
-                    "400": {
-                        "description": "Something's not quite right... Your request is invalid. Please fix it before trying again.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiError"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Your credentials are invalid. Please use your Bandwidth dashboard credentials to authenticate to the API."
-                    },
-                    "403": {
-                        "description": "User unauthorized to perform this action.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiError"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "The resource specified cannot be found or does not belong to you.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiError"
-                                }
-                            }
-                        }
-                    },
-                    "415": {
-                        "description": "We don't support that media type. If a request body is required, please send it to us as `application/json`.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiError"
-                                }
-                            }
-                        }
-                    },
-                    "429": {
-                        "description": "You're sending requests to this endpoint too frequently. Please slow your request rate down and try again.",
-                        "headers": {
-                            "Retry-After": {
-                                "description": "When you should try your request again",
-                                "schema": {
-                                    "type": "string"
-                                }
-                            }
-                        },
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiError"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Something unexpected happened. Please try again.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/accounts/{accountId}/statistics": {
-            "get": {
-                "tags": [
-                    "Statistics"
-                ],
-                "summary": "Get Account Statistics",
-                "description": "Returns details about the current state of the account.",
-                "operationId": "getStatistics",
-                "parameters": [
-                    {
-                        "name": "accountId",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Statistics found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/AccountStatistics"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Something's not quite right... Your request is invalid. Please fix it before trying again.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiError"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Your credentials are invalid. Please use your Bandwidth dashboard credentials to authenticate to the API."
-                    },
-                    "403": {
-                        "description": "User unauthorized to perform this action.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiError"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "The resource specified cannot be found or does not belong to you.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiError"
-                                }
-                            }
-                        }
-                    },
-                    "429": {
-                        "description": "You're sending requests to this endpoint too frequently. Please slow your request rate down and try again.",
-                        "headers": {
-                            "Retry-After": {
-                                "description": "When you should try your request again",
-                                "schema": {
-                                    "type": "string"
-                                }
-                            }
-                        },
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiError"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Something unexpected happened. Please try again.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiError"
-                                }
-                            }
-                        }
-                    }
-                }
             }
         },
         "/api/v2/accounts/{accountId}/calls/{callId}/recording": {
@@ -2485,121 +2267,6 @@
                 ]
             }
         },
-        "/api/v2/accounts/{accountId}/conferences/{conferenceId}/bxml": {
-            "put": {
-                "tags": [
-                    "Conferences"
-                ],
-                "summary": "Update Conference",
-                "description": "Modify the conference state.",
-                "operationId": "modifyConferenceBxml",
-                "parameters": [
-                    {
-                        "name": "accountId",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "conferenceId",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/xml": {
-                            "schema": {
-                                "type": "string",
-                                "description": "A valid BXML document to replace the call's current BXML."
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "204": {
-                        "description": "Conference successfully modified"
-                    },
-                    "400": {
-                        "description": "Something's not quite right... Your request is invalid. Please fix it before trying again.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiError"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Your credentials are invalid. Please use your Bandwidth dashboard credentials to authenticate to the API."
-                    },
-                    "403": {
-                        "description": "User unauthorized to perform this action.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiError"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "The resource specified cannot be found or does not belong to you.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiError"
-                                }
-                            }
-                        }
-                    },
-                    "415": {
-                        "description": "We don't support that media type. If a request body is required, please send it to us as `application/json`.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiError"
-                                }
-                            }
-                        }
-                    },
-                    "429": {
-                        "description": "You're sending requests to this endpoint too frequently. Please slow your request rate down and try again.",
-                        "headers": {
-                            "Retry-After": {
-                                "description": "When you should try your request again",
-                                "schema": {
-                                    "type": "string"
-                                }
-                            }
-                        },
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiError"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Something unexpected happened. Please try again.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ApiError"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/api/v2/accounts/{accountId}/conferences/{conferenceId}/members/{memberId}": {
             "get": {
                 "tags": [
@@ -3686,11 +3353,9 @@
                     "from": {
                         "type": "string"
                     },
-                    "enqueuedTime": {
-                        "nullable": true,
+                    "startTime": {
                         "type": "string",
-                        "format": "date-time",
-                        "description": "Time the call was accepted into the queue"
+                        "format": "date-time"
                     },
                     "callUrl": {
                         "type": "string",
@@ -4277,11 +3942,6 @@
                         "format": "double",
                         "description": "Amount of silence (in seconds) before assuming the callee has finished speaking.",
                         "default": 5
-                    },
-                    "machineSpeechEndThreshold": {
-                        "type": "number",
-                        "format": "double",
-                        "description": "When an answering machine is detected, the amount of silence (in seconds) before assuming the message has finished playing."
                     },
                     "delayResult": {
                         "type": "boolean",
