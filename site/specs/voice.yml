@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Voice
-  version: 3.2.2
+  version: 4.1.0
   contact:
     name: Bandwidth
     url: https://dev.bandwidth.com/apis/voice/
@@ -3444,16 +3444,6 @@ components:
         - mp3
         - wav
       description: The format that the recording is stored in
-    username:
-      type: string
-      nullable: true
-      description: Basic auth username.
-      example: mySecretUsername
-    password:
-      type: string
-      nullable: true
-      description: Basic auth password.
-      example: mySecretPassword1!
     callStateEnum:
       nullable: true
       type: string
@@ -3481,6 +3471,31 @@ components:
       description: >-
         Setting the conference state to `completed` ends the conference and
         ejects all members
+    machineDetectionModeEnum:
+      type: string
+      default: async
+      enum:
+        - sync
+        - async
+      description: >-
+        The machine detection mode. If set to 'async', the detection
+
+        result will be sent in a 'machineDetectionComplete' callback. If set to
+
+        'sync', the 'answer' callback will wait for the machine detection to
+        complete
+
+        and will include its result.
+    username:
+      type: string
+      nullable: true
+      description: Basic auth username.
+      example: mySecretUsername
+    password:
+      type: string
+      nullable: true
+      description: Basic auth password.
+      example: mySecretPassword1!
     createCall:
       type: object
       required:
@@ -3489,6 +3504,12 @@ components:
         - from
         - to
       properties:
+        to:
+          type: string
+          description: |-
+            The destination to call (must be an E.164 formatted number
+            (e.g. `+15555551212`) or a SIP URI (e.g. `sip:user@server.com`)).
+          example: '+15555555555'
         from:
           type: string
           description: >-
@@ -3499,12 +3520,24 @@ components:
 
             strings: `Restricted`, `Anonymous`, `Private`, or `Unavailable`).
           example: '+15555555555'
-        to:
+        uui:
+          nullable: true
           type: string
-          description: |-
-            The destination to call (must be an E.164 formatted number
-            (e.g. `+15555551212`) or a SIP URI (e.g. `sip:user@server.com`)).
-          example: '+15555555555'
+          example: >-
+            eyJhbGciOiJIUzI1NiJ9.WyJoaSJd.-znkjYyCkgz4djmHUPSXl9YrJ6Nix_XvmlwKGFh5ERM;encoding=jwt,aGVsbG8gd29ybGQ=;encoding=base64
+          description: >-
+            A comma-separated list of 'User-To-User' headers to be sent
+
+            in the INVITE when calling a SIP URI. Each value must end with an
+            'encoding'
+
+            parameter as described in <a
+            href='https://tools.ietf.org/html/rfc7433'>RFC
+
+            7433</a>. Only 'jwt' and 'base64' encodings are allowed. The entire
+            value
+
+            cannot exceed 350 characters, including parameters and separators.
         applicationId:
           type: string
           description: The id of the application associated with the `from` number.
@@ -3562,24 +3595,6 @@ components:
             the call ends. This event does not expect a BXML response.
         disconnectMethod:
           $ref: '#/components/schemas/callbackMethodEnum'
-        uui:
-          nullable: true
-          type: string
-          example: >-
-            eyJhbGciOiJIUzI1NiJ9.WyJoaSJd.-znkjYyCkgz4djmHUPSXl9YrJ6Nix_XvmlwKGFh5ERM;encoding=jwt,aGVsbG8gd29ybGQ=;encoding=base64
-          description: >-
-            A comma-separated list of 'User-To-User' headers to be sent
-
-            in the INVITE when calling a SIP URI. Each value must end with an
-            'encoding'
-
-            parameter as described in <a
-            href='https://tools.ietf.org/html/rfc7433'>RFC
-
-            7433</a>. Only 'jwt' and 'base64' encodings are allowed. The entire
-            value
-
-            cannot exceed 350 characters, including parameters and separators.
         callTimeout:
           nullable: true
           type: number
@@ -3696,42 +3711,27 @@ components:
           type: string
           format: uri
         answerMethod:
-          type: string
-          enum:
-            - POST
-            - GET
+          $ref: '#/components/schemas/callbackMethodEnum'
         answerFallbackUrl:
           nullable: true
           type: string
           format: uri
         answerFallbackMethod:
-          nullable: true
-          type: string
-          enum:
-            - POST
-            - GET
+          $ref: '#/components/schemas/callbackMethodEnum'
         disconnectUrl:
           nullable: true
           type: string
           format: uri
         disconnectMethod:
-          nullable: true
-          type: string
-          enum:
-            - POST
-            - GET
+          $ref: '#/components/schemas/callbackMethodEnum'
         username:
-          nullable: true
-          type: string
+          $ref: '#/components/schemas/username'
         password:
-          nullable: true
-          type: string
+          $ref: '#/components/schemas/password'
         fallbackUsername:
-          nullable: true
-          type: string
+          $ref: '#/components/schemas/username'
         fallbackPassword:
-          nullable: true
-          type: string
+          $ref: '#/components/schemas/password'
         tag:
           nullable: true
           type: string
@@ -3828,10 +3828,7 @@ components:
           nullable: true
           type: string
           format: date-time
-          description: >-
-            If <a href='/docs/voice/rateLimits'>outbound call queueing</a> is
-            enabled and this is an outbound call, the time this call was placed
-            in queue.
+          description: The time this call was placed in queue.
         startTime:
           nullable: true
           type: string
@@ -3854,9 +3851,7 @@ components:
         disconnectCause:
           nullable: true
           type: string
-          description: >-
-            Populated once the call has ended, with the reason the call ended.
-            See above for possible values.
+          description: Populated once the call has ended, with the reason the call ended.
         errorMessage:
           nullable: true
           type: string
@@ -3879,14 +3874,13 @@ components:
         state:
           $ref: '#/components/schemas/callStateEnum'
         redirectUrl:
-          description: >-
+          description: |-
             The URL to send the [Redirect](/docs/voice/bxml/redirect) event
+            to which will provide new BXML.
 
-            to which will provide new BXML<br><br>Required if `state` is
-            `active`.
+            Required if `state` is `active`.
 
-
-            Not allowed if `state` is `completed`
+            Not allowed if `state` is `completed`.
           nullable: true
           type: string
           format: uri
@@ -3921,13 +3915,13 @@ components:
             verb, or cleared.
 
 
-            May be cleared by setting `tag=""`
+            May be cleared by setting `tag=""`.
 
 
             Max length 256 characters.
 
 
-            Not allowed if `state` is `completed`
+            Not allowed if `state` is `completed`.
           maximum: 256
     modifyCallRecording:
       type: object
@@ -3939,14 +3933,16 @@ components:
     accountStatistics:
       type: object
       properties:
+        currentCallQueueSize:
+          type: integer
+          description: The number of calls currently enqueued.
+          example: 0
         maxCallQueueSize:
-          type: string
+          type: integer
           description: >-
             The maximum size of the queue before outgoing calls start being
             rejected.
-        currentCallQueueSize:
-          type: string
-          description: The number of calls currently enqueued.
+          example: 900
     callRecordingMetadata:
       type: object
       properties:
@@ -4199,18 +4195,19 @@ components:
           format: date-time
           description: The time that the recording ended in ISO-8601 format
         fileFormat:
-          type: string
-          enum:
-            - mp3
-            - wav
-          description: The format that the recording is stored in
+          $ref: '#components/schemas/fileFormatEnum'
         status:
           type: string
           description: >-
-            The current status of the recording. Current possible values are
-            'processing', 'partial', 'complete', 'deleted', and 'error'.
-            Additional states may be added in the future, so your application
-            must be tolerant of unknown values.
+            The current status of the recording. Current possible values
+
+            are 'processing', 'partial', 'complete', 'deleted', and 'error'.
+            Additional
+
+            states may be added in the future, so your application must be
+            tolerant
+
+            of unknown values.
         mediaUrl:
           nullable: true
           type: string
@@ -4226,16 +4223,7 @@ components:
       type: object
       properties:
         mode:
-          type: string
-          description: >-
-            The machine detection mode. If set to 'async', the detection result
-            will be sent in a 'machineDetectionComplete' callback. If set to
-            'sync', the 'answer' callback will wait for the machine detection to
-            complete and will include its result.
-          enum:
-            - sync
-            - async
-          default: async
+          $ref: '#/components/schemas/machineDetectionModeEnum'
         detectionTimeout:
           type: number
           format: double
@@ -4255,12 +4243,21 @@ components:
           type: number
           format: double
           description: >-
-            When speech has ended and a result couldn't be determined based on
-            the audio content itself, this value is used to determine if the
-            speaker is a machine based on the speech duration. If the length of
-            the speech detected is greater than or equal to this threshold, the
-            result will be 'answering-machine'. If the length of speech detected
-            is below this threshold, the result will be 'human'.
+            When speech has ended and a result couldn't be determined based
+
+            on the audio content itself, this value is used to determine if the
+            speaker
+
+            is a machine based on the speech duration. If the length of the
+            speech
+
+            detected is greater than or equal to this threshold, the result will
+            be
+
+            'answering-machine'. If the length of speech detected is below this
+            threshold,
+
+            the result will be 'human'.
           default: 10
         speechEndThreshold:
           type: number
@@ -4279,9 +4276,14 @@ components:
           type: boolean
           description: >-
             If set to 'true' and if an answering machine is detected, the
+
             'answering-machine' callback will be delayed until the machine is
-            done speaking or until the 'detectionTimeout' is exceeded. If false,
-            the 'answering-machine' result is sent immediately.
+            done
+
+            speaking or until the 'detectionTimeout' is exceeded. If false, the
+            'answering-machine'
+
+            result is sent immediately.
           default: false
         callbackUrl:
           nullable: true
@@ -4291,47 +4293,28 @@ components:
           type: string
           format: uri
         callbackMethod:
-          nullable: true
-          type: string
-          description: >-
-            The HTTP method to use for the request to `callbackUrl`. `GET` or
-            `POST`.
-          enum:
-            - POST
-            - GET
-          default: POST
+          $ref: '#/components/schemas/callbackMethodEnum'
         fallbackUrl:
           nullable: true
           type: string
           format: uri
           description: >-
-            A fallback URL which, if provided, will be used to retry the machine
-            detection complete webhook delivery in case `callbackUrl` fails to
-            respond
+            A fallback URL which, if provided, will be used to retry the
+
+            machine detection complete webhook delivery in case `callbackUrl`
+            fails
+
+            to respond
         fallbackMethod:
-          nullable: true
-          type: string
-          enum:
-            - POST
-            - GET
-          description: The HTTP method to use for the request to fallbackUrl. GET or POST.
-          default: POST
+          $ref: '#/components/schemas/callbackMethodEnum'
         username:
-          nullable: true
-          type: string
-          description: The username to send in the HTTP request to `callbackUrl`
+          $ref: '#/components/schemas/username'
         password:
-          nullable: true
-          type: string
-          description: The password to send in the HTTP request to `callbackUrl`
+          $ref: '#/components/schemas/password'
         fallbackUsername:
-          nullable: true
-          type: string
-          description: The username to send in the HTTP request to `fallbackUrl`
+          $ref: '#/components/schemas/username'
         fallbackPassword:
-          nullable: true
-          type: string
-          description: The password to send in the HTTP request to `fallbackUrl`
+          $ref: '#/components/schemas/password'
     transcribeRecording:
       type: object
       properties:
@@ -4830,7 +4813,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/callRecordingMetadata'
+            $ref: '#/components/schemas/conferenceRecordingMetadata'
     badRequestError:
       description: Bad Request
       content:
