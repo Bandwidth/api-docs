@@ -1,0 +1,2049 @@
+openapi: 3.0.0
+info:
+  title: Porting
+  version: '1.0'
+  description: >-
+    <b>NOTE: </b>This spec is written using OpenAPI version 3.1.0. The
+    documentation generator does not support 3.1.0, so it is temporarily marked
+    as 3.0.0 until Redoc supports v3.1.0
+
+
+    Bandwidth understands that number porting is a powerful tool that enables
+    you to bring all your existing voice and text services under one umbrella.
+    By porting-in your phone numbers to Bandwidth, you mitigate the disruption
+    that comes from changing numbers.
+
+
+    With our new Number Porting API, we are making the number porting process as
+    smooth as possible! This allows you to check all existing porting orders for
+    your account using available filters. For example, you can check the number
+    or current status of your orders. 
+  contact:
+    email: support@bandwidth.com
+servers:
+  - url: http://localhost:3000
+paths:
+  /v3/porting/portInOrders:
+    get:
+      summary: List Port-In Orders
+      operationId: listPortInOrders
+      tags:
+        - Port-In Orders
+        - Coming soon
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      portInOrders:
+                        type: array
+                        description: All port-in orders.
+                        items:
+                          $ref: '#/components/schemas/PortInOrder'
+                      totalElements:
+                        type: integer
+                        description: Number of port-in orders in total.
+                      totalPages:
+                        type: integer
+                        description: Number of pages in total.
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    description: Error explanations.
+                    items:
+                      $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                    format: date-time
+                  status:
+                    type: number
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  path:
+                    type: string
+              examples:
+                Porting403Example:
+                  value:
+                    timestamp: 2022-05-19T09:25:20.991+0000
+                    status: 403
+                    error: Forbidden
+                    message: Access Denied
+                    path: /external/ports/validation
+      parameters:
+        - schema:
+            $ref: '#/components/schemas/PortInOrderStatusType'
+          in: query
+          name: status
+          description: Status of a port order. E.g. DRAFT, SUBMITTED, etc.
+        - schema:
+            type: string
+          in: query
+          name: phoneNumber
+          description: The number you are porting.
+        - schema:
+            $ref: '#/components/schemas/PhoneNumberType'
+          in: query
+          name: phoneNumberType
+          description: The type of phone number. E.g. NATIONAL, TOLL-FREE.
+        - schema:
+            type: string
+          in: query
+          name: countryCodeA3
+          description: ISO 3166-1 standard 3-letter country code.
+        - schema:
+            type: string
+          in: query
+          name: currentProviderName
+          description: >-
+            The losing carrier who's currently the operator on the number to be
+            ported in.
+        - schema:
+            type: string
+          in: query
+          name: customerReference
+          description: >-
+            Parameter that can be used for your own reference, e.g. to uniquely
+            identify one of your customers.
+        - schema:
+            type: string
+          in: query
+          name: orderId
+          description: Port-in order ID.
+        - schema:
+            type: string
+          in: query
+          name: supportRef
+          description: Reference of the support ticket associated to the port-in order.
+        - schema:
+            type: string
+          in: query
+          name: createdDate
+          description: >-
+            Date in YYYY-MM-DD format representing when the initial port-in
+            order was created.
+        - schema:
+            type: string
+          in: query
+          name: expectedPortCompleteDate
+          description: >-
+            Estimated completion date in YYYY-MM-DD format, calculated by adding
+            lead time to date of submission. Only present once the order has
+            been SUBMITTED.
+        - schema:
+            type: string
+          in: query
+          name: preferredPortInDate
+          description: >-
+            Date in YYYY-MM-DD format you requested for the port to be
+            completed.
+        - schema:
+            type: string
+          in: query
+          name: submittedDate
+          description: >-
+            Date in YYYY-MM-DD format at the time when the order was submitted -
+            only present when relevant.
+        - schema:
+            type: string
+          in: query
+          name: offset
+          description: Parameter specifies at what record to begin the resultset.
+        - schema:
+            type: string
+          in: query
+          name: limit
+          description: Parameter specifies how many results to retrieve.
+      description: >-
+        Allows you to check all existing porting orders for your account using
+        available filters. For example, the number or current status.
+    post:
+      summary: Create a draft port-in order
+      operationId: createPortInOrder
+      tags:
+        - Port-In Orders
+        - Coming soon
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      portInOrder:
+                        $ref: '#/components/schemas/PortInOrder'
+                  links:
+                    type: array
+                    description: >-
+                      Indicates all actions you can do with this port-in order
+                      based on its status.
+                    items:
+                      $ref: '#/components/schemas/Link'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    description: Error explanations.
+                    items:
+                      $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    description: Error explanations.
+                    items:
+                      $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                    format: date-time
+                  status:
+                    type: number
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  path:
+                    type: string
+              examples:
+                Porting403Example:
+                  value:
+                    timestamp: 2022-05-19T09:25:20.991+0000
+                    status: 403
+                    error: Forbidden
+                    message: Access Denied
+                    path: /external/ports/validation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phoneNumbers:
+                  type: array
+                  description: Array of telephone numbers in E.164 format.
+                  items:
+                    type: string
+                    minLength: 1
+                    maxLength: 999
+                numbersOwner:
+                  $ref: '#/components/schemas/NumbersOwner'
+                preferredPortInDate:
+                  type: string
+                  format: date-time
+                  description: >-
+                    Date that you prefer to have numbers to be available in
+                    Bandwidth.
+                customerReference:
+                  type: string
+                  description: >-
+                    Parameter that can be used for your own reference, e.g. to
+                    uniquely identify one of your customers.
+                currentProviderName:
+                  type: string
+                  description: >-
+                    The losing carrier who's currently the operator on the
+                    numbers to be ported in.
+              required:
+                - phoneNumbers
+                - numbersOwner
+            examples:
+              CreateOrderExample:
+                value:
+                  currentProviderName: BT
+                  phoneNumbers:
+                    - '+3228090000'
+                    - '+3228090001'
+                  preferredPortInDate: '2021-11-19T15:45:09.913+00:00'
+                  customerReference: P345679078
+                  numbersOwner:
+                    buildingNumber: 489
+                    city: Brussels
+                    companyName: Voxbone
+                    countryCodeA3: BEL
+                    numberUsageType: BUSINESS
+                    postalCode: '1050'
+                    streetName: Rue Vanderkindere
+                    companyVatNumber: BE0478928788
+      description: >-
+        Allows you to create a porting order in a pending state without
+        documents. These documents must be uploaded for this porting order to be
+        processed successfully.
+
+
+        All porting orders are created in a pending state and will be
+        automatically cancelled after 30 days.
+    parameters: []
+  /v3/porting/portInOrders/{portInOrderId}:
+    parameters:
+      - schema:
+          type: integer
+        name: portInOrderId
+        in: path
+        required: true
+        description: Port-in order ID
+    get:
+      summary: Check a port-in order
+      operationId: getPortInOrder
+      tags:
+        - Port-In Orders
+        - Coming soon
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      portIn:
+                        $ref: '#/components/schemas/PortInOrder'
+                  links:
+                    type: array
+                    description: >-
+                      Indicates all actions you can do with this port-in order
+                      based on its status.
+                    items:
+                      $ref: '#/components/schemas/Link'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    description: Error explanations.
+                    items:
+                      $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                    format: date-time
+                  status:
+                    type: number
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  path:
+                    type: string
+              examples:
+                Porting403Example:
+                  value:
+                    timestamp: 2022-05-19T09:25:20.991+0000
+                    status: 403
+                    error: Forbidden
+                    message: Access Denied
+                    path: /external/ports/validation
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    description: Error explanations.
+                    items:
+                      $ref: '#/components/schemas/Error'
+      parameters: []
+      description: Allows you to check the status of an existing port-in order.
+    delete:
+      summary: Delete a draft port-in order
+      operationId: deletePortInOrder
+      tags:
+        - Port-In Orders
+        - Coming soon
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    description: Error explanations.
+                    items:
+                      $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                    format: date-time
+                  status:
+                    type: number
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  path:
+                    type: string
+              examples:
+                Porting403Example:
+                  value:
+                    timestamp: 2022-05-19T09:25:20.991+0000
+                    status: 403
+                    error: Forbidden
+                    message: Access Denied
+                    path: /external/ports/validation
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    description: Error explanations.
+                    items:
+                      $ref: '#/components/schemas/Error'
+      description: >-
+        Allows you to delete a port-in order in draft. For a cancellation of an
+        order in processing, please use PATCH endpoint.
+    patch:
+      summary: Submit/Modify/Request cancellation of a port-in order
+      operationId: updatePortInOrder
+      tags:
+        - Port-In Orders
+        - Coming soon
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      portIn:
+                        $ref: '#/components/schemas/PortInOrder'
+                  links:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Link'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    description: Error explanations.
+                    items:
+                      $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                    format: date-time
+                  status:
+                    type: number
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  path:
+                    type: string
+              examples:
+                Porting403Example:
+                  value:
+                    timestamp: 2022-05-19T09:25:20.991+0000
+                    status: 403
+                    error: Forbidden
+                    message: Access Denied
+                    path: /external/ports/validation
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    description: Error explanations.
+                    items:
+                      $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                status:
+                  $ref: '#/components/schemas/PortInOrderStatusType'
+                numbersOwner:
+                  $ref: '#/components/schemas/NumbersOwner'
+                currentProviderName:
+                  type: string
+                  minLength: 1
+                  description: >-
+                    The losing carrier who's currently the operator on the
+                    number to be ported in.
+                preferredPortInDate:
+                  type: string
+                  minLength: 1
+                  format: date-time
+                  description: >-
+                    Date that you prefer to have numbers become available in
+                    Bandwidth.
+                phoneNumbers:
+                  type: array
+                  description: Array of telephone numbers in E.164 format.
+                  items:
+                    type: string
+        description: ''
+      description: >-
+        Allows you to submit or modify a draft port-in order, or to request the
+        cancellation of a submitted port-in order.
+  /v3/porting/validations:
+    post:
+      summary: Check number portability
+      operationId: portabilityCheck
+      tags:
+        - Portability Checker
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: Success response for number portability check.
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      requirements:
+                        type: array
+                        description: >-
+                          All required information and documents you will need
+                          to provide in order to port your numbers.
+                        items:
+                          $ref: '#/components/schemas/Requirement'
+                      numbersToPort:
+                        type: array
+                        description: >-
+                          List of phone numbers that you requested for us to
+                          port.
+                        items:
+                          $ref: '#/components/schemas/PhoneNumberDetails'
+              examples:
+                CheckPortabilityResponseExample:
+                  value:
+                    data:
+                      requirements:
+                        - countryCodeA3: BEL
+                          phoneNumberType: GEOGRAPHIC
+                          business:
+                            complementaryAddressInformation: Is used to indicate "In attention to someone".
+                            floor: 0
+                            buildingIdentifier: >-
+                              Building number for the end user's address. E.g.
+                              Can put 54 or 54A.
+                            buildingName: Building name for the end user's address.
+                            streetName: Street name for the end user's address.
+                            streetIdentifier: >-
+                              Street code for the end user's address. E.g.
+                              addresses in Japan
+                            postalCode: Postal code for the end user's address.
+                            municipalityIdentifier: >-
+                              Municipality code for the end user's address. E.g.
+                              50026 for Pisa in Italia.
+                            city: City name for the end user's address.
+                            state: State of the end user's address.
+                            countryCodeA3: ISO 3166-1 standard 3-letter country code.
+                            title: COMPANY
+                            firstName: >-
+                              First name of personal end user or company legal
+                              representative.
+                            middleName: >-
+                              Middle name of the personal end user or company
+                              legal representative.
+                            lastName: >-
+                              Surname of personal end user or company legal
+                              representative.
+                            dateOfBirth: >-
+                              Date of birth of personal end user or company
+                              legal representative.
+                            companyName: >-
+                              Registered company name. Only present for business
+                              ownership type.
+                            companyVatNumber: >-
+                              Registered VAT number - only present for business
+                              ownership.
+                            companyRegistrationNumber: >-
+                              Registration number - only present for business
+                              ownership.
+                            documents:
+                              - type: LOA
+                                description: LOA
+                                supportedFileTypes:
+                                  - pdf
+                                  - xls
+                                  - xlsx
+                                  - jpg
+                                  - jpeg
+                            mailBox:
+                              buildingIdentifier: >-
+                                Building number for the end user's address. E.g.
+                                Can put 54 or 54A.
+                              buildingName: Building name for the end user's address.
+                              complementaryAddressInformation: Is used to indicate "In attention to someone".
+                              streetName: Street name for the end user's address.
+                              streetIdentifier: >-
+                                Street code for the end user's address. E.g.
+                                addresses in Japan
+                              postalCode: Postal code for the end user's address.
+                              municipalityIdentifier: >-
+                                Municipality code for the end user's address.
+                                E.g. 50026 for Pisa in Italia.
+                              city: City name for the end user's address.
+                              state: State of the end user's address.
+                              countryCodeA3: ISO 3166-1 standard 3-letter country code.
+                        - personal:
+                            complementaryAddressInformation: Is used to indicate "In attention to someone".
+                            floor: 0
+                            buildingIdentifier: >-
+                              Building number for the end user's address. E.g.
+                              Can put 54 or 54A.
+                            buildingName: Building name for the end user's address.
+                            streetName: Street name for the end user's address.
+                            streetIdentifier: >-
+                              Street code for the end user's address. E.g.
+                              addresses in Japan
+                            postalCode: Postal code for the end user's address.
+                            municipalityIdentifier: >-
+                              Municipality code for the end user's address. E.g.
+                              50026 for Pisa in Italia.
+                            city: City name for the end user's address.
+                            state: State of the end user's address.
+                            countryCodeA3: ISO 3166-1 standard 3-letter country code.
+                            title: MR, MS
+                            firstName: >-
+                              First name of personal end user or company legal
+                              representative.
+                            middleName: >-
+                              Middle name of the personal end user or company
+                              legal representative.
+                            lastName: >-
+                              Surname of personal end user or company legal
+                              representative.
+                            dateOfBirth: >-
+                              Date of birth of personal end user or company
+                              legal representative.
+                            documents:
+                              - type: COB
+                                description: Last invoice
+                                supportedFileTypes:
+                                  - pdf
+                                  - xls
+                                  - xlsx
+                                  - jpg
+                                  - jpeg
+                        - countryCodeA3: BEL
+                          phoneNumberType: MOBILE
+                          business:
+                            complementaryAddressInformation: Is used to indicate "In attention to someone".
+                            floor: 0
+                            buildingIdentifier: >-
+                              Building number for the end user's address. E.g.
+                              Can put 54 or 54A.
+                            buildingName: Building name for the end user's address.
+                            streetName: Street name for the end user's address.
+                            streetIdentifier: >-
+                              Street code for the end user's address. E.g.
+                              addresses in Japan
+                            postalCode: Postal code for the end user's address.
+                            municipalityIdentifier: >-
+                              Municipality code for the end user's address. E.g.
+                              50026 for Pisa in Italia.
+                            city: City name for the end user's address.
+                            state: State of the end user's address.
+                            countryCodeA3: ISO 3166-1 standard 3-letter country code.
+                            title: COMPANY
+                            firstName: >-
+                              First name of personal end user or company legal
+                              representative.
+                            middleName: >-
+                              Middle name of the personal end user or company
+                              legal representative.
+                            lastName: >-
+                              Surname of personal end user or company legal
+                              representative.
+                            dateOfBirth: >-
+                              Date of birth of personal end user or company
+                              legal representative.
+                            companyName: >-
+                              Registered company name. Only present for business
+                              ownership type.
+                            companyVatNumber: >-
+                              Registered VAT number - only present for business
+                              ownership.
+                            companyRegistrationNumber: >-
+                              Registration number - only present for business
+                              ownership.
+                            documents:
+                              - type: LOA
+                                description: LOA
+                                supportedFileTypes:
+                                  - pdf
+                                  - xls
+                                  - xlsx
+                                  - jpg
+                                  - jpeg
+                            mailBox:
+                              buildingIdentifier: >-
+                                Building number for the end user's address. E.g.
+                                Can put 54 or 54A.
+                              buildingName: Building name for the end user's address.
+                              complementaryAddressInformation: Is used to indicate "In attention to someone".
+                              streetName: Street name for the end user's address.
+                              streetIdentifier: >-
+                                Street code for the end user's address. E.g.
+                                addresses in Japan
+                              postalCode: Postal code for the end user's address.
+                              municipalityIdentifier: >-
+                                Municipality code for the end user's address.
+                                E.g. 50026 for Pisa in Italia.
+                              city: City name for the end user's address.
+                              state: State of the end user's address.
+                              countryCodeA3: ISO 3166-1 standard 3-letter country code.
+                        - personal:
+                            complementaryAddressInformation: Is used to indicate "In attention to someone".
+                            floor: 0
+                            buildingIdentifier: >-
+                              Building number for the end user's address. E.g.
+                              Can put 54 or 54A.
+                            buildingName: Building name for the end user's address.
+                            streetName: Street name for the end user's address.
+                            streetIdentifier: >-
+                              Street code for the end user's address. E.g.
+                              addresses in Japan
+                            postalCode: Postal code for the end user's address.
+                            municipalityIdentifier: >-
+                              Municipality code for the end user's address. E.g.
+                              50026 for Pisa in Italia.
+                            city: City name for the end user's address.
+                            state: State of the end user's address.
+                            countryCodeA3: ISO 3166-1 standard 3-letter country code.
+                            title: MR, MS
+                            firstName: >-
+                              First name of personal end user or company legal
+                              representative.
+                            middleName: >-
+                              Middle name of the personal end user or company
+                              legal representative.
+                            lastName: >-
+                              Surname of personal end user or company legal
+                              representative.
+                            dateOfBirth: >-
+                              Date of birth of personal end user or company
+                              legal representative.
+                            documents:
+                              - type: COB
+                                description: Last invoice
+                                supportedFileTypes:
+                                  - pdf
+                                  - xls
+                                  - xlsx
+                                  - jpg
+                                  - jpeg
+                      totalFees:
+                        portFees: 32
+                        cancellationFees: 16
+                        phoneNumberMonthlyFees: 0.48
+                      currency: EUR
+                      numbersToPort:
+                        - phoneNumber: '+32498914698'
+                          phoneNumberType: MOBILE
+                          countryCodeA3: BEL
+                          countryCallingCode: 32
+                          areaCode: ''
+                          leadTime: 10
+                          internalMigration: false
+                          portable: true
+                        - phoneNumber: '+3228090001'
+                          phoneNumberType: GEOGRAPHIC
+                          countryCodeA3: BEL
+                          countryCallingCode: 32
+                          areaCode: '2'
+                          leadTime: 10
+                          internalMigration: false
+                          portable: true
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+              examples:
+                CheckPortability400Example:
+                  value:
+                    errors:
+                      - code: PRT-0499
+                        description: 'The maximum size is: 1000'
+                        source:
+                          field: portingNumbers
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    description: Error explanations.
+                    items:
+                      $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                    format: date-time
+                  status:
+                    type: number
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  path:
+                    type: string
+              examples:
+                Porting403Example:
+                  value:
+                    timestamp: 2022-05-19T09:25:20.991+0000
+                    status: 403
+                    error: Forbidden
+                    message: Access Denied
+                    path: /external/ports/validation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                phoneNumbers:
+                  type: array
+                  description: Array of telephone numbers in E.164 format.
+                  items:
+                    type: string
+                    minLength: 1
+                    maxLength: 999
+                    example: '+33123456789'
+              required:
+                - phoneNumbers
+            examples:
+              CheckPortabilityRequestExample:
+                value:
+                  phoneNumbers:
+                    - '+32498914698'
+                    - '+3228090001'
+        description: ''
+      description: >-
+        Check if a set of numbers is portable to Bandwidth. Bandwidth internally
+        detects the number type, area code, and country code, and you can
+        retrieve porting pricing fees and submission requirements.
+    parameters: []
+  /v3/porting/{portInOrderId}/documents:
+    post:
+      summary: Upload documents for a port-in order
+      operationId: post-porting-:portInOrderID-documents
+      tags:
+        - Port-In Orders
+        - Port-In Order Document
+        - Coming soon
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      documents:
+                        type: array
+                        description: Array of documents.
+                        items:
+                          $ref: '#/components/schemas/Document'
+              examples:
+                UploadDocumentsResponseExample:
+                  value:
+                    data:
+                      documents:
+                        - type: LOA
+                          description: LOA
+                          status: PENDING_VALIDATION
+                          documentId: 552180
+                          links:
+                            - rel: download
+                              href: >-
+                                http://porting-api.integration06.dev.voxbone.com/external/beta/ports/287415/documents/552180
+                              type: GET
+                        - type: COB
+                          description: Last Invoice
+                          status: PENDING_VALIDATION
+                          documentId: 552183
+                          links:
+                            - rel: download
+                              href: >-
+                                http://porting-api.integration06.dev.voxbone.com/external/beta/ports/287415/documents/552183
+                              type: GET
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+              examples:
+                400UploadDocuments:
+                  value:
+                    errors:
+                      - source:
+                          field: documentType
+                        description: Missing mandatory parameters.
+                        code: '7001'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    description: Error explanations.
+                    items:
+                      $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                    format: date-time
+                  status:
+                    type: number
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  path:
+                    type: string
+              examples:
+                Porting403Example:
+                  value:
+                    timestamp: 2022-05-19T09:25:20.991+0000
+                    status: 403
+                    error: Forbidden
+                    message: Access Denied
+                    path: /external/ports/validation
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    description: Error explanations.
+                    items:
+                      $ref: '#/components/schemas/Error'
+      description: >-
+        You are required to upload all the relevant documents for your existing
+        port-in order to be successful depending on the number you are trying to
+        port and which country the number belongs to. You can see the required
+        documents by checking a number's portability requirements.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                documents:
+                  type: array
+                  description: Array of documents.
+                  items:
+                    type: object
+                    properties:
+                      documentType:
+                        $ref: '#/components/schemas/DocumentType'
+                      documentContent:
+                        type: string
+                        format: binary
+                        description: Content of the document in binary.
+                    required:
+                      - documentType
+                      - documentContent
+        description: ''
+      parameters: []
+    parameters:
+      - schema:
+          type: string
+        name: portInOrderId
+        in: path
+        required: true
+  /v3/porting/{portInOrderId}/documents/{documentId}:
+    get:
+      summary: Retrieve an uploaded document
+      tags:
+        - Port-In Orders
+        - Port-In Order Document
+        - Coming soon
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      document:
+                        $ref: '#/components/schemas/Document'
+                  links:
+                    type: array
+                    description: >-
+                      Indicates all actions you can do with this port-in order
+                      based on its status.
+                    items:
+                      $ref: '#/components/schemas/Link'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    description: Error explanations.
+                    items:
+                      $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                    format: date-time
+                  status:
+                    type: number
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  path:
+                    type: string
+              examples:
+                Porting403Example:
+                  value:
+                    timestamp: 2022-05-19T09:25:20.991+0000
+                    status: 403
+                    error: Forbidden
+                    message: Access Denied
+                    path: /external/ports/validation
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Error'
+      operationId: get-porting-:portInOrderID-documents
+      description: >-
+        Allows you to download specific documents you have uploaded to review
+        for a specific port-in order.
+    parameters:
+      - schema:
+          type: string
+        name: portInOrderId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: documentId
+        in: path
+        required: true
+components:
+  schemas:
+    PortInOrder:
+      description: Port-in order details for a number or a set of numbers.
+      type: object
+      title: PortInOrder
+      properties:
+        portInOrderId:
+          type: integer
+          description: ID automatically generated when you create a port-in order.
+        currentProviderName:
+          type: string
+          minLength: 1
+          description: >-
+            The losing carrier who's currently the operator on the number to be
+            ported in.
+        numbersToPort:
+          type: array
+          minItems: 1
+          maxItems: 999
+          description: Array of numbers in E.164 format.
+          items:
+            $ref: '#/components/schemas/PhoneNumberDetails'
+        numbersOwner:
+          $ref: '#/components/schemas/NumbersOwner'
+        customerReference:
+          type: string
+          minLength: 1
+          description: >-
+            Parameter that can be used for your own reference, e.g. to uniquely
+            identify one of your customers.
+          maxLength: 60
+        supportRef:
+          type: string
+          description: >-
+            Reference of a port order - to use when you contact our support or
+            our porting teams. Eg: PRT25168668606830
+        supportTicket:
+          $ref: '#/components/schemas/SupportTicket'
+        status:
+          $ref: '#/components/schemas/PortInOrderStatusType'
+        currency:
+          type: string
+          minLength: 3
+          maxLength: 3
+          description: Currency of port-in fees.
+        preferredPortInDate:
+          type: string
+          minLength: 1
+          format: date-time
+          description: Specific date you would prefer the port-into be completed.
+        createdDate:
+          type: string
+          format: date-time
+          description: Creation date of the port-in order.
+        lastUpdate:
+          type: string
+          format: date-time
+          description: Last update date of the port-in order.
+        submittedDate:
+          type: string
+          format: date-time
+          description: >-
+            Timestamp representing when the order was submitted - only present
+            when relevant.
+        documents:
+          type: array
+          description: Required documents for a port-in order.
+          items:
+            $ref: '#/components/schemas/Document'
+        totalFees:
+          $ref: '#/components/schemas/Fees'
+      required:
+        - currentProviderName
+        - numbersToPort
+        - numbersOwner
+    NumbersOwner:
+      description: Owner of the numbers.
+      type: object
+      title: NumbersOwner
+      examples:
+        - numberUsageType: BUSINESS
+          complementaryAddressInformation: In attention to Mr. Smith
+          buildingNumber: '489'
+          streetName: Rue Vanderkindere
+          city: Brussels
+          countryCodeA3: BEL
+          postalCode: '1050'
+          companyName: Voxbone
+          companyVatNumber: BE0478928788
+      properties:
+        numberUsageType:
+          type: string
+          minLength: 1
+          enum:
+            - BUSINESS
+            - PERSONAL
+          description: Type of numberUsageType of the number to be ported.
+        complementaryAddressInformation:
+          type: string
+          description: Is used to indicate "In attention to someone".
+        floor:
+          description: Building number for the end user's address.
+          type: number
+        buildingIdentifier:
+          type:
+            - number
+            - string
+          description: Building number for the end user's address. E.g. Can put 54 or 54A.
+        buildingName:
+          type: string
+          description: Building number for the end user's address.
+        streetName:
+          type: string
+          description: Street name for the end user's address.
+        streetIdentifier:
+          type: string
+          description: Street code for the end user's address. E.g. addresses in Japan
+        postalCode:
+          type: string
+          description: Postal code for the end user's address.
+        municipalityIdentifier:
+          type: string
+          description: >-
+            Municipality code for the end user's address. E.g. 50026 for Pisa in
+            Italia.
+        city:
+          type: string
+          minLength: 1
+          description: City name for the end user's address.
+        state:
+          type: string
+          description: State of the end user's address.
+        countryCodeA3:
+          type: string
+          minLength: 3
+          maxLength: 3
+          description: ISO 3166-1 standard 3-letter country code.
+        title:
+          $ref: '#/components/schemas/SalutationType'
+        firstName:
+          type: string
+          minLength: 1
+          description: First name of personal end user or company legal representative.
+        middleName:
+          type: string
+          minLength: 1
+          description: >-
+            Middle name of the personal end user or company legal
+            representative.
+        lastName:
+          type: string
+          minLength: 1
+          description: Surname of personal end user or company legal representative.
+        dateOfBirth:
+          type: string
+          minLength: 1
+          description: Date of birth of personal end user or company legal representative.
+        companyName:
+          type: string
+          minLength: 1
+          description: Registered company name. Only present for business numberUsageType.
+        companyVatNumber:
+          type: string
+          minLength: 1
+          description: Registered VAT number - only present for business numberUsageType.
+        companyRegistrationNumber:
+          type: string
+          minLength: 1
+          description: Registration number - only present for business numberUsageType.
+        mailBox:
+          $ref: '#/components/schemas/MailBox'
+      required:
+        - numberUsageType
+        - city
+        - countryCodeA3
+    MailBox:
+      description: Virtual or physical mailbox of the owner of the number.
+      type: object
+      title: MailBox
+      properties:
+        buildingIdentifier:
+          type: string
+          description: Building number for the end user's mailbox. E.g. Can put 54 or 54A.
+        buildingName:
+          type: string
+          description: Building name for the end user's mailbox.
+        complementaryAddressInformation:
+          type: string
+          description: Is used to indicate "In attention to someone."
+        streetName:
+          type: string
+          description: Street name for the end user's mailbox.
+        streetIdentifier:
+          type: string
+          description: Street code for the end user's mailbox. E.g. addresses in Japan
+        postalCode:
+          type: string
+          description: Postal code for the end user's mailbox.
+        municipalityIdentifier:
+          type: string
+          description: >-
+            Municipality code for the end user's mailbox. E.g. 50026 for Pisa in
+            Italia.
+        city:
+          type: string
+          description: City name for the end user's mailbox.
+          minLength: 1
+        state:
+          type: string
+          description: State of the end user's mailbox.
+        countryCodeA3:
+          type: string
+          description: ISO 3166-1 standard 3-letter country code.
+          minLength: 3
+          maxLength: 3
+    PhoneNumberDetails:
+      description: Telephone numbers to port and related porting details.
+      type: object
+      title: PhoneNumberDetails
+      properties:
+        phoneNumber:
+          type: string
+          minLength: 1
+          description: >-
+            Phone number in E.164 format that the portability check response is
+            executed against. E.g: +19995550123, +33123456789.
+        phoneNumberType:
+          $ref: '#/components/schemas/PhoneNumberType'
+        countryCodeA3:
+          type: string
+          minLength: 3
+          maxLength: 3
+          description: ISO 3166-1 standard 3-letter country code. E.g. FRA for France.
+        countryCallingCode:
+          type: integer
+          description: Country calling code. E.g. 44 for UK
+        areaCode:
+          type: string
+          description: Phone area code. Can be empty for mobile phone numbers.
+        leadTime:
+          type: number
+          description: >-
+            Amount of time it takes to complete a order in a happy flow from the
+            moment of submission.
+        internalMigration:
+          type: boolean
+          description: >-
+            Indicates if the number is already in our network and we only need
+            to move the number to your account.
+        portable:
+          type: boolean
+          description: Indicates if the number is portable.
+        notPortableReason:
+          $ref: '#/components/schemas/Error'
+    Fees:
+      description: >-
+        Fees that you have to pay for a number or a set of numbers. The currency
+        will depend on your configuration.
+      type: object
+      examples:
+        - portFees: 1
+          cancellationFees: 2.3
+          didMonthlyFees: 5.7
+      title: Fees
+      properties:
+        portFees:
+          type: number
+          description: Fees for porting-in a number or a set of numbers.
+        cancellationFees:
+          type: number
+          description: Cancellation fees for a submitted number or a set of numbers.
+        phoneNumberMonthlyFees:
+          type: number
+          description: Monthly recurring charge for owning a number or a set of numbers.
+      required:
+        - portFees
+        - cancellationFees
+        - phoneNumberMonthlyFees
+    Link:
+      description: >-
+        All actions that you can do for a port-in order, document, support
+        ticket, or a comment in a support ticket.
+      type: object
+      examples:
+        - rel: cancel
+          href: https://api.preprod.voxbone.com/beta/porting-api/251593
+          type: DELETE
+      title: Link
+      properties:
+        rel:
+          type: string
+          minLength: 1
+          description: Reference of the action.
+        href:
+          type: string
+          minLength: 1
+          format: uri
+          description: Url to perform the action.
+        type:
+          $ref: '#/components/schemas/LinkType'
+      required:
+        - rel
+        - href
+        - type
+    Document:
+      description: Required documents for porting-in a number or a set of numbers.
+      type: object
+      examples:
+        - type: LOA
+          description: Letter of authority
+          status: PENDING_VALIDATION
+          documentId: 255005
+      title: Document
+      properties:
+        documentId:
+          type: integer
+          description: Generated ID for an uploaded document.
+        type:
+          $ref: '#/components/schemas/DocumentType'
+        description:
+          type: string
+          minLength: 1
+          format: binary
+          description: Description of a document.
+        content:
+          type: string
+          format: binary
+          description: Content of a file in binary.
+        status:
+          $ref: '#/components/schemas/DocumentStatusType'
+        link:
+          $ref: '#/components/schemas/Link'
+      required:
+        - type
+    Comment:
+      title: Comment
+      type: object
+      examples:
+        - id: R6776898
+          dateCreated: '2021-11-20'
+          description: >-
+            Hi there, The cancellation request for your port has been
+            successfully processed.
+      description: Comments from porting team.
+      properties:
+        id:
+          type: string
+          description: Id of the comment.
+        dateCreated:
+          type: string
+          description: Created date of the comment.
+          format: date-time
+        description:
+          type: string
+          description: Description of the comment.
+      required:
+        - id
+        - dateCreated
+        - description
+    SupportTicket:
+      title: SupportTicket
+      type: object
+      examples:
+        - link:
+            rel: self
+            href: https://support.voxbone.com/hc/en-us/requests/295782
+            type: GET
+          comments:
+            - id: R6776898
+              dateCreated: '2021-11-20'
+              description: >-
+                Hi there, The cancellation request for your port has been
+                successfully processed.
+      description: Support ticket associated to the port-in order.
+      properties:
+        link:
+          $ref: '#/components/schemas/Link'
+    Requirement:
+      title: Requirement
+      type: object
+      description: >-
+        Required information and documents that you have to provide in order to
+        port your numbers.
+      properties:
+        countryCodeA3:
+          type: string
+          description: >-
+            ISO 3166-1 standard 3-letter country code. E.g. FRA for France, BEL
+            for Belgium.
+        phoneNumberType:
+          $ref: '#/components/schemas/PhoneNumberType'
+        business:
+          $ref: '#/components/schemas/BusinessRequirement'
+        personal:
+          $ref: '#/components/schemas/PersonalRequirement'
+    BusinessRequirement:
+      description: >-
+        All required documents and end user's information that you have to
+        provide for porting-in a number.
+      type: object
+      title: BusinessRequirement
+      properties:
+        complementaryAddressInformation:
+          type: string
+          description: Is used to indicate "In attention to someone."
+        floor:
+          description: Floor number for the end user's address.
+          type: number
+        buildingIdentifier:
+          type: string
+          description: Building number for the end user's address. E.g. Can put 54 or 54A.
+        buildingName:
+          type: string
+          description: Building name for the end user's address.
+        streetName:
+          type: string
+          description: Street name for the end user's address.
+        streetIdentifier:
+          type: string
+          description: Street code for the end user's address. E.g. addresses in Japan
+        postalCode:
+          type: string
+          description: Postal code for the end user's address.
+        municipalityIdentifier:
+          type: string
+          description: >-
+            Municipality code for the end user's address. E.g. 50026 for Pisa in
+            Italia.
+        city:
+          type: string
+          minLength: 1
+          description: City name for the end user's address.
+        state:
+          type: string
+          description: State of the end user's address.
+        countryCodeA3:
+          type: string
+          description: ISO 3166-1 standard 3-letter country code.
+        title:
+          type: string
+        firstName:
+          type: string
+          minLength: 1
+          description: First name of personal end user or company legal representative.
+        middleName:
+          type: string
+          minLength: 1
+          description: >-
+            Middle name of the personal end user or company legal
+            representative.
+        lastName:
+          type: string
+          minLength: 1
+          description: Surname of personal end user or company legal representative.
+        dateOfBirth:
+          type: string
+          minLength: 1
+          description: Date of birth of personal end user or company legal representative.
+        companyName:
+          type: string
+          minLength: 1
+          description: Registered company name. Only present for business numberUsageType.
+        companyVatNumber:
+          type: string
+          minLength: 1
+          description: >-
+            Company registered VAT number. Only present for business
+            numberUsageType.
+        companyRegistrationNumber:
+          type: string
+          minLength: 1
+          description: >-
+            Company registration number. Only present for business
+            numberUsageType.
+        mailBox:
+          $ref: '#/components/schemas/MailBoxRequirement'
+        documents:
+          type: array
+          uniqueItems: true
+          minItems: 1
+          description: Required documents.
+          items:
+            $ref: '#/components/schemas/DocumentRequirement'
+    PersonalRequirement:
+      description: >-
+        All requirements (documents and end user's information) customers have
+        to provide for porting-in a number.
+      type: object
+      title: PersonalRequirement
+      properties:
+        complementaryAddressInformation:
+          type: string
+          description: Is used to indicate "In attention to someone."
+        floor:
+          description: Floor number for the end user's address.
+          type: number
+        buildingIdentifier:
+          description: Building number for the end user's address. E.g. Can put 54 or 54A.
+          type: string
+        buildingName:
+          type: string
+          description: Building name for the end user's address.
+        streetName:
+          type: string
+          description: Street name for the end user's address.
+        streetIdentifier:
+          type: string
+          description: Street code for the end user's address. E.g. addresses in Japan
+        postalCode:
+          type: string
+          description: Postal code for the end user's address.
+        municipalityIdentifier:
+          type: string
+          description: >-
+            Municipality code for the end user's address. E.g. 50026 for Pisa in
+            Italia.
+        city:
+          type: string
+          minLength: 1
+          description: City name for the end user's address.
+        state:
+          type: string
+          description: State of the end user's address.
+        countryCodeA3:
+          type: string
+          description: ISO 3166-1 standard 3-letter country code.
+        title:
+          type: string
+        firstName:
+          type: string
+          minLength: 1
+          description: First name of personal end user.
+        middleName:
+          type: string
+          minLength: 1
+          description: Middle name of the personal end user .
+        lastName:
+          type: string
+          minLength: 1
+          description: Surname of personal end user.
+        dateOfBirth:
+          type: string
+          minLength: 1
+          description: Date of birth of personal end user.
+        mailBox:
+          $ref: '#/components/schemas/MailBox'
+        documents:
+          type: array
+          uniqueItems: true
+          minItems: 1
+          description: Required documents.
+          items:
+            $ref: '#/components/schemas/DocumentRequirement'
+    DocumentRequirement:
+      description: Documents that you have to provide for porting-in a number.
+      type: object
+      title: DocumentRequirement
+      properties:
+        type:
+          $ref: '#/components/schemas/DocumentType'
+        description:
+          type: string
+          minLength: 1
+          description: Description of documents.
+        supportedFileTypes:
+          type: array
+          description: Supported file extensions.
+          items:
+            type: string
+      required:
+        - type
+        - description
+        - supportedFileTypes
+    MailBoxRequirement:
+      description: Virtual or physical mailbox of the owner of the number.
+      type: object
+      title: MailBox
+      properties:
+        buildingIdentifier:
+          type: string
+          description: Building number for the end user's mailbox. E.g. Can put 54 or 54A.
+        buildingName:
+          type: string
+          description: Building name for the end user's mailbox.
+        complementaryAddressInformation:
+          type: string
+          description: Is used to indicate "In attention to someone."
+        streetName:
+          type: string
+          description: Street name for the end user's mailbox.
+        streetIdentifier:
+          type: string
+          description: Street code for the end user's mailbox. E.g. addresses in Japan
+        postalCode:
+          type: string
+          description: Postal code for the end user's mailbox.
+        municipalityIdentifier:
+          type: string
+          description: >-
+            Municipality code for the end user's mailbox. E.g. 50026 for Pisa in
+            Italia.
+        city:
+          type: string
+          description: City name for the end user's mailbox.
+          minLength: 1
+        state:
+          type: string
+          description: State of the end user's mailbox.
+        countryCodeA3:
+          type: string
+          description: ISO 3166-1 standard 3-letter country code.
+    Error:
+      description: Generated error due to a bad request.
+      type: object
+      examples:
+        - source:
+            field: numberToPort
+          description: 'Invalid phone number: jnk'
+          code: XXX-XXXX
+      title: Error
+      properties:
+        description:
+          type: string
+          minLength: 1
+          description: Description of the issue.
+        code:
+          type: string
+          minLength: 1
+          description: Error code.
+        source:
+          type: object
+          description: Contains references to the source of the error.
+          properties:
+            field:
+              type: string
+              minLength: 1
+              description: Missing field or field having the issue.
+      required:
+        - description
+    Pagination:
+      title: Pagination
+      type: object
+      description: Pagination of port-in orders.
+      properties:
+        links:
+          description: >-
+            Represents going to the “next” page. This parameter will be absent
+            if there isn't any next pagination.
+          type: array
+          items:
+            $ref: '#/components/schemas/Link'
+    SalutationType:
+      title: Salutations of the end user or company legal representative.
+      type: string
+      enum:
+        - MR
+        - MS
+        - COMPANY
+      description: >-
+        Salutation of the end user or company legal representative. Use
+        "COMPANY" if the numbers that you want to port belong to a company.
+    DocumentType:
+      title: Type of document
+      type: string
+      enum:
+        - LOA
+        - COB
+        - POA
+        - LEG_ID
+        - COURT
+        - SIG_ID
+        - TRADE
+        - TAX
+        - OFF_SGN
+        - DIREC
+        - INCORP
+        - CSR
+        - FORM
+      description: >
+        Types of documents.
+
+        **The table below defines types of documents.**
+
+
+        | Status      | Description  |
+
+        | ----------- | ------------ |
+
+        | LOA         | A letter of authority. |
+
+        | COB         | Last invoice. |
+
+        | POA         | Company Registration Certificate / Copy of power of
+        attorney. |
+
+        | LEG_ID      | Copy of legal representative's photo ID. |
+
+        | COURT       | Copy of Court Registration. |
+
+        | SIG_ID      | Copy of LOA signatory´s photo ID. |
+
+        | TRADE       | Copy of the company registration in the Trade Registry
+        Gazette. |
+
+        | TAX         | Copy of the registration at the tax office. |
+
+        | OFF_SGN     | Official proof of signature. |
+
+        | DIREC       | Copy of Certificate of Directors and Secretary of the
+        company. | 
+
+        | INCORP      | Copy of Certificate of Incorporation. | 
+
+        | CSR         | A customer service record. | 
+
+        | FORM        | A local regulated porting form. | 
+    PhoneNumberType:
+      title: Type of phone number
+      type: string
+      enum:
+        - NATIONAL
+        - GEOGRAPHIC
+        - MOBILE
+        - SHARED_COST
+        - TOLL_FREE
+        - SPECIAL
+        - INUM
+      description: |
+        This is the list of supported phone number types:
+
+        - NATIONAL
+        - GEOGRAPHIC
+        - MOBILE
+        - SHARED_COST
+        - TOLL_FREE
+        - SPECIAL
+        - INUM
+    LinkType:
+      title: Type of link.
+      type: string
+      enum:
+        - GET
+        - DELETE
+      description: Type of link.
+    PortInOrderStatusType:
+      title: Status of Port-in orders.
+      type: string
+      enum:
+        - DRAFT
+        - SUBMITTED
+        - MISSING_DATA
+        - PENDING_CARRIER_APPROVAL
+        - ACCEPTED_BY_CARRIER
+        - READY_FOR_CONFIGURATION
+        - COMPLETED
+        - REJECTED
+        - PROCESSING_CANCELLATION
+        - CANCELED
+      description: >
+        Possible statuses of a port-in order
+
+
+        | Status                    | Description  |
+
+        | ------------------------- | ------------ |
+
+        | DRAFT                     | Your port-in order has been created, but
+        not yet submitted. You can change the content of the order or delete it
+        anytime. |
+
+        | SUBMITTED                 | Your port-in order has been submitted, and
+        our LNP team will take care of it shortly. If you need to change your
+        order, you will need  to request a cancellation or ask our LNP team to
+        return your order. |
+
+        | MISSING_DATA              | Your port-in order has been returned by
+        our LNP team  because the order doesn't contain the required information
+        ( you may be missing data or the document). Your order needs to be
+        amended and resubmitted. |
+
+        | PENDING_CARRIER_APPROVAL  | Your port-in order has been transmitted to
+        our carrier. |
+
+        | ACCEPTED_BY_CARRIER       | Good news! Your port-in has been accepted
+        by our carrier. |
+
+        | READY_FOR_CONFIGURATION   | Your numbers are ready for configuration.
+        You can now assign your configuration profile to your order. |
+
+        | COMPLETED                 | Your port-in order is complete. |
+
+        | REJECTED                  | Your port-in order has been rejected by
+        our LNP team/carrier. Please contact our LNP team for further details. |
+
+        | PROCESSING_CANCELLATION   | You are requesting the cancellation of
+        your order. Our LNP team will get back to you shortly|
+
+        | CANCELED                  | Your port-in order has been canceled. |
+    DocumentStatusType:
+      title: DocumentStatusType
+      type: string
+      enum:
+        - PENDING_VALIDATION
+        - VALID
+        - INVALID
+      description: >-
+        Status of a document - any new uploaded document will be marked as
+        PENDING_VALIDATION and will need to be validated by our porting team.
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+tags:
+  - name: Port-In Orders
+  - name: Port-In Order Document
+  - name: Portability Checker
+  - name: Coming soon
