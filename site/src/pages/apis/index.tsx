@@ -61,10 +61,10 @@ const ApiList = [
         link: '/apis/dash-notifications'
     },
     {
-        title: 'Call Search',
+        title: 'Insights',
         Svg: require('../../../static/img/icon-voice-complex-no-bg.svg').default,
         style: apiStyles.apiSvg,
-        link: '/apis/call-search'
+        link: '/apis/insights'
     }
 ];
 
