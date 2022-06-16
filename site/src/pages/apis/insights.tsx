@@ -10,7 +10,7 @@ export default function ApiReferencePage() {
           title={`Phone Number Lookup API Reference`}
           description="Authentication and Number Lookup. Everything you'll need to start working with our Phone Number Lookup API."
           keywords="Bandwidth,API,Phone,Number,Lookup">
-            <ApiReference spec={siteConfig.customFields.callSearchSpec} color={siteConfig.customFields.voicePurple} />
+            <ApiReference spec={siteConfig.customFields.insightsSpec} color={siteConfig.customFields.voicePurple} />
         </Layout>
     );
 }
