@@ -25,6 +25,12 @@ const ApiList = [
         link: '/apis/numbers'
     },
     {
+        title: 'Porting',
+        Svg: require('../../../static/img/icon-complex-phone-globe.svg').default,
+        style: apiStyles.apiSvg,
+        link: '/apis/porting'
+    },
+    {
         title: 'Phone Number Lookup',
         Svg: require('../../../static/img/icon-phone-number-lookup-complex-no-bg.svg').default,
         style: apiStyles.apiSvg,
