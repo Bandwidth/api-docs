@@ -348,44 +348,6 @@ paths:
         **Note**: Call information is kept for 7 days after the calls are hung
         up. If you attempt to retrieve information for a call that is older than
         7 days, you will get an HTTP 404 response.
-
-
-        The `disconnectCause` for a call can be:
-
-        - `hangup`: one party hung up the call, a
-        [`<Hangup>`](../../bxml/verbs/hangup.md) verb was executed, or there was
-        no more BXML to execute; it indicates that the call ended normally.
-
-        - `busy`: the callee was busy.
-
-        - `timeout`: the call wasn't answered before the `callTimeout` was
-        reached.
-
-        - `cancel`: the call was cancelled by its originator while it was
-        ringing.
-
-        - `rejected`: the call was rejected by the callee.
-
-        - `callback-error`: a BXML callback couldn't be delivered to your
-        callback server.
-
-        - `invalid-bxml`: invalid BXML was returned in response to a callback.
-
-        - `application-error`: an unsupported action was tried on the call, e.g.
-        trying to play a .ogg audio.
-
-        - `account-limit`: the account rate limits were reached.
-
-        - `node-capacity-exceeded`: the system maximum capacity was reached.
-
-        - `error`: some error not described in any of the other causes happened
-        on the call.
-
-        - `unknown`: some unknown error happened on the call.
-
-
-        Note: This list is not exhaustive and other values can appear in the
-        future.
       operationId: getCallState
       parameters:
         - $ref: '#/components/parameters/accountId'
@@ -2606,7 +2568,7 @@ paths:
     put:
       tags:
         - Conferences
-      summary: Update Conference
+      summary: Update Conference BXML
       description: Update the conference BXML document.
       operationId: updateConferenceBxml
       parameters:
@@ -3496,6 +3458,11 @@ components:
       nullable: true
       description: Basic auth password.
       example: mySecretPassword1!
+    passwordResponse:
+      type: string
+      nullable: true
+      description: Basic auth password. Masked in responses.
+      example: '*****'
     createCall:
       type: object
       required:
@@ -3509,7 +3476,7 @@ components:
           description: |-
             The destination to call (must be an E.164 formatted number
             (e.g. `+15555551212`) or a SIP URI (e.g. `sip:user@server.com`)).
-          example: '+15555555555'
+          example: '+19195551234'
         from:
           type: string
           description: >-
@@ -3519,7 +3486,7 @@ components:
             following
 
             strings: `Restricted`, `Anonymous`, `Private`, or `Unavailable`).
-          example: '+15555555555'
+          example: '+19195554321'
         uui:
           nullable: true
           type: string
@@ -3683,47 +3650,64 @@ components:
         - from
         - to
       properties:
-        accountId:
-          type: string
-        callId:
-          type: string
         applicationId:
           type: string
+          example: 04e88489-df02-4e34-a0ee-27a91849555f
+        accountId:
+          type: string
+          example: '9900000'
+        callId:
+          type: string
+          example: c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85
         to:
           type: string
+          example: '+19195551234'
         from:
           type: string
+          example: '+19195554321'
         enqueuedTime:
           nullable: true
           type: string
           format: date-time
           description: Time the call was accepted into the queue
+          example: '2022-06-16T13:15:07.160Z'
         callUrl:
           type: string
           format: uri
+          example: >-
+            https://voice.bandwidth.com/api/v2/accounts/9900000/calls/c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85
         callTimeout:
           type: number
           format: double
+          example: 30
         callbackTimeout:
           type: number
           format: double
+          example: 15
+        tag:
+          nullable: true
+          type: string
+          example: My custom tag value
+        answerMethod:
+          $ref: '#/components/schemas/callbackMethodEnum'
         answerUrl:
           type: string
           format: uri
-        answerMethod:
+          example: https://myServer.com/bandwidth/webhooks/answer
+        answerFallbackMethod:
           $ref: '#/components/schemas/callbackMethodEnum'
         answerFallbackUrl:
           nullable: true
           type: string
           format: uri
-        answerFallbackMethod:
+          example: https://myFallbackServer.com/bandwidth/webhooks/answer
+        disconnectMethod:
           $ref: '#/components/schemas/callbackMethodEnum'
         disconnectUrl:
           nullable: true
           type: string
           format: uri
-        disconnectMethod:
-          $ref: '#/components/schemas/callbackMethodEnum'
+          example: https://myServer.com/bandwidth/webhooks/disconnect
         username:
           $ref: '#/components/schemas/username'
         password:
@@ -3732,48 +3716,54 @@ components:
           $ref: '#/components/schemas/username'
         fallbackPassword:
           $ref: '#/components/schemas/password'
-        tag:
-          nullable: true
-          type: string
         priority:
           nullable: true
           type: number
           format: integer
+          example: 5
     callState:
       type: object
       properties:
+        applicationId:
+          type: string
+          description: The application id associated with the call.
+          example: 04e88489-df02-4e34-a0ee-27a91849555f
+        accountId:
+          type: string
+          description: The account id associated with the call.
+          example: '9900000'
         callId:
           type: string
+          description: The programmable voice API call ID.
+          example: c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85
         parentCallId:
           nullable: true
           type: string
           description: >-
             The A-leg call id, set only if this call is the B-leg of a
             [`<Transfer>`](/docs/voice/bxml/transfer).
-        applicationId:
-          type: string
-          description: The application id associated with the call.
-        accountId:
-          type: string
-          description: The account id associated with the call.
+          example: c-25ac29a2-1331029c-2cb0-4a07-b215-b22865662d85
         to:
           type: string
           description: >-
             The phone number that received the call, in E.164 format (e.g.
             +15555555555), or if the call was to a SIP URI, the SIP URI
+          example: '+19195551234'
         from:
           type: string
           description: >-
             The phone number that made the call, in E.164 format (e.g.
             +15555555555).
+          example: '19195554321'
         direction:
           type: string
           description: The direction of the call. Either `inbound` or `outbound`.
+          example: outbound
         state:
           description: >-
             The current state of the call. Current possible values are
 
-            'queued', 'initiated', 'answered' and 'disconnected'. Additional
+            `queued`, `initiated`, `answered` and `disconnected`. Additional
             states
 
             may be added in the future, so your application must be tolerant of
@@ -3781,24 +3771,17 @@ components:
 
             values.
           type: string
-        identity:
-          nullable: true
-          type: string
-          description: >-
-            The value of the `Identity` header from the inbound invite
-
-            request. Only present for inbound calls and if the account is
-            configured
-
-            to forward this header.
+          example: disconnected
         stirShaken:
           nullable: true
           type: object
           description: >-
             For inbound calls, the Bandwidth STIR/SHAKEN implementation will
             verify the information provided in the inbound invite request
-            `Identity` header. The verification status is stored in the call
-            state `stirShaken` property as follows.
+            `Identity` header. 
+
+            The verification status is stored in the call state `stirShaken`
+            property as follows.
 
 
             | Property          | Description |
@@ -3816,6 +3799,10 @@ components:
             | originatingId | (optional) A unique origination identifier. |
 
 
+            Note that these are common properties but that the `stirShaken`
+            object is free form and can contain other key-value pairs.
+
+
             More information: [Understanding
             STIR/SHAKEN](https://www.bandwidth.com/regulations/stir-shaken)
           additionalProperties:
@@ -3824,11 +3811,23 @@ components:
             verstat: TN-Verification-Passed
             attestationIndicator: A
             originatingId: abc123
+        identity:
+          nullable: true
+          type: string
+          description: >-
+            The value of the `Identity` header from the inbound invite
+
+            request. Only present for inbound calls and if the account is
+            configured
+
+            to forward this header.
+          example: null
         enqueuedTime:
           nullable: true
           type: string
           format: date-time
           description: The time this call was placed in queue.
+          example: '2022-06-16T13:15:07.160Z'
         startTime:
           nullable: true
           type: string
@@ -3836,6 +3835,7 @@ components:
           description: >-
             The time the call was initiated, in ISO 8601 format. `null` if the
             call is still in your queue.
+          example: '2022-06-16T13:15:07.160Z'
         answerTime:
           nullable: true
           type: string
@@ -3843,31 +3843,76 @@ components:
           description: >-
             Populated once the call has been answered, with the time in ISO 8601
             format.
+          example: '2022-06-16T13:15:18.126Z'
         endTime:
           nullable: true
           type: string
           format: date-time
           description: Populated once the call has ended, with the time in ISO 8601 format.
+          example: '2022-06-16T13:15:18.314Z'
         disconnectCause:
           nullable: true
           type: string
-          description: Populated once the call has ended, with the reason the call ended.
+          description: >-
+            | Cause | Description | 
+
+            |:------|:------------|
+
+            | `hangup`| One party hung up the call, a
+            [`<Hangup>`](../../bxml/verbs/hangup.md) verb was executed, or there
+            was no more BXML to execute; it indicates that the call ended
+            normally. |
+
+            | `busy` | Callee was busy. |
+
+            | `timeout` | Call wasn't answered before the `callTimeout` was
+            reached. |
+
+            | `cancel` | Call was cancelled by its originator while it was
+            ringing. |
+
+            | `rejected` | Call was rejected by the callee. |
+
+            | `callback-error` | BXML callback couldn't be delivered to your
+            callback server. |
+
+            | `invalid-bxml` | Invalid BXML was returned in response to a
+            callback. |
+
+            | `application-error` | An unsupported action was tried on the call,
+            e.g. trying to play a .ogg audio. |
+
+            | `account-limit` | Account rate limits were reached. |
+
+            | `node-capacity-exceeded` | System maximum capacity was reached. |
+
+            | `error` | Some error not described in any of the other causes
+            happened on the call. |
+
+            | `unknown` | Unknown error happened on the call. |
+
+
+            Note: This list is not exhaustive and other values can appear in the
+            future.
         errorMessage:
           nullable: true
           type: string
           description: >-
             Populated only if the call ended with an error, with text explaining
             the reason.
+          example: null
         errorId:
           nullable: true
           type: string
           description: >-
             Populated only if the call ended with an error, with a Bandwidth
             internal id that references the error event.
+          example: null
         lastUpdate:
           type: string
           format: date-time
           description: The last time the call had a state update, in ISO 8601 format.
+          example: '2022-06-16T13:15:18.314Z'
     modifyCall:
       type: object
       properties:
@@ -3884,6 +3929,7 @@ components:
           nullable: true
           type: string
           format: uri
+          example: https://myServer.com/bandwidth/webhooks/redirect
         redirectMethod:
           $ref: '#/components/schemas/redirectMethodEnum'
         username:
@@ -3897,6 +3943,7 @@ components:
           description: |-
             A fallback url which, if provided, will be used to retry the
             redirect callback delivery in case `redirectUrl` fails to respond
+          example: https://myFallbackServer.com/bandwidth/webhooks/redirect
         redirectFallbackMethod:
           $ref: '#/components/schemas/redirectMethodEnum'
         fallbackUsername:
@@ -3923,6 +3970,7 @@ components:
 
             Not allowed if `state` is `completed`.
           maximum: 256
+          example: My Custom Tag
     modifyCallRecording:
       type: object
       required:
@@ -3949,12 +3997,15 @@ components:
         applicationId:
           type: string
           description: The `applicationId` associated with the call
+          example: 04e88489-df02-4e34-a0ee-27a91849555f
         accountId:
           type: string
           description: The account that placed the call
+          example: '9900000'
         callId:
           type: string
           description: The `callId` of the call that created this recording
+          example: c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85
         parentCallId:
           nullable: true
           type: string
@@ -3962,48 +4013,58 @@ components:
             If the call was a transferred leg, this field contains the `callId`
             of the call that executed the
             [`<Transfer>`](/docs/voice/bxml/transfer)
+          example: c-25ac29a2-1331029c-2cb0-4a07-b215-b22865662d85
         recordingId:
           type: string
           description: The recording's unique ID
+          example: r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85
         to:
           type: string
           description: >-
             The phone number that received the call, in E.164 format (e.g.
             +15555555555), or if the call was to a SIP URI, the SIP URI
+          example: '+19195551234'
         from:
           type: string
           description: >-
             The phone number that made the call, in E.164 format (e.g.
             +15555555555).
+          example: '+19195554321'
         transferCallerId:
           nullable: true
           type: string
           description: >-
             If the call was a transferred leg, the `transferCallerId` field from
             the [`<Transfer>`](/docs/voice/bxml/transfer), if any.
+          example: '+12125551234'
         transferTo:
           nullable: true
           type: string
           description: >-
             If the call was a transferred leg, the number that the call was
             transferred to
+          example: '+12125554321'
         duration:
           type: string
           description: The duration of the recording in ISO-8601 format
+          example: PT2.998S
         direction:
           $ref: '#/components/schemas/callDirectionEnum'
         channels:
           type: integer
           format: int32
           description: The number of channels in the recording. Either `1` or `2`
+          example: 1
         startTime:
           type: string
           format: date-time
           description: The time that the recording started in ISO 8601 format
+          example: '2022-06-16T13:15:07.160Z'
         endTime:
           type: string
           format: date-time
           description: The time that the recording ended in ISO 8601 format
+          example: '2022-06-16T13:15:18.314Z'
         fileFormat:
           $ref: '#/components/schemas/fileFormatEnum'
         status:
@@ -4013,75 +4074,43 @@ components:
             'processing', 'partial', 'complete', 'deleted' and 'error'.
             Additional states may be added in the future, so your application
             must be tolerant of unknown values.
+          example: complete
         mediaUrl:
           type: string
           format: uri
           description: The URL that can be used to download the audio recording
+          example: >-
+            https://voice.bandwidth.com/api/v2/accounts/9900000/calls/c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85/recordings/r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85/media
         transcription:
           $ref: '#/components/schemas/transcriptionMetadata'
-    modifyConference:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/conferenceStateEnum'
-        redirectUrl:
-          nullable: true
-          type: string
-          format: uri
-          description: >-
-            The URL to send the
-            [conferenceRedirect](/docs/voice/webhooks/conferenceRedirect)
-
-            event which will provide new BXML. Not allowed if `state` is
-            `completed`,
-
-            but required if `state` is `active`
-        redirectMethod:
-          $ref: '#/components/schemas/redirectMethodEnum'
-        username:
-          $ref: '#/components/schemas/username'
-        password:
-          $ref: '#/components/schemas/password'
-        redirectFallbackUrl:
-          nullable: true
-          type: string
-          format: uri
-          description: >-
-            A fallback url which, if provided, will be used to retry the
-
-            `conferenceRedirect` webhook delivery in case `redirectUrl` fails to
-            respond.  Not
-
-            allowed if `state` is `completed`.
-        redirectFallbackMethod:
-          $ref: '#/components/schemas/redirectMethodEnum'
-        fallbackUsername:
-          $ref: '#/components/schemas/username'
-        fallbackPassword:
-          $ref: '#/components/schemas/password'
     conference:
       type: object
       properties:
         id:
           type: string
           description: The Bandwidth-generated conference ID
+          example: conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9
         name:
           type: string
           description: The name of the conference, as specified by your application
+          example: my-conference-name
         createdTime:
           type: string
           format: date-time
           description: The time the conference was initiated, in ISO 8601 format.
+          example: '2022-06-17T22:19:40.375Z'
         completedTime:
           nullable: true
           type: string
           format: date-time
           description: The time the conference was terminated, in ISO 8601 format.
+          example: '2022-06-17T22:20:00.000Z'
         conferenceEventUrl:
           nullable: true
           type: string
           format: uri
           description: The URL to send the conference-related events.
+          example: https://myServer.com/bandwidth/webhooks/conferenceEvent
         conferenceEventMethod:
           $ref: '#/components/schemas/callbackMethodEnum'
         tag:
@@ -4090,14 +4119,16 @@ components:
           description: >-
             The custom string attached to the conference that will be sent with
             callbacks.
+          example: my custom tag
         activeMembers:
           type: array
           nullable: true
           items:
             $ref: '#/components/schemas/conferenceMember'
           description: >-
-            A list of active members of the conference. Omitted if this is a
-            response to the [Get Conferences
+            A list of active members of the conference. Omitted if this
+
+            is a response to the [Get Conferences
             endpoint](/apis/voice#tag/Conferences/operation/listConferences)
     conferenceMember:
       type: object
@@ -4105,9 +4136,11 @@ components:
         callId:
           type: string
           description: The call ID of this conference member
+          example: c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85
         conferenceId:
           type: string
           description: The Bandwidth-generated conference ID
+          example: conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9
         memberUrl:
           type: string
           description: >-
@@ -4123,6 +4156,8 @@ components:
             Member](/apis/voice/#operation/modifyConferenceMember)
 
             endpoint.
+          example: >-
+            https://voice.bandwidth.com/api/v2/accounts/9900000/conferences/conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9/members/c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85
         mute:
           type: boolean
           description: >-
@@ -4160,6 +4195,49 @@ components:
 
             Note that this will not add the matching calls to the conference;
             each call must individually execute a Conference verb to join.
+          example: c-25ac29a2-1331029c-2cb0-4a07-b215-b22865662d85
+    modifyConference:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/conferenceStateEnum'
+        redirectUrl:
+          nullable: true
+          type: string
+          format: uri
+          description: >-
+            The URL to send the
+            [conferenceRedirect](/docs/voice/webhooks/conferenceRedirect)
+
+            event which will provide new BXML. Not allowed if `state` is
+            `completed`,
+
+            but required if `state` is `active`
+          example: https://myServer.com/bandwidth/webhooks/conferenceRedirect
+        redirectMethod:
+          $ref: '#/components/schemas/redirectMethodEnum'
+        username:
+          $ref: '#/components/schemas/username'
+        password:
+          $ref: '#/components/schemas/password'
+        redirectFallbackUrl:
+          nullable: true
+          type: string
+          format: uri
+          description: >-
+            A fallback url which, if provided, will be used to retry the
+
+            `conferenceRedirect` webhook delivery in case `redirectUrl` fails to
+            respond.  Not
+
+            allowed if `state` is `completed`.
+          example: https://myFallbackServer.com/bandwidth/webhooks/conferenceRedirect
+        redirectFallbackMethod:
+          $ref: '#/components/schemas/redirectMethodEnum'
+        fallbackUsername:
+          $ref: '#/components/schemas/username'
+        fallbackPassword:
+          $ref: '#/components/schemas/password'
     conferenceRecordingMetadata:
       type: object
       properties:
@@ -4171,31 +4249,39 @@ components:
           description: >-
             The unique, Bandwidth-generated ID of the conference that was
             recorded
+          example: conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9
         name:
           type: string
           description: The user-specified name of the conference that was recorded
+          example: my-conference-name
         recordingId:
           type: string
           description: The unique ID of this recording
+          example: r-fbe05094-9fd2afe9-bf5b-4c68-820a-41a01c1c5833
         duration:
           type: string
           description: The duration of the recording in ISO-8601 format
+          example: PT13.67S
         channels:
           type: integer
           format: int32
           description: >-
             Always `1` for conference recordings; multi-channel recordings are
             not supported on conferences.
+          example: 1
         startTime:
           type: string
           format: date-time
           description: The time that the recording started in ISO-8601 format
+          example: '2022-06-17T22:19:40.375Z'
         endTime:
           type: string
           format: date-time
           description: The time that the recording ended in ISO-8601 format
+          example: '2022-06-17T22:20:00.000Z'
         fileFormat:
-          $ref: '#components/schemas/fileFormatEnum'
+          $ref: '#/components/schemas/fileFormatEnum'
+          example: wav
         status:
           type: string
           description: >-
@@ -4208,6 +4294,7 @@ components:
             tolerant
 
             of unknown values.
+          example: completed
         mediaUrl:
           nullable: true
           type: string
@@ -4215,11 +4302,13 @@ components:
           description: >-
             The URL that can be used to download the recording. Only present if
             the recording is finished and may be downloaded.
+          example: >-
+            https://voice.bandwidth.com/api/v2/accounts/9900000/conferences/conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9/recordings/r-fbe05094-9fd2afe9-bf5b-4c68-820a-41a01c1c5833/media
     machineDetectionConfiguration:
       description: >-
         The machine detection request used to perform <a
         href='/docs/voice/guides/machineDetection'>machine detection</a> on the
-        call.<br>(Click arrow to expand machine detection options)
+        call.
       type: object
       properties:
         mode:
@@ -4228,9 +4317,12 @@ components:
           type: number
           format: double
           description: >-
-            The timeout used for the whole operation, in seconds. If no result
-            is determined in this period, a callback with a `timeout` result is
-            sent.
+            The timeout used for the whole operation, in seconds. If no
+
+            result is determined in this period, a callback with a `timeout`
+            result
+
+            is sent.
           default: 15
         silenceTimeout:
           type: number
@@ -4292,8 +4384,13 @@ components:
             detection is completed. Only for 'async' mode.
           type: string
           format: uri
+          example: https://myServer.com/bandwidth/webhooks/machineDetectionComplete
         callbackMethod:
           $ref: '#/components/schemas/callbackMethodEnum'
+        username:
+          $ref: '#/components/schemas/username'
+        password:
+          $ref: '#/components/schemas/password'
         fallbackUrl:
           nullable: true
           type: string
@@ -4305,12 +4402,10 @@ components:
             fails
 
             to respond
+          example: >-
+            https://myFallbackServer.com/bandwidth/webhooks/machineDetectionComplete
         fallbackMethod:
           $ref: '#/components/schemas/callbackMethodEnum'
-        username:
-          $ref: '#/components/schemas/username'
-        password:
-          $ref: '#/components/schemas/password'
         fallbackUsername:
           $ref: '#/components/schemas/username'
         fallbackPassword:
@@ -4395,7 +4490,7 @@ components:
           format: uri
           description: The URL of the [transcription](#operation/getCallTranscription)
           example: >-
-            https://voice.bandwidth.com/api/v2/accounts/9900000/calls/c-aa90dc63-4e3b9ad2-6ec6-43bc-acb5-235dd93c55c6/recordings/r-fbe05094-c30dca68-7f44-423f-a1fa-d31b51bba13a/transcription
+            https://voice.bandwidth.com/api/v2/accounts/9900000/calls/c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85/recordings/r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85/transcription
     transcription:
       type: object
       properties:
@@ -4506,6 +4601,7 @@ components:
       properties:
         conferenceId:
           type: string
+          example: conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9
         name:
           type: string
         eventType:
@@ -4570,7 +4666,7 @@ components:
       schema:
         type: string
       description: Programmable Voice API Conference ID
-      example: c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85
+      example: conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9
     memberId:
       name: memberId
       in: path
@@ -4643,10 +4739,10 @@ components:
       schema:
         type: integer
         format: int32
+        minimum: 1
+        maximum: 1000
         default: 1000
-      description: >-
-        Specifies the max number of conferences that will be returned. Range:
-        integer values between 1 - 1000. Default value is 1000.
+      description: Specifies the max number of conferences that will be returned.
     pageToken:
       name: pageToken
       in: query
@@ -4685,12 +4781,14 @@ components:
             speakSentence:
               summary: SpeakSentence example.
               value: |-
+                <?xml version=\"1.0\" encoding=\"UTF-8\"?>
                 <Bxml>
                   <SpeakSentence>This is a test sentence.</SpeakSentence>
                 </Bxml>
             redirectUrl:
               summary: Redirect example.
               value: |-
+                <?xml version=\"1.0\" encoding=\"UTF-8\"?>
                 <Bxml>
                   <Redirect redirectUrl="https://test.com" redirectMethod="GET"/>
                 </Bxml>
@@ -4719,6 +4817,13 @@ components:
           schema:
             type: string
             description: A valid BXML document to replace the call's current BXML.
+          examples:
+            Stop Recording:
+              value: |-
+                <?xml version="1.0" encoding="UTF-8"?>
+                <Bxml>
+                    <StopRecording/>
+                </Bxml>
     updateConferenceMemberRequest:
       required: true
       content:
@@ -4737,6 +4842,9 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/createCallResponse'
+          examples:
+            createCall Response:
+              $ref: '#/components/examples/createCallResponseExample'
     getCallStateResponse:
       description: Call found
       content:
@@ -4788,6 +4896,9 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/conference'
+          examples:
+            listConferences Response:
+              $ref: '#/components/examples/listConferencesResponseExample'
     getConferenceResponse:
       description: Conferences retrieved successfully
       content:
@@ -4892,6 +5003,40 @@ components:
             internalServerErrorExample:
               $ref: '#/components/examples/internalServerErrorExample'
   examples:
+    createCallResponseExample:
+      summary: An example of a createCall Response
+      value:
+        applicationId: 04e88489-df02-4e34-a0ee-27a91849555f
+        accountId: '9900000'
+        callId: c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85
+        to: '+19195551234'
+        from: '+19195554312'
+        enqueuedTime: '2022-06-16T13:15:07.160Z'
+        callUrl: >-
+          https://voice.bandwidth.com/api/v2/accounts/9900000/calls/c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85
+        callTimeout: 30
+        callbackTimeout: 15
+        tag: My custom tag value
+        answerMethod: POST
+        answerUrl: https://myServer.com/bandwidth/webhooks/answer
+        answerFallbackMethod: POST
+        disconnectMethod: POST
+        disconnectUrl: https://myServer.com/bandwidth/webhooks/disconnect
+        username: mySecretUsername
+        password: '*****'
+        fallbackUsername: mySecretUsername
+        fallbackPassword: '*****'
+        priority: 5
+    listConferencesResponseExample:
+      summary: An example of a listConferences Response
+      value:
+        - id: conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9
+          name: my-conference-name
+          createdTime: '2022-06-17T22:19:40.375Z'
+          completedTime: '2022-06-17T22:20:00.000Z'
+          conferenceEventUrl: https://myServer.com/bandwidth/webhooks/conferenceEvent
+          conferenceEventMethod: POST
+          tag: my custom tag
     badRequestErrorExample:
       summary: An example of a Bad Request (400) Error
       value:
