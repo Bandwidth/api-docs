@@ -63,6 +63,8 @@ paths:
           $ref: '#/components/responses/invalidMediaType'
         '429':
           $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServer'
       deprecated: false
   /users/{accountId}/media/{mediaId}:
     get:
@@ -113,6 +115,8 @@ paths:
           $ref: '#/components/responses/invalidMediaType'
         '429':
           $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServer'
       deprecated: false
     put:
       tags:
@@ -161,7 +165,6 @@ paths:
           schema:
             type: string
       requestBody:
-        x-send-file-in-body: true
         content:
           application/octet-stream:
             schema:
@@ -184,6 +187,8 @@ paths:
           $ref: '#/components/responses/invalidMediaType'
         '429':
           $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServer'
       deprecated: false
     delete:
       tags:
@@ -231,6 +236,8 @@ paths:
           $ref: '#/components/responses/invalidMediaType'
         '429':
           $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServer'
       deprecated: false
   /users/{accountId}/messages:
     get:
@@ -287,13 +294,24 @@ paths:
           example: RECEIVED
           schema:
             type: string
+            enum:
+              - RECEIVED
+              - QUEUED
+              - SENDING
+              - SENT
+              - FAILED
+              - DELIVERED
+              - ACCEPTED
+              - UNDELIVERED
         - name: messageDirection
           in: query
           required: false
           description: The direction of the message. One of INBOUND OUTBOUND
-          example: OUTBOUND
           schema:
             type: string
+            enum:
+              - OUTBOUND
+              - INBOUND
         - name: carrierName
           in: query
           required: false
@@ -308,10 +326,13 @@ paths:
         - name: messageType
           in: query
           required: false
-          description: The type of the message. Either mms or sms.
-          example: mms
+          description: The type of message. Either sms or mms
           schema:
             type: string
+            enum:
+              - sms
+              - mms
+          example: sms
         - name: errorCode
           in: query
           required: false
@@ -384,6 +405,8 @@ paths:
           $ref: '#/components/responses/invalidMediaType'
         '429':
           $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServer'
       deprecated: false
     post:
       tags:
@@ -429,6 +452,8 @@ paths:
           $ref: '#/components/responses/invalidMediaType'
         '429':
           $ref: '#/components/responses/tooManyRequests'
+        '500':
+          $ref: '#/components/responses/internalServer'
       deprecated: false
 components:
   schemas:
@@ -475,10 +500,16 @@ components:
           description: >-
             The direction of the message relative to Bandwidth. Either INBOUND
             or OUTBOUND
+          enum:
+            - OUTBOUND
+            - INBOUND
           example: OUTBOUND
         messageType:
           type: string
           description: The type of message. Either sms or mms
+          enum:
+            - sms
+            - mms
           example: sms
         segmentCount:
           type: integer
@@ -575,22 +606,6 @@ components:
           type: object
         setOrExpired:
           type: boolean
-    bandwidthCallbackMessage:
-      title: BandwidthCallbackMessage
-      type: object
-      properties:
-        time:
-          type: string
-        type:
-          type: string
-        to:
-          type: string
-        errorCode:
-          type: string
-        description:
-          type: string
-        message:
-          $ref: '#/components/schemas/bandwidthMessage'
     bandwidthMessage:
       title: BandwidthMessage
       type: object
@@ -620,6 +635,9 @@ components:
         direction:
           type: string
           description: The direction of the message relative to Bandwidth. Can be in or out
+          enum:
+            - in
+            - out
           example: in
         to:
           uniqueItems: true
@@ -656,6 +674,9 @@ components:
         priority:
           type: string
           description: The priority specified by the user
+          enum:
+            - default
+            - high
           example: default
     messageRequest:
       title: MessageRequest
@@ -756,6 +777,12 @@ components:
             $ref: '#/components/schemas/messagingException'
     tooManyRequests:
       description: 429 The rate limit has been reached
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/messagingException'
+    internalServer:
+      description: Internal Server Error
       content:
         application/json:
           schema:
