@@ -14,6 +14,7 @@ const messagingInternationalSpec = fs.readFileSync('./specs/messagingInternation
 const globalSpec = fs.readFileSync('./specs/global.yml', 'utf-8');
 const globalSpec_v2 = fs.readFileSync('./specs/global-v2.yml', 'utf-8');
 const globalSpec_beta = fs.readFileSync('./specs/global-beta.yml', 'utf-8');
+const insightsSpec = fs.readFileSync('./specs/insights.yml', 'utf-8');
 
 module.exports = {
     title: 'Bandwidth API Docs',
@@ -160,6 +161,8 @@ module.exports = {
         globalSpec: YAML.parse(globalSpec),
         globalSpec_v2: YAML.parse(globalSpec_v2),
         globalSpec_beta: YAML.parse(globalSpec_beta),
+        insightsSpec: YAML.parse(insightsSpec),
+
         // CSS Colors
         bwBlue: '#079CEE',
         voicePurple: '#9a59c5',
