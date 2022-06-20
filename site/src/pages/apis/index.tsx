@@ -2,56 +2,80 @@ import React from 'react';
 import Layout from '@theme/Layout';
 import apiStyles from '../../css/apis.module.css';
 
-const apiList = {
-    numbers: [
-        {
-            name: 'Numbers',
-            link: '/apis/numbers'
-        },
-        {
-            name: 'Phone Number Lookup',
-            link: '/apis/number-lookup'
-        }
-    ],
-    voice: [
-        {
-            name: 'Voice',
-            link: '/apis/voice'
-        }
-    ],
-    messaging: [
-        {
-            name: 'Messaging',
-            link: '/apis/messaging'
-        },
-        {
-            name: 'International Messaging',
-            link: '/apis/messaging-international'
-        }
-    ],
-    emergency: [
-        {
-            name: 'DASH',
-            link: '/apis/dash'
-        },
-        {
-            name: 'DASH Notifications',
-            link: '/apis/dash-notifications'
-        }
-    ],
-    mfa: [
-        {
-            name: 'Multi-Factor Authentication',
-            link: '/apis/multifactorauth'
-        }
-    ],
-    webrtc: [
-        {
-            name: 'WebRTC',
-            link: '/apis/webrtc'
-        },
-    ]
-};
+const productList = [
+    {
+        productName: 'Numbers',
+        Svg: require('../../../static/img/icon-numbers.svg').default,
+        apis: [
+            {
+                name: 'Numbers',
+                link: '/apis/numbers'
+            },
+            {
+                name: 'Phone Number Lookup',
+                link: '/apis/number-lookup'
+            }
+        ]
+    },
+    {
+        productName: 'Voice',
+        Svg: require('../../../static/img/icon-voice.svg').default,
+        apis: [
+            {
+                name: 'Voice',
+                link: '/apis/voice'
+            }
+        ]
+    },
+    {
+        productName: 'Messaging',
+        Svg: require('../../../static/img/icon-messaging.svg').default,
+        apis: [
+            {
+                name: 'Messaging',
+                link: '/apis/messaging'
+            },
+            {
+                name: 'International Messaging',
+                link: '/apis/messaging-international'
+            }
+        ]
+    },
+    {
+        productName: 'Emergency',
+        Svg: require('../../../static/img/icon-emergency.svg').default,
+        apis: [
+            {
+                name: 'DASH',
+                link: '/apis/dash'
+            },
+            {
+                name: 'DASH Notifications',
+                link: '/apis/dash-notifications'
+            }
+        ]
+    },
+    {
+        productName: 'Authentication',
+        Svg: require('../../../static/img/icon-mfa.svg').default,
+        apis: [
+            {
+                name: 'Multi-Factor Authentication',
+                link: '/apis/multifactorauth'
+            }
+        ]
+    },
+    {
+        productName: 'WebRTC',
+        Svg: require('../../../static/img/icon-webrtc.svg').default,
+        apis: [
+            {
+                name: 'WebRTC',
+                link: '/apis/webrtc'
+            }
+        ]
+    }
+];
 
 function ProductInfo({productName, apis}) {
     return (
@@ -71,30 +95,12 @@ function ProductInfo({productName, apis}) {
 function ProductGrid() {
     return (
         <div className={apiStyles.products}>
-            <div className={apiStyles.product}>
-                <svg className={`${apiStyles.productSvg} ${apiStyles.numbersSvg}`}/>
-                <ProductInfo productName='Numbers' apis={apiList.numbers}/>
-            </div>
-            <div className={apiStyles.product}>
-                <svg className={`${apiStyles.productSvg} ${apiStyles.voiceSvg}`}/>
-                <ProductInfo productName='Voice' apis={apiList.voice}/>
-            </div>
-            <div className={apiStyles.product}>
-                <svg className={`${apiStyles.productSvg} ${apiStyles.messagingSvg}`}/>
-                <ProductInfo productName='Messaging' apis={apiList.messaging}/>
-            </div>
-            <div className={apiStyles.product}>
-                <svg className={`${apiStyles.productSvg} ${apiStyles.emergencySvg}`}/>
-                <ProductInfo productName='Emergency' apis={apiList.emergency}/>
-            </div>
-            <div className={apiStyles.product}>
-                <svg className={`${apiStyles.productSvg} ${apiStyles.mfaSvg}`}/>
-                <ProductInfo productName='Authentication' apis={apiList.mfa}/>
-            </div>
-            <div className={apiStyles.product}>
-                <svg className={`${apiStyles.productSvg} ${apiStyles.webrtcSvg}`}/>
-                <ProductInfo productName='WebRTC' apis={apiList.webrtc}/>
-            </div>
+            {productList.map((product) => (
+                <div className={apiStyles.product}>
+                    <product.Svg className={`${apiStyles.productSvg} ${product.productName}`} title={product.productName}/>
+                    <ProductInfo productName={product.productName} apis={product.apis}/>
+                </div>
+            ))}
         </div>
     );
 }
