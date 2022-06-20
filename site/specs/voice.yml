@@ -4130,6 +4130,48 @@ components:
 
             is a response to the [Get Conferences
             endpoint](/apis/voice#tag/Conferences/operation/listConferences)
+    modifyConference:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/conferenceStateEnum'
+        redirectUrl:
+          nullable: true
+          type: string
+          format: uri
+          description: >-
+            The URL to send the
+            [conferenceRedirect](/docs/voice/webhooks/conferenceRedirect)
+
+            event which will provide new BXML. Not allowed if `state` is
+            `completed`,
+
+            but required if `state` is `active`
+          example: https://myServer.com/bandwidth/webhooks/conferenceRedirect
+        redirectMethod:
+          $ref: '#/components/schemas/redirectMethodEnum'
+        username:
+          $ref: '#/components/schemas/username'
+        password:
+          $ref: '#/components/schemas/password'
+        redirectFallbackUrl:
+          nullable: true
+          type: string
+          format: uri
+          description: >-
+            A fallback url which, if provided, will be used to retry the
+
+            `conferenceRedirect` webhook delivery in case `redirectUrl` fails to
+            respond.  Not
+
+            allowed if `state` is `completed`.
+          example: https://myFallbackServer.com/bandwidth/webhooks/conferenceRedirect
+        redirectFallbackMethod:
+          $ref: '#/components/schemas/redirectMethodEnum'
+        fallbackUsername:
+          $ref: '#/components/schemas/username'
+        fallbackPassword:
+          $ref: '#/components/schemas/password'
     conferenceMember:
       type: object
       properties:
@@ -4196,48 +4238,46 @@ components:
             Note that this will not add the matching calls to the conference;
             each call must individually execute a Conference verb to join.
           example: c-25ac29a2-1331029c-2cb0-4a07-b215-b22865662d85
-    modifyConference:
+    modifyConferenceMember:
       type: object
       properties:
-        status:
-          $ref: '#/components/schemas/conferenceStateEnum'
-        redirectUrl:
-          nullable: true
-          type: string
-          format: uri
+        mute:
+          type: boolean
           description: >-
-            The URL to send the
-            [conferenceRedirect](/docs/voice/webhooks/conferenceRedirect)
+            Whether or not this member is currently muted. Members who are muted
+            are still able to hear other participants.
 
-            event which will provide new BXML. Not allowed if `state` is
-            `completed`,
 
-            but required if `state` is `active`
-          example: https://myServer.com/bandwidth/webhooks/conferenceRedirect
-        redirectMethod:
-          $ref: '#/components/schemas/redirectMethodEnum'
-        username:
-          $ref: '#/components/schemas/username'
-        password:
-          $ref: '#/components/schemas/password'
-        redirectFallbackUrl:
-          nullable: true
-          type: string
-          format: uri
+            Updates this member's mute status. Has no effect if omitted.
+        hold:
+          type: boolean
           description: >-
-            A fallback url which, if provided, will be used to retry the
+            Whether or not this member is currently on hold. Members who are on
+            hold are not able to hear or speak in the conference.
 
-            `conferenceRedirect` webhook delivery in case `redirectUrl` fails to
-            respond.  Not
 
-            allowed if `state` is `completed`.
-          example: https://myFallbackServer.com/bandwidth/webhooks/conferenceRedirect
-        redirectFallbackMethod:
-          $ref: '#/components/schemas/redirectMethodEnum'
-        fallbackUsername:
-          $ref: '#/components/schemas/username'
-        fallbackPassword:
-          $ref: '#/components/schemas/password'
+            Updates this member's hold status. Has no effect if omitted.
+        callIdsToCoach:
+          nullable: true
+          type: array
+          items:
+            type: string
+          description: >-
+            If this member had a value set for `callIdsToCoach` in its
+            [Conference](/docs/voice/bxml/conference) verb or this list was
+            added with a previous PUT request to modify the member, this is that
+            list of calls.
+
+
+            Modifies the calls that this member is coaching. Has no effect if
+            omitted. See the documentation for the
+            [Conference](/docs/voice/bxml/conference) verb for more details
+            about coaching.
+
+
+            Note that this will not add the matching calls to the conference;
+            each call must individually execute a Conference verb to join.
+          example: c-25ac29a2-1331029c-2cb0-4a07-b215-b22865662d85
     conferenceRecordingMetadata:
       type: object
       properties:
@@ -4829,7 +4869,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/conferenceMember'
+            $ref: '#/components/schemas/modifyConferenceMember'
   responses:
     createCallResponse:
       description: Call Successfully Created
