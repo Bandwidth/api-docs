@@ -3,6 +3,7 @@ import Layout from '@theme/Layout';
 import twoColumnStyles from '../../css/twoColumn.module.css';
 import sdkStyles from '../../css/sdks.module.css';
 import ItemGrid from '../../components/ItemGrid';
+import { Player } from '@lottiefiles/react-lottie-player';
 
 const sdkList = [
     {
@@ -37,7 +38,7 @@ const sdkList = [
     },
 ];
 
-export default function Apis() {
+export default function Sdks() {
     return (
         <Layout
             title="Bandwidth SDKs"
@@ -49,7 +50,9 @@ export default function Apis() {
                         <h1>Bandwidth SDKs</h1>
                         <h2>Build with Bandwidth</h2>
                     </div>
-                    <div className={sdkStyles.image}></div>
+                    <div className={sdkStyles.image}>
+                        <Player src="https://assets3.lottiefiles.com/packages/lf20_ko8ud57v.json"  background="transparent"  style={{ width: '90%', height: '90%' }} loop autoplay></Player>
+                    </div>
                 </div>
                 <div className={twoColumnStyles.right}>
                     <ItemGrid itemList={sdkList}/>
