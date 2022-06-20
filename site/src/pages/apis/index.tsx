@@ -62,7 +62,7 @@ const ApiList = [
     },
     {
         title: 'Insights',
-        Svg: require('../../../static/img/icon-voice-complex-no-bg.svg').default,
+        Svg: require('../../../static/img/icon-insights-complex-no-bg.svg').default,
         style: apiStyles.apiSvg,
         link: '/apis/insights'
     }
