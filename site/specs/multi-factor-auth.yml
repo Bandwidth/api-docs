@@ -12,6 +12,7 @@ info:
   version: 3.0.1
 servers:
   - url: https://mfa.bandwidth.com/api/v1
+    description: Production
 paths:
   /accounts/{accountId}/code/voice:
     post:
@@ -23,26 +24,18 @@ paths:
       parameters:
         - $ref: '#/components/parameters/accountId'
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/codeRequestSchema'
-        required: true
+        $ref: '#/components/requestBodies/codeRequest'
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/voiceCodeResponse'
+          $ref: '#/components/responses/voiceCodeResponse'
         '400':
-          $ref: '#/components/responses/badRequestError'
+          $ref: '#/components/responses/mfaBadRequestError'
         '401':
-          $ref: '#/components/responses/unauthorizedError'
+          $ref: '#/components/responses/mfaUnauthorizedError'
         '403':
-          $ref: '#/components/responses/forbiddenError'
+          $ref: '#/components/responses/mfaForbiddenError'
         '500':
-          $ref: '#/components/responses/internalServerError'
+          $ref: '#/components/responses/mfaInternalServerError'
   /accounts/{accountId}/code/messaging:
     post:
       tags:
@@ -53,26 +46,18 @@ paths:
       parameters:
         - $ref: '#/components/parameters/accountId'
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/codeRequestSchema'
-        required: true
+        $ref: '#/components/requestBodies/codeRequest'
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/messagingCodeResponse'
+          $ref: '#/components/responses/messagingCodeResponse'
         '400':
-          $ref: '#/components/responses/badRequestError'
+          $ref: '#/components/responses/mfaBadRequestError'
         '401':
-          $ref: '#/components/responses/unauthorizedError'
+          $ref: '#/components/responses/mfaUnauthorizedError'
         '403':
-          $ref: '#/components/responses/forbiddenError'
+          $ref: '#/components/responses/mfaForbiddenError'
         '500':
-          $ref: '#/components/responses/internalServerError'
+          $ref: '#/components/responses/mfaInternalServerError'
   /accounts/{accountId}/code/verify:
     post:
       tags:
@@ -83,31 +68,23 @@ paths:
       parameters:
         - $ref: '#/components/parameters/accountId'
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/verifyRequestSchema'
-        required: true
+        $ref: '#/components/requestBodies/codeVerify'
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/verifyCodeResponse'
+          $ref: '#/components/responses/verifyCodeResponse'
         '400':
-          $ref: '#/components/responses/badRequestError'
+          $ref: '#/components/responses/mfaBadRequestError'
         '401':
-          $ref: '#/components/responses/unauthorizedError'
+          $ref: '#/components/responses/mfaUnauthorizedError'
         '403':
-          $ref: '#/components/responses/forbiddenError'
+          $ref: '#/components/responses/mfaForbiddenError'
         '429':
-          $ref: '#/components/responses/tooManyRequestsError'
+          $ref: '#/components/responses/mfaTooManyRequestsError'
         '500':
-          $ref: '#/components/responses/internalServerError'
+          $ref: '#/components/responses/mfaInternalServerError'
 components:
   schemas:
-    codeRequestSchema:
+    codeRequest:
       type: object
       properties:
         to:
@@ -173,7 +150,7 @@ components:
           type: string
           description: Messaging API Message ID
           example: 9e0df4ca-b18d-40d7-a59f-82fcdf5ae8e6
-    verifyRequestSchema:
+    verifyCodeRequest:
       type: object
       properties:
         to:
@@ -242,35 +219,53 @@ components:
             forbidden.
           example: Missing Authentication Token
   responses:
-    badRequestError:
+    voiceCodeResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/voiceCodeResponse'
+    messagingCodeResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/messagingCodeResponse'
+    verifyCodeResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/verifyCodeResponse'
+    mfaBadRequestError:
       description: Bad Request
       headers: {}
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/mfaRequestError'
-    unauthorizedError:
+    mfaUnauthorizedError:
       description: Unauthorized
       headers: {}
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/mfaUnauthorizedRequestError'
-    forbiddenError:
+    mfaForbiddenError:
       description: Forbidden
       headers: {}
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/mfaForbiddenRequestError'
-    tooManyRequestsError:
+    mfaTooManyRequestsError:
       description: Too Many Requests
       headers: {}
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/mfaRequestError'
-    internalServerError:
+    mfaInternalServerError:
       description: Internal Server Error
       headers: {}
       content:
@@ -287,6 +282,21 @@ components:
       explode: false
       schema:
         type: string
+  requestBodies:
+    codeRequest:
+      description: MFA code request body.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/codeRequest'
+    codeVerify:
+      description: MFA code verify request body.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/verifyCodeRequest'
   securitySchemes:
     Basic Authentication:
       type: http
