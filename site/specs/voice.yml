@@ -434,18 +434,1066 @@ paths:
           $ref: '#/components/responses/tooManyRequestsError'
         '500':
           $ref: '#/components/responses/internalServerError'
-  /accounts/{accountId}/statistics:
+  /accounts/{accountId}/conferences:
     get:
       tags:
-        - Statistics
-      summary: Get Account Statistics
-      description: Returns details about the current state of the account.
-      operationId: getStatistics
+        - Conferences
+      summary: Get Conferences
+      description: >-
+        Returns a max of 1000 conferences, sorted by `createdTime` from oldest
+        to newest.
+
+
+        **NOTE:** If the number of conferences in the account is bigger than
+        `pageSize`, a `Link` header (with format `<{url}>; rel="next"`) will be
+        returned in the response. The url can be used to retrieve the next page
+        of conference records.
+      operationId: listConferences
       parameters:
         - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/name'
+        - $ref: '#/components/parameters/minCreatedTime'
+        - $ref: '#/components/parameters/maxCreatedTime'
+        - $ref: '#/components/parameters/pageSize'
+        - $ref: '#/components/parameters/pageToken'
       responses:
         '200':
-          $ref: '#/components/responses/getStatisticsResponse'
+          $ref: '#/components/responses/listConferencesResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/notAllowedError'
+        '415':
+          $ref: '#/components/responses/unsupportedMediaTypeError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+  /accounts/{accountId}/conferences/{conferenceId}:
+    get:
+      tags:
+        - Conferences
+      summary: Get Conference Information
+      description: Returns information about the specified conference.
+      operationId: getConference
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/conferenceId'
+      responses:
+        '200':
+          $ref: '#/components/responses/getConferenceResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/notAllowedError'
+        '415':
+          $ref: '#/components/responses/unsupportedMediaTypeError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      x-codeSamples:
+        - lang: cURL
+          source: >
+            curl
+            'https://voice.bandwidth.com/api/v2/accounts/12345/conferences/conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8'
+            \
+                -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ='
+        - lang: C#
+          source: |
+            using System;
+            using System.Threading.Tasks;
+            using Bandwidth.Standard;
+            using Bandwidth.Standard.Exceptions;
+            using Bandwidth.Standard.Voice.Models;
+
+            class Program
+            {
+                static async Task Main(string[] args)
+                {
+                    var username = "api-username";
+                    var password = "api-pasword";
+                    var accountId = "12345";
+
+                    var conferenceId = "conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8";
+
+                    var client = new BandwidthClient.Builder()
+                        .VoiceBasicAuthCredentials(username, password)
+                        .Build();
+
+                    try
+                    {
+                        var response = await client.Voice.APIController.GetConferenceAsync(accountId, conferenceId);
+                        Console.WriteLine(response.Data);
+                    }
+                    catch (ApiException e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+            }
+        - lang: Java
+          source: |
+            import com.bandwidth.BandwidthClient;
+            import com.bandwidth.http.response.ApiResponse;
+            import com.bandwidth.voice.models.ConferenceState;
+
+            import java.util.concurrent.CompletableFuture;
+            import java.util.concurrent.ExecutionException;
+
+            public class Sample {
+                public static final String USERNAME = "api-username";
+                public static final String PASSWORD = "api-password";
+                public static final String ACCOUNT_ID = "12345";
+
+                public static void main(String[] args) {
+                    // Conference id is returned after successfully creating a conference.
+                    String conferenceId = "conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8";
+
+                    BandwidthClient client = new BandwidthClient.Builder()
+                            .voiceBasicAuthCredentials(USERNAME, PASSWORD)
+                            .build();
+
+                    try {
+                        CompletableFuture<ApiResponse<ConferenceState>> completableFuture = client.getVoiceClient().getAPIController().getConferenceAsync(ACCOUNT_ID, conferenceId);
+                        System.out.println(completableFuture.get().getResult());
+                    } catch (InterruptedException | ExecutionException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }
+        - lang: Node.js
+          source: >
+            import { Client, ApiController } from '@bandwidth/voice';
+
+
+            const BW_USERNAME = "api-username";
+
+            const BW_PASSWORD = "api-password";
+
+            const BW_ACCOUNT_ID = "12345";
+
+
+            const client = new Client({
+              basicAuthUserName: BW_USERNAME,
+              basicAuthPassword: BW_PASSWORD
+            });
+
+
+            const controller = new ApiController(client);
+
+
+            const accountId = BW_ACCOUNT_ID;
+
+
+            const conferenceId =
+            'conf-abc12345-6defabc1-2345-6def-abc1-23456defabc1';
+
+
+            const getConference = async function() {
+              try {
+                  const response = await controller.getConference(accountId, conferenceId);
+                  console.log(response)
+              } catch(error) {
+                  console.error(error);
+              }
+            }
+
+
+            getConference();
+        - lang: PHP
+          source: |
+            <?php
+
+            require "vendor/autoload.php";
+
+            api-username = "api-username";
+            api-password = "api-pasword";
+            12345 = "12345";
+
+            $config = new BandwidthLib\Configuration(
+                array(
+                    'voiceBasicAuthUserName' => $BW_USERNAME,
+                    'voiceBasicAuthPassword' => $BW_PASSWORD,
+                )
+            );
+            $client = new BandwidthLib\BandwidthClient($config);
+
+            $voiceClient = $client->getVoice()->getClient();
+
+            $conferenceId = "conf-1234";
+
+            try {
+                $response = $voiceClient->getConference($BW_ACCOUNT_ID, $conferenceId);
+                print_r($response->getResult()->name);
+            } catch (BandwidthLib\APIException $e) {
+                print_r($e->getResponseCode());
+            }
+        - lang: Python
+          source: |
+            from bandwidth.bandwidth_client import BandwidthClient
+            from bandwidth.exceptions.api_exception import APIException
+
+            import os
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = BandwidthClient(
+                voice_basic_auth_user_name=BW_USERNAME,
+                voice_basic_auth_password=BW_PASSWORD
+            )
+            voice_client = bandwidth_client.voice_client.client
+
+            conference_id = "conf-1234"
+
+            try:
+                response = voice_client.get_conference(BW_ACCOUNT_ID, conference_id)
+                print(response.body.name)
+            except APIException as e:
+                print(e.response_code)
+        - lang: Ruby
+          source: |
+            require 'bandwidth'
+              
+            include Bandwidth
+            include Bandwidth::Voice
+
+            bandwidth_client = Bandwidth::Client.new(
+                voice_basic_auth_user_name: "api-username",
+                voice_basic_auth_password: "api-password"
+            )
+
+            voice_client = bandwidth_client.voice_client.client
+
+            conference_id = "conf-1234"
+
+            begin
+                response = voice_client.get_conference("12345", conference_id)
+                print(response.data.name)
+            rescue APIException => e
+                puts e.response_code
+            end
+    post:
+      tags:
+        - Conferences
+      summary: Update Conference
+      description: Update the conference state.
+      operationId: updateConference
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/conferenceId'
+      requestBody:
+        $ref: '#/components/requestBodies/modifyConferenceRequest'
+      responses:
+        '204':
+          description: Conference successfully modified
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/notAllowedError'
+        '415':
+          $ref: '#/components/responses/unsupportedMediaTypeError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+  /accounts/{accountId}/conferences/{conferenceId}/bxml:
+    put:
+      tags:
+        - Conferences
+      summary: Update Conference BXML
+      description: Update the conference BXML document.
+      operationId: updateConferenceBxml
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/conferenceId'
+      requestBody:
+        $ref: '#/components/requestBodies/updateConferenceBxmlRequest'
+      responses:
+        '204':
+          description: Conference successfully modified
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/notAllowedError'
+        '415':
+          $ref: '#/components/responses/unsupportedMediaTypeError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+  /accounts/{accountId}/conferences/{conferenceId}/members/{memberId}:
+    get:
+      tags:
+        - Conferences
+      summary: Get Conference Member
+      description: Returns information about the specified conference member.
+      operationId: getConferenceMember
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/conferenceId'
+        - $ref: '#/components/parameters/memberId'
+      responses:
+        '200':
+          $ref: '#/components/responses/getConferenceMemberResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/notAllowedError'
+        '415':
+          $ref: '#/components/responses/unsupportedMediaTypeError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      x-codeSamples:
+        - lang: cURL
+          source: >
+            curl
+            'https://voice.bandwidth.com/api/v2/accounts/12345/conferences/conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8/members/c-95ac8d8d-b81437f5-4586-4d5b-9b46-29f8b3fe0aaf'
+            \
+                -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ='
+        - lang: C#
+          source: |
+            using System;
+            using System.Threading.Tasks;
+            using Bandwidth.Standard;
+            using Bandwidth.Standard.Exceptions;
+            using Bandwidth.Standard.Voice.Models;
+
+            class Program
+            {
+                static async Task Main(string[] args)
+                {
+                    var username = "api-username";
+                    var password = "api-pasword";
+                    var accountId = "12345";
+
+                    var conferenceId = "conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8";
+                    var memberId = "c-95ac8d8d-b81437f5-4586-4d5b-9b46-29f8b3fe0aaf";
+
+                    var client = new BandwidthClient.Builder()
+                        .VoiceBasicAuthCredentials(username, password)
+                        .Build();
+
+                    try
+                    {
+                        var response = await client.Voice.APIController.GetConferenceMemberAsync(accountId, conferenceId, memberId);
+                        Console.WriteLine(response.Data);
+                    }
+                    catch (ApiException e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+            }
+        - lang: Java
+          source: |
+            import com.bandwidth.BandwidthClient;
+            import com.bandwidth.http.response.ApiResponse;
+            import com.bandwidth.voice.models.ConferenceMemberState;
+
+            import java.util.concurrent.CompletableFuture;
+            import java.util.concurrent.ExecutionException;
+
+            public class Sample {
+                public static final String USERNAME = "api-username";
+                public static final String PASSWORD = "api-password";
+                public static final String ACCOUNT_ID = "12345";
+
+                public static void main(String[] args) {
+                    String conferenceId = "conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8";
+                    String memberId = "c-95ac8d8d-b81437f5-4586-4d5b-9b46-29f8b3fe0aaf";
+
+                    BandwidthClient client = new BandwidthClient.Builder()
+                            .voiceBasicAuthCredentials(USERNAME, PASSWORD)
+                            .build();
+
+                    try {
+                        CompletableFuture<ApiResponse<ConferenceMemberState>> completableFuture = client.getVoiceClient().getAPIController().getConferenceMemberAsync(ACCOUNT_ID, conferenceId, memberId);
+                        System.out.println(completableFuture.get().getResult());
+                    } catch (InterruptedException | ExecutionException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }
+        - lang: Node.js
+          source: >
+            import { Client, ApiController } from '@bandwidth/voice';
+
+
+            const BW_USERNAME = "api-username";
+
+            const BW_PASSWORD = "api-password";
+
+            const BW_ACCOUNT_ID = "12345";
+
+
+            const client = new Client({
+              basicAuthUserName: BW_USERNAME,
+              basicAuthPassword: BW_PASSWORD
+            });
+
+
+            const controller = new ApiController(client);
+
+
+            const accountId = BW_ACCOUNT_ID;
+
+
+            const conferenceId =
+            'conf-abc12345-6defabc1-2345-6def-abc1-23456defabc1';
+
+            const memberId = 'c-abc12345-6defabc1-2345-6def-abc1-23456defabc1';
+
+
+            const getConferenceMember = async function() {
+              try {
+                  const response = await controller.getConferenceMember(accountId, conferenceId, memberId);
+                  console.log(response)
+              } catch(error) {
+                  console.error(error);
+              }
+            }
+
+
+            getConferenceMember();
+        - lang: PHP
+          source: |
+            <?php
+
+            require "vendor/autoload.php";
+
+            api-username = "api-username";
+            api-password = "api-pasword";
+            12345 = "12345";
+
+            $config = new BandwidthLib\Configuration(
+                array(
+                    'voiceBasicAuthUserName' => $BW_USERNAME,
+                    'voiceBasicAuthPassword' => $BW_PASSWORD,
+                )
+            );
+            $client = new BandwidthLib\BandwidthClient($config);
+
+            $voiceClient = $client->getVoice()->getClient();
+
+            $conferenceId = "conf-1234";
+            $memberId = "m-1234";
+
+            try {
+                $response = $voiceClient->getConferenceMember($BW_ACCOUNT_ID, $conferenceId, $memberId);
+                print_r($response->getResult()->memberUrl);
+            } catch (BandwidthLib\APIException $e) {
+                print_r($e->getResponseCode());
+            }
+        - lang: Python
+          source: |
+            from bandwidth.bandwidth_client import BandwidthClient
+            from bandwidth.exceptions.api_exception import APIException
+
+            import os
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = BandwidthClient(
+                voice_basic_auth_user_name=BW_USERNAME,
+                voice_basic_auth_password=BW_PASSWORD
+            )
+            voice_client = bandwidth_client.voice_client.client
+
+            conference_id = "conf-1234"
+            member_id = "m-1234"
+
+            try:
+                response = voice_client.get_conference_member(BW_ACCOUNT_ID, conference_id, member_id)
+                print(response.body.member_url)
+            except APIException as e:
+                print(e.response_code)
+        - lang: Ruby
+          source: |
+            require 'bandwidth'
+              
+            include Bandwidth
+            include Bandwidth::Voice
+
+            bandwidth_client = Bandwidth::Client.new(
+                voice_basic_auth_user_name: "api-username",
+                voice_basic_auth_password: "api-password"
+            )
+
+            voice_client = bandwidth_client.voice_client.client
+
+            conference_id = "conf-1234"
+            member_id = "m-1234"
+
+            begin
+                response = voice_client.get_conference_member("12345", conference_id, member_id)
+                puts response.data.member_url
+            rescue APIException => e
+                puts e.response_code
+            end
+    put:
+      tags:
+        - Conferences
+      summary: Update Conference Member
+      description: Updates settings for a particular conference member.
+      operationId: updateConferenceMember
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/conferenceId'
+        - $ref: '#/components/parameters/memberId'
+      requestBody:
+        $ref: '#/components/requestBodies/updateConferenceMemberRequest'
+      responses:
+        '204':
+          description: Conference member successfully modified
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/notAllowedError'
+        '415':
+          $ref: '#/components/responses/unsupportedMediaTypeError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+  /accounts/{accountId}/conferences/{conferenceId}/recordings:
+    get:
+      tags:
+        - Conferences
+      summary: Get Conference Recordings
+      description: >-
+        Returns a (potentially empty) list of metadata for the recordings that
+        took place during the specified conference.
+      operationId: listConferenceRecordings
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/conferenceId'
+      responses:
+        '200':
+          $ref: '#/components/responses/listConferenceRecordingsResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/notAllowedError'
+        '415':
+          $ref: '#/components/responses/unsupportedMediaTypeError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+  /accounts/{accountId}/conferences/{conferenceId}/recordings/{recordingId}:
+    get:
+      tags:
+        - Conferences
+      summary: Get Conference Recording Information
+      description: Returns metadata for the specified recording.
+      operationId: getConferenceRecording
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/conferenceId'
+        - $ref: '#/components/parameters/recordingId'
+      responses:
+        '200':
+          $ref: '#/components/responses/getConferenceRecordingResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/notAllowedError'
+        '415':
+          $ref: '#/components/responses/unsupportedMediaTypeError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      x-codeSamples:
+        - lang: cURL
+          source: >
+            curl
+            'https://voice.bandwidth.com/api/v2/accounts/12345/conferences/conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8/recordings/r-d68201ef-d53e-4c6d-a743-1c1283909d41'
+            \
+                -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ='
+        - lang: C#
+          source: |
+            using System;
+            using System.Threading.Tasks;
+            using Bandwidth.Standard;
+            using Bandwidth.Standard.Exceptions;
+            using Bandwidth.Standard.Voice.Models;
+
+            class Program
+            {
+                static async Task Main(string[] args)
+                {
+                    var username = "api-username";
+                    var password = "api-pasword";
+                    var accountId = "12345";
+
+                    var conferenceId = "conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8";
+                    var recordingId = "r-d68201ef-d53e-4c6d-a743-1c1283909d41";
+
+                    var client = new BandwidthClient.Builder()
+                        .VoiceBasicAuthCredentials(username, password)
+                        .Build();
+
+                    try
+                    {
+                        var response = await client.Voice.APIController.GetConferenceRecordingAsync(accountId, conferenceId, recordingId);
+                        Console.WriteLine(response.Data);
+                    }
+                    catch (ApiException e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+            }
+        - lang: Java
+          source: |
+            import com.bandwidth.BandwidthClient;
+            import com.bandwidth.http.response.ApiResponse;
+            import com.bandwidth.voice.models.CallRecordingMetadata;
+
+            import java.util.concurrent.CompletableFuture;
+            import java.util.concurrent.ExecutionException;
+
+            public class Sample {
+                public static final String USERNAME = "api-username";
+                public static final String PASSWORD = "api-password";
+                public static final String ACCOUNT_ID = "12345";
+
+                public static void main(String[] args) {
+                    String conferenceId = "conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8";
+                    String recordingId = "r-d68201ef-d53e-4c6d-a743-1c1283909d41";
+
+                    BandwidthClient client = new BandwidthClient.Builder()
+                            .voiceBasicAuthCredentials(USERNAME, PASSWORD)
+                            .build();
+
+                    try {
+                        CompletableFuture<ApiResponse<CallRecordingMetadata>> completableFuture = client.getVoiceClient().getAPIController().getConferenceRecordingAsync(ACCOUNT_ID, conferenceId, recordingId);
+                        System.out.println(completableFuture.get().getResult());
+                    } catch (InterruptedException | ExecutionException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }
+        - lang: Node.js
+          source: >
+            import { Client, ApiController } from '@bandwidth/voice';
+
+
+            const BW_USERNAME = "api-username";
+
+            const BW_PASSWORD = "api-password";
+
+            const BW_ACCOUNT_ID = "12345";
+
+
+            const client = new Client({
+              basicAuthUserName: BW_USERNAME,
+              basicAuthPassword: BW_PASSWORD
+            });
+
+
+            const controller = new ApiController(client);
+
+
+            const accountId = BW_ACCOUNT_ID;
+
+
+            const conferenceId =
+            'conf-abc12345-6defabc1-2345-6def-abc1-23456defabc1';
+
+            const recordingId = 'r-abc12345-6def-abc1-2345-6defabc12345';
+
+
+            const getConferenceRecording = async function() {
+              try {
+                  const response = await controller.getConferenceRecording(accountId, conferenceId, recordingId);
+                  console.log(response)
+              } catch(error) {
+                  console.error(error);
+              }
+            }
+
+
+            getConferenceRecording();
+        - lang: PHP
+          source: |
+            <?php
+
+            require "vendor/autoload.php";
+
+            api-username = "api-username";
+            api-password = "api-pasword";
+            12345 = "12345";
+
+            $config = new BandwidthLib\Configuration(
+                array(
+                    'voiceBasicAuthUserName' => $BW_USERNAME,
+                    'voiceBasicAuthPassword' => $BW_PASSWORD,
+                )
+            );
+            $client = new BandwidthLib\BandwidthClient($config);
+
+            $voiceClient = $client->getVoice()->getClient();
+
+            $conferenceId = "c-1234";
+            $recordingId = "r-1234";
+
+            try {
+                $response = $voiceClient->getConferenceRecording($BW_ACCOUNT_ID, $conferenceId, $recordingId);
+                print_r($response->getResult()->applicationId);
+            } catch (BandwidthLib\APIException $e) {
+                print_r($e->getResponseCode());
+            }
+        - lang: Python
+          source: |
+            from bandwidth.bandwidth_client import BandwidthClient
+            from bandwidth.exceptions.api_exception import APIException
+
+            import os
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = BandwidthClient(
+                voice_basic_auth_user_name=BW_USERNAME,
+                voice_basic_auth_password=BW_PASSWORD
+            )
+            voice_client = bandwidth_client.voice_client.client
+
+            conference_id = "conf-1234"
+            recording_id = "r-1234"
+
+            try:
+                response = voice_client.get_conference_recording(BW_ACCOUNT_ID, conference_id, recording_id)
+                print(response.body.application_id)
+            except APIException as e:
+                print(e.response_code)
+        - lang: Ruby
+          source: |
+            require 'bandwidth'
+
+            include Bandwidth
+            include Bandwidth::Voice
+
+            bandwidth_client = Bandwidth::Client.new(
+                voice_basic_auth_user_name: "api-username",
+                voice_basic_auth_password: "api-password"
+            )
+
+            voice_client = bandwidth_client.voice_client.client
+
+            conference_id = "conf-1234"
+            recording_id = "r-1234"
+
+            begin
+                response = voice_client.get_conference_recording("12345", conference_id, recording_id)
+                puts response.body.application_id
+            rescue APIException => e
+                puts e.response_code
+            end
+  /accounts/{accountId}/conferences/{conferenceId}/recordings/{recordingId}/media:
+    get:
+      tags:
+        - Conferences
+      summary: Download Conference Recording
+      description: Downloads the specified recording file.
+      operationId: downloadConferenceRecording
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/conferenceId'
+        - $ref: '#/components/parameters/recordingId'
+      responses:
+        '200':
+          $ref: '#/components/responses/downloadCallRecordingResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/notAllowedError'
+        '415':
+          $ref: '#/components/responses/unsupportedMediaTypeError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      x-codeSamples:
+        - lang: cURL
+          source: >
+            curl
+            'https://voice.bandwidth.com/api/v2/accounts/12345/conferences/conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8/recordings/r-d68201ef-d53e-4c6d-a743-1c1283909d41/media'
+            \
+                -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ='
+        - lang: C#
+          source: |
+            using System;
+            using System.Threading.Tasks;
+            using Bandwidth.Standard;
+            using Bandwidth.Standard.Exceptions;
+            using Bandwidth.Standard.Voice.Models;
+
+            class Program
+            {
+                static async Task Main(string[] args)
+                {
+                    var username = "api-username";
+                    var password = "api-pasword";
+                    var accountId = "12345";
+
+                    var conferenceId = "conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8";
+                    // Recording id is returned after retrieving a recording from the call.
+                    var recordingId = "r-d68201ef-d53e-4c6d-a743-1c1283909d41";
+
+                    var client = new BandwidthClient.Builder()
+                        .VoiceBasicAuthCredentials(username, password)
+                        .Build();
+
+                    try
+                    {
+                        var response = await client.Voice.APIController.GetDownloadConferenceRecordingAsync(accountId, conferenceId, recordingId);
+                        Console.WriteLine(response.Data);
+                    }
+                    catch (ApiException e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+            }
+        - lang: Java
+          source: |
+            import com.bandwidth.BandwidthClient;
+            import com.bandwidth.http.response.ApiResponse;
+            import com.bandwidth.voice.models.DynamicResponse;
+
+            import java.util.concurrent.CompletableFuture;
+            import java.util.concurrent.ExecutionException;
+
+            public class Sample {
+                public static final String USERNAME = "api-username";
+                public static final String PASSWORD = "api-password";
+                public static final String ACCOUNT_ID = "12345";
+
+                public static void main(String[] args) {
+                    // Conference id is returned after successfully creating a conference.
+                    String conferenceId = "conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8";
+                    // Recording id is returned after retrieving a recording from the call.
+                    String recordingId = "r-d68201ef-d53e-4c6d-a743-1c1283909d41";
+
+                    BandwidthClient client = new BandwidthClient.Builder()
+                            .voiceBasicAuthCredentials(USERNAME, PASSWORD)
+                            .build();
+
+                    try {
+                        CompletableFuture<ApiResponse<DynamicResponse>> completableFuture = client.getVoiceClient().getAPIController().getDownloadConferenceRecordingAsync(ACCOUNT_ID, conferenceId, recordingId);
+                        System.out.println(completableFuture.get().getResult());
+                    } catch (InterruptedException | ExecutionException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }
+        - lang: Node.js
+          source: >
+            import { Client, ApiController } from '@bandwidth/voice';
+
+
+            const BW_USERNAME = "api-username";
+
+            const BW_PASSWORD = "api-password";
+
+            const BW_ACCOUNT_ID = "12345";
+
+
+            const client = new Client({
+              basicAuthUserName: BW_USERNAME,
+              basicAuthPassword: BW_PASSWORD
+            });
+
+
+            const controller = new ApiController(client);
+
+
+            const accountId = BW_ACCOUNT_ID;
+
+
+            const conferenceId =
+            'conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8';
+
+            const recordingId = 'r-abc12345-6def-abc1-2345-6defabc12345';
+
+
+            try {
+                const response = await controller.getDownloadConferenceRecording(accountId, conferenceId, recordingId);
+                console.log(response);
+            } catch (error) {
+                console.error(error);
+            }
+        - lang: PHP
+          source: |
+            <?php
+              
+            require "vendor/autoload.php";
+
+            api-username = "api-username";
+            api-password = "api-pasword";
+            12345 = "12345";
+
+            $config = new BandwidthLib\Configuration(
+                array(
+                    'voiceBasicAuthUserName' => $BW_USERNAME,
+                    'voiceBasicAuthPassword' => $BW_PASSWORD,
+                )
+            );
+            $client = new BandwidthLib\BandwidthClient($config);
+
+            $voiceClient = $client->getVoice()->getClient();
+
+            $conferenceId = "conf-1234";
+            $recordingId = "r-1234";
+
+            try {
+                $response = $voiceClient->getDownloadConferenceRecording($BW_ACCOUNT_ID, $conferenceId, $recordingId);
+                $downloaded_recording = $response->getResult();
+            } catch (BandwidthLib\APIException $e) {
+                print_r($e->getResponseCode());
+            }
+        - lang: Python
+          source: |
+            from bandwidth.bandwidth_client import BandwidthClient
+            from bandwidth.exceptions.api_exception import APIException
+
+            import os
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = BandwidthClient(
+                voice_basic_auth_user_name=BW_USERNAME,
+                voice_basic_auth_password=BW_PASSWORD
+            )
+            voice_client = bandwidth_client.voice_client.client
+
+            conference_id = "conf-1234"
+            recording_id = "r-1234"
+
+            try:
+                response = voice_client.get_download_conference_recording(BW_ACCOUNT_ID, conference_id, recording_id)
+                downloaded_recording = response.body
+            except APIException as e:
+                print(e.response_code)
+        - lang: Ruby
+          source: |
+            require 'bandwidth'
+
+            include Bandwidth
+            include Bandwidth::Voice
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = Bandwidth::Client.new(
+                voice_basic_auth_user_name: BW_USERNAME,
+                voice_basic_auth_password: BW_PASSWORD
+            )
+
+            voice_client = bandwidth_client.voice_client.client
+
+            conference_id = "conf-1234"
+            recording_id = "r-1234"
+
+            begin
+                result = voice_client.get_download_conference_recording(BW_ACCOUNT_ID, conference_id, recording_id)
+                downloaded_recording = result.data
+            rescue APIException => e
+                puts e.response_code
+            end
+  /accounts/{accountId}/recordings:
+    get:
+      tags:
+        - Recordings
+      summary: Get Call Recordings
+      description: >-
+        Returns a list of metadata for the recordings associated with the
+
+        specified account. The list can be filtered by the optional from, to,
+        minStartTime,
+
+        and maxStartTime arguments. The list is capped at 1000 entries and may
+        be
+
+        empty if no recordings match the specified criteria.
+      operationId: listAccountCallRecordings
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/to'
+        - $ref: '#/components/parameters/from'
+        - $ref: '#/components/parameters/minStartTime'
+        - $ref: '#/components/parameters/maxStartTime'
+      responses:
+        '200':
+          $ref: '#/components/responses/listCallRecordingsResponse'
         '400':
           $ref: '#/components/responses/badRequestError'
         '401':
@@ -2281,1066 +3329,18 @@ paths:
             rescue APIException => e
                 puts e.response_code
             end
-  /accounts/{accountId}/conferences:
+  /accounts/{accountId}/statistics:
     get:
       tags:
-        - Conferences
-      summary: Get Conferences
-      description: >-
-        Returns a max of 1000 conferences, sorted by `createdTime` from oldest
-        to newest.
-
-
-        **NOTE:** If the number of conferences in the account is bigger than
-        `pageSize`, a `Link` header (with format `<{url}>; rel="next"`) will be
-        returned in the response. The url can be used to retrieve the next page
-        of conference records.
-      operationId: listConferences
+        - Statistics
+      summary: Get Account Statistics
+      description: Returns details about the current state of the account.
+      operationId: getStatistics
       parameters:
         - $ref: '#/components/parameters/accountId'
-        - $ref: '#/components/parameters/name'
-        - $ref: '#/components/parameters/minCreatedTime'
-        - $ref: '#/components/parameters/maxCreatedTime'
-        - $ref: '#/components/parameters/pageSize'
-        - $ref: '#/components/parameters/pageToken'
       responses:
         '200':
-          $ref: '#/components/responses/listConferencesResponse'
-        '400':
-          $ref: '#/components/responses/badRequestError'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
-        '405':
-          $ref: '#/components/responses/notAllowedError'
-        '415':
-          $ref: '#/components/responses/unsupportedMediaTypeError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestsError'
-        '500':
-          $ref: '#/components/responses/internalServerError'
-  /accounts/{accountId}/conferences/{conferenceId}:
-    get:
-      tags:
-        - Conferences
-      summary: Get Conference Information
-      description: Returns information about the specified conference.
-      operationId: getConference
-      parameters:
-        - $ref: '#/components/parameters/accountId'
-        - $ref: '#/components/parameters/conferenceId'
-      responses:
-        '200':
-          $ref: '#/components/responses/getConferenceResponse'
-        '400':
-          $ref: '#/components/responses/badRequestError'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
-        '405':
-          $ref: '#/components/responses/notAllowedError'
-        '415':
-          $ref: '#/components/responses/unsupportedMediaTypeError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestsError'
-        '500':
-          $ref: '#/components/responses/internalServerError'
-      x-codeSamples:
-        - lang: cURL
-          source: >
-            curl
-            'https://voice.bandwidth.com/api/v2/accounts/12345/conferences/conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8'
-            \
-                -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ='
-        - lang: C#
-          source: |
-            using System;
-            using System.Threading.Tasks;
-            using Bandwidth.Standard;
-            using Bandwidth.Standard.Exceptions;
-            using Bandwidth.Standard.Voice.Models;
-
-            class Program
-            {
-                static async Task Main(string[] args)
-                {
-                    var username = "api-username";
-                    var password = "api-pasword";
-                    var accountId = "12345";
-
-                    var conferenceId = "conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8";
-
-                    var client = new BandwidthClient.Builder()
-                        .VoiceBasicAuthCredentials(username, password)
-                        .Build();
-
-                    try
-                    {
-                        var response = await client.Voice.APIController.GetConferenceAsync(accountId, conferenceId);
-                        Console.WriteLine(response.Data);
-                    }
-                    catch (ApiException e)
-                    {
-                        Console.WriteLine(e.Message);
-                    }
-                }
-            }
-        - lang: Java
-          source: |
-            import com.bandwidth.BandwidthClient;
-            import com.bandwidth.http.response.ApiResponse;
-            import com.bandwidth.voice.models.ConferenceState;
-
-            import java.util.concurrent.CompletableFuture;
-            import java.util.concurrent.ExecutionException;
-
-            public class Sample {
-                public static final String USERNAME = "api-username";
-                public static final String PASSWORD = "api-password";
-                public static final String ACCOUNT_ID = "12345";
-
-                public static void main(String[] args) {
-                    // Conference id is returned after successfully creating a conference.
-                    String conferenceId = "conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8";
-
-                    BandwidthClient client = new BandwidthClient.Builder()
-                            .voiceBasicAuthCredentials(USERNAME, PASSWORD)
-                            .build();
-
-                    try {
-                        CompletableFuture<ApiResponse<ConferenceState>> completableFuture = client.getVoiceClient().getAPIController().getConferenceAsync(ACCOUNT_ID, conferenceId);
-                        System.out.println(completableFuture.get().getResult());
-                    } catch (InterruptedException | ExecutionException e) {
-                        System.out.println(e.getMessage());
-                    }
-                }
-            }
-        - lang: Node.js
-          source: >
-            import { Client, ApiController } from '@bandwidth/voice';
-
-
-            const BW_USERNAME = "api-username";
-
-            const BW_PASSWORD = "api-password";
-
-            const BW_ACCOUNT_ID = "12345";
-
-
-            const client = new Client({
-              basicAuthUserName: BW_USERNAME,
-              basicAuthPassword: BW_PASSWORD
-            });
-
-
-            const controller = new ApiController(client);
-
-
-            const accountId = BW_ACCOUNT_ID;
-
-
-            const conferenceId =
-            'conf-abc12345-6defabc1-2345-6def-abc1-23456defabc1';
-
-
-            const getConference = async function() {
-              try {
-                  const response = await controller.getConference(accountId, conferenceId);
-                  console.log(response)
-              } catch(error) {
-                  console.error(error);
-              }
-            }
-
-
-            getConference();
-        - lang: PHP
-          source: |
-            <?php
-
-            require "vendor/autoload.php";
-
-            api-username = "api-username";
-            api-password = "api-pasword";
-            12345 = "12345";
-
-            $config = new BandwidthLib\Configuration(
-                array(
-                    'voiceBasicAuthUserName' => $BW_USERNAME,
-                    'voiceBasicAuthPassword' => $BW_PASSWORD,
-                )
-            );
-            $client = new BandwidthLib\BandwidthClient($config);
-
-            $voiceClient = $client->getVoice()->getClient();
-
-            $conferenceId = "conf-1234";
-
-            try {
-                $response = $voiceClient->getConference($BW_ACCOUNT_ID, $conferenceId);
-                print_r($response->getResult()->name);
-            } catch (BandwidthLib\APIException $e) {
-                print_r($e->getResponseCode());
-            }
-        - lang: Python
-          source: |
-            from bandwidth.bandwidth_client import BandwidthClient
-            from bandwidth.exceptions.api_exception import APIException
-
-            import os
-
-            BW_USERNAME = "api-username"
-            BW_PASSWORD = "api-password"
-            BW_ACCOUNT_ID = "12345"
-
-            bandwidth_client = BandwidthClient(
-                voice_basic_auth_user_name=BW_USERNAME,
-                voice_basic_auth_password=BW_PASSWORD
-            )
-            voice_client = bandwidth_client.voice_client.client
-
-            conference_id = "conf-1234"
-
-            try:
-                response = voice_client.get_conference(BW_ACCOUNT_ID, conference_id)
-                print(response.body.name)
-            except APIException as e:
-                print(e.response_code)
-        - lang: Ruby
-          source: |
-            require 'bandwidth'
-              
-            include Bandwidth
-            include Bandwidth::Voice
-
-            bandwidth_client = Bandwidth::Client.new(
-                voice_basic_auth_user_name: "api-username",
-                voice_basic_auth_password: "api-password"
-            )
-
-            voice_client = bandwidth_client.voice_client.client
-
-            conference_id = "conf-1234"
-
-            begin
-                response = voice_client.get_conference("12345", conference_id)
-                print(response.data.name)
-            rescue APIException => e
-                puts e.response_code
-            end
-    post:
-      tags:
-        - Conferences
-      summary: Update Conference
-      description: Update the conference state.
-      operationId: updateConference
-      parameters:
-        - $ref: '#/components/parameters/accountId'
-        - $ref: '#/components/parameters/conferenceId'
-      requestBody:
-        $ref: '#/components/requestBodies/modifyConferenceRequest'
-      responses:
-        '204':
-          description: Conference successfully modified
-        '400':
-          $ref: '#/components/responses/badRequestError'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
-        '405':
-          $ref: '#/components/responses/notAllowedError'
-        '415':
-          $ref: '#/components/responses/unsupportedMediaTypeError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestsError'
-        '500':
-          $ref: '#/components/responses/internalServerError'
-  /accounts/{accountId}/conferences/{conferenceId}/bxml:
-    put:
-      tags:
-        - Conferences
-      summary: Update Conference BXML
-      description: Update the conference BXML document.
-      operationId: updateConferenceBxml
-      parameters:
-        - $ref: '#/components/parameters/accountId'
-        - $ref: '#/components/parameters/conferenceId'
-      requestBody:
-        $ref: '#/components/requestBodies/updateConferenceBxmlRequest'
-      responses:
-        '204':
-          description: Conference successfully modified
-        '400':
-          $ref: '#/components/responses/badRequestError'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
-        '405':
-          $ref: '#/components/responses/notAllowedError'
-        '415':
-          $ref: '#/components/responses/unsupportedMediaTypeError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestsError'
-        '500':
-          $ref: '#/components/responses/internalServerError'
-  /accounts/{accountId}/conferences/{conferenceId}/members/{memberId}:
-    get:
-      tags:
-        - Conferences
-      summary: Get Conference Member
-      description: Returns information about the specified conference member.
-      operationId: getConferenceMember
-      parameters:
-        - $ref: '#/components/parameters/accountId'
-        - $ref: '#/components/parameters/conferenceId'
-        - $ref: '#/components/parameters/memberId'
-      responses:
-        '200':
-          $ref: '#/components/responses/getConferenceMemberResponse'
-        '400':
-          $ref: '#/components/responses/badRequestError'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
-        '405':
-          $ref: '#/components/responses/notAllowedError'
-        '415':
-          $ref: '#/components/responses/unsupportedMediaTypeError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestsError'
-        '500':
-          $ref: '#/components/responses/internalServerError'
-      x-codeSamples:
-        - lang: cURL
-          source: >
-            curl
-            'https://voice.bandwidth.com/api/v2/accounts/12345/conferences/conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8/members/c-95ac8d8d-b81437f5-4586-4d5b-9b46-29f8b3fe0aaf'
-            \
-                -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ='
-        - lang: C#
-          source: |
-            using System;
-            using System.Threading.Tasks;
-            using Bandwidth.Standard;
-            using Bandwidth.Standard.Exceptions;
-            using Bandwidth.Standard.Voice.Models;
-
-            class Program
-            {
-                static async Task Main(string[] args)
-                {
-                    var username = "api-username";
-                    var password = "api-pasword";
-                    var accountId = "12345";
-
-                    var conferenceId = "conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8";
-                    var memberId = "c-95ac8d8d-b81437f5-4586-4d5b-9b46-29f8b3fe0aaf";
-
-                    var client = new BandwidthClient.Builder()
-                        .VoiceBasicAuthCredentials(username, password)
-                        .Build();
-
-                    try
-                    {
-                        var response = await client.Voice.APIController.GetConferenceMemberAsync(accountId, conferenceId, memberId);
-                        Console.WriteLine(response.Data);
-                    }
-                    catch (ApiException e)
-                    {
-                        Console.WriteLine(e.Message);
-                    }
-                }
-            }
-        - lang: Java
-          source: |
-            import com.bandwidth.BandwidthClient;
-            import com.bandwidth.http.response.ApiResponse;
-            import com.bandwidth.voice.models.ConferenceMemberState;
-
-            import java.util.concurrent.CompletableFuture;
-            import java.util.concurrent.ExecutionException;
-
-            public class Sample {
-                public static final String USERNAME = "api-username";
-                public static final String PASSWORD = "api-password";
-                public static final String ACCOUNT_ID = "12345";
-
-                public static void main(String[] args) {
-                    String conferenceId = "conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8";
-                    String memberId = "c-95ac8d8d-b81437f5-4586-4d5b-9b46-29f8b3fe0aaf";
-
-                    BandwidthClient client = new BandwidthClient.Builder()
-                            .voiceBasicAuthCredentials(USERNAME, PASSWORD)
-                            .build();
-
-                    try {
-                        CompletableFuture<ApiResponse<ConferenceMemberState>> completableFuture = client.getVoiceClient().getAPIController().getConferenceMemberAsync(ACCOUNT_ID, conferenceId, memberId);
-                        System.out.println(completableFuture.get().getResult());
-                    } catch (InterruptedException | ExecutionException e) {
-                        System.out.println(e.getMessage());
-                    }
-                }
-            }
-        - lang: Node.js
-          source: >
-            import { Client, ApiController } from '@bandwidth/voice';
-
-
-            const BW_USERNAME = "api-username";
-
-            const BW_PASSWORD = "api-password";
-
-            const BW_ACCOUNT_ID = "12345";
-
-
-            const client = new Client({
-              basicAuthUserName: BW_USERNAME,
-              basicAuthPassword: BW_PASSWORD
-            });
-
-
-            const controller = new ApiController(client);
-
-
-            const accountId = BW_ACCOUNT_ID;
-
-
-            const conferenceId =
-            'conf-abc12345-6defabc1-2345-6def-abc1-23456defabc1';
-
-            const memberId = 'c-abc12345-6defabc1-2345-6def-abc1-23456defabc1';
-
-
-            const getConferenceMember = async function() {
-              try {
-                  const response = await controller.getConferenceMember(accountId, conferenceId, memberId);
-                  console.log(response)
-              } catch(error) {
-                  console.error(error);
-              }
-            }
-
-
-            getConferenceMember();
-        - lang: PHP
-          source: |
-            <?php
-
-            require "vendor/autoload.php";
-
-            api-username = "api-username";
-            api-password = "api-pasword";
-            12345 = "12345";
-
-            $config = new BandwidthLib\Configuration(
-                array(
-                    'voiceBasicAuthUserName' => $BW_USERNAME,
-                    'voiceBasicAuthPassword' => $BW_PASSWORD,
-                )
-            );
-            $client = new BandwidthLib\BandwidthClient($config);
-
-            $voiceClient = $client->getVoice()->getClient();
-
-            $conferenceId = "conf-1234";
-            $memberId = "m-1234";
-
-            try {
-                $response = $voiceClient->getConferenceMember($BW_ACCOUNT_ID, $conferenceId, $memberId);
-                print_r($response->getResult()->memberUrl);
-            } catch (BandwidthLib\APIException $e) {
-                print_r($e->getResponseCode());
-            }
-        - lang: Python
-          source: |
-            from bandwidth.bandwidth_client import BandwidthClient
-            from bandwidth.exceptions.api_exception import APIException
-
-            import os
-
-            BW_USERNAME = "api-username"
-            BW_PASSWORD = "api-password"
-            BW_ACCOUNT_ID = "12345"
-
-            bandwidth_client = BandwidthClient(
-                voice_basic_auth_user_name=BW_USERNAME,
-                voice_basic_auth_password=BW_PASSWORD
-            )
-            voice_client = bandwidth_client.voice_client.client
-
-            conference_id = "conf-1234"
-            member_id = "m-1234"
-
-            try:
-                response = voice_client.get_conference_member(BW_ACCOUNT_ID, conference_id, member_id)
-                print(response.body.member_url)
-            except APIException as e:
-                print(e.response_code)
-        - lang: Ruby
-          source: |
-            require 'bandwidth'
-              
-            include Bandwidth
-            include Bandwidth::Voice
-
-            bandwidth_client = Bandwidth::Client.new(
-                voice_basic_auth_user_name: "api-username",
-                voice_basic_auth_password: "api-password"
-            )
-
-            voice_client = bandwidth_client.voice_client.client
-
-            conference_id = "conf-1234"
-            member_id = "m-1234"
-
-            begin
-                response = voice_client.get_conference_member("12345", conference_id, member_id)
-                puts response.data.member_url
-            rescue APIException => e
-                puts e.response_code
-            end
-    put:
-      tags:
-        - Conferences
-      summary: Update Conference Member
-      description: Updates settings for a particular conference member.
-      operationId: updateConferenceMember
-      parameters:
-        - $ref: '#/components/parameters/accountId'
-        - $ref: '#/components/parameters/conferenceId'
-        - $ref: '#/components/parameters/memberId'
-      requestBody:
-        $ref: '#/components/requestBodies/updateConferenceMemberRequest'
-      responses:
-        '204':
-          description: Conference member successfully modified
-        '400':
-          $ref: '#/components/responses/badRequestError'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
-        '405':
-          $ref: '#/components/responses/notAllowedError'
-        '415':
-          $ref: '#/components/responses/unsupportedMediaTypeError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestsError'
-        '500':
-          $ref: '#/components/responses/internalServerError'
-  /accounts/{accountId}/conferences/{conferenceId}/recordings:
-    get:
-      tags:
-        - Conferences
-      summary: Get Conference Recordings
-      description: >-
-        Returns a (potentially empty) list of metadata for the recordings that
-        took place during the specified conference.
-      operationId: listConferenceRecordings
-      parameters:
-        - $ref: '#/components/parameters/accountId'
-        - $ref: '#/components/parameters/conferenceId'
-      responses:
-        '200':
-          $ref: '#/components/responses/listConferenceRecordingsResponse'
-        '400':
-          $ref: '#/components/responses/badRequestError'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
-        '405':
-          $ref: '#/components/responses/notAllowedError'
-        '415':
-          $ref: '#/components/responses/unsupportedMediaTypeError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestsError'
-        '500':
-          $ref: '#/components/responses/internalServerError'
-  /accounts/{accountId}/conferences/{conferenceId}/recordings/{recordingId}:
-    get:
-      tags:
-        - Conferences
-      summary: Get Conference Recording Information
-      description: Returns metadata for the specified recording.
-      operationId: getConferenceRecording
-      parameters:
-        - $ref: '#/components/parameters/accountId'
-        - $ref: '#/components/parameters/conferenceId'
-        - $ref: '#/components/parameters/recordingId'
-      responses:
-        '200':
-          $ref: '#/components/responses/getConferenceRecordingResponse'
-        '400':
-          $ref: '#/components/responses/badRequestError'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
-        '405':
-          $ref: '#/components/responses/notAllowedError'
-        '415':
-          $ref: '#/components/responses/unsupportedMediaTypeError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestsError'
-        '500':
-          $ref: '#/components/responses/internalServerError'
-      x-codeSamples:
-        - lang: cURL
-          source: >
-            curl
-            'https://voice.bandwidth.com/api/v2/accounts/12345/conferences/conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8/recordings/r-d68201ef-d53e-4c6d-a743-1c1283909d41'
-            \
-                -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ='
-        - lang: C#
-          source: |
-            using System;
-            using System.Threading.Tasks;
-            using Bandwidth.Standard;
-            using Bandwidth.Standard.Exceptions;
-            using Bandwidth.Standard.Voice.Models;
-
-            class Program
-            {
-                static async Task Main(string[] args)
-                {
-                    var username = "api-username";
-                    var password = "api-pasword";
-                    var accountId = "12345";
-
-                    var conferenceId = "conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8";
-                    var recordingId = "r-d68201ef-d53e-4c6d-a743-1c1283909d41";
-
-                    var client = new BandwidthClient.Builder()
-                        .VoiceBasicAuthCredentials(username, password)
-                        .Build();
-
-                    try
-                    {
-                        var response = await client.Voice.APIController.GetConferenceRecordingAsync(accountId, conferenceId, recordingId);
-                        Console.WriteLine(response.Data);
-                    }
-                    catch (ApiException e)
-                    {
-                        Console.WriteLine(e.Message);
-                    }
-                }
-            }
-        - lang: Java
-          source: |
-            import com.bandwidth.BandwidthClient;
-            import com.bandwidth.http.response.ApiResponse;
-            import com.bandwidth.voice.models.CallRecordingMetadata;
-
-            import java.util.concurrent.CompletableFuture;
-            import java.util.concurrent.ExecutionException;
-
-            public class Sample {
-                public static final String USERNAME = "api-username";
-                public static final String PASSWORD = "api-password";
-                public static final String ACCOUNT_ID = "12345";
-
-                public static void main(String[] args) {
-                    String conferenceId = "conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8";
-                    String recordingId = "r-d68201ef-d53e-4c6d-a743-1c1283909d41";
-
-                    BandwidthClient client = new BandwidthClient.Builder()
-                            .voiceBasicAuthCredentials(USERNAME, PASSWORD)
-                            .build();
-
-                    try {
-                        CompletableFuture<ApiResponse<CallRecordingMetadata>> completableFuture = client.getVoiceClient().getAPIController().getConferenceRecordingAsync(ACCOUNT_ID, conferenceId, recordingId);
-                        System.out.println(completableFuture.get().getResult());
-                    } catch (InterruptedException | ExecutionException e) {
-                        System.out.println(e.getMessage());
-                    }
-                }
-            }
-        - lang: Node.js
-          source: >
-            import { Client, ApiController } from '@bandwidth/voice';
-
-
-            const BW_USERNAME = "api-username";
-
-            const BW_PASSWORD = "api-password";
-
-            const BW_ACCOUNT_ID = "12345";
-
-
-            const client = new Client({
-              basicAuthUserName: BW_USERNAME,
-              basicAuthPassword: BW_PASSWORD
-            });
-
-
-            const controller = new ApiController(client);
-
-
-            const accountId = BW_ACCOUNT_ID;
-
-
-            const conferenceId =
-            'conf-abc12345-6defabc1-2345-6def-abc1-23456defabc1';
-
-            const recordingId = 'r-abc12345-6def-abc1-2345-6defabc12345';
-
-
-            const getConferenceRecording = async function() {
-              try {
-                  const response = await controller.getConferenceRecording(accountId, conferenceId, recordingId);
-                  console.log(response)
-              } catch(error) {
-                  console.error(error);
-              }
-            }
-
-
-            getConferenceRecording();
-        - lang: PHP
-          source: |
-            <?php
-
-            require "vendor/autoload.php";
-
-            api-username = "api-username";
-            api-password = "api-pasword";
-            12345 = "12345";
-
-            $config = new BandwidthLib\Configuration(
-                array(
-                    'voiceBasicAuthUserName' => $BW_USERNAME,
-                    'voiceBasicAuthPassword' => $BW_PASSWORD,
-                )
-            );
-            $client = new BandwidthLib\BandwidthClient($config);
-
-            $voiceClient = $client->getVoice()->getClient();
-
-            $conferenceId = "c-1234";
-            $recordingId = "r-1234";
-
-            try {
-                $response = $voiceClient->getConferenceRecording($BW_ACCOUNT_ID, $conferenceId, $recordingId);
-                print_r($response->getResult()->applicationId);
-            } catch (BandwidthLib\APIException $e) {
-                print_r($e->getResponseCode());
-            }
-        - lang: Python
-          source: |
-            from bandwidth.bandwidth_client import BandwidthClient
-            from bandwidth.exceptions.api_exception import APIException
-
-            import os
-
-            BW_USERNAME = "api-username"
-            BW_PASSWORD = "api-password"
-            BW_ACCOUNT_ID = "12345"
-
-            bandwidth_client = BandwidthClient(
-                voice_basic_auth_user_name=BW_USERNAME,
-                voice_basic_auth_password=BW_PASSWORD
-            )
-            voice_client = bandwidth_client.voice_client.client
-
-            conference_id = "conf-1234"
-            recording_id = "r-1234"
-
-            try:
-                response = voice_client.get_conference_recording(BW_ACCOUNT_ID, conference_id, recording_id)
-                print(response.body.application_id)
-            except APIException as e:
-                print(e.response_code)
-        - lang: Ruby
-          source: |
-            require 'bandwidth'
-
-            include Bandwidth
-            include Bandwidth::Voice
-
-            bandwidth_client = Bandwidth::Client.new(
-                voice_basic_auth_user_name: "api-username",
-                voice_basic_auth_password: "api-password"
-            )
-
-            voice_client = bandwidth_client.voice_client.client
-
-            conference_id = "conf-1234"
-            recording_id = "r-1234"
-
-            begin
-                response = voice_client.get_conference_recording("12345", conference_id, recording_id)
-                puts response.body.application_id
-            rescue APIException => e
-                puts e.response_code
-            end
-  /accounts/{accountId}/conferences/{conferenceId}/recordings/{recordingId}/media:
-    get:
-      tags:
-        - Conferences
-      summary: Download Conference Recording
-      description: Downloads the specified recording file.
-      operationId: downloadConferenceRecording
-      parameters:
-        - $ref: '#/components/parameters/accountId'
-        - $ref: '#/components/parameters/conferenceId'
-        - $ref: '#/components/parameters/recordingId'
-      responses:
-        '200':
-          $ref: '#/components/responses/downloadCallRecordingResponse'
-        '400':
-          $ref: '#/components/responses/badRequestError'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
-        '405':
-          $ref: '#/components/responses/notAllowedError'
-        '415':
-          $ref: '#/components/responses/unsupportedMediaTypeError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestsError'
-        '500':
-          $ref: '#/components/responses/internalServerError'
-      x-codeSamples:
-        - lang: cURL
-          source: >
-            curl
-            'https://voice.bandwidth.com/api/v2/accounts/12345/conferences/conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8/recordings/r-d68201ef-d53e-4c6d-a743-1c1283909d41/media'
-            \
-                -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ='
-        - lang: C#
-          source: |
-            using System;
-            using System.Threading.Tasks;
-            using Bandwidth.Standard;
-            using Bandwidth.Standard.Exceptions;
-            using Bandwidth.Standard.Voice.Models;
-
-            class Program
-            {
-                static async Task Main(string[] args)
-                {
-                    var username = "api-username";
-                    var password = "api-pasword";
-                    var accountId = "12345";
-
-                    var conferenceId = "conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8";
-                    // Recording id is returned after retrieving a recording from the call.
-                    var recordingId = "r-d68201ef-d53e-4c6d-a743-1c1283909d41";
-
-                    var client = new BandwidthClient.Builder()
-                        .VoiceBasicAuthCredentials(username, password)
-                        .Build();
-
-                    try
-                    {
-                        var response = await client.Voice.APIController.GetDownloadConferenceRecordingAsync(accountId, conferenceId, recordingId);
-                        Console.WriteLine(response.Data);
-                    }
-                    catch (ApiException e)
-                    {
-                        Console.WriteLine(e.Message);
-                    }
-                }
-            }
-        - lang: Java
-          source: |
-            import com.bandwidth.BandwidthClient;
-            import com.bandwidth.http.response.ApiResponse;
-            import com.bandwidth.voice.models.DynamicResponse;
-
-            import java.util.concurrent.CompletableFuture;
-            import java.util.concurrent.ExecutionException;
-
-            public class Sample {
-                public static final String USERNAME = "api-username";
-                public static final String PASSWORD = "api-password";
-                public static final String ACCOUNT_ID = "12345";
-
-                public static void main(String[] args) {
-                    // Conference id is returned after successfully creating a conference.
-                    String conferenceId = "conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8";
-                    // Recording id is returned after retrieving a recording from the call.
-                    String recordingId = "r-d68201ef-d53e-4c6d-a743-1c1283909d41";
-
-                    BandwidthClient client = new BandwidthClient.Builder()
-                            .voiceBasicAuthCredentials(USERNAME, PASSWORD)
-                            .build();
-
-                    try {
-                        CompletableFuture<ApiResponse<DynamicResponse>> completableFuture = client.getVoiceClient().getAPIController().getDownloadConferenceRecordingAsync(ACCOUNT_ID, conferenceId, recordingId);
-                        System.out.println(completableFuture.get().getResult());
-                    } catch (InterruptedException | ExecutionException e) {
-                        System.out.println(e.getMessage());
-                    }
-                }
-            }
-        - lang: Node.js
-          source: >
-            import { Client, ApiController } from '@bandwidth/voice';
-
-
-            const BW_USERNAME = "api-username";
-
-            const BW_PASSWORD = "api-password";
-
-            const BW_ACCOUNT_ID = "12345";
-
-
-            const client = new Client({
-              basicAuthUserName: BW_USERNAME,
-              basicAuthPassword: BW_PASSWORD
-            });
-
-
-            const controller = new ApiController(client);
-
-
-            const accountId = BW_ACCOUNT_ID;
-
-
-            const conferenceId =
-            'conf-95ac8d8d-28e06798-2afe-434c-b0f4-666a79cd47f8';
-
-            const recordingId = 'r-abc12345-6def-abc1-2345-6defabc12345';
-
-
-            try {
-                const response = await controller.getDownloadConferenceRecording(accountId, conferenceId, recordingId);
-                console.log(response);
-            } catch (error) {
-                console.error(error);
-            }
-        - lang: PHP
-          source: |
-            <?php
-              
-            require "vendor/autoload.php";
-
-            api-username = "api-username";
-            api-password = "api-pasword";
-            12345 = "12345";
-
-            $config = new BandwidthLib\Configuration(
-                array(
-                    'voiceBasicAuthUserName' => $BW_USERNAME,
-                    'voiceBasicAuthPassword' => $BW_PASSWORD,
-                )
-            );
-            $client = new BandwidthLib\BandwidthClient($config);
-
-            $voiceClient = $client->getVoice()->getClient();
-
-            $conferenceId = "conf-1234";
-            $recordingId = "r-1234";
-
-            try {
-                $response = $voiceClient->getDownloadConferenceRecording($BW_ACCOUNT_ID, $conferenceId, $recordingId);
-                $downloaded_recording = $response->getResult();
-            } catch (BandwidthLib\APIException $e) {
-                print_r($e->getResponseCode());
-            }
-        - lang: Python
-          source: |
-            from bandwidth.bandwidth_client import BandwidthClient
-            from bandwidth.exceptions.api_exception import APIException
-
-            import os
-
-            BW_USERNAME = "api-username"
-            BW_PASSWORD = "api-password"
-            BW_ACCOUNT_ID = "12345"
-
-            bandwidth_client = BandwidthClient(
-                voice_basic_auth_user_name=BW_USERNAME,
-                voice_basic_auth_password=BW_PASSWORD
-            )
-            voice_client = bandwidth_client.voice_client.client
-
-            conference_id = "conf-1234"
-            recording_id = "r-1234"
-
-            try:
-                response = voice_client.get_download_conference_recording(BW_ACCOUNT_ID, conference_id, recording_id)
-                downloaded_recording = response.body
-            except APIException as e:
-                print(e.response_code)
-        - lang: Ruby
-          source: |
-            require 'bandwidth'
-
-            include Bandwidth
-            include Bandwidth::Voice
-
-            BW_USERNAME = "api-username"
-            BW_PASSWORD = "api-password"
-            BW_ACCOUNT_ID = "12345"
-
-            bandwidth_client = Bandwidth::Client.new(
-                voice_basic_auth_user_name: BW_USERNAME,
-                voice_basic_auth_password: BW_PASSWORD
-            )
-
-            voice_client = bandwidth_client.voice_client.client
-
-            conference_id = "conf-1234"
-            recording_id = "r-1234"
-
-            begin
-                result = voice_client.get_download_conference_recording(BW_ACCOUNT_ID, conference_id, recording_id)
-                downloaded_recording = result.data
-            rescue APIException => e
-                puts e.response_code
-            end
-  /accounts/{accountId}/recordings:
-    get:
-      tags:
-        - Recordings
-      summary: Get Call Recordings
-      description: >-
-        Returns a list of metadata for the recordings associated with the
-
-        specified account. The list can be filtered by the optional from, to,
-        minStartTime,
-
-        and maxStartTime arguments. The list is capped at 1000 entries and may
-        be
-
-        empty if no recordings match the specified criteria.
-      operationId: listAccountCallRecordings
-      parameters:
-        - $ref: '#/components/parameters/accountId'
-        - $ref: '#/components/parameters/to'
-        - $ref: '#/components/parameters/from'
-        - $ref: '#/components/parameters/minStartTime'
-        - $ref: '#/components/parameters/maxStartTime'
-      responses:
-        '200':
-          $ref: '#/components/responses/listCallRecordingsResponse'
+          $ref: '#/components/responses/getStatisticsResponse'
         '400':
           $ref: '#/components/responses/badRequestError'
         '401':
@@ -5136,6 +5136,6 @@ components:
         Example: `Authorization: Basic ZGVtbZpwQDU1dzByZA==`
 tags:
   - name: Calls
-  - name: Recordings
   - name: Conferences
+  - name: Recordings
   - name: Statistics
