@@ -1,0 +1,574 @@
+openapi: 3.0.1
+info:
+  title: Insights
+  contact:
+    name: Bandwidth
+  version: 0.1.2
+  description: API that allows users to query call logs.
+servers:
+  - url: https://insights.bandwidth.com/api/v1.beta/voice
+tags:
+  - name: Voice
+paths:
+  /calls:
+    get:
+      tags:
+        - Voice
+      description: >-
+        Returns a list of call events. Note: at least one query
+
+        parameter, other than accountId, needs to be specified for the query to
+        be valid.
+      operationId: listCalls
+      parameters:
+        - name: accountId
+          in: query
+          description: CRM ID of the account to get calls from.
+          schema:
+            type: string
+            example: '1234567'
+        - name: callId
+          in: query
+          description: |
+            Filter Type: Exact Match, any valid call ID
+          schema:
+            type: string
+            example: 12345678980abcdefghijklmnopqrstuvwxyz
+        - name: startTime
+          in: query
+          description: |
+            Filter Type: Range, use gte or lte
+          schema:
+            type: string
+            example: |
+              gte:2022-05-26T12:00:00Z
+        - name: endTime
+          in: query
+          description: |
+            Filter Type: Range, use gte or lte
+          schema:
+            type: string
+            example: lte:2022-05-26T12:00:50Z
+        - name: answerTime
+          in: query
+          description: 'Filter Type: Range, use gte or lte'
+          schema:
+            type: string
+            example: gte:2022-05-26T12:00:00Z
+        - name: callingNumber
+          in: query
+          description: |-
+            Filter Type: Exact Match, Multimatch, Prefix Match
+
+            Example: 
+
+            * Exact Match: 15555551234
+
+            * Multimatch: 15555551234,15555554321
+
+            * Prefix: 155555512* 
+
+            Format: E.164 or E.164 with '+' prefix
+          schema:
+            type: string
+            example: '+18185559876'
+        - name: callingNumberType
+          in: query
+          description: 'Filter Type: Exact Match, any valid call number type'
+          schema:
+            $ref: '#/components/schemas/callingNumberType'
+        - name: calledNumber
+          in: query
+          description: |-
+            Filter Type: Exact Match, Multimatch, Prefix Match
+
+            Example: 
+
+            * Exact Match: 15555551234
+
+            * Multimatch: 15555551234,15555554321
+
+            * Prefix: 155555512*
+
+            Format: E.164 or E.164 with '+' prefix
+          schema:
+            type: string
+            example: '+18185551234'
+        - name: calledNumberType
+          in: query
+          description: 'Filter Type: Exact Match, any valid call number type'
+          schema:
+            $ref: '#/components/schemas/calledNumberType'
+        - name: callDirection
+          in: query
+          description: 'Filter Type: Exact Match, any valid call direction type'
+          schema:
+            $ref: '#/components/schemas/callDirection'
+        - name: callType
+          in: query
+          description: 'Filter Type: Exact Match, any valid call type'
+          schema:
+            $ref: '#/components/schemas/callType'
+        - name: callResult
+          in: query
+          description: 'Filter Type: Exact Match, any valid call result type'
+          schema:
+            $ref: '#/components/schemas/callResult'
+        - name: sipResponseCode
+          in: query
+          description: 'Filter Type: Exact Match. Examples: 200, 300, 400, 500'
+          schema:
+            type: integer
+            example: 200
+        - name: sort
+          in: query
+          description: >-
+            The field and direction to sort by, combined with a colon. Direction
+            is one of asc, desc
+          schema:
+            type: string
+            example: endTime:desc
+        - name: offset
+          in: query
+          description: Return records starting at the nth record
+          schema:
+            type: integer
+            example: 1
+        - name: limit
+          in: query
+          description: The maximum records to return per page. Default 100
+          schema:
+            type: integer
+            example: 50
+            minimum: 1
+            maximum: 10000
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  links:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/link'
+                    nullable: true
+                  data:
+                    type: object
+                    properties:
+                      totalCount:
+                        type: integer
+                        description: The total count of objects returned in the response
+                        example: 1
+                      calls:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/call'
+                    nullable: true
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/error'
+                    nullable: true
+                    example: null
+                required:
+                  - links
+                  - data
+                  - errors
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/methodNotFoundError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+  /calls/{callId}:
+    get:
+      tags:
+        - Voice
+      description: Returns a single call event.
+      operationId: listCall
+      parameters:
+        - name: callId
+          in: path
+          required: true
+          description: 'Filter Type: Exact Match, any valid call ID'
+          schema:
+            type: string
+            example: 12345678980abcdefghijklmnopqrstuvwxyz
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  links:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/link'
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    properties:
+                      totalCount:
+                        type: integer
+                        description: The total count of objects returned in the response
+                        example: 1
+                      calls:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/call'
+                    nullable: true
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/error'
+                    nullable: true
+                    example: null
+                required:
+                  - links
+                  - data
+                  - errors
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/methodNotFoundError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+components:
+  schemas:
+    call:
+      title: Call
+      type: object
+      properties:
+        accountId:
+          type: string
+          description: CRM ID of the account to get calls from.
+          example: '1234567'
+        callId:
+          type: string
+          description: Unique call identifier
+          example: 1234567890abcdefghijklmnopqrstuvwxyz
+        startTime:
+          type: string
+          description: Timestamp of when the call started, conforming to RFC 3339 format.
+          example: '2022-05-26T17:05:48.960Z'
+        endTime:
+          type: string
+          description: Timestamp of when the call ended, conforming to RFC 3339 format.
+          example: '2022-05-26T17:27:44.400Z'
+        answerTime:
+          type: string
+          description: |-
+            Timestamp of when the call was answered, conforming to RFC 3339
+            format.
+          example: '2022-05-26T17:05:48.960Z'
+        duration:
+          type: integer
+          description: Length of the call in milliseconds
+          example: 500000
+        callingNumber:
+          type: string
+          description: >-
+            Phone number of the caller who initiated the call. Format: E.164
+            with '+' prefix
+          example: '+18185559876'
+        callingNumberType:
+          $ref: '#/components/schemas/callingNumberType'
+        calledNumber:
+          type: string
+          description: >-
+            Phone number of the caller who received the call. Format: E.164 with
+            '+' prefix
+          example: '+18185551234'
+        calledNumberType:
+          $ref: '#/components/schemas/calledNumberType'
+        callDirection:
+          $ref: '#/components/schemas/callDirection'
+        postDialDelay:
+          type: integer
+          description: >-
+            The measurement of how long it takes for a calling party to hear a
+            ringback tone after initiating a call
+          example: 0
+        callType:
+          $ref: '#/components/schemas/callType'
+        callResult:
+          $ref: '#/components/schemas/callResult'
+        sipResponseCode:
+          type: integer
+          description: >-
+            The message generated by a user agent server (UAS) or SIP server to
+            reply to a request generated by a client
+          example: 200
+    genericError:
+      title: Generic Error
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/link'
+          nullable: true
+          example: null
+        data:
+          type: object
+          nullable: true
+          example: null
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/error'
+          nullable: true
+      required:
+        - links
+        - data
+        - errors
+    callingNumberType:
+      type: string
+      description: Number type of the caller who initiated the call.
+      enum:
+        - EMERGENCY
+        - INFORMATION
+        - INTERNATIONAL
+        - INTL-BLOCK
+        - N11
+        - NANPA-INVALID
+        - NANPA-INTL
+        - NANPA-US
+        - OPERATOR
+        - TOLLFREE-OOS
+        - UNKNOWN
+      example: NANPA-US
+    calledNumberType:
+      type: string
+      description: Number type of the caller who received the call.
+      enum:
+        - EMERGENCY
+        - INFORMATION
+        - INTERNATIONAL
+        - INTL-BLOCK
+        - N11
+        - NANPA-INVALID
+        - NANPA-INTL
+        - NANPA-US
+        - OPERATOR
+        - TOLLFREE-OOS
+        - UNKNOWN
+      example: NANPA-US
+    callDirection:
+      type: string
+      description: Direction of call.
+      enum:
+        - INBOUND
+        - INBOUND-FORWARDED
+        - OUTBOUND
+        - OUTBOUND-FORWARDED
+      example: INBOUND
+    callType:
+      type: string
+      description: Type of call.
+      enum:
+        - EMERGENCY
+        - INBOUND-TFOOS
+        - INFORMATION
+        - INTERNATIONAL
+        - INTERNATIONAL-INTERNAL
+        - INTERSTATE
+        - INTRASTATE
+        - INTL-BLOCK
+        - LOCAL
+        - OPERATOR
+        - OTHER-N11
+        - SIPURI-EXT
+        - TOLLFREE-IN
+        - TOLLFREE-OUT
+        - UNDETERMINED
+      example: LOCAL
+    callResult:
+      type: string
+      description: Call completion status.
+      enum:
+        - COMPLETE
+        - INCOMPLETE
+      example: COMPLETE
+    link:
+      title: Link
+      type: object
+      properties:
+        href:
+          type: string
+          description: URI of the link
+          example: next
+        rel:
+          type: string
+          description: Specifies the relationship between this link and the resource
+          example: >-
+            https://insights.bandwidth.com/api/v1.beta/voice/calls?callResult=completed&offset=1&limit=1&sort=endTime:desc
+    error:
+      title: Error
+      type: object
+      properties:
+        description:
+          type: string
+          description: >-
+            A human-readable explanation that SHOULD be specific to this
+            occurrence of the problem
+          example: There was an issue with a field in your request body
+      required:
+        - description
+  responses:
+    badRequestError:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/genericError'
+          examples:
+            badRequestErrorExample:
+              $ref: '#/components/examples/badRequestErrorExample'
+    unauthorizedError:
+      description: Unauthorized Account
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/genericError'
+          examples:
+            unknownAccountErrorExample:
+              $ref: '#/components/examples/unauthorizedErrorExample'
+    forbiddenError:
+      description: Unknown Account
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/genericError'
+          examples:
+            unknownAccountErrorExample:
+              $ref: '#/components/examples/forbiddenErrorExample'
+    notFoundError:
+      description: Method Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/genericError'
+          examples:
+            unknownAccountErrorExample:
+              $ref: '#/components/examples/notFoundErrorExample'
+    methodNotFoundError:
+      description: Method Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/genericError'
+          examples:
+            unknownAccountErrorExample:
+              $ref: '#/components/examples/methodNotFoundErrorExample'
+    tooManyRequestsError:
+      description: Too Many Requests Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/genericError'
+          examples:
+            unknownAccountErrorExample:
+              $ref: '#/components/examples/tooManyRequestsErrorExample'
+    internalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/genericError'
+          examples:
+            unknownAccountErrorExample:
+              $ref: '#/components/examples/internalServerErrorExample'
+  examples:
+    badRequestErrorExample:
+      summary: An example of a generic Bad Request Error
+      value:
+        links: null
+        data: null
+        errors:
+          - description: There was an issue with your request.
+    unauthorizedErrorExample:
+      summary: An example of a generic Unauthorized Account Error
+      value:
+        links: null
+        data: null
+        errors:
+          - description: This is an Unauthorized Account.
+    forbiddenErrorExample:
+      summary: An example of a generic Unknown Account Error
+      value:
+        links: null
+        data: null
+        errors:
+          - description: This is an Unknown Account.
+    notFoundErrorExample:
+      summary: An example of a generic Not Found Error
+      value:
+        links: null
+        data: null
+        errors:
+          - description: >-
+              The origin server did not find a current representation for the
+              target resource or is not willing to disclose that one exists.
+    methodNotFoundErrorExample:
+      summary: An example of a generic Method Not Found Error
+      value:
+        links: null
+        data: null
+        errors:
+          - description: >-
+              The method received in the request-line is known by the origin
+              server but not supported by the target resource.
+    tooManyRequestsErrorExample:
+      summary: An example of a generic Too Many Requests Error
+      value:
+        links: null
+        data: null
+        errors:
+          - description: The user has sent too many requests in a given amount of time.
+    internalServerErrorExample:
+      summary: An example of a generic Internal Server Error
+      value:
+        links: null
+        data: null
+        errors:
+          - description: >-
+              The server encountered an unexpected condition that prevented it
+              from fulfilling the request.
+  securitySchemes:
+    Basic:
+      type: http
+      scheme: basic
+      description: >-
+        Basic authentication is a simple authentication scheme built into the
+        HTTP protocol. To use it, send your HTTP requests with an Authorization
+        header that contains the word Basic followed by a space and a
+        base64-encoded string `username:password`.
+
+        Example: `Authorization: Basic ZGVtbZpwQDU1dzByZA==`
+    Token:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
