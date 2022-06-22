@@ -7,7 +7,7 @@ const phoneNumberLookupSpec = fs.readFileSync('./specs/phoneNumberLookup.json', 
 const voiceSpec = fs.readFileSync('./specs/voice.json', 'utf-8');
 const messagingSpec = fs.readFileSync('./specs/messaging.json', 'utf-8');
 const webRtcSpec = fs.readFileSync('./specs/webRtc.json', 'utf-8');
-const multiFactorAuthSpec = fs.readFileSync('./specs/multiFactorAuth.json', 'utf-8');
+const multiFactorAuthSpec = fs.readFileSync('./specs/multi-factor-auth.yml', 'utf-8');
 const dashSpec = fs.readFileSync('./specs/dash.json', 'utf-8');
 const dashNotificationsSpec = fs.readFileSync('./specs/dashNotifications.json', 'utf-8');
 const messagingInternationalSpec = fs.readFileSync('./specs/messagingInternational.json', 'utf-8');
@@ -155,7 +155,7 @@ module.exports = {
         messagingSpec: JSON.parse(messagingSpec),
         messagingInternationalSpec: JSON.parse(messagingInternationalSpec),
         webRTCSpec: JSON.parse(webRtcSpec),
-        multiFactorAuthSpec: JSON.parse(multiFactorAuthSpec),
+        multiFactorAuthSpec: YAML.parse(multiFactorAuthSpec),
         dashSpec: JSON.parse(dashSpec),
         dashNotificationsSpec: JSON.parse(dashNotificationsSpec),
         globalSpec: YAML.parse(globalSpec),
