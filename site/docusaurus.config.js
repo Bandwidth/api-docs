@@ -52,23 +52,38 @@ module.exports = {
                 src: 'img/bandwidth-logo-navbar.png',
             },
             items: [{
-                to: 'docs',
-                activeBasePath: 'docs',
-                label: 'Docs',
+                type: 'dropdown',
+                label: 'US & Canada APIs',
                 position: 'left',
+                items: [
+                    {
+                        to: 'docs',
+                        activeBasePath: 'docs',
+                        label: 'Docs',
+                    }, {
+                        to: 'apis',
+                        label: 'API Reference',
+                        activeBasePath: 'apis'
+                    }, {
+                        to: 'sdks',
+                        label: 'SDKs',
+                        activeBasePath: 'sdks'
+                    }, {
+                        href: 'https://github.com/Bandwidth-Samples',
+                        label: 'Samples',
+                    }
+                ]
             }, {
-                to: 'apis',
-                label: 'API Reference',
-                activeBasePath: 'apis'
-            }, {
-                to: 'sdks',
-                label: 'SDKs',
-                activeBasePath: 'sdks'
-            }, {
-                href: 'https://github.com/Bandwidth-Samples',
-                label: 'Samples',
+                type: 'dropdown',
+                label: 'Global APIs',
                 position: 'left',
-            },{
+                items: [
+                    {
+                        to: 'apis/global',
+                        label: 'Docs & API Reference',
+                    }
+                ]
+            }, {
                 href: 'https://github.com/Bandwidth',
                 position: 'right', 
                 className: 'header-github-link'
