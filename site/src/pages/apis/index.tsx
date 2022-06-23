@@ -74,6 +74,16 @@ const productList = [
                 link: '/apis/webrtc'
             }
         ]
+    },
+    {
+        productName: 'Insights',
+        Svg: require('../../../static/img/icon-insights.svg').default,
+        apis: [
+            {
+                name: 'Insights',
+                link: '/apis/insights'
+            }
+        ]
     }
 ];
 

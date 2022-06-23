@@ -733,7 +733,7 @@ security:
   - KeyBasedAuthentication:
       - apiKey
 tags:
-  - name: Service & Coverage
+  - name: Service, Coverage, & Number Inventory
     description: >-
       Search for numbers to buy or check number coverage, stock and service
       restrictions
@@ -760,26 +760,32 @@ tags:
       1. createCart will return a cartIdentifier (listCart as well if you’ve
       already got an existing cart)
 
-      2. To buy numbers, get the associated didGroupId for a country/area code
-      from listDidGroup method (Inventory module)
 
-      3. Add a certain quantity of DIDs (didCartItem) from a didGroupId to the
-      CartIdentifier using addToCart
+      2. To buy numbers, you can either:
+        * Get the associated didGroupId for a country/area code from listDidGroup method (Inventory module), and add a certain quantity of DIDs (didCartItem) from a didGroupId to the CartIdentifier using addToCart
+        * Coming Q2 2022: Provide a list of telephone numbers you've searched and found in the Voxbone inventory, for sale.
 
-      4. Check your funds with accountBalance
+      3. Check your funds with accountBalance
 
-      5. Make sure that the cart value (setup100 + monthly100 will be charged)
+
+      4. Make sure that the cart value (setup100 + monthly100 will be charged)
       is not higher than your account Balance. If not, add funds via our portal.
 
-      6. Re-iterate the last 3 operations until you wish to check-out your cart
+
+      5. Re-iterate the last 3 operations until you wish to check-out your cart
       using checkoutCart. Once checkoutCart method is called on a cart, an
       associated order will be created.
 
-      7. Use the listOrder method to retrieve your orders and their status
+
+      6. Use the listOrder method to retrieve your orders and their status
       (carts can lead to 1 or multiple order(s)). When running the checkoutCart
       operation, the response contains a list of productCheckout elements. These
       elements give you an orderReference for each product type contained in
       your cart, which can be used as a filter for the listDid operation
+
+
+
+      Coming Q3 2022: Review the Number(s) and number information of the order
   - name: Service Activation
     description: >
       Service activation module contains a list of operations that allow you to
@@ -919,7 +925,7 @@ paths:
   /inventory/country:
     get:
       tags:
-        - Service & Coverage
+        - Service, Coverage, & Number Inventory
       summary: Search Coverage by Country
       description: Search Coverage by Country
       operationId: listCountry
@@ -983,7 +989,7 @@ paths:
   /inventory/country/{countryCodeA3}:
     get:
       tags:
-        - Service & Coverage
+        - Service, Coverage, & Number Inventory
       summary: Get activation requirements and available area codes within a country
       description: Get activation requirements and available area codes within a country
       operationId: getCountry
@@ -1011,7 +1017,7 @@ paths:
   /inventory/country/{countryCodeA3}/state:
     get:
       tags:
-        - Service & Coverage
+        - Service, Coverage, & Number Inventory
       summary: Get Coverage by States in USA and Canada
       description: Get Coverage by States in USA and Canada
       operationId: listState
@@ -1042,9 +1048,41 @@ paths:
   /inventory/didgroup:
     get:
       tags:
-        - Service & Coverage
-      summary: Search Coverage by City and Area Code
-      description: Search Coverage by City and Area Code
+        - Service, Coverage, & Number Inventory
+      summary: Search Global Number Inventory by City and Area Code
+      description: >-
+        Allows you to retrieve the list of numbers available to purchase, and
+        DID group of the numbers. A DID group can be defined as the smallest set
+        of DIDs which is usually DIDs that share the same city or area code
+        attributes. It is a method which is useful to get pricing info on a DID
+        and to get didGroupIds. 
+
+
+        When adding numbers to your cart (to purchase) you will need to request
+        the didGroupId and quantity of. 
+
+
+        At present, you are able to see a list of numbers available (BETA). 
+
+        - The list of numbers in stock will not return unless you provide a
+        Quantity in the query parameter. 
+
+        - If a user requests for consecutive numbers (true) without quantity
+        error will return 'Please provide quantity'
+
+        - If Quantity is not provided - you will be able to see how many numbers
+        are in stock, just not the list of numbers unless you provide a Quantity
+        in the query parameter. 
+
+        - Response can return a maximum of 5000 numbers
+
+        - The ability to submit selected numbers available to your cart to
+        purchase will be available August 2022.
+
+
+        Coming Q3 2022:
+
+        - Ability to vanity search for a number in the Voxbone inventory
       operationId: listDidGroup
       parameters:
         - name: countryCodeA3
@@ -1149,13 +1187,22 @@ paths:
             type: integer
             format: int32
           example: 20
+        - schema:
+            type: integer
+          in: query
+          name: quantity
+          description: The quantity of numbers you want to return in your results
+        - schema:
+            type: boolean
+          in: query
+          name: consecutive
+          description: >-
+            Indicating if you want the numbers returned in your results to
+            consecutive only, or not. (true/false)
       responses:
         '200':
           description: successful operation
           content:
-            text/xml:
-              schema:
-                $ref: '#/components/schemas/ListDidGroupResponse'
             application/json:
               schema:
                 $ref: '#/components/schemas/ListDidGroupResponse'
@@ -1196,7 +1243,12 @@ paths:
                       - featureId: 52
                         name: VoxOUT National
                         description: Used to build the coverage pages in the public website
+                    phoneNumbers:
+                      - '+31208908115'
+                      - '+31208908116'
+                      - '+31208908117'
                 resultCount: 1
+      x-internal: false
     x-summary: >-
       Get stock, pricing, activation requirements, available features and other
       details on numbers
@@ -1209,9 +1261,9 @@ paths:
   /inventory/country/{countryCodeA3}/restriction:
     get:
       tags:
-        - Service & Coverage
+        - Service, Coverage, & Number Inventory
       summary: List Service Restrictions by Country
-      description: List Service Restrictions by Country
+      description: List Service Restrictions by Country.
       operationId: listRestriction
       parameters:
         - name: countryCodeA3
@@ -1246,7 +1298,7 @@ paths:
   /inventory/zone:
     get:
       tags:
-        - Service & Coverage
+        - Service, Coverage, & Number Inventory
       summary: List channels by zone
       description: List channels by zone
       operationId: listZone
@@ -1265,7 +1317,7 @@ paths:
   /inventory/feature:
     get:
       tags:
-        - Service & Coverage
+        - Service, Coverage, & Number Inventory
       summary: List available communications features
       description: List available communications features
       operationId: listFeature
@@ -1349,6 +1401,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CreateCartRequest'
+            examples: {}
         required: false
       responses:
         '200':
@@ -1357,6 +1410,7 @@ paths:
             text/xml:
               schema:
                 $ref: '#/components/schemas/CreateCartResponse'
+              examples: {}
             application/json:
               schema:
                 $ref: '#/components/schemas/CreateCartResponse'
@@ -1366,6 +1420,54 @@ paths:
       Allows you to list your carts and retrieve their attributes
       (cartIdentifier, customerReference, description), and their content (list
       of products - orderProducts - that are currently in the cart).
+  /ordering/cart/{cartIdentifier}/product/{orderProductId}:
+    post:
+      tags:
+        - Ordering
+      summary: Remove number(s) and product(s) from cart or change quantity
+      description: >-
+        Set quantity to 0 if you want to remove the product from the cart. 
+
+
+        At present, you are able to see a list of numbers available (BETA). The
+        ability to submit selected numbers available to your cart to purchase
+        will be available August 2022. The ability to remove selected numbers in
+        your cart to purchase will be available August 2022.
+      operationId: removeFromCart
+      parameters:
+        - name: cartIdentifier
+          in: path
+          description: The identifier of the cart.
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: orderProductId
+          in: path
+          description: The identifier of the product.
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/RemoveFromCartRequest'
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            text/xml:
+              schema:
+                $ref: '#/components/schemas/RemoveFromCartResponse'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RemoveFromCartResponse'
+      x-codegen-request-body-name: body
+    x-summary: Manage product quantities in existing cart
+    x-description: Remove a product from your cart, or change the ordered quantity.
   /ordering/cart/{cartIdentifier}:
     get:
       tags:
@@ -1426,7 +1528,7 @@ paths:
     post:
       tags:
         - Ordering
-      summary: Add products to cart
+      summary: Add Numbers and products to cart
       description: >-
         Only one product can be added per addToCart request. The system will
         automatically create a new orderProductId (or add the items to an
@@ -1435,6 +1537,15 @@ paths:
         should update your capacity forecast (in the portal). The delivery of
         capacity is not in real-time and requires validation from our operation
         team.
+
+
+        When adding numbers to your cart (to purchase) you will need to request
+        the didGroupId and quantity of. 
+
+
+        At present, you are able to see a list of numbers available (BETA). The
+        ability to submit selected numbers available to your cart to purchase
+        will be available August 2022.
       operationId: addToCart
       parameters:
         - name: cartIdentifier
@@ -1450,15 +1561,22 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AddToCartRequest'
+              oneOf:
+                - allOf:
+                    - $ref: '#/components/schemas/AddToCartRequest'
+                    - type: object
+                      properties:
+                        didCartItem:
+                          $ref: '#/components/schemas/DidCartItem'
+                - allOf:
+                    - $ref: '#/components/schemas/AddToCartRequest'
+                    - $ref: '#/components/schemas/PhoneNumberCartItem'
         required: false
+        description: ''
       responses:
         '200':
           description: successful operation
           content:
-            text/xml:
-              schema:
-                $ref: '#/components/schemas/AddToCartResponse'
             application/json:
               schema:
                 $ref: '#/components/schemas/AddToCartResponse'
@@ -1468,47 +1586,6 @@ paths:
       Allows you to add items (orderProducts) to a specific cart before checking
       out the cart. Different product types (DID, CAPACITY or CREDIT_PACKAGE)
       can be added into one single cart.
-  /ordering/cart/{cartIdentifier}/product/{orderProductId}:
-    post:
-      tags:
-        - Ordering
-      summary: Remove product(s) from cart or change quantity
-      description: Set quantity to 0 if you want to remove the product from the cart.
-      operationId: removeFromCart
-      parameters:
-        - name: cartIdentifier
-          in: path
-          description: The identifier of the cart.
-          required: true
-          schema:
-            type: integer
-            format: int32
-        - name: orderProductId
-          in: path
-          description: The identifier of the product.
-          required: true
-          schema:
-            type: integer
-            format: int32
-      requestBody:
-        content:
-          '*/*':
-            schema:
-              $ref: '#/components/schemas/RemoveFromCartRequest'
-        required: true
-      responses:
-        '200':
-          description: successful operation
-          content:
-            text/xml:
-              schema:
-                $ref: '#/components/schemas/RemoveFromCartResponse'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RemoveFromCartResponse'
-      x-codegen-request-body-name: body
-    x-summary: Manage product quantities in existing cart
-    x-description: Remove a product from your cart, or change the ordered quantity.
   /ordering/accountbalance:
     get:
       tags:
@@ -1597,7 +1674,7 @@ paths:
       tags:
         - Ordering
       summary: List and filter placed orders
-      description: List and filter placed orders
+      description: 'List and filter placed orders. '
       operationId: listOrder
       parameters:
         - name: reference
@@ -1657,6 +1734,7 @@ paths:
             text/xml:
               schema:
                 $ref: '#/components/schemas/ListOrderResponse'
+              examples: {}
             application/json:
               schema:
                 $ref: '#/components/schemas/ListOrderResponse'
@@ -4936,17 +5014,48 @@ components:
             type: string
     DidGroup:
       type: object
+      x-examples:
+        example-1:
+          didGroupId: 1073
+          countryCodeA3: NLD
+          stateId: 69
+          didType: GEOGRAPHIC
+          cityName: AMSTERDAM
+          areaCode: '20'
+          rateCenter: string
+          stock: 11
+          setup100: 0
+          monthly100: 110
+          available: true
+          regulationRequirement:
+            addressType: LOCAL
+            proofRequired: false
+          features:
+            - featureId: 0
+              name: string
+              description: string
+          phoneNumbers:
+            - >-
+              [{phoneNumber: "+31208908115"}, {phoneNumber: "+31208908116"},
+              {phoneNumber: "+31208908117"}, {phoneNumber: "+31208908118"},
+              {phoneNumber: "+31208908119"}, {phoneNumber: "+31208908120"},
+              {phoneNumber: "+31208908121"}, {phoneNumber: "+31208908122"},
+              {phoneNumber: "+31208908123"}, {phoneNumber: "+31208908124"},
+              {phoneNumber: "+31208908125"}, {phoneNumber: "+31208908126"}]
+      x-internal: false
       properties:
         didGroupId:
           type: integer
           description: The ID of the DID group.
           format: int32
+          example: 1073
         countryCodeA3:
           type: string
           description: >-
             Indicates the country code of the DID group in its ISO 3166-1
             alpha-3 format (e.g. 'GBR' for United Kingdom, 'USA' for United
             States of America, 'BEL' for Belgium, etc.).
+          example: NLD
         stateId:
           type: integer
           description: The ID of the state of the DID group, if the country has any state.
@@ -4962,12 +5071,15 @@ components:
             - INUM
             - SHARED_COST
             - SPECIAL
+          example: GEOGRAPHIC
         cityName:
           type: string
           description: The name of the city of the DID group.
+          example: AMSTERDAM
         areaCode:
           type: string
           description: The area code of the DID group.
+          example: '20'
         rateCenter:
           type: string
           description: >-
@@ -4982,12 +5094,14 @@ components:
             Note that even if the stock is null, it is still possible to order
             DIDs. In that case the order is not fulfilled in real time.
           format: int32
+          example: 11
         setup100:
           type: integer
           description: >-
             The price of the DID setup multiplied by 100 (i.e. expressed in
             cents) in the currency of the account.
           format: int32
+          example: 0
         monthly100:
           type: integer
           description: >-
@@ -4996,17 +5110,30 @@ components:
             month of ordering is fully due and that when a DID order is placed
             both the setup and the monthly are charged.
           format: int32
+          example: 110
         available:
           type: boolean
           description: >-
             Returns information about whether this DIDGroup is available or out
             of stock (true/false).
+          default: true
         regulationRequirement:
           $ref: '#/components/schemas/RegulationRequirementModel'
         features:
           type: array
           items:
             $ref: '#/components/schemas/Feature'
+        phoneNumbers:
+          type: array
+          items:
+            type: string
+            example: >-
+              [{phoneNumber: "+31208908115"}, {phoneNumber: "+31208908116"},
+              {phoneNumber: "+31208908117"}, {phoneNumber: "+31208908118"},
+              {phoneNumber: "+31208908119"}, {phoneNumber: "+31208908120"},
+              {phoneNumber: "+31208908121"}, {phoneNumber: "+31208908122"},
+              {phoneNumber: "+31208908123"}, {phoneNumber: "+31208908124"},
+              {phoneNumber: "+31208908125"}, {phoneNumber: "+31208908126"}]
     Feature:
       type: object
       properties:
@@ -5033,6 +5160,44 @@ components:
           format: int32
           xml:
             attribute: true
+      x-examples:
+        Example:
+          didGroups:
+            - didGroupId: 1073
+              countryCodeA3: NLD
+              stateId: 0
+              didType: GEOGRAPHIC
+              cityName: AMSTERDAM
+              areaCode: '20'
+              rateCenter: string
+              stock: 11
+              setup100: 0
+              monthly100: 110
+              available: true
+              regulationRequirement:
+                addressType: LOCAL
+                proofRequired: true
+              features:
+                - featureId: 6
+                  name: VoxFax
+                  description: VoxFax
+                - featureId: 50
+                  name: Voice
+                  description: Voice
+                - featureId: 51
+                  name: VoxOUT International
+                  description: Used to build the coverage pages in the public website
+                - featureId: 5
+                  name: T.38
+                  description: T.38
+                - featureId: 29
+                  name: VoxOUT Emergency
+                  description: Feature that allows the VoxDID to access emergency services
+                - featureId: 52
+                  name: VoxOUT National
+                  description: Used to build the coverage pages in the public website
+          resultCount: 1
+      description: Example
     RegulationRequirementModel:
       type: object
       properties:
@@ -5043,9 +5208,11 @@ components:
             - WORLDWIDE
             - NATIONAL
             - LOCAL
+          example: LOCAL
         proofRequired:
           type: boolean
           description: Whether a proof of address is required.
+          default: false
     ListFeatureResponse:
       type: object
       properties:
@@ -5245,6 +5412,7 @@ components:
             - PARTIAL
             - WARNING
             - ERROR
+      x-examples: {}
     AddToCartRequest:
       type: object
       properties:
@@ -5254,12 +5422,11 @@ components:
             Identifies the cart and is returned by the createCart method or can
             be retrieved with the listCart method.
           format: int32
-        didCartItem:
-          $ref: '#/components/schemas/DidCartItem'
         capacityCartItem:
           $ref: '#/components/schemas/CapacityCartItem'
         creditPackageCartItem:
           $ref: '#/components/schemas/CreditPackageCartItem'
+      x-examples: {}
     CapacityCartItem:
       type: object
       properties:
@@ -5290,8 +5457,11 @@ components:
           description: The amount of prepaid credits required.
           format: int32
       description: CreditPackageCartItem corresponds to prepaid credits.
+      x-examples: {}
     DidCartItem:
       type: object
+      description: DidCartItem corresponds to DIDs
+      x-examples: {}
       properties:
         didGroupId:
           type: integer
@@ -5300,11 +5470,21 @@ components:
             valid ID for the DID group of the DIDs. Note that you can specify
             multiple ids by repeating the query parameter.
           format: int32
+          example: -100000000
         quantity:
           type: integer
           description: Amount of DIDs from that DID group.
           format: int32
-      description: DidCartItem corresponds to DIDs (VoxDID or Vox800).
+          example: 0
+    PhoneNumberCartItem:
+      type: object
+      description: Corresponds to a list of Phone Numbers in a cart
+      properties:
+        phoneNumbers:
+          type: array
+          items:
+            type: string
+            example: '+19191234567'
     RemoveFromCartResponse:
       type: object
       properties:
@@ -5318,12 +5498,17 @@ components:
             - PARTIAL
             - WARNING
             - ERROR
+      x-examples: {}
     RemoveFromCartRequest:
-      required:
-        - cartIdentifier
-        - orderProductId
-        - quantity
       type: object
+      x-examples:
+        example-1:
+          cartIdentifier: -2147483648
+          orderProductId: -2147483648
+          quantity: -2147483648
+          phoneNumbers:
+            phoneNumber:
+              - null
       properties:
         cartIdentifier:
           type: integer
@@ -5341,6 +5526,13 @@ components:
             orderProductId will be removed from the Cart. Note that capacity
             must be removed in multiple of 10.
           format: int32
+        phoneNumbers:
+          type: array
+          items:
+            type: string
+      required:
+        - cartIdentifier
+        - orderProductId
     AccountBalance:
       type: object
       properties:
@@ -5400,6 +5592,7 @@ components:
             - PARTIAL
             - WARNING
             - ERROR
+      x-examples: {}
     Cart:
       type: object
       properties:
@@ -5423,6 +5616,19 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/OrderProduct'
+      x-examples:
+        example-1:
+          cartIdentifier: -2147483648
+          customerReference: string
+          description: string
+          dateAdded: string
+          orderProducts:
+            - orderProductId: 0
+              productType: DID
+              productDescription: string
+              quantity: 0
+              didgroupId: 0
+              phoneNumbers: null
     ListCartResponse:
       type: object
       properties:
@@ -5436,8 +5642,17 @@ components:
           format: int32
           xml:
             attribute: true
+      x-examples: {}
     OrderProduct:
       type: object
+      x-examples:
+        example-1:
+          orderProductId: -2147483648
+          productType: DID
+          productDescription: string
+          quantity: -2147483648
+          didgroupId: -2147483648
+          phoneNumbers: null
       properties:
         orderProductId:
           type: integer
@@ -5463,6 +5678,10 @@ components:
             The ID of the DIDgroup that the DID added to the cart belongs to. A
             listDidGroup method is available to get information on DID groups.
           format: int32
+        phoneNumbers:
+          type: array
+          items:
+            type: string
     ListOrderResponse:
       type: object
       properties:
@@ -5478,7 +5697,10 @@ components:
             attribute: true
     Order:
       type: object
+      x-examples: {}
       properties:
+        userName:
+          type: string
         orderId:
           type: integer
           description: The ID of the order.
@@ -5508,6 +5730,27 @@ components:
         customerReference:
           type: string
           description: Your own customer reference defined in createCart.
+        didGroups:
+          type: object
+          properties:
+            didGroupId:
+              type: string
+            countryCodeA3:
+              type: string
+            stateId:
+              type: string
+            didType:
+              type: string
+            cityName:
+              type: string
+            areaCode:
+              type: string
+            rateCenter:
+              type: string
+            phoneNumbers:
+              type: array
+              items:
+                type: string
     CreateCartResponse:
       required:
         - cart
@@ -5524,6 +5767,10 @@ components:
         description:
           type: string
           description: This is the description or the name you want to give to the cart.
+      x-examples:
+        example-1:
+          customerReference: string
+          description: string
     ExtraFields:
       type: object
       properties:
