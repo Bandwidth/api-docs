@@ -39,6 +39,9 @@ jobs:
         BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
     - name: Sync zip to Bucket
       run: |
-        aws s3 sync ./site/build s3://$BUCKET_NAME --acl public-read
+        aws s3 sync ./site/build s3://$BUCKET_NAME --acl public-read --delete
       env:
         BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
+    - name: Invalidate Cloudfront Cache
+      run: 
+        aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID}} --paths "/" "/apis/*"
