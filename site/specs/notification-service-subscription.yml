@@ -34,7 +34,6 @@ paths:
         - $ref: '#/components/parameters/subscriptionId'
         - $ref: '#/components/parameters/product'
         - $ref: '#/components/parameters/eventType'
-        - $ref: '#/components/parameters/userName'
         - $ref: '#/components/parameters/subscriptionStatus'
         - $ref: '#/components/parameters/entityId'
       responses:
@@ -76,10 +75,18 @@ paths:
         '500':
           $ref: '#/components/responses/internalErrorResponse'
   /subscriptions/{subscriptionId}:
+    parameters:
+      - schema:
+          type: string
+        name: subscriptionId
+        in: path
+        required: true
     get:
       summary: Get Subscription
+      operationId: getSubscription
+      description: GET Subscription by ID
       tags:
-        - Subscription
+        - Subscriptions
       responses:
         '200':
           $ref: '#/components/responses/subscriptionResponse'
@@ -93,19 +100,12 @@ paths:
           $ref: '#/components/responses/methodNotAllowedResponse'
         '500':
           $ref: '#/components/responses/internalErrorResponse'
-      operationId: getSubscription
-      description: GET Subscriiption by ID
-    parameters:
-      - schema:
-          type: string
-        name: subscriptionId
-        in: path
-        required: true
     delete:
-      tags:
-        - Subscription
       summary: Delete Subscription
       operationId: deleteSubscription
+      description: Delete Subscription
+      tags:
+        - Subscriptions
       responses:
         '204':
           description: 'SubscriptionID : X Successfully Deleted'
@@ -121,12 +121,14 @@ paths:
           $ref: '#/components/responses/methodNotAllowedResponse'
         '500':
           $ref: '#/components/responses/internalErrorResponse'
-      description: Delete Subscription
     patch:
-      tags:
-        - Subscription
       summary: Update Subscription
       operationId: modifySubscription
+      description: Update Subscription
+      tags:
+        - Subscriptions
+      requestBody:
+        $ref: '#/components/requestBodies/patchSubscription'
       responses:
         '200':
           $ref: '#/components/responses/subscriptionResponse'
@@ -138,18 +140,20 @@ paths:
           $ref: '#/components/responses/forbiddenResponse'
         '404':
           $ref: '#/components/responses/notFoundResponse'
+        '405':
+          $ref: '#/components/responses/methodNotAllowedResponse'
         '409':
           $ref: '#/components/responses/conflictResponse'
         '500':
           $ref: '#/components/responses/internalErrorResponse'
-      description: Update Subscription
-      requestBody:
-        $ref: '#/components/requestBodies/patchSubscription'
     put:
-      tags:
-        - Subscription
       summary: Rewrite Subscription
       operationId: replaceSubscription
+      description: Rewrite Subscription
+      tags:
+        - Subscriptions
+      requestBody:
+        $ref: '#/components/requestBodies/putSubscription'
       responses:
         '200':
           $ref: '#/components/responses/subscriptionResponse'
@@ -161,11 +165,10 @@ paths:
           $ref: '#/components/responses/forbiddenResponse'
         '404':
           $ref: '#/components/responses/notFoundResponse'
+        '405':
+          $ref: '#/components/responses/methodNotAllowedResponse'
         '500':
           $ref: '#/components/responses/internalErrorResponse'
-      description: Rewrite Subscription
-      requestBody:
-        $ref: '#/components/requestBodies/putSubscription'
 components:
   schemas:
     callback:
@@ -199,11 +202,10 @@ components:
         eventType:
           anyOf:
             - $ref: '#/components/schemas/eventTypeEnum'
-            - $ref: '#/components/schemas/nullTypeEnum'
         entityId:
           description: >-
-            Unique Id of object/action prcessed which generates Event for
-            Notification
+            Unique Id of object/action processed which generates Event for
+            Notification.
           type: string
           minLength: 1
           nullable: true
@@ -211,7 +213,6 @@ components:
         subscriptionStatus:
           anyOf:
             - $ref: '#/components/schemas/subscriptionStatusEnum'
-            - $ref: '#/components/schemas/nullTypeEnum'
         tags:
           nullable: true
           title: Tag Elements
@@ -245,19 +246,17 @@ components:
         eventType:
           anyOf:
             - $ref: '#/components/schemas/eventTypeEnum'
-            - $ref: '#/components/schemas/nullTypeEnum'
         entityId:
           nullable: true
           description: >-
-            Unique Id of object/action prcessed which generates Event for
-            Notification
+            Unique Id of object/action processed which generates Event for
+            Notification.
           type: string
           minLength: 1
           example: q3434-132414
         subscriptionStatus:
           anyOf:
             - $ref: '#/components/schemas/subscriptionStatusEnum'
-            - $ref: '#/components/schemas/nullTypeEnum'
         tags:
           nullable: true
           title: Tag Elements
@@ -304,15 +303,12 @@ components:
     eventTypeEnum:
       title: eventTypeEnum
       type: string
+      nullable: true
       description: The Event Type of the Subscription
       enum:
         - PORTIN_ORDER_STATUS
-      example: PORTIN_ORDER_STATUS
-    nullTypeEnum:
-      title: Null Type Enum
-      description: Null Enum to statisfy nullable
-      enum:
         - null
+      example: PORTIN_ORDER_STATUS
     productEnum:
       title: productEnum
       type: string
@@ -323,6 +319,7 @@ components:
     portingPortinEventStatusEnum:
       title: portingPortinEventStatusEnum
       type: string
+      nullable: true
       description: "The valid Event Status values \n<table>\n  <tr>\n    <th>Status</th>\n    <th>Description</th>\n  </tr>\n  <tr>\n    <td>ACCEPTED_BY_CARRIER </td>\n    <td>Good news - your port-in is accepted by our carrier. </td>\n  </tr>\n  <tr>\n    <td>CANCELED </td>\n    <td>Your port-in order is cancelled. </td>\n  </tr>\n  <tr>\n    <td>COMPLETED </td>\n    <td>Your port-in order is completed. </td>\n  </tr>    \n  <tr>\n    <td>DRAFT </td>\n    <td> Your port-in order is created, but not yet submitted. You can change the content of the order or delete it anytime. </td>\n  </tr>\n  <tr>\n    <td>MISSING_DATA </td>\n    <td>Your port-in order has been returned by our LNP team - because the order doesn't contain required information, this can be data or document. Your order has to be amended and resubmitted again. </td>\n  </tr>   \n  </tr>\n  <tr>\n    <td>PENDING_CARRIER_APPROVAL </td>\n    <td> Your port-in order is transmitted to our carrier.</td>\n  </tr>   \n  <tr>\n    <td>PROCESSING_CANCELLATION </td>\n    <td>You are requesting the cancellation of your order. Our LNP team will get back to you shortly </td>\n  </tr>  \n  <tr>\n    <td>READY_FOR_CONFIGURATION</td>\n    <td>Your numbers are ready for configuration. You can now assign your configuration profile to your order. </td>\n  </tr>           \n  <tr>\n    <td>REJECTED </td>\n    <td>\tYour port-in order is rejected by our LNP team/carrier. Please contact our LNP team for further details.Your port-in order is submitted, our LNP team will take care of it shortly. In case you need to change your order, you have to request a cancellation or ask our LNP team to return your order. </td>\n  </tr>  \n  <tr>\n    <td>SUBMITTED </td>\n    <td>Your port-in order is submitted, our LNP team will take care of it shortly. In case you need to change your order, you have to request a cancellation or ask our LNP team to return your order. </td>\n  </tr>                                                                 \n</table>\n"
       enum:
         - ACCEPTED_BY_CARRIER
@@ -335,6 +332,7 @@ components:
         - READY_FOR_CONFIGURATION
         - REJECTED
         - SUBMITTED
+        - null
     tag:
       description: Tag Information
       title: Tag Element
@@ -739,7 +737,7 @@ components:
                     reference: api.voxbone.com/v1/subscriptions/123465789
                   id: optional-error-id
                   meta:
-                    subscriiptionId: '123456789'
+                    subscriptionId: '123456789'
             properties:
               links:
                 type: array
@@ -1034,13 +1032,6 @@ components:
       schema:
         type: string
       description: EventType Subscribed to
-    userName:
-      name: userName
-      in: query
-      required: false
-      schema:
-        type: string
-      description: System userName of User
     subscriptionStatus:
       name: subscriptionStatus
       in: query
