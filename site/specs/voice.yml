@@ -383,7 +383,7 @@ paths:
         - $ref: '#/components/parameters/accountId'
         - $ref: '#/components/parameters/callId'
       requestBody:
-        $ref: '#/components/requestBodies/modifyCallRequest'
+        $ref: '#/components/requestBodies/updateCallRequest'
       responses:
         '200':
           description: Call Successfully Modified
@@ -414,7 +414,7 @@ paths:
         - $ref: '#/components/parameters/accountId'
         - $ref: '#/components/parameters/callId'
       requestBody:
-        $ref: '#/components/requestBodies/modifyCallBxmlRequest'
+        $ref: '#/components/requestBodies/updateCallBxmlRequest'
       responses:
         '204':
           description: Call BXML Successfully Replaced
@@ -697,7 +697,7 @@ paths:
         - $ref: '#/components/parameters/accountId'
         - $ref: '#/components/parameters/conferenceId'
       requestBody:
-        $ref: '#/components/requestBodies/modifyConferenceRequest'
+        $ref: '#/components/requestBodies/updateConferenceRequest'
       responses:
         '204':
           description: Conference successfully modified
@@ -1516,7 +1516,7 @@ paths:
         - Recordings
       summary: Update Recording
       description: Pause or resume a recording on an active phone call
-      operationId: modifyCallRecordingState
+      operationId: updateCallRecordingState
       parameters:
         - $ref: '#/components/parameters/accountId'
         - $ref: '#/components/parameters/callId'
@@ -1541,214 +1541,6 @@ paths:
           $ref: '#/components/responses/voiceTooManyRequestsError'
         '500':
           $ref: '#/components/responses/voiceInternalServerError'
-      x-codeSamples:
-        - lang: cURL
-          source: >
-            curl
-            'https://voice.bandwidth.com/api/v2/accounts/12345/calls/c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d/recording'
-            \
-                -X PUT \
-                -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=' \
-                -H 'Content-Type: application/json' \
-                -d '{
-                    "state": "NOT_RECORDING",
-                }'
-        - lang: C#
-          source: |
-            using System;
-            using System.Threading.Tasks;
-            using Bandwidth.Standard;
-            using Bandwidth.Standard.Exceptions;
-            using Bandwidth.Standard.Voice.Models;
-
-            class Program
-            {
-                static async Task Main(string[] args)
-                {
-                    var username = "api-username";
-                    var password = "api-pasword";
-                    var accountId = "12345";
-
-                    // Call id is returned after successfully creating a call.
-                    var callId = "c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d";
-
-                    var client = new BandwidthClient.Builder()
-                        .VoiceBasicAuthCredentials(username, password)
-                        .Build();
-
-                    var state = new ModifyCallRecordingRequest
-                    {
-                        State = State1Enum.PAUSED
-                    };
-
-                    try
-                    {
-                        await client.Voice.APIController.ModifyCallRecordingStateAsync(accountId, callId, state);
-                    }
-                    catch (ApiException e)
-                    {
-                        Console.WriteLine(e.Message);
-                    }
-                }
-            }
-        - lang: Java
-          source: |
-            import com.bandwidth.BandwidthClient;
-            import com.bandwidth.http.response.ApiResponse;
-            import com.bandwidth.voice.models.*;
-
-            import java.util.concurrent.CompletableFuture;
-            import java.util.concurrent.ExecutionException;
-
-            public class Sample {
-                public static final String USERNAME = "api-username";
-                public static final String PASSWORD = "api-password";
-                public static final String ACCOUNT_ID = "12345";
-
-                public static void main(String[] args) {
-                    String callId = "c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d";
-
-                    BandwidthClient client = new BandwidthClient.Builder()
-                            .voiceBasicAuthCredentials(USERNAME, PASSWORD)
-                            .build();
-
-                    ModifyCallRecordingRequest recordingRequest = new ModifyCallRecordingRequest();
-                    recordingRequest.setState(State1Enum.PAUSED);
-
-                    try {
-                        CompletableFuture<ApiResponse<Void>> completableFuture = client.getVoiceClient().getAPIController().modifyCallRecordingStateAsync(ACCOUNT_ID, callId, recordingRequest);
-                        System.out.println(completableFuture.get().getResult());
-                    } catch (InterruptedException | ExecutionException e) {
-                        System.out.println(e.getMessage());
-                    }
-                }
-            }
-        - lang: Node.js
-          source: |
-            import { Client, ApiController } from '@bandwidth/voice';
-
-            const BW_USERNAME = "api-username";
-            const BW_PASSWORD = "api-password";
-            const BW_ACCOUNT_ID = "12345";
-
-            const client = new Client({
-              basicAuthUserName: BW_USERNAME,
-              basicAuthPassword: BW_PASSWORD
-            });
-
-            const controller = new ApiController(client);
-
-            const accountId = BW_ACCOUNT_ID;
-
-            const callId = 'c-abc12345-6defabc1-2345-6def-abc1-23456defabc1';
-
-            const modifyCallRecordingState = async function() {
-              try {
-                  const response = await controller.modifyCallRecordingState(accountId, callId, {
-                  state: 'PAUSED'
-                });
-                  console.log(response)
-              } catch(error) {
-                  console.error(error);
-              }
-            }
-
-            modifyCallRecordingState();
-        - lang: PHP
-          source: |
-            <?php
-              
-            require "vendor/autoload.php";
-
-            api-username = "api-username";
-            api-password = "api-pasword";
-            12345 = "12345";
-
-            $config = new BandwidthLib\Configuration(
-                array(
-                    'voiceBasicAuthUserName' => $BW_USERNAME,
-                    'voiceBasicAuthPassword' => $BW_PASSWORD,
-                )
-            );
-            $client = new BandwidthLib\BandwidthClient($config);
-
-            $voiceClient = $client->getVoice()->getClient();
-
-            $callId = "c-1234";
-
-            $body = new BandwidthLib\Voice\Models\ModifyCallRecordingRequest();
-            $body->redirectUrl = "http://www.myapp.com/new";
-            $body->state = "paused";
-
-            try {
-                $voiceClient->modifyCallRecordingState($BW_ACCOUNT_ID, $callId, $body);
-            } catch (BandwidthLib\APIException $e) {
-                print_r($e->getResponseCode());
-            }
-        - lang: Python
-          source: >
-            from bandwidth.bandwidth_client import BandwidthClient
-
-            from bandwidth.voice.models.modify_call_recording_request import
-            ModifyCallRecordingRequest
-
-            from bandwidth.exceptions.api_exception import APIException
-
-
-            import os
-
-
-            BW_USERNAME = "api-username"
-
-            BW_PASSWORD = "api-password"
-
-            BW_ACCOUNT_ID = "12345"
-
-
-            bandwidth_client = BandwidthClient(
-                voice_basic_auth_user_name=BW_USERNAME,
-                voice_basic_auth_password=BW_PASSWORD
-            )
-
-            voice_client = bandwidth_client.voice_client.client
-
-
-            body = ModifyCallRecordingRequest()
-
-            body.state = "paused"
-
-
-            call_id = "c-1234"
-
-
-            try:
-                voice_client.modify_call_recording_state(BW_ACCOUNT_ID, call_id, body)
-            except APIException as e:
-                print(e.response_code)
-        - lang: Ruby
-          source: |
-            require 'bandwidth'
-
-            include Bandwidth
-            include Bandwidth::Voice
-
-            bandwidth_client = Bandwidth::Client.new(
-                voice_basic_auth_user_name: "api-username",
-                voice_basic_auth_password: "api-password"
-            )
-
-            voice_client = bandwidth_client.voice_client.client
-
-            body = ModifyCallRecordingRequest.new
-            body.state = "paused"
-
-            call_id = "c-1234"
-
-            begin
-                voice_client.modify_call_recording_state("12345", call_id, body)
-            rescue APIException => e
-                puts e.response_code
-            end
   /accounts/{accountId}/calls/{callId}/recordings:
     get:
       tags:
@@ -3921,7 +3713,7 @@ components:
           format: date-time
           description: The last time the call had a state update, in ISO 8601 format.
           example: '2022-06-16T13:15:18.314Z'
-    modifyCall:
+    updateCall:
       type: object
       properties:
         state:
@@ -3979,7 +3771,7 @@ components:
             Not allowed if `state` is `completed`.
           maximum: 256
           example: My Custom Tag
-    modifyCallRecording:
+    updateCallRecording:
       type: object
       required:
         - state
@@ -4138,7 +3930,7 @@ components:
 
             is a response to the [Get Conferences
             endpoint](/apis/voice#tag/Conferences/operation/listConferences)
-    modifyConference:
+    updateConference:
       type: object
       properties:
         status:
@@ -4203,7 +3995,7 @@ components:
             endpoint
 
             and [Modify Conference
-            Member](/apis/voice/#operation/modifyConferenceMember)
+            Member](/apis/voice/#operation/updateConferenceMember)
 
             endpoint.
           example: >-
@@ -4249,7 +4041,7 @@ components:
             each call must individually execute a Conference verb to join.
           example:
             - c-25ac29a2-1331029c-2cb0-4a07-b215-b22865662d85
-    modifyConferenceMember:
+    updateConferenceMember:
       type: object
       properties:
         mute:
@@ -4744,6 +4536,7 @@ components:
       schema:
         type: string
       description: Filter results by the `to` field.
+      example: '%2b19195551234'
     from:
       name: from
       in: query
@@ -4751,6 +4544,7 @@ components:
       schema:
         type: string
       description: Filter results by the `from` field.
+      example: '%2b19195554321'
     name:
       name: name
       in: query
@@ -4829,7 +4623,7 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/createCall'
-    modifyCallRequest:
+    updateCallRequest:
       description: >-
         JSON object containing information to redirect an existing call to a new
         BXML document
@@ -4837,8 +4631,8 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/modifyCall'
-    modifyCallBxmlRequest:
+            $ref: '#/components/schemas/updateCall'
+    updateCallBxmlRequest:
       required: true
       content:
         application/xml:
@@ -4860,24 +4654,24 @@ components:
                 <Bxml>
                   <Redirect redirectUrl="https://test.com" redirectMethod="GET"/>
                 </Bxml>
-    modifyCallRecordingRequest:
+    updateCallRecordingRequest:
       required: true
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/modifyCallRecording'
+            $ref: '#/components/schemas/updateCallRecording'
     transcribeRecordingRequest:
       required: true
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/transcribeRecording'
-    modifyConferenceRequest:
+    updateConferenceRequest:
       required: true
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/modifyConference'
+            $ref: '#/components/schemas/updateConference'
     updateConferenceBxmlRequest:
       required: true
       content:
@@ -4898,7 +4692,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/modifyConferenceMember'
+            $ref: '#/components/schemas/updateConferenceMember'
   responses:
     createCallResponse:
       description: Call Successfully Created
@@ -5111,49 +4905,41 @@ components:
       value:
         type: validation
         description: 'Invalid answerUrl: only http and https are allowed'
-        id: ''
     voiceUnauthorizedErrorExample:
       summary: Example of an Unauthorized (401) Error
       value:
         type: validation
         description: 'Invalid answerUrl: only http and https are allowed'
-        id: ''
     voiceForbiddenErrorExample:
       summary: Example of a Forbidden (403) Error
       value:
         type: validation
         description: 'Invalid answerUrl: only http and https are allowed'
-        id: ''
     voiceNotFoundErrorExample:
       summary: Example of a Not Found (404) Error
       value:
         type: validation
         description: 'Invalid answerUrl: only http and https are allowed'
-        id: ''
     voiceNotAllowedErrorExample:
       summary: Example of a Not Allwoed (405) Error
       value:
         type: validation
         description: 'Invalid answerUrl: only http and https are allowed'
-        id: ''
     voiceUnsupportedMediaTypeErrorExample:
       summary: Example of an Unsupported Media Type (415) Error
       value:
         type: validation
         description: 'Invalid answerUrl: only http and https are allowed'
-        id: ''
     voiceTooManyRequestsErrorExample:
       summary: Eexample of a Too Many Requests (429) Error
       value:
         type: validation
         description: 'Invalid answerUrl: only http and https are allowed'
-        id: ''
     voiceInternalServerErrorExample:
       summary: Example of an Internal Server (500) Error
       value:
         type: validation
         description: 'Invalid answerUrl: only http and https are allowed'
-        id: ''
   securitySchemes:
     Basic:
       type: http
@@ -5166,6 +4952,8 @@ components:
 
 
         Example: `Authorization: Basic ZGVtbZpwQDU1dzByZA==`
+security:
+  - Basic: []
 tags:
   - name: Calls
   - name: Conferences
