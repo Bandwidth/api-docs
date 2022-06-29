@@ -62,7 +62,7 @@ module.exports = {
                         label: 'SDKs',
                         activeBasePath: 'sdks'
                     }, {
-                        href: 'https://github.com/Bandwidth-Samples',
+                        to: 'https://github.com/Bandwidth-Samples',
                         label: 'Samples',
                     }
                 ]
@@ -82,7 +82,7 @@ module.exports = {
                 className: 'header-github-link bw-link',
                 title: 'Github Organization'
             }, {
-                href: 'https://github.com/Bandwidth/postman',
+                href: 'https://github.com/Bandwidth/postman',   // TODO: update with real postman url
                 position: 'right', 
                 className: 'header-postman-link bw-link',
                 title: 'Postman Collection'
@@ -129,13 +129,16 @@ module.exports = {
                             label: 'GitHub',
                             to: 'https://github.com/Bandwidth',
                         }, {
-                            label: 'Try Sandbox',
+                            label: 'Sandbox',
                             to: 'https://sandbox.bandwidth.com'
-                        }
+                        }/*, {
+                            label: 'Postman',
+                            to: 'https://github.com/Bandwidth/postman' // TODO: update with real postman url
+                        }*/
                     ],
                 }
             ],
-            copyright: `Copyright © ${new Date().getFullYear()} Bandwidth Inc.`,
+            copyright: `© ${new Date().getFullYear()} Bandwidth Inc. Built with Docusaurus.`,
         },
         // Now this breaks redoc :sad: (Now missing prism dependency as well)
         // prism: {
