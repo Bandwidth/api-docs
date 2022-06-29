@@ -7,7 +7,7 @@ description: A general overview of Bandwidth's account services
 keywords:
   - bandwidth
   - account
-image: ../../static/img/bandwidth-logo.png
+image: ../../static/img/bw-icon.svg
 ---
 
 Your Bandwidth account is your entrypoint into using Bandwidth's products and services to power communication on your platform. Here are some resources that cover setting up and utilizing your Bandwidth account.

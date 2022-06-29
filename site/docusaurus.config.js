@@ -42,7 +42,7 @@ module.exports = {
             hideOnScroll: false,
             logo: {
                 alt: 'Bandwidth',
-                src: 'img/bandwidth-logo-navbar.png',
+                src: 'img/bw-horizontal.svg',
             },
             items: [{
                 type: 'dropdown',
@@ -94,10 +94,9 @@ module.exports = {
             }]
         },
         footer: {
-            style: "dark",
             logo: {
                 alt: 'Bandwidth',
-                src: 'img/bandwidth-logo-footer.png',
+                src: 'img/bw-horizontal.svg',
                 href: 'https://www.bandwidth.com',
             },
             links: [{
@@ -107,7 +106,6 @@ module.exports = {
                             to: '/docs/',
                         }, {
                             to: 'changelog',
-                            activeBasePath: 'changelog',
                             label: 'Changelog',
                         },
                     ],
@@ -116,7 +114,7 @@ module.exports = {
                     title: 'Community',
                     items: [{
                         label: 'Developer Forum',
-                        href: 'http://bandwidthdashboard.discussion.community/',
+                        to: 'http://bandwidthdashboard.discussion.community/',
                     }],
                 },
                 {
@@ -129,10 +127,10 @@ module.exports = {
                         // },
                         {
                             label: 'GitHub',
-                            href: 'https://github.com/Bandwidth',
+                            to: 'https://github.com/Bandwidth',
                         }, {
                             label: 'Try Sandbox',
-                            href: 'https://sandbox.bandwidth.com'
+                            to: 'https://sandbox.bandwidth.com'
                         }
                     ],
                 }

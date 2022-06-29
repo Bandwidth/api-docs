@@ -11,7 +11,7 @@ keywords:
   - location
   - site
   - sippeer
-image: ../../static/img/bandwidth-logo.png
+image: ../../static/img/bw-icon.svg
 ---
 
 <img
