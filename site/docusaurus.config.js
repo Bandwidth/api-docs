@@ -99,42 +99,49 @@ module.exports = {
                 src: 'img/bw-horizontal.svg',
                 href: 'https://www.bandwidth.com',
             },
-            links: [{
-                    title: 'Docs',
+            links: [
+                {
+                    title: 'Social',
                     items: [{
-                            label: 'Guides & Tutorials',
-                            to: '/docs/',
-                        }, {
-                            to: 'changelog',
-                            label: 'Changelog',
-                        },
-                    ],
+                        label: 'Instagram',
+                        to: 'https://www.instagram.com/wearebandwidth',
+                    }, {
+                        label: 'LinkedIn',
+                        to: 'https://www.linkedin.com/company/bandwidth-inc/mycompany/verification/'
+                    }, {
+                        label: 'Twitter',
+                        to: 'https://twitter.com/bandwidth'
+                    }, {
+                        label: 'YouTube',
+                        to: 'https://www.youtube.com/user/bandwidth'
+                    }]
                 },
                 {
                     title: 'Community',
                     items: [{
-                        label: 'Developer Forum',
-                        to: 'http://bandwidthdashboard.discussion.community/',
-                    }],
+                        label: 'Blog',
+                        to: 'https://www.bandwidth.com/blog/',
+                    }, {
+                        label: 'GitHub',
+                        to: 'https://github.com/Bandwidth'
+                    },],
                 },
                 {
                     title: 'More',
                     items: [
-                        // 'Blog' 404's with no md files in the blog folder
-                        // {
-                        //   label: 'Blog',
-                        //   to: '/blog',
-                        // },
                         {
-                            label: 'GitHub',
-                            to: 'https://github.com/Bandwidth',
+                            label: 'Release Notes',
+                            to: 'https://www.bandwidth.com/release-notes/'
                         }, {
                             label: 'Sandbox',
                             to: 'https://sandbox.bandwidth.com'
-                        }/*, {
-                            label: 'Postman',
-                            to: 'https://github.com/Bandwidth/postman' // TODO: update with real postman url
-                        }*/
+                        }, {
+                            label: 'Status',
+                            to: 'https://status.bandwidth.com/'
+                        }, {
+                            label: 'Support',
+                            to: 'https://support.bandwidth.com'
+                        }
                     ],
                 }
             ],
