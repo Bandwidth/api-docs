@@ -1,0 +1,412 @@
+openapi: 3.0.3
+info:
+  title: Phone Number Lookup
+  version: 1.1.0
+  contact:
+    name: Bandwidth Support
+    email: support@bandwidth.com
+    url: https://support.bandwidth.com
+  description: >-
+    A Bandwidth API to provide carrier information for a telephone number or
+    batch of telephone numbers. Currently supports lookups of telephone numbers
+    in the mainland United States, Alaska, Hawaii, District of Columbia, and the
+    provinces of Canada. Telephone numbers submitted must be in E.164 format to
+    be processed.
+
+    ## Base Path
+
+    <code>https://numbers.bandwidth.com/api/v1</code>
+servers:
+  - url: https://numbers.bandwidth.com/api/v1
+    description: Production
+paths:
+  /accounts/{accountId}/tnlookup:
+    post:
+      summary: Create Lookup
+      description: Create a Phone Number Lookup Order.
+      operationId: createLookup
+      tags:
+        - Phone Number Lookup
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+      requestBody:
+        $ref: '#/components/requestBodies/createLookupRequest'
+      responses:
+        '202':
+          $ref: '#/components/responses/createLookupResponse'
+        '400':
+          $ref: '#/components/responses/tnLookupBadRequestError'
+        '401':
+          $ref: '#/components/responses/tnLookupUnauthorizedError'
+        '403':
+          $ref: '#/components/responses/tnLookupForbiddenError'
+        '415':
+          $ref: '#/components/responses/tnLookupMediaTypeError'
+        '429':
+          $ref: '#/components/responses/tnLookupTooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/tnLookupInternalServerError'
+  /accounts/{accountId}/tnlookup/{requestId}:
+    get:
+      summary: Get Lookup Order Status
+      description: Get an existing Phone Number Lookup Order.
+      operationId: getLookupStatus
+      tags:
+        - Phone Number Lookup
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/requestId'
+      responses:
+        '200':
+          $ref: '#/components/responses/getLookupResponse'
+        '400':
+          $ref: '#/components/responses/tnLookupBadRequestError'
+        '401':
+          $ref: '#/components/responses/tnLookupUnauthorizedError'
+        '404':
+          description: Not Found
+        '429':
+          $ref: '#/components/responses/tnLookupTooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/tnLookupInternalServerError'
+components:
+  schemas:
+    lookupOrderStatusEnum:
+      type: string
+      description: >-
+        The status of the request (IN_PROGRESS, COMPLETE, PARTIAL_COMPLETE, or
+        FAILED).
+      enum:
+        - IN_PROGRESS
+        - COMPLETE
+        - PARTIAL_COMPLETE
+        - FAILED
+      example: COMPLETE
+    orderRequest:
+      type: object
+      description: Create phone number lookup request.
+      properties:
+        tns:
+          type: array
+          items:
+            type: string
+      required:
+        - tns
+    orderResponse:
+      type: object
+      description: >-
+        The request has been accepted for processing but not yet finished and in
+        a terminal state (COMPLETE, PARTIAL_COMPLETE, or FAILED).
+      properties:
+        requestId:
+          type: string
+        status:
+          type: string
+    orderStatus:
+      type: object
+      description: >-
+        If requestId exists, the result for that request is returned. See the
+        Examples for details on the various responses that you can receive. 
+        Generally, if you see a Response Code of 0 in a result for a TN,
+        information will be available for it.  Any other Response Code will
+        indicate no information was available for the TN.
+      properties:
+        requestId:
+          type: string
+          description: The requestId.
+          example: 004223a0-8b17-41b1-bf81-20732adf5590
+        status:
+          $ref: '#/components/schemas/lookupOrderStatusEnum'
+        result:
+          type: array
+          description: The carrier information results for the specified telephone number.
+          items:
+            type: object
+            properties:
+              Response Code:
+                type: integer
+                description: Our vendor's response code.
+                example: 0
+              Message:
+                type: string
+                description: Message associated with the response code.
+                example: NOERROR
+              E.164 Format:
+                type: string
+                description: The telephone number in E.164 format.
+                example: '+19195551234'
+              Formatted:
+                type: string
+                description: The formatted version of the telephone number.
+                example: (919) 555-1234
+              Country:
+                type: string
+                description: The country of the telephone number.
+                example: US
+              Line Type:
+                type: string
+                description: The line type of the telephone number.
+                example: Mobile
+              Line Provider:
+                type: string
+                description: The service provider of the telephone number.
+                example: Verizon Wireless
+              Mobile Country Code:
+                type: string
+                description: The first half of the Home Network Identity (HNI).
+                example: '310'
+              Mobile Network Code:
+                type: string
+                description: The second half of the HNI.
+                example: '010'
+        failedTelephoneNumbers:
+          type: array
+          description: The telephone numbers whose lookup failed.
+          items:
+            type: string
+          example:
+            - '+191955512345'
+    tnLookupRequestError:
+      type: object
+      properties:
+        message:
+          type: string
+          description: A description of what validation error occurred.
+          example: example error message
+  responses:
+    createLookupResponse:
+      description: Accepted
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/orderResponse'
+          examples:
+            lookupOrderResponseExample:
+              $ref: '#/components/examples/lookupInProgressExample'
+    getLookupResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/orderStatus'
+          examples:
+            lookupInProgressExample:
+              $ref: '#/components/examples/lookupInProgressExample'
+            lookupFailedExample:
+              $ref: '#/components/examples/lookupFailedExample'
+            lookupSingleNumberCompleteExample:
+              $ref: '#/components/examples/lookupSingleNumberCompleteExample'
+            lookupMultipleNumbersCompleteExample:
+              $ref: '#/components/examples/lookupMultipleNumbersCompleteExample'
+            lookupMultipleNumbersPartialCompleteExample:
+              $ref: >-
+                #/components/examples/lookupMultipleNumbersPartialCompleteExample
+            lookupSingleNumberCompleteNoInfoExample:
+              $ref: '#/components/examples/lookupSingleNumberCompleteNoInfoExample'
+    tnLookupBadRequestError:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/tnLookupRequestError'
+          examples:
+            badRequest:
+              summary: Example Bad Request Error
+              value:
+                message: 'Some tns do not match e164 format: 1234'
+    tnLookupUnauthorizedError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/tnLookupRequestError'
+          examples:
+            unauthorized:
+              summary: Example Unauthorized Error
+              value:
+                message: Unauthorized
+    tnLookupForbiddenError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/tnLookupRequestError'
+          examples:
+            forbidden:
+              summary: Example Forbidden Error
+              value:
+                message: >-
+                  Authorization header requires 'Credential' parameter.
+                  Authorization header requires 'Signature' parameter. 
+                  Authorization header requires 'SignedHeaders' parameter.
+                  Authorization header requires existence of either a
+                  'X-Amz-Date' or a 'Date' header.  Authorization=Basic
+                  Y2tvZloPTGhHgywYIzGlcGVlcGvvcGovYTIGIt=='
+    tnLookupMediaTypeError:
+      description: Unsupported Media Type
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/tnLookupRequestError'
+          examples:
+            mediaType:
+              summary: Example Unsupported Media Type Error
+              value:
+                message: Content-Type must be application/json.
+    tnLookupTooManyRequestsError:
+      description: Too Many Requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/tnLookupRequestError'
+          examples:
+            mediaType:
+              summary: Example Too Many Requests Error
+              value:
+                message: Too many requests.
+    tnLookupInternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/tnLookupRequestError'
+          examples:
+            mediaType:
+              summary: Example Internal Server Error Error
+              value:
+                message: Request has not been passed further.
+  parameters:
+    accountId:
+      name: accountId
+      description: The ID of the Bandwidth account that the user belongs to.
+      in: path
+      required: true
+      schema:
+        type: string
+        example: '9900000'
+    requestId:
+      name: requestId
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 004223a0-8b17-41b1-bf81-20732adf5590
+  examples:
+    singleNumberRequestExample:
+      summary: Example Number Lookup Request for One Number
+      value:
+        tns:
+          - '+19195551234'
+    multipleNumberRequestExample:
+      summary: Example Number Lookup Request for Multiple Numbers
+      value:
+        tns:
+          - '+19195551234'
+          - '+19195554321'
+    lookupInProgressExample:
+      summary: Example Lookup In Progress Response
+      value:
+        requestId: 004223a0-8b17-41b1-bf81-20732adf5590
+        status: IN_PROGRESS
+    lookupFailedExample:
+      summary: Example Lookup Failed Response
+      value:
+        requestId: 004223a0-8b17-41b1-bf81-20732adf5590
+        status: FAILED
+        failedTelephoneNumbers:
+          - '+191955512345'
+    lookupSingleNumberCompleteExample:
+      summary: Example Single Number Lookup Complete Response
+      value:
+        requestId: 004223a0-8b17-41b1-bf81-20732adf5590
+        status: COMPLETE
+        result:
+          - Response Code: 0
+            Message: NOERROR
+            E.164 Format: '+19195551234'
+            Formatted: (919) 555-1234
+            Country: US
+            Line Type: Mobile
+            Line Provider: Verizon Wireless
+            Mobile Country Code: '310'
+            Mobile Network Code: '010'
+    lookupMultipleNumbersCompleteExample:
+      summary: Example Multiple Numbers Lookup Complete Response
+      value:
+        requestId: 004223a0-8b17-41b1-bf81-20732adf5590
+        status: COMPLETE
+        result:
+          - Response Code: 0
+            Message: NOERROR
+            E.164 Format: '+19195551234'
+            Formatted: (919) 555-1234
+            Country: US
+            Line Type: Mobile
+            Line Provider: Verizon Wireless
+            Mobile Country Code: '310'
+            Mobile Network Code: '010'
+          - Response Code: 0
+            Message: NOERROR
+            E.164 Format: '+19195554321'
+            Formatted: (919) 555-4321
+            Country: US
+            Line Type: Mobile
+            Line Provider: T-Mobile USA
+            Mobile Country Code: '310'
+            Mobile Network Code: '160'
+    lookupMultipleNumbersPartialCompleteExample:
+      summary: Example Multiple Numbers Lookup Partial Complete Response
+      value:
+        requestId: 004223a0-8b17-41b1-bf81-20732adf5590
+        status: PARTIAL_COMPLETE
+        result:
+          - Response Code: 0
+            Message: NOERROR
+            E.164 Format: '+19195551234'
+            Formatted: (919) 555-1234
+            Country: US
+            Line Type: Mobile
+            Line Provider: Verizon Wireless
+            Mobile Country Code: '310'
+            Mobile Network Code: '010'
+        failedTelephoneNumbers:
+          - '+191955512345'
+    lookupSingleNumberCompleteNoInfoExample:
+      summary: Example Single Number Lookup Complete with No Information Response
+      value:
+        requestId: 004223a0-8b17-41b1-bf81-20732adf5590
+        status: COMPLETE
+        result:
+          - Response Code: 3
+            Message: NXDOMAIN
+            E.164 Format: '+19195550000'
+            Formatted: (919) 555-0000
+            Country: US
+  requestBodies:
+    createLookupRequest:
+      description: Phone number lookup order request.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/orderRequest'
+          examples:
+            singleNumberRequestExample:
+              $ref: '#/components/examples/singleNumberRequestExample'
+            multipleNumberRequestExample:
+              $ref: '#/components/examples/multipleNumberRequestExample'
+  securitySchemes:
+    Basic:
+      type: http
+      scheme: basic
+      description: >-
+        Basic authentication is a simple authentication scheme built into the
+        HTTP protocol. To use it, send your HTTP requests with an Authorization
+        header that contains the word Basic followed by a space and a
+        base64-encoded string `username:password`.
+
+        Example: `Authorization: Basic ZGVtbZpwQDU1dzByZA==`
+security:
+  - Basic: []
+tags:
+  - name: Phone Number Lookup
