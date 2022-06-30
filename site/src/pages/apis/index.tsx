@@ -1,8 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
 import Layout from '@theme/Layout';
-import Link from '@docusaurus/Link';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import styles from '../index.module.css';
 import apiStyles from '../../css/apis.module.css';
 import ItemGrid from '../../components/gridItem'
@@ -61,11 +59,16 @@ const ApiList = [
         Svg: require('../../../static/img/icon-dash-notifications-complex-no-bg.svg').default,
         style: apiStyles.apiSvg,
         link: '/apis/dash-notifications'
+    },
+    {
+        title: 'Insights',
+        Svg: require('../../../static/img/icon-insights-complex-no-bg.svg').default,
+        style: apiStyles.apiSvg,
+        link: '/apis/insights'
     }
 ];
 
 function Header() {
-    const { siteConfig } = useDocusaurusContext();
     return (
         <header className={clsx('hero hero--primary', styles.heroBanner)}>
             <div className="container">
@@ -77,7 +80,6 @@ function Header() {
 }
 
 export default function Apis() {
-    const { siteConfig } = useDocusaurusContext();
     return (
         <Layout
             title="Bandwidth APIs"
@@ -85,7 +87,7 @@ export default function Apis() {
             keywords="Bandwidth,API">
             <Header />
             <main>
-                <ItemGrid itemList={ApiList} className={apiStyles.apis}/>
+                <ItemGrid itemList={ApiList} className={apiStyles.apis} />
             </main>
         </Layout>
     );

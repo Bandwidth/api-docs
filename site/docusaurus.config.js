@@ -12,8 +12,9 @@ const dashSpec = fs.readFileSync('./specs/dash.json', 'utf-8');
 const dashNotificationsSpec = fs.readFileSync('./specs/dashNotifications.json', 'utf-8');
 const messagingInternationalSpec = fs.readFileSync('./specs/messagingInternational.json', 'utf-8');
 const globalSpec = fs.readFileSync('./specs/global.yml', 'utf-8');
-const globalSpec_v2 = fs.readFileSync('./specs/global_v2.yml', 'utf-8');
-const globalSpec_beta = fs.readFileSync('./specs/global_beta.yml', 'utf-8');
+const globalSpec_v2 = fs.readFileSync('./specs/global-v2.yml', 'utf-8');
+const globalSpec_beta = fs.readFileSync('./specs/global-beta.yml', 'utf-8');
+const insightsSpec = fs.readFileSync('./specs/insights.yml', 'utf-8');
 
 module.exports = {
     title: 'Bandwidth API Docs',
@@ -23,8 +24,8 @@ module.exports = {
     onBrokenLinks: 'throw',
     onBrokenMarkdownLinks: 'warn',
     favicon: 'img/favicon.ico',
-    organizationName: 'bandwidth', // Usually your GitHub org/user name.
-    projectName: 'api-docs', // Usually your repo name.
+    organizationName: 'bandwidth', 
+    projectName: 'api-docs', 
     themeConfig: {
         image: 'img/bandwidth.png', // used for meta tag
         colorMode: {
@@ -36,10 +37,6 @@ module.exports = {
             indexName: 'bandwidth',
             contextualSearch: false, // useful for versioned Docusaurus sites
         },
-        googleAnalytics: {
-            trackingID: 'UA-62651840-1',
-            anonymizeIP: false,
-        },
         announcementBar: {
             id: 'new_docsite_flag', // Any value that will identify this message.
             content: 'Welcome to the new home of Bandwidth\'s Developer Documentation. Please take a minute to <a target="_blank" href="https://forms.gle/CgaaBoNRzSp1XoWbA">provide any feedback you may have</a> on our new docsite!',
@@ -47,11 +44,6 @@ module.exports = {
             textColor: '#079CEE', // Defaults to `#000`.
             isCloseable: false, // Defaults to `true`.
         },
-        // this is broken
-        // prism: {
-        //   additionalLanguages: ['java', 'csharp', 'php', 'ruby'],
-        // },
-        sidebarCollapsible: true,
         navbar: {
             title: '',
             hideOnScroll: false,
@@ -60,22 +52,41 @@ module.exports = {
                 src: 'img/bandwidth-logo-navbar.png',
             },
             items: [{
-                to: 'docs',
-                activeBasePath: 'docs',
-                label: 'Docs',
+                type: 'dropdown',
+                label: 'US & Canada APIs',
                 position: 'left',
+                items: [
+                    {
+                        to: 'docs',
+                        activeBasePath: 'docs',
+                        label: 'Docs',
+                    }, {
+                        to: 'apis',
+                        label: 'API Reference',
+                        activeBasePath: 'apis'
+                    }, {
+                        to: 'sdks',
+                        label: 'SDKs',
+                        activeBasePath: 'sdks'
+                    }, {
+                        href: 'https://github.com/Bandwidth-Samples',
+                        label: 'Samples',
+                    }
+                ]
             }, {
-                to: 'apis',
-                label: 'API Reference',
-                activeBasePath: 'apis'
-            }, {
-                to: 'sdks',
-                label: 'SDKs',
-                activeBasePath: 'sdks'
-            }, {
-                href: 'https://github.com/Bandwidth-Samples',
-                label: 'Samples',
+                type: 'dropdown',
+                label: 'Global APIs',
                 position: 'left',
+                items: [
+                    {
+                        to: 'apis/global',
+                        label: 'Docs & API Reference',
+                    }
+                ]
+            }, {
+                href: 'https://github.com/Bandwidth',
+                position: 'right', 
+                className: 'header-github-link'
             }]
         },
         footer: {
@@ -124,6 +135,10 @@ module.exports = {
             ],
             copyright: `Copyright © ${new Date().getFullYear()} Bandwidth Inc.`,
         },
+        // Now this breaks redoc :sad: 
+        // prism: {
+        //     additionalLanguages: ['csharp', 'java', 'ruby', 'php'],
+        //   },
     },
     presets: [
         [
@@ -132,6 +147,7 @@ module.exports = {
                 docs: {
                     sidebarPath: require.resolve('./sidebar.js'),
                     editUrl: 'https://github.com/Bandwidth/api-docs/edit/main/site/',
+                    sidebarCollapsible: true,
                 },
                 blog: {
                     showReadingTime: true,
@@ -139,6 +155,10 @@ module.exports = {
                 },
                 theme: {
                     customCss: require.resolve('./src/css/custom.css'),
+                },
+                googleAnalytics: {
+                    trackingID: 'UA-62651840-1',
+                    anonymizeIP: false,
                 },
             }
         ],
@@ -156,6 +176,8 @@ module.exports = {
         globalSpec: YAML.parse(globalSpec),
         globalSpec_v2: YAML.parse(globalSpec_v2),
         globalSpec_beta: YAML.parse(globalSpec_beta),
+        insightsSpec: YAML.parse(insightsSpec),
+
         // CSS Colors
         bwBlue: '#079CEE',
         voicePurple: '#9a59c5',

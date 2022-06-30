@@ -1,0 +1,1193 @@
+---
+id: migrationGuide
+title: Twilio Migration Guide
+slug: /voice/twilioVoiceMigration
+description: A Quick guide on how to migrate from Twilio to Bandwidth's Voice API
+keywords:
+  - bandwidth
+  - voice
+  - guide
+  - tutorial
+  - Twilio
+  - migrate
+hide_title: false
+image: ../../static/img/bandwidth-logo.png
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## Introduction
+This guide will show you how easy it is to migrate your voice calling services to Bandwidth from Twilio. We’re the only Twilio alternative with its own nationwide carrier network, giving you the quality, control, and cost-savings that other providers can’t match.
+
+Our Voice API and XML structures (TwiML v BXML) are similar, allowing you to seamlessly migrate with low effort. With our comprehensive APIs, you will have everything you need and more to grow your business.
+
+
+## The differences between Twilio and Bandwidth’s voice offerings
+Most of the features available on Twilio’s Programmable Voice are also available on Bandwidth’s Voice API. Therefore, your migration should be straightforward, as getting started is identical for both.
+
+## A side-by-side comparison of our Voice API capabilities.
+
+| Features                                        | Twilio                                              |  Bandwidth                            |
+|:------------------------------------------------|:----------------------------------------------------|:--------------------------------------|
+| Receive Calls from PSTN                         | ✓                                                   | ✓                                     |
+| Make Calls to PSTN                              | ✓                                                   | ✓                                     |
+| Own Nationwide Carrier Network                  | X                                                   | ✓                                     |
+| Play Audio                                      | ✓                                                   | ✓                                     |
+| Text-to-Speech                                  | ✓                                                   | ✓                                     |
+| SSML Support                                    | ✓                                                   | ✓                                     |
+| Recording (single/dual channel) and storage     | ✓                                                   | ✓                                     |
+| Transcription                                   | ✓                                                   | ✓                                     |
+| Media Streaming                                 | ✓                                                   | In Development                        |
+| Real-time transcription                         | ✓                                                   | X (Available via media streaming)     |
+| Custom Caller ID                                | ✓                                                   | ✓                                     |
+| Voicemail Detection                             | ✓                                                   | ✓                                     |
+| Conferencing                                    | ✓                                                   | ✓                                     |
+| Call Forwarding                                 | ✓                                                   | ✓                                     |
+| DTMF-based IVR                                  | ✓                                                   | ✓                                     |
+| Voice Activated IVR                             | ✓                                                   | X                                     |
+
+## Migrating your existing voice application
+
+Migrating from Twilio to Bandwidth will require you to refactor your existing code, but most API call logic will remain the same.
+For example, [Bandwidth’s BXML](/docs/voice/bxml) must be used directly, and there is no user interface for constructing call flows visually.
+We also offer SDKs in your preferred language (Node, Python, Ruby, Java, C#, and PHP) and have put together a few examples to demonstrate how easy it is to move to Bandwidth.
+
+## How to make an outbound call
+
+In this example we will show you the process of refactoring your code to migrate your existing application from Twilio to Bandwidth by changing just a few lines of code for placing an outbound call.
+
+#### Twilio:
+
+<Tabs
+    groupId="bxml"
+    defaultValue="curl"
+    values={[
+        { label: 'cURL', value: 'curl', },
+        { label: 'Java', value: 'java', },
+        { label: 'C#', value: 'csharp', },
+        { label: 'Ruby', value: 'ruby', },
+        { label: 'NodeJS', value: 'nodejs', },
+        { label: 'Python', value: 'python', },
+        { label: 'PHP', value: 'php', },
+    ]
+}>
+<TabItem value="curl">
+
+```cURL
+Note: Remember to add authentication for your application if needed!
+
+curl -X POST https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Calls.json \
+--data-urlencode "Url=http://demo.twilio.com/docs/voice.xml" \
+--data-urlencode "To=+15017122661" \
+--data-urlencode "From=+15558675310" \
+-u $TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN
+```
+
+</TabItem>
+<TabItem value="java">
+
+```java
+// Install the Java helper library from twilio.com/docs/java/install
+
+import com.twilio.Twilio;
+import com.twilio.rest.api.v2010.account.Call;
+import com.twilio.type.PhoneNumber;
+
+import java.net.URI;
+
+public class Example {
+    // Find your Account SID and Auth Token at twilio.com/console
+    // and set the environment variables. See http://twil.io/secure
+    public static final String ACCOUNT_SID = System.getenv("TWILIO_ACCOUNT_SID");
+    public static final String AUTH_TOKEN = System.getenv("TWILIO_AUTH_TOKEN");
+
+    public static void main(String[] args) {
+        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+        Call call = Call.creator(
+                new com.twilio.type.PhoneNumber("+15017122661"),
+                new com.twilio.type.PhoneNumber("+15558675310"),
+                URI.create("http://demo.twilio.com/docs/voice.xml"))
+            .create();
+
+        System.out.println(call.getSid());
+    }
+}
+```
+
+</TabItem>
+<TabItem value="csharp">
+
+```csharp
+// Install the C# / .NET helper library from twilio.com/docs/csharp/install
+
+using System;
+using Twilio;
+using Twilio.Rest.Api.V2010.Account;
+
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Find your Account SID and Auth Token at twilio.com/console
+        // and set the environment variables. See http://twil.io/secure
+        string accountSid = Environment.GetEnvironmentVariable("TWILIO_ACCOUNT_SID");
+        string authToken = Environment.GetEnvironmentVariable("TWILIO_AUTH_TOKEN");
+
+        TwilioClient.Init(accountSid, authToken);
+
+        var call = CallResource.Create(
+            url: new Uri("http://demo.twilio.com/docs/voice.xml"),
+            to: new Twilio.Types.PhoneNumber("+15017122661"),
+            from: new Twilio.Types.PhoneNumber("+15558675310")
+        );
+
+        Console.WriteLine(call.Sid);
+    }
+}
+```
+
+</TabItem>
+<TabItem value="ruby">
+
+```ruby
+# Download the helper library from https://www.twilio.com/docs/ruby/install
+require 'rubygems'
+require 'twilio-ruby'
+
+# Find your Account SID and Auth Token at twilio.com/console
+# and set the environment variables. See http://twil.io/secure
+account_sid = ENV['TWILIO_ACCOUNT_SID']
+auth_token = ENV['TWILIO_AUTH_TOKEN']
+@client = Twilio::REST::Client.new(account_sid, auth_token)
+
+call = @client.calls.create(
+                       url: 'http://demo.twilio.com/docs/voice.xml',
+                       to: '+15017122661',
+                       from: '+15558675310'
+                     )
+
+puts call.sid
+```
+
+</TabItem>
+<TabItem value="nodejs">
+
+```js
+// Download the helper library from https://www.twilio.com/docs/node/install
+// Find your Account SID and Auth Token at twilio.com/console
+// and set the environment variables. See http://twil.io/secure
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const client = require('twilio')(accountSid, authToken);
+
+client.calls
+      .create({
+         url: 'http://demo.twilio.com/docs/voice.xml',
+         to: '+15017122661',
+         from: '+15558675310'
+       })
+      .then(call => console.log(call.sid));
+```
+
+</TabItem>
+<TabItem value="python">
+
+```python
+# Download the helper library from https://www.twilio.com/docs/python/install
+import os
+from twilio.rest import Client
+
+
+# Find your Account SID and Auth Token at twilio.com/console
+# and set the environment variables. See http://twil.io/secure
+account_sid = os.environ['TWILIO_ACCOUNT_SID']
+auth_token = os.environ['TWILIO_AUTH_TOKEN']
+client = Client(account_sid, auth_token)
+
+call = client.calls.create(
+                        url='http://demo.twilio.com/docs/voice.xml',
+                        to='+15017122661',
+                        from_='+15558675310'
+                    )
+
+print(call.sid)
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+<?php
+
+// Update the path below to your autoload.php,
+// see https://getcomposer.org/doc/01-basic-usage.md
+require_once '/path/to/vendor/autoload.php';
+
+use Twilio\Rest\Client;
+
+// Find your Account SID and Auth Token at twilio.com/console
+// and set the environment variables. See http://twil.io/secure
+$sid = getenv("TWILIO_ACCOUNT_SID");
+$token = getenv("TWILIO_AUTH_TOKEN");
+$twilio = new Client($sid, $token);
+
+$call = $twilio->calls
+               ->create("+15017122661", // to
+                        "+15558675310", // from
+                        ["url" => "http://demo.twilio.com/docs/voice.xml"]
+               );
+
+print($call->sid);
+```
+
+</TabItem>
+</Tabs>
+
+#### Bandwidth:
+
+<Tabs
+    groupId="bxml"
+    defaultValue="payload"
+    values={[
+        { label: 'Request Payload', value: 'payload', },
+        { label: 'cURL', value: 'curl', },
+        { label: 'Java', value: 'java', },
+        { label: 'C#', value: 'csharp', },
+        { label: 'Ruby', value: 'ruby', },
+        { label: 'NodeJS', value: 'nodejs', },
+        { label: 'Python', value: 'python', },
+        { label: 'PHP', value: 'php', },
+    ]
+}>
+<TabItem value="payload">
+
+```json
+Note: Remember to add authentication for your application if needed!
+
+POST https://voice.bandwidth.com/api/v2/accounts/{accountId}
+//Make sure an authentication header is added with your BANDWIDTH_USERNAME and BANDWIDTH_PASSWORD
+{
+    "from": "{BW_NUMBER}",
+    "to": "{$USER_NUMBER}",
+    "applicationId": "{APPLICATION_ID}",
+    "answerUrl": "http://example.test/callbacks/answer",
+}
+```
+
+</TabItem>
+<TabItem value="curl">
+
+```cURL
+Note: Remember to add authentication for your application if needed!
+
+curl 'https://voice.bandwidth.com/api/v2/accounts/{BW_ACCOUNT_ID}/calls' \
+    -X POST \
+    -U '{BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}' \
+    -H 'Content-Type: application/json' \
+    -d '{
+        "from": "{BW_NUMBER}",
+        "to": "{$USER_NUMBER}",
+        "applicationId": "{APPLICATION_ID}",
+        "answerUrl": "http://example.test/callbacks/answer",
+    }'
+```
+
+</TabItem>
+<TabItem value="java">
+
+```java
+import com.bandwidth.BandwidthClient;
+import com.bandwidth.http.response.ApiResponse;
+import com.bandwidth.voice.models.CreateCallRequest;
+import com.bandwidth.voice.models.CreateCallResponse;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
+public class Sample {
+    public static final String USERNAME = System.getenv("BW_USERNAME");
+    public static final String PASSWORD = System.getenv("BW_PASSWORD");
+    public static final String ACCOUNT_ID = System.getenv("BW_ACCOUNT_ID");
+
+    public static void main(String[] args) {
+        String voiceApplicationId = System.getenv("BW_VOICE_APPLICATION_ID");
+        String to = System.getenv("USER_NUMBER");
+        String from = System.getenv("BW_NUMBER");
+        String baseUrl = System.getenv("BASE_CALLBACK_URL");
+        String answerUrl = baseUrl.concat("/callbacks/answer");
+
+        BandwidthClient client = new BandwidthClient.Builder()
+        .voiceBasicAuthCredentials(USERNAME, PASSWORD)
+        .build();
+
+        CreateCallRequest request = new CreateCallRequest();
+        request.setApplicationId(voiceApplicationId);
+        request.setTo(to);
+        request.setFrom(from);
+        request.setAnswerUrl(answerUrl);
+        //remember to add auth for your application if needed!
+
+        try {
+            CompletableFuture<ApiResponse<CreateCallResponse>> completableFuture = client.getVoiceClient().getAPIController().createCallAsync(ACCOUNT_ID, request);
+            System.out.println(completableFuture.get().getResult());
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
+```
+
+</TabItem>
+<TabItem value="csharp">
+
+```csharp
+using System;
+using System.Threading.Tasks;
+using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
+using Bandwidth.Standard.Voice.Models;
+
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        var username = System.Environment.GetEnvironmentVariable("BW_USERNAME");
+        var password = System.Environment.GetEnvironmentVariable("BW_PASSWORD");
+        var accountId = System.Environment.GetEnvironmentVariable("BW_ACCOUNT_ID");
+        var applicationId = System.Environment.GetEnvironmentVariable("BW_VOICE_APPLICATION_ID");
+        var to = System.Environment.GetEnvironmentVariable("USER_NUMBER");
+        var from = System.Environment.GetEnvironmentVariable("BW_NUMBER");
+        var baseUrl = System.Environment.GetEnvironmentVariable("BASE_CALLBACK_URL");
+        var answerUrl = string.Concat(baseUrl, "/callbacks/answer");
+
+        var client = new BandwidthClient.Builder()
+            .VoiceBasicAuthCredentials(username, password)
+            .Build();
+
+        var request = new CreateCallRequest()
+        {
+            ApplicationId = applicationId,
+            To = to,
+            From = from,
+            AnswerUrl = answerUrl
+            //remember to add auth for your application if needed!
+        };
+
+        try
+        {
+            var response = await client.Voice.APIController.CreateCallAsync(accountId, request);
+            Console.WriteLine(response.Data);
+        }
+        catch (ApiException e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+}
+```
+
+</TabItem>
+<TabItem value="ruby">
+
+```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
+bandwidth_client = Bandwidth::Client.new(
+    voice_basic_auth_user_name: ENV['BW_USERNAME'],
+    voice_basic_auth_password: ENV['BW_PASSWORD']
+)
+
+voice_client = bandwidth_client.voice_client.client
+
+body = CreateCallRequest.new
+body.from = ENV['BW_NUMBER']
+body.to = ENV['USER_NUMBER']
+body.answer_url = ENV['BASE_CALLBACK_URL'] + "/callbacks/answer"
+body.application_id = ENV['BW_VOICE_APPLICATION_ID']
+#remember to add auth for your application if needed!
+
+begin
+    result = voice_client.create_call(ENV['BW_ACCOUNT_ID'], body)
+    puts result.data.call_id
+rescue APIException => e
+    puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="nodejs">
+
+```js
+import { Client, ApiController } from '@bandwidth/voice';
+
+const BW_USERNAME = process.env["BW_USERNAME"];
+const BW_PASSWORD = process.env["BW_PASSWORD"];
+const BW_ACCOUNT_ID = process.env["BW_ACCOUNT_ID"];
+const BW_VOICE_APPLICATION_ID = process.env["BW_VOICE_APPLICATION_ID"];
+const BW_NUMBER = process.env["BW_NUMBER"];
+const USER_NUMBER = process.env["USER_NUMBER"];
+const VOICE_CALLBACK_URL = process.env["VOICE_CALLBACK_URL"];
+
+const client = new Client({
+  basicAuthUserName: BW_USERNAME,
+  basicAuthPassword: BW_PASSWORD
+});
+
+const controller = new ApiController(client);
+
+const accountId = BW_ACCOUNT_ID;
+
+const makeCall = async function() {
+  try {
+    const response = await controller.createCall(accountId, {
+        applicationId: BW_VOICE_APPLICATION_ID,
+        to: USER_NUMBER,
+        from: BW_NUMBER,
+        answerUrl: VOICE_CALLBACK_URL,
+        answerMethod: 'POST',
+        callTimeout: 30
+        //remember to add auth for your application if needed!
+    });
+    console.log(response.body);
+  } catch(error) {
+      console.error(error);
+  }
+}
+
+makeCall();
+```
+
+</TabItem>
+<TabItem value="python">
+
+```python
+from bandwidth.bandwidth_client import BandwidthClient
+from bandwidth.voice.models.create_call_request import CreateCallRequest
+from bandwidth.exceptions.api_exception import APIException
+
+import os
+
+BW_USERNAME = os.environ["BW_USERNAME"]
+BW_PASSWORD = os.environ["BW_PASSWORD"]
+BW_ACCOUNT_ID = os.environ["BW_ACCOUNT_ID"]
+BW_VOICE_APPLICATION_ID = os.environ["BW_VOICE_APPLICATION_ID"]
+BW_NUMBER = os.environ["BW_NUMBER"]
+USER_NUMBER = os.environ["USER_NUMBER"]
+VOICE_CALLBACK_URL = os.environ["VOICE_CALLBACK_URL"]
+
+bandwidth_client = BandwidthClient(
+    voice_basic_auth_user_name=BW_USERNAME,
+    voice_basic_auth_password=BW_PASSWORD
+)
+voice_client = bandwidth_client.voice_client.client
+
+body = CreateCallRequest()
+body.application_id = BW_VOICE_APPLICATION_ID
+body.to = USER_NUMBER
+body.mfrom = BW_NUMBER
+body.answer_url = VOICE_CALLBACK_URL
+#remember to add auth for your application if needed!
+
+try:
+    response = voice_client.create_call(BW_ACCOUNT_ID, body)
+    print(response.body.call_id)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+require "vendor/autoload.php";
+
+$BW_USERNAME = getenv("BW_USERNAME");
+$BW_PASSWORD = getenv("BW_PASSWORD");
+$BW_ACCOUNT_ID = getenv("BW_ACCOUNT_ID");
+$BW_VOICE_APPLICATION_ID = getenv("BW_VOICE_APPLICATION_ID");
+$BW_NUMBER = getenv("BW_NUMBER");
+$USER_NUMBER = getenv("USER_NUMBER");
+$VOICE_CALLBACK_URL = getenv("VOICE_CALLBACK_URL");
+
+$config = new BandwidthLib\Configuration(
+    array(
+        'voiceBasicAuthUserName' => $BW_USERNAME,
+        'voiceBasicAuthPassword' => $BW_PASSWORD,
+    )
+);
+$client = new BandwidthLib\BandwidthClient($config);
+
+$voiceClient = $client->getVoice()->getClient();
+
+$body = new BandwidthLib\Voice\Models\CreateCallRequest();
+$body->from = $BW_NUMBER;
+$body->to = $USER_NUMBER;
+$body->answerUrl = $VOICE_CALLBACK_URL;
+$body->applicationId = $BW_VOICE_APPLICATION_ID;
+#remember to add auth for your application if needed!
+
+try {
+    $response = $voiceClient->createCall($BW_ACCOUNT_ID, $body);
+    print_r($response->getResult()->callId);
+} catch (BandwidthLib\APIException $e) {
+    print_r($e->getResponseCode());
+}
+```
+
+</TabItem>
+</Tabs>
+
+These are the two primary ways you may have implemented TwiML into your platform, and based on those options, here's how that pathway would look like to Bandwidth:
+
+*   With Twilio, you can place an outbound call with a URL that contains your TwiML. The same is true for Bandwidth, where the answerUrl expects BXML to continue the call with your chosen action.
+
+*   With Twilio, you can also place an outbound call and directly specify your TwiML. However, this is not possible with Bandwidth, but your answerUrl can contain all your equivalent BXML actions.
+
+## How to transfer a call
+
+In this example, we will show you the process of refactoring your code to migrate your existing application from Twilio to Bandwidth.  All it takes is changing just a few lines of code to transfer a call.
+
+#### Twilio:
+
+<Tabs
+    groupId="bxml"
+    defaultValue="java"
+    values={[
+        { label: 'Java', value: 'java', },
+        { label: 'C#', value: 'csharp', },
+        { label: 'Ruby', value: 'ruby', },
+        { label: 'NodeJS', value: 'nodejs', },
+        { label: 'Python', value: 'python', },
+        { label: 'PHP', value: 'php', },
+    ]
+}>
+<TabItem value="java">
+
+```java
+import com.twilio.twiml.voice.Dial;
+import com.twilio.twiml.VoiceResponse;
+import com.twilio.twiml.voice.Say;
+import com.twilio.twiml.TwiMLException;
+
+
+public class Example {
+    public static void main(String[] args) {
+        Dial dial = new Dial.Builder("415-123-4567").build();
+        Say say = new Say.Builder("Goodbye").build();
+        VoiceResponse response = new VoiceResponse.Builder().dial(dial)
+            .say(say).build();
+
+        try {
+            System.out.println(response.toXml());
+        } catch (TwiMLException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+</TabItem>
+<TabItem value="csharp">
+
+```csharp
+using System;
+using Twilio.TwiML;
+using Twilio.TwiML.Voice;
+
+
+class Example
+{
+    static void Main(string[] args)
+    {
+
+        var response = new VoiceResponse();
+        response.Dial(415-123-4567);
+        response.Say(Goodbye);
+
+        Console.WriteLine(response.ToString());
+    }
+}
+```
+
+</TabItem>
+<TabItem value="ruby">
+
+```ruby
+require 'twilio-ruby'
+
+response = Twilio::TwiML::VoiceResponse.new
+response.dial(number: '415-123-4567')
+response.say(message: 'Goodbye')
+
+puts response
+```
+
+</TabItem>
+<TabItem value="nodejs">
+
+```js
+const VoiceResponse = require('twilio').twiml.VoiceResponse;
+
+
+const response = new VoiceResponse();
+response.dial('415-123-4567');
+response.say('Goodbye');
+
+console.log(response.toString());
+```
+
+</TabItem>
+<TabItem value="python">
+
+```python
+from twilio.twiml.voice_response import Dial, VoiceResponse, Say
+
+response = VoiceResponse()
+response.dial('415-123-4567')
+response.say('Goodbye')
+
+print(response)
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+<?php
+require_once './vendor/autoload.php';
+use Twilio\TwiML\VoiceResponse;
+
+$response = new VoiceResponse();
+$response->dial('415-123-4567');
+$response->say('Goodbye');
+
+echo $response;
+
+```
+
+</TabItem>
+</Tabs>
+
+#### Bandwidth:
+
+This shows how to use Bandwidth XML to transfer a phone call with a pre-transfer announcement.
+
+<Tabs
+  groupId="bxml"
+  defaultValue="xml"
+  values={[
+      { label: 'XML', value: 'xml', },
+      { label: 'Java', value: 'java', },
+      { label: 'C#', value: 'csharp', },
+      { label: 'Ruby', value: 'ruby', },
+      { label: 'NodeJS', value: 'nodejs', },
+      { label: 'Python', value: 'python', },
+      { label: 'PHP', value: 'php', },
+  ]
+}>
+<TabItem value="xml">
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <Transfer transferCallerId="+15555555555">
+        <PhoneNumber transferAnswerUrl="/announcement">+15555555554</PhoneNumber>
+    </Transfer>
+</Response>
+
+> The announcement endpoint response from `/announcement` is:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <SpeakSentence>Hey! There's a customer on the line.</SpeakSentence>
+</Response>
+```
+
+</TabItem>
+<TabItem value="java">
+
+```java
+@Post /incoming_calls endpoint
+public String transfer_to_bob() {
+    PhoneNumber phoneNumber = PhoneNumber.builder()
+            .phoneNumber("+15555555554")
+            .transferAnswerUrl("/announcement")
+            .build();
+
+    Transfer transfer = Transfer.builder()
+            .transferCallerId("+15555555555")
+            .phoneNumbers(phoneNumber)
+            .build();
+
+    Response response = Response.builder().build()
+            .add(transfer);
+
+    System.out.println(response.toBXML());
+    return response.toBXML();
+}
+
+@POST /announcement endpoint
+public byte[] alert() {
+    SpeakSentence speakSentence = SpeakSentence.builder()
+        .text("Hey! There's a customer on the line.")
+        .build();
+
+    Response response = Response.builder().build()
+        .add(speakSentence);
+
+    System.out.println(response.toBXML());
+    return response.toBXML();
+}
+```
+
+</TabItem>
+<TabItem value="csharp">
+
+```csharp
+@Post [/incoming_calls]
+public ActionResult transfer_to_bob() {
+    PhoneNumber phoneNumber = new PhoneNumber
+    {
+        Number = "+15555555554",
+        TransferAnswerUrl = "/announcement"
+    };
+
+
+    Transfer transfer = new Transfer
+    {
+        TransferCallerId = "+15555555555",
+        PhoneNumbers = new PhoneNumber[] { phoneNumber }
+    };
+
+    Response response = new Response();
+    response.Add(transfer);
+
+    Console.WriteLine(response.ToBXML());
+    return new OkObjectResult(response.ToBXML());
+}
+
+@Post [/announcement]
+public ActionResult alert() {
+    SpeakSentence speakSentence = new SpeakSentence
+    {
+        Sentence = "Hey! There's a customer on the line.",
+    };
+
+    Response response = new Response();
+    response.Add(speakSentence);
+    Console.WriteLine(response.ToBXML());
+    return new OkObjectResult(response.ToBXML());
+}
+```
+
+</TabItem>
+<TabItem value="ruby">
+
+```ruby
+@POST '/incoming_calls' do:
+    phone_number = Bandwidth::Voice::PhoneNumber.new({
+        :number => "+15555555554",
+        :transfer_answer_url => "/announcement"
+    })
+
+    transfer = Bandwidth::Voice::Transfer.new({
+        :transfer_caller_id => "+15555555555",
+        :phone_numbers => [phone_number]
+    })
+
+    response = Bandwidth::Voice::Response.new()
+    response.push(transfer)
+
+    puts response.to_bxml()
+    return response.to_bxml()
+
+@POST '/announcement' do:
+    speak_sentence = Bandwidth::Voice::SpeakSentence.new({
+        :sentence => "Hey! There's a customer on the line."
+    })
+    response = Bandwidth::Voice::Response.new()
+    response.push(speak_sentence)
+    puts response.to_bxml()
+    return response.to_bxml()
+```
+
+</TabItem>
+<TabItem value="nodejs">
+
+```js
+@POST ['/incoming_calls'] (req, res) => {
+    const number = new Transfer.PhoneNumber({
+        number: "+15555555554",
+        transferAnswerUrl: "/announcement"
+    });
+
+    const transfer = new Transfer({
+        transferCallerId: "+15555555555",
+        phoneNumbers: [number]
+    });
+
+    const response = new Response(transfer);
+
+    console.log(response.toBxml());
+    res.status(200).send(response.toBxml());
+}
+
+@POST ['/announcement'] (req, res) => {
+    const speakSentence = new SpeakSentence({
+        sentence: "Hey! There's a customer on the line."
+    });
+
+    const response = new Response(speakSentence);
+    console.log(response.toBxml());
+    res.status(200).send(response.toBxml());
+}
+```
+
+</TabItem>
+<TabItem value="python">
+
+```python
+@POST '/incoming_calls'
+def transfer_to_bob():
+    phone_number = PhoneNumber(
+        number="+15555555554",
+        transfer_answer_url="/announcement"
+    )
+
+    transfer = Transfer(
+        transfer_caller_id="+15555555555",
+        phone_numbers=[phone_number]
+    )
+
+    response = Response()
+    response.add_verb(transfer)
+
+    print(response.to_bxml())
+    return response.to_bxml()
+
+@POST '/announcement'
+def alert():
+    speak_sentence = SpeakSentence(
+        sentence="Hey! There's a customer on the line."
+    )
+    response = Response()
+    response.add_verb(speak_sentence)
+    print(response.to_bxml())
+    return response.to_bxml()
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+@POST('/incoming_calls)
+function transfer_to_bob(Request $request, Response $response) {
+    $number = new BandwidthLib\Voice\Bxml\PhoneNumber("+15555555554");
+
+    $transfer = new BandwidthLib\Voice\Bxml\Transfer();
+    $transfer->transferCallerId("+15555555555");
+    $transfer->phoneNumbers(array($number));
+
+    $response = new BandwidthLib\Voice\Bxml\Response();
+    $response->addVerb($transfer);
+
+    echo $response->toBxml();
+    $bxml = $bxmlResponse->toBxml();
+    $response = $response->withStatus(200)->withHeader('Content-Type', 'application/xml');
+    $response->getBody()->write($bxml);
+    return $response;
+}
+
+@POST('/announcement)
+function alert(Request $request, Response $response) {
+    $speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("Hey! There's a customer on the line.");
+    $response = new BandwidthLib\Voice\Bxml\Response();
+
+    $response->addVerb($speakSentence);
+    $response = $response->withStatus(200)->withHeader('Content-Type', 'application/xml');
+    $response->getBody()->write($response->toBxml());
+    return $response;
+}
+```
+
+</TabItem>
+</Tabs>
+
+Twilio uses the `<Dial>` verb in TwiML to connect the current caller to another party during an active call. For Bandwidth the equivalent function is `<Bridge>`.
+
+## How to use text-to-speech
+
+In this example, we will show you the process of refactoring your code to migrate your existing application from Twilio to Bandwidth for utilizing text-to-speech for outbound calls.
+
+#### Twilio:
+
+<Tabs
+  groupId="bxml"
+  defaultValue="java"
+  values={[
+    { label: 'Java', value: 'java', },
+    { label: 'C#', value: 'csharp', },
+    { label: 'Ruby', value: 'ruby', },
+    { label: 'NodeJS', value: 'nodejs', },
+    { label: 'Python', value: 'python', },
+    { label: 'PHP', value: 'php', },
+  ]
+}>
+<TabItem value="java">
+
+```java
+import com.twilio.twiml.VoiceResponse;
+import com.twilio.twiml.voice.Say;
+import com.twilio.twiml.TwiMLException;
+
+
+public class Example {
+    public static void main(String[] args) {
+        Say say = new Say.Builder("Chapeau!").voice(Say.Voice.WOMAN)
+            .language(Say.Language.FR_FR).build();
+        VoiceResponse response = new VoiceResponse.Builder().say(say).build();
+
+        try {
+            System.out.println(response.toXml());
+        } catch (TwiMLException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+</TabItem>
+<TabItem value="csharp">
+
+```csharp
+using System;
+using Twilio.TwiML;
+using Twilio.TwiML.Voice;
+
+
+class Example
+{
+    static void Main()
+    {
+        var response = new VoiceResponse();
+        response.Say("Chapeau!", voice: "woman", language: "fr-FR");
+
+        Console.WriteLine(response.ToString());
+    }
+}
+```
+
+</TabItem>
+<TabItem value="ruby">
+
+```ruby
+require 'twilio-ruby'
+
+response = Twilio::TwiML::VoiceResponse.new
+response.say(voice: 'woman', language: 'fr-FR', message: 'Chapeau!')
+
+puts response
+```
+
+</TabItem>
+<TabItem value="nodejs">
+
+```js
+const VoiceResponse = require('twilio').twiml.VoiceResponse;
+
+
+const response = new VoiceResponse();
+response.say({
+    voice: 'woman',
+    language: 'fr-FR'
+}, 'Chapeau!');
+
+console.log(response.toString());
+```
+
+</TabItem>
+<TabItem value="python">
+
+```python
+from twilio.twiml.voice_response import VoiceResponse, Say
+
+response = VoiceResponse()
+response.say('Chapeau!', voice='woman', language='fr-FR')
+
+print(response)
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+<?php
+require_once './vendor/autoload.php';
+use Twilio\TwiML\VoiceResponse;
+
+$response = new VoiceResponse();
+$response->say('Chapeau!', ['voice' => 'woman', 'language' => 'fr-FR']);
+
+echo $response;
+```
+
+</TabItem>
+</Tabs>
+
+#### Bandwidth:
+
+<Tabs
+  groupId="bxml"
+  defaultValue="xml"
+  values={[
+    { label: 'XML', value: 'xml', },
+    { label: 'Java', value: 'java', },
+    { label: 'C#', value: 'csharp', },
+    { label: 'Ruby', value: 'ruby', },
+    { label: 'NodeJS', value: 'nodejs', },
+    { label: 'Python', value: 'python', },
+    { label: 'PHP', value: 'php', },
+  ]
+}>
+<TabItem value="xml">
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+   <SpeakSentence voice="julie">
+      This is a test.
+   </SpeakSentence>
+</Response>
+```
+
+</TabItem>
+<TabItem value="java">
+
+```java
+SpeakSentence speakSentence = SpeakSentence.builder()
+        .text("This is a test.")
+        .voice("julie")
+        .build();
+
+Response response = Response.builder().build()
+        .add(speakSentence);
+
+System.out.println(response.toBXML());
+```
+
+</TabItem>
+<TabItem value="csharp">
+
+```csharp
+SpeakSentence speakSentence = new SpeakSentence
+{
+    Sentence = "This is a test.",
+    Voice = "julie"
+};
+
+Response response = new Response();
+response.Add(speakSentence);
+
+Console.WriteLine(response.ToBXML());
+```
+
+</TabItem>
+<TabItem value="ruby">
+
+```ruby
+speak_sentence = Bandwidth::Voice::SpeakSentence.new({
+    :sentence => "This is a test.",
+    :voice => "julie"
+})
+
+response = Bandwidth::Voice::Response.new()
+response.push(speak_sentence)
+
+puts response.to_bxml()
+```
+
+</TabItem>
+<TabItem value="nodejs">
+
+```js
+const speakSentence = new SpeakSentence({
+    sentence: "This is a test.",
+    voice: "julie"
+});
+
+const response = new Response(speakSentence);
+
+console.log(response.toBxml());
+```
+
+</TabItem>
+<TabItem value="python">
+
+```python
+speak_sentence = SpeakSentence(
+    sentence="This is a test.",
+    voice="julie"
+)
+
+response = Response()
+response.add_verb(speak_sentence)
+
+print(response.to_bxml())
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+$speakSentence = new BandwidthLib\Voice\Bxml\SpeakSentence("This is a test.");
+$speakSentence->voice("julie");
+
+$response = new BandwidthLib\Voice\Bxml\Response();
+$response->addVerb($speakSentence);
+
+echo $response->toBxml();
+```
+
+</TabItem>
+</Tabs>
+
+With Twilio, the `<Say>` verb in TwiML is used for converting text-to-speech that is then read back to the caller. For Bandwidth the equivalent function is `<SpeakSentence>`.
+
+Additionally, Bandwidth uses Amazon Polly for text-to-speech services with the support of SSML tags. So if you are using Amazon Polly as your text-to-speech provider in Twilio, you can discover the same speaker voice [here](/docs/voice/bxml/speakSentence).
+
+## Where to next?
+
+Now that you have seen how easy and comparable Twilio’s API is to Bandwidth, check out our in-depth guides to continue to build out your application:
+
+*   [How to play media and perform text-to-speech](/docs/voice/guides/mediaAndTTS)
+*   [How to record calls & transcribe](/docs/voice/guides/recording)
+*   [How to gather user input (IVR)](/docs/voice/guides/interactiveVoiceResponse)
+*   [How to use voicemail detection](/docs/voice/guides/machineDetection)
+*   [How to create conference calls](/docs/voice/guides/conference)
+*   [How to retrieve call logs](/docs/voice/guides/callInformation)
+
+## Need additional help?
+
+Our Bandwidth Signature Support is included for free for every customer. Our support comes with a 24/7 Network Operations Center (NOC), Technical Assistance Center (TAC), and a clear path of escalation.  We are here for you when you need actual human support that a forum can’t cover.
+
+## Porting your numbers from Twilio to Bandwidth
+
+Whether you are [purchasing new phone numbers](/docs/numbers/guides/orderingNumbers) to use with Bandwidth or looking to keep your existing phone numbers purchased from Twilio, the process couldn’t be easier.
+
+You can port your numbers from Twilio to Bandwidth without devoting any downtime by following a few simple steps in our [Porting Numbers    ](/docs/numbers/guides/portingNumbers) guide.
+
+## Other API features
+
+Bandwidth has comparable APIs to Twilio fo`r SMS, WebRTC calling, Video, Multi-factor Authentication, Phone Numbers, and 911 Access, all on our own network, providing you with additional cost savings.
+
+Discover our other services today.
+
+*   [Messaging](/docs/messaging)
+*   [WebRTC](/docs/webrtc)
+*   [Multi-factor Authentication](/docs/mfa)
+*   [Phone Numbers](/docs/numbers)
+*   [Emergency Calling API](/docs/emergency)
