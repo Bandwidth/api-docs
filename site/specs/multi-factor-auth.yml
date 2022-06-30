@@ -1,0 +1,309 @@
+openapi: 3.0.3
+info:
+  title: Multi-Factor Authentication
+  description: |-
+    Bandwidth's Two-Factor Authentication service
+
+    ## Base Path
+
+    <code>https://mfa.bandwidth.com/api/v1</code>
+  contact:
+    name: Bandwidth Support
+    email: support@bandwidth.com
+    url: https://support.bandwidth.com
+  version: 3.1.0
+servers:
+  - url: https://mfa.bandwidth.com/api/v1
+    description: Production
+paths:
+  /accounts/{accountId}/code/voice:
+    post:
+      tags:
+        - MFA
+      summary: Voice Authentication Code
+      description: Send an MFA Code via a phone call.
+      operationId: generateVoiceCode
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+      requestBody:
+        $ref: '#/components/requestBodies/codeRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/voiceCodeResponse'
+        '400':
+          $ref: '#/components/responses/mfaBadRequestError'
+        '401':
+          $ref: '#/components/responses/mfaUnauthorizedError'
+        '403':
+          $ref: '#/components/responses/mfaForbiddenError'
+        '500':
+          $ref: '#/components/responses/mfaInternalServerError'
+  /accounts/{accountId}/code/messaging:
+    post:
+      tags:
+        - MFA
+      summary: Messaging Authentication Code
+      description: Send an MFA code via text message (SMS).
+      operationId: generateMessagingCode
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+      requestBody:
+        $ref: '#/components/requestBodies/codeRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/messagingCodeResponse'
+        '400':
+          $ref: '#/components/responses/mfaBadRequestError'
+        '401':
+          $ref: '#/components/responses/mfaUnauthorizedError'
+        '403':
+          $ref: '#/components/responses/mfaForbiddenError'
+        '500':
+          $ref: '#/components/responses/mfaInternalServerError'
+  /accounts/{accountId}/code/verify:
+    post:
+      tags:
+        - MFA
+      summary: Verify Authentication Code
+      description: Verify a previously sent MFA code.
+      operationId: verifyCode
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+      requestBody:
+        $ref: '#/components/requestBodies/codeVerify'
+      responses:
+        '200':
+          $ref: '#/components/responses/verifyCodeResponse'
+        '400':
+          $ref: '#/components/responses/mfaBadRequestError'
+        '401':
+          $ref: '#/components/responses/mfaUnauthorizedError'
+        '403':
+          $ref: '#/components/responses/mfaForbiddenError'
+        '429':
+          $ref: '#/components/responses/mfaTooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/mfaInternalServerError'
+components:
+  schemas:
+    codeRequest:
+      type: object
+      properties:
+        to:
+          type: string
+          description: The phone number to send the mfa code to.
+          pattern: ^\+[1-9]\d{1,14}$
+          example: '+19195551234'
+        from:
+          type: string
+          description: The application phone number, the sender of the mfa code.
+          pattern: ^\+[1-9]\d{1,14}$
+          maxLength: 32
+          example: '+19195554321'
+        applicationId:
+          type: string
+          description: The application unique ID, obtained from Bandwidth.
+          maxLength: 50
+          example: 66fd98ae-ac8d-a00f-7fcd-ba3280aeb9b1
+        scope:
+          type: string
+          description: >-
+            An optional field to denote what scope or action the mfa code is
+            addressing.  If not supplied, defaults to "2FA".
+          maxLength: 25
+          example: 2FA
+        message:
+          type: string
+          description: >-
+            The message format of the mfa code.  There are three values that the
+            system will replace "{CODE}", "{NAME}", "{SCOPE}".  The "{SCOPE}"
+            and "{NAME} value template are optional, while "{CODE}" must be
+            supplied.  As the name would suggest, code will be replace with the
+            actual mfa code.  Name is replaced with the application name,
+            configured during provisioning of mfa.  The scope value is the same
+            value sent during the call and partitioned by the server.
+          maxLength: 2048
+          example: Your temporary {NAME} {SCOPE} code is {CODE}
+        digits:
+          type: integer
+          description: >-
+            The number of digits for your mfa code.  The valid number ranges
+            from 2 to 8, inclusively.
+          minimum: 4
+          maximum: 8
+          example: 6
+      required:
+        - to
+        - from
+        - applicationId
+        - message
+        - digits
+    voiceCodeResponse:
+      type: object
+      properties:
+        callId:
+          type: string
+          description: Programmable Voice API Call ID
+          example: c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85
+    messagingCodeResponse:
+      type: object
+      properties:
+        messageId:
+          type: string
+          description: Messaging API Message ID
+          example: 9e0df4ca-b18d-40d7-a59f-82fcdf5ae8e6
+    verifyCodeRequest:
+      type: object
+      properties:
+        to:
+          type: string
+          description: The phone number to send the mfa code to.
+          pattern: ^\+[1-9]\d{1,14}$
+          example: '+19195551234'
+        scope:
+          type: string
+          description: >-
+            An optional field to denote what scope or action the mfa code is
+            addressing.  If not supplied, defaults to "2FA".
+          example: 2FA
+        expirationTimeInMinutes:
+          type: number
+          description: >-
+            The time period, in minutes, to validate the mfa code.  By setting
+            this to 3 minutes, it will mean any code generated within the last 3
+            minutes are still valid.  The valid range for expiration time is
+            between 0 and 15 minutes, exclusively and inclusively, respectively.
+          minimum: 1
+          maximum: 15
+          example: 3
+        code:
+          type: string
+          description: The generated mfa code to check if valid
+          minLength: 4
+          maxLength: 8
+          example: '123456'
+      required:
+        - to
+        - expirationTimeInMinutes
+        - code
+    verifyCodeResponse:
+      type: object
+      properties:
+        valid:
+          type: boolean
+          description: Whether or not the supplied code is valid
+          example: true
+    mfaRequestError:
+      type: object
+      properties:
+        error:
+          type: string
+          description: A message describing the error with your request.
+          example: 400 Request is malformed or invalid
+        requestId:
+          type: string
+          description: The associated requestId from AWS.
+          example: 354cc8a3-6701-461e-8fa7-8671703dd898
+    mfaUnauthorizedRequestError:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Unauthorized
+          example: Unauthorized
+    mfaForbiddenRequestError:
+      type: object
+      properties:
+        message:
+          type: string
+          description: >-
+            The message containing the reason behind the request being
+            forbidden.
+          example: Missing Authentication Token
+  responses:
+    voiceCodeResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/voiceCodeResponse'
+    messagingCodeResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/messagingCodeResponse'
+    verifyCodeResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/verifyCodeResponse'
+    mfaBadRequestError:
+      description: Bad Request
+      headers: {}
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/mfaRequestError'
+    mfaUnauthorizedError:
+      description: Unauthorized
+      headers: {}
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/mfaUnauthorizedRequestError'
+    mfaForbiddenError:
+      description: Forbidden
+      headers: {}
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/mfaForbiddenRequestError'
+    mfaTooManyRequestsError:
+      description: Too Many Requests
+      headers: {}
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/mfaRequestError'
+    mfaInternalServerError:
+      description: Internal Server Error
+      headers: {}
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/mfaRequestError'
+  parameters:
+    accountId:
+      name: accountId
+      description: Bandwidth Account ID with Voice service enabled
+      in: path
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+  requestBodies:
+    codeRequest:
+      description: MFA code request body.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/codeRequest'
+    codeVerify:
+      description: MFA code verify request body.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/verifyCodeRequest'
+  securitySchemes:
+    Basic Authentication:
+      type: http
+      scheme: basic
+security:
+  - Basic Authentication: []
+tags:
+  - name: MFA
