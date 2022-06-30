@@ -1,0 +1,204 @@
+---
+id: portingNumbers
+title: Create Portin
+slug: /numbers/guides/portingNumbers
+description: How to port numbers using the Bandwidth API
+keywords:
+  - bandwidth
+  - numbers
+  - porting
+  - portin
+  - lnp
+  - port
+image: ../../../static/img/bandwidth-logo.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+export const accountId = "{accountId}";
+export const orderId = "{orderId}";
+
+export const Highlight = ({children, color}) => (
+    <span
+      style={{
+        backgroundColor: color,
+        borderRadius: '2px',
+        color: '#fff',
+        padding: '0.2rem',
+      }}>
+      {children}
+    </span>
+  );
+
+The Bandwidth Phone Number API is used to submit Port-In requests. These requests to move phone numbers from a “losing carrier” to Bandwidth are part of the Local Number Portability (LNP) process. These LNP requests are automatically validated and processed.
+
+Bandwidth supports two APIs for porting numbers to Bandwidth:
+- /portins
+- /bulkPortins
+
+The `/portins` API allows a set of TNs to be ported in, provided that the set of TNs meets the criteria below.
+TNs can be ported in a single `/portins` request if all of the following are true:
+
+1. They all have the same Port Type
+2. They all have the same losing carrier
+3. They are all associated with the same billing TN and Service Address
+
+There are also a number of reasons why a TN may not be able to be ported in:
+
+* The TN is in a rate center that is not supported by Bandwidth or any of Bandwidth's partners.
+* The TN is an off-net TN and the account is configured to support tier zero (on-net) only.
+* The TN belongs to a losing carrier that Bandwidth does not have a Trading Partner Agreement with.
+* The TN is already being processed in another active port-in order.
+* The Bandwidth account has not been enabled for porting.
+Otherwise the user must separate the TNs into individual `/portins` requests.
+
+The `/lnpchecker` API is used to determine the Port Type(s) and losing carrier(s) for a set of TNs.
+The `/bulkPortins` API eliminates the need for the `/lnpchecker` API by sorting the list of TNs automatically into a set of port-in requests by Port Type. The set of port-ins associated with the bulk port-in remain in a DRAFT state until you've had a chance to examine the breakdown. From that point, you can decide to submit all of the port-ins together under the umbrella of the bulk port-in, or you can separate out individual port-ins to submit by themselves.
+Terminology
+
+
+| Term       | Description                               |                                                                                                                                                                                                                                                                       |
+|:----------------------------------|:-------------------------------------------------------|
+| Port Type | A categorization of how the TNs submitted to the /lnpchecker API will be handled by Bandwidth. See the POST operation for more information |
+| On-Net | TNs that belong to a rate center covered by Bandwidth are referred to as on-net TNs |
+| Off-Net | TNs that belong to a rate center covered by a Bandwidth partner are refered to as off-net TNs |
+| Automated | If the TNs are on-net, or off-net and covered by a Bandwidth partner that supports automated ports, then the port-in of these TNs will be handled with no human intervention |
+| Manual | If the TNs cannot be ported automatically, the Bandwidth LNP team will work with the appropriate porting vendor or losing carrier to ensure completion of the port-in. The /portins API can be used to submit manual port-ins, which will be identified as such, and a Zendesk ticket will be automatically created to notify the Bandwidth LNP team |
+| Internal | TNs that are being moved from one Bandwidth account to another Bandwidth account are referred to as internal ports. Internal ports are handled automatically |
+| Losing carrier | The carrier from which the TN(s) is being ported |
+
+
+## Checking for Portability
+
+A number or set of numbers can be checked to see if they can be ported into the Bandwidth Network using the `/accounts/{accountId}/lnpChecker` API endpoint.
+
+## Create a Portin Order
+
+The API allows a user to create a new LNP order. An order number will be auto-generated and provided to the customer. The order must pass synchronous and asynchronous validation. Synchronous validation will return validation failures immediately in the response. If synchronous validation passes, but asynchronous validation fails, the customer will not receive the error response until they check the order status.
+
+As in other asynchronous workflows, the request to port in a number is created by a <Highlight color="#079CEE">POST</Highlight> to a resource dedicated to the purpose to tracking requests – the `accounts/{accountId}/portins` resource.
+
+The portins endpoint is used to manage requests to port both toll free and non-toll free telephone numbers into Bandwidth. Like many other requests, the /portins endpoint causes the creation of an order that is used to manage the porting event throughout the lifecycle of the request. The various sub-resources and methods are covered in greater detail below.
+When a port-in is created, a port-type is assigned based on the telephone numbers provided. A lot of the conditional payload elements are conditional on the basis of the port-type. Port-type can take on the following values:
+
+* MANUALOFFNET - Manual indicates that the port-in will be processed manually by Bandwidth’s Local Number Portability team. Off-net means that the telephone numbers in the port-in exist in a rate center supported by one of Bandwidth’s partners. Off-net port-ins are processed manually when the Bandwidth partner does not have APIs by which the port-in can be automated, or Bandwidth has not implemented those APIs. Orders may also be processed manually if there are more numbers in the port-in than the partner’s interface supports.
+* MANUALONNET - Manual indicates that the port-in will be processed manually by Bandwidth’s Local Number Portability team. On-net means that the telephone numbers in the port-in exist in a rate center supported by Bandwidth. On-net port-ins are processed manually only when there are more numbers in the port-in than the porting vendor’s interface supports.
+* MANUALTOLLFREE - Manual indicates that the port-in will be processed manually by Bandwidth’s Local Number Portability team. Currently all toll free port-ins are handled manually by Bandwidth’s Local Number Portability team. But Bandwidth is in the process of automating portions of toll free porting, with a goal of eventually automating the entire process.
+* AUTOMATED - Automated means that the port-in will be processed automatically using interfaces to our porting vendors. There are several sub-types of AUTOMATED as follows:
+* ON-NET - On-net means that the telephone numbers in the port-in exist in a rate center supported by Bandwidth. There are differences in on-net port-in rules depending on whether the order is for wireless to wireless vs. one of the other 3 combinations.
+* OFF-NET - Off-net means that the telephone numbers in the port-in exist in a rate center supported by one of Bandwidth’s partners. Currently only numbers in the U.S. are automated. There are differences in port-in rules depending on whether the order has achieved FOC status.
+* INTERNAL - Internal means that the telephone number is being moved from one Bandwidth account to another Bandwidth account. Internal port-in may involve on-net, off-net, or toll free telephone numbers.
+
+### Polling vs. Webhooks
+
+Porting numbers in the Bandwidth Dashboard is asynchronous when creating an LNP "order". The orders are then processed and the order status is updated asynchronously. Bandwidth recommends configuring your account with a subscription instead of polling the order resource for `<OrderStatus>`.
+
+Order processing times can vary and are not guaranteed, so bandwidth recommends relying on a webhook update from an portins subscription.
+
+### Request URL
+
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/portins</code>
+
+### Examples
+
+> Request
+
+```xml
+POST https://dashboard.bandwidth.com/api/accounts/{accountId}/portins HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<LnpOrder>
+    <RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>
+    <AlternateSpid>X455</AlternateSpid>
+    <BillingTelephoneNumber>9195551234</BillingTelephoneNumber>
+    <NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>
+    <SiteId>12345</SiteId>
+    <PeerId>660123</PeerId>
+    <Subscriber>
+        <SubscriberType>BUSINESS</SubscriberType>
+        <FirstName>First</FirstName>
+        <LastName>Last</LastName>
+        <ServiceAddress>
+            <HouseNumber>11235</HouseNumber>
+            <StreetName>Back</StreetName>
+            <City>Denver</City>
+            <StateCode>CO</StateCode>
+            <Zip>27541</Zip>
+            <County>Canyon</County>
+        </ServiceAddress>
+    </Subscriber>
+    <LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>
+    <WirelessInfo>
+        <AccountNumber>771297665AABC</AccountNumber>
+        <PinNumber>1234</PinNumber>
+    </WirelessInfo>
+    <ListOfPhoneNumbers>
+        <PhoneNumber>9195551234</PhoneNumber>
+        <PhoneNumber>9195554321</PhoneNumber>
+    </ListOfPhoneNumbers>
+    <Triggered>true</Triggered>
+</LnpOrder>
+```
+
+> Response
+
+```xml
+HTTP 201 Created
+Content-Type: application/xml; charset=utf-8
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<LnpOrderResponse>
+    <OrderId>03f194d5-3932-4e9f-8ba1-03ef767985e5</OrderId>
+    <Status>
+        <Code>201</Code>
+        <Description>Order request received. Please use the order id to check the status of your order later.</Description>
+    </Status>
+    <ProcessingStatus>PENDING_DOCUMENTS</ProcessingStatus>
+    <RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>
+    <LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>
+    <Subscriber>
+        <SubscriberType>BUSINESS</SubscriberType>
+        <FirstName>First</FirstName>
+        <LastName>Last</LastName>
+        <ServiceAddress>
+            <HouseNumber>11235</HouseNumber>
+            <StreetName>Back</StreetName>
+            <City>Denver</City>
+            <StateCode>CO</StateCode>
+            <Zip>27541</Zip>
+            <County>Canyon</County>
+            <Country>United States</Country>
+        </ServiceAddress>
+    </Subscriber>
+    <WirelessInfo>
+        <AccountNumber>771297665AABC</AccountNumber>
+        <PinNumber>1234</PinNumber>
+    </WirelessInfo>
+    <BillingTelephoneNumber>9195551234</BillingTelephoneNumber>
+    <NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>
+    <ListOfPhoneNumbers>
+        <PhoneNumber>9195551234</PhoneNumber>
+        <PhoneNumber>9195554321</PhoneNumber>
+    </ListOfPhoneNumbers>
+    <Triggered>true</Triggered>
+</LnpOrderResponse>
+```
+
+## Modify a Portin Order
+
+The API allows a user to modify an existing LNP order, called a SUPP request. Modifications are only allowed for orders that are not yet complete or cancelled. LNP orders can be modified with a <code class="put">PUT</code> to `accounts/{accountId}/portins/{orderId}`. Since many of the entries in an LNP Order cannot be changed after the initial order is placed, the <code class="put">PUT</code> on a porting order-id does not require that the full order payload is included.
+For more details follow ....TODO
+
+## Cancel a Portin Order
+
+The API allows a user to cancel an existing LNP order. The order number that was generated in the create request must be provided, and dhe status of the order shall not be marked as `COMPLETE`. The <Highlight color="#ff6f47">DELETE</Highlight> method is used for this purpose.
+
+TODO : reference to cancel portin
+
+> Response
+
+```http
+HTTP 200 OK
+```
