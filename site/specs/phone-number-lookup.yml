@@ -46,6 +46,208 @@ paths:
           $ref: '#/components/responses/tnLookupTooManyRequestsError'
         '500':
           $ref: '#/components/responses/tnLookupInternalServerError'
+      x-codeSamples:
+        - lang: cURL
+          source: >
+            curl 'https://numbers.bandwidth.com/api/v1/accounts/12345/tnlookup'
+            \
+                -X POST \
+                -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=' \
+                -H 'Content-Type: application/json' \
+                -d '{
+                    "tns":
+                    [
+                        "19196104420"
+                    ]
+                }'
+        - lang: C#
+          source: |
+            using System;
+            using System.Collections.Generic;
+            using System.Threading.Tasks;
+            using Bandwidth.Standard;
+            using Bandwidth.Standard.Exceptions;
+            using Bandwidth.Standard.PhoneNumberLookup.Models;
+
+            class Program
+            {
+                static async Task Main(string[] args)
+                {
+                    var username = "api-username";
+                    var password = "api-pasword";
+                    var accountId = "12345";
+
+                    var client = new BandwidthClient.Builder()
+                        .PhoneNumberLookupBasicAuthCredentials(username, password)
+                        .Build();
+
+                    var request = new OrderRequest
+                    {
+                        Tns = new List<string> { "+15553334444" }
+                    };
+
+                    try
+                    {
+                        var response = await client.PhoneNumberLookup.APIController.CreateLookupRequestAsync(accountId, request);
+                        Console.WriteLine(response.Data);
+                    }
+                    catch (ApiException e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+            }
+        - lang: Java
+          source: |
+            import com.bandwidth.BandwidthClient;
+            import com.bandwidth.http.response.ApiResponse;
+            import com.bandwidth.phonenumberlookup.models.OrderRequest;
+            import com.bandwidth.phonenumberlookup.models.OrderResponse;
+
+            import java.util.concurrent.CompletableFuture;
+            import java.util.concurrent.ExecutionException;
+            import java.util.ArrayList;
+            import java.util.List;
+
+            public class Sample {
+                public static final String USERNAME = "api-username";
+                public static final String PASSWORD = "api-password";
+                public static final String ACCOUNT_ID = "12345";
+
+                public static void main(String[] args) {
+                    BandwidthClient client = new BandwidthClient.Builder()
+                            .phoneNumberLookupBasicAuthCredentials(USERNAME, PASSWORD)
+                            .build();
+
+                    List<String> numbers = new ArrayList<>();
+                    numbers.add("+15553334444");
+
+                    OrderRequest request = new OrderRequest(numbers);
+
+                    try {
+                        CompletableFuture<ApiResponse<OrderResponse>> completableFuture = client.getPhoneNumberLookupClient().getAPIController().createLookupRequestAsync(ACCOUNT_ID, request);
+                        System.out.println(completableFuture.get().getResult());
+                    } catch (InterruptedException | ExecutionException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }
+        - lang: PHP
+          source: >
+            <?php
+
+
+            require "vendor/autoload.php";
+
+
+            api-username = "api-username";
+
+            api-password = "api-pasword";
+
+            12345 = "12345";
+
+
+            $config = new BandwidthLib\Configuration(
+                array(
+                    'messagingBasicAuthUserName' => $BW_USERNAME,
+                    'messagingBasicAuthPassword' => $BW_PASSWORD,
+                )
+            );
+
+            $client = new BandwidthLib\BandwidthClient($config);
+
+
+            $phoneNumberLookupClient =
+            $client->getPhoneNumberLookup()->getClient();
+
+
+            $body = new BandwidthLib\PhoneNumberLookup\Models\OrderRequest();
+
+            $body->tns = array("+15554443333");
+
+
+            try {
+                $response = $phoneNumberLookupClient->createLookupRequest($BW_ACCOUNT_ID, $body);
+                print_r($response->getResult()->requestId);
+            } catch (BandwidthLib\APIException $e) {
+                print_r($e->getResponseCode());
+            }
+        - lang: Python
+          source: >
+            from bandwidth.bandwidth_client import BandwidthClient
+
+            from bandwidth.exceptions.api_exception import APIException
+
+            from bandwidth.phonenumberlookup.models.order_request import
+            OrderRequest
+
+
+            import os
+
+
+            BW_USERNAME = "api-username"
+
+            BW_PASSWORD = "api-password"
+
+            BW_ACCOUNT_ID = "12345"
+
+
+            bandwidth_client = BandwidthClient(
+                phone_number_lookup_basic_auth_user_name=BW_USERNAME,
+                phone_number_lookup_basic_auth_password=BW_PASSWORD
+            )
+
+            phone_number_lookup_client =
+            bandwidth_client.phone_number_lookup_client.client
+
+
+            body = OrderRequest()
+
+            body.tns = ["+15554443333"]
+
+
+            try:
+                response = phone_number_lookup_client.create_lookup_request(BW_ACCOUNT_ID, body)
+                print(response.body.request_id)
+            except APIException as e:
+                print(e.response_code)
+        - lang: Ruby
+          source: >
+            require 'bandwidth'
+              
+            include Bandwidth
+
+            include Bandwidth::Voice
+
+
+            BW_USERNAME = "api-username"
+
+            BW_PASSWORD = "api-password"
+
+            BW_ACCOUNT_ID = "12345"
+
+
+            bandwidth_client = Bandwidth::Client.new(
+                phone_number_lookup_basic_auth_user_name: BW_USERNAME,
+                phone_number_lookup_basic_auth_password: BW_PASSWORD
+            )
+
+
+            phone_number_lookup_client =
+            bandwidth_client.phone_number_lookup_client.client
+
+
+            body = OrderRequest.new
+
+            body.tns = ["+15554443333"]
+
+
+            begin
+                result = phone_number_lookup_client.create_lookup_request(BW_ACCOUNT_ID, body)
+                puts result.data.request_id
+            rescue APIException => e
+                puts e.response_code
+            end
   /accounts/{accountId}/tnlookup/{requestId}:
     get:
       summary: Get Lookup Request Status
@@ -71,6 +273,182 @@ paths:
           $ref: '#/components/responses/tnLookupTooManyRequestsError'
         '500':
           $ref: '#/components/responses/tnLookupInternalServerError'
+      x-codeSamples:
+        - lang: cURL
+          source: >
+            curl
+            'https://numbers.bandwidth.com/api/v1/accounts/12345/tnlookup/004223a0-8b17-41b1-bf81-20732adf5590'
+            \
+                -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ='
+        - lang: C#
+          source: |
+            using System;
+            using System.Collections.Generic;
+            using System.Threading.Tasks;
+            using Bandwidth.Standard;
+            using Bandwidth.Standard.Exceptions;
+
+            class Program
+            {
+                static async Task Main(string[] args)
+                {
+                    var username = "api-username";
+                    var password = "api-pasword";
+                    var accountId = "12345";
+
+                    var client = new BandwidthClient.Builder()
+                        .PhoneNumberLookupBasicAuthCredentials(username, password)
+                        .Build();
+
+                    var requestId = "8a358296-e188-4a3a-b974-8e4d12001dd8";
+
+                    try
+                    {
+                        var response = await client.PhoneNumberLookup.APIController.GetLookupRequestStatusAsync(accountId, requestId);
+                        Console.WriteLine(response.Data);
+                    }
+                    catch (ApiException e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+            }
+        - lang: Java
+          source: |
+            import com.bandwidth.BandwidthClient;
+            import com.bandwidth.http.response.ApiResponse;
+            import com.bandwidth.phonenumberlookup.models.OrderStatus;
+
+            import java.util.concurrent.CompletableFuture;
+            import java.util.concurrent.ExecutionException;
+
+            public class Sample {
+                public static final String USERNAME = "api-username";
+                public static final String PASSWORD = "api-password";
+                public static final String ACCOUNT_ID = "12345";
+
+                public static void main(String[] args) {
+                    BandwidthClient client = new BandwidthClient.Builder()
+                            .phoneNumberLookupBasicAuthCredentials(USERNAME, PASSWORD)
+                            .build();
+
+                    String requestId = "8a358296-e188-4a3a-b974-8e4d12001dd8";
+
+                    try {
+                        CompletableFuture<ApiResponse<OrderStatus>> completableFuture = client.getPhoneNumberLookupClient().getAPIController().getLookupRequestStatusAsync(ACCOUNT_ID, requestId);
+                        System.out.println(completableFuture.get().getResult());
+                    } catch (InterruptedException | ExecutionException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }
+        - lang: PHP
+          source: >
+            <?php
+
+
+            require "vendor/autoload.php";
+
+
+            api-username = "api-username";
+
+            api-password = "api-pasword";
+
+            12345 = "12345";
+
+
+            $config = new BandwidthLib\Configuration(
+                array(
+                    'messagingBasicAuthUserName' => $BW_USERNAME,
+                    'messagingBasicAuthPassword' => $BW_PASSWORD,
+                )
+            );
+
+            $client = new BandwidthLib\BandwidthClient($config);
+
+
+            $phoneNumberLookupClient =
+            $client->getPhoneNumberLookup()->getClient();
+
+
+            $requestId = "1234-abcd";
+
+
+            try {
+                $response = $phoneNumberLookupClient->getLookupRequestStatus($BW_ACCOUNT_ID, $requestId);
+                print_r($response->getResult()->status);
+            } catch (BandwidthLib\APIException $e) {
+                print_r($e->getResponseCode());
+            }
+        - lang: Python
+          source: >
+            from bandwidth.bandwidth_client import BandwidthClient
+
+            from bandwidth.exceptions.api_exception import APIException
+
+
+            import os
+
+
+            BW_USERNAME = "api-username"
+
+            BW_PASSWORD = "api-password"
+
+            BW_ACCOUNT_ID = "12345"
+
+
+            bandwidth_client = BandwidthClient(
+                phone_number_lookup_basic_auth_user_name=BW_USERNAME,
+                phone_number_lookup_basic_auth_password=BW_PASSWORD
+            )
+
+            phone_number_lookup_client =
+            bandwidth_client.phone_number_lookup_client.client
+
+
+            request_id = "1234-abcd"
+
+
+            try:
+                response = phone_number_lookup_client.get_lookup_request_status(BW_ACCOUNT_ID, request_id)
+                print(response.body.status)
+            except APIException as e:
+                print(e.response_code)
+        - lang: Ruby
+          source: >
+            require 'bandwidth'
+              
+            include Bandwidth
+
+            include Bandwidth::Voice
+
+
+            BW_USERNAME = "api-username"
+
+            BW_PASSWORD = "api-password"
+
+            BW_ACCOUNT_ID = "12345"
+
+
+            bandwidth_client = Bandwidth::Client.new(
+                phone_number_lookup_basic_auth_user_name: BW_USERNAME,
+                phone_number_lookup_basic_auth_password: BW_PASSWORD
+            )
+
+
+            phone_number_lookup_client =
+            bandwidth_client.phone_number_lookup_client.client
+
+
+            request_id = "1234-abcd"
+
+
+            begin
+                result = phone_number_lookup_client.get_lookup_request_status(BW_ACCOUNT_ID, request_id)
+                puts result.data.status
+            rescue APIException => e
+                puts e.response_code
+            end
 components:
   schemas:
     lookupStatusEnum:
@@ -108,7 +486,7 @@ components:
       type: object
       description: >-
         If requestId exists, the result for that request is returned. See the
-        Examples for details on the various responses that you can receive. 
+        Examples for details on the various responses that you can receive.
         Generally, if you see a Response Code of 0 in a result for a TN,
         information will be available for it.  Any other Response Code will
         indicate no information was available for the TN.
@@ -239,7 +617,7 @@ components:
               value:
                 message: >-
                   Authorization header requires 'Credential' parameter.
-                  Authorization header requires 'Signature' parameter. 
+                  Authorization header requires 'Signature' parameter.
                   Authorization header requires 'SignedHeaders' parameter.
                   Authorization header requires existence of either a
                   'X-Amz-Date' or a 'Date' header. Authorization=Basic
