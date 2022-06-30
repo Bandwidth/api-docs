@@ -2891,7 +2891,7 @@ paths:
       tags:
         - Recordings
       summary: Update Recording
-      description: Pause or resume a recording on an active phone call
+      description: Pause or resume a recording on an active phone call.
       operationId: updateCallRecordingState
       parameters:
         - $ref: '#/components/parameters/accountId'
@@ -2917,6 +2917,214 @@ paths:
           $ref: '#/components/responses/voiceTooManyRequestsError'
         '500':
           $ref: '#/components/responses/voiceInternalServerError'
+      x-codeSamples:
+        - lang: cURL
+          source: >
+            curl
+            'https://voice.bandwidth.com/api/v2/accounts/12345/calls/c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d/recording'
+            \
+                -X PUT \
+                -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=' \
+                -H 'Content-Type: application/json' \
+                -d '{
+                    "state": "NOT_RECORDING",
+                }'
+        - lang: C#
+          source: |
+            using System;
+            using System.Threading.Tasks;
+            using Bandwidth.Standard;
+            using Bandwidth.Standard.Exceptions;
+            using Bandwidth.Standard.Voice.Models;
+
+            class Program
+            {
+                static async Task Main(string[] args)
+                {
+                    var username = "api-username";
+                    var password = "api-pasword";
+                    var accountId = "12345";
+
+                    // Call id is returned after successfully creating a call.
+                    var callId = "c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d";
+
+                    var client = new BandwidthClient.Builder()
+                        .VoiceBasicAuthCredentials(username, password)
+                        .Build();
+
+                    var state = new ModifyCallRecordingRequest
+                    {
+                        State = State1Enum.PAUSED
+                    };
+
+                    try
+                    {
+                        await client.Voice.APIController.ModifyCallRecordingStateAsync(accountId, callId, state);
+                    }
+                    catch (ApiException e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+            }
+        - lang: Java
+          source: |
+            import com.bandwidth.BandwidthClient;
+            import com.bandwidth.http.response.ApiResponse;
+            import com.bandwidth.voice.models.*;
+
+            import java.util.concurrent.CompletableFuture;
+            import java.util.concurrent.ExecutionException;
+
+            public class Sample {
+                public static final String USERNAME = "api-username";
+                public static final String PASSWORD = "api-password";
+                public static final String ACCOUNT_ID = "12345";
+
+                public static void main(String[] args) {
+                    String callId = "c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d";
+
+                    BandwidthClient client = new BandwidthClient.Builder()
+                            .voiceBasicAuthCredentials(USERNAME, PASSWORD)
+                            .build();
+
+                    ModifyCallRecordingRequest recordingRequest = new ModifyCallRecordingRequest();
+                    recordingRequest.setState(State1Enum.PAUSED);
+
+                    try {
+                        CompletableFuture<ApiResponse<Void>> completableFuture = client.getVoiceClient().getAPIController().modifyCallRecordingStateAsync(ACCOUNT_ID, callId, recordingRequest);
+                        System.out.println(completableFuture.get().getResult());
+                    } catch (InterruptedException | ExecutionException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }
+        - lang: Node.js
+          source: |
+            import { Client, ApiController } from '@bandwidth/voice';
+
+            const BW_USERNAME = "api-username";
+            const BW_PASSWORD = "api-password";
+            const BW_ACCOUNT_ID = "12345";
+
+            const client = new Client({
+              basicAuthUserName: BW_USERNAME,
+              basicAuthPassword: BW_PASSWORD
+            });
+
+            const controller = new ApiController(client);
+
+            const accountId = BW_ACCOUNT_ID;
+
+            const callId = 'c-abc12345-6defabc1-2345-6def-abc1-23456defabc1';
+
+            const modifyCallRecordingState = async function() {
+              try {
+                  const response = await controller.modifyCallRecordingState(accountId, callId, {
+                  state: 'PAUSED'
+                });
+                  console.log(response)
+              } catch(error) {
+                  console.error(error);
+              }
+            }
+
+            modifyCallRecordingState();
+        - lang: PHP
+          source: |
+            <?php
+              
+            require "vendor/autoload.php";
+
+            api-username = "api-username";
+            api-password = "api-pasword";
+            12345 = "12345";
+
+            $config = new BandwidthLib\Configuration(
+                array(
+                    'voiceBasicAuthUserName' => $BW_USERNAME,
+                    'voiceBasicAuthPassword' => $BW_PASSWORD,
+                )
+            );
+            $client = new BandwidthLib\BandwidthClient($config);
+
+            $voiceClient = $client->getVoice()->getClient();
+
+            $callId = "c-1234";
+
+            $body = new BandwidthLib\Voice\Models\ModifyCallRecordingRequest();
+            $body->redirectUrl = "http://www.myapp.com/new";
+            $body->state = "paused";
+
+            try {
+                $voiceClient->modifyCallRecordingState($BW_ACCOUNT_ID, $callId, $body);
+            } catch (BandwidthLib\APIException $e) {
+                print_r($e->getResponseCode());
+            }
+        - lang: Python
+          source: >
+            from bandwidth.bandwidth_client import BandwidthClient
+
+            from bandwidth.voice.models.modify_call_recording_request import
+            ModifyCallRecordingRequest
+
+            from bandwidth.exceptions.api_exception import APIException
+
+
+            import os
+
+
+            BW_USERNAME = "api-username"
+
+            BW_PASSWORD = "api-password"
+
+            BW_ACCOUNT_ID = "12345"
+
+
+            bandwidth_client = BandwidthClient(
+                voice_basic_auth_user_name=BW_USERNAME,
+                voice_basic_auth_password=BW_PASSWORD
+            )
+
+            voice_client = bandwidth_client.voice_client.client
+
+
+            body = ModifyCallRecordingRequest()
+
+            body.state = "paused"
+
+
+            call_id = "c-1234"
+
+
+            try:
+                voice_client.modify_call_recording_state(BW_ACCOUNT_ID, call_id, body)
+            except APIException as e:
+                print(e.response_code)
+        - lang: Ruby
+          source: |
+            require 'bandwidth'
+
+            include Bandwidth
+            include Bandwidth::Voice
+
+            bandwidth_client = Bandwidth::Client.new(
+                voice_basic_auth_user_name: "api-username",
+                voice_basic_auth_password: "api-password"
+            )
+
+            voice_client = bandwidth_client.voice_client.client
+
+            body = ModifyCallRecordingRequest.new
+            body.state = "paused"
+
+            call_id = "c-1234"
+
+            begin
+                voice_client.modify_call_recording_state("12345", call_id, body)
+            rescue APIException => e
+                puts e.response_code
+            end
   /accounts/{accountId}/calls/{callId}/recordings:
     get:
       tags:
