@@ -22526,7 +22526,9 @@
             "properties": {
               "CustomerOrderId": {
                 "type": "string",
-                "description": "The `CustomerOrderId` is an optional field that may be provided by the customer and will remain with the order.<br/><br/>Only alphanumeric values, dashes and spaces are allowed. Max length is 40 characters. The value is opaque to Bandwidth."
+                "description": "The `CustomerOrderId` is an optional field that may be provided by the customer and will remain with the order. The value is opaque to Bandwidth.",
+                "format": "Only alphanumeric values, dashes and spaces are allowed",
+                "maxLength": 40
               },
               "ProcessingStatus": {
                 "type": "string",
@@ -22544,14 +22546,134 @@
                 "description": "This field is used to specify a new billing telephone number on the losing carrier account.<br/><br/>Cannot be the same as `BillingTelephoneNumber` or be present in the list of ported numbers. This element is not applicable to toll free or off-net port-in orders."
               },
               "WirelessInfo": {
-                "$ref": "#/components/schemas/WirelessInfoPortinRequestPayload"
+                "type": "object",
+                "title": "WirelessInfo",
+                "description": "Most common for telephone numbers that were formerly wireless. This element is not applicable for toll free port-ins.",
+                "properties": {
+                  "AccountNumber": {
+                    "type": "string",
+                    "description": "The `AccountNumber` is sometimes required to authorize the port-out from the losing carrier. This is most common for telephone numbers that were formerly wireless."
+                  },
+                  "PinNumber": {
+                    "type": "string",
+                    "description": "The `PinNumber` is sometimes required to authorize the port-out from the losing carrier. This is most common for telephone numbers that were formerly wireless."
+                  }
+                }
               },
               "RequestedFocDate": {
                 "type": "string",
                 "description": "Format: ISO8601 encoding such as “2013-05-10T15:14:22Z”, or \"2019-10-31T17:15:00+04:00\".<br/><br/>For all ports, if `RequestedFocDate` is specified, the date portion must be:<br/> - in the future<br/> - after the losing carrier's minimum number of days to port-out<br/> - not on a weekend or U.S. holiday<br/><br/>If `RequestedFocDate` is not specified, the next available FOC date meeting the criteria above will be used. If the Time portion of the `RequestedFocDate` is omitted the port-in order will be activated at the default activation time of 11:30 AM ET. If an activation time other than 11:30 AM ET is desired, that activation time should be included in the `RequestedFocDate`."
               },
               "Subscriber": {
-                "$ref": "#/components/schemas/SubscriberPortinPayload"
+                "type": "object",
+                "title": "Subscriber",
+                "description": "The `Subscriber` is mandatory for all non-toll free port-in orders. See sub-fields for details.",
+                "properties": {
+                  "SubscriberType": {
+                    "type": "string",
+                    "description": "The `SubscriberType` is mandatory for all non-toll free port-in orders.",
+                    "enum": [
+                      "BUSINESS",
+                      "RESIDENTIAL"
+                    ]
+                  },
+                  "BusinessName": {
+                    "type": "string",
+                    "description": "The `BusinessName` is mandatory for non-toll free port-ins for which the SubscriberType is set to `BUSINESS`. This element is not applicable for toll free port-ins.",
+                    "maxLength": 25
+                  },
+                  "FirstName": {
+                    "type": "string",
+                    "description": "The `FirstName` value is applicable to non-toll free port-in orders in which the `SubscriberType` is set to RESIDENTIAL.",
+                    "maxLength": 25
+                  },
+                  "MiddleInitial": {
+                    "type": "string",
+                    "description": "The `MiddleInitial` value is applicable to non-toll free port-in orders in which the SubscriberType is set to RESIDENTIAL.",
+                    "maxLength": 1
+                  },
+                  "LastName": {
+                    "type": "string",
+                    "description": "The `LastName` value is mandatory for non-toll free port-in orders in which the `SubscriberType` is set to RESIDENTIAL.",
+                    "maxLength": 25
+                  },
+                  "ServiceAddress": {
+                    "type": "object",
+                    "title": "ServiceAddress",
+                    "description": "The `ServiceAddress` is mandatory for all non-toll free port-ins.",
+                    "properties": {
+                      "HousePrefix": {
+                        "type": "string",
+                        "description": "The `HouseSuffix` is the non-numeric address number suffix of the `ServiceAddress`. This element is optional when not needed to fully specify the `ServiceAddress`."
+                      },
+                      "HouseNumber": {
+                        "type": "string",
+                        "description": "The `HouseNumber` is the street address number of the `ServiceAddress`. `HouseNumber` is mandatory for port-in orders in which the `ServiceAddress` is mandatory."
+                      },
+                      "HouseSuffix": {
+                        "type": "string",
+                        "description": "The `HouseSuffix` is the non-numeric address number suffix of the `ServiceAddress`. This element is optional when not needed to fully specify the `ServiceAddress`."
+                      },
+                      "PreDirectional": {
+                        "type": "string",
+                        "description": "The `PreDirectional` is the non-numeric street name prefix of the `ServiceAddress`. This element is optional when not needed to fully specify the `ServiceAddress`."
+                      },
+                      "StreetName": {
+                        "type": "string",
+                        "description": "The `StreetName` is mandatory in cases where the `ServiceAddress` is mandatory."
+                      },
+                      "StreetSuffix": {
+                        "type": "string",
+                        "description": "The `StreetSuffix` is the street suffix of the `ServiceAddress`. This element is optional when not needed to fully specify the `ServiceAddress`."
+                      },
+                      "PostDirectional": {
+                        "type": "string",
+                        "description": "The `PostDirectional` is the street name post directional of the `ServiceAddress`. This element is optional when not needed to fully specify the `ServiceAddress`."
+                      },
+                      "AddressLine2": {
+                        "type": "string",
+                        "description": "`AddressLine2` is used to specify Unit, Suite, Floor, etc. in the Service Address. `AddressLine2` is optional when not needed to fully specify the `ServiceAddress`."
+                      },
+                      "City": {
+                        "type": "string",
+                        "description": "`City` is mandatory in cases where the `ServiceAddress` is mandatory."
+                      },
+                      "StateCode": {
+                        "type": "string",
+                        "description": "`StateCode` is the 2-letter abbreviation of the state of the `ServiceAddress`. `StateCode` is mandatory in cases where the `ServiceAddress` is mandatory. ex: `NC`, `NY`, or `AK`",
+                        "maxLength": 2
+                      },
+                      "Zip": {
+                        "type": "string",
+                        "description": "`Zip` is the Zip Code of the `ServiceAddress`. `Zip` is mandatory in cases where the `ServiceAddress` is mandatory."
+                      },
+                      "PlusFour": {
+                        "type": "string",
+                        "description": "`PlusFour` is the 4 digits that are sometimes suffixed to the Zip Code.",
+                        "maxLength": 4
+                      },
+                      "Country": {
+                        "type": "string",
+                        "description": "`Country` is the country of the `ServiceAddress`. This value will be derived from the `StateCode`, so it should generally be omitted."
+                      },
+                      "ResetAddressFields": {
+                        "type": "boolean",
+                        "description": "The `ResetAddressFields` may be specified in a `PUT` request for a non-toll free port-in order if you would like to remove `ServiceAddress` elements that are not specified in the PUT payload. Default value is `false`."
+                      }
+                    },
+                    "required": [
+                      "HouseNumber",
+                      "StreetName",
+                      "City",
+                      "StateCode",
+                      "Zip"
+                    ]
+                  }
+                },
+                "required": [
+                  "SubscriberType",
+                  "ServiceAddress"
+                ]
               },
               "PeerId": {
                 "type": "string",
@@ -22563,7 +22685,8 @@
               },
               "LoaAuthorizingPerson": {
                 "type": "string",
-                "description": "The `LoaAuthorizingPerson` is mandatory for all port-types. This is the first and last names of the person that has authorized the port. The `LoaAuthorizingPerson` value may be up to 15 characters in length."
+                "description": "The `LoaAuthorizingPerson` is mandatory for all port-types. This is the first and last names of the person that has authorized the port.",
+                "maxLength": 15
               },
               "Immediately": {
                 "type": "boolean",
@@ -22610,132 +22733,14 @@
                 "format": "int32",
                 "description": "`SiteId` is mandatory for all port-types. It specifies the identifier of the site (sub-account) that the telephone numbers will be ported into.<br/><br/>You can find the identifier for a site (sub-account) by using `GET /accounts/id/sites`, or by clicking on 'Manage sub-account' for the desired sub-account on the main page of the Bandwidth Dashboard."
               }
-            }
-          }
-        }
-      },
-      "SubscriberPortinPayload": {
-        "type": "object",
-        "title": "Subscriber",
-        "description": "The `Subscriber` is mandatory for all non-toll free port-in orders. See sub-fields for details.",
-        "properties": {
-          "SubscriberType": {
-            "type": "string",
-            "description": "The `SubscriberType` is mandatory for all non-toll free port-in orders.<br/><br/>The `SubscriberType` field may have values: `BUSINESS` or `RESIDENTIAL`.",
-            "enum": [
-              "business",
-              "residential",
-              "generic"
+            },
+            "required": [
+              "BillingTelephoneNumber",
+              "SiteId",
+              "ListOfPhoneNumbers",
+              "LoaAuthorizingPerson",
+              "Subscriber"
             ]
-          },
-          "BusinessName": {
-            "type": "string",
-            "description": "The `BusinessName` is mandatory for non-toll free port-ins for which the SubscriberType is set to `BUSINESS`. The `BusinessName` may be up to 25 characters in length. This element is not applicable for toll free port-ins."
-          },
-          "FirstName": {
-            "type": "string",
-            "description": "The `FirstName` value is applicable to non-toll free port-in orders in which the `SubscriberType` is set to RESIDENTIAL. The `FirstName` is always optional. The `FirstName` may be up to 25 characters in length."
-          },
-          "MiddleInitial": {
-            "type": "string",
-            "description": "The `MiddleInitial` value is applicable to non-toll free port-in orders in which the SubscriberType is set to RESIDENTIAL. The `MiddleInitial` is always optional. The `MiddleInitial` is 1 character in length."
-          },
-          "LastName": {
-            "type": "string",
-            "description": "The `LastName` value is mandatory for non-toll free port-in orders in which the `SubscriberType` is set to RESIDENTIAL. The `LastName` may be up to 25 characters in length."
-          },
-          "Name": {
-            "type": "string",
-            "description": ""
-          },
-          "AccountNumber": {
-            "type": "string",
-            "description": ""
-          },
-          "PinNumber": {
-            "type": "string",
-            "description": ""
-          },
-          "ServiceAddress": {
-            "$ref": "#/components/schemas/PortinSubscriberAddress"
-          }
-        }
-      },
-      "PortinSubscriberAddress": {
-        "type": "object",
-        "title": "ServiceAddress",
-        "description": "The `ServiceAddress` is mandatory for all non-toll free port-ins. See sub-fields for additional details.",
-        "properties": {
-          "HousePrefix": {
-            "type": "string",
-            "description": "The `HouseSuffix` is the non-numeric address number suffix of the `ServiceAddress`. This element is optional when not needed to fully specify the `ServiceAddress`."
-          },
-          "HouseNumber": {
-            "type": "string",
-            "description": "The `HouseNumber` is the street address number of the `ServiceAddress`. `HouseNumber` is mandatory for port-in orders in which the `ServiceAddress` is mandatory."
-          },
-          "HouseSuffix": {
-            "type": "string",
-            "description": "The `HouseSuffix` is the non-numeric address number suffix of the `ServiceAddress`. This element is optional when not needed to fully specify the `ServiceAddress`."
-          },
-          "PreDirectional": {
-            "type": "string",
-            "description": "The `PreDirectional` is the non-numeric street name prefix of the `ServiceAddress`. This element is optional when not needed to fully specify the `ServiceAddress`."
-          },
-          "StreetName": {
-            "type": "string",
-            "description": "The `StreetName` is mandatory in cases where the `ServiceAddress` is mandatory."
-          },
-          "StreetSuffix": {
-            "type": "string",
-            "description": "The `StreetSuffix` is the street suffix of the `ServiceAddress`. This element is optional when not needed to fully specify the `ServiceAddress`."
-          },
-          "PostDirectional": {
-            "type": "string",
-            "description": "The `PostDirectional` is the street name post directional of the `ServiceAddress`. This element is optional when not needed to fully specify the `ServiceAddress`."
-          },
-          "AddressLine2": {
-            "type": "string",
-            "description": "`AddressLine2` is used to specify Unit, Suite, Floor, etc. in the Service Address. `AddressLine2` is optional when not needed to fully specify the `ServiceAddress`."
-          },
-          "City": {
-            "type": "string",
-            "description": "`City` is mandatory in cases where the `ServiceAddress` is mandatory."
-          },
-          "StateCode": {
-            "type": "string",
-            "description": "`StateCode` is the 2-letter abbreviation of the state of the `ServiceAddress`. `StateCode` is mandatory in cases where the `ServiceAddress` is mandatory. ex: `NC`, `NY`, or `AK`"
-          },
-          "Zip": {
-            "type": "string",
-            "description": "`Zip` is the Zip Code of the `ServiceAddress`. `Zip` is mandatory in cases where the `ServiceAddress` is mandatory."
-          },
-          "PlusFour": {
-            "type": "string",
-            "description": "`PlusFour` is the 4 digits that are sometimes suffixed to the Zip Code."
-          },
-          "Country": {
-            "type": "string",
-            "description": "`Country` is the country of the `ServiceAddress`. This value will be derived from the `StateCode`, so it should generally be omitted."
-          },
-          "ResetAddressFields": {
-            "type": "boolean",
-            "description": "The `ResetAddressFields` may be specified in a `PUT` request for a non-toll free port-in order if you would like to remove `ServiceAddress` elements that are not specified in the PUT payload. Default value is `false`."
-          }
-        }
-      },
-      "WirelessInfoPortinRequestPayload": {
-        "type": "object",
-        "title": "WirelessInfo",
-        "description": "Most common for telephone numbers that were formerly wireless. This element is not applicable for toll free port-ins.",
-        "properties": {
-          "AccountNumber": {
-            "type": "string",
-            "description": "The `AccountNumber` is sometimes required to authorize the port-out from the losing carrier. This is most common for telephone numbers that were formerly wireless."
-          },
-          "PinNumber": {
-            "type": "string",
-            "description": "The `PinNumber` is sometimes required to authorize the port-out from the losing carrier. This is most common for telephone numbers that were formerly wireless."
           }
         }
       },
