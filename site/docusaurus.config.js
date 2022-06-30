@@ -4,9 +4,9 @@ const path = require('path');
 
 const numbersSpec = fs.readFileSync('./specs-temp/numbers.json', 'utf-8');
 const phoneNumberLookupSpec = fs.readFileSync('./specs/phone-number-lookup.yml', 'utf-8');
-const voiceSpec = fs.readFileSync('./specs/voice.json', 'utf-8');
-const messagingSpec = fs.readFileSync('./specs/messaging.json', 'utf-8');
-const webRtcSpec = fs.readFileSync('./specs/webRtc.json', 'utf-8');
+const voiceSpec = fs.readFileSync('./specs/voice.yml', 'utf-8');
+const messagingSpec = fs.readFileSync('./specs/messaging.yml', 'utf-8');
+const webRtcSpec = fs.readFileSync('./specs/webrtc.yml', 'utf-8');
 const multiFactorAuthSpec = fs.readFileSync('./specs/multi-factor-auth.yml', 'utf-8');
 const dashSpec = fs.readFileSync('./specs/dash.json', 'utf-8');
 const dashNotificationsSpec = fs.readFileSync('./specs/dashNotifications.json', 'utf-8');
@@ -166,10 +166,10 @@ module.exports = {
     customFields: {
         numbersSpec: JSON.parse(numbersSpec),
         phoneNumberLookupSpec: YAML.parse(phoneNumberLookupSpec),
-        voiceSpec: JSON.parse(voiceSpec),
-        messagingSpec: JSON.parse(messagingSpec),
+        voiceSpec: YAML.parse(voiceSpec),
+        messagingSpec: YAML.parse(messagingSpec),
         messagingInternationalSpec: JSON.parse(messagingInternationalSpec),
-        webRTCSpec: JSON.parse(webRtcSpec),
+        webRTCSpec: YAML.parse(webRtcSpec),
         multiFactorAuthSpec: YAML.parse(multiFactorAuthSpec),
         dashSpec: JSON.parse(dashSpec),
         dashNotificationsSpec: JSON.parse(dashNotificationsSpec),
