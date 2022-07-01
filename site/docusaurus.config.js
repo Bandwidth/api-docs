@@ -42,7 +42,7 @@ module.exports = {
             hideOnScroll: false,
             logo: {
                 alt: 'Bandwidth',
-                src: 'img/bandwidth-logo-navbar.png',
+                src: 'img/bw-horizontal.svg',
             },
             items: [{
                 type: 'dropdown',
@@ -62,7 +62,7 @@ module.exports = {
                         label: 'SDKs',
                         activeBasePath: 'sdks'
                     }, {
-                        href: 'https://github.com/Bandwidth-Samples',
+                        to: 'https://github.com/Bandwidth-Samples',
                         label: 'Samples',
                     }
                 ]
@@ -82,7 +82,7 @@ module.exports = {
                 className: 'header-github-link bw-link',
                 title: 'Github Organization'
             }, {
-                href: 'https://github.com/Bandwidth/postman',
+                href: 'https://www.postman.com/bandwidth',   // TODO: update with real postman url
                 position: 'right', 
                 className: 'header-postman-link bw-link',
                 title: 'Postman Collection'
@@ -94,50 +94,61 @@ module.exports = {
             }]
         },
         footer: {
-            style: "dark",
             logo: {
                 alt: 'Bandwidth',
-                src: 'img/bandwidth-logo-footer.png',
+                src: 'img/bw-horizontal.svg',
                 href: 'https://www.bandwidth.com',
             },
-            links: [{
-                    title: 'Docs',
+            links: [
+                {
+                    title: 'Social',
                     items: [{
-                            label: 'Guides & Tutorials',
-                            to: '/docs/',
-                        }, {
-                            to: 'changelog',
-                            activeBasePath: 'changelog',
-                            label: 'Changelog',
-                        },
-                    ],
+                        label: 'Instagram',
+                        to: 'https://www.instagram.com/wearebandwidth',
+                    }, {
+                        label: 'LinkedIn',
+                        to: 'https://www.linkedin.com/company/bandwidth-inc/mycompany/verification/'
+                    }, {
+                        label: 'Twitter',
+                        to: 'https://twitter.com/bandwidth'
+                    }, {
+                        label: 'YouTube',
+                        to: 'https://www.youtube.com/user/bandwidth'
+                    }]
                 },
                 {
                     title: 'Community',
                     items: [{
-                        label: 'Developer Forum',
-                        href: 'http://bandwidthdashboard.discussion.community/',
+                        label: 'Blog',
+                        to: 'https://www.bandwidth.com/blog/',
+                    }, {
+                        label: 'GitHub',
+                        to: 'https://github.com/Bandwidth'
+                    }, {
+                        label: 'Postman',
+                        to: 'https://www.postman.com/bandwidth'
                     }],
                 },
                 {
                     title: 'More',
                     items: [
-                        // 'Blog' 404's with no md files in the blog folder
-                        // {
-                        //   label: 'Blog',
-                        //   to: '/blog',
-                        // },
                         {
-                            label: 'GitHub',
-                            href: 'https://github.com/Bandwidth',
+                            label: 'Release Notes',
+                            to: 'https://www.bandwidth.com/release-notes/'
                         }, {
-                            label: 'Try Sandbox',
-                            href: 'https://sandbox.bandwidth.com'
+                            label: 'Sandbox',
+                            to: 'https://sandbox.bandwidth.com'
+                        }, {
+                            label: 'Status',
+                            to: 'https://status.bandwidth.com/'
+                        }, {
+                            label: 'Support',
+                            to: 'https://support.bandwidth.com'
                         }
                     ],
                 }
             ],
-            copyright: `Copyright © ${new Date().getFullYear()} Bandwidth Inc.`,
+            copyright: `© ${new Date().getFullYear()} Bandwidth Inc. Built with Docusaurus.`,
         },
         // Now this breaks redoc :sad: (Now missing prism dependency as well)
         // prism: {

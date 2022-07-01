@@ -11,7 +11,7 @@ keywords:
   - factor
   - auth
   - authentication
-image: ../../static/img/bandwidth-logo.png
+image: ../../static/img/bw-icon.svg
 ---
 
 Rate limits for MFA are based on your [Voice API Rate Limits](../voice) and [Messaging API Rate Limits](../messaging).

@@ -7,7 +7,7 @@ keywords:
   - bandwidth
   - webrtc
   - video
-image: ../../static/img/bandwidth-logo.png
+image: ../../static/img/bw-icon.svg
 ---
 
 ## Connecting WebRTC to Programmable Voice
