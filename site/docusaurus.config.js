@@ -82,7 +82,7 @@ module.exports = {
                 className: 'header-github-link bw-link',
                 title: 'Github Organization'
             }, {
-                href: 'https://github.com/Bandwidth/postman',   // TODO: update with real postman url
+                href: 'https://www.postman.com/bandwidth',   // TODO: update with real postman url
                 position: 'right', 
                 className: 'header-postman-link bw-link',
                 title: 'Postman Collection'
@@ -124,7 +124,10 @@ module.exports = {
                     }, {
                         label: 'GitHub',
                         to: 'https://github.com/Bandwidth'
-                    },],
+                    }, {
+                        label: 'Postman',
+                        to: 'https://www.postman.com/bandwidth'
+                    }],
                 },
                 {
                     title: 'More',
