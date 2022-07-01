@@ -38,6 +38,283 @@ paths:
           $ref: '#/components/responses/mfaForbiddenError'
         '500':
           $ref: '#/components/responses/mfaInternalServerError'
+      x-codeSamples:
+        - lang: cURL
+          source: |
+            curl 'https://mfa.bandwidth.com/api/v1/accounts/12345/code/voice' \
+                -X POST \
+                -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=' \
+                -H 'Content-Type: application/json' \
+                -d '{
+                    "to": "+15553334444",
+                    "from": "+15554443333",
+                    "applicationId": "1234-asdf",
+                    "scope": "scope",
+                    "message": "Your temporary {NAME} {SCOPE} code is {CODE}",
+                    "digits": 5
+                }'
+        - lang: C#
+          source: |
+            using System;
+            using System.Threading.Tasks;
+            using Bandwidth.Standard;
+            using Bandwidth.Standard.Exceptions;
+            using Bandwidth.Standard.MultiFactorAuth.Models;
+
+            class Program
+            {
+                static async Task Main(string[] args)
+                {
+                    var username = "api-username";
+                    var password = "api-pasword";
+                    var accountId = "12345";
+                    var applicationId = "1234-qwer";
+                    var to = "+15553334444";
+                    var from = "+15554443333";
+                    var scope = "sample";
+                    var digits = 6;
+                    var message = "Your temporary {NAME} {SCOPE} code is {CODE}";
+
+                    var client = new BandwidthClient.Builder()
+                        .MultiFactorAuthBasicAuthCredentials(username, password)
+                        .Build();
+
+                    var request = new TwoFactorCodeRequestSchema
+                    {
+                        ApplicationId = applicationId,
+                        To = to,
+                        From = from,
+                        Scope = scope,
+                        Digits = digits,
+                        Message = message
+                    };
+
+                    try
+                    {
+                        var response = await client.MultiFactorAuth.MFAController.CreateVoiceTwoFactorAsync(accountId, request);
+                        Console.WriteLine(response.Data);
+                    }
+                    catch (ApiException e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+            }
+        - lang: Java
+          source: >
+            import com.bandwidth.BandwidthClient;
+
+            import com.bandwidth.http.response.ApiResponse;
+
+            import
+            com.bandwidth.multifactorauth.models.TwoFactorCodeRequestSchema;
+
+            import com.bandwidth.multifactorauth.models.TwoFactorVoiceResponse;
+
+
+            import java.util.concurrent.CompletableFuture;
+
+            import java.util.concurrent.ExecutionException;
+
+
+            public class Sample {
+                public static final String USERNAME = "api-username";
+                public static final String PASSWORD = "api-password";
+                public static final String ACCOUNT_ID = "12345";
+                public static final String APPLICATION_ID = "1234-qwer";
+
+                public static void main(String[] args) {
+                    BandwidthClient client = new BandwidthClient.Builder()
+                            .multiFactorAuthBasicAuthCredentials(USERNAME, PASSWORD)
+                            .build();
+
+                    String to = "+15553334444";
+                    String from = "+15554443333";
+                    String scope = "sample";
+                    int digits = 6;
+                    String message = "Your temporary {NAME} {SCOPE} code is {CODE}";
+
+                    TwoFactorCodeRequestSchema request = new TwoFactorCodeRequestSchema();
+                    request.setApplicationId(APPLICATION_ID);
+                    request.setTo(to);
+                    request.setFrom(from);
+                    request.setScope(scope);
+                    request.setDigits(digits);
+                    request.setMessage(message);
+
+                    try {
+                        CompletableFuture<ApiResponse<TwoFactorVoiceResponse>> completableFuture = client.getMultiFactorAuthClient().getMFAController().createVoiceTwoFactorAsync(ACCOUNT_ID, request);
+                        System.out.println(completableFuture.get().getResult());
+                    } catch (InterruptedException | ExecutionException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }
+        - lang: Node.js
+          source: |
+            import { Client, MFAController } from '@bandwidth/mfa';
+
+            const BW_USERNAME = "api-username";
+            const BW_PASSWORD = "api-password";
+            const BW_ACCOUNT_ID = "12345";
+            const BW_VOICE_APPLICATION_ID = "1234-qwer";
+            const fromNumber = "+15554443333";
+            const toNumber = "+15553334444";
+
+            const client = new Client({
+              basicAuthUserName: BW_USERNAME,
+              basicAuthPassword: BW_PASSWORD
+            });
+
+            const controller = new MFAController(client);
+
+            const payload = {
+              applicationId: BW_VOICE_APPLICATION_ID,
+              from: fromNumber,
+              to: toNumber,
+              scope: 'scope',
+              digits: 5,
+              message: "Your temporary {NAME} {SCOPE} code is {CODE}"
+            }
+
+            const voiceTwoFactor = async function() {
+              try {
+                const response = await controller.voiceTwoFactor(BW_ACCOUNT_ID, payload);
+                console.log(JSON.stringify(response, null, 2));
+              } catch (error) {
+                console.error(error);
+            }};
+
+            voiceTwoFactor();
+        - lang: PHP
+          source: >
+            <?php
+
+
+            require "vendor/autoload.php";
+
+
+            api-username = "api-username";
+
+            api-password = "api-pasword";
+
+            12345 = "12345";
+
+            1234-qwer = "1234-qwer";
+
+            +15554443333 = "+15554443333";
+
+            +15553334444 = "+15553334444";
+
+
+            $config = new BandwidthLib\Configuration(
+                array(
+                    'multiFactorAuthBasicAuthUserName' => $BW_USERNAME,
+                    'multiFactorAuthBasicAuthPassword' => $BW_PASSWORD,
+                )
+            );
+
+            $client = new BandwidthLib\BandwidthClient($config);
+
+
+            $mfaClient = $client->getMultiFactorAuth()->getMFA();
+
+
+            $body = new
+            BandwidthLib\MultiFactorAuth\Models\TwoFactorCodeRequestSchema();
+
+            $body->from = $BW_MFA_NUMBER;
+
+            $body->to = $USER_NUMBER;
+
+            $body->applicationId = $BW_MFA_VOICE_APPLICATION_ID;
+
+            $body->scope = "scope";
+
+            $body->digits = 6;
+
+            $body->message = "Your temporary {NAME} {SCOPE} code is {CODE}";
+
+
+            try {
+                $mfaClient->createVoiceTwoFactor($BW_ACCOUNT_ID, $body);
+            } catch (BandwidthLib\APIException $e) {
+                print_r($e->getResponseCode());
+            }
+        - lang: Python
+          source: >
+            from bandwidth.bandwidth_client import BandwidthClient
+
+            from bandwidth.multifactorauth.models.two_factor_code_request_schema
+            import TwoFactorCodeRequestSchema
+
+            from bandwidth.exceptions.api_exception import APIException
+
+
+            import os
+
+
+            BW_USERNAME = "api-username"
+
+            BW_PASSWORD = "api-password"
+
+            BW_ACCOUNT_ID = "12345"
+
+            BW_MFA_VOICE_APPLICATION_ID = "1234-qwer"
+
+            BW_MFA_NUMBER = "+15554443333"
+
+            USER_NUMBER = "+15553334444"
+
+
+            bandwidth_client = BandwidthClient(
+                multi_factor_auth_basic_auth_user_name=BW_USERNAME,
+                multi_factor_auth_basic_auth_password=BW_PASSWORD
+            )
+
+            auth_client = bandwidth_client.multi_factor_auth_client.mfa
+
+
+            body = TwoFactorCodeRequestSchema(
+                mfrom = BW_MFA_NUMBER,
+                to = USER_NUMBER,
+                application_id = BW_MFA_VOICE_APPLICATION_ID,
+                scope = "scope",
+                digits = 6,
+                message = "Your temporary {NAME} {SCOPE} code is {CODE}"
+            )
+
+
+            try:
+                auth_client.create_voice_two_factor(BW_ACCOUNT_ID, body)
+            except APIException as e:
+                print(e.response_code)
+        - lang: Ruby
+          source: |
+            require 'bandwidth'
+
+            include Bandwidth
+            include Bandwidth::MultiFactorAuth
+
+            bandwidth_client = Bandwidth::Client.new(
+                multi_factor_auth_basic_auth_user_name: "api-username",
+                multi_factor_auth_basic_auth_password: "api-password"
+            )
+            auth_client = bandwidth_client.multi_factor_auth_client.mfa
+
+            body = TwoFactorCodeRequestSchema.new
+            body.application_id = "1234-qwer"
+            body.to = "+15553334444"
+            body.from = "+15554443333"
+            body.digits = 6
+            body.scope = "scope"
+            body.message = "Your temporary {NAME} {SCOPE} code is {CODE}"
+            begin
+                result = auth_client.create_voice_two_factor("12345", body)
+                puts 'callId: ' + result.data.call_id
+            rescue APIException => e
+                puts e.response_code
+            end
   /accounts/{accountId}/code/messaging:
     post:
       tags:
@@ -60,6 +337,284 @@ paths:
           $ref: '#/components/responses/mfaForbiddenError'
         '500':
           $ref: '#/components/responses/mfaInternalServerError'
+      x-codeSamples:
+        - lang: cURL
+          source: >
+            curl
+            'https://mfa.bandwidth.com/api/v1/accounts/12345/code/messaging' \
+                -X POST \
+                -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=' \
+                -H 'Content-Type: application/json' \
+                -d '{
+                    "to": "+15553334444",
+                    "from": "+15554443333",
+                    "applicationId": "1234-asdf",
+                    "scope": "scope",
+                    "message": "Your temporary {NAME} {SCOPE} code is {CODE}",
+                    "digits": 6
+                }'
+        - lang: C#
+          source: |
+            using System;
+            using System.Threading.Tasks;
+            using Bandwidth.Standard;
+            using Bandwidth.Standard.Exceptions;
+            using Bandwidth.Standard.MultiFactorAuth.Models;
+
+            class Program
+            {
+                static async Task Main(string[] args)
+                {
+                    var username = "api-username";
+                    var password = "api-pasword";
+                    var accountId = "12345";
+                    var applicationId = "1234-asdf";
+                    var to = "+15553334444";
+                    var from = "+15554443333";
+                    var scope = "sample";
+                    var digits = 6;
+                    var message = "Your temporary {NAME} {SCOPE} code is {CODE}";
+
+                    var client = new BandwidthClient.Builder()
+                        .MultiFactorAuthBasicAuthCredentials(username, password)
+                        .Build();
+
+                    var request = new TwoFactorCodeRequestSchema
+                    {
+                        ApplicationId = applicationId,
+                        To = to,
+                        From = from,
+                        Scope = scope,
+                        Digits = digits,
+                        Message = message
+                    };
+
+                    try
+                    {
+                        var response = await client.MultiFactorAuth.MFAController.CreateMessagingTwoFactorAsync(accountId, request);
+                        Console.WriteLine(response.Data);
+                    }
+                    catch (ApiException e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+            }
+        - lang: Java
+          source: >
+            import com.bandwidth.BandwidthClient;
+
+            import com.bandwidth.http.response.ApiResponse;
+
+            import
+            com.bandwidth.multifactorauth.models.TwoFactorCodeRequestSchema;
+
+            import
+            com.bandwidth.multifactorauth.models.TwoFactorMessagingResponse;
+
+
+            import java.util.concurrent.CompletableFuture;
+
+            import java.util.concurrent.ExecutionException;
+
+
+            public class Sample {
+                public static final String USERNAME = "api-username";
+                public static final String PASSWORD = "api-password";
+                public static final String ACCOUNT_ID = "12345";
+                public static final String APPLICATION_ID = "1234-asdf";
+
+                public static void main(String[] args) {
+                    BandwidthClient client = new BandwidthClient.Builder()
+                            .multiFactorAuthBasicAuthCredentials(USERNAME, PASSWORD)
+                            .build();
+
+                    String to = "+15553334444";
+                    String from = "+15554443333";
+                    String scope = "sample";
+                    int digits = 6;
+                    String message = "Your temporary {NAME} {SCOPE} code is {CODE}";
+
+                    TwoFactorCodeRequestSchema request = new TwoFactorCodeRequestSchema();
+                    request.setApplicationId(APPLICATION_ID);
+                    request.setTo(to);
+                    request.setFrom(from);
+                    request.setScope(scope);
+                    request.setDigits(digits);
+                    request.setMessage(message);
+
+                    try {
+                        CompletableFuture<ApiResponse<TwoFactorMessagingResponse>> completableFuture = client.getMultiFactorAuthClient().getMFAController().createMessagingTwoFactorAsync(ACCOUNT_ID, request);
+                        System.out.println(completableFuture.get().getResult());
+                    } catch (InterruptedException | ExecutionException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }
+        - lang: Node.js
+          source: |
+            import { Client, MFAController } from '@bandwidth/mfa';
+
+            const BW_USERNAME = "api-username";
+            const BW_PASSWORD = "api-password";
+            const BW_ACCOUNT_ID = "12345";
+            const BW_MESSAGING_APPLICATION_ID = "1234-asdf";
+            const fromNumber = "+15554443333";
+            const toNumber = "+15553334444";
+
+            const client = new Client({
+              basicAuthUserName: BW_USERNAME,
+              basicAuthPassword: BW_PASSWORD
+            });
+
+            const controller = new MFAController(client);
+
+            const payload = {
+              applicationId: BW_MESSAGING_APPLICATION_ID,
+              from: fromNumber,
+              to: toNumber,
+              scope: 'scope',
+              digits: 6,
+              message: "Your temporary {NAME} {SCOPE} code is {CODE}"
+            }
+
+            const msgTwoFactor = async function() {
+              try {
+                const response = await controller.messagingTwoFactor(BW_ACCOUNT_ID, payload);
+                console.log(JSON.stringify(response, null, 2));
+              } catch (error) {
+                console.error(error);
+            }};
+
+            msgTwoFactor();
+        - lang: PHP
+          source: >
+            <?php
+
+
+            require "vendor/autoload.php";
+
+
+            api-username = "api-username";
+
+            api-password = "api-pasword";
+
+            12345 = "12345";
+
+            1234-asdf = "1234-asdf";
+
+            +15554443333 = "+15554443333";
+
+            +15553334444 = "+15553334444";
+
+
+            $config = new BandwidthLib\Configuration(
+                array(
+                    'multiFactorAuthBasicAuthUserName' => $BW_USERNAME,
+                    'multiFactorAuthBasicAuthPassword' => $BW_PASSWORD,
+                )
+            );
+
+            $client = new BandwidthLib\BandwidthClient($config);
+
+
+            $mfaClient = $client->getMultiFactorAuth()->getMFA();
+
+
+            $body = new
+            BandwidthLib\MultiFactorAuth\Models\TwoFactorCodeRequestSchema();
+
+            $body->from = $BW_MFA_NUMBER;
+
+            $body->to = $USER_NUMBER;
+
+            $body->applicationId = $BW_MFA_MESSAGING_APPLICATION_ID;
+
+            $body->scope = "scope";
+
+            $body->digits = 6;
+
+            $body->message = "Your temporary {NAME} {SCOPE} code is {CODE}";
+
+
+            try {
+                $mfaClient->createMessagingTwoFactor($BW_ACCOUNT_ID, $body);
+            } catch (BandwidthLib\APIException $e) {
+                print_r($e->getResponseCode());
+            }
+        - lang: Python
+          source: >
+            from bandwidth.bandwidth_client import BandwidthClient
+
+            from bandwidth.multifactorauth.models.two_factor_code_request_schema
+            import TwoFactorCodeRequestSchema
+
+            from bandwidth.exceptions.api_exception import APIException
+
+
+            import os
+
+
+            BW_USERNAME = "api-username"
+
+            BW_PASSWORD = "api-password"
+
+            BW_ACCOUNT_ID = "12345"
+
+            BW_MFA_MESSAGING_APPLICATION_ID = "1234-asdf"
+
+            BW_MFA_NUMBER = "+15554443333"
+
+            USER_NUMBER = "+15553334444"
+
+
+            bandwidth_client = BandwidthClient(
+                multi_factor_auth_basic_auth_user_name=BW_USERNAME,
+                multi_factor_auth_basic_auth_password=BW_PASSWORD
+            )
+
+            auth_client = bandwidth_client.multi_factor_auth_client.mfa
+
+
+            body = TwoFactorCodeRequestSchema(
+                mfrom = BW_MFA_NUMBER,
+                to = USER_NUMBER,
+                application_id = BW_MFA_MESSAGING_APPLICATION_ID,
+                scope = "scope",
+                digits = 6,
+                message = "Your temporary {NAME} {SCOPE} code is {CODE}"
+            )
+
+            try:
+                auth_client.create_messaging_two_factor(BW_ACCOUNT_ID, body)
+            except APIException as e:
+                print(e.response_code)
+        - lang: Ruby
+          source: |
+            require 'bandwidth'
+
+            include Bandwidth
+            include Bandwidth::MultiFactorAuth
+
+            bandwidth_client = Bandwidth::Client.new(
+                multi_factor_auth_basic_auth_user_name: "api-username",
+                multi_factor_auth_basic_auth_password: "api-password"
+            )
+            auth_client = bandwidth_client.multi_factor_auth_client.mfa
+
+            body = TwoFactorCodeRequestSchema.new
+            body.application_id = "1234-asdf"
+            body.to = "+15553334444"
+            body.from = "+15554443333"
+            body.digits = 6
+            body.scope = "scope"
+            body.message = "Your temporary {NAME} {SCOPE} code is {CODE}"
+            begin
+                result = auth_client.create_messaging_two_factor("12345", body)
+                puts 'messageId: ' + result.data.message_id
+            rescue APIException => e
+                puts e.response_code
+            end
   /accounts/{accountId}/code/verify:
     post:
       tags:
@@ -84,6 +639,296 @@ paths:
           $ref: '#/components/responses/mfaTooManyRequestsError'
         '500':
           $ref: '#/components/responses/mfaInternalServerError'
+      x-codeSamples:
+        - lang: cURL
+          source: |
+            curl 'https://mfa.bandwidth.com/api/v1/accounts/12345/code/verify' \
+                -X POST \
+                -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=' \
+                -H 'Content-Type: application/json' \
+                -d '{
+                    "to": "+15553334444",
+                    "applicationId": "1234-asdf",
+                    "scope": "scope",
+                    "expirationTimeInMinutes": 3,
+                    "code": "123456"
+                }'
+        - lang: C#
+          source: |
+            using System;
+            using System.Threading.Tasks;
+            using Bandwidth.Standard;
+            using Bandwidth.Standard.Exceptions;
+            using Bandwidth.Standard.MultiFactorAuth.Models;
+
+            class Program
+            {
+                static async Task Main(string[] args)
+                {
+                    var username = "api-username";
+                    var password = "api-pasword";
+                    var accountId = "12345";
+                    var applicationId = "1234-asdf";
+                    var to = "+15553334444";
+                    var scope = "sample";
+                    var code = "159193";
+                    var expirationTimeInMinutes = 3;
+
+                    var client = new BandwidthClient.Builder()
+                        .MultiFactorAuthBasicAuthCredentials(username, password)
+                        .Build();
+
+                    var request = new TwoFactorVerifyRequestSchema
+                    {
+                        ApplicationId = applicationId,
+                        To = to,
+                        Scope = scope,
+                        Code = code,
+                        ExpirationTimeInMinutes = expirationTimeInMinutes
+                    };
+
+                    try
+                    {
+                        var response = await client.MultiFactorAuth.MFAController.CreateVerifyTwoFactorAsync(accountId, request);
+                        Console.WriteLine(response.Data);
+                    }
+                    catch (ApiException e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+            }
+        - lang: Java
+          source: >
+            import com.bandwidth.BandwidthClient;
+
+            import com.bandwidth.http.response.ApiResponse;
+
+            import
+            com.bandwidth.multifactorauth.models.TwoFactorVerifyCodeResponse;
+
+            import
+            com.bandwidth.multifactorauth.models.TwoFactorVerifyRequestSchema;
+
+
+            import java.util.concurrent.CompletableFuture;
+
+            import java.util.concurrent.ExecutionException;
+
+
+            public class Sample {
+                public static final String USERNAME = "api-username";
+                public static final String PASSWORD = "api-password";
+                public static final String ACCOUNT_ID = "12345";
+                public static final String APPLICATION_ID = "1234-qwer";
+
+                public static void main(String[] args) {
+                    BandwidthClient client = new BandwidthClient.Builder()
+                            .multiFactorAuthBasicAuthCredentials(USERNAME, PASSWORD)
+                            .build();
+
+                    String to = "+15553334444";
+                    String scope = "sample";
+                    String code = "159193";
+                    int expirationTimeInMinutes = 3;
+
+                    TwoFactorVerifyRequestSchema request = new TwoFactorVerifyRequestSchema();
+                    request.setApplicationId(APPLICATION_ID);
+                    request.setTo(to);
+                    request.setScope(scope);
+                    request.setCode(code);
+                    request.setExpirationTimeInMinutes(expirationTimeInMinutes);
+
+                    try {
+                        CompletableFuture<ApiResponse<TwoFactorVerifyCodeResponse>> completableFuture = client.getMultiFactorAuthClient().getMFAController().createVerifyTwoFactorAsync(ACCOUNT_ID, request);
+                        System.out.println(completableFuture.get().getResult());
+                    } catch (InterruptedException | ExecutionException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }
+        - lang: Node.js
+          source: |
+            import { Client, MFAController } from '@bandwidth/mfa';
+
+            const BW_USERNAME = "api-username";
+            const BW_PASSWORD = "api-password";
+            const BW_ACCOUNT_ID = "12345";
+            const BW_MESSAGING_APPLICATION_ID = "1234-qwer";
+            const toNumber = "+15553334444";
+
+            const client = new Client({
+              basicAuthUserName: BW_USERNAME,
+              basicAuthPassword: BW_PASSWORD
+            });
+
+            const controller = new MFAController(client);
+
+            const payload = {
+              applicationId: BW_MESSAGING_APPLICATION_ID,
+              to: toNumber,
+              code: "12345",
+              scope: "scope",
+              expirationTimeInMinutes: 3,
+              code: "123456"
+            }
+
+            const verifyTwoFactor = async function() {
+              try {
+                const response = await controller.verifyTwoFactor(BW_ACCOUNT_ID, payload);
+                console.log(JSON.stringify(response, null, 2));
+              } catch (error) {
+                console.error(error);
+            }};
+
+            verifyTwoFactor();
+        - lang: PHP
+          source: >
+            <?php
+              
+            require "vendor/autoload.php";
+
+
+            api-username = "api-username";
+
+            api-password = "api-pasword";
+
+            12345 = "12345";
+
+            1234-asdf = "1234-asdf";
+
+            //$BW_MFA_MESSAGING_APPLICATION_ID =
+            getenv("BW_MFA_MESSAGING_APPLICATION_ID");
+
+            //Both voice and messaging application IDs can be used. The verify
+            request
+
+            //must have the same ID as the code request.
+
+            +15554443333 = "+15554443333";
+
+            +15553334444 = "+15553334444";
+
+
+            $config = new BandwidthLib\Configuration(
+                array(
+                    'multiFactorAuthBasicAuthUserName' => $BW_USERNAME,
+                    'multiFactorAuthBasicAuthPassword' => $BW_PASSWORD,
+                )
+            );
+
+            $client = new BandwidthLib\BandwidthClient($config);
+
+
+            $mfaClient = $client->getMultiFactorAuth()->getMFA();
+
+
+            $body = new
+            BandwidthLib\MultiFactorAuth\Models\TwoFactorVerifyRequestSchema();
+
+            $body->from = $BW_MFA_NUMBER;
+
+            $body->to = $USER_NUMBER;
+
+            $body->applicationId = $BW_MFA_MESSAGING_APPLICATION_ID;
+
+            //$body->applicationId = 1234-qwer;
+
+            $body->scope = "scope";
+
+            $body->code = "123456"; //This is the user's input to validate
+
+            $body->digits = 6;
+
+            $body->expirationTimeInMinutes = 3;
+
+
+            try {
+                $response = $mfaClient->createVerifyTwoFactor($BW_ACCOUNT_ID, $body);
+                print_r($response->getResult()->valid);
+            } catch (BandwidthLib\APIException $e) {
+                print_r($e->getResponseCode());
+            }
+        - lang: Python
+          source: >
+            from bandwidth.bandwidth_client import BandwidthClient
+
+            from
+            bandwidth.multifactorauth.models.two_factor_verify_request_schema
+            import TwoFactorVerifyRequestSchema
+
+            from bandwidth.exceptions.api_exception import APIException
+
+
+            import os
+
+
+            BW_USERNAME = "api-username"
+
+            BW_PASSWORD = "api-password"
+
+            BW_ACCOUNT_ID = "12345"
+
+            BW_MFA_VOICE_APPLICATION_ID = "1234-qwer"
+
+            #BW_MFA_MESSAGING_APPLICATION_ID = "1234-asdf"
+
+            #Both voice and messaging application IDs can be used. The verify
+            request
+
+            #must have the same ID as the code request.
+
+            USER_NUMBER = "+15553334444"
+
+
+            bandwidth_client = BandwidthClient(
+                multi_factor_auth_basic_auth_user_name=BW_USERNAME,
+                multi_factor_auth_basic_auth_password=BW_PASSWORD
+            )
+
+            auth_client = bandwidth_client.multi_factor_auth_client.mfa
+
+
+            body = TwoFactorVerifyRequestSchema(
+                to = USER_NUMBER,
+                application_id = BW_MFA_VOICE_APPLICATION_ID,
+                #application_id = MFA_MESSAGING_APPLICATION_ID,
+                scope = "scope",
+                code = "123456", #This is the user's input to validate
+                expiration_time_in_minutes = 3
+            )
+
+
+            try:
+                response = auth_client.create_verify_two_factor(BW_ACCOUNT_ID, body)
+                print(response.body.valid)
+            except APIException as e:
+                print(e.response_code)
+        - lang: Ruby
+          source: |
+            require 'bandwidth'
+
+            include Bandwidth
+            include Bandwidth::MultiFactorAuth
+
+            bandwidth_client = Bandwidth::Client.new(
+                multi_factor_auth_basic_auth_user_name: "api-username",
+                multi_factor_auth_basic_auth_password: "api-password"
+            )
+            auth_client = bandwidth_client.multi_factor_auth_client.mfa
+
+            body = TwoFactorVerifyRequestSchema.new
+            body.application_id = "1234-qwer"
+            body.to = "+15553334444"
+            body.scope = "scope"
+            body.code = "123456"
+            body.expiration_time_in_minutes = 3
+            begin
+                result = auth_client.create_verify_two_factor("12345", body)
+                puts 'valid?: ' + result.data.valid
+            rescue APIException => e
+                puts e.response_code
+            end
 components:
   schemas:
     codeRequest:
@@ -143,14 +988,14 @@ components:
       properties:
         callId:
           type: string
-          description: Programmable Voice API Call ID
+          description: Programmable Voice API Call ID.
           example: c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85
     messagingCodeResponse:
       type: object
       properties:
         messageId:
           type: string
-          description: Messaging API Message ID
+          description: Messaging API Message ID.
           example: 9e0df4ca-b18d-40d7-a59f-82fcdf5ae8e6
     verifyCodeRequest:
       type: object
@@ -178,7 +1023,7 @@ components:
           example: 3
         code:
           type: string
-          description: The generated mfa code to check if valid
+          description: The generated mfa code to check if valid.
           minLength: 4
           maxLength: 8
           example: '123456'
@@ -191,7 +1036,7 @@ components:
       properties:
         valid:
           type: boolean
-          description: Whether or not the supplied code is valid
+          description: Whether or not the supplied code is valid.
           example: true
     mfaRequestError:
       type: object
@@ -277,7 +1122,7 @@ components:
   parameters:
     accountId:
       name: accountId
-      description: Bandwidth Account ID with Voice service enabled
+      description: Bandwidth Account ID with Voice service enabled.
       in: path
       required: true
       style: simple
@@ -300,10 +1145,17 @@ components:
           schema:
             $ref: '#/components/schemas/verifyCodeRequest'
   securitySchemes:
-    Basic Authentication:
+    Basic:
       type: http
       scheme: basic
+      description: >-
+        Basic authentication is a simple authentication scheme built into the
+        HTTP protocol. To use it, send your HTTP requests with an Authorization
+        header that contains the word Basic followed by a space and a
+        base64-encoded string `username:password`.
+
+        Example: `Authorization: Basic ZGVtbZpwQDU1dzByZA==`
 security:
-  - Basic Authentication: []
+  - Basic: []
 tags:
   - name: MFA
