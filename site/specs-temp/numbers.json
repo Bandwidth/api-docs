@@ -2920,7 +2920,7 @@
           }
         }
       },
-      "post" : {
+      "post": {
         "tags": [
           "/accounts",
           "Porting"
@@ -3038,7 +3038,7 @@
           }
         }
       },
-      "put" : {
+      "put": {
         "tags": [
           "/accounts",
           "Porting"
@@ -3106,8 +3106,7 @@
         }
       }
     },
-
-      "/accounts/{accountId}/csrs/{csrsId}/notes": {
+    "/accounts/{accountId}/csrs/{csrsId}/notes": {
       "get": {
         "tags": [
           "/accounts"
@@ -3295,7 +3294,6 @@
         }
       }
     },
-
     "/accounts/{accountId}/discnumbers": {
       "get": {
         "tags": [
@@ -10215,7 +10213,20 @@
                 }
               },
               "schema": {
-                "$ref": "#/components/schemas/LnpOrderRequest"
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/OnNetLnpOrderRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/TollFreeLnpOrderRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/OffNetLnpOrderRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/InternalLnpOrderRequest"
+                  }
+                ]
               }
             }
           }
@@ -22518,228 +22529,217 @@
           }
         }
       },
-      "LnpOrderRequest": {
+      "LnpOrderBasic": {
         "type": "object",
         "properties": {
-          "LnpOrder": {
+          "CustomerOrderId": {
+            "type": "string",
+            "description": "The `CustomerOrderId` is an optional field that may be provided by the customer and will remain with the order. The value is opaque to Bandwidth.",
+            "format": "Only alphanumeric values, dashes and spaces",
+            "maxLength": 40
+          },
+          "ProcessingStatus": {
+            "type": "string",
+            "enum": [
+              "DRAFT"
+            ],
+            "description": "Including `ProcessingStatus` with a value of DRAFT allows you to create a port-in request, but not process the request. This is useful if you wish to add items to the order over a period of time and submit once you have the order setup the way you want. Note, however, that draft orders that have not been updated in a couple of days are automatically deleted. Removal of stagnant draft orders is performed so that telephone numbers are not tied up in these orders, preventing them from being included in other orders.<br/><br/>Very little validation is performed while an order is in draft state. Omitting `ProcessingStatus` causes the port-in to be validated and, if correct, processed right away. The full validation is performed on the order when you change the ProcessingStatus to 'SUBMITTED' by performing a PUT request on the order. <br><br><p>All toll free telephone numbers provided will be validated (even in draft state) to ensure\nthat they are portable, and to allow you to separate telephone numbers into separate port-ins\nbased on the RespOrg that they are being ported from.</p>"
+          },
+          "RequestedFocDate": {
+            "type": "string",
+            "description": "Format: ISO8601 encoding such as “2013-05-10T15:14:22Z”, or \"2019-10-31T17:15:00+04:00\".<br/><br/>For all ports, if `RequestedFocDate` is specified, the date portion must be:<br/> - in the future<br/> - after the losing carrier's minimum number of days to port-out<br/> - not on a weekend or U.S. holiday<br/><br/>If `RequestedFocDate` is not specified, the next available FOC date meeting the criteria above will be used. If the Time portion of the `RequestedFocDate` is omitted the port-in order will be activated at the default activation time of 11:30 AM ET. If an activation time other than 11:30 AM ET is desired, that activation time should be included in the `RequestedFocDate`."
+          },
+          "PeerId": {
+            "type": "string",
+            "description": "`PeerId` specifies the numeric identifier of the SIP-peer (Location) that the telephone numbers will be ported into.<br/><br/>You can find the identifier for a SIP-peer (location) by using `GET /accounts/id/sites/id/sippeers`, or by clicking on 'Accounts' on the upper right of the [Bandwidth Dashboard](Https://dashboard.bandwidth.com), then clicking 'Locations' on the navigation bar. The SIP-peer (location) identifiers are listed next to each location name. If `PeerId` is omitted, the SIP-peer (location) designated as the 'default location' for that site (sub-account) will be used."
+          },
+          "LoaAuthorizingPerson": {
+            "type": "string",
+            "description": "This is the first and last names of the person that has authorized the port.",
+            "maxLength": 15
+          },
+          "ListOfPhoneNumbers": {
+            "type": "array",
+            "description": "`ListOfPhoneNumbers` is an array of `PhoneNumber`. At least one `PhoneNumber` must be provided.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "PhoneNumber": {
+                  "description": "One or more phone numbers is required. <br/>Use a `<PhoneNumber>` tag for each phone number in the `<ListOfPhoneNumbers>` list.",
+                  "format": "Ten digit phone number with no dots or dashes",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "SiteId": {
+            "type": "integer",
+            "format": "int32",
+            "description": "`SiteId` specifies the identifier of the site (sub-account) that the telephone numbers will be ported into.<br/><br/>You can find the identifier for a site (sub-account) by using `GET /accounts/id/sites`, or by clicking on 'Manage sub-account' for the desired sub-account on the main page of the Bandwidth Dashboard."
+          }
+        },
+        "required": [
+          "SiteId",
+          "ListOfPhoneNumbers",
+          "LoaAuthorizingPerson"
+        ]
+      },
+      "LnpOrderAdditionalFields": {
+        "type": "object",
+        "properties": {
+          "BillingTelephoneNumber": {
+            "type": "string",
+            "description": "The `BillingTelephoneNumber` is the primary telephone number associated with the invoice that the subscriber gets from the losing carrier. For wireline port-in, the BillingTelephoneNumber is typically the telephone number being ported in."
+          },
+          "WirelessInfo": {
             "type": "object",
+            "title": "WirelessInfo",
+            "description": "Most common for telephone numbers that were formerly wireless.",
             "properties": {
-              "CustomerOrderId": {
+              "AccountNumber": {
                 "type": "string",
-                "description": "The `CustomerOrderId` is an optional field that may be provided by the customer and will remain with the order. The value is opaque to Bandwidth.",
-                "format": "Only alphanumeric values, dashes and spaces are allowed",
-                "maxLength": 40
+                "description": "The `AccountNumber` is sometimes required to authorize the port-out from the losing carrier. This is most common for telephone numbers that were formerly wireless."
               },
-              "ProcessingStatus": {
+              "PinNumber": {
                 "type": "string",
-                "enum": [
-                  "DRAFT"
-                ],
-                "description": "Including `ProcessingStatus` with a value of DRAFT allows you to create a port-in request, but not process the request. This is useful if you wish to add items to the order over a period of time and submit once you have the order setup the way you want. Note, however, that draft orders that have not been updated in a couple of days are automatically deleted. Removal of stagnant draft orders is performed so that telephone numbers are not tied up in these orders, preventing them from being included in other orders.<br/><br/>Very little validation is performed while an order is in draft state. Omitting `ProcessingStatus` causes the port-in to be validated and, if correct, processed right away. The full validation is performed on the order when you change the ProcessingStatus to 'SUBMITTED' by performing a PUT request on the order. <br><br><p>All toll free telephone numbers provided will be validated (even in draft state) to ensure\nthat they are portable, and to allow you to separate telephone numbers into separate port-ins\nbased on the RespOrg that they are being ported from.</p>"
+                "description": "The `PinNumber` is sometimes required to authorize the port-out from the losing carrier. This is most common for telephone numbers that were formerly wireless."
+              }
+            }
+          },
+          "Subscriber": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SubscriberBusiness"
               },
-              "BillingTelephoneNumber": {
-                "type": "string",
-                "description": "The `BillingTelephoneNumber` is the primary telephone number associated with the invoice that the subscriber gets from the losing carrier. For wireline port-in, the BillingTelephoneNumber is typically the telephone number being ported in. This element is not applicable for toll free port-ins, but mandatory for non-toll free port-ins."
+              {
+                "$ref": "#/components/schemas/SubscriberResidential"
+              }
+            ]
+          },
+          "Triggered": {
+            "type": "boolean",
+            "description": "The `Triggered` field must be set to `true` if you want an activation time other than the 11:30 AM ET default. The desired activation time can then be specified in the time portion of the `RequestedFocDate`."
+          },
+          "AlternateSpid": {
+            "type": "string",
+            "description": "Even though the telephone numbers are being ported into Bandwidth’s SPID, some of Bandwidth’s wholesale customers have an alternate SPID that is used to identify the telephone number with that customer."
+          }
+        },
+        "required": [
+          "BillingTelephoneNumber",
+          "Subscriber"
+        ]
+      },
+      "TollFreeLnpOrderRequest": {
+        "type": "object",
+        "title": "Toll free Lnp request",
+        "description": "Manual indicates that the port-in will be processed manually by Bandwidth’s Local Number Portability team. Currently all toll free port-ins are handled manually by Bandwidth’s Local Number Portability team. But Bandwidth is in the process of automating portions of toll free porting, with a goal of eventually automating the entire process.",
+        "properties": {
+          "LnpOrder": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LnpOrderBasic"
+              }
+            ]
+          }
+        }
+      },
+      "OnNetLnpOrderRequest": {
+        "type": "object",
+        "title": "On-net Lnp request",
+        "properties": {
+          "LnpOrder": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LnpOrderBasic"
               },
-              "NewBillingTelephoneNumber": {
-                "type": "string",
-                "description": "This field is used to specify a new billing telephone number on the losing carrier account.<br/><br/>Cannot be the same as `BillingTelephoneNumber` or be present in the list of ported numbers. This element is not applicable to toll free or off-net port-in orders."
+              {
+                "$ref": "#/components/schemas/LnpOrderAdditionalFields"
               },
-              "WirelessInfo": {
+              {
                 "type": "object",
-                "title": "WirelessInfo",
-                "description": "Most common for telephone numbers that were formerly wireless. This element is not applicable for toll free port-ins.",
                 "properties": {
-                  "AccountNumber": {
+                  "NewBillingTelephoneNumber": {
                     "type": "string",
-                    "description": "The `AccountNumber` is sometimes required to authorize the port-out from the losing carrier. This is most common for telephone numbers that were formerly wireless."
+                    "description": "This field is used to specify a new billing telephone number on the losing carrier account.<br/><br/>Cannot be the same as `BillingTelephoneNumber` or be present in the list of ported numbers."
                   },
-                  "PinNumber": {
+                  "PartialPort": {
                     "type": "string",
-                    "description": "The `PinNumber` is sometimes required to authorize the port-out from the losing carrier. This is most common for telephone numbers that were formerly wireless."
-                  }
-                }
-              },
-              "RequestedFocDate": {
-                "type": "string",
-                "description": "Format: ISO8601 encoding such as “2013-05-10T15:14:22Z”, or \"2019-10-31T17:15:00+04:00\".<br/><br/>For all ports, if `RequestedFocDate` is specified, the date portion must be:<br/> - in the future<br/> - after the losing carrier's minimum number of days to port-out<br/> - not on a weekend or U.S. holiday<br/><br/>If `RequestedFocDate` is not specified, the next available FOC date meeting the criteria above will be used. If the Time portion of the `RequestedFocDate` is omitted the port-in order will be activated at the default activation time of 11:30 AM ET. If an activation time other than 11:30 AM ET is desired, that activation time should be included in the `RequestedFocDate`."
-              },
-              "Subscriber": {
-                "type": "object",
-                "title": "Subscriber",
-                "description": "The `Subscriber` is mandatory for all non-toll free port-in orders. See sub-fields for details.",
-                "properties": {
-                  "SubscriberType": {
-                    "type": "string",
-                    "description": "The `SubscriberType` is mandatory for all non-toll free port-in orders.",
-                    "enum": [
-                      "BUSINESS",
-                      "RESIDENTIAL"
-                    ]
+                    "description": "The `PartialPort` must be set to `true` if the intent is to **NOT** port all of the telephone numbers associated with the `BillingTelephoneNumber`.<br/><br/>If PartialPort is omitted or false, and the `ListOfPhoneNumbers` does not include all of the telephone numbers associated with the `BillingTelephoneNumber`, the port-in will be rejected.<br/><br/>PartialPort is applicable only to on-net port-types."
                   },
-                  "BusinessName": {
+                  "BillingType": {
                     "type": "string",
-                    "description": "The `BusinessName` is mandatory for non-toll free port-ins for which the SubscriberType is set to `BUSINESS`. This element is not applicable for toll free port-ins.",
-                    "maxLength": 25
+                    "description": ""
                   },
-                  "FirstName": {
+                  "AutoActivation": {
                     "type": "string",
-                    "description": "The `FirstName` value is applicable to non-toll free port-in orders in which the `SubscriberType` is set to RESIDENTIAL.",
-                    "maxLength": 25
+                    "description": ""
                   },
-                  "MiddleInitial": {
-                    "type": "string",
-                    "description": "The `MiddleInitial` value is applicable to non-toll free port-in orders in which the SubscriberType is set to RESIDENTIAL.",
-                    "maxLength": 1
-                  },
-                  "LastName": {
-                    "type": "string",
-                    "description": "The `LastName` value is mandatory for non-toll free port-in orders in which the `SubscriberType` is set to RESIDENTIAL.",
-                    "maxLength": 25
-                  },
-                  "ServiceAddress": {
-                    "type": "object",
-                    "title": "ServiceAddress",
-                    "description": "The `ServiceAddress` is mandatory for all non-toll free port-ins.",
-                    "properties": {
-                      "HousePrefix": {
-                        "type": "string",
-                        "description": "The `HouseSuffix` is the non-numeric address number suffix of the `ServiceAddress`. This element is optional when not needed to fully specify the `ServiceAddress`."
-                      },
-                      "HouseNumber": {
-                        "type": "string",
-                        "description": "The `HouseNumber` is the street address number of the `ServiceAddress`. `HouseNumber` is mandatory for port-in orders in which the `ServiceAddress` is mandatory."
-                      },
-                      "HouseSuffix": {
-                        "type": "string",
-                        "description": "The `HouseSuffix` is the non-numeric address number suffix of the `ServiceAddress`. This element is optional when not needed to fully specify the `ServiceAddress`."
-                      },
-                      "PreDirectional": {
-                        "type": "string",
-                        "description": "The `PreDirectional` is the non-numeric street name prefix of the `ServiceAddress`. This element is optional when not needed to fully specify the `ServiceAddress`."
-                      },
-                      "StreetName": {
-                        "type": "string",
-                        "description": "The `StreetName` is mandatory in cases where the `ServiceAddress` is mandatory."
-                      },
-                      "StreetSuffix": {
-                        "type": "string",
-                        "description": "The `StreetSuffix` is the street suffix of the `ServiceAddress`. This element is optional when not needed to fully specify the `ServiceAddress`."
-                      },
-                      "PostDirectional": {
-                        "type": "string",
-                        "description": "The `PostDirectional` is the street name post directional of the `ServiceAddress`. This element is optional when not needed to fully specify the `ServiceAddress`."
-                      },
-                      "AddressLine2": {
-                        "type": "string",
-                        "description": "`AddressLine2` is used to specify Unit, Suite, Floor, etc. in the Service Address. `AddressLine2` is optional when not needed to fully specify the `ServiceAddress`."
-                      },
-                      "City": {
-                        "type": "string",
-                        "description": "`City` is mandatory in cases where the `ServiceAddress` is mandatory."
-                      },
-                      "StateCode": {
-                        "type": "string",
-                        "description": "`StateCode` is the 2-letter abbreviation of the state of the `ServiceAddress`. `StateCode` is mandatory in cases where the `ServiceAddress` is mandatory. ex: `NC`, `NY`, or `AK`",
-                        "maxLength": 2
-                      },
-                      "Zip": {
-                        "type": "string",
-                        "description": "`Zip` is the Zip Code of the `ServiceAddress`. `Zip` is mandatory in cases where the `ServiceAddress` is mandatory."
-                      },
-                      "PlusFour": {
-                        "type": "string",
-                        "description": "`PlusFour` is the 4 digits that are sometimes suffixed to the Zip Code.",
-                        "maxLength": 4
-                      },
-                      "Country": {
-                        "type": "string",
-                        "description": "`Country` is the country of the `ServiceAddress`. This value will be derived from the `StateCode`, so it should generally be omitted."
-                      },
-                      "ResetAddressFields": {
-                        "type": "boolean",
-                        "description": "The `ResetAddressFields` may be specified in a `PUT` request for a non-toll free port-in order if you would like to remove `ServiceAddress` elements that are not specified in the PUT payload. Default value is `false`."
-                      }
-                    },
-                    "required": [
-                      "HouseNumber",
-                      "StreetName",
-                      "City",
-                      "StateCode",
-                      "Zip"
-                    ]
-                  }
-                },
-                "required": [
-                  "SubscriberType",
-                  "ServiceAddress"
-                ]
-              },
-              "PeerId": {
-                "type": "string",
-                "description": "`PeerId` specifies the numeric identifier of the SIP-peer (Location) that the telephone numbers will be ported into.<br/><br/>You can find the identifier for a SIP-peer (location) by using `GET /accounts/id/sites/id/sippeers`, or by clicking on 'Accounts' on the upper right of the [Bandwidth Dashboard](Https://dashboard.bandwidth.com), then clicking 'Locations' on the navigation bar. The SIP-peer (location) identifiers are listed next to each location name. If `PeerId` is omitted, the SIP-peer (location) designated as the 'default location' for that site (sub-account) will be used."
-              },
-              "PartialPort": {
-                "type": "string",
-                "description": "The `PartialPort` must be set to `true` if the intent is to **NOT** port all of the telephone numbers associated with the `BillingTelephoneNumber`.<br/><br/>If PartialPort is omitted or false, and the `ListOfPhoneNumbers` does not include all of the telephone numbers associated with the `BillingTelephoneNumber`, the port-in will be rejected.<br/><br/>PartialPort is applicable only to on-net port-types. This element is not applicable to toll free or off-net port-in orders."
-              },
-              "LoaAuthorizingPerson": {
-                "type": "string",
-                "description": "The `LoaAuthorizingPerson` is mandatory for all port-types. This is the first and last names of the person that has authorized the port.",
-                "maxLength": 15
-              },
-              "Immediately": {
-                "type": "boolean",
-                "description": "Including `Immediately` with a value of `true` will cause an Internal port-in to complete as soon as possible, without requiring a scheduled activation time.<br/><br/>`Immediately` has no meaning for port types other than Internal."
-              },
-              "Triggered": {
-                "type": "boolean",
-                "description": "The `Triggered` field must be set to `true` if you want an activation time other than the 11:30 AM ET default. The desired activation time can then be specified in the time portion of the `RequestedFocDate`. Triggered activation is not yet supported for toll free port-in orders."
-              },
-              "BillingType": {
-                "type": "string",
-                "description": ""
-              },
-              "AutoActivation": {
-                "type": "string",
-                "description": ""
-              },
-              "TnAttributes": {
-                "type": "array",
-                "description": "The `TnAttributes` field specifies line attributes that will apply to the ported in telephone numbers. If present, `TnAttributes` may have a value of `PROTECTED`. This element is not applicable for off-net or toll free port-types.",
-                "items": {
-                  "$ref": "#/components/schemas/TnAttribute"
-                }
-              },
-              "AlternateSpid": {
-                "type": "string",
-                "description": "Even though the telephone numbers are being ported into Bandwidth’s SPID, some of Bandwidth’s wholesale customers have an alternate SPID that is used to identify the telephone number with that customer. This element is not applicable for toll free port-ins."
-              },
-              "ListOfPhoneNumbers": {
-                "type": "array",
-                "description": "`ListOfPhoneNumbers` is an array of `PhoneNumber`. At least one `PhoneNumber` must be provided for all port-types.",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "PhoneNumber": {
-                      "description": "Ten digit phone number with no dots or dashes. One or more is required. <br/>Use a `<PhoneNumber>` tag for each phone number in the `<ListOfPhoneNumbers>` list.",
-                      "type": "string"
+                  "TnAttributes": {
+                    "type": "array",
+                    "description": "The `TnAttributes` field specifies line attributes that will apply to the ported in telephone numbers. If present, `TnAttributes` may have a value of `PROTECTED`.",
+                    "items": {
+                      "$ref": "#/components/schemas/TnAttribute"
                     }
                   }
                 }
-              },
-              "SiteId": {
-                "type": "integer",
-                "format": "int32",
-                "description": "`SiteId` is mandatory for all port-types. It specifies the identifier of the site (sub-account) that the telephone numbers will be ported into.<br/><br/>You can find the identifier for a site (sub-account) by using `GET /accounts/id/sites`, or by clicking on 'Manage sub-account' for the desired sub-account on the main page of the Bandwidth Dashboard."
               }
-            },
-            "required": [
-              "BillingTelephoneNumber",
-              "SiteId",
-              "ListOfPhoneNumbers",
-              "LoaAuthorizingPerson",
-              "Subscriber"
+            ]
+          }
+        }
+      },
+      "InternalLnpOrderRequest": {
+        "type": "object",
+        "title": "On-net Lnp request",
+        "properties": {
+          "LnpOrder": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LnpOrderBasic"
+              },
+              {
+                "$ref": "#/components/schemas/LnpOrderAdditionalFields"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "NewBillingTelephoneNumber": {
+                    "type": "string",
+                    "description": "This field is used to specify a new billing telephone number on the losing carrier account.<br/><br/>Cannot be the same as `BillingTelephoneNumber` or be present in the list of ported numbers."
+                  },
+                  "PartialPort": {
+                    "type": "string",
+                    "description": "The `PartialPort` must be set to `true` if the intent is to **NOT** port all of the telephone numbers associated with the `BillingTelephoneNumber`.<br/><br/>If PartialPort is omitted or false, and the `ListOfPhoneNumbers` does not include all of the telephone numbers associated with the `BillingTelephoneNumber`, the port-in will be rejected.<br/><br/>PartialPort is applicable only to on-net port-types."
+                  },
+                  "Immediately": {
+                    "type": "boolean",
+                    "description": "Including `Immediately` with a value of `true` will cause an Internal port-in to complete as soon as possible, without requiring a scheduled activation time.<br/><br/>`Immediately` has no meaning for port types other than Internal."
+                  },
+                  "TnAttributes": {
+                    "type": "array",
+                    "description": "The `TnAttributes` field specifies line attributes that will apply to the ported in telephone numbers. If present, `TnAttributes` may have a value of `PROTECTED`.",
+                    "items": {
+                      "$ref": "#/components/schemas/TnAttribute"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "OffNetLnpOrderRequest": {
+        "type": "object",
+        "title": "Off-net Lnp request",
+        "properties": {
+          "LnpOrder": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LnpOrderBasic"
+              },
+              {
+                "$ref": "#/components/schemas/LnpOrderAdditionalFields"
+              }
             ]
           }
         }
@@ -22752,6 +22752,145 @@
           },
           "PinNumber": {
             "type": "string"
+          }
+        }
+      },
+      "SubscriberBusiness": {
+        "type": "object",
+        "title": "BUSINESS",
+        "properties": {
+          "SubscriberType": {
+            "type": "string",
+            "enum": [
+              "BUSINESS"
+            ]
+          },
+          "BusinessName": {
+            "type": "string",
+            "maxLength": 25
+          },
+          "ServiceAddress": {
+            "$ref": "#/components/schemas/PortinSubscriberServiceAddress"
+          }
+        },
+        "required": [
+          "SubscriberType",
+          "ServiceAddress",
+          "BusinessName"
+        ]
+      },
+      "SubscriberResidential": {
+        "type": "object",
+        "title": "RESIDENTIAL",
+        "properties": {
+          "SubscriberType": {
+            "type": "string",
+            "enum": [
+              "RESIDENTIAL"
+            ]
+          },
+          "FirstName": {
+            "type": "string",
+            "maxLength": 25
+          },
+          "MiddleInitial": {
+            "type": "string",
+            "maxLength": 1
+          },
+          "LastName": {
+            "type": "string",
+            "maxLength": 25
+          },
+          "ServiceAddress": {
+            "$ref": "#/components/schemas/PortinSubscriberServiceAddress"
+          }
+        },
+        "required": [
+          "SubscriberType",
+          "ServiceAddress",
+          "FirstName",
+          "LastName"
+        ]
+      },
+      "PortinSubscriberServiceAddress": {
+        "type": "object",
+        "title": "ServiceAddress",
+        "properties": {
+          "HousePrefix": {
+            "type": "string",
+            "description": "The `HouseSuffix` is the non-numeric address number suffix of the `ServiceAddress`. This element is optional when not needed to fully specify the `ServiceAddress`."
+          },
+          "HouseNumber": {
+            "type": "string",
+            "description": "The `HouseNumber` is the street address number of the `ServiceAddress`. `HouseNumber` is mandatory for port-in orders in which the `ServiceAddress` is mandatory."
+          },
+          "HouseSuffix": {
+            "type": "string",
+            "description": "The `HouseSuffix` is the non-numeric address number suffix of the `ServiceAddress`. This element is optional when not needed to fully specify the `ServiceAddress`."
+          },
+          "PreDirectional": {
+            "type": "string",
+            "description": "The `PreDirectional` is the non-numeric street name prefix of the `ServiceAddress`. This element is optional when not needed to fully specify the `ServiceAddress`."
+          },
+          "StreetName": {
+            "type": "string",
+            "description": "The `StreetName` is mandatory in cases where the `ServiceAddress` is mandatory."
+          },
+          "StreetSuffix": {
+            "type": "string",
+            "description": "The `StreetSuffix` is the street suffix of the `ServiceAddress`. This element is optional when not needed to fully specify the `ServiceAddress`."
+          },
+          "PostDirectional": {
+            "type": "string",
+            "description": "The `PostDirectional` is the street name post directional of the `ServiceAddress`. This element is optional when not needed to fully specify the `ServiceAddress`."
+          },
+          "AddressLine2": {
+            "type": "string",
+            "description": "`AddressLine2` is used to specify Unit, Suite, Floor, etc. in the Service Address. `AddressLine2` is optional when not needed to fully specify the `ServiceAddress`."
+          },
+          "City": {
+            "type": "string",
+            "description": "`City` is mandatory in cases where the `ServiceAddress` is mandatory."
+          },
+          "StateCode": {
+            "type": "string",
+            "description": "`StateCode` is the 2-letter abbreviation of the state of the `ServiceAddress`. `StateCode` is mandatory in cases where the `ServiceAddress` is mandatory. ex: `NC`, `NY`, or `AK`",
+            "maxLength": 2
+          },
+          "Zip": {
+            "type": "string",
+            "description": "`Zip` is the Zip Code of the `ServiceAddress`. `Zip` is mandatory in cases where the `ServiceAddress` is mandatory."
+          },
+          "PlusFour": {
+            "type": "string",
+            "description": "`PlusFour` is the 4 digits that are sometimes suffixed to the Zip Code.",
+            "maxLength": 4
+          },
+          "Country": {
+            "type": "string",
+            "description": "`Country` is the country of the `ServiceAddress`. This value will be derived from the `StateCode`, so it should generally be omitted."
+          }
+        },
+        "required": [
+          "HouseNumber",
+          "StreetName",
+          "City",
+          "StateCode",
+          "Zip"
+        ]
+      },
+      "PortinPutSubscriberServiceAddress": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PortinSubscriberServiceAddress"
+          }
+        ],
+        "type": "object",
+        "title": "ServiceAddress",
+        "properties": {
+          "ResetAddressFields": {
+            "type": "boolean",
+            "description": "The `ResetAddressFields` may be specified in a `PUT` request for a non-toll free port-in order if you would like to remove `ServiceAddress` elements that are not specified in the PUT payload. Default value is `false`."
           }
         }
       },
@@ -24393,156 +24532,154 @@
       "CsrGetResponse": {
         "type": "object",
         "properties": {
-          "CustomerOrderId" : {
+          "CustomerOrderId": {
             "type": "string"
           },
-          "LastModifiedBy" : {
+          "LastModifiedBy": {
             "type": "string"
           },
-          "OrderCreateDate" : {
+          "OrderCreateDate": {
             "type": "string"
           },
-           "OrderId" : {
+          "OrderId": {
             "type": "string"
           },
-            "LastModifiedDate" : {
+          "LastModifiedDate": {
             "type": "string"
           },
-          "WorkingOrBillingTelephoneNumber" : {
+          "WorkingOrBillingTelephoneNumber": {
             "type": "string"
           },
-          "WorkingTelephoneNumber" : {
+          "WorkingTelephoneNumber": {
             "type": "string"
           },
-          "BillingTelephoneNumber" : {
+          "BillingTelephoneNumber": {
             "type": "string"
           },
-          "CustomerName" : {
+          "CustomerName": {
             "type": "string"
           },
-          "AuthorizingPersonName" : {
+          "AuthorizingPersonName": {
             "type": "string"
           },
-          "AccountNumber" : {
+          "AccountNumber": {
             "type": "string"
           },
-          "WorkingTelephoneNumbersOnAccount" : {
+          "WorkingTelephoneNumbersOnAccount": {
             "type": "object",
             "properties": {
-              "TelephoneNumber" : {
+              "TelephoneNumber": {
                 "type": "array"
               }
             }
           },
-          "CsrServiceAddress" : {
+          "CsrServiceAddress": {
             "$ref": "#/components/schemas/Address"
           },
-          "AccountTelephoneNumber" : {
+          "AccountTelephoneNumber": {
             "type": "string"
           },
-          "EndUserName" : {
+          "EndUserName": {
             "type": "string"
           },
-          "AuthorizingUserName" : {
+          "AuthorizingUserName": {
             "type": "string"
           },
-          "CustomerCode" : {
+          "CustomerCode": {
             "type": "string"
           },
-          "EndUserPIN" : {
+          "EndUserPIN": {
             "type": "string"
           },
-          "EndUserPassword" : {
+          "EndUserPassword": {
             "type": "string"
           },
-          "AddressLine1" : {
+          "AddressLine1": {
             "type": "string"
           },
-          "City" : {
+          "City": {
             "type": "string"
           },
-          "State" : {
+          "State": {
             "type": "string"
           },
-          "ZIPCode" : {
+          "ZIPCode": {
             "type": "string"
           },
-          "TypeOfService" : {
+          "TypeOfService": {
             "type": "string"
           },
-          "Status" : {
+          "Status": {
             "type": "string"
           }
         }
       },
-
-
-        "Csr": {
+      "Csr": {
         "type": "object",
         "properties": {
-          "WorkingOrBillingTelephoneNumber" : {
+          "WorkingOrBillingTelephoneNumber": {
             "type": "string"
           },
-          "WorkingTelephoneNumber" : {
+          "WorkingTelephoneNumber": {
             "type": "string"
           },
-          "BillingTelephoneNumber" : {
+          "BillingTelephoneNumber": {
             "type": "string"
           },
-          "CustomerName" : {
+          "CustomerName": {
             "type": "string"
           },
-          "AuthorizingPersonName" : {
+          "AuthorizingPersonName": {
             "type": "string"
           },
-          "AccountNumber" : {
+          "AccountNumber": {
             "type": "string"
           },
-          "WorkingTelephoneNumbersOnAccount" : {
+          "WorkingTelephoneNumbersOnAccount": {
             "type": "object",
             "properties": {
-              "TelephoneNumber" : {
+              "TelephoneNumber": {
                 "type": "array"
               }
             }
           },
-          "CsrServiceAddress" : {
+          "CsrServiceAddress": {
             "$ref": "#/components/schemas/Address"
           },
-          "AccountTelephoneNumber" : {
+          "AccountTelephoneNumber": {
             "type": "string"
           },
-          "EndUserName" : {
+          "EndUserName": {
             "type": "string"
           },
-          "AuthorizingUserName" : {
+          "AuthorizingUserName": {
             "type": "string"
           },
-          "CustomerCode" : {
+          "CustomerCode": {
             "type": "string"
           },
-          "EndUserPIN" : {
+          "EndUserPIN": {
             "type": "string"
           },
-          "EndUserPassword" : {
+          "EndUserPassword": {
             "type": "string"
           },
-          "AddressLine1" : {
+          "AddressLine1": {
             "type": "string"
           },
-          "City" : {
+          "City": {
             "type": "string"
           },
-          "State" : {
+          "State": {
             "type": "string"
           },
-          "ZIPCode" : {
+          "ZIPCode": {
             "type": "string"
           },
-          "TypeOfService" : {
+          "TypeOfService": {
             "type": "string"
           },
-          "Status" : {
+          "Status": {
             "type": "string"
           }
         }
