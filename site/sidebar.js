@@ -56,7 +56,7 @@ module.exports = {
                                 "numbers/porting/updatePortin",
                                 "numbers/porting/cancelPortin",
                                 "numbers/porting/portingTypes",
-                                "numbers/porting/bulkportins",
+                                "numbers/porting/bulkPortins",
                             ],
                         },
                         "numbers/csrLookupTool",
