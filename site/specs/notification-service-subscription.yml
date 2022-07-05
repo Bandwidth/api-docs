@@ -90,6 +90,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/subscriptionResponse'
+        '400':
+          $ref: '#/components/responses/badRequestResponse'
         '401':
           $ref: '#/components/responses/unauthorizedResponse'
         '403':
@@ -196,6 +198,7 @@ components:
       title: Subscription
       description: Data representing a Subscription
       type: object
+      nullable: true
       properties:
         product:
           $ref: '#/components/schemas/productEnum'
@@ -288,6 +291,7 @@ components:
               publicKey: key
     responseSubscription:
       title: Subscription Response
+      description: Subscription Response Ojbect
       allOf:
         - type: object
           properties:
@@ -300,6 +304,23 @@ components:
               format: date-time
               example: '2022-05-23T12:00:00'
         - $ref: '#/components/schemas/subscription'
+      x-examples:
+        example-1:
+          subscriptionId: adfaf-134afd
+          dateOfLastModification: '2022-05-23T12:00:00'
+          product: PORTING
+          eventType: PORTIN_ORDER_STATUS
+          entityId: q3434-132414
+          subscriptionStatus: ACTIVE
+          tags:
+            - name: string
+              value: string
+          notifyStates:
+            - ACCEPTED_BY_CARRIER
+          notificationChannel:
+            - callback:
+                url: some-url
+                publicKey: key
     eventTypeEnum:
       title: eventTypeEnum
       type: string
@@ -403,7 +424,7 @@ components:
             - data
             - errors
       example:
-        links: []
+        links: null
         data: null
         errors:
           - type: internal-server-error
@@ -416,7 +437,7 @@ components:
               message: An optional metadata field
       x-examples:
         example-1:
-          links: []
+          links: null
           data: null
           errors:
             - type: internal-server-error
@@ -443,6 +464,7 @@ components:
             properties:
               links:
                 type: array
+                nullable: true
                 items:
                   type: object
               data:
@@ -456,12 +478,14 @@ components:
                       $ref: '#/components/schemas/responseSubscription'
               errors:
                 type: array
+                nullable: true
                 items:
                   type: object
           examples:
-            Example Subscription List Response:
+            subscriptionListResponseExample:
+              description: Example Subscription List Response
               value:
-                links: []
+                links: null
                 data:
                   subscriptions:
                     - product: PORTING
@@ -480,29 +504,32 @@ components:
                         - callback:
                             url: some-url
                             publicKey: key
-                errors: []
+                errors: null
     subscriptionResponse:
       description: Subscription Response
       content:
         application/json:
           schema:
-            description: ''
+            description: Subscription Response Object
             type: object
             properties:
               links:
                 type: array
+                nullable: true
                 items:
                   type: object
               data:
                 $ref: '#/components/schemas/responseSubscription'
               errors:
                 type: array
+                nullable: true
                 items:
                   type: object
           examples:
-            Example Subscription Response:
+            subscriptionResponseExample:
+              description: Example Subscription Response
               value:
-                links: []
+                links: null
                 data:
                   subscriptionId: string
                   dateOfLastModification: '2019-08-24T14:15:22Z'
@@ -520,17 +547,18 @@ components:
                     - callback: null
                       url: some-url
                       publicKey: key
-                errors: []
+                errors: null
     unauthorizedResponse:
-      description: 401 Unauthorized Response
+      description: Unauthorized
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/responseProperties'
           examples:
-            Example 401 Unauthorized Response:
+            unauthorizedExample:
+              description: Example 401 Unauthorized Response
               value:
-                links: []
+                links: null
                 data: null
                 errors:
                   - type: authentication-credentials
@@ -539,15 +567,16 @@ components:
                     id: optional-error-id
                     meta: null
     forbiddenResponse:
-      description: 403 Forbidden Response
+      description: Forbidden
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/responseProperties'
           examples:
-            Example 403 Forbidden Response:
+            forbiddenExample:
+              description: Example 403 Forbidden Response
               value:
-                links: []
+                links: null
                 data: null
                 errors:
                   - type: resource-permissions
@@ -556,15 +585,16 @@ components:
                     id: optional-error-id
                     meta: null
     conflictResponse:
-      description: 409 Conflict Response
+      description: Conflict
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/responseProperties'
           examples:
-            Example 409 Conflict Response:
+            conflictExample:
+              description: Example 409 Conflict Response
               value:
-                links: []
+                links: null
                 data: null
                 errors:
                   - type: resource-conflict
@@ -575,15 +605,16 @@ components:
                     id: optional-error-id
                     meta: null
     badRequestResponse:
-      description: 400 Bad Request Response
+      description: Bad Request
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/responseProperties'
           examples:
-            Example 400 Bad Request Response:
+            badRequestExample:
+              description: Example 400 Bad Request Response
               value:
-                links: []
+                links: null
                 data: null
                 errors:
                   - type: invalid-parameter-value
@@ -595,7 +626,7 @@ components:
                     meta: null
             Example Missing Field Error:
               value:
-                links: []
+                links: null
                 data: null
                 errors:
                   - type: missing-field
@@ -606,15 +637,16 @@ components:
                     id: optional-error-id
                     meta: null
     notFoundResponse:
-      description: 404 Not Found Response
+      description: Not Found
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/responseProperties'
           examples:
-            Example 404 Not Found Response:
+            notFoundExample:
+              description: Example 404 Not Found Response
               value:
-                links: []
+                links: null
                 data: null
                 errors:
                   - type: resource-not-found
@@ -626,13 +658,14 @@ components:
                     meta:
                       subscriptionId: '123456789'
     internalErrorResponse:
-      description: 500 Internal Error Response
+      description: Internal Server Error
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/responseProperties'
           examples:
-            Example 500 Internal Error Response:
+            internalErrorExample:
+              description: Example 500 Internal Error Response
               value:
                 links: null
                 data: null
@@ -646,11 +679,25 @@ components:
                     meta:
                       message: An optional metadata field
     methodNotAllowedResponse:
-      description: 405 Method Not Allowed Response
+      description: Method Not Allowed
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/responseProperties'
+          examples:
+            example-1:
+              value:
+                links: null
+                data: null
+                errors:
+                  - type: internal-server-error
+                    description: >-
+                      Unexpected internal server error. Contact Bandwidth
+                      Customer Support if this problem persists.
+                    code: optional-but-recommended-error-code
+                    id: optional-error-id
+                    meta:
+                      message: An optional metadata field
   requestBodies:
     newSubscription:
       content:
@@ -658,7 +705,9 @@ components:
           schema:
             $ref: '#/components/schemas/subscription'
           examples:
-            'Example New Subscription ':
+            newSubscriptionExample:
+              description: Example New Subscription
+              summary: New Subscription
               value:
                 product: PORTING
                 eventType: PORTIN_ORDER_STATUS
@@ -680,7 +729,8 @@ components:
           schema:
             $ref: '#/components/schemas/patchSubscription'
           examples:
-            Example Existing Subscription:
+            existingSubscriptionExample:
+              description: Example Existing Subscription
               value:
                 eventType: PORTIN_ORDER_STATUS
                 entityId: unique-id-value
@@ -751,3 +801,5 @@ components:
       schema:
         type: string
       description: Unique ID of Event Entity (i.e. OrderId)
+security:
+  - bearerAuth: []
