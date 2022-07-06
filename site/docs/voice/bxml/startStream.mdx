@@ -18,7 +18,7 @@ import TabItem from '@theme/TabItem';
 
 The StartStream verb allows a segment of a call to be sent off to another destination for additional processing.
 
-When used on a call, audio from one or both sides of the call will be sent to the specified destination. The stream will continue until the call ends or the [`<StopStream>`][1] verb is used.
+When used on a call, audio from one or both sides of the call will be sent to the specified destination. The stream will continue until the call ends or the [`<StopStream>`][1] verb is used. A total of 4 concurrent track streams are allowed on a call. This can be two `<StartStream>` requests with `both` tracks, or four `<StartStream>` requests with either the `inbound` or `outbound` tracks, or any combination of those.
 
 ## Text Content
 
@@ -52,9 +52,9 @@ While multiple streams for the same call are allowed, each stream MUST have a un
 
 ## Nested Tags
 
-You may specify a number of `<CustomParam/>` elements nested within a `<StartStream>` tag. These elements define optional user specified parameters that will be sent to the destination URL when the stream is first started.
+You may specify up to 12 `<StreamParam/>` elements nested within a `<StartStream>` tag. These elements define optional user specified parameters that will be sent to the destination URL when the stream is first started.
 
-### CustomParam Attributes
+### StreamParam Attributes
 
 | Attribute | Description                                                    |
 |:----------|:---------------------------------------------------------------|
@@ -87,7 +87,7 @@ You may specify a number of `<CustomParam/>` elements nested within a `<StartStr
 <Response>
     <SpeakSentence voice="bridget">This call is being streamed to a live studio audience.</SpeakSentence>
     <StartStream name="live_audience" tracks="both" destination="wss://live-studio-audience.myapp.example.com" streamEventsUrl="https://myapp.example.com/noBXML">
-        <CustomParam name="internal_id" value="call_ABC" />
+        <StreamParam name="internal_id" value="call_ABC" />
     </StartStream>
     <SpeakSentence voice="bridget">This will now be streamed to the destination as well as played to the call participants.</SpeakSentence>
 </Response>
@@ -102,7 +102,7 @@ SpeakSentence speakSentenceStart = SpeakSentence.builder()
         .voice("bridget")
         .build();
 
-CustomParam customParam = CustomParam.builder()
+StreamParam streamParam = StreamParam.builder()
         .name("internal_id")
         .value("call_ABC")
         .build();
@@ -112,7 +112,7 @@ StartStream startStream = StartStream.builder()
         .tracks("both")
         .destination("wss://live-studio-audience.myapp.example.com")
         .streamEventsUrl("https://myapp.example.com/noBXML")
-        .customParams(customParam)
+        .streamParams(streamParam)
         .build();
 
 SpeakSentence speakSentenceEnd = SpeakSentence.builder()
@@ -138,7 +138,7 @@ SpeakSentence speakSentenceStart = new SpeakSentence
     Voice = "bridget"
 };
 
-CustomParam customParam = new CustomParam
+StreamParam streamParam = new StreamParam
 {
     Name = "internal_id",
     Value = "call_ABC",
@@ -150,7 +150,7 @@ StartStream startStream = new StartStream
     Tracks = "both",
     Destination = "wss://live-studio-audience.myapp.example.com",
     StreamEventsUrl = "https://myapp.example.com/noBXML",
-    CustomParams = new CustomParams[] { customParam }
+    StreamParams = new StreamParams[] { streamParam }
 };
 
 SpeakSentence speakSentenceEnd = new SpeakSentence
@@ -176,7 +176,7 @@ speak_sentence_start = Bandwidth::Voice::SpeakSentence.new({
     :voice => "bridget"
 })
 
-custom_param = Bandwidth::Voice::CustomParam.new({
+stream_param = Bandwidth::Voice::StreamParam.new({
     :name => "internal_id",
     :value => "call_ABC"
 })
@@ -186,7 +186,7 @@ start_stream = Bandwidth::Voice::StartStream.new({
     :tracks => "both",
     :destination => "wss://live-studio-audience.myapp.example.com",
     :stream_events_url = "https://myapp.example.com/noBXML"
-    :custom_params => [custom_param]
+    :stream_params => [stream_param]
 })
 
 speak_sentence_end = Bandwidth::Voice::SpeakSentence.new({
@@ -211,7 +211,7 @@ const speakSentenceStart = new SpeakSentence({
     voice: "bridget"
 });
 
-const customParam = new CustomParam({
+const streamParam = new StreamParam({
     name: "internal_id",
     value: "call_ABC"
 });
@@ -221,7 +221,7 @@ const startStream = new StartStream({
     tracks: "both",
     destination: "wss://live-studio-audience.myapp.example.com",
     streamEventsUrl: "https://myapp.example.com/noBXML",
-    customParams: [customParam]
+    streamParams: [streamParam]
 });
 
 const speakSentenceEnd = new SpeakSentence({
@@ -243,7 +243,7 @@ speak_sentence_start = SpeakSentence(
     voice="bridget"
 )
 
-custom_param = CustomParam(
+stream_param = StreamParam(
     name="internal_id",
     value="call_ABC"
 )
@@ -253,7 +253,7 @@ start_stream = StartStream(
     tracks="both",
     destination="wss://live-studio-audience.myapp.example.com",
     stream_events_url="https://myapp.example.com/noBXML",
-    custom_params=[customParam]
+    stream_params=[stream_param]
 )
 
 speak_sentence_end = SpeakSentence(
@@ -279,15 +279,15 @@ $speakSentenceStart->voice("bridget");
 $startRecording = new BandwidthLib\Voice\Bxml\StartRecording();
 $startRecording->recordingAvailableUrl("https://myapp.com/noBXML");
 
-$customParam = new BandwidthLib\Voice\Bxml\CustomParam();
-$customParam->name("internal_id");
-$customParam->value("call_ABC");
+$streamParam = new BandwidthLib\Voice\Bxml\StreamParam();
+$streamParam->name("internal_id");
+$streamParam->value("call_ABC");
 
 $startStream = new BandwidthLib\Voice\Bxml\StartStream("wss://live-studio-audience.myapp.example.com");
 $startStream->name("live_audience");
 $startStream->tracks("both")
 $startStream->streamEventsUrl("https://myapp.example.com/noBXML")
-$startStream->customParams(array($customParam));
+$startStream->streamParams(array($streamParam));
 
 $speakSentenceEnd = new BandwidthLib\Voice\Bxml\SpeakSentence("This will now be streamed to the destination as well as played to the call participants.");
 $speakSentenceEnd->voice("bridget");
