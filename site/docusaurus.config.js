@@ -107,7 +107,7 @@ module.exports = {
                         to: 'https://www.instagram.com/wearebandwidth',
                     }, {
                         label: 'LinkedIn',
-                        to: 'https://www.linkedin.com/company/bandwidth-inc/mycompany/verification/'
+                        to: 'https://www.linkedin.com/company/bandwidth-inc'
                     }, {
                         label: 'Twitter',
                         to: 'https://twitter.com/bandwidth'
