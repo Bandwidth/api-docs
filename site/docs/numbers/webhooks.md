@@ -23,8 +23,8 @@ If the customer's endpoint is unavailable, the Bandwidth Dashboard API callback 
 
 | Event | Description |
 |:------|:------------|
-| [Order Notification Webhooks](webhooks/orderWebhook) | Bandwidth sends this event for each **order status** update as defined by the subscription |
-| [Event Notification Webhooks](webhooks/eventWebhook) | Bandwidth sends this event for each **event** update as defined by the subscription |
+| [Order Notification Webhooks](./orderWebhook) | Bandwidth sends this event for each **order status** update as defined by the subscription |
+| [Event Notification Webhooks](./eventWebhook) | Bandwidth sends this event for each **event** update as defined by the subscription |
 
 ## Portout Validation Webhooks
 
@@ -36,7 +36,7 @@ If the customer's endpoint is unavailable, the Bandwidth Dashboard API webhook s
 
 | Event | Description |
 |:------|:------------|
-| [Portout Validation Webhooks](webhooks/portoutValidationWebhook) | Bandwidth sends this event when a Portout request is initiated on a number in your account. Please contact [support](https://support.bandwidth.com) to enable Portout Validation. |
+| [Portout Validation Webhooks](./portoutValidationWebhook) | Bandwidth sends this event when a Portout request is initiated on a number in your account. Please contact [support](https://support.bandwidth.com) to enable Portout Validation. |
 
 ## Authentication
 

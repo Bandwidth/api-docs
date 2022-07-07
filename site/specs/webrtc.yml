@@ -1461,6 +1461,7 @@ paths:
           source: |
             using System;
             using System.Threading.Tasks;
+            using System.Collections.Generic;
             using Bandwidth.Standard;
             using Bandwidth.Standard.Exceptions;
             using Bandwidth.Standard.WebRtc.Models;
@@ -1480,9 +1481,14 @@ paths:
                         .WebRtcBasicAuthCredentials(username, password)
                         .Build();
 
+                    var subscriptions = new Subscriptions()
+                    {
+                        SessionId = sessionId
+                    };
+
                     try
                     {
-                        await client.WebRtc.APIController.AddParticipantToSessionAsync(accountId, sessionId, participantId);
+                        await client.WebRtc.APIController.AddParticipantToSessionAsync(accountId, sessionId, participantId, subscriptions);
                     }
                     catch (ApiException e)
                     {
@@ -1494,6 +1500,11 @@ paths:
           source: |
             import com.bandwidth.BandwidthClient;
             import com.bandwidth.http.response.ApiResponse;
+            import com.bandwidth.webrtc.models.Subscriptions;
+            import com.bandwidth.webrtc.models.ParticipantSubscription;
+
+            import java.util.ArrayList;
+            import java.util.List;
 
             import java.util.concurrent.CompletableFuture;
             import java.util.concurrent.ExecutionException;
@@ -1511,8 +1522,11 @@ paths:
                             .webRtcBasicAuthCredentials(USERNAME, PASSWORD)
                             .build();
 
+                    Subscriptions subscriptions = new Subscriptions();
+                    subscriptions.setSessionId(sessionId);
+                    
                     try {
-                        CompletableFuture<ApiResponse<Void>> completableFuture = client.getWebRtcClient().getAPIController().addParticipantToSessionAsync(ACCOUNT_ID, sessionId, participantId, null);
+                        CompletableFuture<ApiResponse<Void>> completableFuture = client.getWebRtcClient().getAPIController().addParticipantToSessionAsync(ACCOUNT_ID, sessionId, participantId, subscriptions);
                         System.out.println(completableFuture.get().getResult());
                     } catch (InterruptedException | ExecutionException e) {
                         System.out.println(e.getMessage());
@@ -1537,10 +1551,13 @@ paths:
             const accountId = BW_ACCOUNT_ID;
             const sessionId = "75c21163-e110-41bc-bd76-1bb428ec85d5"
             const participantId = "320e2af6-13ec-498d-8b51-daba52c37853"
+            const subscriptions = {
+              sessionId: sessionId
+            };
 
             const addParticipantToSession = async function() {
               try {
-                const response = await controller.addParticipantToSession(accountId, sessionId, participantId)
+                const response = await controller.addParticipantToSession(accountId, sessionId, participantId, subscriptions)
                 console.log(response.body);
               } catch(error) {
                 console.error(error);
@@ -1571,8 +1588,11 @@ paths:
             $sessionId = "1234-abcd";
             $participantId = "4321-dcba";
 
+            $body = new BandwidthLib\WebRtc\Models\Subscriptions();
+            $body->sessionId = $sessionId;
+
             try {
-                $webRtcClient->addParticipantToSession($BW_ACCOUNT_ID, $sessionId, $participantId);
+                $webRtcClient->addParticipantToSession($BW_ACCOUNT_ID, $sessionId, $participantId, $body);
             } catch (BandwidthLib\APIException $e) {
                 print_r($e->getResponseCode());
             }
@@ -1595,9 +1615,10 @@ paths:
 
             session_id = "1234-abcd"
             participant_id = "4321-dcba"
+            subscriptions = {'sessionId': session_id}
 
             try:
-                web_rtc_client.add_participant_to_session(BW_ACCOUNT_ID, session_id, participant_id)
+                web_rtc_client.add_participant_to_session(BW_ACCOUNT_ID, session_id, participant_id, subscriptions)
             except APIException as e:
                 print(e.response_code)
         - lang: Ruby
@@ -1621,8 +1642,11 @@ paths:
             session_id = "1234-abcd"
             participant_id = "4321-dcba"
 
+            body = Subscriptions.new
+            body.session_id = session_id
+
             begin
-                web_rtc_client.add_participant_to_session(BW_ACCOUNT_ID, session_id, participant_id)
+                web_rtc_client.add_participant_to_session(BW_ACCOUNT_ID, session_id, participant_id, body: body)
             rescue APIException => e
                 puts e.response_code
             end

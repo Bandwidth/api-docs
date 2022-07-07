@@ -12,7 +12,7 @@ image: ../../static/img/bw-icon.svg
 
 ## Connecting WebRTC to Programmable Voice
 
-Bandwidth has a demonstrated history of excellence in IP voice technologies, including comprehensive CPaaS [Programmable Voice](../voice) (PV) and Messaging capabilities. Combining WebRTC with our Programmable Voice (PV) offering yields a rich and flexible platform that allows our customers to extend their business with a broad range of browser-based communication capabilities.
+Bandwidth has a demonstrated history of excellence in IP voice technologies, including comprehensive CPaaS [Programmable Voice](../../voice) (PV) and Messaging capabilities. Combining WebRTC with our Programmable Voice (PV) offering yields a rich and flexible platform that allows our customers to extend their business with a broad range of browser-based communication capabilities.
 
 One of the steps we have taken to enable this capability suite is to ensure that our PV and WebRTC APIs combine their respective strengths when integrated.
 
@@ -190,4 +190,4 @@ res.contentType("application/xml").send(resp.toBxml());
 
 When your outgoing call is answered, our Voice API hits this [/callAnswered](<https://github.com/Bandwidth-Samples/webrtc-voiceconf-ts/blob/main/src/server.ts#:~:text=*/-,app.post(%22/callAnswered%22%2C%20async%20(req%2C%20res)%20%3D%3E%20%7B,%7D)%3B,-/**>) endpoint to connect you to a conference. The above snippets can be found in the [Conference repository](https://github.com/Bandwidth-Samples/webrtc-voiceconf-ts).
 
-So far, you have read about only 3 of our call control verbs. There are many options available to you, and these can be found in the [developer docs](../voice/bxml).
+So far, you have read about only 3 of our call control verbs. There are many options available to you, and these can be found in the [developer docs](../../voice/bxml).
