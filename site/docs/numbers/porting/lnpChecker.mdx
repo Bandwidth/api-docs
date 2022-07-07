@@ -1,6 +1,6 @@
 ---
 id: lnpChecker
-title: Lnp Checker
+title: Checking number portability
 slug: /numbers/guides/porting/lnpChecker
 description: How to check number(s) portability
 keywords:
@@ -34,30 +34,40 @@ export const Highlight = ({children, color}) => (
     </span>
   );
 
-## Checking for Portability
+A number or set of numbers can be checked to see if they can be ported into the Bandwidth Network using the [`/accounts/{accountId}/lnpChecker`](/apis/numbers#operation/RequestPortabilityInfo) API endpoint.
 
-A number or set of numbers can be checked to see if they can be ported into the Bandwidth Network using the `/accounts/{accountId}/lnpChecker` API endpoint.
+### Portability criteria
 
-The `fullcheck` query parameter values control the components of the response payload that is returned.
+TNs can be ported in a single `/portins` request if all the following are true:
+
+1. They all have the same Port Type (see the `Port Types` section below)
+2. They all have the same losing carrier
+3. They are all associated with the same billing TN and Service Address
+
+There are also a number of reasons why a TN may not be able to be ported in:
+
+* The TN is in a rate center that is not supported by Bandwidth or any of Bandwidth's partners.
+* The TN is an off-net TN, and the account is configured to support tier zero (on-net) only.
+* The TN belongs to a losing carrier that Bandwidth does not have a Trading Partner Agreement with.
+* The TN is already being processed in another active port-in order.
+* The Bandwidth account has not been enabled for porting.
+Otherwise, the user must separate the TNs into individual `/portins` requests.
+
+### Port Types
+
+Port Type - is a categorization of how the TNs submitted to the /lnpchecker API will be handled by Bandwidth.
+
+| Port Type       | Description                               |                                   |
+|:----------------------------------|:-------------------------------------------------------|
+| MANUAL | `MANUAL` (for all port types starting with `MANUAL`) indicates that if the TNs cannot be ported automatically, the Bandwidth LNP team will work with the appropriate porting vendor or losing carrier to ensure completion of the port-in. The /portins API can be used to submit manual port-ins, which will be identified as such, and a Zendesk ticket will be automatically created to notify the Bandwidth LNP team. |
+| MANUALOFFNET | `Off-net` means that the telephone numbers in the port-in exist in a rate center supported by one of Bandwidth’s partners. Off-net port-ins are processed manually when the Bandwidth partner does not have APIs by which the port-in can be automated, or Bandwidth has not implemented those APIs. Orders may also be processed manually if there are more numbers in the port-in than the partner’s interface supports, e.g. off-net ports with vendor Level 3 and with more than 49 TNs are automatically submitted as manual ports.|
+| MANUALONNET | `On-net` means that the telephone numbers in the port-in exist in a rate center supported by Bandwidth. On-net port-ins are processed manually only when there are more numbers in the port-in than the porting vendor’s interface supports (e.g more than 999 TNs). |
+| MANUALTOLLFREE | Currently all toll free port-ins are handled manually by Bandwidth’s LNP team. But Bandwidth is in the process of automating portions of toll free porting, with a goal of eventually automating the entire process. |
+| AUTOMATED | If the TNs are on-net, or off-net and covered by a Bandwidth partner that supports automated ports, then the port-in of these TNs will be handled with no human intervention using interfaces to our porting vendors. There are several sub-types of `AUTOMATED` as follows: <br/><ul><li>`AUTOMATED` - means that the telephone numbers in the port-in exist in a rate center supported by Bandwidth (On-net tns). There are differences in on-net port-in rules depending on whether the order is for wireless to wireless vs. one of the other 3 combinations.</li><li>`AUTOMATEDOFFNET` - Off-net means that the telephone numbers in the port-in exist in a rate center supported by one of Bandwidth’s partners. Currently, only numbers in the U.S. are automated. There are differences in port-in rules depending on whether the order has achieved FOC status.</li><li>`INTERNAL` - Internal means that the telephone number is being moved from one Bandwidth account to another Bandwidth account. Internal port-in may involve on-net, off-net, or toll free telephone numbers.</li></ul>|
+| MIXED | If the list of TNs supplied to /lnpchecker includes TNs that are categorized as more than one of the above Port Types, the resulting Port Type will be `MIXED`. If you plan to use /portins to port the TNs, you must break the TN list into separate /portins requests for each Port Type. |
 
 ### Request URL
 <Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/lnpChecker</code>
-
-### Request Query Parameter
-
-| `fullcheck` value  | Description                                                                                                                                                                                                                                                                                                      |
-|:-------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `false` (default)  | Return only rate center information                                                                                                                                                                                                                                                                              |
-| `true`             | Additional information will be provided on the losing carriers associated with the listed numbers                                                                                                                                                                                                                |
-| `onnetportability` | Provides rate center and losing carrier information for onnet tiers only                                                                                                                                                                                                                                         |
-| `offnetportabilty` | In addition to on-net information return off-net port information in `<PartnerSupportedRateCenters>` element with Partner/Vendor that the port will be supported on. Contains a list of the TNs that are supported in partner rate centers, and for which we will manually execute a port if requested for help. |
-
-### Response Parameters
-
-| Element                                                                                       | Description                                                                                                                                                                                                                                             |
-|:----------------------------------------------------------------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `SupportedRateCenters` <br/> `PartnerSupportedRateCenters` <br/> `UnsupportedRateCenters`  | Rate Center information for the indicated set of ratecenters, containing City, State, LATA and the list of TNs for which that Rate Center applies. <br/> The Tier information is provided for offnet rate centers.                                      |
-| `SupportedLosingCarriers` <br/> `UnsupportedLosingCarriers`                                 | Details on the Losing Carrier including name, SPID, whether or not the carrier is a wireless carrier, whether or not account number is required as part of the CSR check, and the anticipated minimum number of days before a FoC date will be granted. |
 
 ### Examples
 

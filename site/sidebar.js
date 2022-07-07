@@ -51,12 +51,11 @@ module.exports = {
                             label: "Porting numbers",
                             items: [
                                 "numbers/porting/portingNumbers",
+                                "numbers/porting/bulkPortins",
                                 "numbers/porting/lnpChecker",
                                 "numbers/porting/loaUpload",
                                 "numbers/porting/updatePortin",
                                 "numbers/porting/cancelPortin",
-                                "numbers/porting/portingTypes",
-                                "numbers/porting/bulkPortins",
                             ],
                         },
                         "numbers/csrLookupTool",
