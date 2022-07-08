@@ -1,6 +1,6 @@
 ---
 id: portingNumbers
-title: Create Portin
+title: Port-in numbers
 slug: /numbers/guides/porting/portingNumbers
 description: How to port numbers using the Bandwidth API
 keywords:
@@ -42,7 +42,344 @@ The `/bulkPortins` API eliminates the need for the `/lnpchecker` API by sorting 
 
 The API allows a user to create a new LNP order. An order number will be auto-generated and provided to the customer. The order must pass synchronous and asynchronous validation. Synchronous validation will return validation failures immediately in the response. If synchronous validation passes, but asynchronous validation fails, the customer will not receive the error response until they check the order status.
 
-As in other asynchronous workflows, the request to port in a number is created by a <Highlight color="#079CEE">POST</Highlight> to a resource dedicated to the purpose to tracking requests – the `accounts/{accountId}/portins` resource.
+### Request URL
+
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/portins</code>
+
+### Examples
+
+<Tabs
+    groupId="bxml"
+    defaultValue="payload"
+    values={[
+        { label: 'Request Payload', value: 'payload', },
+        { label: 'cURL', value: 'curl', },
+        { label: 'Java', value: 'java', },
+        { label: 'C#', value: 'csharp', },
+        { label: 'Ruby', value: 'ruby', },
+        { label: 'NodeJS', value: 'nodejs', },
+        { label: 'PHP', value: 'php', },
+    ]
+    }>
+<TabItem value="payload">
+
+```xml
+    Note: Remember to add authentication for your application if needed!
+
+    https://dashboard.bandwidth.com/api/accounts/{accountId}/portins
+    //Make sure an authentication header is added with your BANDWIDTH_USERNAME and BANDWIDTH:PASSWORD
+    <LnpOrder>
+        <RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>
+        <AlternateSpid>X455</AlternateSpid>
+        <BillingTelephoneNumber>9195551234</BillingTelephoneNumber>
+        <NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>
+        <SiteId>12345</SiteId>
+        <PeerId>660123</PeerId>
+        <Subscriber>
+            <SubscriberType>BUSINESS</SubscriberType>
+            <FirstName>First</FirstName>
+            <LastName>Last</LastName>
+            <ServiceAddress>
+                <HouseNumber>11235</HouseNumber>
+                <StreetName>Back</StreetName>
+                <City>Denver</City>
+                <StateCode>CO</StateCode>
+                <Zip>27541</Zip>
+                <County>Canyon</County>
+            </ServiceAddress>
+        </Subscriber>
+        <LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>
+        <WirelessInfo>
+            <AccountNumber>771297665AABC</AccountNumber>
+            <PinNumber>1234</PinNumber>
+        </WirelessInfo>
+        <ListOfPhoneNumbers>
+            <PhoneNumber>9195551234</PhoneNumber>
+            <PhoneNumber>9195554321</PhoneNumber>
+        </ListOfPhoneNumbers>
+        <Triggered>true</Triggered>
+    </LnpOrder>
+```
+
+</TabItem>
+<TabItem value="curl">
+
+```cURL
+    Note: Remember to add authentication for your application if needed!
+
+    curl 'https://dashboard.bandwidth.com/api/accounts/{BW_ACCOUNT_ID}/portins' \
+    -X POST \
+    -U '{BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}' \
+    -H 'Content-Type: application/xml' \
+    -d '<LnpOrder>
+        <RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>
+        <AlternateSpid>X455</AlternateSpid>
+        <BillingTelephoneNumber>9195551234</BillingTelephoneNumber>
+        <NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>
+        <SiteId>12345</SiteId>
+        <PeerId>660123</PeerId>
+        <Subscriber>
+            <SubscriberType>BUSINESS</SubscriberType>
+            <FirstName>First</FirstName>
+            <LastName>Last</LastName>
+            <ServiceAddress>
+                <HouseNumber>11235</HouseNumber>
+                <StreetName>Back</StreetName>
+                <City>Denver</City>
+                <StateCode>CO</StateCode>
+                <Zip>27541</Zip>
+                <County>Canyon</County>
+            </ServiceAddress>
+        </Subscriber>
+        <LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>
+        <WirelessInfo>
+            <AccountNumber>771297665AABC</AccountNumber>
+            <PinNumber>1234</PinNumber>
+        </WirelessInfo>
+        <ListOfPhoneNumbers>
+            <PhoneNumber>9195551234</PhoneNumber>
+            <PhoneNumber>9195554321</PhoneNumber>
+        </ListOfPhoneNumbers>
+        <Triggered>true</Triggered>
+    </LnpOrder>'
+```
+
+</TabItem>
+<TabItem value="java">
+
+```java
+import com.bandwidth.BandwidthClient;
+import com.bandwidth.http.response.ApiResponse;
+import com.bandwidth.voice.models.CreateCallRequest;
+import com.bandwidth.voice.models.CreateCallResponse;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
+public class Sample {
+
+    public static void main(String[] args) {
+        String accountId = System.getenv("BANDWIDTH_IRIS_ACCOUNTID");
+        String username = System.getenv("BANDWIDTH_IRIS_USERNAME");
+        String password = System.getenv("BANDWIDTH_IRIS_PASSWORD");
+        String irisUrl = System.getenv("BANDWIDTH_IRIS_URL");
+
+        IrisClient client = new IrisClient(accountId, username, password);
+
+        Subscriber s = new Subscriber();
+        s.setSubscriberType("BUSINESS");
+        s.setBusinessName("Company");
+        ServiceAddress serviceAddress = new ServiceAddress();
+        serviceAddress.setHouseNumber("123");
+        serviceAddress.setStreetName("Anywhere St");
+        serviceAddress.setCity("Raleigh");
+        serviceAddress.setStateCode("NC");
+        serviceAddress.setZip("27609");
+        s.setServiceAddress(serviceAddress);
+
+        LnpOrder order = new LnpOrder();
+        order.setSiteId(getFirstSite().getId());
+        order.setPeerId(getFirstSipPeer().getPeerId());
+        order.setBillingTelephoneNumber("9195551212");
+        order.setSubscriber(s);
+        order.setLoaAuthorizingPerson("Joe Blow");
+        order.getListOfPhoneNumbers().add("9195551212");
+
+        try {
+            order = LnpOrder.create(client, order);
+            System.out.println(order);
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
+```
+
+</TabItem>
+<TabItem value="csharp">
+
+```csharp
+using System;
+using System.Threading.Tasks;
+using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
+using Bandwidth.Standard.Voice.Models;
+
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        var accountId = System.Environment.GetEnvironmentVariable("BANDWIDTH_API_ACCOUNT_ID");
+        var username = System.Environment.GetEnvironmentVariable("BANDWIDTH_API_USERNAME");
+        var password = System.Environment.GetEnvironmentVariable("BANDWIDTH_API_PASSWORD");
+        var apiEndpoint = System.Environment.GetEnvironmentVariable("BANDWIDTH_API_ENDPOINT");
+
+        var client = Client.GetInstance("accountId", "username", "password", "apiEndpoint")
+
+        var data = new PortIn
+        {
+            BillingTelephoneNumber = "+1-202-555-0158",
+            Subscriber = new Subscriber
+            {
+                SubscriberType = "BUSINESS",
+                BusinessName = "Company",
+                FirstName = "John",
+                LastName = "Doe",
+                ServiceAddress = new Address
+                {
+                    City = "City",
+                    StateCode = "State",
+                    Country = "Country"
+                }
+            },
+            PeerId = sipPeer.Id,
+            SiteId = site.Id
+        };
+        try
+        {
+            var order = await PortIn.Create(_client, data);
+        }
+            catch (Bandwidth.Iris.BandwidthIrisException error)
+        {
+            Console.WriteLine(error.Message);
+        }
+            catch (Exception e)
+        {
+            Exception innerEx = e;
+
+            while(innerEx != null)
+            {
+                string msg = innerEx.Message;
+                Console.WriteLine(msg);
+                innerEx = innerEx.InnerException;
+            }
+        }
+    }
+}
+```
+
+</TabItem>
+<TabItem value="ruby">
+
+```ruby
+    require 'ruby-bandwidth-iris'
+
+    BandwidthIris::Client.global_options = {
+        :account_id => 'accountId',
+        :username => 'userName',
+        :password => 'password'
+    }
+
+    data = {
+        :site_id =>1234,
+        :peer_id => 5678,
+        :billing_telephone_number => "9195551212",
+        :subscriber => {
+            :subscriber_type => "BUSINESS",
+            :business_name => "Company",
+            :service_address => {
+                :house_number => "123",
+                :street_name => "EZ Street",
+                :city => "Raleigh",
+                :state_code => "NC",
+                :county => "Wake"
+            }
+        },
+        :loa_authorizing_person => "Joe Blow",
+        :list_of_phone_numbers => {
+            :phone_number => ["9195551212"]
+        },
+        :billing_type => "PORTIN"
+    }
+
+    portin_response = BandwidthIris::PortIn.create(data)
+```
+
+</TabItem>
+<TabItem value="nodejs">
+
+```js
+    var numbers = require("@bandwidth/numbers");
+
+    var data = {
+        siteId: 1234,
+        peerId: 5678,
+        billingTelephoneNumber: "9195551212",
+        subscriber: {
+            subscriberType: "BUSINESS",
+            businessName: "Company",
+            serviceAddress: {
+                houseNumber: "123",
+                streetName: "EZ Street",
+                city: "Raleigh",
+                stateCode: "NC",
+                county: "Wake"
+            }
+        },
+        loaAuthorizingPerson: "Joe Blow",
+        listOfPhoneNumbers: {
+            phoneNumber: ["9195551212"]
+        },
+        billingType: "PORTIN"
+    };
+
+    //Using client directly
+    var client = new numbers.Client("accountId", "userName", "password");
+    numbers.PortIn.create(client, function(err, response){...});
+
+    //Or you can use default client instance (do this only once)
+    numbers.Client.globalOptions.accountId = "accountId";
+    numbers.Client.globalOptions.userName = "userName";
+    numbers.Client.globalOptions.password = "password";
+
+    //Default client will be used to do this call
+    numbers.PortIn.create(data, callback);
+
+    numbers.PortIn.create(data, callback);
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+    $accountId = getenv("BANDWIDTH_API_ACCOUNT_ID");
+    $username = getenv("BANDWIDTH_API_USERNAME");
+    $password = getenv("BANDWIDTH_API_PASSWORD");
+    $apiEndpoint = getenv("BANDWIDTH_API_ENDPOINT");
+
+    $client = new \Iris\Client($username, $password, ['url' => $apiEndpoint]);
+    $account = new \Iris\Account($accountId, $client);
+
+    try {
+        $portin = $account->portins()->create(array(
+            "BillingTelephoneNumber" => "6882015002",
+            "Subscriber" => array(
+                "SubscriberType" => "BUSINESS",
+                "BusinessName" => "Acme Corporation",
+                "ServiceAddress" => array(
+                    "HouseNumber" => "1623",
+                    "StreetName" => "Brockton Ave",
+                    "City" => "Los Angeles",
+                    "StateCode" => "CA",
+                    "Zip" => "90025",
+                    "Country" => "USA"
+                )
+            ),
+            "LoaAuthorizingPerson" => "John Doe",
+            "ListOfPhoneNumbers" => array(
+                "PhoneNumber" => array("9882015025", "9882015026")
+            ),
+            "SiteId" => "365",
+            "Triggered" => "false"
+        ));
+        print_r($response->getResult()->callId);
+    } catch (BandwidthLib\APIException $e) {
+        print_r($e->getResponseCode());
+    }
+```
+
+</TabItem>
+</Tabs>
 
 ### Polling vs. Webhooks
 
@@ -50,95 +387,6 @@ Porting numbers in the Bandwidth Dashboard is asynchronous when creating an LNP 
 
 Order processing times can vary and are not guaranteed, so bandwidth recommends relying on a webhook update from an portins subscription.
 
-### Request URL
-
-<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/portins</code>
-
-### Examples
-
-> Request
-
-```xml
-POST https://dashboard.bandwidth.com/api/accounts/{accountId}/portins HTTP/1.1
-Content-Type: application/xml; charset=utf-8
-Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
-
-<LnpOrder>
-    <RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>
-    <AlternateSpid>X455</AlternateSpid>
-    <BillingTelephoneNumber>9195551234</BillingTelephoneNumber>
-    <NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>
-    <SiteId>12345</SiteId>
-    <PeerId>660123</PeerId>
-    <Subscriber>
-        <SubscriberType>BUSINESS</SubscriberType>
-        <FirstName>First</FirstName>
-        <LastName>Last</LastName>
-        <ServiceAddress>
-            <HouseNumber>11235</HouseNumber>
-            <StreetName>Back</StreetName>
-            <City>Denver</City>
-            <StateCode>CO</StateCode>
-            <Zip>27541</Zip>
-            <County>Canyon</County>
-        </ServiceAddress>
-    </Subscriber>
-    <LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>
-    <WirelessInfo>
-        <AccountNumber>771297665AABC</AccountNumber>
-        <PinNumber>1234</PinNumber>
-    </WirelessInfo>
-    <ListOfPhoneNumbers>
-        <PhoneNumber>9195551234</PhoneNumber>
-        <PhoneNumber>9195554321</PhoneNumber>
-    </ListOfPhoneNumbers>
-    <Triggered>true</Triggered>
-</LnpOrder>
-```
-
-> Response
-
-```xml
-HTTP 201 Created
-Content-Type: application/xml; charset=utf-8
-
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<LnpOrderResponse>
-    <OrderId>03f194d5-3932-4e9f-8ba1-03ef767985e5</OrderId>
-    <Status>
-        <Code>201</Code>
-        <Description>Order request received. Please use the order id to check the status of your order later.</Description>
-    </Status>
-    <ProcessingStatus>PENDING_DOCUMENTS</ProcessingStatus>
-    <RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>
-    <LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>
-    <Subscriber>
-        <SubscriberType>BUSINESS</SubscriberType>
-        <FirstName>First</FirstName>
-        <LastName>Last</LastName>
-        <ServiceAddress>
-            <HouseNumber>11235</HouseNumber>
-            <StreetName>Back</StreetName>
-            <City>Denver</City>
-            <StateCode>CO</StateCode>
-            <Zip>27541</Zip>
-            <County>Canyon</County>
-            <Country>United States</Country>
-        </ServiceAddress>
-    </Subscriber>
-    <WirelessInfo>
-        <AccountNumber>771297665AABC</AccountNumber>
-        <PinNumber>1234</PinNumber>
-    </WirelessInfo>
-    <BillingTelephoneNumber>9195551234</BillingTelephoneNumber>
-    <NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>
-    <ListOfPhoneNumbers>
-        <PhoneNumber>9195551234</PhoneNumber>
-        <PhoneNumber>9195554321</PhoneNumber>
-    </ListOfPhoneNumbers>
-    <Triggered>true</Triggered>
-</LnpOrderResponse>
-```
 You can retrieve an information about your Port in using a <Highlight color="#00bf8c">GET</Highlight> request to `/accounts/{accountId}/portins/{orderId}`
 
 ## Modify a Portin Order
