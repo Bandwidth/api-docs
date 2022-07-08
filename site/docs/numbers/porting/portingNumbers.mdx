@@ -49,7 +49,7 @@ The API allows a user to create a new LNP order. An order number will be auto-ge
 ### Examples
 
 <Tabs
-    groupId="bxml"
+    groupId="createPortin"
     defaultValue="payload"
     values={[
         { label: 'Request Payload', value: 'payload', },
@@ -386,7 +386,7 @@ Order processing times can vary and are not guaranteed, so bandwidth recommends 
 
 You can retrieve an information about your Port in using a <Highlight color="#00bf8c">GET</Highlight> request to `/accounts/{accountId}/portins/{orderId}`
 <Tabs
-    groupId="bxml"
+    groupId="getPortin"
     defaultValue="curl"
     values={[
         { label: 'cURL', value: 'curl', },
@@ -543,6 +543,262 @@ try {
 
 The API allows a user to modify an existing LNP order, called a SUPP request. Modifications are only allowed for orders that are not yet complete or cancelled. LNP orders can be modified with a <code class="put">PUT</code> to `accounts/{accountId}/portins/{orderId}`. Since many of the entries in an LNP Order cannot be changed after the initial order is placed, the <code class="put">PUT</code> on a porting order-id does not require that the full order payload is included.
 For more details follow ....TODO
+
+<Tabs
+    groupId="updatePortin"
+    defaultValue="payload"
+    values={[
+        { label: 'Request Payload', value: 'payload', },
+        { label: 'cURL', value: 'curl', },
+        { label: 'Java', value: 'java', },
+        { label: 'C#', value: 'csharp', },
+        { label: 'Ruby', value: 'ruby', },
+        { label: 'NodeJS', value: 'nodejs', },
+        { label: 'PHP', value: 'php', },
+    ]
+    }>
+<TabItem value="payload">
+
+```xml
+PUT https://dashboard.bandwidth.com/api/accounts/{accountId}/portins/{orderId} HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<?xml version="1.0" encoding="UTF-8"?>
+<LnpOrderSupp>
+    <CustomerOrderId>SJM00002</CustomerOrderId>
+    <RequestedFocDate>2014-12-04T13:00:00.000Z</RequestedFocDate>
+    <BillingTelephoneNumber>8045030092</BillingTelephoneNumber>
+    <NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>
+    <WirelessInfo>
+        <AccountNumber>23453245</AccountNumber>
+        <PinNumber>1111</PinNumber>
+    </WirelessInfo>
+    <Subscriber>
+        <SubscriberType>RESIDENTIAL</SubscriberType>
+        <FirstName>Steve</FirstName>
+        <LastName>McKinnon</LastName>
+        <ServiceAddress>
+            <!-- If true will overwrite all address fields,
+             those which should be required remain required.
+             Affect only supp. Default false. -->
+            <ResetAddressFields>true</ResetAddressFields>
+            <HouseNumber>115</HouseNumber>
+            <StreetName>Monarch Way</StreetName>
+            <City>Cary</City>
+            <StateCode>NC</StateCode>
+            <Zip>27518</Zip>
+        </ServiceAddress>
+    </Subscriber>
+    <SiteId>743</SiteId>
+    <PartialPort>true</PartialPort>
+    <ListOfPhoneNumbers>
+        <PhoneNumber>2019721004</PhoneNumber>
+        <PhoneNumber>2019721005</PhoneNumber>
+    </ListOfPhoneNumbers>
+    <LoaAuthorizingPerson>Steve McKinnon</LoaAuthorizingPerson>
+    <AlternateSpid>Foo</AlternateSpid>
+</LnpOrderSupp>
+```
+
+</TabItem>
+<TabItem value="curl">
+
+```cURL
+Note: Remember to add authentication for your application if needed!
+
+curl 'https://dashboard.bandwidth.com/api/accounts/{BW_ACCOUNT_ID}/portins' \
+-X POST \
+-U '{BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}' \
+-H 'Content-Type: application/xml' \
+-d '<LnpOrderSupp>
+    <CustomerOrderId>SJM00002</CustomerOrderId>
+    <RequestedFocDate>2014-12-04T13:00:00.000Z</RequestedFocDate>
+    <BillingTelephoneNumber>8045030092</BillingTelephoneNumber>
+    <NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>
+    <WirelessInfo>
+        <AccountNumber>23453245</AccountNumber>
+        <PinNumber>1111</PinNumber>
+    </WirelessInfo>
+    <Subscriber>
+        <SubscriberType>RESIDENTIAL</SubscriberType>
+        <FirstName>Steve</FirstName>
+        <LastName>McKinnon</LastName>
+        <ServiceAddress>
+            <!-- If true will overwrite all address fields,
+             those which should be required remain required.
+             Affect only supp. Default false. -->
+            <ResetAddressFields>true</ResetAddressFields>
+            <HouseNumber>115</HouseNumber>
+            <StreetName>Monarch Way</StreetName>
+            <City>Cary</City>
+            <StateCode>NC</StateCode>
+            <Zip>27518</Zip>
+        </ServiceAddress>
+    </Subscriber>
+    <SiteId>743</SiteId>
+    <PartialPort>true</PartialPort>
+    <ListOfPhoneNumbers>
+        <PhoneNumber>2019721004</PhoneNumber>
+        <PhoneNumber>2019721005</PhoneNumber>
+    </ListOfPhoneNumbers>
+    <LoaAuthorizingPerson>Steve McKinnon</LoaAuthorizingPerson>
+    <AlternateSpid>Foo</AlternateSpid>
+</LnpOrderSupp>'
+```
+
+</TabItem>
+<TabItem value="java">
+
+```java
+import com.bandwidth.BandwidthClient;
+import com.bandwidth.http.response.ApiResponse;
+import com.bandwidth.voice.models.CreateCallRequest;
+import com.bandwidth.voice.models.CreateCallResponse;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
+public class Sample {
+
+    public static void main(String[] args) {
+        String accountId = System.getenv("BANDWIDTH_IRIS_ACCOUNTID");
+        String username = System.getenv("BANDWIDTH_IRIS_USERNAME");
+        String password = System.getenv("BANDWIDTH_IRIS_PASSWORD");
+        String irisUrl = System.getenv("BANDWIDTH_IRIS_URL");
+
+        IrisClient client = new IrisClient(accountId, username, password);
+
+        LnpOrderSupp order = new LnpOrderSupp();
+        order.setSiteId(getFirstSite().getId());
+        order.setPeerId(getFirstSipPeer().getPeerId());
+        // ...
+
+        try {
+            portIn = BandwidthIris::PortIn.get("portin_id", callback)
+            order.update(client, LnpOrderSupp supp);
+            System.out.println(order);
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
+```
+
+</TabItem>
+<TabItem value="csharp">
+
+```csharp
+using System;
+using System.Threading.Tasks;
+using Bandwidth.Standard;
+using Bandwidth.Standard.Exceptions;
+using Bandwidth.Standard.Voice.Models;
+
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        var accountId = System.Environment.GetEnvironmentVariable("BANDWIDTH_API_ACCOUNT_ID");
+        var username = System.Environment.GetEnvironmentVariable("BANDWIDTH_API_USERNAME");
+        var password = System.Environment.GetEnvironmentVariable("BANDWIDTH_API_PASSWORD");
+        var apiEndpoint = System.Environment.GetEnvironmentVariable("BANDWIDTH_API_ENDPOINT");
+
+        var client = Client.GetInstance("accountId", "username", "password", "apiEndpoint")
+
+        var data = new PortIn
+        {
+            // ...
+            PeerId = sipPeer.Id,
+            SiteId = site.Id
+        };
+        try
+        {
+            var portInOrder = PortIn.Get("orderId");
+            portInOrder.Update(data);
+        }
+        catch (Bandwidth.Iris.BandwidthIrisException error)
+        {
+            Console.WriteLine(error.Message);
+        }
+        catch (Exception e)
+        {
+            Exception innerEx = e;
+
+            while(innerEx != null)
+            {
+                string msg = innerEx.Message;
+                Console.WriteLine(msg);
+                innerEx = innerEx.InnerException;
+            }
+        }
+    }
+}
+```
+
+</TabItem>
+<TabItem value="ruby">
+
+```ruby
+require 'ruby-bandwidth-iris'
+
+BandwidthIris::Client.global_options = {
+:account_id => 'accountId',
+:username => 'userName',
+:password => 'password'
+}
+
+data = {
+    //...
+}
+
+portIn = BandwidthIris::PortIn.get("portin_id", callback)
+portIn.update(data)
+```
+
+</TabItem>
+<TabItem value="nodejs">
+
+```js
+var numbers = require("@bandwidth/numbers");
+
+var data = {
+ // ...
+};
+
+numbers.Client.globalOptions.accountId = "accountId";
+numbers.Client.globalOptions.userName = "userName";
+numbers.Client.globalOptions.password = "password";
+
+portIn.update(data, callback);;
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+$accountId = getenv("BANDWIDTH_API_ACCOUNT_ID");
+$username = getenv("BANDWIDTH_API_USERNAME");
+$password = getenv("BANDWIDTH_API_PASSWORD");
+$apiEndpoint = getenv("BANDWIDTH_API_ENDPOINT");
+
+$client = new \Iris\Client($username, $password, ['url' => $apiEndpoint]);
+$account = new \Iris\Account($accountId, $client);
+
+try {
+    $portin = $account->portins()->portin("d28b36f7-fa96-49eb-9556-a40fca49f7c6"));
+    $portin->update(array(
+        "BillingTelephoneNumber" => "6882015002",
+        "SiteId" => "365",
+        // ...
+    ));
+} catch (BandwidthLib\APIException $e) {
+    print_r($e->getResponseCode());
+}
+```
+
+</TabItem>
+</Tabs>
 
 ## Cancel a Portin Order
 
