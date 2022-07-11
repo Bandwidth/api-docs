@@ -46,7 +46,7 @@ const ProductList = [
   {
     title: 'Multi-Factor Authentication',
     Svg: require('../../static/img/icon-mfa.svg').default,
-    link: '/docs/mfa/about',
+    link: '/docs/mfa',
     description: (
       <>
         Easily add multi-factor authentication to your software, website, or application.
