@@ -17,24 +17,24 @@ const sdkList = [
         link: '/sdks/python'
     },
     {
-        title: 'Ruby',
-        Svg: require('../../../static/img/ruby.svg').default,
-        link: '/sdks/ruby'
-    },
-    {
         title: 'Java',
         Svg: require('../../../static/img/java.svg').default,
         link: '/sdks/java'
     },
     {
-        title: 'C#',
-        Svg: require('../../../static/img/csharp.svg').default,
-        link: '/sdks/csharp'
-    },
-    {
         title: 'PHP',
         Svg: require('../../../static/img/php.svg').default,
         link: '/sdks/php'
+    },
+    {
+        title: 'Ruby',
+        Svg: require('../../../static/img/ruby.svg').default,
+        link: '/sdks/ruby'
+    },
+    {
+        title: 'C#',
+        Svg: require('../../../static/img/csharp.svg').default,
+        link: '/sdks/csharp'
     },
 ];
 
