@@ -65,7 +65,6 @@ module.exports = {
                         "numbers/disconnectNumbers",
                         "numbers/lookupNumbers",
                         "numbers/downloadingReports",
-                        "numbers/e911s",
                         "numbers/lsrOrders",
                     ],
                 },
