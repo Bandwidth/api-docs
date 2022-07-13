@@ -55,7 +55,6 @@ module.exports = {
                         "numbers/bulkportins",
                         "numbers/lookupNumbers",
                         "numbers/downloadingReports",
-                        "numbers/e911s",
                         "numbers/lsrOrders",
                     ],
                 },

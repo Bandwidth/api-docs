@@ -29,7 +29,7 @@ const productList = [
     {
         title: 'Multi-Factor Authentication',
         Svg: require('../../static/img/icon-mfa.svg').default,
-        link: '/docs/mfa/about',
+        link: '/docs/mfa',
     },
     {
         title: 'WebRTC',

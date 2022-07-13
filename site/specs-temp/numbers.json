@@ -2920,7 +2920,7 @@
           }
         }
       },
-      "post" : {
+      "post": {
         "tags": [
           "/accounts",
           "Porting"
@@ -3038,7 +3038,7 @@
           }
         }
       },
-      "put" : {
+      "put": {
         "tags": [
           "/accounts",
           "Porting"
@@ -3106,8 +3106,7 @@
         }
       }
     },
-
-      "/accounts/{accountId}/csrs/{csrsId}/notes": {
+    "/accounts/{accountId}/csrs/{csrsId}/notes": {
       "get": {
         "tags": [
           "/accounts"
@@ -3295,7 +3294,6 @@
         }
       }
     },
-
     "/accounts/{accountId}/discnumbers": {
       "get": {
         "tags": [
@@ -4428,7 +4426,7 @@
         "tags": [
           "/accounts"
         ],
-        "description": "Create E911 order to associate the address with the telephone number. \nPlease visit <a href='/docs/numbers/guides/e911s'>Guides and Tutorials</a>",
+        "description": "<p>The E911Orders endpoint resource represents the requests made to the Bandwidth Dashboard API to add or otherwise manage a request to associate a postal address with an endpoint (a telephone number, ACID (alternate caller identifier), or some other unique identifier. This API allows the creation and observation of a \"E911\" work order that causes an update of a address information in a network database.</p><p>The E911 order processing model is consistent with the overall model of creating an order or request with the initial POST, and then checking on the status of that order using callbacks and / or GET while that order progresses through the various steps in the process.</p><h4>The E911 order supports several 911 use cases:</h4><ol><li>CONVENTIONAL E911: Telephone number/address combination. For UC Trunking and most applicable wholesale customers, this method associates a telephone number in the customer’s Bandwidth Dashboard API TN inventory to a postal address. Caller name can also be specified in the request. At 911 call time, the address that is associated with the telephone number in the SIP 'from' header will be seen by the Public Safety Answering Point (PSAP).</li><br><li>PIDF-LO (Presence Information Data Format-Location Object or Dynamic Location Routing) Endpoints and Addresses: For customers utilizing Bandwidth’s Dynamic Routing capability, addresses are first added to an \"address pool\", then endpoints are provisioned using one of the addresses as a default for taxation purposes. Each endpoint is represented by an Alternate End User Identifier consisting of a unique identifier (could be TN, ACID, or other identifier), callback number and caller name (if not being passed in at 911 call time), and preferred language (French or English, with English as the default). At 911 call time, the customer can pass any address in the SIP header of the call and the sip 'from' header will contain the identifier of the endpoint. If the address in the call matches an address in the address pool, then the call is routed to the PSAP. Otherwise, the call is routed to an Emergency Call Center.</li><br><li><p>SIMPLE AEUI: This is similar to telephone number/address combination in that there is a 1 to 1 mapping between endpoint and address. Each endpoint is represented by an Alternate End User Identifier(AEUI) consisting of a unique identifier and callback number. At 911 call time, the endpoint identifier is passed in the SIP from header and the address that is associated with that endpoint will be seen by the PSAP.</p><p>The states that the order may reside in are RECEIVED, PROCESSING, COMPLETE, PARTIAL, FAILED, ADJUSTED_COMPLETE, and ADJUSTED_PARTIAL. \"ADJUSTED\" indicates that the provisioning was successful, but that the street address was subtly changed to reflect a geocodable address. As with other order types, PARTIAL indicates that there were some errors detected, but that all elements of the order that could be processed were processed. In this case, the order record will need to be examined to determine the items that failed.</p></o></li></ol><h4>The key data elements in the submission are as follows.</h4><table><tr><th>Parameter</th><th>Description</th></tr><tr><td>TelephoneNumbers</td><td>A list of telephone numbers you need link to the street address</td></tr><tr><td>CallerName</td><td>\tCallerName that will be linked to TNs. This field is required in the case of a new address assignment</td></tr><tr><td>Address</td><td>This field is required in the case of a new address assignment. Inner fields: HousePrefix, HouseNumber, HouseSuffix, PreDirectional, StreetName, StreetSuffix, PostDirectional, AddressLine2, City, StateCode, Zip, PlusFour. Streetname, City, and State are required. House Number is currently required, although this enforcement may be relaxed in the future. Depending on the type of E911 service, the Location ID may be updated by the Bandwidth Dashboard API</td></tr><tr><td>DeleteTNSpecificE911Address</td><td>Can be true or false. If value is true then Address and CallerName should not be specified</td></tr><tr><td>AlternateEndUserIdentifiers</td><td>A list of AEUIs acts as a replacement for the list of telephone numbers. It replaces the TelephoneNumbers and AdditionalAddress payload element. If ACID exists in external system it will be updated with given values</td></tr><tr><td>AdditionalAddresses</td><td>A list of Address sections. This address information for all potential endpoints which will be provisioned to the Bandwidth 911 system. At call time, the customer will submit this address information within the SIP header and, if a match is determined, the call will be routed to the PSAP nearest to that address. Otherwise, the call will be routed to an ECC. These Address sections will be the same in format to the Address section in the top-level of the E911Order payload. It replaces the TelephoneNumbers and AlternateEndUserIdentifiers payload element</td></tr><tr><td>CustomerOrderId</td><td>The Customer Order ID is an ID assigned by the account owner to provide a reference number for the Order. The element is optional. Only alphanumeric values, dashes and spaces are allowed. Max length is 40 characters</td></tr></table>",
         "operationId": "CreateE911Order",
         "summary": "Create E911 order - associate the address with the telephone number",
         "parameters": [
@@ -4443,6 +4441,96 @@
             "example": "1234567"
           }
         ],
+        "requestBody": {
+          "description": "<h5>1. CONVENTIONAL E911. TN/Address-provisioning order:</h5><p>TN/Address-provisioning order.</p><h5>2. CONVENTIONAL E911. TN/address-deletion order:</h5><p>TelephoneNumbers and TelephoneNumber are required. DeleteTNSpecificE911Address is required and must be set to 'true'.</p><h5>3. PIDF-LO. AEUI endpoint-provisioning order with additional address provisioning and without pre-defined location id:</h5><p>AlternateEndUserIdentifiers, AlternateEndUserIdentifier, Address, and Identifier are required. Identifier can only contain alphanumeric characters and must be between 1 and 30 characters. PIDFLOEnabled is required and must be 'true'. Default value of PreferredLanguage is 'en'.</p><h5>4. PIDF-LO. AEUI endpoint-provisioning order with additional address provisioning and with pre-defined location id</h5><p>AlternateEndUserIdentifiers, AlternateEndUserIdentifier, Address, and Identifier are required. Identifier can only contain alphanumeric characters and must be between 1 and 30 characters. PIDFLOEnabled is required and must be 'true'. Default value of PreferredLanguage is 'en'.</p><h5>5. PIDF-LO. AEUI endpoint-provisioning order with provisioned location id</h5><p>AlternateEndUserIdentifiers, AlternateEndUserIdentifier, LocationId, and Identifier are required. Identifier can only contain alphanumeric characters and must be between 1 and 30 characters. PIDFLOEnabled is required and must be 'true'. Default value of PreferredLanguage is 'en'.</p><h5>6. PIDF-LO and SIMPLE AEUI. Mixed PIDF-LO AEUI and Non-PIDF-LO AEUI endpoint-provisioning order</h5><p>AlternateEndUserIdentifiers, AlternateEndUserIdentifier, Address, and Identifier are required. Default value of PreferredLanguage is 'en'. Non-PIDF-LO: CallbackNumber is required. Identifier can only contain alphanumeric characters and must be between 6 and 30 characters. PIDF-LO: PIDFLOEnabled is required and must be 'true'. Identifier can only contain alphanumeric characters and must be between 1 and 30 characters.</p><h5>7. PIDF-LO and SIMPLE AEUI. PIDF-LO and Non-PIDF-LO endpoint-deletion order</h5><p>AlternateEndUserIdentifiers, AlternateEndUserIdentifier, and Identifier are required. DeleteTNSpecificE911Address is required and must be 'true'. Non-PIDF-LO: CallbackNumber is required. Identifier can only contain alphanumeric characters 6 and 30 characters. PIDF-LO: PIDFLOEnabled is required and must be 'true'. Identifier can only contain alphanumeric characters and must be between 1 and 30 characters.</p><h5>8. PIDF-LO. address-provisioning order</h5><p>AdditionalAddresses and Address are required.</p><h5>9. PIDF-LO. address-editing order</h5><p>Address and LocationId are required. Allows a user to update all address fields except PlusFour and Country.</p><h5>10. PIDF-LO. address-deletion order</h5><p>AdditionalAddresses, Address, and LocationId are required. DeleteTNSpecificE911Address is required and must be 'true'.</p><h5>11. SIMPLE AEUI. Non-PIDF-LO endpoint-provisioning order</h5><p>AlternateEndUserIdentifiers, AlternateEndUserIdentifier, Address, CallbackNumber, and Identifier are required Identifier can only contain alphanumeric characters, must contain at least one letter, and must be between 6 and 30 characters.</p>",
+          "content": {
+            "application/xml": {
+              "examples": {
+                "ConventionalAddressProvisioningE911Order": {
+                  "summary": "CONVENTIONAL E911. TN/Address-provisioning order",
+                  "value": "<E911Order>\n  <TelephoneNumbers>\n    <TelephoneNumber>9706542332</TelephoneNumber>\n    <TelephoneNumber>9706542333</TelephoneNumber>\n  </TelephoneNumbers>\n  <CallerName>OptionalCallerName</CallerName>\n  <Address>\n    <HouseNumber>915</HouseNumber>\n    <HouseSuffix/>\n    <PreDirectional/>\n    <StreetName>Elm</StreetName>\n    <StreetSuffix>Ave</StreetSuffix>\n    <PostDirectional/>\n    <AddressLine2/>\n    <City>Carpinteria</City>\n    <StateCode>CA</StateCode>\n    <Zip>93013</Zip>\n    <PlusFour/>\n    <County/>\n    <Country>United States</Country>\n    <Latitude>35.848359</Latitude>\n    <Longitude>-75.000000</Longitude>\n  </Address>\n</E911Order>"
+                },
+                "ConventionalAddressDeletionE911Order": {
+                  "summary": "CONVENTIONAL E911. TN/address-deletion order",
+                  "value": "<E911Order>\n  <CustomerOrderId>CustomOrderId1</CustomerOrderId>\n  <TelephoneNumbers>\n    <TelephoneNumber>9706542332</TelephoneNumber>\n    <TelephoneNumber>9706542333</TelephoneNumber>\n  </TelephoneNumbers>\n  <DeleteTNSpecificE911Address>true</DeleteTNSpecificE911Address>\n</E911Order>"
+                },
+                "PidfloAeuiWithAdditionalAddressWithoutLocationIdE911Order": {
+                  "summary": "PIDF-LO. AEUI endpoint-provisioning order with additional address provisioning and without pre-defined location id",
+                  "value": "<E911Order>\n  <CustomerOrderId>CustomOrderId1</CustomerOrderId>\n  <Address>\n    <HouseNumber>901</HouseNumber>\n    <StreetName>MAIN CAMPUS</StreetName>\n    <StreetSuffix>DR</StreetSuffix>\n    <City>RALEIGH</City>\n    <StateCode>NC</StateCode>\n    <Zip>27606</Zip>\n    <PlusFour>5244</PlusFour>\n    <Country>United States</Country>\n    <Latitude>35.848359</Latitude>\n    <Longitude>-75.000000</Longitude>\n    <AddressType>E911</AddressType>\n  </Address>\n  <AlternateEndUserIdentifiers>\n    <AlternateEndUserIdentifier>\n      <CallerName>OptionalCallerName</CallerName>\n      <CallbackNumber>9706542333</CallbackNumber>\n      <Identifier>blep123</Identifier>\n      <PIDFLOEnabled>true</PIDFLOEnabled>\n      <PreferredLanguage>en</PreferredLanguage>\n    </AlternateEndUserIdentifier>\n  </AlternateEndUserIdentifiers>\n</E911Order>"
+                },
+                "PidfloAeuiWithAdditionalAddressWithLocationIdE911Order": {
+                  "summary": "PIDF-LO. AEUI endpoint-provisioning order with additional address provisioning and with pre-defined location id",
+                  "value": "<E911Order>\n  <CustomerOrderId>CustomOrderId1</CustomerOrderId>\n  <Address>\n    <LocationId>Some32CharacterOrLessString</LocationId>\n    <HouseNumber>901</HouseNumber>\n    <StreetName>MAIN CAMPUS</StreetName>\n    <StreetSuffix>DR</StreetSuffix>\n    <City>RALEIGH</City>\n    <StateCode>NC</StateCode>\n    <Zip>27606</Zip>\n    <PlusFour>5244</PlusFour>\n    <Country>United States</Country>\n    <Latitude>35.848359</Latitude>\n    <Longitude>-75.000000</Longitude>\n    <AddressType>E911</AddressType>\n  </Address>\n  <AlternateEndUserIdentifiers>\n    <AlternateEndUserIdentifier>\n      <CallerName>OptionalCallerName</CallerName>\n      <CallbackNumber>9706542333</CallbackNumber>\n      <Identifier>blep123</Identifier>\n      <PIDFLOEnabled>true</PIDFLOEnabled>\n      <PreferredLanguage>en</PreferredLanguage>\n    </AlternateEndUserIdentifier>\n  </AlternateEndUserIdentifiers>\n</E911Order>"
+                },
+                "PidfloAeuiWithLocationIdE911Order": {
+                  "summary": "PIDF-LO. AEUI endpoint-provisioning order with provisioned location id",
+                  "value": "<E911Order>\n  <CustomerOrderId>CustomOrderId1</CustomerOrderId>\n  <AlternateEndUserIdentifiers>\n    <AlternateEndUserIdentifier>\n      <CallerName>OptionalCallerName</CallerName>\n      <LocationId>Some32CharacterOrLessString</LocationId>\n      <CallbackNumber>9706542333</CallbackNumber>\n      <Identifier>blep123</Identifier>\n      <PIDFLOEnabled>true</PIDFLOEnabled>\n      <PreferredLanguage>en</PreferredLanguage>\n    </AlternateEndUserIdentifier>\n  </AlternateEndUserIdentifiers>\n</E911Order>"
+                },
+                "PidfloAndSimpleAeuiMixedPidfloAeuiAndNonPidloAeuiProvisioning911Order": {
+                  "summary": "PIDF-LO and SIMPLE AEUI. Mixed PIDF-LO AEUI and Non-PIDF-LO AEUI endpoint-provisioning order",
+                  "value": "<E911Order>\n  <CustomerOrderId>CustomOrderId1</CustomerOrderId>\n  <CallerName>OptionalCallerName</CallerName>\n  <Address>\n    <LocationId>Some32CharacterOrLessString</LocationId>\n    <HouseNumber>901</HouseNumber>\n    <StreetName>MAIN CAMPUS</StreetName>\n    <StreetSuffix>DR</StreetSuffix>\n    <City>RALEIGH</City>\n    <StateCode>NC</StateCode>\n    <Zip>27606</Zip>\n    <PlusFour>5244</PlusFour>\n    <Country>United States</Country>\n    <Latitude>35.848359</Latitude>\n    <Longitude>-75.000000</Longitude>\n    <AddressType>E911</AddressType>\n  </Address>\n  <AlternateEndUserIdentifiers>\n    <AlternateEndUserIdentifier>\n      <CallerName>OptionalCallerName</CallerName>\n      <LocationId>Some32CharacterOrLessString</LocationId>\n      <CallbackNumber>9706542333</CallbackNumber>\n      <Identifier>blep123</Identifier>\n      <PIDFLOEnabled>true</PIDFLOEnabled>\n      <PreferredLanguage>en</PreferredLanguage>\n    </AlternateEndUserIdentifier>\n    <AlternateEndUserIdentifier>\n      <CallbackNumber>9706542334</CallbackNumber>\n      <Identifier>blepblop</Identifier>\n      <PIDFLOEnabled>false</PIDFLOEnabled>\n    </AlternateEndUserIdentifier>\n  </AlternateEndUserIdentifiers>\n</E911Order>"
+                },
+                "PidfloAndSimpleAeuiMixedPidfloAeuiAndNonPidloAeuiDeleting911Order": {
+                  "summary": "PIDF-LO and SIMPLE AEUI. PIDF-LO and Non-PIDF-LO endpoint-deletion order",
+                  "value": "<E911Order>\n  <CustomerOrderId>CustomOrderId1</CustomerOrderId>\n  <AdditionalAddresses>\n    <Address>\n      <LocationId>Some32CharacterOrLessString</LocationId>\n      <HouseNumber>901</HouseNumber>\n      <StreetName>MAIN CAMPUS</StreetName>\n      <StreetSuffix>DR</StreetSuffix>\n      <City>RALEIGH</City>\n      <StateCode>NC</StateCode>\n      <Zip>27606</Zip>\n      <PlusFour>5244</PlusFour>\n      <Country>United States</Country>\n      <Latitude>35.848359</Latitude>\n      <Longitude>-75.000000</Longitude>\n      <AddressType>E911</AddressType>\n    </Address>\n    <Address>\n      <LocationId>Some32CharacterOrLessString</LocationId>\n      <HouseNumber>645</HouseNumber>\n      <PreDirectional>E</PreDirectional>\n      <StreetName>MANCHESTER</StreetName>\n      <StreetSuffix>AVE</StreetSuffix>\n      <City>LOS ANGELES</City>\n      <StateCode>United States</StateCode>\n      <Zip>90001</Zip>\n      <Country>United States</Country>\n    </Address>\n  </AdditionalAddresses>\n</E911Order>"
+                },
+                "PidfloAddressProvisioning911Order": {
+                  "summary": "PIDF-LO. address-provisioning order",
+                  "value": "<E911Order>\n  <CustomerOrderId>CustomOrderId1</CustomerOrderId>\n  <AdditionalAddresses>\n    <Address>\n      <LocationId>Some32CharacterOrLessString</LocationId>\n      <HouseNumber>901</HouseNumber>\n      <StreetName>MAIN CAMPUS</StreetName>\n      <StreetSuffix>DR</StreetSuffix>\n      <City>RALEIGH</City>\n      <StateCode>NC</StateCode>\n      <Zip>27606</Zip>\n      <PlusFour>5244</PlusFour>\n      <Country>United States</Country>\n      <Latitude>35.848359</Latitude>\n      <Longitude>-75.000000</Longitude>\n      <AddressType>E911</AddressType>\n    </Address>\n    <Address>\n      <LocationId>Some32CharacterOrLessString</LocationId>\n      <HouseNumber>645</HouseNumber>\n      <PreDirectional>E</PreDirectional>\n      <StreetName>MANCHESTER</StreetName>\n      <StreetSuffix>AVE</StreetSuffix>\n      <City>LOS ANGELES</City>\n      <StateCode>United States</StateCode>\n      <Zip>90001</Zip>\n      <Country>United States</Country>\n    </Address>\n  </AdditionalAddresses>\n</E911Order>"
+                },
+                "PidfloAddressEditing911Order": {
+                  "summary": "PIDF-LO. address-editing order",
+                  "value": "<E911Order>\n  <AdditionalAddresses>\n    <Address>\n      <HouseNumber>645</HouseNumber>\n      <PreDirectional>E</PreDirectional>\n      <HouseSuffix>1/2</HouseSuffix>\n      <PostDirectional>S</PostDirectional>\n      <StreetName>Manchester</StreetName>\n      <StreetSuffix>AVE</StreetSuffix>\n      <AddressLine2>test address line 2</AddressLine2>\n      <City>Los Angeles</City>\n      <StateCode>CA</StateCode>\n      <Zip>90001</Zip>\n      <Latitude>35.848359</Latitude>\n      <Longitude>-75.000000</Longitude>\n      <LocationId>Some32CharacterOrLessString</LocationId>\n    </Address>\n  </AdditionalAddresses>\n</E911Order>"
+                },
+                "PidfloAddressDeleting911Order": {
+                  "summary": "PIDF-LO. address-deletion order",
+                  "value": "<E911Order>\n  <CustomerOrderId>CustomOrderId1</CustomerOrderId>\n  <AdditionalAddresses>\n    <Address>\n      <LocationId>Some32CharacterOrLessString1</LocationId>\n    </Address>\n    <Address>\n      <LocationId>Some32CharacterOrLessString1</LocationId>\n    </Address>\n  </AdditionalAddresses>\n  <DeleteTNSpecificE911Address>true</DeleteTNSpecificE911Address>\n</E911Order>"
+                },
+                "SimpleAeuiNonPidfloProvisioning911Order": {
+                  "summary": "SIMPLE AEUI. Non-PIDF-LO endpoint-provisioning order",
+                  "value": "<E911Order>\n  <CustomerOrderId>CustomOrderId1</CustomerOrderId>\n  <CallerName>OptionalCallerName</CallerName>\n  <Address>\n    <LocationId>Some32CharacterOrLessString</LocationId>\n    <HouseNumber>901</HouseNumber>\n    <StreetName>MAIN CAMPUS</StreetName>\n    <StreetSuffix>DR</StreetSuffix>\n    <City>RALEIGH</City>\n    <StateCode>NC</StateCode>\n    <Zip>27606</Zip>\n    <PlusFour>5244</PlusFour>\n    <Country>United States</Country>\n    <Latitude>35.848359</Latitude>\n    <Longitude>-75.000000</Longitude>\n    <AddressType>E911</AddressType>\n  </Address>\n  <AlternateEndUserIdentifiers>\n    <AlternateEndUserIdentifier>\n      <CallbackNumber>9706542333</CallbackNumber>\n      <Identifier>abc123</Identifier>\n      <PIDFLOEnabled>false</PIDFLOEnabled>\n    </AlternateEndUserIdentifier>\n  </AlternateEndUserIdentifiers>\n</E911Order>"
+                }
+              },
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ConventionalAddressProvisioningE911Order"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ConventionalAddressDeletionE911Order"
+                  },
+                  {
+                    "$ref": "#/components/schemas/PidfloAeuiWithAdditionalAddressWithoutLocationIdE911Order"
+                  },
+                  {
+                    "$ref": "#/components/schemas/PidfloAeuiWithAdditionalAddressWithLocationIdE911Order"
+                  },
+                  {
+                    "$ref": "#/components/schemas/PidfloAeuiWithLocationIdE911Order"
+                  },
+                  {
+                    "$ref": "#/components/schemas/PidfloAndSimpleAeuiMixedPidfloAeuiAndNonPidloAeuiProvisioning911Order"
+                  },
+                  {
+                    "$ref": "#/components/schemas/PidfloAndSimpleAeuiMixedPidfloAeuiAndNonPidloAeuiDeleting911Order"
+                  },
+                  {
+                    "$ref": "#/components/schemas/PidfloAddressProvisioning911Order"
+                  },
+                  {
+                    "$ref": "#/components/schemas/PidfloAddressEditing911Order"
+                  },
+                  {
+                    "$ref": "#/components/schemas/PidfloAddressDeleting911Order"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SimpleAeuiNonPidfloProvisioning911Order"
+                  }
+                ]
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
             "description": "Created - a 201 response indicates that an order has been created.",
@@ -4450,8 +4538,7 @@
               "application/xml": {
                 "examples": {
                   "example": {
-                    "description": "example",
-                    "value": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<E911OrderResponse>\n   <E911Order>\n      <CustomerOrderId>CustomOrderId1</CustomerOrderId>\n      <orderId>1d863522-c9bf-430c-8e79-cc63cad04a1d</orderId>\n      <ProcessingStatus>RECEIVED</ProcessingStatus>\n      <TelephoneNumbers>\n         <TelephoneNumber>9706542332</TelephoneNumber>\n         <TelephoneNumber>9706542333</TelephoneNumber>\n      </TelephoneNumbers>\n      <CallerName>CustomCallerName</CallerName>\n      <Address>\n         <HouseNumber>915</HouseNumber>\n         <HouseSuffix />\n         <PreDirectional />\n         <StreetName>Elm</StreetName>\n         <StreetSuffix>Ave</StreetSuffix>\n         <PostDirectional />\n         <AddressLine2 />\n         <City>Carpinteria</City>\n         <StateCode>CA</StateCode>\n         <Zip>93013</Zip>\n         <PlusFour />\n         <County />\n         <Country />\n         <Latitude>35.848359</Latitude>\n         <Longitude>-75.000000</Longitude>\n      </Address>\n   </E911Order>\n</E911OrderResponse>"
+                    "value": "<E911OrderResponse>\n   <E911Order>\n      <CustomerOrderId>CustomOrderId1</CustomerOrderId>\n      <orderId>1d863522-c9bf-430c-8e79-cc63cad04a1d</orderId>\n      <ProcessingStatus>RECEIVED</ProcessingStatus>\n      <TelephoneNumbers>\n         <TelephoneNumber>9706542332</TelephoneNumber>\n         <TelephoneNumber>9706542333</TelephoneNumber>\n      </TelephoneNumbers>\n      <CallerName>CustomCallerName</CallerName>\n      <Address>\n         <HouseNumber>915</HouseNumber>\n         <HouseSuffix />\n         <PreDirectional />\n         <StreetName>Elm</StreetName>\n         <StreetSuffix>Ave</StreetSuffix>\n         <PostDirectional />\n         <AddressLine2 />\n         <City>Carpinteria</City>\n         <StateCode>CA</StateCode>\n         <Zip>93013</Zip>\n         <PlusFour />\n         <County />\n         <Country />\n         <Latitude>35.848359</Latitude>\n         <Longitude>-75.000000</Longitude>\n      </Address>\n   </E911Order>\n</E911OrderResponse>"
                   }
                 },
                 "schema": {
@@ -4470,15 +4557,6 @@
                     "value": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<E911OrderResponse>\n   <ResponseStatus>\n      <ErrorCode>5070</ErrorCode>\n      <Description>Telephone number is invalid.</Description>\n   </ResponseStatus>\n</E911OrderResponse>"
                   }
                 }
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "content": {
-            "application/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/E911Order"
               }
             }
           }
@@ -7511,6 +7589,240 @@
           },
           "404": {
             "description": "A 404 indicates that the indicated file was not found in conjunction with the order id.cd"
+          }
+        }
+      }
+    },
+    "/accounts/{accountId}/importTnOrders/voice": {
+      "get": {
+        "tags": [
+          "/accounts"
+        ],
+        "description": "Retrieves the ImportVoiceTnOrder requests for the given account ID. A maximum of 1,000 orders can be retrieved per request. If no date range or specific query parameter (marked by <b class=\"required\">*</b> below) is provided, the order results will be limited to the last two years.\n",
+        "summary": "List Import Voice Tn orders",
+        "operationId": "ReadImportVoiceTnOrders",
+        "parameters": [
+          {
+            "$ref": "#/components/schemas/AccountIdPathParam"
+          },
+          {
+            "$ref": "#/components/schemas/StatusQueryParam"
+          },
+          {
+            "name": "tn",
+            "description": "A Telephone Number (TN) that is referenced in the order",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "9199918388"
+          },
+          {
+            "name": "customerOrderId",
+            "description": "The Customer Order ID is an ID assigned by the account owner to provide a reference number for the importVoiceTnOrder.",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "ABCCorp12345"
+          },
+          {
+            "name": "createdDateFrom",
+            "description": "Checks the order's creation date against this value. Orders that have a creation date after this date will be included. Format is yyyy-MM-dd",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "2013-10-22"
+          },
+          {
+            "name": "createdDateTo",
+            "description": "Checks the order's creation date against this value. Orders that have a creation date before this date will be included. Format is yyyy-MM-dd",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "2013-10-25"
+          },
+          {
+            "name": "modifiedDateFrom",
+            "description": "For Date-based searches, the starting date of a date range (inclusive) that will be used to find Import Tn Orders that were modified within the date range. It is in the form yyyy-MM-dd.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "2013-10-22"
+          },
+          {
+            "name": "modifiedDateTo",
+            "description": "For Date-based searches, the ending date of a date range (inclusive) that will be used to find Import Tn Orders that were modified within the date range. It is in the form yyyy-MM-dd.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "2013-10-25"
+          },
+          {
+            "name": "sipPeerId",
+            "description": "A Sip Peer Id that is referenced in the order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            },
+            "example": "50139"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The descriptive payload for the importVoiceTnOrders query provides information about the orders found by the query, including the data associated with the order, the state of the order, and a list of the successfully imported Telephone Numbers, and descriptions of any encountered errors.",
+            "content": {
+              "application/xml": {
+                "examples": {
+                  "example": {
+                    "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ImportVoiceTnOrders>\n   <TotalCount>2</TotalCount>\n   <ImportVoiceTnOrderSummary>\n      <accountId>14</accountId>\n      <CountOfTNs>1</CountOfTNs>\n      <CustomerOrderId>CustomerOrderId</CustomerOrderId>\n      <userId>systemUser</userId>\n      <lastModifiedDate>2019-01-24T11:08:09.770Z</lastModifiedDate>\n      <OrderDate>2019-01-24T11:08:09.770Z</OrderDate>\n      <OrderType>import_voice_tn_orders</OrderType>\n      <OrderStatus>COMPLETE</OrderStatus>\n      <OrderId>211a103c-5f9c-4117-8833-c574bdc390fd</OrderId>\n   </ImportVoiceTnOrderSummary>\n   <ImportVoiceTnOrderSummary>\n      <accountId>14</accountId>\n      <CountOfTNs>2</CountOfTNs>\n      <CustomerOrderId>CustomerOrderId</CustomerOrderId>\n      <userId>systemUser</userId>\n      <lastModifiedDate>2019-01-24T10:43:16.934Z</lastModifiedDate>\n      <OrderDate>2019-01-24T10:43:16.934Z</OrderDate>\n      <OrderType>import_voice_tn_orders</OrderType>\n      <OrderStatus>PARTIAL</OrderStatus>\n      <OrderId>8dc32f09-2329-4c73-b702-526f46b02712</OrderId>\n   </ImportVoiceTnOrderSummary>\n</ImportVoiceTnOrders>\n"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ImportVoiceTnOrdersResponseList"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "/accounts"
+        ],
+        "description": "Creates an ImportVoiceTnOrders request to add numbers under the given site ID and sipPeer ID as specified in the body.\nA successfully submitted order will have a status of \"RECEIVED\". A successfully completed order will have a status of \"COMPLETE\" if all of the telephone numbers were successfully imported and  \"PARTIAL\" if some of the telephone numbers were imported. A failed order with will have a staus of \"FAILED\" and no telephone numbers would have been imported.",
+        "summary": "Import Voice Tn order",
+        "operationId": "CreateVoiceImportTnOrder",
+        "parameters": [
+          {
+            "$ref": "#/components/schemas/AccountIdPathParam"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportVoiceTnOrderRequest"
+              },
+              "examples": {
+                "example": {
+                  "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ImportVoiceTnOrder>\n   <CustomerOrderID>ICPA123ABC</CustomerOrderID>\n   <SiteId>743</SiteId>\n   <SipPeerId>303716</SipPeerId>\n   <TelephoneNumbers>\n      <TelephoneNumber>9199918388</TelephoneNumber>\n      <TelephoneNumber>4158714245</TelephoneNumber>\n      <TelephoneNumber>4352154439</TelephoneNumber>\n      <TelephoneNumber>4352154466</TelephoneNumber>\n   </TelephoneNumbers>\n</ImportVoiceTnOrder>\n"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The order has been created and an order ID will be specified in the payload and in the header.",
+            "content": {
+              "application/xml": {
+                "examples": {
+                  "example": {
+                    "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ImportVoiceTnOrderResponse>\n   <ImportVoiceTnOrder>\n      <CustomerOrderId>SJM000001</CustomerOrderId>\n      <OrderCreateDate>2018-01-20T02:59:54.000Z</OrderCreateDate>\n      <AccountId>9900012</AccountId>\n      <CreatedByUser>smckinnon</CreatedByUser>\n      <OrderId>b05de7e6-0cab-4c83-81bb-9379cba8efd0</OrderId>\n      <LastModifiedDate>2018-01-20T02:59:54.000Z</LastModifiedDate>\n      <SiteId>202</SiteId>\n      <SipPeerId>520565</SipPeerId>\n      <TelephoneNumbers>\n         <TelephoneNumber>9199918388</TelephoneNumber>\n         <TelephoneNumber>4158714245</TelephoneNumber>\n         <TelephoneNumber>4352154439</TelephoneNumber>\n         <TelephoneNumber>4352154466</TelephoneNumber>\n      </TelephoneNumbers>\n      <ProcessingStatus>PROCESSING</ProcessingStatus>\n      <Errors/>\n   </ImportVoiceTnOrder>\n</ImportVoiceTnOrderResponse>\n"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ImportVoiceTnOrderResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The order failed; one of the input parameters is invalid. The error text and an error code will be provided in the ErrorList element.</p> <table cellspacing=\"0\" cellpadding=\"0\" width=\"624\">\n        <tbody>\n            <tr>\n                <td valign=\"top\">\n                    <p>\n                        <strong>ErrorCode</strong>\n                    </p>\n                </td>\n                <td valign=\"top\">\n                    <p>\n                        <strong>Description</strong>\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td valign=\"top\">\n                    <p>\n                        25010\n                    </p>\n                </td>\n                <td valign=\"top\">\n                    <p align=\"left\">\n                        The account does not have permission to use the endpoint requested, please contact support if you believe you should have permission.\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td valign=\"top\">\n                    <p>\n                        5052\n                    </p>\n                </td>\n                <td valign=\"top\">\n                    <p align=\"left\">\n                        Customer order ID is invalid. Only alphanumeric values, dashes and spaces are allowed. Max length is 255 characters.\n                </td>\n            </tr>\n            <tr>\n                <td valign=\"top\">\n                    <p>\n                        1003\n                    </p>\n                </td>\n                <td valign=\"top\">\n                    <p align=\"left\">\n                        SiteId is required.\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td valign=\"top\">\n                    <p>\n                        5073\n                    </p>\n                </td>\n                <td valign=\"top\">\n                    <p align=\"left\">\n                        Telephone number is required.\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td valign=\"top\">\n                    <p>\n                        5095\n                    </p>\n                </td>\n                <td valign=\"top\">\n                    <p align=\"left\">\n                        The count of telephone numbers in order exceeds the maximum size of 5000.\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td valign=\"top\">\n                    <p>\n                        1003\n                    </p>\n                </td>\n                <td valign=\"top\">\n                    <p align=\"left\">\n                        TelephoneNumbers is required.\n                </td>\n            </tr>\n            <tr>\n                <td valign=\"top\">\n                    <p>\n                        5070\n                    </p>\n                </td>\n                <td valign=\"top\">\n                    <p align=\"left\">\n                        Telephone number is invalid.\n                </td>\n            </tr>\n            <tr>\n                <td valign=\"top\">\n                    <p>\n                        5093\n                    </p>\n                </td>\n                <td valign=\"top\">\n                    <p align=\"left\">\n                        Order cannot contain duplicate telephone numbers.\n                </td>\n            </tr>            \n        </tbody>\n    </table>",
+            "content": {
+              "application/xml": {
+                "examples": {
+                  "example": {
+                    "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ImportVoiceTnOrderResponse>\n   <ProcessingStatus>FAILED</ProcessingStatus>\n   <Errors>\n      <Code>7309</Code>\n      <Description>The site id was not supplied or is invalid.</Description>\n   </Errors>\n   <Errors>\n      <Code>7312</Code>\n      <Description>The sippeer id is invalid.</Description>\n   </Errors>\n</ImportVoiceTnOrderResponse>\n"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ImportVoiceTnOrderError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/{accountId}/importTnOrders/voice/{orderId}": {
+      "get": {
+        "tags": [
+          "/accounts"
+        ],
+        "description": "Retrieve information about a importVoiceTnOrder with specified ID.",
+        "summary": "Fetch Import Voice Tn order status",
+        "operationId": "ReadImportVoiceTnOrder",
+        "parameters": [
+          {
+            "$ref": "#/components/schemas/AccountIdPathParam"
+          },
+          {
+            "$ref": "#/components/schemas/OrderIdPathParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The information has been successfully retrieved and displayed in the payload. <table cellspacing=\"0\" cellpadding=\"0\" width=\"624\">\n        <tbody>\n            <tr>\n                <td valign=\"top\">\n                    <p>\n                        <strong>ErrorCode</strong>\n                    </p>\n                </td>\n                <td valign=\"top\">\n                    <p>\n                        <strong>Description</strong>\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td valign=\"top\">\n                    <p>\n                        19014\n                    </p>\n                </td>\n                <td valign=\"top\">\n                    <p align=\"left\">\n                        Numbers cannot be imported by this account at this time.\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td valign=\"top\">\n                    <p>\n                        5061\n                    </p>\n                </td>\n                <td valign=\"top\">\n                    <p align=\"left\">\n                        The SiteId submitted is invalid.\n                </td>\n            </tr>\n            <tr>\n                <td valign=\"top\">\n                    <p>\n                        5023\n                    </p>\n                </td>\n                <td valign=\"top\">\n                    <p align=\"left\">\n                        SIP peer submitted is invalid.\n                    </p>\n                </td>\n            </tr>            \n        </tbody>\n    </table>",
+            "content": {
+              "application/xml": {
+                "examples": {
+                  "example": {
+                    "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ImportVoiceTnOrder>\n   <OrderCreateDate>2018-01-09T02:58:04.615Z</OrderCreateDate>\n   <AccountId>9900012</AccountId>\n   <CreatedByUser>sjm</CreatedByUser>\n   <OrderId>bf1305b8-8998-1111-2222-51ba3ce52d4e</OrderId>\n   <LastModifiedDate>2018-01-09T02:58:05.298Z</LastModifiedDate>\n   <SiteId>65487</SiteId>\n   <SipPeerId>885544</SipPeerId>\n   <TelephoneNumbers>\n      <TelephoneNumber>2106078250</TelephoneNumber>\n      <TelephoneNumber>2109678273</TelephoneNumber>\n      <TelephoneNumber>2109678331</TelephoneNumber>\n      <TelephoneNumber>2109678337</TelephoneNumber>\n      <TelephoneNumber>2266401468</TelephoneNumber>\n      </TelephoneNumbers>\n   <ProcessingStatus>PARTIAL</ProcessingStatus>\n   <Errors>\n      <Error>\n         <Code>7518</Code>\n         <Description>Telephone Number Not Active.</Description>\n         <TelephoneNumbers>\n            <TelephoneNumber>2262665583</TelephoneNumber>\n         </TelephoneNumbers>\n      </Error>\n   </Errors>\n</ImportTnOrder>\n"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ImportVoiceTnOrderResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/{accountId}/importTnOrders/voice/{orderId}/history": {
+      "get": {
+        "tags": [
+          "/accounts"
+        ],
+        "description": "Retrieves the history of the specified importVoiceTnOrder.",
+        "summary": "Fetch Import Voice Tn order history",
+        "operationId": "ReadImportVoiceTnOrderHistory",
+        "parameters": [
+          {
+            "$ref": "#/components/schemas/AccountIdPathParam"
+          },
+          {
+            "$ref": "#/components/schemas/OrderIdPathParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The history has been successfully retrieved and displayed in the payload.",
+            "content": {
+              "application/xml": {
+                "examples": {
+                  "example": {
+                    "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<OrderHistoryWrapper>\n   <OrderHistory>\n      <OrderDate>2015-06-16T14:03:10.225Z</OrderDate>\n      <Note>Import Voice TN order is received.</Note>\n      <Author>admin</Author>\n      <Status>RECEIVED</Status>\n      </OrderHistory>\n      <OrderHistory>\n      <OrderDate>2015-06-16T14:03:10.330Z</OrderDate>\n      <Note>Import TN order is processing.</Note>\n      <Author>admin</Author>\n      <Status>PROCESSING</Status>\n   </OrderHistory>\n   <OrderHistory>\n      <OrderDate>2015-06-16T14:03:10.789Z</OrderDate>\n      <Note>Import Voice TN order is partial.</Note>\n      <Author>admin</Author>\n      <Status>PARTIAL</Status>\n   </OrderHistory>\n</OrderHistoryWrapper>\n"
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/OrderHistoryWrapper"
+                }
+              }
+            }
           }
         }
       }
@@ -13073,6 +13385,227 @@
         }
       }
     },
+    "/accounts/{accountId}/removeImportedTnOrders/voice": {
+      "get": {
+        "tags": [
+          "/accounts"
+        ],
+        "description": "Retrieves the Remove Imported Voice Tn Orders requests for the given account ID.\nA maximum of 1,000 orders can be retrieved per request. If no date range or specific query parameter as required is provided, the order results will be limited to the last two years.",
+        "summary": "List Remove Imported Voice Tn Orders",
+        "operationId": "ListRemoveImportedVoiceTnOrders",
+        "parameters": [
+          {
+            "$ref": "#/components/schemas/AccountIdPathParam"
+          },
+          {
+            "$ref": "#/components/schemas/StatusQueryParam"
+          },
+          {
+            "name": "tn",
+            "description": "A Telephone Number (TN) that is referenced in the order",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "9199918388"
+          },
+          {
+            "name": "customerOrderId",
+            "description": "The Customer Order Id is an Id assigned by the account owner to provide a reference number for the Remove Imported Tn Order",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "ABCCorp12345"
+          },
+          {
+            "name": "createdDateFrom",
+            "description": "Checks the order's creation date against this value. Orders that have a creation date after this date will be included. Format is yyyy-MM-dd",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "2022-04-19"
+          },
+          {
+            "name": "createdDateTo",
+            "description": "Checks the order's creation date against this value. Orders that have a creation date before this date will be included. Format is yyyy-MM-dd",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "2022-04-19"
+          },
+          {
+            "name": "modifiedDateFrom",
+            "description": "For Date-based searches, the starting date of a date range (inclusive) that will be used to find Remove Imported Voice Tn Orders that were modified within the date range. It is in the form yyyy-MM-dd",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "2022-04-19"
+          },
+          {
+            "name": "modifiedDateTo",
+            "description": "For Date-based searches, the ending date of a date range (inclusive) that will be used to find Remove Imported Voice Tn Orders that were modified within the date range. It is in the form yyyy-MM-dd",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "2022-04-19"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The descriptive payload for the Remove Imported Voice Tn Orders query provides information about the orders found by the query, including the data associated with the order, the state of the order, and a list of the successfully removed Telephone Numbers, and descriptions of any encountered errors",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/RemoveImportedVoiceTnOrders"
+                },
+                "examples": {
+                  "example": {
+                    "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<RemoveImportedVoiceTnOrders>\n   <TotalCount>2</TotalCount>\n   <RemoveImportedVoiceTnOrderSummary>\n      <accountId>14</accountId>\n      <CountOfTNs>1</CountOfTNs>\n      <CustomerOrderId>DemoOrder</CustomerOrderId>\n      <userId>systemUser</userId>\n      <lastModifiedDate>2019-01-24T10:40:12.908Z</lastModifiedDate>\n      <OrderDate>2019-01-24T10:40:12.907Z</OrderDate>\n      <OrderType>remove_imported_voice_tn_orders</OrderType>\n      <OrderStatus>COMPLETE</OrderStatus>\n      <OrderId>4f2d090b-ece7-49ab-9c40-06d1425c39c3</OrderId>\n   </RemoveImportedVoiceTnOrderSummary>\n   <RemoveImportedVoiceTnOrderSummary>\n      <accountId>14</accountId>\n      <CountOfTNs>1</CountOfTNs>\n      <CustomerOrderId>DemoOrder</CustomerOrderId>\n      <userId>systemUser</userId>\n      <lastModifiedDate>2019-01-24T09:38:24.028Z</lastModifiedDate>\n      <OrderDate>2019-01-24T09:38:24.028Z</OrderDate>\n      <OrderType>remove_imported_voice_tn_orders</OrderType>\n      <OrderStatus>PARTIAL</OrderStatus>\n      <OrderId>ca30ea6a-018a-4cae-9d49-3d419fefdbe3</OrderId>\n   </RemoveImportedVoiceTnOrderSummary>\n</RemoveImportedVoiceTnOrders>"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "/accounts"
+        ],
+        "description": "Creates a Remove Imported Voice Tn Orders request to remove imported telephone numbers from the given site ID and sippeer ID as specified in the body. A successfully submitted order will have a status of \"PROCESSING\". A successfully completed order will have a status of \"COMPLETE\" if all of the telephone numbers were successfully removed and  \"PARTIAL\" if some of the telephone numbers were removed. A failed order with will have a status of \"FAILED\" and no telephone numbers would have been removed",
+        "summary": "Create Remove Imported Voice Tn Order",
+        "operationId": "CreateRemoveImportedVoiceTnOrder",
+        "parameters": [
+          {
+            "$ref": "#/components/schemas/AccountIdPathParam"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/RemoveImportedVoiceTnOrderRequest"
+              },
+              "examples": {
+                "example": {
+                  "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<RemoveImportedVoiceTnOrder>\n   <CustomerOrderId>ICPA123ABC</CustomerOrderId>\n   <TelephoneNumbers>\n      <TelephoneNumber>9199918388</TelephoneNumber>\n      <TelephoneNumber>4158714245</TelephoneNumber>\n      <TelephoneNumber>4352154439</TelephoneNumber>\n      <TelephoneNumber>4352154466</TelephoneNumber>\n   </TelephoneNumbers>\n</RemoveImportedVoiceTnOrder>"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The order has been created and an order ID will be specified in the payload and in the header",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/RemoveImportedVoiceTnOrderResponse"
+                },
+                "examples": {
+                  "example": {
+                    "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<RemoveImportedVoiceTnOrderResponse>\n   <RemoveImportedVoiceTnOrder>\n      <CustomerOrderId>SJM000001</CustomerOrderId>\n      <OrderCreateDate>2018-01-20T02:59:54.000Z</OrderCreateDate>\n      <AccountId>9900012</AccountId>\n      <CreatedByUser>smckinnon</CreatedByUser>\n      <OrderId>b05de7e6-0cab-4c83-81bb-9379cba8efd0</OrderId>\n      <LastModifiedDate>2018-01-20T02:59:54.000Z</LastModifiedDate>\n      <TelephoneNumbers>\n         <TelephoneNumber>9199918388</TelephoneNumber>\n         <TelephoneNumber>4158714245</TelephoneNumber>\n         <TelephoneNumber>4352154439</TelephoneNumber>\n         <TelephoneNumber>4352154466</TelephoneNumber>\n      </TelephoneNumbers>\n      <ProcessingStatus>PROCESSING</ProcessingStatus>\n      <Errors />\n   </RemoveImportedVoiceTnOrder>\n</RemoveImportedVoiceTnOrderResponse>"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The order failed. One of the input parameters is invalid. The error text and an error code will be provided in the ErrorList element. <table cellspacing=\"0\" cellpadding=\"0\" width=\"624\">\n        <tbody>\n            <tr>\n                <td valign=\"top\">\n                    <p>\n                        <strong>ErrorCode</strong>\n                    </p>\n                </td>\n                <td valign=\"top\">\n                    <p>\n                        <strong>Description</strong>\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td valign=\"top\">\n                    <p>\n                        25010\n                    </p>\n                </td>\n                <td valign=\"top\">\n                    <p align=\"left\">\n                        The account does not have permission to use the endpoint requested, please contact support if you believe you should have permission.\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td valign=\"top\">\n                    <p>\n                        5052\n                    </p>\n                </td>\n                <td valign=\"top\">\n                    <p align=\"left\">\n                        Customer order ID is invalid. Only alphanumeric values, dashes and spaces are allowed. Max length is 255 characters.\n                </td>\n            </tr>\n            <tr>\n                <td valign=\"top\">\n                    <p>\n                        5073\n                    </p>\n                </td>\n                <td valign=\"top\">\n                    <p align=\"left\">\n                        Telephone number is required.\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td valign=\"top\">\n                    <p>\n                        5095\n                    </p>\n                </td>\n                <td valign=\"top\">\n                    <p align=\"left\">\n                        The count of telephone numbers in order exceeds the maximum size of 5000.\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td valign=\"top\">\n                    <p>\n                        1003\n                    </p>\n                </td>\n                <td valign=\"top\">\n                    <p align=\"left\">\n                        TelephoneNumbers is required.\n                </td>\n            </tr>\n            <tr>\n                <td valign=\"top\">\n                    <p>\n                        5070\n                    </p>\n                </td>\n                <td valign=\"top\">\n                    <p align=\"left\">\n                        Telephone number is invalid.\n                </td>\n            </tr>\n            <tr>\n                <td valign=\"top\">\n                    <p>\n                        5093\n                    </p>\n                </td>\n                <td valign=\"top\">\n                    <p align=\"left\">\n                        Order cannot contain duplicate telephone numbers.\n                </td>\n            </tr>            \n        </tbody>\n    </table>\n\n",
+            "content": {
+              "application/xml": {
+                "examples": {
+                  "example": {
+                    "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<RemoveImportedVoiceTnOrderResponse>\n   <ProcessingStatus>FAILED</ProcessingStatus>\n   <Errors>\n      <Code>1234</Code>\n      <Description>The customer order id is invalid.</Description>\n   </Errors>\n</RemoveImportedVoiceTnOrderResponse>"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/{accountId}/removeImportedTnOrders/voice/{orderId}": {
+      "get": {
+        "tags": [
+          "/accounts"
+        ],
+        "description": "Retrieve information about a removeImportedVoiceTnOrder with specified ID",
+        "summary": "Retrieve Remove Imported Voice Tn Order",
+        "operationId": "RetrieveRemoveImportedVoiceTnOrder",
+        "parameters": [
+          {
+            "$ref": "#/components/schemas/AccountIdPathParam"
+          },
+          {
+            "$ref": "#/components/schemas/OrderIdPathParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The information has been successfully retrieved and displayed in the payload. <table cellspacing=\"0\" cellpadding=\"0\" width=\"624\">\n        <tbody>\n            <tr>\n                <td valign=\"top\">\n                    <p>\n                        <strong>ErrorCode</strong>\n                    </p>\n                </td>\n                <td valign=\"top\">\n                    <p>\n                        <strong>Description</strong>\n                    </p>\n                </td>\n            </tr>\n            <tr>\n                <td valign=\"top\">\n                    <p>\n                        5158\n                    </p>\n                </td>\n                <td valign=\"left\">\n                    <p align=\"\">\n                        Telephone number hasn't been previously imported.\n                    </p>\n                </td>\n            </tr>           \n        </tbody>\n    </table>\n",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/RemoveImportedVoiceTnOrderResponse"
+                },
+                "examples": {
+                  "example": {
+                    "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<RemoveImportedVoiceTnOrder>\n   <OrderCreateDate>2018-01-09T02:58:04.615Z</OrderCreateDate>\n   <AccountId>9900012</AccountId>\n   <CreatedByUser>sjm</CreatedByUser>\n   <OrderId>bf1305b8-8998-1111-2222-51ba3ce52d4e</OrderId>\n   <LastModifiedDate>2018-01-09T02:58:05.298Z</LastModifiedDate>\n   <TelephoneNumbers>\n      <TelephoneNumber>2106078250</TelephoneNumber>\n      <TelephoneNumber>2109678273</TelephoneNumber>\n      <TelephoneNumber>2109678331</TelephoneNumber>\n      <TelephoneNumber>2109678337</TelephoneNumber>\n      <TelephoneNumber>2266401468</TelephoneNumber>\n   </TelephoneNumbers>\n   <ProcessingStatus>PARTIAL</ProcessingStatus>\n   <Errors>\n      <Error>\n         <Code>7518</Code>\n         <Description>Telephone Number Not Active.</Description>\n         <TelephoneNumbers>\n            <TelephoneNumber>2262665583</TelephoneNumber>\n         </TelephoneNumbers>\n      </Error>\n   </Errors>\n</RemoveVoiceImportedTnOrder>"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/{accountId}/removeImportedTnOrders/voice/{orderId}/history": {
+      "get": {
+        "tags": [
+          "/accounts"
+        ],
+        "description": "Retrieves the history of the specified Remove Imported Voice Tn Order",
+        "summary": "Retrieve Remove Imported Voice Tn Order history",
+        "operationId": "RetrieveRemoveImportedVoiceTnOrderHistory",
+        "parameters": [
+          {
+            "$ref": "#/components/schemas/AccountIdPathParam"
+          },
+          {
+            "$ref": "#/components/schemas/OrderIdPathParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The history has been successfully retrieved and displayed in the payload",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderHistoryWrapper"
+                },
+                "examples": {
+                  "example": {
+                    "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<OrderHistoryWrapper>\n   <OrderHistory>\n      <OrderDate>2015-06-16T14:03:10.225Z</OrderDate>\n      <Note>Remove Imported Voice TN order is received.</Note>\n      <Author>admin</Author>\n      <Status>RECEIVED</Status>\n   </OrderHistory>\n   <OrderHistory>\n      <OrderDate>2015-06-16T14:03:10.330Z</OrderDate>\n      <Note>Remove Imported TN order is processing.</Note>\n      <Author>admin</Author>\n      <Status>PROCESSING</Status>\n   </OrderHistory>\n   <OrderHistory>\n      <OrderDate>2015-06-16T14:03:10.789Z</OrderDate>\n      <Note>Remove Imported Voice TN order is partial.</Note>\n      <Author>admin</Author>\n      <Status>PARTIAL</Status>\n   </OrderHistory>\n</OrderHistoryWrapper>"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/accounts/{accountId}/reports": {
       "get": {
         "tags": [
@@ -13487,10 +14020,10 @@
             "description": "Successful retrieval of report output. Link to download the file provided in the Location header",
             "headers": {
               "Location": {
-                  "description": "The URL for downloading the file",
-                  "schema": {
-                      "type": "string"
-                  }
+                "description": "The URL for downloading the file",
+                "schema": {
+                  "type": "string"
+                }
               }
             }
           },
@@ -21562,6 +22095,812 @@
           }
         }
       },
+      "CustomerOrderIdE911": {
+        "title": "CustomerOrderId",
+        "description": "The Customer Order ID is an ID assigned by the account owner to provide a reference number for the Order. The element is optional. Only alphanumeric values, dashes and spaces are allowed. Max length is 40 characters",
+        "type": "string",
+        "maxLength": 40
+      },
+      "CallerNameE911": {
+        "title": "CallerName",
+        "description": "CallerName that will be linked to TNs. This field is required in the case of a new address assignment",
+        "type": "string",
+        "maxLength": 50
+      },
+      "DeleteTNSpecificE911Address": {
+        "description": "DeleteTNSpecificE911Address is required and must be set to `true`.",
+        "type": "string"
+      },
+      "ConventionalAddressProvisioningE911Order": {
+        "title": "CONVENTIONAL E911. TN/Address-provisioning order",
+        "type": "object",
+        "properties": {
+          "E911Order": {
+            "type": "object",
+            "properties": {
+              "TelephoneNumbers": {
+                "description": "A list of telephone numbers you need link to the street address",
+                "type": "array",
+                "items": {
+                  "title": "TelephoneNumber",
+                  "properties": {
+                    "TelephoneNumber": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "TelephoneNumber"
+                  ]
+                }
+              },
+              "CallerName": {
+                "$ref": "#/components/schemas/CallerNameE911"
+              },
+              "Address": {
+                "type": "object",
+                "properties": {
+                  "HouseNumber": {
+                    "type": "string"
+                  },
+                  "HouseSuffix": {
+                    "type": "string"
+                  },
+                  "PreDirectional": {
+                    "type": "string"
+                  },
+                  "StreetName": {
+                    "type": "string"
+                  },
+                  "StreetSuffix": {
+                    "type": "string"
+                  },
+                  "PostDirectional": {
+                    "type": "string"
+                  },
+                  "AddressLine2": {
+                    "type": "string"
+                  },
+                  "City": {
+                    "type": "string"
+                  },
+                  "StateCode": {
+                    "type": "string"
+                  },
+                  "Zip": {
+                    "type": "string"
+                  },
+                  "PlusFour": {
+                    "type": "string"
+                  },
+                  "County": {
+                    "type": "string"
+                  },
+                  "Country": {
+                    "type": "string"
+                  },
+                  "AddressType": {
+                    "type": "string"
+                  },
+                  "Latitude": {
+                    "type": "string"
+                  },
+                  "Longitude": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "required": [
+              "Address",
+              "TelephoneNumbers"
+            ]
+          }
+        }
+      },
+      "ConventionalAddressDeletionE911Order": {
+        "title": "CONVENTIONAL E911. TN/Address-deletion order",
+        "type": "object",
+        "properties": {
+          "E911Order": {
+            "type": "object",
+            "properties": {
+              "CustomerOrderId": {
+                "$ref": "#/components/schemas/CustomerOrderIdE911"
+              },
+              "TelephoneNumbers": {
+                "title": "TelephoneNumber",
+                "description": "A list of telephone numbers you need unlink from the street address",
+                "type": "array",
+                "items": {
+                  "properties": {
+                    "TelephoneNumber": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "TelephoneNumber"
+                  ]
+                }
+              },
+              "DeleteTNSpecificE911Address": {
+                "$ref": "#/components/schemas/DeleteTNSpecificE911Address"
+              }
+            },
+            "required": [
+              "TelephoneNumbers",
+              "DeleteTNSpecificE911Address"
+            ]
+          }
+        }
+      },
+      "PidfloAeuiWithAdditionalAddressWithoutLocationIdE911Order": {
+        "title": "PIDF-LO AEUI. Endpoint-provisioning order with additional address provisioning and without pre-defined location id",
+        "type": "object",
+        "properties": {
+          "E911Order": {
+            "type": "object",
+            "properties": {
+              "CustomerOrderId": {
+                "$ref": "#/components/schemas/CustomerOrderIdE911"
+              },
+              "Address": {
+                "type": "object",
+                "properties": {
+                  "HouseNumber": {
+                    "type": "string"
+                  },
+                  "StreetName": {
+                    "type": "string"
+                  },
+                  "StreetSuffix": {
+                    "type": "string"
+                  },
+                  "City": {
+                    "type": "string"
+                  },
+                  "StateCode": {
+                    "type": "string"
+                  },
+                  "Zip": {
+                    "type": "string"
+                  },
+                  "PlusFour": {
+                    "type": "string"
+                  },
+                  "Country": {
+                    "type": "string"
+                  },
+                  "Latitude": {
+                    "type": "string"
+                  },
+                  "Longitude": {
+                    "type": "string"
+                  },
+                  "AddressType": {
+                    "type": "string"
+                  }
+                }
+              },
+              "AlternateEndUserIdentifiers": {
+                "type": "array",
+                "items": {
+                  "title": "AlternateEndUserIdentifier",
+                  "properties": {
+                    "AlternateEndUserIdentifier": {
+                      "type": "object",
+                      "properties": {
+                        "CallerName": {
+                          "$ref": "#/components/schemas/CallerNameE911"
+                        },
+                        "CallbackNumber": {
+                          "type": "string"
+                        },
+                        "Identifier": {
+                          "type": "string",
+                          "minItems": 1,
+                          "maxLength": 30
+                        },
+                        "PIDFLOEnabled": {
+                          "description": "PIDFLOEnabled is required and must be 'true'.",
+                          "type": "string"
+                        },
+                        "PreferredLanguage": {
+                          "type": "string",
+                          "default": "en"
+                        }
+                      },
+                      "required": [
+                        "Identifier",
+                        "PIDFLOEnabled"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "AlternateEndUserIdentifier"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "AlternateEndUserIdentifiers",
+              "Address"
+            ]
+          }
+        }
+      },
+      "PidfloAeuiWithAdditionalAddressWithLocationIdE911Order": {
+        "title": "PIDF-LO. AEUI endpoint-provisioning order with additional address provisioning and with pre-defined location id",
+        "type": "object",
+        "properties": {
+          "E911Order": {
+            "type": "object",
+            "properties": {
+              "CustomerOrderId": {
+                "$ref": "#/components/schemas/CustomerOrderIdE911"
+              },
+              "Address": {
+                "type": "object",
+                "properties": {
+                  "LocationId": {
+                    "type": "string"
+                  },
+                  "HouseNumber": {
+                    "type": "string"
+                  },
+                  "StreetName": {
+                    "type": "string"
+                  },
+                  "StreetSuffix": {
+                    "type": "string"
+                  },
+                  "City": {
+                    "type": "string"
+                  },
+                  "StateCode": {
+                    "type": "string"
+                  },
+                  "Zip": {
+                    "type": "string"
+                  },
+                  "PlusFour": {
+                    "type": "string"
+                  },
+                  "Country": {
+                    "type": "string"
+                  },
+                  "Latitude": {
+                    "type": "string"
+                  },
+                  "Longitude": {
+                    "type": "string"
+                  },
+                  "AddressType": {
+                    "type": "string"
+                  }
+                }
+              },
+              "AlternateEndUserIdentifiers": {
+                "type": "array",
+                "items": {
+                  "properties": {
+                    "AlternateEndUserIdentifier": {
+                      "type": "object",
+                      "properties": {
+                        "CallerName": {
+                          "$ref": "#/components/schemas/CallerNameE911"
+                        },
+                        "CallbackNumber": {
+                          "type": "string"
+                        },
+                        "Identifier": {
+                          "type": "string",
+                          "minItems": 1,
+                          "maxLength": 30
+                        },
+                        "PIDFLOEnabled": {
+                          "description": "PIDFLOEnabled is required and must be 'true'.",
+                          "type": "string"
+                        },
+                        "PreferredLanguage": {
+                          "type": "string",
+                          "default": "en"
+                        }
+                      },
+                      "required": [
+                        "Identifier",
+                        "PIDFLOEnabled"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "AlternateEndUserIdentifier"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "AlternateEndUserIdentifiers",
+              "Address"
+            ]
+          }
+        }
+      },
+      "PidfloAeuiWithLocationIdE911Order": {
+        "title": "PIDF-LO. AEUI endpoint-provisioning order with provisioned location id",
+        "type": "object",
+        "properties": {
+          "E911Order": {
+            "type": "object",
+            "properties": {
+              "CustomerOrderId": {
+                "$ref": "#/components/schemas/CustomerOrderIdE911"
+              },
+              "AlternateEndUserIdentifiers": {
+                "type": "array",
+                "items": {
+                  "properties": {
+                    "AlternateEndUserIdentifier": {
+                      "type": "object",
+                      "properties": {
+                        "CallerName": {
+                          "$ref": "#/components/schemas/CallerNameE911"
+                        },
+                        "LocationId": {
+                          "type": "string"
+                        },
+                        "CallbackNumber": {
+                          "type": "string"
+                        },
+                        "Identifier": {
+                          "type": "string",
+                          "minItems": 1,
+                          "maxLength": 30
+                        },
+                        "PIDFLOEnabled": {
+                          "description": "PIDFLOEnabled is required and must be 'true'.",
+                          "type": "string"
+                        },
+                        "PreferredLanguage": {
+                          "type": "string",
+                          "default": "en"
+                        }
+                      },
+                      "required": [
+                        "LocationId",
+                        "Identifier",
+                        "PIDFLOEnabled"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "AlternateEndUserIdentifier"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "AlternateEndUserIdentifiers"
+            ]
+          }
+        }
+      },
+      "PidfloAndSimpleAeuiMixedPidfloAeuiAndNonPidloAeuiProvisioning911Order": {
+        "title": "PIDF-LO and SIMPLE AEUI. Mixed PIDF-LO AEUI and Non-PIDF-LO AEUI endpoint-provisioning order",
+        "type": "object",
+        "properties": {
+          "E911Order": {
+            "type": "object",
+            "properties": {
+              "CustomerOrderId": {
+                "$ref": "#/components/schemas/CustomerOrderIdE911"
+              },
+              "Address": {
+                "type": "object",
+                "properties": {
+                  "LocationId": {
+                    "type": "string"
+                  },
+                  "HouseNumber": {
+                    "type": "string"
+                  },
+                  "StreetName": {
+                    "type": "string"
+                  },
+                  "StreetSuffix": {
+                    "type": "string"
+                  },
+                  "City": {
+                    "type": "string"
+                  },
+                  "StateCode": {
+                    "type": "string"
+                  },
+                  "Zip": {
+                    "type": "string"
+                  },
+                  "PlusFour": {
+                    "type": "string"
+                  },
+                  "Country": {
+                    "type": "string"
+                  },
+                  "Latitude": {
+                    "type": "string"
+                  },
+                  "Longitude": {
+                    "type": "string"
+                  },
+                  "AddressType": {
+                    "type": "string"
+                  }
+                }
+              },
+              "AlternateEndUserIdentifiers": {
+                "type": "array",
+                "items": {
+                  "properties": {
+                    "AlternateEndUserIdentifier": {
+                      "type": "object",
+                      "properties": {
+                        "CallerName": {
+                          "$ref": "#/components/schemas/CallerNameE911"
+                        },
+                        "LocationId": {
+                          "type": "string"
+                        },
+                        "CallbackNumber": {
+                          "description": "Non-PIDF-LO: CallbackNumber is required",
+                          "type": "string"
+                        },
+                        "Identifier": {
+                          "type": "string",
+                          "minItems": 1,
+                          "maxLength": 30
+                        },
+                        "PIDFLOEnabled": {
+                          "description": "PIDFLOEnabled is required and must be 'true'.",
+                          "type": "string"
+                        },
+                        "PreferredLanguage": {
+                          "type": "string",
+                          "default": "en"
+                        }
+                      },
+                      "required": [
+                        "LocationId",
+                        "Identifier",
+                        "PIDFLOEnabled"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "AlternateEndUserIdentifier"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "AlternateEndUserIdentifiers",
+              "Address"
+            ]
+          }
+        }
+      },
+      "PidfloAndSimpleAeuiMixedPidfloAeuiAndNonPidloAeuiDeleting911Order": {
+        "title": "PIDF-LO and SIMPLE AEUI. PIDF-LO and Non-PIDF-LO endpoint-deletion order",
+        "type": "object",
+        "properties": {
+          "E911Order": {
+            "type": "object",
+            "properties": {
+              "CustomerOrderId": {
+                "$ref": "#/components/schemas/CustomerOrderIdE911"
+              },
+              "AlternateEndUserIdentifiers": {
+                "type": "array",
+                "items": {
+                  "properties": {
+                    "AlternateEndUserIdentifier": {
+                      "type": "object",
+                      "properties": {
+                        "CallbackNumber": {
+                          "description": "Non-PIDF-LO: CallbackNumber is required",
+                          "type": "string"
+                        },
+                        "Identifier": {
+                          "type": "string",
+                          "minItems": 1,
+                          "maxLength": 30
+                        }
+                      },
+                      "required": [
+                        "Identifier"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "AlternateEndUserIdentifier"
+                  ]
+                }
+              },
+              "DeleteTNSpecificE911Address": {
+                "$ref": "#/components/schemas/DeleteTNSpecificE911Address"
+              }
+            },
+            "required": [
+              "AlternateEndUserIdentifiers",
+              "DeleteTNSpecificE911Address"
+            ]
+          }
+        }
+      },
+      "PidfloAddressProvisioning911Order": {
+        "title": "PIDF-LO. address-provisioning order",
+        "type": "object",
+        "properties": {
+          "E911Order": {
+            "type": "object",
+            "properties": {
+              "CustomerOrderId": {
+                "$ref": "#/components/schemas/CustomerOrderIdE911"
+              },
+              "AdditionalAddresses": {
+                "description": "A list of Address sections. This address information for all potential endpoints which will be provisioned to the Bandwidth 911 system. At call time, the customer will submit this address information within the SIP header and, if a match is determined, the call will be routed to the PSAP nearest to that address. Otherwise, the call will be routed to an ECC. These Address sections will be the same in format to the Address section in the top-level of the E911Order payload. It replaces the TelephoneNumbers and AlternateEndUserIdentifiers payload element",
+                "type": "array",
+                "items": {
+                  "properties": {
+                    "Address": {
+                      "type": "object",
+                      "properties": {
+                        "LocationId": {
+                          "type": "string"
+                        },
+                        "HouseNumber": {
+                          "type": "string"
+                        },
+                        "StreetName": {
+                          "type": "string"
+                        },
+                        "StreetSuffix": {
+                          "type": "string"
+                        },
+                        "City": {
+                          "type": "string"
+                        },
+                        "StateCode": {
+                          "type": "string"
+                        },
+                        "Zip": {
+                          "type": "string"
+                        },
+                        "PlusFour": {
+                          "type": "string"
+                        },
+                        "Country": {
+                          "type": "string"
+                        },
+                        "Latitude": {
+                          "type": "string"
+                        },
+                        "Longitude": {
+                          "type": "string"
+                        },
+                        "AddressType": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "required": [
+                    "Address"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "AdditionalAddresses"
+            ]
+          }
+        }
+      },
+      "PidfloAddressEditing911Order": {
+        "title": "PIDF-LO. address-editing order",
+        "type": "object",
+        "properties": {
+          "E911Order": {
+            "type": "object",
+            "properties": {
+              "AdditionalAddresses": {
+                "description": "A list of Address sections. This address information for all potential endpoints which will be provisioned to the Bandwidth 911 system. At call time, the customer will submit this address information within the SIP header and, if a match is determined, the call will be routed to the PSAP nearest to that address. Otherwise, the call will be routed to an ECC. These Address sections will be the same in format to the Address section in the top-level of the E911Order payload. It replaces the TelephoneNumbers and AlternateEndUserIdentifiers payload element",
+                "type": "array",
+                "items": {
+                  "properties": {
+                    "Address": {
+                      "type": "object",
+                      "properties": {
+                        "LocationId": {
+                          "type": "string"
+                        },
+                        "HouseNumber": {
+                          "type": "string"
+                        },
+                        "StreetName": {
+                          "type": "string"
+                        },
+                        "StreetSuffix": {
+                          "type": "string"
+                        },
+                        "City": {
+                          "type": "string"
+                        },
+                        "StateCode": {
+                          "type": "string"
+                        },
+                        "Zip": {
+                          "type": "string"
+                        },
+                        "Latitude": {
+                          "type": "string"
+                        },
+                        "Longitude": {
+                          "type": "string"
+                        },
+                        "AddressType": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "LocationId"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "Address"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "AdditionalAddresses"
+            ]
+          }
+        }
+      },
+      "PidfloAddressDeleting911Order": {
+        "title": "PIDF-LO. PIDF-LO address-deletion order",
+        "type": "object",
+        "properties": {
+          "E911Order": {
+            "type": "object",
+            "properties": {
+              "CustomerOrderId": {
+                "$ref": "#/components/schemas/CustomerOrderIdE911"
+              },
+              "AdditionalAddresses": {
+                "type": "array",
+                "items": {
+                  "properties": {
+                    "Address": {
+                      "type": "object",
+                      "properties": {
+                        "LocationId": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "LocationId"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "Address"
+                  ]
+                }
+              },
+              "DeleteTNSpecificE911Address": {
+                "$ref": "#/components/schemas/DeleteTNSpecificE911Address"
+              }
+            },
+            "required": [
+              "AdditionalAddresses",
+              "DeleteTNSpecificE911Address"
+            ]
+          }
+        }
+      },
+      "SimpleAeuiNonPidfloProvisioning911Order": {
+        "title": "SIMPLE AEUI. Non-PIDF-LO endpoint-provisioning order",
+        "type": "object",
+        "properties": {
+          "E911Order": {
+            "type": "object",
+            "properties": {
+              "CustomerOrderId": {
+                "$ref": "#/components/schemas/CustomerOrderIdE911"
+              },
+              "CallerName": {
+                "$ref": "#/components/schemas/CallerNameE911"
+              },
+              "Address": {
+                "type": "object",
+                "properties": {
+                  "LocationId": {
+                    "type": "string"
+                  },
+                  "HouseNumber": {
+                    "type": "string"
+                  },
+                  "StreetName": {
+                    "type": "string"
+                  },
+                  "StreetSuffix": {
+                    "type": "string"
+                  },
+                  "City": {
+                    "type": "string"
+                  },
+                  "StateCode": {
+                    "type": "string"
+                  },
+                  "Zip": {
+                    "type": "string"
+                  },
+                  "PlusFour": {
+                    "type": "string"
+                  },
+                  "Country": {
+                    "type": "string"
+                  },
+                  "Latitude": {
+                    "type": "string"
+                  },
+                  "Longitude": {
+                    "type": "string"
+                  },
+                  "AddressType": {
+                    "type": "string"
+                  }
+                }
+              },
+              "AlternateEndUserIdentifiers": {
+                "type": "array",
+                "items": {
+                  "properties": {
+                    "AlternateEndUserIdentifier": {
+                      "type": "object",
+                      "properties": {
+                        "CallbackNumber": {
+                          "type": "string"
+                        },
+                        "Identifier": {
+                          "type": "string",
+                          "minItems": 1,
+                          "maxLength": 30
+                        },
+                        "PIDFLOEnabled": {
+                          "type": "string",
+                          "default": "true"
+                        }
+                      },
+                      "required": [
+                        "CallbackNumber",
+                        "Identifier"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "AlternateEndUserIdentifier"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "AlternateEndUserIdentifiers",
+              "Address"
+            ]
+          }
+        }
+      },
       "E911Order": {
         "type": "object",
         "properties": {
@@ -24247,156 +25586,154 @@
       "CsrGetResponse": {
         "type": "object",
         "properties": {
-          "CustomerOrderId" : {
+          "CustomerOrderId": {
             "type": "string"
           },
-          "LastModifiedBy" : {
+          "LastModifiedBy": {
             "type": "string"
           },
-          "OrderCreateDate" : {
+          "OrderCreateDate": {
             "type": "string"
           },
-           "OrderId" : {
+          "OrderId": {
             "type": "string"
           },
-            "LastModifiedDate" : {
+          "LastModifiedDate": {
             "type": "string"
           },
-          "WorkingOrBillingTelephoneNumber" : {
+          "WorkingOrBillingTelephoneNumber": {
             "type": "string"
           },
-          "WorkingTelephoneNumber" : {
+          "WorkingTelephoneNumber": {
             "type": "string"
           },
-          "BillingTelephoneNumber" : {
+          "BillingTelephoneNumber": {
             "type": "string"
           },
-          "CustomerName" : {
+          "CustomerName": {
             "type": "string"
           },
-          "AuthorizingPersonName" : {
+          "AuthorizingPersonName": {
             "type": "string"
           },
-          "AccountNumber" : {
+          "AccountNumber": {
             "type": "string"
           },
-          "WorkingTelephoneNumbersOnAccount" : {
+          "WorkingTelephoneNumbersOnAccount": {
             "type": "object",
             "properties": {
-              "TelephoneNumber" : {
+              "TelephoneNumber": {
                 "type": "array"
               }
             }
           },
-          "CsrServiceAddress" : {
+          "CsrServiceAddress": {
             "$ref": "#/components/schemas/Address"
           },
-          "AccountTelephoneNumber" : {
+          "AccountTelephoneNumber": {
             "type": "string"
           },
-          "EndUserName" : {
+          "EndUserName": {
             "type": "string"
           },
-          "AuthorizingUserName" : {
+          "AuthorizingUserName": {
             "type": "string"
           },
-          "CustomerCode" : {
+          "CustomerCode": {
             "type": "string"
           },
-          "EndUserPIN" : {
+          "EndUserPIN": {
             "type": "string"
           },
-          "EndUserPassword" : {
+          "EndUserPassword": {
             "type": "string"
           },
-          "AddressLine1" : {
+          "AddressLine1": {
             "type": "string"
           },
-          "City" : {
+          "City": {
             "type": "string"
           },
-          "State" : {
+          "State": {
             "type": "string"
           },
-          "ZIPCode" : {
+          "ZIPCode": {
             "type": "string"
           },
-          "TypeOfService" : {
+          "TypeOfService": {
             "type": "string"
           },
-          "Status" : {
+          "Status": {
             "type": "string"
           }
         }
       },
-
-
-        "Csr": {
+      "Csr": {
         "type": "object",
         "properties": {
-          "WorkingOrBillingTelephoneNumber" : {
+          "WorkingOrBillingTelephoneNumber": {
             "type": "string"
           },
-          "WorkingTelephoneNumber" : {
+          "WorkingTelephoneNumber": {
             "type": "string"
           },
-          "BillingTelephoneNumber" : {
+          "BillingTelephoneNumber": {
             "type": "string"
           },
-          "CustomerName" : {
+          "CustomerName": {
             "type": "string"
           },
-          "AuthorizingPersonName" : {
+          "AuthorizingPersonName": {
             "type": "string"
           },
-          "AccountNumber" : {
+          "AccountNumber": {
             "type": "string"
           },
-          "WorkingTelephoneNumbersOnAccount" : {
+          "WorkingTelephoneNumbersOnAccount": {
             "type": "object",
             "properties": {
-              "TelephoneNumber" : {
+              "TelephoneNumber": {
                 "type": "array"
               }
             }
           },
-          "CsrServiceAddress" : {
+          "CsrServiceAddress": {
             "$ref": "#/components/schemas/Address"
           },
-          "AccountTelephoneNumber" : {
+          "AccountTelephoneNumber": {
             "type": "string"
           },
-          "EndUserName" : {
+          "EndUserName": {
             "type": "string"
           },
-          "AuthorizingUserName" : {
+          "AuthorizingUserName": {
             "type": "string"
           },
-          "CustomerCode" : {
+          "CustomerCode": {
             "type": "string"
           },
-          "EndUserPIN" : {
+          "EndUserPIN": {
             "type": "string"
           },
-          "EndUserPassword" : {
+          "EndUserPassword": {
             "type": "string"
           },
-          "AddressLine1" : {
+          "AddressLine1": {
             "type": "string"
           },
-          "City" : {
+          "City": {
             "type": "string"
           },
-          "State" : {
+          "State": {
             "type": "string"
           },
-          "ZIPCode" : {
+          "ZIPCode": {
             "type": "string"
           },
-          "TypeOfService" : {
+          "TypeOfService": {
             "type": "string"
           },
-          "Status" : {
+          "Status": {
             "type": "string"
           }
         }
@@ -29482,30 +30819,7 @@
             "type": "object",
             "properties": {
               "E911Order": {
-                "type": "object",
-                "properties": {
-                  "CustomerOrderId": {
-                    "type": "string"
-                  },
-                  "orderId": {
-                    "type": "string"
-                  },
-                  "ProcessingStatus": {
-                    "type": "string"
-                  },
-                  "TelephoneNumbers": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/TelephoneNumber"
-                    }
-                  },
-                  "CallerName": {
-                    "type": "string"
-                  },
-                  "Address": {
-                    "$ref": "#/components/schemas/E911Address"
-                  }
-                }
+                "$ref": "#/components/schemas/E911OrderPayload"
               }
             }
           }
@@ -30001,6 +31315,333 @@
             }
           }
         }
+      },
+      "SiteOrdersResponse": {
+        "type": "object",
+        "properties": {
+          "ResponseSelectWrapper": {
+            "type": "object",
+            "properties": {
+              "ListOrderIdUserIdDate": {
+                "type": "object",
+                "properties": {
+                  "TotalCount": {
+                    "type": "integer"
+                  },
+                  "OrderIdUserIdDate": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/OrderSummary"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "SiteTNsResponse": {
+        "type": "object",
+        "properties": {
+          "SiteTNs": {
+            "type": "object",
+            "properties": {
+              "TotalCount": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      },
+      "ImportVoiceTnOrdersResponseList": {
+        "type": "object",
+        "properties": {
+          "ImportVoiceTnOrders": {
+            "type": "object",
+            "properties": {
+              "TotalCount": {
+                "type": "integer"
+              },
+              "ImportVoiceTnOrderSummary": {
+                "$ref": "#/components/schemas/ImportVoiceTnOrderSummary"
+              }
+            }
+          }
+        }
+      },
+      "ImportVoiceTnOrderSummary": {
+        "type": "object",
+        "properties": {
+          "CustomerOrderId": {
+            "type": "string"
+          },
+          "CountsOfTNs": {
+            "type": "integer"
+          },
+          "OrderType": {
+            "type": "string",
+            "enum": [
+              "import_voice_tn_orders"
+            ]
+          },
+          "OrderDate": {
+            "type": "string"
+          },
+          "AccountId": {
+            "type": "string"
+          },
+          "UserId": {
+            "type": "string"
+          },
+          "LastModifiedDate": {
+            "type": "string"
+          },
+          "ProcessingStatus": {
+            "type": "string",
+            "enum": [
+              "RECEIVED",
+              "PROCESSING",
+              "COMPLETE",
+              "PARTIAL",
+              "FAILED"
+            ]
+          }
+        }
+      },
+      "ImportVoiceTnOrderRequest": {
+        "title": "ImportVoiceTnOrder",
+        "properties": {
+          "ImportVoiceTnOrder": {
+            "type": "object",
+            "required": [
+              "TelephoneNumbers",
+              "SiteId"
+            ],
+            "properties": {
+              "TelephoneNumbers": {
+                "description": "List of telephone numbers to be moved",
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "TelephoneNumber": {
+                      "description": "Ten digit phone number with no dots or dashes",
+                      "type": "integer"
+                    }
+                  }
+                }
+              },
+              "SiteId": {
+                "description": "A site id to which telephone number will be moved",
+                "type": "integer"
+              },
+              "CustomerOrderId": {
+                "description": "Internal customer order id for tracking the order. Only alphanumeric values, dashes and spaces are allowed. Max length is 40 characters",
+                "type": "string"
+              },
+              "SipPeerId": {
+                "description": "A sippeer id of provided site to which telephone number will be moved",
+                "type": "integer"
+              }
+            }
+          }
+        }
+      },
+      "ImportVoiceTnOrderResponse": {
+        "type": "object",
+        "properties": {
+          "ImportVoiceTnOrderResponse": {
+            "type": "object",
+            "properties": {
+              "ImportVoiceTnOrder": {
+                "$ref": "#/components/schemas/ImportVoiceTnOrder"
+              }
+            }
+          }
+        }
+      },
+      "ImportVoiceTnOrder": {
+        "type": "object",
+        "properties": {
+          "CustomerOrderId": {
+            "type": "string"
+          },
+          "OrderCreateDate": {
+            "type": "string"
+          },
+          "AccountId": {
+            "type": "string"
+          },
+          "CreatedByUser": {
+            "type": "string"
+          },
+          "LastModifiedDate": {
+            "type": "string"
+          },
+          "SiteId": {
+            "type": "string"
+          },
+          "SipPeerId": {
+            "type": "string"
+          },
+          "TelephoneNumbers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TelephoneNumber"
+            }
+          },
+          "ProcessingStatus": {
+            "type": "string",
+            "enum": [
+              "RECEIVED",
+              "PROCESSING",
+              "COMPLETE",
+              "PARTIAL",
+              "FAILED"
+            ]
+          },
+          "Errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "ImportVoiceTnOrderError": {
+        "type": "object",
+        "properties": {
+          "ImportVoiceTnOrderResponse": {
+            "$ref": "#/components/schemas/ResponseStatus"
+          }
+        }
+      },
+      "RemoveImportedVoiceTnOrders": {
+        "type": "object",
+        "properties": {
+          "TotalCount": {
+            "type": "integer"
+          },
+          "Links": {
+            "$ref": "#/components/schemas/PaginationLinks"
+          },
+          "RemoveImportedVoiceTnOrderSummary": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderSummary"
+            }
+          }
+        }
+      },
+      "RemoveImportedVoiceTnOrderRequest": {
+        "required": [
+          "TelephoneNumbers"
+        ],
+        "title": "RemoveImportedVoiceTnOrder",
+        "properties": {
+          "CustomerOrderId": {
+            "type": "string",
+            "description": "Internal customer order id for tracking the order. Only alphanumeric values, dashes and spaces are allowed",
+            "maxLength": 40
+          },
+          "TelephoneNumbers": {
+            "description": "Ten digit phone number with no dots or dashes. One or more is required. Use a PhoneNumber tag for each phone number in the list",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/TelephoneNumber"
+            }
+          }
+        }
+      },
+      "RemoveImportedVoiceTnOrderResponse": {
+        "type": "object",
+        "properties": {
+          "RemoveImportedVoiceTnOrder": {
+            "type": "object",
+            "properties": {
+              "CustomerOrderId": {
+                "type": "string"
+              },
+              "OrderCreateDate": {
+                "type": "string"
+              },
+              "AccountId": {
+                "type": "integer"
+              },
+              "CreatedByUser": {
+                "type": "string"
+              },
+              "OrderId": {
+                "type": "string"
+              },
+              "LastModifiedDate": {
+                "type": "string"
+              },
+              "ProcessingStatus": {
+                "type": "string",
+                "enum": [
+                  "RECEIVED",
+                  "PROCESSING",
+                  "COMPLETE",
+                  "PARTIAL",
+                  "FAILED"
+                ]
+              },
+              "TelephoneNumbers": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TelephoneNumber"
+                }
+              },
+              "Errors": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TelephoneNumberGroupError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "AccountIdPathParam": {
+        "name": "accountId",
+        "description": "User's account ID",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "example": "1234567"
+      },
+      "StatusQueryParam": {
+        "name": "status",
+        "description": "The status of the order being searched for.",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "PROCESSING",
+              "COMPLETE",
+              "PARTIAL",
+              "FAILED"
+            ]
+          }
+        }
+      },
+      "OrderIdPathParam": {
+        "name": "orderId",
+        "description": "ID of order to retrieve",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "example": "bf1305b8-8998-1111-2222-51ba3ce52d4e"
       }
     }
   }
