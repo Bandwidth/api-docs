@@ -88,10 +88,10 @@ module.exports = {
                 className: 'header-postman-link bw-link',
                 title: 'Postman Collection'
             }, {
-                href: 'https://dashboard.bandwidth.com/portal/r/',
+                href: 'https://www.bandwidth.com/login/',
                 position: 'right', 
                 className: 'header-dashboard-link bw-link',
-                title: 'Dashboard Login'
+                title: 'Login'
             }]
         },
         footer: {
