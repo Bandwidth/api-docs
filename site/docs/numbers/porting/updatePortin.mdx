@@ -41,36 +41,6 @@ If the order ProcessingStatus is `DRAFT`, the rules about what can be changed ar
 
 The general approach to handling this API call is to replace the elements included in the request body, and leave other preexisting elements in an unmodified condition. This is typical of a PATCH method, but because of our commitment to backwards compatibility we have elected not to "Fix" this behavior. As a result, there are some elements that cannot be modified using the <Highlight color="#652B51">PUT</Highlight> method. The elements affected vary by Port-In Order type, which can be determined using a <Highlight color="#00bf8c">GET</Highlight> request to the `/portins/{orderId}` endpoint. Please refer to the matrix below to see which elements can be modified and replaced.
 
-| Payload Field                                            | Manual Off-Net | Manual On-Net | Manual Toll Free | Automated On-Net  | Automated Off-Net Pre FOC | Automated Off-Net Post FOC | Internal |
-|----------------------------------------------------------|----------------|---------------|------------------|-------------------|---------------------------|----------------------------|----------|
-| billingTelephoneNumber                                   | Editable       | Editable      | Disabled         | Editable          | Editable                  | Disabled                   | Editable |
-| newBillingTelephoneNumber                                | Editable       | Editable      | Disabled         | Editable          | Disabled                  | Disabled                   | Editable |
-| partialPort                                              | Editable       | Editable      | Disabled         | Editable          | Disabled                  | Disabled                   | Editable |
-| subscriber.subscriberType                                | Editable       | Editable      | Editable         | Editable          | Editable                  | Disabled                   | Editable |
-| subscriber.businessName/firstName/middleInitial/lastName | Editable       | Editable      | Editable         | Editable          | Editable                  | Disabled                   | Editable |
-| loaAuthorizingPerson                                     | Editable       | Editable      | Editable         | Editable          | Disabled                  | Disabled                   | Editable |
-| wirelessInfo.accountNumber                               | Editable       | Editable      | Editable         | Editable          | Disabled                  | Disabled                   | Editable |
-| wirelessInfo.pinNumber                                   | Editable       | Editable      | Disabled         | Editable          | Disabled                  | Disabled                   | Editable |
-| subscriber.serviceAddress                                | Editable       | Editable      | Editable         | Editable          | Disabled                  | Disabled                   | Editable |
-| requestedFocDate                                         | Editable       | Editable      | Editable         | Editable          | Editable                  | Editable                   | Editable |
-| listOfPhoneNumbers                                       | Disabled       | Disabled      | Disabled         | Editable          | Disabled                  | Disabled                   | Disabled |
-| siteId                                                   | Editable       | Editable      | Editable         | Editable          | Editable                  | Editable                   | Editable |
-| peerId                                                   | Editable       | Editable      | Editable         | Editable          | Editable                  | Editable                   | Editable |
-| customerOrderId                                          | Editable       | Editable      | Editable         | Editable          | Editable                  | Editable                   | Editable |
-| TnAttributes elements                                    | Editable       | Editable      | Editable         | Editable          | Editable                  | Editable                   | Editable |
-| Immediately                                              | Disabled       | Disabled      | Disabled         | Disabled          | Disabled                  | Disabled                   | Editable |
-
-### Level3 Portin
-
-When a port-in is being processed by off-net partner Level 3 (you can retrieve this information using a <Highlight color="#00bf8c">GET</Highlight> request to `/portins/{orderId}` indicates a Port Type of AUTOMATEDOFFNET and a VendorName of "Level 3"), the rules for what can be changed in a SUPP operation are more restrictive. If the order has NOT yet received FOC, you may change the following:
-
-* RequestedFocDate
-* BillingTelephoneNumber
-* SubscriberType
-* Subscriber name elements or BusinessName, provided that SubscriberType is provided
-
-After the FOC date has been received, the billing telephone number and subscriber information cannot be modified, only the FOC date/time can be updated.
-
 ### Request URL
 
 <Highlight color="#652B51">PUT</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/portins/{orderId}</code>
@@ -302,4 +272,28 @@ Content-Type: application/xml; charset=utf-8
     <NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>
     <Triggered>false</Triggered>
 </LnpOrderResponse>
+```
+
+## Cancel a Portin Order
+
+The API allows a user to cancel an existing LNP order. The order number that was generated in the create request must be provided, and dhe status of the order shall not be marked as `COMPLETE`. The <Highlight color="#ff6f47">DELETE</Highlight> method is used for this purpose.
+
+### Request URL
+
+<Highlight color="#ff6f47">DELETE</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/portins/{orderId}</code>
+
+### Examples
+
+> Request
+
+```http
+DELETE https://dashboard.bandwidth.com/api/accounts/{accountId}/portins/{orderId} HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```
+
+> Response
+
+```http
+HTTP 200 OK
 ```

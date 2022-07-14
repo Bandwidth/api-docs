@@ -1,6 +1,6 @@
 ---
 id: lnpChecker
-title: Checking number portability
+title: Check number(s) portability
 slug: /numbers/guides/porting/lnpChecker
 description: How to check number(s) portability
 keywords:
@@ -34,16 +34,13 @@ export const Highlight = ({children, color}) => (
     </span>
   );
 
-A number or set of numbers can be checked to see if they can be ported into the Bandwidth Network using the [`/accounts/{accountId}/lnpChecker`](/apis/numbers#operation/RequestPortabilityInfo) API endpoint.
-
-### Portability criteria
-
-TNs can be ported in a single `/portins` request if all the following are true:
+A number or set of numbers can be checked to see if they can be ported into the Bandwidth Network. TNs can be ported in a single `/portins` request if all the following are true:
 
 1. They all have the same Port Type (see the `Port Types` section below)
 2. They all have the same losing carrier
 3. They are all associated with the same billing TN and Service Address
 
+:::info
 There are also a number of reasons why a TN may not be able to be ported in:
 
 * The TN is in a rate center that is not supported by Bandwidth or any of Bandwidth's partners.
@@ -52,6 +49,7 @@ There are also a number of reasons why a TN may not be able to be ported in:
 * The TN is already being processed in another active port-in order.
 * The Bandwidth account has not been enabled for porting.
 Otherwise, the user must separate the TNs into individual `/portins` requests.
+:::
 
 ### Port Types
 
@@ -66,12 +64,27 @@ Port Type - is a categorization of how the TNs submitted to the /lnpchecker API 
 | AUTOMATED | If the TNs are on-net, or off-net and covered by a Bandwidth partner that supports automated ports, then the port-in of these TNs will be handled with no human intervention using interfaces to our porting vendors. There are several sub-types of `AUTOMATED` as follows: <br/><ul><li>`AUTOMATED` - means that the telephone numbers in the port-in exist in a rate center supported by Bandwidth (On-net tns). There are differences in on-net port-in rules depending on whether the order is for wireless to wireless vs. one of the other 3 combinations.</li><li>`AUTOMATEDOFFNET` - Off-net means that the telephone numbers in the port-in exist in a rate center supported by one of Bandwidth’s partners. Currently, only numbers in the U.S. are automated. There are differences in port-in rules depending on whether the order has achieved FOC status.</li><li>`INTERNAL` - Internal means that the telephone number is being moved from one Bandwidth account to another Bandwidth account. Internal port-in may involve on-net, off-net, or toll free telephone numbers.</li></ul>|
 | MIXED | If the list of TNs supplied to /lnpchecker includes TNs that are categorized as more than one of the above Port Types, the resulting Port Type will be `MIXED`. If you plan to use /portins to port the TNs, you must break the TN list into separate /portins requests for each Port Type. |
 
-### Request URL
-<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/lnpChecker</code>
+### Check number portability
+
+A number or set of numbers can be checked to see if they can be ported into the Bandwidth Network using the <Highlight color="#079CEE">POST</Highlight> request to [`/accounts/{accountId}/lnpChecker`](/apis/numbers#operation/RequestPortabilityInfo) API endpoint. This can be done through our [SDKs](/sdks), using tools like [Postman](https://github.com/Bandwidth/postman), or in command line.
 
 ### Examples
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/lnpChecker</code>
 
-> Request
+<Tabs
+    groupId="updatePortin"
+    defaultValue="payload"
+    values={[
+        { label: 'Request Payload', value: 'payload', },
+        { label: 'cURL', value: 'curl', },
+        { label: 'Java', value: 'java', },
+        { label: 'C#', value: 'csharp', },
+        { label: 'Ruby', value: 'ruby', },
+        { label: 'NodeJS', value: 'nodejs', },
+        { label: 'PHP', value: 'php', },
+    ]
+    }>
+<TabItem value="payload">
 
 ```xml
 POST https://dashboard.bandwidth.com/api/accounts/{accountId}/lnpChecker?fullcheck=true HTTP/1.1
@@ -86,7 +99,102 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 </NumberPortabilityRequest>
 ```
 
-> Response
+</TabItem>
+<TabItem value="curl">
+
+```cURL
+Note: Remember to add authentication for your application if needed!
+
+curl 'https://dashboard.bandwidth.com/api/accounts/{accountId}/lnpChecker?fullcheck=true' \
+-X POST \
+-U '{BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}' \
+-H 'Content-Type: application/xml' \
+-d '<NumberPortabilityRequest>
+    <TnList>
+        <Tn>9195551234</Tn>
+        <Tn>9198675309</Tn>
+    </TnList>
+</NumberPortabilityRequest>'
+```
+
+</TabItem>
+<TabItem value="java">
+
+```java
+String accountId = System.getenv("BANDWIDTH_IRIS_ACCOUNTID");
+String username = System.getenv("BANDWIDTH_IRIS_USERNAME");
+String password = System.getenv("BANDWIDTH_IRIS_PASSWORD");
+String irisUrl = System.getenv("BANDWIDTH_IRIS_URL");
+String version = System.getenv("BANDWIDTH_IRIS_URL");
+IrisClient client = new IrisClient(accountId, username, password, irisUrl, version);
+
+NumberPortabilityRequest request = new NumberPortabilityRequest();
+request.getTnList().add("9195551212");
+NumberPortabilityResponse response = LnpChecker.checkLnp(client, request, "true");
+System.out.println(response.getPortableNumbers().get(0));
+```
+
+</TabItem>
+<TabItem value="csharp">
+
+```csharp
+var client = Client.GetInstance("accountId", "username", "password", "apiEndpoint")
+var result = await LnpChecker.Check(client, new string[] { "555555" });
+Console.WriteLine(result);
+```
+
+</TabItem>
+<TabItem value="ruby">
+
+```ruby
+require 'ruby-bandwidth-iris'
+
+BandwidthIris::Client.global_options = {
+:account_id => 'accountId',
+:username => 'userName',
+:password => 'password'
+}
+
+numbers = ["9195551212", "9195551213"]
+full_check = true
+BandwidthIris::LnpChecker.check(numbers, full_check)
+```
+
+</TabItem>
+<TabItem value="nodejs">
+
+```js
+var numbers = require("@bandwidth/numbers");
+
+numbers.Client.globalOptions.accountId = "accountId";
+numbers.Client.globalOptions.userName = "userName";
+numbers.Client.globalOptions.password = "password";
+
+var numbersList = ["9195551212", "9195551213"];
+var fullCheck = true;
+numbers.LnpChecker.check(numbersList, fullCheck, callback);
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+$accountId = getenv("BANDWIDTH_API_ACCOUNT_ID");
+$username = getenv("BANDWIDTH_API_USERNAME");
+$password = getenv("BANDWIDTH_API_PASSWORD");
+$apiEndpoint = getenv("BANDWIDTH_API_ENDPOINT");
+
+$client = new \Iris\Client($username, $password, ['url' => $apiEndpoint]);
+$account = new \Iris\Account($accountId, $client);
+
+$account->lnpChecker(["4109255199", "9196190594"], "true");
+```
+
+</TabItem>
+</Tabs>
+
+
+Response
 
 ```xml
 HTTP 200 OK
@@ -147,3 +255,8 @@ Content-Type: application/xml; charset=utf-8
     </SupportedLosingCarriers>
 </NumberPortabilityResponse>
 ```
+## Where to next?
+
+Now that you have learnt how to check numbers portability, check out some of the available actions in the following guides:
+- [How to create Port in request](/docs/numbers/guides/porting/portingNumbers)
+- [How to create Bulk Port in](/docs/numbers/guides/porting/bulkPortins)
