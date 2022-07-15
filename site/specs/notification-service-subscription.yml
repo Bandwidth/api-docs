@@ -130,7 +130,7 @@ paths:
       tags:
         - Subscriptions
       requestBody:
-        $ref: '#/components/requestBodies/patchSubscription'
+        $ref: '#/components/requestBodies/modifySubscription'
       responses:
         '200':
           $ref: '#/components/responses/subscriptionResponse'
@@ -155,7 +155,7 @@ paths:
       tags:
         - Subscriptions
       requestBody:
-        $ref: '#/components/requestBodies/putSubscription'
+        $ref: '#/components/requestBodies/updateSubscription'
       responses:
         '200':
           $ref: '#/components/responses/subscriptionResponse'
@@ -176,6 +176,7 @@ components:
     callback:
       title: callback
       type: object
+      description: Callback Object
       properties:
         url:
           type: string
@@ -185,7 +186,6 @@ components:
         callback:
           url: some-url
           publicKey: key
-      description: Callback Object
     subscriptionStatusEnum:
       title: Subscription Status Enum
       type: string
@@ -227,12 +227,27 @@ components:
           nullable: true
           type: array
           items:
-            - $ref: '#/components/schemas/portingPortinEventStatusEnum'
+            $ref: '#/components/schemas/portinEventStatusEnum'
         notificationChannel:
           $ref: '#/components/schemas/notificationChannel'
       required:
         - product
         - notificationChannel
+      example:
+        exampleSubscriptionObject: null
+        product: PORTING
+        eventType: PORTIN_ORDER_STATUS
+        entityId: q3434-132414
+        subscriptionStatus: ACTIVE
+        tags:
+          - name: My Custom Tag
+            value: abc123-456def
+        notifyStates:
+          - ACCEPTED_BY_CARRIER
+        notificationChannel:
+          - callback:
+              url: some-url
+              publicKey: key
     notificationChannel:
       title: Notification Channel
       type: array
@@ -246,8 +261,7 @@ components:
       type: object
       properties:
         eventType:
-          anyOf:
-            - $ref: '#/components/schemas/eventTypeEnum'
+          $ref: '#/components/schemas/eventTypeEnum'
         entityId:
           nullable: true
           description: >-
@@ -270,11 +284,11 @@ components:
           nullable: true
           type: array
           items:
-            oneOf:
-              - $ref: '#/components/schemas/portingPortinEventStatusEnum'
+            $ref: '#/components/schemas/portinEventStatusEnum'
         notificationChannel:
           $ref: '#/components/schemas/notificationChannel'
       example:
+        exampleModifySubscription: null
         eventType: PORTIN_ORDER_STATUS
         entityId: q3434-132414
         subscriptionStatus: ACTIVE
@@ -290,7 +304,7 @@ components:
               publicKey: key
     subscriptionResponse:
       title: Subscription Response
-      description: Subscription Response Ojbect
+      description: Subscription Response Object
       allOf:
         - type: object
           properties:
@@ -303,8 +317,8 @@ components:
               format: date-time
               example: '2022-05-23T12:00:00'
         - $ref: '#/components/schemas/subscription'
-      x-examples:
-        example-1:
+      example:
+        exampleSubscriptionResponse:
           subscriptionId: adfaf-134afd
           dateOfLastModification: '2022-05-23T12:00:00'
           product: PORTING
@@ -337,7 +351,7 @@ components:
         - PORTING
       example: PORTING
     portinEventStatusEnum:
-      title: portingPortinEventStatusEnum
+      title: portinEventStatusEnum
       type: string
       nullable: true
       description: "The valid Event Status values \n<table>\n  <tr>\n    <th>Status</th>\n    <th>Description</th>\n  </tr>\n  <tr>\n    <td>ACCEPTED_BY_CARRIER </td>\n    <td>Good news - your port-in is accepted by our carrier. </td>\n  </tr>\n  <tr>\n    <td>CANCELED </td>\n    <td>Your port-in order is cancelled. </td>\n  </tr>\n  <tr>\n    <td>COMPLETED </td>\n    <td>Your port-in order is completed. </td>\n  </tr>    \n  <tr>\n    <td>DRAFT </td>\n    <td> Your port-in order is created, but not yet submitted. You can change the content of the order or delete it anytime. </td>\n  </tr>\n  <tr>\n    <td>MISSING_DATA </td>\n    <td>Your port-in order has been returned by our LNP team - because the order doesn't contain required information, this can be data or document. Your order has to be amended and resubmitted again. </td>\n  </tr>   \n  </tr>\n  <tr>\n    <td>PENDING_CARRIER_APPROVAL </td>\n    <td> Your port-in order is transmitted to our carrier.</td>\n  </tr>   \n  <tr>\n    <td>PROCESSING_CANCELLATION </td>\n    <td>You are requesting the cancellation of your order. Our LNP team will get back to you shortly </td>\n  </tr>  \n  <tr>\n    <td>READY_FOR_CONFIGURATION</td>\n    <td>Your numbers are ready for configuration. You can now assign your configuration profile to your order. </td>\n  </tr>           \n  <tr>\n    <td>REJECTED </td>\n    <td>\tYour port-in order is rejected by our LNP team/carrier. Please contact our LNP team for further details.Your port-in order is submitted, our LNP team will take care of it shortly. In case you need to change your order, you have to request a cancellation or ask our LNP team to return your order. </td>\n  </tr>  \n  <tr>\n    <td>SUBMITTED </td>\n    <td>Your port-in order is submitted, our LNP team will take care of it shortly. In case you need to change your order, you have to request a cancellation or ask our LNP team to return your order. </td>\n  </tr>                                                                 \n</table>\n"
@@ -423,19 +437,7 @@ components:
             - data
             - errors
       example:
-        links: null
-        data: null
-        errors:
-          - type: internal-server-error
-            description: >-
-              Unexpected internal server error. Contact Bandwidth Customer
-              Support if this problem persists.
-            code: optional-but-recommended-error-code
-            id: optional-error-id
-            meta:
-              message: An optional metadata field
-      x-examples:
-        example-1:
+        - errorExample: null
           links: null
           data: null
           errors:
@@ -447,6 +449,26 @@ components:
               id: optional-error-id
               meta:
                 message: An optional metadata field
+        - dataExample: null
+          data:
+            subscriptions:
+              - product: PORTING
+                subscriptionId: string
+                dateOfLastModification: '2019-08-24T14:15:22Z'
+                eventType: PORTIN_ORDER_STATUS
+                entityId: unique-id-value
+                subscriptionStatus: ACTIVE
+                tags:
+                  - name: tag-name
+                    value: tag-value
+                notifyStates:
+                  - DRAFT
+                  - COMPLETED
+                notificationChannel:
+                  - callback:
+                      url: some-url
+                      publicKey: key
+          errors: null
   securitySchemes:
     bearerAuth:
       type: http
@@ -458,7 +480,7 @@ components:
       content:
         application/json:
           schema:
-            description: ''
+            description: Response with multiple Subscription elements
             type: object
             properties:
               links:
@@ -468,13 +490,14 @@ components:
                   type: object
               data:
                 type: object
+                nullable: true
                 properties:
                   subscriptions:
                     type: array
                     uniqueItems: true
                     minItems: 0
                     items:
-                      $ref: '#/components/schemas/responseSubscription'
+                      $ref: '#/components/schemas/subscriptionResponse'
               errors:
                 type: array
                 nullable: true
@@ -518,7 +541,7 @@ components:
                 items:
                   type: object
               data:
-                $ref: '#/components/schemas/responseSubscription'
+                $ref: '#/components/schemas/subscriptionResponse'
               errors:
                 type: array
                 nullable: true
@@ -684,7 +707,7 @@ components:
           schema:
             $ref: '#/components/schemas/responseProperties'
           examples:
-            example-1:
+            methodNotAllwedExample:
               value:
                 links: null
                 data: null
@@ -699,6 +722,7 @@ components:
                       message: An optional metadata field
   requestBodies:
     newSubscription:
+      description: Request Body for New Subscription
       content:
         application/json:
           schema:
@@ -721,14 +745,14 @@ components:
                   - callback:
                       url: some-url
                       publicKey: key
-      description: Request Body for New Subscription
-    patchSubscription:
+    modifySubscription:
+      description: Request Body for Modify Subscription
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/patchSubscription'
+            $ref: '#/components/schemas/modifySubscription'
           examples:
-            existingSubscriptionExample:
+            updatedSubscriptedExample:
               description: Example Existing Subscription
               value:
                 eventType: PORTIN_ORDER_STATUS
@@ -742,14 +766,14 @@ components:
                   - COMPLETED
                 notificationChannel:
                   - $ref: '#/components/schemas/notificationChannel'
-      description: Request Body for PATCH Subscription
-    putSubscription:
+    updateSubscription:
+      description: Request Body for Update Existing Subscription
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/subscription'
           examples:
-            Example PUT Subscription:
+            overwritingSubscriptionExample:
               value:
                 product: PORTING
                 eventType: PORTIN_ORDER_STATUS
@@ -763,7 +787,6 @@ components:
                   - COMPLETED
                 notificationChannel:
                   - $ref: '#/components/schemas/notificationChannel'
-      description: Request Body for Existing Subscription
   parameters:
     subscriptionId:
       name: subscriptionId
