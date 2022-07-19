@@ -35,13 +35,12 @@ export const Highlight = ({children, color}) => (
 
 In this guide we will show you how to manage your Port in order. Please ensure you have followed our earlier guide on [How to create Port in order](/docs/numbers/guides/porting/updatePortin) with Bandwidth.
 
-The <code class="put">PUT</code> to `accounts/{accountId}/portins/{orderId}` API allows a user to modify an existing LNP order, by sending a so-called SUPP request. Modifications are only allowed for orders that are not yet `complete` or `cancelled`. Since many of the entries in an LNP Order cannot be changed after the initial order is placed, the <code class="put">PUT</code> on a porting order-id does not require that the full order payload is included.
+The <code class="put">PUT</code> to [accounts/{accountId}/portins/{orderId} API](/apis/numbers/#operation/UpdatePortin) API allows a user to modify an existing LNP order, by sending a so-called SUPP request. Modifications are only allowed for orders that are not yet `complete` or `cancelled`. Since many of the entries in an LNP Order cannot be changed after the initial order is placed, the <code class="put">PUT</code> on a porting order-id does not require that the full order payload is included.
 
 If the order ProcessingStatus is `DRAFT`, the rules about what can be changed are much more relaxed. Validation is performed when the ProcessingStatus is changed from `DRAFT` to `SUBMITTED`. The AltSpid element can be modified if it is not configured at the system level.
+Regarding the fields which can be updated for different port types check [request schema for PUT accounts/{accountId}/portins/{orderId}](/apis/numbers/#operation/UpdatePortin) guide.
 
-The general approach to handling this API call is to replace the elements included in the request body, and leave other preexisting elements in an unmodified condition. This is typical of a PATCH method, but because of our commitment to backwards compatibility we have elected not to "Fix" this behavior. As a result, there are some elements that cannot be modified using the <Highlight color="#652B51">PUT</Highlight> method. The elements affected vary by Port-In Order type, which can be determined using a <Highlight color="#00bf8c">GET</Highlight> request to the `/portins/{orderId}` endpoint. Please refer to the matrix below to see which elements can be modified and replaced.
-
-### Request URL
+The general approach to handling this API call is to replace the elements included in the request body, and leave other preexisting elements in an unmodified condition. This is typical of a PATCH method, but because of our commitment to backwards compatibility we have elected not to "Fix" this behavior. As a result, there are some elements that cannot be modified using the <Highlight color="#652B51">PUT</Highlight> method. The elements affected vary by Port-In Order type, which can be determined using a <Highlight color="#00bf8c">GET</Highlight> request to the `/portins/{orderId}` endpoint.
 
 <Highlight color="#652B51">PUT</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/portins/{orderId}</code>
 
@@ -61,7 +60,7 @@ The general approach to handling this API call is to replace the elements includ
 <TabItem value="payload">
 
 ```xml
-PUT https://dashboard.bandwidth.com/api/accounts/{accountId}/portins/{orderId} HTTP/1.1
+PUT https://dashboard.bandwidth.com/api/accounts/{accountId}/portins/d28b36f7-fa96-49eb-9556-a40fca49f7c6 HTTP/1.1
 Content-Type: application/xml; charset=utf-8
 Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 
@@ -102,19 +101,39 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 </LnpOrderSupp>
 ```
 
+> Response
+
+```xml
+HTTP 200 OK
+Content-Type: application/xml; charset=utf-8
+
+<LnpOrderResponse>
+    <OrderId>d28b36f7-fa96-49eb-9556-a40fca49f7c6</OrderId>
+    <Status>
+        <Code>200</Code>
+        <Description>Supp request received. Please use the order id to check the status of your order later.</Description>
+    </Status>
+    <ProcessingStatus>REQUESTED_SUPP</ProcessingStatus>
+    <RequestedFocDate>2022-06-04T13:00:00Z</RequestedFocDate>
+    <BillingTelephoneNumber>8045030092</BillingTelephoneNumber>
+    <NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>
+    <Triggered>false</Triggered>
+</LnpOrderResponse>
+```
+
 </TabItem>
 <TabItem value="curl">
 
 ```cURL
 Note: Remember to add authentication for your application if needed!
 
-curl 'https://dashboard.bandwidth.com/api/accounts/{BW_ACCOUNT_ID}/portins' \
--X POST \
+curl 'https://dashboard.bandwidth.com/api/accounts/{BW_ACCOUNT_ID}/portins/d28b36f7-fa96-49eb-9556-a40fca49f7c6' \
+-X PUT \
 -U '{BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}' \
 -H 'Content-Type: application/xml' \
 -d '<LnpOrderSupp>
 <CustomerOrderId>SJM00002</CustomerOrderId>
-<RequestedFocDate>2014-12-04T13:00:00.000Z</RequestedFocDate>
+<RequestedFocDate>2022-06-04T13:00:00.000Z</RequestedFocDate>
 <BillingTelephoneNumber>8045030092</BillingTelephoneNumber>
 <NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>
 <WirelessInfo>
@@ -148,6 +167,26 @@ curl 'https://dashboard.bandwidth.com/api/accounts/{BW_ACCOUNT_ID}/portins' \
 </LnpOrderSupp>'
 ```
 
+> Response
+
+```xml
+HTTP 200 OK
+Content-Type: application/xml; charset=utf-8
+
+<LnpOrderResponse>
+    <OrderId>d28b36f7-fa96-49eb-9556-a40fca49f7c6</OrderId>
+    <Status>
+        <Code>200</Code>
+        <Description>Supp request received. Please use the order id to check the status of your order later.</Description>
+    </Status>
+    <ProcessingStatus>REQUESTED_SUPP</ProcessingStatus>
+    <RequestedFocDate>2022-06-04T13:00:00Z</RequestedFocDate>
+    <BillingTelephoneNumber>8045030092</BillingTelephoneNumber>
+    <NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>
+    <Triggered>false</Triggered>
+</LnpOrderResponse>
+```
+
 </TabItem>
 <TabItem value="java">
 
@@ -166,7 +205,7 @@ supp.setPeerId("12345");
 // ...
 
 try {
-    LnpOrder order = LnpOrder.get(client, "orderId");
+    LnpOrder order = LnpOrder.get(client, "d28b36f7-fa96-49eb-9556-a40fca49f7c6");
     order.update(supp);
     System.out.println(order);
 } catch (Exception e) {
@@ -186,7 +225,7 @@ var data = new PortIn
     PeerId = "12345",
     SiteId = "123"
 };
-var portInOrder = PortIn.Get("orderId");
+var portInOrder = PortIn.Get("d28b36f7-fa96-49eb-9556-a40fca49f7c6");
 portInOrder.Update(data);
 ```
 
@@ -206,7 +245,7 @@ data = {
 //...
 }
 
-portIn = BandwidthIris::PortIn.get("portin_id", callback)
+portIn = BandwidthIris::PortIn.get("d28b36f7-fa96-49eb-9556-a40fca49f7c6", callback)
 portIn.update(data)
 ```
 
@@ -224,7 +263,9 @@ numbers.Client.globalOptions.accountId = "accountId";
 numbers.Client.globalOptions.userName = "userName";
 numbers.Client.globalOptions.password = "password";
 
-portIn.update(data, callback);;
+numbers.PortIn.get("d28b36f7-fa96-49eb-9556-a40fca49f7c6", function(err, portIn){
+    portIn.update(data, callback);
+});
 ```
 
 </TabItem>
@@ -254,40 +295,30 @@ try {
 </TabItem>
 </Tabs>
 
-> Postman/cURL Response Example
-
-```xml
-HTTP 200 OK
-Content-Type: application/xml; charset=utf-8
-
-<LnpOrderResponse>
-    <OrderId>b6080e4c-7ddf-4faa-bbd8-328a72de9297</OrderId>
-    <Status>
-        <Code>200</Code>
-        <Description>Supp request received. Please use the order id to check the status of your order later.</Description>
-    </Status>
-    <ProcessingStatus>REQUESTED_SUPP</ProcessingStatus>
-    <RequestedFocDate>2014-12-04T13:00:00Z</RequestedFocDate>
-    <BillingTelephoneNumber>8045030092</BillingTelephoneNumber>
-    <NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>
-    <Triggered>false</Triggered>
-</LnpOrderResponse>
-```
-
 ## Cancel a Portin Order
 
 The API allows a user to cancel an existing LNP order. The order number that was generated in the create request must be provided, and dhe status of the order shall not be marked as `COMPLETE`. The <Highlight color="#ff6f47">DELETE</Highlight> method is used for this purpose.
 
-### Request URL
-
 <Highlight color="#ff6f47">DELETE</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/portins/{orderId}</code>
 
-### Examples
+<Tabs
+    groupId="deletePortin"
+    defaultValue="cURL"
+    values={[
+        { label: 'cURL', value: 'cURL', },
+        { label: 'Java', value: 'java', },
+        { label: 'C#', value: 'csharp', },
+        { label: 'Ruby', value: 'ruby', },
+        { label: 'NodeJS', value: 'nodejs', },
+        { label: 'PHP', value: 'php', },
+    ]
+    }>
+<TabItem value="cURL">
 
 > Request
 
 ```http
-DELETE https://dashboard.bandwidth.com/api/accounts/{accountId}/portins/{orderId} HTTP/1.1
+DELETE https://dashboard.bandwidth.com/api/accounts/{accountId}/portins/d28b36f7-fa96-49eb-9556-a40fca49f7c6 HTTP/1.1
 Content-Type: application/xml; charset=utf-8
 Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 ```
@@ -297,3 +328,85 @@ Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 ```http
 HTTP 200 OK
 ```
+
+</TabItem>
+<TabItem value="java">
+
+```java
+String accountId = System.getenv("BANDWIDTH_IRIS_ACCOUNTID");
+String username = System.getenv("BANDWIDTH_IRIS_USERNAME");
+String password = System.getenv("BANDWIDTH_IRIS_PASSWORD");
+String irisUrl = System.getenv("BANDWIDTH_IRIS_URL");
+String version = System.getenv("BANDWIDTH_IRIS_URL");
+
+IrisClient client = new IrisClient(accountId, username, password, irisUrl, version);
+
+LnpOrder order = LnpOrder.get(client, "d28b36f7-fa96-49eb-9556-a40fca49f7c6");
+order.delete();
+```
+
+</TabItem>
+<TabItem value="csharp">
+
+```csharp
+var client = Client.GetInstance("accountId", "username", "password", "apiEndpoint")
+
+var portInOrder = PortIn.Get("d28b36f7-fa96-49eb-9556-a40fca49f7c6");
+portInOrder.Delete();
+```
+
+</TabItem>
+<TabItem value="ruby">
+
+```ruby
+require 'ruby-bandwidth-iris'
+
+BandwidthIris::Client.global_options = {
+:account_id => 'accountId',
+:username => 'userName',
+:password => 'password'
+}
+
+portIn = BandwidthIris::PortIn.get("d28b36f7-fa96-49eb-9556-a40fca49f7c6", callback)
+portIn.delete
+```
+
+</TabItem>
+<TabItem value="nodejs">
+
+```js
+var numbers = require("@bandwidth/numbers");
+
+numbers.Client.globalOptions.accountId = "accountId";
+numbers.Client.globalOptions.userName = "userName";
+numbers.Client.globalOptions.password = "password";
+
+numbers.PortIn.get("d28b36f7-fa96-49eb-9556-a40fca49f7c6", function(err, portIn){
+    portIn.delete(callback);
+});
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+$accountId = getenv("BANDWIDTH_API_ACCOUNT_ID");
+$username = getenv("BANDWIDTH_API_USERNAME");
+$password = getenv("BANDWIDTH_API_PASSWORD");
+$apiEndpoint = getenv("BANDWIDTH_API_ENDPOINT");
+
+$client = new \Iris\Client($username, $password, ['url' => $apiEndpoint]);
+$account = new \Iris\Account($accountId, $client);
+
+
+$portin = $account->portins()->portin("d28b36f7-fa96-49eb-9556-a40fca49f7c6"));
+$portin->delete();
+```
+
+</TabItem>
+</Tabs>
+
+## Where to next?
+
+Now that you have learnt how to manage a Port in order, check out some of the available actions in the following guides:
+- [How to manage Port in](/docs/numbers/guides/porting/updatePortin)
