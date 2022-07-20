@@ -1,6 +1,6 @@
 ---
 id: searchingNumbers
-title: Searching Number Inventory
+title: How to search and order a phone number
 slug: /numbers/guides/searchingForNumbers
 description: How to search for available numbers using the Bandwidth API
 keywords:
@@ -17,121 +17,27 @@ export const accountId = "{accountId}";
 
 export const Highlight = ({children, color}) => (
     <span
-      style={{
-        backgroundColor: color,
-        borderRadius: '2px',
-        color: '#fff',
-        padding: '0.2rem',
-      }}>
+        style={{
+            backgroundColor: color,
+            borderRadius: '2px',
+            color: '#fff',
+            padding: '0.2rem',
+        }}>
       {children}
     </span>
-  );
+);
 
-Searching for available phone numbers can be performed through our Dashboard API. There are many ways to search for phone numbers and this guide covers the various methods and how you perform them.
+Ordering Phone Numbers for use with the network allows you to provision specific phone numbers from available inventory that have been discovered in a search.
 
-Specific API information can be found on our [Dashboard API reference](../../../../apis/numbers)
+In this guide we will show you how to make searching for available phone numbers and order them through Dashboard API.
 
-## Searching Numbers
-
+## Search Numbers
+You can find Bandwidth's available numbers using different criteria.
 In certain cases where the **exact digits** are important (such as localVantiy, endsIn, npaNxxx) LCA should be disabled to filter out non-pattern matched phone numbers.
-
-### Request URL
-<Highlight color="#00bf8c">GET</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/availableNumbers</code>
-
-### Query Parameters
-
-| Parameter               | Description                                                                                                                                                                                                  | Example           |
-|:------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:------------------|
-| areaCode                | The 3 digit area code to search for                                                                                                                                                                          | 919               |
-| npaNxx                  | The first 6 digits of the phone number starting with area code, ie. the area code (NPA - Number Plan Area) and prefix (NXX - Exchange or Central Office Code).                                               | 123456            |
-| npaNxxx                 | The first 7 digits of the phone number starting with area code, ie. the area code (NPA - Number Plan Area), prefix (NXX - Exchange or Central Office Code), and 1 additional digit following the prefix.     | 1234567           |
-| rateCenter              | The rate center to search for                                                                                                                                                                                | Cary              |
-| state                   | The 2 letter state code to search for                                                                                                                                                                        | NC                |
-| city                    | The city to search for                                                                                                                                                                                       | Raleigh           |
-| zip                     | The 5 or 9 digit zip code to search for                                                                                                                                                                      | 27606, 27606-0007 |
-| lata                    | Local access and transport area. An up to 5 digit number that represents the geographic area in which numbers are routed                                                                                     | 244               |
-| localVanity             | A 3 to 7 alphanumeric character long string for pattern matching of phone numbers. May also include `*` (to match all) and `_` (to match one)                                                                | `81_`, `8*`       |
-| tollFreeVanity          | A 4 to 7 alphanumeric character long string for pattern matching of toll free numbers                                                                                                                        | `NEWCARS`         |
-| tollFreeWildCardPattern | A 3 alphanumeric character long string representing a wild card pattern for toll free numbers                                                                                                                | `8**`             |
-| quantity                | Number of phone numbers to return. Can be 1 to 5000. Defaults to 5000                                                                                                                                        | 5000              |
-| enableTNDetail          | Boolean value to include TN details. Defaults to false                                                                                                                                                       | `true`            |
-| LCA                     | Boolean value to include TNs in the local calling area.<br/>⚠️Defaults to `true`                                                                                                                              | `true`            |
-| endsIn                  | Boolean value to include only numbers which end in the `localVanity`. Defaults to false                                                                                                                      | `true`            |
-| orderBy                 | The field to order the results by. Can be one of `fullNumber`, `npaNxx`, `npaNxxx`, or `areaCode`                                                                                                            | `areaCode`        |
-| protected               | Determines if the search should return only protected numbers (`ONLY`), only not protected numbers (`NONE`), or both protected and not protected numbers (`MIXED`). Can be one of `NONE`, `ONLY`, or `MIXED` | `NONE`            |
-
-#### Local Calling Area (LCA)
-
 Bandwidth's available number searches with local calling enabled by default. The LCA flag searches nearby Ratecenters for phone numbers that are considered "local" to the parameters passed.
 
-### Search Types
-
-| Search Type                        | Required Parameters     | Combinational Parameters                                                                          | Optional Parameters                          |
-|:-----------------------------------|:------------------------|:--------------------------------------------------------------------------------------------------|:---------------------------------------------|
-| Area Code                          | areaCode                | rateCenter (state required), city (state required), state, lata, zip                              | quantity, enableTNDetail, protected          |
-| NPA-NXX                            | npaNxx                  | rateCenter (state required), city (state required), state, lata, zip, orderBy                     | quantity, enableTNDetail, protected          |
-| NPA-NXX with Local Calling Area    | npaNxx                  |                                                                                                   | quantity, LCA, enableTNDetail, protected     |
-| NPA-NXX-X                          | npaNxxx                 | rateCenter (state required), city (state required), state, lata, zip, orderBy                     | quantity, enableTNDetail, protected          |
-| NPA-NXX-X with Local Calling Area  | npaNxxx                 | rateCenter (state required), city (state required), state, lata, zip                              | quantity, LCA, enableTNDetail, protected     |
-| RateCenter                         | rateCenter, state       | city, areaCode/npaNxx/npaNxxx, lata, zip, orderBy                                                 | quantity, enableTNDetail, protected          |
-| RateCenter with Local Calling Area | rateCenter, state       |                                                                                                   | quantity, LCA, enableTNDetail, protected     |
-| State                              | state                   | rateCenter, city, areaCode/npaNxx/npaNxxx, lata, zip                                              | quantity, enableTNDetail, protected          |
-| City                               | state, city             | rateCenter, state, areaCode/npaNxx/npaNxxx, lata, zip, orderBy                                    | quantity, enableTNDetail, protected          |
-| Zip Code                           | zip                     | rateCenter (state required), city (state required), state, areaCode/npaNxx/npaNxxx, lata, orderBy | quantity, enableTNDetail, protected          |
-| LATA                               | lata                    | rateCenter (state required), city (state required), state, areaCode/npaNxx/npaNxxx, zip           | quantity, enableTNDetail, protected          |
-| Local Vanity                       | localVanity             | state, areaCode                                                                                   | endsIn, quantity, protected, enableTNdetails |
-| TollFree Vanity                    | tollFreeVanity          | orderBy                                                                                           | quantity                                     |
-| TollFree WildCard                  | tollFreeWildCardPattern | orderBy                                                                                           | quantity                                     |
-
-### Examples
-
-<Tabs
-  groupId="http_number_search"
-  defaultValue="area_code"
-  values={[
-    { label: 'Area Code', value: 'area_code', },
-    { label: 'Toll Free', value: 'toll_free', },
-    { label: 'Local Vanity', value: 'local_vanity', },
-    { label: 'NPANxxx, LCA=False', value: 'npanxxx_lca_false', },
-    { label: 'NPANxxx, LCA=True', value: 'npanxxx_lca_true', },
-  ]
-}>
-<TabItem value="area_code">
-
-Search for 2 phone numbers by Area Code
-
-Parameters:
-
-* areaCode : 919
-* quantity : 2
-
-> Request
-
-```http
-GET https://dashboard.bandwidth.com/api/accounts/{accountId}/availableNumbers?areaCode=919&quantity=2
-Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
-```
-
-> Response
-
-```xml
-HTTP/1.1 200
-Content-type: application/xml
-
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<SearchResult>
-    <ResultCount>2</ResultCount>
-    <TelephoneNumberList>
-        <TelephoneNumber>9192760028</TelephoneNumber>
-        <TelephoneNumber>9194954957</TelephoneNumber>
-    </TelephoneNumberList>
-</SearchResult>
-```
-
-</TabItem>
-<TabItem value="toll_free">
-
-Search for 2 toll-free numbers
+To make a search for the available number, you must make a GET request to our [API available numbers](../../../../apis/numbers#tag/accounts/operation/GetAvailableTns) endpoint.
+This can be done through our [SDKs](/sdks), using tools like [Postman](https://github.com/Bandwidth/postman) or in the command line.
 
 :::tip Searching Toll Free Numbers
 The `tollFreeWildCardPattern` allows you to search toll free area codes, but forces the 3rd digit to be a `*`.
@@ -139,58 +45,81 @@ However, with the nature of Toll Free area codes - the 3rd digit will always be 
 For 800 numbers, search for `80*` and so on.
 :::
 
-Parameters:
+<Tabs
+groupId="http_number_search"
+defaultValue="curl"
+values={[
+    { label: 'cURL', value: 'curl', },
+    { label: 'Java', value: 'java', },
+    { label: 'C#', value: 'c#', },
+    { label: 'NodeJS', value: 'nodejs', },
+    { label: 'PHP', value: 'php', },
+]
+}>
+<TabItem value="curl">
 
-* tollFreeWildCardPattern : 80*
-* quantity                : 2
+```cURL
+Note: Remember to add authentication for your application if needed!
 
-> Request
-
-```http
-GET https://dashboard.bandwidth.com/api/accounts/{accountId}/availableNumbers?tollFreeWildCardPattern=80*&quantity=2
-Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+curl 'https://voice.bandwidth.com/api/v2/accounts/{BW_ACCOUNT_ID}/availableNumbers?areaCode=919&quantity=2' \
+-U '{BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}'
 ```
+</TabItem>
 
-> Response
+<TabItem value="java">
 
-```xml
-HTTP/1.1 200
-Content-type: application/xml
+```java
+Map<String, Object> query = new HashMap<String, Object>();
+query.put("areaCode", "919");
+query.put("quantity", 2);
 
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<SearchResult>
-    <ResultCount>2</ResultCount>
-    <TelephoneNumberList>
-        <TelephoneNumber>8336572433</TelephoneNumber>
-        <TelephoneNumber>8336580609</TelephoneNumber>
-    </TelephoneNumberList>
-</SearchResult>
+List<TelephoneNumberDetail> numbers = (List<TelephoneNumberDetail>) AvailableNumbers.search(client, query);
+
+for (TelephoneNumberDetail number : numbers)
+{
+    System.out.println(String.format("Full number: %s : Rate Center: %s", number.getFullNumber(), number.getRateCenter()));
+}
 ```
 
 </TabItem>
-<TabItem value="local_vanity">
+<TabItem value="c#">
 
-Search for 2 phone numbers by localVanity
-
-Parameters:
-
-* localVanity : 867_0*
-* lca         : false
-* quantity    : 2
-
-> Request
-
-```http
-GET https://dashboard.bandwidth.com/api/accounts/{accountId}/availableNumbers?localVanity=867_0*&quantity=2&lca=false
-Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```c#
+var query = new Dictionary<string, object>();
+query.Add("areaCode", "919");
+query.Add("quantity", 2);
+var result = await AvailableNumbers.List(_client, query);
+foreach (string number in result.TelephoneNumberList)
+{
+    Console.WriteLine(string.Format("Number: {0}", number));
+}
 ```
+
+</TabItem>
+<TabItem value="nodejs">
+
+Available Numbers Area Code
+
+```nodejs
+var res = await numbers.AvailableNumbers.listAsync({areaCode:"919", quantity:"2"});
+console.log(res);
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+$account->availableNumbers([ "areaCode" => "818", "quantity" => "2" ]);
+```
+
+</TabItem>
+</Tabs>
+
+And endpoint `../availableNumbers` should return a response like:
 
 > Response
 
 ```xml
-HTTP/1.1 200
-Content-type: application/xml
-
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <SearchResult>
     <ResultCount>2</ResultCount>
@@ -201,77 +130,368 @@ Content-type: application/xml
 </SearchResult>
 ```
 
-</TabItem>
-<TabItem value="npanxxx_lca_false">
+## Order Phone Numbers
 
-Search for 2 phone numbers by NPANxxx with LCA False
+To create an order, you can use the numbers found through the search.
+If you want that Bandwidth will select phones for you according to your criteria and immediately create an order -
+then you can look at the `orderType` parameter of the request schema in [API order numbers](../../../../apis/numbers#tag/accounts/operation/CreateOrder).
 
-Parameters:
+In this example, we will show how to make an order for numbers that were found using the search.
+To order numbers, you must make a POST request to our [API order numbers](../../../../apis/numbers#tag/accounts/operation/CreateOrder) endpoint.
+This can be done through our [SDKs](/sdks), using tools like [Postman](https://github.com/Bandwidth/postman) or in the command line.
 
-* NPANxxx   : 9192760
-* lca       : false
-* quantity  : 2
+<Tabs
+groupId="http_number_search"
+defaultValue="payload"
+values={[
+    { label: 'Payload', value: 'payload', },
+    { label: 'cURL', value: 'curl', },
+    { label: 'Java', value: 'java', },
+    { label: 'C#', value: 'c#', },
+    { label: 'NodeJS', value: 'nodejs', },
+    { label: 'PHP', value: 'php', },
+]
+}>
 
-> Request
+<TabItem value="payload">
 
-```http
-GET https://dashboard.bandwidth.com/api/accounts/{accountId}/availableNumbers?npaNxxx=9192760&quantity=2&lca=false
-Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```xml
+<Order>
+    <SiteId>461</SiteId>
+    <PartialAllowed>true</PartialAllowed>
+    <ExistingTelephoneNumberOrderType>
+        <TelephoneNumberList>
+            <TelephoneNumber>6672286710</TelephoneNumber>
+            <TelephoneNumber>5756186700</TelephoneNumber>
+        </TelephoneNumberList>
+    </ExistingTelephoneNumberOrderType>
+</Order>
 ```
+
+</TabItem>
+
+<TabItem value="curl">
+
+```cURL
+Note: Remember to add authentication for your application if needed!
+
+curl 'https://voice.bandwidth.com/api/v2/accounts/{BW_ACCOUNT_ID}/orders' \
+-X POST \
+-U '{BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}' \
+-H 'Content-Type: application/json' \
+-d '{
+    "name": "Available Telephone Number order",
+    "SiteId": "461",
+    "ExistingTelephoneNumberOrderType": "{TelephoneNumberList: [TelephoneNumber: "6672286710", TelephoneNumber: "5756186700"]}"
+}'
+```
+
+</TabItem>
+
+<TabItem value="java">
+
+```java
+ExistingTelephoneNumberOrderType existingTelephoneNumberOrderType = new ExistingTelephoneNumberOrderType();
+existingTelephoneNumberOrderType.getTelephoneNumberList().add("6672286710");
+existingTelephoneNumberOrderType.getTelephoneNumberList().add("5756186700");
+
+Order o = new Order();
+o.setName("Available Telephone Number order");
+o.setExistingTelephoneNumberOrderType(existingTelephoneNumberOrderType);
+OrderResponse createdOrder = Order.create(client, o);
+```
+
+</TabItem>
+
+<TabItem value="c#">
+
+```c#
+var result = await Order.Create(_client, new Order
+{
+    Name = "Available Telephone Number order",
+    SiteId = "461",
+    ExistingTelephoneNumberOrderType = {
+        TelephoneNumberList = [] {
+            TelephoneNumber: "6672286710",
+            TelephoneNumber: "5756186700"
+        }
+    }
+});
+```
+
+</TabItem>
+
+<TabItem value="nodejs">
+
+```nodejs
+var order = {
+    name: "Available Telephone Number order",
+    siteId: 461,
+    existingTelephoneNumberOrderType: {
+        telephoneNumberList: [
+            {
+                telephoneNumber: "6672286710"
+            },
+            {
+                telephoneNumber: "5756186700"
+            }
+        ]
+    }
+};
+numbers.Order.create(order, callback);
+```
+
+</TabItem>
+
+<TabItem value="php">
+
+```php
+$order = $account->orders()->create([
+    "Name" => "Available Telephone Number order",
+    "SiteId" => "461",
+    "ExistingTelephoneNumberOrderType" => [
+        "TelephoneNumberList" => [
+            "TelephoneNumber" => [ "6672286710", "5756186700" ]
+        ]
+    ]
+]);
+```
+
+</TabItem>
+
+</Tabs>
+
+And endpoint `../orders` should return a response like:
 
 > Response
 
 ```xml
-HTTP/1.1 200
-Content-type: application/xml
-
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<SearchResult>
-    <ResultCount>1</ResultCount>
-    <TelephoneNumberList>
-        <TelephoneNumber>9192760028</TelephoneNumber>
-    </TelephoneNumberList>
-</SearchResult>
+<OrderResponse>
+    <Order>
+        <OrderCreateDate>2018-01-23T19:56:29.678Z</OrderCreateDate>
+        <BackOrderRequested>false</BackOrderRequested>
+        <id>47955555-67aa-4adb-8c0f-b6894e60c0dc</id>
+        <ExistingTelephoneNumberOrderType>
+            <TelephoneNumberList>
+                <TelephoneNumber>6672286710</TelephoneNumber>
+                <TelephoneNumber>5756186700</TelephoneNumber>
+            </TelephoneNumberList>
+        </ExistingTelephoneNumberOrderType>
+        <PartialAllowed>true</PartialAllowed>
+        <SiteId>461</SiteId>
+    </Order>
+    <OrderStatus>RECEIVED</OrderStatus>
+</OrderResponse>
+```
+
+## Fetch Order Information
+
+Phone number ordering in the Bandwidth Dashboard is asynchronous when creating an "order". The orders are then processed and the order status is updated asynchronously.  Bandwidth recommends configuring your account with a subscription instead of polling the order resource for `<OrderStatus>`.
+Order processing times can vary and are not guaranteed, so bandwidth does __not__ recommend setting a timeout on waiting for an order to show either `COMPLETE` or `FAILED` status, but instead relying on a webhook from an orders subscription.
+
+## Poll for Order Status
+
+To poll for Order status you must to send GET request with order Id to our [API fetch order status](../../../../apis/numbers#tag/accounts/operation/RetrieveOrder) endpoint.
+
+<Tabs
+groupId="http_number_search"
+defaultValue="curl"
+values={[
+    { label: 'cURL', value: 'curl', },
+    { label: 'Java', value: 'java', },
+    { label: 'C#', value: 'c#', },
+    { label: 'NodeJS', value: 'nodejs', },
+    { label: 'PHP', value: 'php', },
+]
+}>
+
+<TabItem value="curl">
+
+```cURL
+Note: Remember to add authentication for your application if needed!
+
+curl 'https://voice.bandwidth.com/api/v2/accounts/{BW_ACCOUNT_ID}/orders/{ORDER_ID}' \
+-U '{BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}'
 ```
 
 </TabItem>
-<TabItem value="npanxxx_lca_true">
 
-Search for 5 phone numbers by NPANxxx with LCA true
+<TabItem value="java">
 
-Parameters:
-
-* NPANxxx   : 9192760
-* lca       : **true** by default
-* quantity  : 5
-
-> Request
-
-```http
-GET https://dashboard.bandwidth.com/api/accounts/{accountId}/availableNumbers?npaNxxx=9192760&quantity=5
-Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```java
+Order o = Order.get(client, "orderId");
 ```
 
-> Responds
+</TabItem>
 
-**Note the difference between the previous example, with the resulting numbers not exactly matching the pattern sent**
+<TabItem value="c#">
+
+```c#
+var order = await Order.Get("orderId");
+```
+
+</TabItem>
+
+
+<TabItem value="nodejs">
+
+```nodejs
+numbers.Order.get(id, callback);
+```
+
+</TabItem>
+
+<TabItem value="php">
+
+```php
+$response = $account->orders()->order("orderId");
+$order = $response->Order;
+```
+
+</TabItem>
+
+</Tabs>
+
+And endpoint `../orders/{ORDER_ID}` should return a response like:
+
+> Response
 
 ```xml
-HTTP/1.1 200
-Content-type: application/xml
-
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<SearchResult>
-    <ResultCount>5</ResultCount>
-    <TelephoneNumberList>
-        <TelephoneNumber>9102424029</TelephoneNumber>
-        <TelephoneNumber>9102424379</TelephoneNumber>
-        <TelephoneNumber>9105142211</TelephoneNumber>
-        <TelephoneNumber>9108081128</TelephoneNumber>
-        <TelephoneNumber>9108081915</TelephoneNumber>
-    </TelephoneNumberList>
-</SearchResult>
+<OrderResponse>
+    <CompletedQuantity>2</CompletedQuantity>
+    <CreatedByUser>jbm</CreatedByUser>
+    <LastModifiedDate>2018-01-23T19:56:30.782Z</LastModifiedDate>
+    <OrderCompleteDate>2018-01-23T19:56:30.782Z</OrderCompleteDate>
+    <Order>
+        <OrderCreateDate>2018-01-23T19:56:29.678Z</OrderCreateDate>
+        <id>47955555-67aa-4adb-8c0f-b6894e60c0dc</id>
+        <ExistingTelephoneNumberOrderType>
+            <TelephoneNumberList>
+                <TelephoneNumber>6672286710</TelephoneNumber>
+                <TelephoneNumber>5756186700</TelephoneNumber>
+            </TelephoneNumberList>
+        </ExistingTelephoneNumberOrderType>
+        <PartialAllowed>true</PartialAllowed>
+        <SiteId>461</SiteId>
+    </Order>
+    <OrderStatus>COMPLETE</OrderStatus>
+    <CompletedNumbers>
+        <TelephoneNumber>
+            <FullNumber>6672286710</FullNumber>
+            <FullNumber>5756186700</FullNumber>
+        </TelephoneNumber>
+    </CompletedNumbers>
+    <Summary>2 number ordered</Summary>
+    <FailedQuantity>0</FailedQuantity>
+</OrderResponse>
+```
+
+## Order Status Webhook
+
+This is a webhook that bandwidth sends to _your_ server/email upon order completion/failure - there is no need to poll the resource if using this recommended method.
+
+To create a subscription for Order Status you must to send POST request to our [API create subscription](../../../../apis/numbers#tag/accounts/operation/CreateSubscriptions) endpoint.
+
+<Tabs
+groupId="http_number_search"
+defaultValue="curl"
+values={[
+    { label: 'cURL', value: 'curl', },
+    { label: 'Java', value: 'java', },
+    { label: 'C#', value: 'c#', },
+    { label: 'NodeJS', value: 'nodejs', },
+    { label: 'PHP', value: 'php', },
+]
+}>
+
+<TabItem value="curl">
+
+```curl
+
+curl 'https://voice.bandwidth.com/api/v2/accounts/{BW_ACCOUNT_ID}/orders' \
+-X POST \
+-U '{BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}' \
+-H 'Content-Type: application/json' \
+-d '{
+    "Subscription" : {
+        "orderType": "orders",
+        "orderId": "orderId"
+        "EmailSubscription": {
+            "Email":"some@email.com",
+            "DigestRequested":"DAILY"
+        }
+    }
+}'
+```
+
+</TabItem>
+
+<TabItem value="java">
+
+```java
+Subscription subscription = new Subscription();
+subscription.setOrderType("orders");
+subscription.setOrderId("orderId");
+EmailSubscription emailSubscription = new EmailSubscription();
+emailSubscription.setEmail("test@test.com");
+emailSubscription.setDigestRequested("NONE");
+subscription.setEmailSubscription(emailSubscription);
+Subscription createdSubscription = Subscription.create(client, subscription);
+```
+
+</TabItem>
+
+<TabItem value="c#">
+
+```c#
+
+var subscription = await Subscription.Create(new Subscription() {
+    OrderType = "orders",
+    OrderId = "100",
+    EmailSubscription = new EmailSubscription {
+        Email = "test@test",
+        DigestRequested = "NONE"
+    }
+};
+```
+
+</TabItem>
+
+<TabItem value="nodejs">
+
+```nodejs
+
+var subscription = {
+    orderType:"orders",
+    callbackSubscription: {
+        URL:"http://mycallbackurl.com",
+        user:"userid",
+        expiry: 12000
+    }
+};
+numbers.Subscription.create(subscription, callback);
+```
+
+</TabItem>
+
+<TabItem value="php">
+
+```php
+$subscription = $account->subscriptions()->create([
+    "OrderType" => "portins",
+    "OrderId" => "orderId",
+    "EmailSubscription" => [
+        "Email" => "test@test.com",
+        "DigestRequested" => "DAILY"
+    ]
+]);
 ```
 
 </TabItem>
 </Tabs>
+
+## Where to next?
+Now that you have learn how to search and order numbers, check out some of the available actions in the guides:
+- [How to porting numbers](/docs/numbers/guides/portingNumbers)
