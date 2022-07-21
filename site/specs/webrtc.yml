@@ -2425,24 +2425,24 @@ components:
     subscriptions:
       type: object
       readOnly: true
-      required:
-        - sessionId
       properties:
         sessionId:
           type: string
           description: >-
-            Session the subscriptions are associated with. If this is the only
-            field, the subscriber will be subscribed to all participants in the
-            session (including any participants that are later added to the
-            session). Upon creation of a Participant, returns as an empty
-            object.
+            If present, and not overridden by the array of participants, it 
+            represents the session the subscriptions are associated with. If
+            this is the only field, the subscriber will be subscribed to all
+            participants in the session (including any participants that are
+            later added to the session). Upon creation of a Participant, returns
+            as an empty object.
           example: d8886aad-b956-4e1b-b2f4-d7c9f8162772
         participants:
           type: array
           description: >-
             (optional) A list of participants  in the session that will be
-            subscribed to. Returns empty if used during the creation of a
-            Participant. 
+            subscribed to.  If present and not  empty or null, this will
+            override  any sessionId specified in the body. Returns empty if used
+            during the creation of a Participant. 
           example:
             - participantId: 568749d5-04d5-483d-adf5-deac7dd3d521
             - participantId: 0275e47f-dd21-4cf0-a1e1-dfdc719e73a7
@@ -2619,19 +2619,42 @@ components:
             $ref: '#/components/schemas/session'
     addParticipantToSessionRequest:
       description: >-
-        Optional set of subscriptions to set on the participant.
+        The Body describes an optional set of subscriptions to apply to the
+        participant.
+
 
         Calling this endpoint with no/empty body will only add the participant
-        to the session. NOTE: the request body for this endpoint is OPTIONAL and
-        provided as a convenience to avoid additional calls to the Update
-        Participant Subscriptions endpoint.
+        to the session, and will not subscribe the Participant to any media.
+
+
+        The request body for this endpoint is OPTIONAL and provided as a
+        convenience to avoid additional calls to the Update Participant
+        Subscriptions endpoint. --- If a body is provided it will yield explicit
+        control over what Participants are subscribed to. - if the participants
+        Array is provided and not empty, that list of Participants will be
+        subscribed To - if the participants Array is missing or empty, and the
+        sessionId is provided, the participant will be subscribed to the
+        session, including all subsequent changes to the membership of the
+        session - if the sessionId and the participant Array are both missing or
+        empty, no subscriptions will be created
       required: false
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/subscriptions'
     updateParticipantSubscriptionsRequest:
-      description: Update participant subscriptions request body.
+      description: >-
+        description: The body describes the desired subscriptions for the
+        Participant.
+                ---
+        If a body is provided it will yield explicit control over what
+        Participants are subscribed to. - if the participants Array is provided
+        and not empty, that list of Participants will be subscribed To - if the
+        participants Array is missing or empty, and the sessionId is provided,
+        the participant will be subscribed to the session, including all
+        subsequent changes to the membership of the session - if the sessionId
+        and the participant Array are both missing or empty, no subscriptions
+        will be created
       required: false
       content:
         application/json:
