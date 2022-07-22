@@ -1,0 +1,457 @@
+openapi: 3.0.1
+info:
+  title: Bandwidth Toll Free Verification API
+  version: 1.0.0
+  contact:
+    name: Bandwidth Support
+    email: support@bandwidth.com
+    url: https://support.bandwidth.com
+  description: >-
+    Submission, management, and querying of requests to verify toll-free US
+    phone numbers for message campaigns
+servers:
+  - url: https://dashboard.bandwidth.com
+tags:
+  - name: Get Verification Information
+    description: >-
+      This API will provide verification status for a phone number that is
+      provisioned to your account.
+  - name: Delete Verification Information
+    description: >-
+      This API will remove verification status for a phone number that is
+      provisioned to your account.
+  - name: Submit Verification Request
+    description: Submit a request for verification of a toll-free phone number.
+security:
+  - Basic: []
+paths:
+  /v1/accounts/{accountId}/tollFreeVerificationRequests/{phoneNumber}:
+    get:
+      tags:
+        - Get Verification Information
+      summary: >-
+        This API will provide verification status for a phone number that is
+        provisioned to your account.
+      description: >-
+        This API will provide verification status for a phone number that is
+        provisioned to your account.
+      operationId: getVerificationStatus
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/phoneNumber'
+      responses:
+        '200':
+          $ref: '#/components/responses/Success-200'
+        '400':
+          $ref: '#/components/responses/BadRequest-400'
+        '401':
+          $ref: '#/components/responses/Unauthorized-401'
+        '403':
+          $ref: '#/components/responses/Forbidden-403'
+        '404':
+          $ref: '#/components/responses/NotFound-404'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed-405'
+        '429':
+          $ref: '#/components/responses/TooManyRequests-429'
+        '500':
+          $ref: '#/components/responses/ServerError-500'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable-503'
+    delete:
+      tags:
+        - Delete Verification Information
+      summary: >-
+        This API will remove verification status for a phone number that is
+        provisioned to your account.
+      description: >-
+        This API will remove verification status for a phone number that is
+        provisioned to your account.
+      operationId: deleteVerificationStatus
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/phoneNumber'
+      responses:
+        '204':
+          $ref: '#/components/responses/NoContent-204'
+        '400':
+          $ref: '#/components/responses/BadRequest-400'
+        '401':
+          $ref: '#/components/responses/Unauthorized-401'
+        '403':
+          $ref: '#/components/responses/Forbidden-403'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed-405'
+        '429':
+          $ref: '#/components/responses/TooManyRequests-429'
+        '500':
+          $ref: '#/components/responses/ServerError-500'
+  /v1/accounts/{accountId}/tollFreeVerificationRequests:
+    post:
+      tags:
+        - Submit Verification Request
+      summary: >-
+        Submit a set of phone numbers for verification with identical metadata
+        (address, contact, etc.)
+      description: Submit a request for verification of a toll-free phone number.
+      operationId: requestVerification
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+      requestBody:
+        $ref: '#/components/requestBodies/verificationRequest'
+      responses:
+        '202':
+          $ref: '#/components/responses/Accepted-202'
+        '400':
+          $ref: '#/components/responses/BadRequest-400'
+        '401':
+          $ref: '#/components/responses/Unauthorized-401'
+        '403':
+          $ref: '#/components/responses/Forbidden-403'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed-405'
+        '429':
+          $ref: '#/components/responses/TooManyRequests-429'
+        '500':
+          $ref: '#/components/responses/ServerError-500'
+      x-codegen-request-body-name: submit
+components:
+  parameters:
+    accountId:
+      name: accountId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Your Bandwidth Account ID
+      example: '9900000'
+    phoneNumber:
+      name: phoneNumber
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/PhoneNumber'
+      description: Valid telephone number in E.164 format
+      example: '+19194445555'
+  requestBodies:
+    verificationRequest:
+      description: Submit a request for verification of a toll-free phone number.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/VerificationRequest'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/VerificationRequest'
+  schemas:
+    PhoneNumber:
+      type: string
+      minLength: 2
+      maxLength: 17
+      nullable: false
+      pattern: ^\+\d{1,16}$
+      example: '+18005555555'
+    Email:
+      type: string
+      minLength: 3
+      maxLength: 500
+      nullable: false
+      pattern: >-
+        ^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$
+      example: foo@bar.com
+    Url:
+      type: string
+      minLength: 3
+      maxLength: 500
+      nullable: false
+      example: https://www.example.com/path/to/resource
+      pattern: ^((https?):\/\/)?(www.)?[a-z0-9]+\.[a-z]+(\/[a-zA-Z0-9#]+\/?)*$
+    UsState:
+      type: string
+      minLength: 2
+      maxLength: 500
+      nullable: false
+      example: NC
+    UsZipCode:
+      type: string
+      minLength: 5
+      maxLength: 10
+      nullable: false
+      example: '27606'
+      pattern: ^\d{5}(-\d{4})?$
+    String:
+      type: string
+      minLength: 0
+      maxLength: 500
+      nullable: false
+    Address:
+      type: object
+      nullable: false
+      required:
+        - name
+        - addressLine1
+        - city
+        - state
+        - zipCode
+        - website
+      properties:
+        name:
+          $ref: '#/components/schemas/String'
+        addressLine1:
+          $ref: '#/components/schemas/String'
+        addressLine2:
+          $ref: '#/components/schemas/String'
+        city:
+          $ref: '#/components/schemas/String'
+        state:
+          $ref: '#/components/schemas/UsState'
+        zipCode:
+          $ref: '#/components/schemas/UsZipCode'
+        website:
+          $ref: '#/components/schemas/Url'
+    Contact:
+      type: object
+      nullable: false
+      required:
+        - firstName
+        - lastName
+        - email
+        - phoneNumber
+      properties:
+        firstName:
+          $ref: '#/components/schemas/String'
+        lastName:
+          $ref: '#/components/schemas/String'
+        email:
+          $ref: '#/components/schemas/Email'
+        phoneNumber:
+          $ref: '#/components/schemas/PhoneNumber'
+    OptInWorkflow:
+      type: object
+      nullable: false
+      required:
+        - description
+        - imageUrls
+      properties:
+        description:
+          $ref: '#/components/schemas/String'
+        imageUrls:
+          type: array
+          items:
+            $ref: '#/components/schemas/Url'
+    VerificationRequest:
+      type: object
+      required:
+        - businessAddress
+        - businessContact
+        - messageVolume
+        - phoneNumbers
+        - useCaseCategory
+        - useCaseSummary
+        - productionMessageContent
+        - optInWorkflow
+      properties:
+        businessAddress:
+          $ref: '#/components/schemas/Address'
+        businessContact:
+          $ref: '#/components/schemas/Contact'
+        messageVolume:
+          type: integer
+          example: 10000
+        phoneNumbers:
+          type: array
+          minItems: 1
+          maxItems: 10
+          items:
+            $ref: '#/components/schemas/PhoneNumber'
+        useCaseCategory:
+          $ref: '#/components/schemas/UseCaseCategories'
+        useCaseSummary:
+          $ref: '#/components/schemas/String'
+        productionMessageContent:
+          $ref: '#/components/schemas/String'
+        optInWorkflow:
+          $ref: '#/components/schemas/OptInWorkflow'
+        additionalInformation:
+          $ref: '#/components/schemas/String'
+        internalTicketNumber:
+          $ref: '#/components/schemas/String'
+        isvReseller:
+          $ref: '#/components/schemas/String'
+    OkGetContent:
+      type: object
+      properties:
+        phoneNumber:
+          type: string
+          example: '+18005555555'
+        status:
+          type: string
+          example: Verified
+    AcceptedContent:
+      type: object
+      properties:
+        status:
+          type: number
+          example: 202
+        message:
+          type: string
+          example: Request has been accepted
+    UseCaseCategories:
+      type: string
+      example: 2FA
+    BadRequestContent:
+      type: object
+      properties:
+        status:
+          type: number
+          example: 400
+        message:
+          type: string
+          example: Phone Number is not in E.164 format
+    ErrorResponse401:
+      type: object
+      required:
+        - status
+        - message
+      properties:
+        status:
+          type: number
+          example: 401
+        message:
+          type: string
+          example: User not authorized to query phone number
+    ErrorResponse403:
+      type: object
+      required:
+        - status
+        - message
+      properties:
+        status:
+          type: number
+          example: 403
+        message:
+          type: string
+          example: Forbidden - user is not a BW admin
+    MethodNotAllowedContent:
+      type: object
+      properties:
+        status:
+          type: number
+          example: 405
+        message:
+          type: string
+          example: This method is not allowed for the given accountId
+    TooManyRequestsContent:
+      type: object
+      properties:
+        status:
+          type: number
+          example: 429
+        message:
+          type: string
+          example: User has issued too many requests
+    ServerErrorContent:
+      type: object
+      properties:
+        status:
+          type: number
+          example: 500
+        message:
+          type: string
+          example: Internal server error
+    ServiceUnavailableContent:
+      type: object
+      properties:
+        status:
+          type: number
+          example: 503
+        message:
+          type: string
+          example: Service is unavailable
+    ErrorResponse:
+      type: object
+      required:
+        - status
+        - message
+      properties:
+        status:
+          type: number
+          example: 412
+        message:
+          type: string
+          example: Request failed required preconditions
+  securitySchemes:
+    Basic:
+      type: http
+      scheme: basic
+      description: >-
+        Basic authentication is a simple authentication scheme built into the
+        HTTP protocol. To use it, send your HTTP requests with an Authorization
+        header that contains the word Basic followed by a space and a
+        base64-encoded string `username:password`.
+
+        Example: `Authorization: Basic ZGVtbZpwQDU1dzByZA==`
+  responses:
+    Success-200:
+      description: Success
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OkGetContent'
+    Accepted-202:
+      description: Accepted
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AcceptedContent'
+    NoContent-204:
+      description: No Content
+    BadRequest-400:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BadRequestContent'
+    Unauthorized-401:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse401'
+    Forbidden-403:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse403'
+    NotFound-404:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    MethodNotAllowed-405:
+      description: Method Not Allowed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MethodNotAllowedContent'
+    TooManyRequests-429:
+      description: Too Many Requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsContent'
+    ServerError-500:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ServerErrorContent'
+    ServiceUnavailable-503:
+      description: Service Unavailable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ServiceUnavailableContent'
