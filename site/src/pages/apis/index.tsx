@@ -65,6 +65,12 @@ const ApiList = [
         Svg: require('../../../static/img/icon-insights-complex-no-bg.svg').default,
         style: apiStyles.apiSvg,
         link: '/apis/insights'
+    },
+    {
+        title: 'Toll-Free Verification',    
+        Svg: require('../../../static/img/icon-int-messaging-complex-no-bg.svg').default, 
+        style: apiStyles.apiSvg,    
+        link: '/apis/tfVerify'    
     }
 ];
 
