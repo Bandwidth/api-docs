@@ -225,10 +225,9 @@ paths:
         description: Port-in order ID
     get:
       summary: Check a Port-In Order
+      description: Allows you to check the status of an existing port-in order.
       operationId: getPortInOrder
-      tags:
-        - Port-In Orders
-        - Coming soon
+      parameters: []
       responses:
         '200':
           description: OK
@@ -248,14 +247,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/responses/404ErrorResponse'
-      parameters: []
-      description: Allows you to check the status of an existing port-in order.
-    delete:
-      summary: Delete a Draft Port-In Order
-      operationId: deletePortInOrder
       tags:
         - Port-In Orders
         - Coming soon
+    delete:
+      summary: Delete a Draft Port-In Order
+      description: >-
+        Allows you to delete a port-in order in draft. For a cancellation of an
+        order in processing, please use PATCH endpoint.
+      operationId: deletePortInOrder
       responses:
         '204':
           description: No Content
@@ -283,15 +283,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/responses/409ErrorResponse'
-      description: >-
-        Allows you to delete a port-in order in draft. For a cancellation of an
-        order in processing, please use PATCH endpoint.
-    patch:
-      summary: Submit/Modify/Request Cancellation of a Port-In Order
-      operationId: modifyPortinOrder
       tags:
         - Port-In Orders
         - Coming soon
+    patch:
+      summary: Submit/Modify/Request Cancellation of a Port-In Order
+      description: >-
+        Allows you to submit or modify a draft port-in order, or to request the
+        cancellation of a submitted port-in order.
+      operationId: modifyPortinOrder
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/requestBodies/portInOrderRequest'
       responses:
         '200':
           description: OK
@@ -329,20 +334,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/responses/409ErrorResponse'
+      tags:
+        - Port-In Orders
+        - Coming soon
+  /v3/porting/validator:
+    post:
+      summary: Check number portability
+      description: >-
+        Check if a set of numbers is portable to Bandwidth. Bandwidth internally
+        detects the number type, area code, and country code, and you can
+        retrieve porting pricing fees and submission requirements.
+      operationId: portabilityCheck
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/requestBodies/portInOrderRequest'
-      description: >-
-        Allows you to submit or modify a draft port-in order, or to request the
-        cancellation of a submitted port-in order.
-  /v3/porting/validator:
-    post:
-      summary: Check number portability
-      operationId: portabilityCheck
-      tags:
-        - Portability Checker
+              type: object
+              properties:
+                phoneNumbers:
+                  type: array
+                  description: Array of telephone numbers in E.164 format.
+                  items:
+                    type: string
+                    minLength: 1
+                    maxLength: 999
+                    example: '+33123456789'
+              required:
+                - phoneNumbers
       responses:
         '200':
           description: OK
@@ -389,36 +407,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/responses/403ErrorResponse'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                phoneNumbers:
-                  type: array
-                  description: Array of telephone numbers in E.164 format.
-                  items:
-                    type: string
-                    minLength: 1
-                    maxLength: 999
-                    example: '+33123456789'
-              required:
-                - phoneNumbers
-            examples: {}
-      description: >-
-        Check if a set of numbers is portable to Bandwidth. Bandwidth internally
-        detects the number type, area code, and country code, and you can
-        retrieve porting pricing fees and submission requirements.
-    parameters: []
+      tags:
+        - Portability Checker
   /v3/porting/{portInOrderId}/documents:
     post:
       summary: Upload documents for a port-in order
+      description: >-
+        You are required to upload all the relevant documents for your existing
+        port-in order to be successful depending on the number you are trying to
+        port and which country the number belongs to. You can see the required
+        documents by checking a number's portability requirements.
+
+
+        The endpoint can only support 1 file per document type, and up to 20Mb. 
       operationId: uploadPortInDocuments
-      tags:
-        - Port-In Orders
-        - Port-In Order Document
-        - Coming soon
+      parameters:
+        - schema:
+            type: string
+          name: portInOrderId
+          in: path
+          required: true
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+          application/json:
+            schema:
+              type: object
+              properties: {}
       responses:
         '201':
           description: OK
@@ -475,37 +492,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/responses/404ErrorResponse'
-      description: >-
-        You are required to upload all the relevant documents for your existing
-        port-in order to be successful depending on the number you are trying to
-        port and which country the number belongs to. You can see the required
-        documents by checking a number's portability requirements.
-
-
-        The endpoint can only support 1 file per document type, and up to 20Mb. 
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-          application/json:
-            schema:
-              type: object
-              properties: {}
-      parameters: []
-    parameters:
-      - schema:
-          type: string
-        name: portInOrderId
-        in: path
-        required: true
-  /v3/porting/{portInOrderId}/documents/{documentId}:
-    get:
-      summary: Retrieve an uploaded document
       tags:
         - Port-In Orders
         - Port-In Order Document
         - Coming soon
+  /v3/porting/{portInOrderId}/documents/{documentId}:
+    get:
+      summary: Retrieve an uploaded document
+      description: >-
+        Allows you to download specific documents you have uploaded to review
+        for a specific port-in order.
+      operationId: getPortInDocument
+      parameters:
+        - schema:
+            type: string
+          name: portInOrderId
+          in: path
+          required: true
+        - schema:
+            type: string
+          name: documentId
+          in: path
+          required: true
       responses:
         '200':
           description: OK
@@ -544,21 +552,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/responses/404ErrorResponse'
-      operationId: getPortInDocument
-      description: >-
-        Allows you to download specific documents you have uploaded to review
-        for a specific port-in order.
-    parameters:
-      - schema:
-          type: string
-        name: portInOrderId
-        in: path
-        required: true
-      - schema:
-          type: string
-        name: documentId
-        in: path
-        required: true
+      tags:
+        - Port-In Orders
+        - Port-In Order Document
+        - Coming soon
 components:
   schemas:
     portInOrder:
@@ -2142,6 +2139,13 @@ components:
                   href: >-
                     http://porting-api.integration06.dev.voxbone.com/external/beta/ports/287415/documents/552183
                   type: GET
+  parameters:
+    portInOrderId:
+      name: Id of a port-in order
+      in: path
+      required: true
+      schema:
+        type: integer
 tags:
   - name: Port-In Orders
   - name: Port-In Order Document
