@@ -4,7 +4,7 @@ info:
   contact:
     name: Bandwidth
   version: 0.1.2
-  description: API that allows users to query call logs.
+  description: API that allows users to query call logs
 servers:
   - url: https://insights.bandwidth.com/api/v1.beta/voice
 tags:
@@ -14,16 +14,12 @@ paths:
     get:
       tags:
         - Voice
-      description: >-
-        Returns a list of call events. Note: at least one query
-
-        parameter, other than accountId, needs to be specified for the query to
-        be valid.
+      description: Returns a list of call events
       operationId: listCalls
       parameters:
         - name: accountId
           in: query
-          description: CRM ID of the account to get calls from.
+          description: CRM ID of the account to get calls from
           schema:
             type: string
             example: '1234567'
@@ -36,8 +32,12 @@ paths:
             example: 12345678980abcdefghijklmnopqrstuvwxyz
         - name: startTime
           in: query
-          description: |
-            Filter Type: Range, use gte or lte
+          description: >
+            Filter Type: Range using gt, gte, lt and lte
+
+
+            Note: If no startTime or endTime is specified, startTime will
+            default to the last 24 hours
           schema:
             type: string
             example: |
@@ -45,16 +45,10 @@ paths:
         - name: endTime
           in: query
           description: |
-            Filter Type: Range, use gte or lte
+            Filter Type: Range using gt, gte, lt and lte
           schema:
             type: string
             example: lte:2022-05-26T12:00:50Z
-        - name: answerTime
-          in: query
-          description: 'Filter Type: Range, use gte or lte'
-          schema:
-            type: string
-            example: gte:2022-05-26T12:00:00Z
         - name: callingNumber
           in: query
           description: |-
@@ -124,10 +118,10 @@ paths:
           in: query
           description: >-
             The field and direction to sort by, combined with a colon. Direction
-            is one of asc, desc
+            is one of asc, desc.
           schema:
             type: string
-            example: endTime:desc
+            example: startTime:desc
         - name: offset
           in: query
           description: Return records starting at the nth record
@@ -136,7 +130,7 @@ paths:
             example: 1
         - name: limit
           in: query
-          description: The maximum records to return per page. Default 100
+          description: The maximum records to return per page. Default value is 100.
           schema:
             type: integer
             example: 50
@@ -195,7 +189,7 @@ paths:
     get:
       tags:
         - Voice
-      description: Returns a single call event.
+      description: Returns a single call event
       operationId: listCall
       parameters:
         - name: callId
@@ -263,7 +257,7 @@ components:
       properties:
         accountId:
           type: string
-          description: CRM ID of the account to get calls from.
+          description: CRM ID of the account to get calls from
           example: '1234567'
         callId:
           type: string
@@ -271,35 +265,31 @@ components:
           example: 1234567890abcdefghijklmnopqrstuvwxyz
         startTime:
           type: string
-          description: Timestamp of when the call started, conforming to RFC 3339 format.
+          description: Timestamp of when the call started, conforming to RFC 3339 format
           example: '2022-05-26T17:05:48.960Z'
         endTime:
           type: string
-          description: Timestamp of when the call ended, conforming to RFC 3339 format.
+          description: Timestamp of when the call ended, conforming to RFC 3339 format
           example: '2022-05-26T17:27:44.400Z'
-        answerTime:
-          type: string
-          description: |-
-            Timestamp of when the call was answered, conforming to RFC 3339
-            format.
-          example: '2022-05-26T17:05:48.960Z'
         duration:
           type: integer
-          description: Length of the call in milliseconds
+          description: Length of the call, measured in milliseconds
           example: 500000
         callingNumber:
           type: string
-          description: >-
-            Phone number of the caller who initiated the call. Format: E.164
-            with '+' prefix
+          description: |-
+            Phone number of the caller who initiated the call 
+
+            Format: E.164 with '+' prefix
           example: '+18185559876'
         callingNumberType:
           $ref: '#/components/schemas/callingNumberType'
         calledNumber:
           type: string
-          description: >-
-            Phone number of the caller who received the call. Format: E.164 with
-            '+' prefix
+          description: |-
+            Phone number of the caller who received the call 
+
+            Format: E.164 with '+' prefix
           example: '+18185551234'
         calledNumberType:
           $ref: '#/components/schemas/calledNumberType'
@@ -308,8 +298,8 @@ components:
         postDialDelay:
           type: integer
           description: >-
-            The measurement of how long it takes for a calling party to hear a
-            ringback tone after initiating a call
+            How long it takes for a calling party to hear a ringback tone after
+            initiating a call, measured in milliseconds
           example: 0
         callType:
           $ref: '#/components/schemas/callType'
@@ -318,9 +308,34 @@ components:
         sipResponseCode:
           type: integer
           description: >-
-            The message generated by a user agent server (UAS) or SIP server to
+            Message generated by a user agent server (UAS) or SIP server to
             reply to a request generated by a client
           example: 200
+        packetLoss:
+          type: integer
+          description: Count of packets lost during transmission
+          example: 0
+        jitter:
+          type: integer
+          description: >-
+            Variation in the delay of received packets over time, measured in
+            milliseconds
+          example: 0
+        latency:
+          type: integer
+          description: >-
+            Time it takes for information to be transmitted from the source to
+            the destination, measured in milliseconds
+          example: 0
+        cost:
+          format: double
+          type: number
+          description: >-
+            Estimated cost associated with the call. This may not match directly
+            to your invoice as this is an estimate. If this value is null it is
+            because the cost has not yet been calculated. Cost is usually
+            available within a day of call completion.
+          example: 0.000123
     genericError:
       title: Generic Error
       type: object
@@ -346,7 +361,7 @@ components:
         - errors
     callingNumberType:
       type: string
-      description: Number type of the caller who initiated the call.
+      description: Number type of the caller who initiated the call
       enum:
         - EMERGENCY
         - INFORMATION
@@ -362,7 +377,7 @@ components:
       example: NANPA-US
     calledNumberType:
       type: string
-      description: Number type of the caller who received the call.
+      description: Number type of the caller who received the call
       enum:
         - EMERGENCY
         - INFORMATION
@@ -378,7 +393,7 @@ components:
       example: NANPA-US
     callDirection:
       type: string
-      description: Direction of call.
+      description: Direction of call
       enum:
         - INBOUND
         - INBOUND-FORWARDED
@@ -387,7 +402,7 @@ components:
       example: INBOUND
     callType:
       type: string
-      description: Type of call.
+      description: Type of call
       enum:
         - EMERGENCY
         - INBOUND-TFOOS
@@ -407,7 +422,7 @@ components:
       example: LOCAL
     callResult:
       type: string
-      description: Call completion status.
+      description: Call completion status
       enum:
         - COMPLETE
         - INCOMPLETE
@@ -424,7 +439,7 @@ components:
           type: string
           description: Specifies the relationship between this link and the resource
           example: >-
-            https://insights.bandwidth.com/api/v1.beta/voice/calls?callResult=completed&offset=1&limit=1&sort=endTime:desc
+            https://insights.bandwidth.com/api/v1.beta/voice/calls?callResult=completed&offset=1&limit=1&sort=startTime:desc
     error:
       title: Error
       type: object
