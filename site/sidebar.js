@@ -50,8 +50,8 @@ module.exports = {
                             type: "category",
                             label: "Porting numbers",
                             items: [
-                                "numbers/porting/portingNumbers",
                                 "numbers/porting/lnpChecker",
+                                "numbers/porting/portingNumbers",
                                 "numbers/porting/loaUpload",
                                 "numbers/porting/updatePortin",
                                 "numbers/porting/bulkPortins",
