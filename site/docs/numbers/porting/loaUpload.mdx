@@ -2,12 +2,13 @@
 id: loaUpload
 title: LOA Upload
 slug: /numbers/guides/porting/loaUpload
-description: How to upload Letter of Authorization (LOA) for portin request
+description: How to upload Letter of Authorization (LOA) for port-in request
 keywords:
   - bandwidth
   - numbers
   - porting
   - portin
+  - port-in
   - lnp
   - port
   - loa
@@ -56,27 +57,22 @@ The following MIME types are supported for the LOA upload file:
 * ZIP (“application/zip”)
 
 
-To upload and manage the LOA you can use different requests to [/portins/{orderId}/loas API](/apis/numbers/#operation/UploadPortinLoaFile). This can be done through our [SDKs](/sdks), using tools like [Postman](https://github.com/Bandwidth/postman), or in command line.
+To upload and manage the LOA you can use different requests to [/portins/{orderId}/loas API](/apis/numbers/#operation/UploadPortinLoaFile). This can be done using tools like Postman, or in command line.
 
 ### Examples
 <Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/portins/{orderId}/loas</code>
 
 <Tabs
-    groupId="manageLoa"
-    defaultValue="http"
+    groupId="uploadLoa"
+    defaultValue="payload"
     values={[
-        { label: 'http', value: 'http', },
+        { label: 'payload', value: 'payload', },
         { label: 'cURL', value: 'curl', },
-        { label: 'Java', value: 'java', },
-        { label: 'C#', value: 'csharp', },
-        { label: 'Ruby', value: 'ruby', },
-        { label: 'NodeJS', value: 'nodejs', },
-        { label: 'PHP', value: 'php', },
     ]
     }>
-<TabItem value="http">
+<TabItem value="payload">
 
-> UPLOAD LOA
+> Upload LOA
 
 ```http
 POST /api/accounts/9900778/portins/{orderId}/loas HTTP/1.1
@@ -109,7 +105,34 @@ Content-Type: application/xml; charset=utf-8
 </fileUploadResponse>
 ```
 
->UPDATE FILE METADATA
+</TabItem>
+<TabItem value="curl">
+
+```cURL
+# UPLOAD LOA
+
+curl \
+    -H 'Content-Type: application/pdf' \
+    --data-binary "@Test_LOA.pdf" \
+    -iv https://dashboard.bandwidth.com/api/accounts/{accountId}/portins/{orderId}/loas
+```
+
+</TabItem>
+</Tabs>
+
+To manage your LOA files use our APIs like [/portins/{orderid}/loas/{fileId}](/apis/numbers/#operation/UpdatePortinLoaFile) and [/portins/{orderid}/loas/{fileId}/metadata](/apis/numbers/#operation/UpdatePortinLoadMetadata).
+
+<Highlight color="#9a59c5">PUT</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/portins/{orderId}/loas/{fileId}/metadata</code>
+
+<Tabs
+    groupId="manageLoa"
+    defaultValue="payload"
+    values={[
+        { label: 'payload', value: 'payload', },
+        { label: 'cURL', value: 'curl', },
+    ]
+    }>
+<TabItem value="payload">
 
 ```xml
 <FileMetaData>
@@ -124,167 +147,14 @@ Content-Type: application/xml; charset=utf-8
 > Request
 
 ```cURL
-# UPLOAD LOA
-
-curl \
-    -H 'Content-Type: application/pdf' \
-    --data-binary "@Test_LOA.pdf" \
-    -iv https://dashboard.bandwidth.com/api/accounts/{accountId}/portins/{orderId}/loas
-
-# UPDATE FILE METADATA
-
 curl 'https://dashboard.bandwidth.com/api/accounts/{accountId}/portins/{orderId}/loas/{fileId}/metadata' \
 -X PUT \
 -U '{BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}' \
 -H 'Content-Type: application/xml' \
 -d '<FileMetaData>
-    <DocumentName> [string] </DocumentName>
-    <DocumentType> [LOA | INVOICE | CSR | OTHER] </DocumentType>
+<DocumentName> [string] </DocumentName>
+<DocumentType> [LOA | INVOICE | CSR | OTHER] </DocumentType>
 </FileMetaData>'
-```
-
-</TabItem>
-<TabItem value="java">
-
-```java
-String accountId = System.getenv("BANDWIDTH_IRIS_ACCOUNTID");
-String username = System.getenv("BANDWIDTH_IRIS_USERNAME");
-String password = System.getenv("BANDWIDTH_IRIS_PASSWORD");
-String irisUrl = System.getenv("BANDWIDTH_IRIS_URL");
-String version = System.getenv("BANDWIDTH_IRIS_URL");
-
-IrisClient client = new IrisClient(accountId, username, password, irisUrl, version);
-
-try {
-    LnpOrder order = LnpOrder.get(client, "orderId");
-
-    String fileName = "myLoaFile.pdf";
-    order.uploadLoa(new File("path_to_the_file/../myLoaFile.pdf"), LoaFileType.PDF);
-    order.updateLoa(new File("another_path_to_the_file"), LoaFileType.PDF);
-    order.deleteLoa(fileName);
-    order.getLoaMetaData(fileName);
-
-    FileMetaData fileMetaData = new FileMetaData();
-    fileMetaData.setDocumentName("myLoaFile.pdf");
-    fileMetaData.setDocumentType("INVOICE");
-    order.updateLoaMetaData(fileName,  fileMetaData);
-    order.deleteLoaMetaData(fileName);
-} catch (Exception e) {
-    System.out.println(e.getMessage());
-}
-```
-
-</TabItem>
-<TabItem value="csharp">
-
-```csharp
-var client = Client.GetInstance(accountId, username, password, apiEndpoint)
-var portInOrder = PortIn.Get(client, "orderId");
-
-// Port In LOA Management
-portInOrder.CreateFile(Stream s, string mediaType);
-portInOrder.CreateFile(byte[] buffer, string mediaType);
-portInOrder.UpdateFile(string fileName, Stream s, string mediaType);
-portInOrder.UpdateFile(string fileName, byte[] buffer, string mediaType);
-portInOrder.GetFileMetaData(string fileName);
-PutFileMetadata(string fileName, FileMetadata fileMetadata);
-portInOrder.DeleteFile(string fileName);
-portInOrder.GetFiles(bool metaData);
-portInOrder.GetFile(string fileName);
-```
-
-</TabItem>
-<TabItem value="ruby">
-
-```ruby
-require 'ruby-bandwidth-iris'
-
-BandwidthIris::Client.global_options = {
-:account_id => 'accountId',
-:username => 'userName',
-:password => 'password'
-}
-portIn = BandwidthIris::PortIn.get("portin_id", callback)
-
-# Add File
-portIn.create_file(IO.read("myFile.txt"))
-
-# Update File
-portIn.update_file("myFile.txt", IO.read("myFile.txt"))
-
-# Get File
-portIn.get_file("myFile.txt")
-
-# Get File Metadata
-portIn.get_file_metadata("myFile.txt")
-
-# Get Files
-portIn.get_files()
-```
-
-</TabItem>
-<TabItem value="nodejs">
-
-```js
-var numbers = require("@bandwidth/numbers");
-
-// Using client directly
-// var client = new numbers.Client("accountId", "userName", "password");
-// numbers.PortIn.create(client, function(err, response){...});
-
-//Or you can use default client instance (do this only once)
-numbers.Client.globalOptions.accountId = "accountId";
-numbers.Client.globalOptions.userName = "userName";
-numbers.Client.globalOptions.password = "password";
-
-var portinOrderId = "...";
-numbers.PortIn.get(portinOrderId, function(err, portIn){
-// Add File
-portIn.createFile(fs.createReadStream("myFile.txt"), callback);
-
-// Update File
-portIn.updateFile("myFile.txt", fs.createReadStream("myFile.txt"), callback);
-
-// Get File
-portIn.getFile("myFile.txt", callback);
-
-// Get File Metadata
-portIn.getFileMetadata("myFile.txt", callback);
-
-// Get Files
-portIn.getFiles(callback);
-});
-```
-
-</TabItem>
-<TabItem value="php">
-
-```php
-$accountId = getenv("BANDWIDTH_API_ACCOUNT_ID");
-$username = getenv("BANDWIDTH_API_USERNAME");
-$password = getenv("BANDWIDTH_API_PASSWORD");
-$apiEndpoint = getenv("BANDWIDTH_API_ENDPOINT");
-
-$client = new \Iris\Client($username, $password, ['url' => $apiEndpoint]);
-$account = new \Iris\Account($accountId, $client);
-
-try {
-    $portin = $account->portins()->portin("d28b36f7-fa96-49eb-9556-a40fca49f7c6"));
-    $portin->list_loas(true); // metadata = true
-    $portin->loas_send("./1.txt");
-    $portin->loas_update("./1.txt", "1.txt");
-    $portin->loas_delete("1.txt");
-    $portin->get_metadata("1.txt");
-
-    $meta_new = array(
-    "DocumentName" => "text.txt",
-    "DocumentType" => "INVOICE"
-    );
-    $portin->set_metadata('test.txt', $meta_new);
-    $portin->delete_metadata('test.txt');
-} catch (BandwidthLib\APIException $e) {
-    print_r($e->getResponseCode());
-}
 ```
 
 </TabItem>
@@ -293,4 +163,4 @@ try {
 ## Where to next?
 
 Now that you have learnt how to create a Port in order, check out some of the available actions in the following guides:
-- [How to manage Port in](/docs/numbers/guides/porting/updatePortin)
+- [How to manage Port in →](/docs/numbers/guides/porting/updatePortin)

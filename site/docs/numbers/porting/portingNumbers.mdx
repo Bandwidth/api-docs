@@ -8,6 +8,7 @@ keywords:
   - numbers
   - porting
   - portin
+  - port-in
   - lnp
   - port
 image: ../../../static/img/bandwidth-logo.png
@@ -36,14 +37,14 @@ The Bandwidth Phone Number `/portins` API is used to submit Port-In requests. Th
 In order to successfully port telephone numbers they need to correspond to a set of criteria. To check them follow the [How to check numbers portability](/docs/numbers/guides/porting/lnpChecker) guide.
 
 :::info
-As an alternative to individual porting the `/bulkPortins` API eliminates the need for the `/lnpchecker` API by sorting the list of TNs automatically into a set of port-in requests by Port Type. For more details follow the [How to Bulk Port](/docs/numbers/guides/porting/bulkPortins).
+As an alternative to individual porting the `/bulkPortins` API eliminates the need for the `/lnpchecker` API by sorting the list of TNs automatically into a set of port-in requests by Port Type. For more details follow the [How to Bulk Port](/docs/numbers/guides/porting/createBulkPortins).
 :::
 
-## Create a Portin Order
+## Create a Port-in Order
 
 The API allows a user to create a new LNP order. An order id will be auto-generated and provided to the customer. The order must pass synchronous and asynchronous validation. Synchronous validation will return validation failures immediately in the response. If synchronous validation passes, but asynchronous validation fails, the customer will not receive the error response until they check the order status.
 
-To create Port-in request, you must make a <Highlight color="#079CEE">POST</Highlight> request to our [API /portins](/apis/numbers/#operation/CreatePortin) endpoint. This can be done through our [SDKs](/sdks), using tools like [Postman](https://github.com/Bandwidth/postman), or in command line.
+To create Port-in request, you must make a <Highlight color="#079CEE">POST</Highlight> request to our [API /portins](/apis/numbers/#operation/CreatePortin) endpoint. This can be done using tools like Postman, or in command line.
 
 ### Examples
 <Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/portins</code>
@@ -53,14 +54,11 @@ To create Port-in request, you must make a <Highlight color="#079CEE">POST</High
     values={[
         { label: 'Request Payload', value: 'payload', },
         { label: 'cURL', value: 'curl', },
-        { label: 'Java', value: 'java', },
-        { label: 'C#', value: 'csharp', },
-        { label: 'Ruby', value: 'ruby', },
-        { label: 'NodeJS', value: 'nodejs', },
-        { label: 'PHP', value: 'php', },
     ]
     }>
 <TabItem value="payload">
+
+>Request
 
 ```xml
 Note: Remember to add authentication for your application if needed!
@@ -98,6 +96,48 @@ https://dashboard.bandwidth.com/api/accounts/{accountId}/portins
     </ListOfPhoneNumbers>
     <Triggered>true</Triggered>
 </LnpOrder>
+```
+
+>Response
+
+```xml
+<LnpOrderResponse>
+    <OrderId>d28b36f7-fa96-49eb-9556-a40fca49f7c6</OrderId>
+    <Status>
+        <Code>201</Code>
+        <Description>Order request received. Please use the order id to check the status of your order later.</Description>
+    </Status>
+    <ProcessingStatus>PENDING_DOCUMENTS</ProcessingStatus>
+    <RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>
+    <AlternateSpid>X455</AlternateSpid>
+    <BillingTelephoneNumber>9195551234</BillingTelephoneNumber>
+    <NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>
+    <SiteId>12345</SiteId>
+    <PeerId>660123</PeerId>
+    <Subscriber>
+        <SubscriberType>BUSINESS</SubscriberType>
+        <FirstName>First</FirstName>
+        <LastName>Last</LastName>
+        <ServiceAddress>
+            <HouseNumber>11235</HouseNumber>
+            <StreetName>Back</StreetName>
+            <City>Denver</City>
+            <StateCode>CO</StateCode>
+            <Zip>27541</Zip>
+            <County>Canyon</County>
+        </ServiceAddress>
+    </Subscriber>
+    <LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>
+    <WirelessInfo>
+        <AccountNumber>771297665AABC</AccountNumber>
+        <PinNumber>1234</PinNumber>
+    </WirelessInfo>
+    <ListOfPhoneNumbers>
+        <PhoneNumber>9195551234</PhoneNumber>
+        <PhoneNumber>9195554321</PhoneNumber>
+    </ListOfPhoneNumbers>
+    <Triggered>true</Triggered>
+</LnpOrderResponse>
 ```
 
 </TabItem>
@@ -144,212 +184,13 @@ curl 'https://dashboard.bandwidth.com/api/accounts/{BW_ACCOUNT_ID}/portins' \
 ```
 
 </TabItem>
-<TabItem value="java">
-
-```java
-import com.bandwidth.iris.sdk.IrisClient;
-import com.bandwidth.iris.sdk.model.LnpOrder;
-import com.bandwidth.iris.sdk.model.ServiceAddress;
-import com.bandwidth.iris.sdk.model.Subscriber;
-
-public class Main {
-
-    public static void main(String[] args) {
-        String accountId = System.getenv("BANDWIDTH_IRIS_ACCOUNTID");
-        String username = System.getenv("BANDWIDTH_IRIS_USERNAME");
-        String password = System.getenv("BANDWIDTH_IRIS_PASSWORD");
-        String irisUrl = System.getenv("BANDWIDTH_IRIS_URL");
-        String version = System.getenv("BANDWIDTH_IRIS_URL");
-
-        IrisClient client = new IrisClient(irisUrl, accountId, username, password, version);
-
-        Subscriber s = new Subscriber();
-        s.setSubscriberType("BUSINESS");
-        s.setBusinessName("Company");
-        ServiceAddress serviceAddress = new ServiceAddress();
-        serviceAddress.setHouseNumber("123");
-        serviceAddress.setStreetName("Anywhere St");
-        serviceAddress.setCity("Raleigh");
-        serviceAddress.setStateCode("NC");
-        serviceAddress.setZip("27609");
-        s.setServiceAddress(serviceAddress);
-
-        LnpOrder order = new LnpOrder();
-        order.setSiteId("123");
-        order.setPeerId("12345");
-        order.setBillingTelephoneNumber("9195551212");
-        order.setSubscriber(s);
-        order.setLoaAuthorizingPerson("Joe Blow");
-        order.getListOfPhoneNumbers().add("9195551212");
-
-        try {
-            order = LnpOrder.create(client, order);
-            System.out.println(order);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
-}
-```
-
-</TabItem>
-<TabItem value="csharp">
-
-```csharp
-var accountId = System.Environment.GetEnvironmentVariable("BANDWIDTH_API_ACCOUNT_ID");
-var username = System.Environment.GetEnvironmentVariable("BANDWIDTH_API_USERNAME");
-var password = System.Environment.GetEnvironmentVariable("BANDWIDTH_API_PASSWORD");
-var apiEndpoint = System.Environment.GetEnvironmentVariable("BANDWIDTH_API_ENDPOINT");
-
-var client = Client.GetInstance(accountId, username, password, apiEndpoint)
-
-var data = new PortIn
-{
-    BillingTelephoneNumber = "+1-202-555-0158",
-    Subscriber = new Subscriber
-    {
-        SubscriberType = "BUSINESS",
-        BusinessName = "Company",
-        FirstName = "John",
-        LastName = "Doe",
-        ServiceAddress = new Address
-        {
-            City = "City",
-            StateCode = "State",
-            Country = "Country"
-        }
-    },
-    PeerId = "12345",
-    SiteId = "123"
-};
-var order = await PortIn.Create(client, data);
-```
-
-</TabItem>
-<TabItem value="ruby">
-
-```ruby
-require 'ruby-bandwidth-iris'
-
-BandwidthIris::Client.global_options = {
-    :account_id => 'accountId',
-    :username => 'userName',
-    :password => 'password'
-}
-
-data = {
-    :site_id =>1234,
-    :peer_id => 5678,
-    :billing_telephone_number => "9195551212",
-    :subscriber => {
-        :subscriber_type => "BUSINESS",
-        :business_name => "Company",
-        :service_address => {
-            :house_number => "123",
-            :street_name => "EZ Street",
-            :city => "Raleigh",
-            :state_code => "NC",
-            :county => "Wake"
-        }
-    },
-    :loa_authorizing_person => "Joe Blow",
-    :list_of_phone_numbers => {
-        :phone_number => ["9195551212"]
-    },
-    :billing_type => "PORTIN"
-}
-
-portin_response = BandwidthIris::PortIn.create(data)
-```
-
-</TabItem>
-<TabItem value="nodejs">
-
-```js
-var numbers = require("@bandwidth/numbers");
-
-var data = {
-    siteId: 1234,
-    peerId: 5678,
-    billingTelephoneNumber: "9195551212",
-    subscriber: {
-        subscriberType: "BUSINESS",
-        businessName: "Company",
-        serviceAddress: {
-            houseNumber: "123",
-            streetName: "EZ Street",
-            city: "Raleigh",
-            stateCode: "NC",
-            county: "Wake"
-        }
-    },
-    loaAuthorizingPerson: "Joe Blow",
-    listOfPhoneNumbers: {
-        phoneNumber: ["9195551212"]
-    },
-    billingType: "PORTIN"
-};
-
-// Using client directly
-// var client = new numbers.Client("accountId", "userName", "password");
-// numbers.PortIn.create(client, function(err, response){...});
-
-//Or you can use default client instance (do this only once)
-numbers.Client.globalOptions.accountId = "accountId";
-numbers.Client.globalOptions.userName = "userName";
-numbers.Client.globalOptions.password = "password";
-
-//Default client will be used to do this call
-numbers.PortIn.create(data, callback);
-```
-
-</TabItem>
-<TabItem value="php">
-
-```php
-$accountId = getenv("BANDWIDTH_API_ACCOUNT_ID");
-$username = getenv("BANDWIDTH_API_USERNAME");
-$password = getenv("BANDWIDTH_API_PASSWORD");
-$apiEndpoint = getenv("BANDWIDTH_API_ENDPOINT");
-
-$client = new \Iris\Client($username, $password, ['url' => $apiEndpoint]);
-$account = new \Iris\Account($accountId, $client);
-
-try {
-    $portin = $account->portins()->create(array(
-        "BillingTelephoneNumber" => "6882015002",
-        "Subscriber" => array(
-            "SubscriberType" => "BUSINESS",
-            "BusinessName" => "Acme Corporation",
-            "ServiceAddress" => array(
-                "HouseNumber" => "1623",
-                "StreetName" => "Brockton Ave",
-                "City" => "Los Angeles",
-                "StateCode" => "CA",
-                "Zip" => "90025",
-                "Country" => "USA"
-            )
-        ),
-        "LoaAuthorizingPerson" => "John Doe",
-        "ListOfPhoneNumbers" => array(
-            "PhoneNumber" => array("9882015025", "9882015026")
-        ),
-        "SiteId" => "365",
-        "Triggered" => "false"
-    ));
-} catch (BandwidthLib\APIException $e) {
-    print_r($e->getResponseCode());
-}
-```
-
-</TabItem>
 </Tabs>
 
 ### Polling vs. Webhooks
 
 Porting numbers in the Bandwidth Dashboard is asynchronous which means the orders are processed and the order status is updated asynchronously. As times can vary and are not guaranteed Bandwidth recommends configuring your account with a subscription instead of polling the order resource for `<OrderStatus>`. Please follow the [How to setup Notification Webhook](/docs/numbers/webhooks/orderWebhook) guide.
 
-To poll an information about your Port in you can still use a <Highlight color="#00bf8c">GET</Highlight> request to [accounts/{accountId}/portins API](/apis/numbers/#operation/GetPortin). This can be done through our [SDKs](/sdks), using tools like [Postman](https://github.com/Bandwidth/postman), or in command line.
+To poll an information about your Port in you can still use a <Highlight color="#00bf8c">GET</Highlight> request to [accounts/{accountId}/portins API](/apis/numbers/#operation/GetPortin). This can be done using tools like Postman, or in command line.
 
 <Highlight color="#00bf8c">GET</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/portins/{orderId}</code>
 <Tabs
@@ -357,11 +198,6 @@ To poll an information about your Port in you can still use a <Highlight color="
     defaultValue="curl"
     values={[
         { label: 'cURL', value: 'curl', },
-        { label: 'Java', value: 'java', },
-        { label: 'C#', value: 'csharp', },
-        { label: 'Ruby', value: 'ruby', },
-        { label: 'NodeJS', value: 'nodejs', },
-        { label: 'PHP', value: 'php', },
     ]
     }>
 <TabItem value="curl">
@@ -375,104 +211,10 @@ curl 'https://dashboard.bandwidth.com/api/accounts/{BW_ACCOUNT_ID}/portins' \
 ```
 
 </TabItem>
-<TabItem value="java">
-
-```java
-import com.bandwidth.BandwidthClient;
-import com.bandwidth.http.response.ApiResponse;
-import com.bandwidth.voice.models.CreateCallRequest;
-import com.bandwidth.voice.models.CreateCallResponse;
-
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-
-public class Sample {
-
-    public static void main(String[] args) {
-        String accountId = System.getenv("BANDWIDTH_IRIS_ACCOUNTID");
-        String username = System.getenv("BANDWIDTH_IRIS_USERNAME");
-        String password = System.getenv("BANDWIDTH_IRIS_PASSWORD");
-        String irisUrl = System.getenv("BANDWIDTH_IRIS_URL");
-        String version = System.getenv("BANDWIDTH_IRIS_URL");
-
-        IrisClient client = new IrisClient(irisUrl, accountId, username, password, version);
-
-        try {
-            LnpOrder order = LnpOrder.get(client, "orderId");
-            System.out.println(order);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
-}
-```
-
-</TabItem>
-<TabItem value="csharp">
-
-```csharp
-var client = Client.GetInstance(accountId, username, password, apiEndpoint)
-var portInOrder = PortIn.Get(client, "orderId");
-```
-
-</TabItem>
-<TabItem value="ruby">
-
-```ruby
-require 'ruby-bandwidth-iris'
-
-BandwidthIris::Client.global_options = {
-    :account_id => 'accountId',
-    :username => 'userName',
-    :password => 'password'
-}
-portIn = BandwidthIris::PortIn.get("portin_id", callback)
-```
-
-</TabItem>
-<TabItem value="nodejs">
-
-```js
-var numbers = require("@bandwidth/numbers");
-
-// Using client directly
-// var client = new numbers.Client("accountId", "userName", "password");
-// numbers.PortIn.create(client, function(err, response){...});
-
-//Or you can use default client instance (do this only once)
-numbers.Client.globalOptions.accountId = "accountId";
-numbers.Client.globalOptions.userName = "userName";
-numbers.Client.globalOptions.password = "password";
-
-var orderId = "...";
-//Default client will be used to do this call
-numbers.PortIn.get(orderId, callback)
-```
-
-</TabItem>
-<TabItem value="php">
-
-```php
-$accountId = getenv("BANDWIDTH_API_ACCOUNT_ID");
-$username = getenv("BANDWIDTH_API_USERNAME");
-$password = getenv("BANDWIDTH_API_PASSWORD");
-$apiEndpoint = getenv("BANDWIDTH_API_ENDPOINT");
-
-$client = new \Iris\Client($username, $password, ['url' => $apiEndpoint]);
-$account = new \Iris\Account($accountId, $client);
-
-try {
-    $portin = $account->portins()->portin("d28b36f7-fa96-49eb-9556-a40fca49f7c6"));
-} catch (BandwidthLib\APIException $e) {
-    print_r($e->getResponseCode());
-}
-```
-
-</TabItem>
 </Tabs>
 
 :::info
-If your port-on order stuck in a ```PENDING_DOCUMENTS``` status then [LOA (Letter of authorization) upload](/docs/numbers/guides/porting/loaUpload) is required action.
+If your port-on order stuck in a ```PENDING_DOCUMENTS``` status and does not transit to ```SUBMITTED``` then [LOA (Letter of authorization) upload](/docs/numbers/guides/porting/loaUpload) is required action.
 :::
 
 ## Where to next?
@@ -482,4 +224,4 @@ Now that you have learnt how to create a Port in order, check out some of the av
 - [How to check numbers portability ←](/docs/numbers/guides/porting/lnpChecker)
 - [How to upload LOA (Letter of authorization) →](/docs/numbers/guides/porting/loaUpload)
 - [How to manage Port in →](/docs/numbers/guides/porting/updatePortin)
-- [How to create Bulk Port in →](/docs/numbers/guides/porting/bulkPortins)
+- [How to create Bulk Port in →](/docs/numbers/guides/porting/createBulkPortins)

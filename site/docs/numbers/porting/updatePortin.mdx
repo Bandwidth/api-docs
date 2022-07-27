@@ -1,13 +1,14 @@
 ---
 id: updatePortin
-title: Manage Portin
+title: Manage Port-in
 slug: /numbers/guides/porting/updatePortin
-description: How to update your portin request
+description: How to update your port-in request
 keywords:
   - bandwidth
   - numbers
   - porting
   - portin
+  - port-in
   - lnp
   - port
   - update
@@ -33,11 +34,11 @@ export const Highlight = ({children, color}) => (
     </span>
   );
 
-In this guide we will show you how to manage your Port in order. We assume that you have [created Port in order](/docs/numbers/guides/porting/updatePortin) first.
+In this guide we will show you how to manage your Port in order. We assume that you have [created Port in order](/docs/numbers/guides/porting/updatePortin).
 
 ## Update Port-in Order
 
-The <code class="put">PUT</code> to [/portins/{orderId} API](/apis/numbers/#operation/UpdatePortin) API allows a user to modify an existing LNP order, by sending a so-called SUPP request. Modifications are only allowed for orders that are not yet `complete` or `cancelled`. Since many of the entries in an LNP Order cannot be changed after the initial order is placed, the <code class="put">PUT</code> on a porting order-id does not require that the full order payload is included.
+The <code class="put">PUT</code> to [/portins/{orderId} API](/apis/numbers/#operation/UpdatePortin) API allows a user to modify an existing LNP order, by sending a so-called SUPP request. Modifications are only allowed for orders that are not yet `complete` or `cancelled`. Since many of the entries in an LNP Order cannot be changed after the initial order is placed, the ```PUT``` on a porting order-id does not require that the full order payload is included.
 
 If the order ProcessingStatus is `DRAFT`, the rules about what can be changed are much more relaxed. Validation is performed when the ProcessingStatus is changed from `DRAFT` to `SUBMITTED`. The AltSpid element can be modified if it is not configured at the system level.
 Regarding the fields which can be updated for different port types check the request schema section of [PUT /portins/{orderId}](/apis/numbers/#operation/UpdatePortin) specification.
@@ -45,7 +46,7 @@ Regarding the fields which can be updated for different port types check the req
 The general approach to handling this API call is to replace the elements included in the request body, and leave other preexisting elements in an unmodified condition. This is typical of a PATCH method, but because of our commitment to backwards compatibility we have elected not to "Fix" this behavior. As a result, there are some elements that cannot be modified using the <Highlight color="#9a59c5">PUT</Highlight> method. The elements affected vary by Port-In Order type, which can be determined using a <Highlight color="#00bf8c">GET</Highlight> request to the `/portins/{orderId}` endpoint.
 
 ### Examples
-To update Port-in request, you must make a <Highlight color="#9a59c5">PUT</Highlight> request to our [API /portins/{orderId}](/apis/numbers/#operation/UpdatePortin) endpoint. This can be done through our [SDKs](/sdks), using tools like [Postman](https://github.com/Bandwidth/postman), or in command line.
+To update Port-in request, you must make a <Highlight color="#9a59c5">PUT</Highlight> request to our [API /portins/{orderId}](/apis/numbers/#operation/UpdatePortin) endpoint. This can be done using tools like Postman, or in command line.
 <Highlight color="#9a59c5">PUT</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/portins/{orderId}</code>
 
 <Tabs
@@ -54,11 +55,6 @@ To update Port-in request, you must make a <Highlight color="#9a59c5">PUT</Highl
     values={[
         { label: 'Request Payload', value: 'payload', },
         { label: 'cURL', value: 'curl', },
-        { label: 'Java', value: 'java', },
-        { label: 'C#', value: 'csharp', },
-        { label: 'Ruby', value: 'ruby', },
-        { label: 'NodeJS', value: 'nodejs', },
-        { label: 'PHP', value: 'php', },
     ]
     }>
 <TabItem value="payload">
@@ -192,111 +188,6 @@ Content-Type: application/xml; charset=utf-8
 ```
 
 </TabItem>
-<TabItem value="java">
-
-```java
-String accountId = System.getenv("BANDWIDTH_IRIS_ACCOUNTID");
-String username = System.getenv("BANDWIDTH_IRIS_USERNAME");
-String password = System.getenv("BANDWIDTH_IRIS_PASSWORD");
-String irisUrl = System.getenv("BANDWIDTH_IRIS_URL");
-String version = System.getenv("BANDWIDTH_IRIS_URL");
-
-IrisClient client = new IrisClient(accountId, username, password, irisUrl, version);
-
-LnpOrderSupp supp = new LnpOrderSupp();
-supp.setSiteId("123");
-supp.setPeerId("12345");
-// ...
-
-try {
-    LnpOrder order = LnpOrder.get(client, "d28b36f7-fa96-49eb-9556-a40fca49f7c6");
-    order.update(supp);
-    System.out.println(order);
-} catch (Exception e) {
-    System.out.println(e.getMessage());
-}
-```
-
-</TabItem>
-<TabItem value="csharp">
-
-```csharp
-var client = Client.GetInstance("accountId", "username", "password", "apiEndpoint")
-
-var data = new PortIn
-{
-    // ...
-    PeerId = "12345",
-    SiteId = "123"
-};
-var portInOrder = PortIn.Get("d28b36f7-fa96-49eb-9556-a40fca49f7c6");
-portInOrder.Update(data);
-```
-
-</TabItem>
-<TabItem value="ruby">
-
-```ruby
-require 'ruby-bandwidth-iris'
-
-BandwidthIris::Client.global_options = {
-:account_id => 'accountId',
-:username => 'userName',
-:password => 'password'
-}
-
-data = {
-//...
-}
-
-portIn = BandwidthIris::PortIn.get("d28b36f7-fa96-49eb-9556-a40fca49f7c6", callback)
-portIn.update(data)
-```
-
-</TabItem>
-<TabItem value="nodejs">
-
-```js
-var numbers = require("@bandwidth/numbers");
-
-var data = {
-// ...
-};
-
-numbers.Client.globalOptions.accountId = "accountId";
-numbers.Client.globalOptions.userName = "userName";
-numbers.Client.globalOptions.password = "password";
-
-numbers.PortIn.get("d28b36f7-fa96-49eb-9556-a40fca49f7c6", function(err, portIn){
-    portIn.update(data, callback);
-});
-```
-
-</TabItem>
-<TabItem value="php">
-
-```php
-$accountId = getenv("BANDWIDTH_API_ACCOUNT_ID");
-$username = getenv("BANDWIDTH_API_USERNAME");
-$password = getenv("BANDWIDTH_API_PASSWORD");
-$apiEndpoint = getenv("BANDWIDTH_API_ENDPOINT");
-
-$client = new \Iris\Client($username, $password, ['url' => $apiEndpoint]);
-$account = new \Iris\Account($accountId, $client);
-
-try {
-    $portin = $account->portins()->portin("d28b36f7-fa96-49eb-9556-a40fca49f7c6"));
-        $portin->update(array(
-        "BillingTelephoneNumber" => "6882015002",
-        "SiteId" => "365",
-        // ...
-    ));
-} catch (BandwidthLib\APIException $e) {
-    print_r($e->getResponseCode());
-}
-```
-
-</TabItem>
 </Tabs>
 
 ## Cancel a Port-in Order
@@ -311,21 +202,14 @@ The API allows a user to cancel an existing LNP order. The order number that was
     defaultValue="cURL"
     values={[
         { label: 'cURL', value: 'cURL', },
-        { label: 'Java', value: 'java', },
-        { label: 'C#', value: 'csharp', },
-        { label: 'Ruby', value: 'ruby', },
-        { label: 'NodeJS', value: 'nodejs', },
-        { label: 'PHP', value: 'php', },
     ]
     }>
 <TabItem value="cURL">
 
-> Request
-
 ```http
-DELETE https://dashboard.bandwidth.com/api/accounts/{accountId}/portins/d28b36f7-fa96-49eb-9556-a40fca49f7c6 HTTP/1.1
-Content-Type: application/xml; charset=utf-8
-Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+curl -X DELETE https://dashboard.bandwidth.com/api/accounts/{accountId}/portins/d28b36f7-fa96-49eb-9556-a40fca49f7c6 \
+    -U '{BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}' \
+    -H 'Content-Type: application/xml'
 ```
 
 > Response
@@ -335,78 +219,15 @@ HTTP 200 OK
 ```
 
 </TabItem>
-<TabItem value="java">
-
-```java
-String accountId = System.getenv("BANDWIDTH_IRIS_ACCOUNTID");
-String username = System.getenv("BANDWIDTH_IRIS_USERNAME");
-String password = System.getenv("BANDWIDTH_IRIS_PASSWORD");
-String irisUrl = System.getenv("BANDWIDTH_IRIS_URL");
-String version = System.getenv("BANDWIDTH_IRIS_URL");
-
-IrisClient client = new IrisClient(accountId, username, password, irisUrl, version);
-
-LnpOrder order = LnpOrder.get(client, "d28b36f7-fa96-49eb-9556-a40fca49f7c6");
-order.delete();
-```
-
-</TabItem>
-<TabItem value="csharp">
-
-```csharp
-var client = Client.GetInstance("accountId", "username", "password", "apiEndpoint")
-
-var portInOrder = PortIn.Get("d28b36f7-fa96-49eb-9556-a40fca49f7c6");
-portInOrder.Delete();
-```
-
-</TabItem>
-<TabItem value="ruby">
-
-```ruby
-require 'ruby-bandwidth-iris'
-
-BandwidthIris::Client.global_options = {
-:account_id => 'accountId',
-:username => 'userName',
-:password => 'password'
-}
-
-portIn = BandwidthIris::PortIn.get("d28b36f7-fa96-49eb-9556-a40fca49f7c6", callback)
-portIn.delete
-```
-
-</TabItem>
-<TabItem value="nodejs">
-
-```js
-var numbers = require("@bandwidth/numbers");
-
-numbers.Client.globalOptions.accountId = "accountId";
-numbers.Client.globalOptions.userName = "userName";
-numbers.Client.globalOptions.password = "password";
-
-numbers.PortIn.get("d28b36f7-fa96-49eb-9556-a40fca49f7c6", function(err, portIn){
-    portIn.delete(callback);
-});
-```
-
-</TabItem>
-<TabItem value="php">
-
-```php
-$accountId = getenv("BANDWIDTH_API_ACCOUNT_ID");
-$username = getenv("BANDWIDTH_API_USERNAME");
-$password = getenv("BANDWIDTH_API_PASSWORD");
-$apiEndpoint = getenv("BANDWIDTH_API_ENDPOINT");
-
-$client = new \Iris\Client($username, $password, ['url' => $apiEndpoint]);
-$account = new \Iris\Account($accountId, $client);
-
-
-$portin = $account->portins()->portin("d28b36f7-fa96-49eb-9556-a40fca49f7c6"));
-$portin->delete();
-```
-
-</TabItem>
 </Tabs>
+
+## Port-in completion
+
+A port-in order may have one of 2 terminal processing statuses: ```COMPLETED``` (successful completion) or ```CANCELLED``` (cancelled by user or because of critical error). An order in a “terminal” state will never transition to any other processing status (terminal or not).
+
+## Where to next?
+
+- [How to check numbers portability ←](/docs/numbers/guides/porting/lnpChecker)
+- [How to upload LOA (Letter of authorization) ←](/docs/numbers/guides/porting/loaUpload)
+- [How to create Port in request ←](/docs/numbers/guides/porting/portingNumbers)
+

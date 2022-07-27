@@ -1,0 +1,220 @@
+---
+id: updateBulkPortins
+title: Update Bulk Port-in
+slug: /numbers/guides/porting/updateBulkPortins
+description: How to update bulk port-in order using the Bandwidth API
+keywords:
+  - bandwidth
+  - bulkportins
+  - portin
+image: ../../static/img/bandwidth-logo.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+export const accountId = "{accountId}";
+export const orderId = "{orderId}";
+
+export const Highlight = ({children, color}) => (
+    <span
+      style={{
+        backgroundColor: color,
+        borderRadius: '2px',
+        color: '#fff',
+        padding: '0.2rem',
+      }}>
+      {children}
+    </span>
+  );
+
+[The bulkPortins endpoint](/apis/numbers#operation/CreateBulkPortin) is used to manage requests to port a diverse collection of Telephone Numbers into the Bandwidth Dashboard. These telephone numbers will be decomposed into a set of individual port-in orders based on port-type, losing carrier, losing RespOrg, etc., making all reasonable attempts to treat the individual port-in requests in a uniform manner. The elements supplied in the bulk port-in payload are cascaded to the child port-in orders when possible. This is useful, for example, if you want all of the child orders to have the same CustomerOrderId, or RequestedFocDate.
+
+## Update Bulk Port-in
+
+It is possible to update Bulk Port-in order using ```PUT``` or ```PATCH``` request to ```/bulkPortins/{orderId} API``` on the existing order-id:
+* If Bulk Port-in is not in terminal (```COMPLETED```, ```CANCELLED```, or ```PARTIAL```) status
+* As with the ```POST```, any data associated with the bulk port-in will cascade to subtending orders when they are created
+* If the port-in orders contained within the Bulk Port are in ```DRAFT``` state, any field can be modified
+* If any child port-in order in the Bulk Port-in is in any other state, normal SUPP rules apply, and the list of appropriate fields is smaller
+
+:::info
+Subtending orders are created after tns are added to the bulk port-in using the /tnList endpoint, see the next section of this tutorial.
+:::
+
+* The [```PUT``` /bulkPortins/{orderId}](/apis/numbers/#operation/PutBulkOrder) operation is available only for bulk port-in orders that are not yet associated with subtending orders
+* The [```PATCH``` /bulkPortins/{orderId}](/apis/numbers/#operation/PatchBulkOrder) replaces only the elements included in the request payload. Other elements will remain untouched
+
+### Example
+
+In the following example we are adding ```LoaAuthorizingPerson``` field to the bulk porting (to apply it to all future subtending port-in orders):
+<Highlight color="#9a59c5">PUT</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/bulkPortins/{orderId}</code>
+<Tabs
+    groupId="putBulkPortin"
+    defaultValue="payload"
+    values={[
+        { label: 'Request Payload', value: 'payload', },
+        { label: 'cURL', value: 'curl', },
+    ]
+    }>
+<TabItem value="payload">
+
+> Request
+
+```xml
+Note: Make sure an authentication header is added with your BANDWIDTH_USERNAME and BANDWIDTH:PASSWORD
+
+https://dashboard.bandwidth.com/api/accounts/{accountId}/bulkPortins/{orderId}
+<BulkPortin>
+    <CustomerOrderId>Order Id for all child orders</CustomerOrderId>
+    <RequestedFocDate>2021-06-30Z</RequestedFocDate>
+    <SiteId>14020</SiteId>
+    <PeerId>521434</PeerId>
+    <LoaAuthorizingPerson>The Guy</LoaAuthorizingPerson>
+</BulkPortin>
+```
+
+> Response
+
+```
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<BulkPortinResponse>
+    <BulkPortin>
+        <CustomerOrderId>Order Id for all child orders</CustomerOrderId>
+        <RequestedFocDate>2021-06-30T00:00:00.000Z</RequestedFocDate>
+        <LoaAuthorizingPerson>The Guy</LoaAuthorizingPerson>
+        <SiteId>14020</SiteId>
+        <PeerId>521434</PeerId>
+        <ProcessingStatus>DRAFT</ProcessingStatus>
+        <AccountId>9900572</AccountId>
+        <CreatedByUser>myUser</CreatedByUser>
+        <LastModifiedBy>myUser</LastModifiedBy>
+        <LastModifiedDate>2021-06-21T19:42:34.760Z</LastModifiedDate>
+        <OrderCreateDate>2021-06-21T19:42:34.760Z</OrderCreateDate>
+        <OrderId>ac2c8ab2-7a63-44da-a307-edcabe0b6c81</OrderId>
+    </BulkPortin>
+</BulkPortinResponse>
+```
+
+</TabItem>
+<TabItem value="curl">
+
+```cURL
+Note: Remember to add authentication for your application if needed!
+
+curl 'https://dashboard.bandwidth.com/api/accounts/{accountId}/bulkPortins/{orderId}' \
+-X POST \
+-U '{BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}' \
+-H 'Content-Type: application/xml' \
+-d '<BulkPortin>
+    <CustomerOrderId>Order Id for all child orders</CustomerOrderId>
+    <RequestedFocDate>2021-06-30Z</RequestedFocDate>
+    <SiteId>14020</SiteId>
+    <PeerId>521434</PeerId>
+    <LoaAuthorizingPerson>The Guy</LoaAuthorizingPerson>
+</BulkPortin>'
+```
+
+</TabItem>
+</Tabs>
+
+Note that ```PUT``` completely replaces the existing Bulk Port-in order with the given payload while ```PATCH``` replaces only the elements included in the request payload.
+
+<Highlight color="#652B51">PATCH</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/bulkPortins/{orderId}</code>
+
+<Tabs
+    groupId="patchBulkPortin"
+    defaultValue="payload"
+    values={[
+        { label: 'Request Payload', value: 'payload', },
+        { label: 'cURL', value: 'curl', },
+    ]
+    }>
+<TabItem value="payload">
+
+> Request
+
+```xml
+Note: Make sure an authentication header is added with your BANDWIDTH_USERNAME and BANDWIDTH:PASSWORD
+
+https://dashboard.bandwidth.com/api/accounts/{accountId}/bulkPortins/{orderId}
+<BulkPortin>
+    <LoaAuthorizingPerson>The Guy</LoaAuthorizingPerson>
+</BulkPortin>
+```
+
+> Response
+
+```
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<BulkPortinResponse>
+    <BulkPortin>
+        <CustomerOrderId>Order Id for all child orders</CustomerOrderId>
+        <RequestedFocDate>2021-06-30T00:00:00.000Z</RequestedFocDate>
+        <LoaAuthorizingPerson>The Guy</LoaAuthorizingPerson>
+        <SiteId>14020</SiteId>
+        <PeerId>521434</PeerId>
+        <ProcessingStatus>DRAFT</ProcessingStatus>
+        <AccountId>9900572</AccountId>
+        <CreatedByUser>myUser</CreatedByUser>
+        <LastModifiedBy>myUser</LastModifiedBy>
+        <LastModifiedDate>2021-06-21T19:42:34.760Z</LastModifiedDate>
+        <OrderCreateDate>2021-06-21T19:42:34.760Z</OrderCreateDate>
+        <OrderId>ac2c8ab2-7a63-44da-a307-edcabe0b6c81</OrderId>
+    </BulkPortin>
+</BulkPortinResponse>
+```
+
+</TabItem>
+<TabItem value="curl">
+
+```cURL
+Note: Remember to add authentication for your application if needed!
+
+curl 'https://dashboard.bandwidth.com/api/accounts/{accountId}/bulkPortins/{orderId}' \
+-X POST \
+-U '{BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}' \
+-H 'Content-Type: application/xml' \
+-d '<BulkPortin>
+        <LoaAuthorizingPerson>The Guy</LoaAuthorizingPerson>
+    </BulkPortin>'
+```
+
+</TabItem>
+</Tabs>
+
+## Delete Bulk Port-in
+
+You can delete a bulk port-in order with child port-ins. Deleting a bulk port-in is allowed for ```DRAFT``` state only. Deleting a bulk port-in will delete all ```DRAFT``` child port-ins associated with the bulk port-in. When the bulk port-in is deleted, any child port-in orders that are not in a ```DRAFT``` status are dissociated from the bulk port-in, but not deleted.
+
+### Examples
+<Highlight color="#ff6f47">DELETE</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/bulkPortins/{orderId}</code>
+
+<Tabs
+    groupId="deleteBulkPortin"
+    defaultValue="cURL"
+    values={[
+        { label: 'cURL', value: 'cURL', },
+    ]
+    }>
+<TabItem value="cURL">
+
+```http
+curl -X DELETE https://dashboard.bandwidth.com/api/accounts/{accountId}/bulkPortins/{orderId}} \
+-U '{BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}' \
+-H 'Content-Type: application/xml'
+```
+
+> Response
+
+```http
+HTTP 200 OK
+```
+
+</TabItem>
+</Tabs>
+
+## Where to next?
+
+- [How to create Bulk Port-in ←](/docs/numbers/guides/porting/createBulkPortins)
+- [How to submit Bulk Port-in →](/docs/numbers/guides/porting/submitBulkPortins)

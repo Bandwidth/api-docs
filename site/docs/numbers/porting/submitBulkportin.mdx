@@ -1,0 +1,123 @@
+---
+id: submitBulkPortins
+title: Submit Bulk Port-in
+slug: /numbers/guides/porting/submitBulkPortins
+description: How to trigger bulk port-in order processing
+keywords:
+  - bandwidth
+  - bulkportins
+  - portin
+  - port-in
+image: ../../static/img/bandwidth-logo.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+export const accountId = "{accountId}";
+export const orderId = "{orderId}";
+
+export const Highlight = ({children, color}) => (
+    <span
+      style={{
+        backgroundColor: color,
+        borderRadius: '2px',
+        color: '#fff',
+        padding: '0.2rem',
+      }}>
+      {children}
+    </span>
+  );
+
+[The bulkPortins endpoint](/apis/numbers#operation/CreateBulkPortin) is used to manage requests to port a diverse collection of Telephone Numbers into the Bandwidth Dashboard. These telephone numbers will be decomposed into a set of individual port-in orders based on port-type, losing carrier, losing RespOrg, etc., making all reasonable attempts to treat the individual port-in requests in a uniform manner. The elements supplied in the bulk port-in payload are cascaded to the child port-in orders when possible. This is useful, for example, if you want all of the child orders to have the same CustomerOrderId, or RequestedFocDate.
+
+## Submit Bulk Port-in
+
+On this step we assume that you have created your bulk port-in and added telephone numbers which you wanted to port into the Bandwidth Dashboard. If not, follow the [How to create Bulk Port in](/docs/numbers/guides/porting/createBulkPortins) guide.
+
+The bulk port-in and child port-in orders will remain in draft states until you submit them. You can submit all the port-ins together under the umbrella of the bulk port-in by changing bulk port-in status to ```IN_PROGRESS```.
+
+:::info
+If for any reason you want to work with individual port-ins you still can submit them separately through ```PUT``` request to [/portins/{orderId} API](/apis/numbers/#operation/UpdatePortin). Check [Update Port-in](/docs/numbers/guides/porting/updatePortin) guide to learn more.
+:::
+
+To trigger Bulk Port-in processing use the ```PATCH``` operation on the bulk port-in order to change the ```ProcessingStatus``` to ```IN_PROGRESS```. To do it you must send a <Highlight color="#652B51">PATCH</Highlight> request to our [API /bulkPortins/{orderId}](/apis/numbers/#operation/PatchBulkPortin) endpoint. This can be done through tools like Postman, or in command line.
+
+:::caution
+Changing the ProcessingStatus to 'IN_PROGRESS' is only valid if child port-ins exist for the bulk port-in. Check [How to Provide telephone number(s) to port](/docs/numbers/guides/porting/createBulkPortins/#provide-telephone-numbers-to-port) guide.
+:::
+
+<Highlight color="#652B51">PATCH</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/bulkPortins/{orderId}</code>
+<Tabs
+    groupId="submitBulkPortin"
+    defaultValue="payload"
+    values={[
+        { label: 'Request Payload', value: 'payload', },
+        { label: 'cURL', value: 'curl', },
+    ]
+    }>
+<TabItem value="payload">
+
+> Request
+
+```xml
+Note: Make sure an authentication header is added with your BANDWIDTH_USERNAME and BANDWIDTH:PASSWORD
+
+https://dashboard.bandwidth.com/api/accounts/{accountId}/bulkPortins/{orderId}
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n
+<BulkPortin>
+    <ProcessingStatus>IN_PROGRESS</ProcessingStatus>
+</BulkPortin>
+```
+
+> Response
+
+```
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<BulkPortinResponse>
+    <BulkPortin>
+        <CustomerOrderId>Order Id for all child orders</CustomerOrderId>
+        <RequestedFocDate>2021-06-30T00:00:00.000Z</RequestedFocDate>
+        <SiteId>14020</SiteId>
+        <PeerId>521434</PeerId>
+        <ProcessingStatus>IN_PROGRESS</ProcessingStatus>
+        <AccountId>9900572</AccountId>
+        <CreatedByUser>jgilmore</CreatedByUser>
+        <LastModifiedBy>jgilmore</LastModifiedBy>
+        <LastModifiedDate>2021-06-21T19:42:34.760Z</LastModifiedDate>
+        <OrderCreateDate>2021-06-21T19:42:34.760Z</OrderCreateDate>
+        <OrderId>ac2c8ab2-7a63-44da-a307-edcabe0b6c81</OrderId>
+    </BulkPortin>
+</BulkPortinResponse>
+```
+
+</TabItem>
+<TabItem value="curl">
+
+```cURL
+Note: Remember to add authentication for your application if needed!
+
+curl 'https://dashboard.bandwidth.com/api/accounts/{accountId}/bulkPortins/{orderId}' \
+-X POST \
+-U '{BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}' \
+-H 'Content-Type: application/xml' \
+-d '<BulkPortin>
+        <ProcessingStatus>IN_PROGRESS</ProcessingStatus>
+    </BulkPortin>'
+```
+
+</TabItem>
+</Tabs>
+
+## Bulk Port-in completion
+
+A bulk port-in order may have one of 3 terminal processing statuses: ```COMPLETED```, ```CANCELLED```, or ```PARTIAL```, which are just an aggregation of the child order statuses. An order in a “terminal” state will never transition to any other processing status (terminal or not). A bulk port-in order goes to a terminal status automatically as soon as the last of its associated child port-ins transfers to terminal status (```COMPLETE``` or ```CANCELLED```). The resulting terminal processing status of the bulk port-in order depends on statuses of associated child port-ins:
+* ```COMPLETED``` - when all child port-ins are in ```COMPLETE``` status
+* ```CANCELLED``` - when all child port-ins are in ```CANCELLED``` status
+* ```PARTIAL``` - when there is a mix of ```CANCELLED``` and ```COMPLETE``` child port-in statuses.
+
+## Where to next?
+
+- [How to create Bulk Port-in ←](/docs/numbers/guides/porting/updateBulkPortins)
+- [How to update Bulk Port-in →](/docs/numbers/guides/porting/updateBulkPortins)
+- [How to manage Port in →](/docs/numbers/guides/porting/updatePortin)
