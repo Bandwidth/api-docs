@@ -27,17 +27,18 @@ export const Highlight = ({children, color}) => (
     </span>
 );
 
-Ordering Phone Numbers for use with the network allows you to provision specific phone numbers from available inventory that have been discovered in a search.
+Bandwidth allows you to provision specific phone numbers from available inventory for use with the network.
+We offer an API that allows you to search our inventory and purchase numbers for use with our network.
 
-In this guide we will show you how to make searching for available phone numbers and order them through Dashboard API.
+In this guide we will show you how to search for available phone numbers and order them through Dashboard API.
 
 ## Search Numbers
-You can find Bandwidth's available numbers using different criteria.
+You can find Bandwidth's available numbers using different search criteria.
 In certain cases where the **exact digits** are important (such as localVantiy, endsIn, npaNxxx) LCA should be disabled to filter out non-pattern matched phone numbers.
 Bandwidth's available number searches with local calling enabled by default. The LCA flag searches nearby Ratecenters for phone numbers that are considered "local" to the parameters passed.
 
-To make a search for the available number, you must make a GET request to our [API available numbers](../../../../apis/numbers#tag/accounts/operation/GetAvailableTns) endpoint.
-This can be done through our [SDKs](/sdks), using tools like [Postman](https://github.com/Bandwidth/postman) or in the command line.
+To make a search for the available number, you must make a GET request to our [Available Numbers API](../../../../apis/numbers#tag/accounts/operation/GetAvailableTns) endpoint.
+This can be done through tools like [Postman](https://github.com/Bandwidth/postman) or in the command line.
 
 :::tip Searching Toll Free Numbers
 The `tollFreeWildCardPattern` allows you to search toll free area codes, but forces the 3rd digit to be a `*`.
@@ -49,11 +50,7 @@ For 800 numbers, search for `80*` and so on.
 groupId="http_number_search"
 defaultValue="curl"
 values={[
-    { label: 'cURL', value: 'curl', },
-    { label: 'Java', value: 'java', },
-    { label: 'C#', value: 'c#', },
-    { label: 'NodeJS', value: 'nodejs', },
-    { label: 'PHP', value: 'php', },
+    { label: 'cURL', value: 'curl', }
 ]
 }>
 <TabItem value="curl">
@@ -61,55 +58,8 @@ values={[
 ```cURL
 Note: Remember to add authentication for your application if needed!
 
-curl 'https://voice.bandwidth.com/api/v2/accounts/{BW_ACCOUNT_ID}/availableNumbers?areaCode=919&quantity=2' \
+curl 'https://dashboard.bandwidth.com/api/accounts/{BW_ACCOUNT_ID}/availableNumbers?areaCode=919&quantity=2' \
 -U '{BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}'
-```
-</TabItem>
-
-<TabItem value="java">
-
-```java
-Map<String, Object> query = new HashMap<String, Object>();
-query.put("areaCode", "919");
-query.put("quantity", 2);
-
-List<TelephoneNumberDetail> numbers = (List<TelephoneNumberDetail>) AvailableNumbers.search(client, query);
-
-for (TelephoneNumberDetail number : numbers)
-{
-    System.out.println(String.format("Full number: %s : Rate Center: %s", number.getFullNumber(), number.getRateCenter()));
-}
-```
-
-</TabItem>
-<TabItem value="c#">
-
-```c#
-var query = new Dictionary<string, object>();
-query.Add("areaCode", "919");
-query.Add("quantity", 2);
-var result = await AvailableNumbers.List(_client, query);
-foreach (string number in result.TelephoneNumberList)
-{
-    Console.WriteLine(string.Format("Number: {0}", number));
-}
-```
-
-</TabItem>
-<TabItem value="nodejs">
-
-Available Numbers Area Code
-
-```nodejs
-var res = await numbers.AvailableNumbers.listAsync({areaCode:"919", quantity:"2"});
-console.log(res);
-```
-
-</TabItem>
-<TabItem value="php">
-
-```php
-$account->availableNumbers([ "areaCode" => "818", "quantity" => "2" ]);
 ```
 
 </TabItem>
@@ -133,23 +83,19 @@ And endpoint `../availableNumbers` should return a response like:
 ## Order Phone Numbers
 
 To create an order, you can use the numbers found through the search.
-If you want that Bandwidth will select phones for you according to your criteria and immediately create an order -
-then you can look at the `orderType` parameter of the request schema in [API order numbers](../../../../apis/numbers#tag/accounts/operation/CreateOrder).
+If you want that Bandwidth will select numbers for you according to your search criteria and immediately create an order -
+then you can look at the `orderType` parameter of the request schema in [Order Numbers API](../../../../apis/numbers#tag/accounts/operation/CreateOrder).
 
 In this example, we will show how to make an order for numbers that were found using the search.
-To order numbers, you must make a POST request to our [API order numbers](../../../../apis/numbers#tag/accounts/operation/CreateOrder) endpoint.
-This can be done through our [SDKs](/sdks), using tools like [Postman](https://github.com/Bandwidth/postman) or in the command line.
+To order numbers, you must make a POST request to our [Order Numbers API](../../../../apis/numbers#tag/accounts/operation/CreateOrder) endpoint.
+This can be done through tools like [Postman](https://github.com/Bandwidth/postman) or in the command line.
 
 <Tabs
 groupId="http_number_search"
 defaultValue="payload"
 values={[
     { label: 'Payload', value: 'payload', },
-    { label: 'cURL', value: 'curl', },
-    { label: 'Java', value: 'java', },
-    { label: 'C#', value: 'c#', },
-    { label: 'NodeJS', value: 'nodejs', },
-    { label: 'PHP', value: 'php', },
+    { label: 'cURL', value: 'curl', }
 ]
 }>
 
@@ -175,86 +121,19 @@ values={[
 ```cURL
 Note: Remember to add authentication for your application if needed!
 
-curl 'https://voice.bandwidth.com/api/v2/accounts/{BW_ACCOUNT_ID}/orders' \
--X POST \
--U '{BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}' \
--H 'Content-Type: application/json' \
--d '{
-    "name": "Available Telephone Number order",
-    "SiteId": "461",
-    "ExistingTelephoneNumberOrderType": "{TelephoneNumberList: [TelephoneNumber: "6672286710", TelephoneNumber: "5756186700"]}"
-}'
-```
-
-</TabItem>
-
-<TabItem value="java">
-
-```java
-ExistingTelephoneNumberOrderType existingTelephoneNumberOrderType = new ExistingTelephoneNumberOrderType();
-existingTelephoneNumberOrderType.getTelephoneNumberList().add("6672286710");
-existingTelephoneNumberOrderType.getTelephoneNumberList().add("5756186700");
-
-Order o = new Order();
-o.setName("Available Telephone Number order");
-o.setExistingTelephoneNumberOrderType(existingTelephoneNumberOrderType);
-OrderResponse createdOrder = Order.create(client, o);
-```
-
-</TabItem>
-
-<TabItem value="c#">
-
-```c#
-var result = await Order.Create(_client, new Order
-{
-    Name = "Available Telephone Number order",
-    SiteId = "461",
-    ExistingTelephoneNumberOrderType = {
-        TelephoneNumberList = [] {
-            TelephoneNumber: "6672286710",
-            TelephoneNumber: "5756186700"
-        }
-    }
-});
-```
-
-</TabItem>
-
-<TabItem value="nodejs">
-
-```nodejs
-var order = {
-    name: "Available Telephone Number order",
-    siteId: 461,
-    existingTelephoneNumberOrderType: {
-        telephoneNumberList: [
-            {
-                telephoneNumber: "6672286710"
-            },
-            {
-                telephoneNumber: "5756186700"
-            }
-        ]
-    }
-};
-numbers.Order.create(order, callback);
-```
-
-</TabItem>
-
-<TabItem value="php">
-
-```php
-$order = $account->orders()->create([
-    "Name" => "Available Telephone Number order",
-    "SiteId" => "461",
-    "ExistingTelephoneNumberOrderType" => [
-        "TelephoneNumberList" => [
-            "TelephoneNumber" => [ "6672286710", "5756186700" ]
-        ]
-    ]
-]);
+curl -X POST 'https://dashboard.bandwidth.com/api/accounts/{BW_ACCOUNT_ID}/orders'
+-U '{BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}'
+-H "Content-Type: application/xml"
+-d "<Order>
+        <SiteId>461</SiteId>
+        <PartialAllowed>true</PartialAllowed>
+        <ExistingTelephoneNumberOrderType>
+            <TelephoneNumberList>
+                <TelephoneNumber>6672286710</TelephoneNumber>
+                <TelephoneNumber>5756186700</TelephoneNumber>
+            </TelephoneNumberList>
+        </ExistingTelephoneNumberOrderType>
+    </Order>"
 ```
 
 </TabItem>
@@ -292,17 +171,13 @@ Order processing times can vary and are not guaranteed, so bandwidth does __not_
 
 ## Poll for Order Status
 
-To poll for Order status you must to send GET request with order Id to our [API fetch order status](../../../../apis/numbers#tag/accounts/operation/RetrieveOrder) endpoint.
+To poll for Order status you have to send GET request with order ID to our [Fetch Order Status API](../../../../apis/numbers#tag/accounts/operation/RetrieveOrder) endpoint.
 
 <Tabs
 groupId="http_number_search"
 defaultValue="curl"
 values={[
-    { label: 'cURL', value: 'curl', },
-    { label: 'Java', value: 'java', },
-    { label: 'C#', value: 'c#', },
-    { label: 'NodeJS', value: 'nodejs', },
-    { label: 'PHP', value: 'php', },
+    { label: 'cURL', value: 'curl', }
 ]
 }>
 
@@ -311,42 +186,8 @@ values={[
 ```cURL
 Note: Remember to add authentication for your application if needed!
 
-curl 'https://voice.bandwidth.com/api/v2/accounts/{BW_ACCOUNT_ID}/orders/{ORDER_ID}' \
+curl 'https://dashboard.bandwidth.com/api/accounts/{BW_ACCOUNT_ID}/orders/{ORDER_ID}' \
 -U '{BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}'
-```
-
-</TabItem>
-
-<TabItem value="java">
-
-```java
-Order o = Order.get(client, "orderId");
-```
-
-</TabItem>
-
-<TabItem value="c#">
-
-```c#
-var order = await Order.Get("orderId");
-```
-
-</TabItem>
-
-
-<TabItem value="nodejs">
-
-```nodejs
-numbers.Order.get(id, callback);
-```
-
-</TabItem>
-
-<TabItem value="php">
-
-```php
-$response = $account->orders()->order("orderId");
-$order = $response->Order;
 ```
 
 </TabItem>
@@ -392,101 +233,48 @@ And endpoint `../orders/{ORDER_ID}` should return a response like:
 
 This is a webhook that bandwidth sends to _your_ server/email upon order completion/failure - there is no need to poll the resource if using this recommended method.
 
-To create a subscription for Order Status you must to send POST request to our [API create subscription](../../../../apis/numbers#tag/accounts/operation/CreateSubscriptions) endpoint.
+To create a subscription for Order Status you have to send POST request to our [Create Subscription API](../../../../apis/numbers#tag/accounts/operation/CreateSubscriptions) endpoint.
 
 <Tabs
 groupId="http_number_search"
-defaultValue="curl"
+defaultValue="payload"
 values={[
-    { label: 'cURL', value: 'curl', },
-    { label: 'Java', value: 'java', },
-    { label: 'C#', value: 'c#', },
-    { label: 'NodeJS', value: 'nodejs', },
-    { label: 'PHP', value: 'php', },
+    { label: 'Payload', value: 'payload', },
+    { label: 'cURL', value: 'curl', }
 ]
 }>
+
+<TabItem value="payload">
+
+```xml
+<Subscription>
+    <OrderType>orders</OrderType>
+    <OrderId>ORDER_ID</OrderId>
+    <EmailSubscription>
+        <Email>your_email@gmail.com</Email>
+        <DigestRequested>DAILY</DigestRequested>
+    </EmailSubscription>
+</Subscription>
+```
+
+</TabItem>
 
 <TabItem value="curl">
 
 ```curl
+Note: Remember to add authentication for your application if needed!
 
-curl 'https://voice.bandwidth.com/api/v2/accounts/{BW_ACCOUNT_ID}/orders' \
--X POST \
--U '{BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}' \
--H 'Content-Type: application/json' \
--d '{
-    "Subscription" : {
-        "orderType": "orders",
-        "orderId": "orderId"
-        "EmailSubscription": {
-            "Email":"some@email.com",
-            "DigestRequested":"DAILY"
-        }
-    }
-}'
-```
-
-</TabItem>
-
-<TabItem value="java">
-
-```java
-Subscription subscription = new Subscription();
-subscription.setOrderType("orders");
-subscription.setOrderId("orderId");
-EmailSubscription emailSubscription = new EmailSubscription();
-emailSubscription.setEmail("test@test.com");
-emailSubscription.setDigestRequested("NONE");
-subscription.setEmailSubscription(emailSubscription);
-Subscription createdSubscription = Subscription.create(client, subscription);
-```
-
-</TabItem>
-
-<TabItem value="c#">
-
-```c#
-
-var subscription = await Subscription.Create(new Subscription() {
-    OrderType = "orders",
-    OrderId = "100",
-    EmailSubscription = new EmailSubscription {
-        Email = "test@test",
-        DigestRequested = "NONE"
-    }
-};
-```
-
-</TabItem>
-
-<TabItem value="nodejs">
-
-```nodejs
-
-var subscription = {
-    orderType:"orders",
-    callbackSubscription: {
-        URL:"http://mycallbackurl.com",
-        user:"userid",
-        expiry: 12000
-    }
-};
-numbers.Subscription.create(subscription, callback);
-```
-
-</TabItem>
-
-<TabItem value="php">
-
-```php
-$subscription = $account->subscriptions()->create([
-    "OrderType" => "portins",
-    "OrderId" => "orderId",
-    "EmailSubscription" => [
-        "Email" => "test@test.com",
-        "DigestRequested" => "DAILY"
-    ]
-]);
+curl -X POST 'https://dashboard.bandwidth.com/api/accounts/{BW_ACCOUNT_ID}/subscriptions'
+-U '{BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}'
+-H "Content-Type: application/xml"
+-d "<Subscription>
+        <OrderType>orders</OrderType>
+        <OrderId>ORDER_ID</OrderId>
+        <EmailSubscription>
+            <Email>your_email@gmail.com</Email>
+            <DigestRequested>DAILY</DigestRequested>
+        </EmailSubscription>
+    </Subscription>"
 ```
 
 </TabItem>
@@ -494,4 +282,4 @@ $subscription = $account->subscriptions()->create([
 
 ## Where to next?
 Now that you have learn how to search and order numbers, check out some of the available actions in the guides:
-- [How to porting numbers](/docs/numbers/guides/portingNumbers)
+- [How to port numbers](/docs/numbers/guides/portingNumbers)
