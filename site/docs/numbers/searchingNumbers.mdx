@@ -30,42 +30,38 @@ export const Highlight = ({children, color}) => (
 Bandwidth allows you to provision specific phone numbers from available inventory for use with the network.
 We offer an API that allows you to search our inventory and purchase numbers for use with our network.
 
-In this guide we will show you how to search for available phone numbers and order them through Dashboard API.
+In this guide we will show you how to search for available phone numbers and order them through API.
 
 ## Search Numbers
 You can find Bandwidth's available numbers using different search criteria.
 In certain cases where the **exact digits** are important (such as localVantiy, endsIn, npaNxxx) LCA should be disabled to filter out non-pattern matched phone numbers.
-Bandwidth's available number searches with local calling enabled by default. The LCA flag searches nearby Ratecenters for phone numbers that are considered "local" to the parameters passed.
+Bandwidth's available number searches with local calling enabled by default. (The LCA flag searches nearby Ratecenters for phone numbers that are considered "local" to the parameters passed).
 
-To make a search for the available number, you must make a GET request to our [Available Numbers API](../../../../apis/numbers#tag/accounts/operation/GetAvailableTns) endpoint.
+To search for an available number and view possible search parameters, make a <Highlight color="#00bf8c">GET</Highlight> request to our [Available Numbers API](../../../../apis/numbers#tag/accounts/operation/GetAvailableTns) endpoint.
 This can be done through tools like [Postman](https://github.com/Bandwidth/postman) or in the command line.
 
 :::tip Searching Toll Free Numbers
 The `tollFreeWildCardPattern` allows you to search toll free area codes, but forces the 3rd digit to be a `*`.
-However, with the nature of Toll Free area codes - the 3rd digit will always be a repeat of the second, so to search for 833 numbers, set the parameter value as `83*` and you will only return 833 numbers.
+The third digit of Toll Free area codes will always be a repeat of the second. To search for 833 numbers, set the parameter value as `83*` to return 833 numbers.
 For 800 numbers, search for `80*` and so on.
 :::
+
+### Examples
+<Highlight color="#00bf8c">GET</Highlight><code>https://dashboard.bandwidth.com/api/accounts/{accountId}/availableNumbers?areaCode=919&quantity=2</code>
 
 <Tabs
 groupId="http_number_search"
 defaultValue="curl"
 values={[
-    { label: 'cURL', value: 'curl', }
+    { label: 'cURL', value: 'curl', },
 ]
 }>
 <TabItem value="curl">
 
 ```cURL
-Note: Remember to add authentication for your application if needed!
-
-curl 'https://dashboard.bandwidth.com/api/accounts/{BW_ACCOUNT_ID}/availableNumbers?areaCode=919&quantity=2' \
--U '{BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}'
+curl 'https://dashboard.bandwidth.com/api/accounts/{accountId}/availableNumbers?areaCode=919&quantity=2'
+-U '{userName}:{password}'
 ```
-
-</TabItem>
-</Tabs>
-
-And endpoint `../availableNumbers` should return a response like:
 
 > Response
 
@@ -80,22 +76,30 @@ And endpoint `../availableNumbers` should return a response like:
 </SearchResult>
 ```
 
+</TabItem>
+
+</Tabs>
+
 ## Order Phone Numbers
 
-To create an order, you can use the numbers found through the search.
-If you want that Bandwidth will select numbers for you according to your search criteria and immediately create an order -
-then you can look at the `orderType` parameter of the request schema in [Order Numbers API](../../../../apis/numbers#tag/accounts/operation/CreateOrder).
+The `orderType` parameter of the request schema in [Order Numbers API](../../../../apis/numbers#tag/accounts/operation/CreateOrder)
+determines how you order numbers. To create an order using the numbers found in your search, set the `orderType` to `ExistingTelephoneNumberOrderType`.
 
-In this example, we will show how to make an order for numbers that were found using the search.
-To order numbers, you must make a POST request to our [Order Numbers API](../../../../apis/numbers#tag/accounts/operation/CreateOrder) endpoint.
+You can also search and order numbers simultaneously by setting the `orderType` parameter to one of the search and order types.
+
+In this example, we will show how to create an order for numbers that were found using the search.
+To order numbers, you must make a <Highlight color="#079CEE">POST</Highlight> request to our [Order Numbers API](../../../../apis/numbers#tag/accounts/operation/CreateOrder) endpoint.
 This can be done through tools like [Postman](https://github.com/Bandwidth/postman) or in the command line.
+
+### Examples
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/orders</code>
 
 <Tabs
 groupId="http_number_search"
 defaultValue="payload"
 values={[
-    { label: 'Payload', value: 'payload', },
-    { label: 'cURL', value: 'curl', }
+    { label: 'Payload', value: 'payload' },
+    { label: 'cURL', value: 'curl' }
 ]
 }>
 
@@ -119,12 +123,10 @@ values={[
 <TabItem value="curl">
 
 ```cURL
-Note: Remember to add authentication for your application if needed!
-
-curl -X POST 'https://dashboard.bandwidth.com/api/accounts/{BW_ACCOUNT_ID}/orders'
--U '{BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}'
--H "Content-Type: application/xml"
--d "<Order>
+curl -X POST 'https://dashboard.bandwidth.com/api/accounts/{accountId}/orders'
+-U '{userName}:{password}'
+-H 'Content-Type: application/xml'
+-d '<Order>
         <SiteId>461</SiteId>
         <PartialAllowed>true</PartialAllowed>
         <ExistingTelephoneNumberOrderType>
@@ -133,14 +135,12 @@ curl -X POST 'https://dashboard.bandwidth.com/api/accounts/{BW_ACCOUNT_ID}/order
                 <TelephoneNumber>5756186700</TelephoneNumber>
             </TelephoneNumberList>
         </ExistingTelephoneNumberOrderType>
-    </Order>"
+    </Order>'
 ```
 
 </TabItem>
 
 </Tabs>
-
-And endpoint `../orders` should return a response like:
 
 > Response
 
@@ -166,74 +166,21 @@ And endpoint `../orders` should return a response like:
 
 ## Fetch Order Information
 
-Phone number ordering in the Bandwidth Dashboard is asynchronous when creating an "order". The orders are then processed and the order status is updated asynchronously.  Bandwidth recommends configuring your account with a subscription instead of polling the order resource for `<OrderStatus>`.
+Phone number ordering in the Bandwidth Dashboard is asynchronous when creating an "order". The orders are then processed and the order status is updated asynchronously.
+Bandwidth recommends configuring your account with a subscription instead of polling the order resource for `OrderStatus`.
 Order processing times can vary and are not guaranteed, so bandwidth does __not__ recommend setting a timeout on waiting for an order to show either `COMPLETE` or `FAILED` status, but instead relying on a webhook from an orders subscription.
 
-## Poll for Order Status
-
-To poll for Order status you have to send GET request with order ID to our [Fetch Order Status API](../../../../apis/numbers#tag/accounts/operation/RetrieveOrder) endpoint.
-
-<Tabs
-groupId="http_number_search"
-defaultValue="curl"
-values={[
-    { label: 'cURL', value: 'curl', }
-]
-}>
-
-<TabItem value="curl">
-
-```cURL
-Note: Remember to add authentication for your application if needed!
-
-curl 'https://dashboard.bandwidth.com/api/accounts/{BW_ACCOUNT_ID}/orders/{ORDER_ID}' \
--U '{BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}'
-```
-
-</TabItem>
-
-</Tabs>
-
-And endpoint `../orders/{ORDER_ID}` should return a response like:
-
-> Response
-
-```xml
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<OrderResponse>
-    <CompletedQuantity>2</CompletedQuantity>
-    <CreatedByUser>jbm</CreatedByUser>
-    <LastModifiedDate>2018-01-23T19:56:30.782Z</LastModifiedDate>
-    <OrderCompleteDate>2018-01-23T19:56:30.782Z</OrderCompleteDate>
-    <Order>
-        <OrderCreateDate>2018-01-23T19:56:29.678Z</OrderCreateDate>
-        <id>47955555-67aa-4adb-8c0f-b6894e60c0dc</id>
-        <ExistingTelephoneNumberOrderType>
-            <TelephoneNumberList>
-                <TelephoneNumber>6672286710</TelephoneNumber>
-                <TelephoneNumber>5756186700</TelephoneNumber>
-            </TelephoneNumberList>
-        </ExistingTelephoneNumberOrderType>
-        <PartialAllowed>true</PartialAllowed>
-        <SiteId>461</SiteId>
-    </Order>
-    <OrderStatus>COMPLETE</OrderStatus>
-    <CompletedNumbers>
-        <TelephoneNumber>
-            <FullNumber>6672286710</FullNumber>
-            <FullNumber>5756186700</FullNumber>
-        </TelephoneNumber>
-    </CompletedNumbers>
-    <Summary>2 number ordered</Summary>
-    <FailedQuantity>0</FailedQuantity>
-</OrderResponse>
-```
+:::tip Poll for Order Status
+To poll for Order status you have to send <Highlight color="#00bf8c">GET</Highlight> request with order ID to our [Fetch Order Status API](../../../../apis/numbers#tag/accounts/operation/RetrieveOrder) endpoint.
+:::
 
 ## Order Status Webhook
 
-This is a webhook that bandwidth sends to _your_ server/email upon order completion/failure - there is no need to poll the resource if using this recommended method.
+This is a webhook that bandwidth sends to **your** server/email upon order completion/failure - there is no need to poll the resource if using this recommended method.
+Please follow the [How to setup Notification Webhook](/docs/numbers/webhooks/orderWebhook) guide for more information.
 
-To create a subscription for Order Status you have to send POST request to our [Create Subscription API](../../../../apis/numbers#tag/accounts/operation/CreateSubscriptions) endpoint.
+### Example
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/subscriptions</code>
 
 <Tabs
 groupId="http_number_search"
@@ -262,24 +209,22 @@ values={[
 <TabItem value="curl">
 
 ```curl
-Note: Remember to add authentication for your application if needed!
-
-curl -X POST 'https://dashboard.bandwidth.com/api/accounts/{BW_ACCOUNT_ID}/subscriptions'
--U '{BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}'
--H "Content-Type: application/xml"
--d "<Subscription>
+curl -X POST 'https://dashboard.bandwidth.com/api/accounts/{accountId}/subscriptions'
+-U '{userName}:{password}'
+-H 'Content-Type: application/xml'
+-d '<Subscription>
         <OrderType>orders</OrderType>
         <OrderId>ORDER_ID</OrderId>
         <EmailSubscription>
             <Email>your_email@gmail.com</Email>
             <DigestRequested>DAILY</DigestRequested>
         </EmailSubscription>
-    </Subscription>"
+    </Subscription>'
 ```
 
 </TabItem>
 </Tabs>
 
 ## Where to next?
-Now that you have learn how to search and order numbers, check out some of the available actions in the guides:
+Now that you have learned how to search and order numbers, check out some of the other available actions in our guides:
 - [How to port numbers](/docs/numbers/guides/portingNumbers)
