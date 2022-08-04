@@ -3,11 +3,11 @@ const fs = require('fs');
 const path = require('path');
 
 const numbersSpec = fs.readFileSync('./specs-temp/numbers.json', 'utf-8');
-const phoneNumberLookupSpec = fs.readFileSync('./specs/phoneNumberLookup.json', 'utf-8');
-const voiceSpec = fs.readFileSync('./specs/voice.json', 'utf-8');
-const messagingSpec = fs.readFileSync('./specs/messaging.json', 'utf-8');
-const webRtcSpec = fs.readFileSync('./specs/webRtc.json', 'utf-8');
-const multiFactorAuthSpec = fs.readFileSync('./specs/multiFactorAuth.json', 'utf-8');
+const phoneNumberLookupSpec = fs.readFileSync('./specs/phone-number-lookup.yml', 'utf-8');
+const voiceSpec = fs.readFileSync('./specs/voice.yml', 'utf-8');
+const messagingSpec = fs.readFileSync('./specs/messaging.yml', 'utf-8');
+const webRtcSpec = fs.readFileSync('./specs/webrtc.yml', 'utf-8');
+const multiFactorAuthSpec = fs.readFileSync('./specs/multi-factor-auth.yml', 'utf-8');
 const dashSpec = fs.readFileSync('./specs/dash.json', 'utf-8');
 const dashNotificationsSpec = fs.readFileSync('./specs/dashNotifications.json', 'utf-8');
 const messagingInternationalSpec = fs.readFileSync('./specs/messagingInternational.json', 'utf-8');
@@ -25,6 +25,7 @@ module.exports = {
     onBrokenLinks: 'throw',
     onBrokenMarkdownLinks: 'warn',
     favicon: 'img/favicon.ico',
+    trailingSlash: true,
     organizationName: 'bandwidth', 
     projectName: 'api-docs', 
     themeConfig: {
@@ -53,23 +54,38 @@ module.exports = {
                 src: 'img/bandwidth-logo-navbar.png',
             },
             items: [{
-                to: 'docs',
-                activeBasePath: 'docs',
-                label: 'Docs',
+                type: 'dropdown',
+                label: 'US & Canada APIs',
                 position: 'left',
+                items: [
+                    {
+                        to: 'docs',
+                        activeBasePath: 'docs',
+                        label: 'Docs',
+                    }, {
+                        to: 'apis',
+                        label: 'API Reference',
+                        activeBasePath: 'apis'
+                    }, {
+                        to: 'sdks',
+                        label: 'SDKs',
+                        activeBasePath: 'sdks'
+                    }, {
+                        href: 'https://github.com/Bandwidth-Samples',
+                        label: 'Samples',
+                    }
+                ]
             }, {
-                to: 'apis',
-                label: 'API Reference',
-                activeBasePath: 'apis'
-            }, {
-                to: 'sdks',
-                label: 'SDKs',
-                activeBasePath: 'sdks'
-            }, {
-                href: 'https://github.com/Bandwidth-Samples',
-                label: 'Samples',
+                type: 'dropdown',
+                label: 'Global APIs',
                 position: 'left',
-            },{
+                items: [
+                    {
+                        to: 'apis/global',
+                        label: 'Docs & API Reference',
+                    }
+                ]
+            }, {
                 href: 'https://github.com/Bandwidth',
                 position: 'right', 
                 className: 'header-github-link'
@@ -151,12 +167,12 @@ module.exports = {
     ],
     customFields: {
         numbersSpec: JSON.parse(numbersSpec),
-        phoneNumberLookupSpec: JSON.parse(phoneNumberLookupSpec),
-        voiceSpec: JSON.parse(voiceSpec),
-        messagingSpec: JSON.parse(messagingSpec),
+        phoneNumberLookupSpec: YAML.parse(phoneNumberLookupSpec),
+        voiceSpec: YAML.parse(voiceSpec),
+        messagingSpec: YAML.parse(messagingSpec),
         messagingInternationalSpec: JSON.parse(messagingInternationalSpec),
-        webRTCSpec: JSON.parse(webRtcSpec),
-        multiFactorAuthSpec: JSON.parse(multiFactorAuthSpec),
+        webRTCSpec: YAML.parse(webRtcSpec),
+        multiFactorAuthSpec: YAML.parse(multiFactorAuthSpec),
         dashSpec: JSON.parse(dashSpec),
         dashNotificationsSpec: JSON.parse(dashNotificationsSpec),
         portingSpec: YAML.parse(portingSpec),
