@@ -50,7 +50,7 @@ module.exports = {
                         "numbers/csrLookupTool",
                         "numbers/hostingNumbers",
                         "numbers/manageNumberFeatures",
-                        "numbers/searchNumbers",
+                        "numbers/manageInventory",
                         "numbers/disconnectNumbers",
                         "numbers/bulkportins",
                         "numbers/lookupNumbers",
