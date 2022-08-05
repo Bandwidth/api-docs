@@ -37,7 +37,6 @@ paths:
         - $ref: '#/components/parameters/countryCodeA3'
         - $ref: '#/components/parameters/currentProviderName'
         - $ref: '#/components/parameters/customerReference'
-        - $ref: '#/components/parameters/portInOrderId'
         - $ref: '#/components/parameters/supportRef'
         - $ref: '#/components/parameters/createdDate'
         - $ref: '#/components/parameters/expectedPortCompleteDate'
@@ -50,8 +49,10 @@ paths:
           description: OK
           $ref: '#/components/responses/portInOrderArraySuccessResponse'
         '401':
+          description: Unauthorized
           $ref: '#/components/responses/401ErrorResponse'
         '403':
+          description: Forbidden
           $ref: '#/components/responses/403ErrorResponse'
       tags:
         - Port-In Orders
@@ -68,57 +69,7 @@ paths:
         automatically cancelled after 30 days.
       operationId: createPortInOrder
       requestBody:
-        content:
-          application/json:
-            schema:
-              description: Request body.
-              type: object
-              properties:
-                numbersOwner:
-                  $ref: '#/components/schemas/numbersOwner'
-                currentProviderName:
-                  type: string
-                  minLength: 1
-                  description: >-
-                    The losing carrier who's currently the operator on the
-                    number to be ported in.
-                  example: BT
-                preferredPortInDate:
-                  type: string
-                  minLength: 1
-                  format: date-time
-                  description: >-
-                    Date that you prefer to have numbers become available in
-                    Bandwidth.
-                  example: '2022-03-10T17:32:28Z'
-                phoneNumbers:
-                  type: array
-                  description: Array of telephone numbers in E.164 format.
-                  items:
-                    type: string
-                    example: '[     "+32498914698",     "+3228090001"   ]'
-              required:
-                - numbersOwner
-                - currentProviderName
-                - phoneNumbers
-            examples:
-              CreateOrderExample:
-                value:
-                  currentProviderName: BT
-                  phoneNumbers:
-                    - '+3228090000'
-                    - '+3228090001'
-                  preferredPortInDate: '2021-11-19T15:45:09.913+00:00'
-                  customerReference: P345679078
-                  numbersOwner:
-                    buildingNumber: 489
-                    city: Brussels
-                    companyName: Voxbone
-                    countryCodeA3: BEL
-                    numberUsageType: BUSINESS
-                    postalCode: '1050'
-                    streetName: Rue Vanderkindere
-                    companyVatNumber: BE0478928788
+        $ref: '#/components/requestBodies/portInOrderCreationRequest'
       responses:
         '201':
           description: OK
@@ -147,7 +98,6 @@ paths:
       summary: Check a Port-In Order
       description: Allows you to check the status of an existing port-in order.
       operationId: getPortInOrder
-      parameters: []
       responses:
         '200':
           $ref: '#/components/responses/portInOrderSuccessResponse'
@@ -189,10 +139,7 @@ paths:
         cancellation of a submitted port-in order.
       operationId: modifyPortinOrder
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/requestBodies/portInOrderRequest'
+        $ref: '#/components/requestBodies/portInOrderRequest'
       responses:
         '200':
           description: OK
@@ -224,25 +171,15 @@ paths:
         retrieve porting pricing fees and submission requirements.
       operationId: portabilityCheck
       requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                phoneNumbers:
-                  type: array
-                  description: Array of telephone numbers in E.164 format.
-                  items:
-                    type: string
-                    minLength: 1
-                    maxLength: 999
-                    example: '+33123456789'
-              required:
-                - phoneNumbers
+        $ref: '#/components/requestBodies/portabilityCheckRequest'
+        examples:
+          - $ref: '#/components/examples/portabilityCheckRequest'
       responses:
         '200':
           description: OK
-          $ref: '#/components/responses/checkPortabilitySuccessResponse'
+          $ref: '#/components/responses/portabilityCheckSuccessResponse'
+          examples:
+            - $ref: '#/components/examples/portabilityCheckSuccessResponse'
         '400':
           description: Bad Request
           $ref: '#/components/responses/400ErrorResponse'
@@ -268,19 +205,12 @@ paths:
       operationId: uploadPortInDocuments
       parameters:
         - schema:
-            type: string
+            type: integer
           name: portInOrderId
           in: path
           required: true
       requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-          application/json:
-            schema:
-              type: object
-              properties: {}
+        $ref: '#/components/requestBodies/documentUploadRequest'
       responses:
         '201':
           description: OK
@@ -288,28 +218,12 @@ paths:
         '400':
           description: Bad Request
           $ref: '#/components/responses/400ErrorResponse'
-          examples:
-            400UploadDocuments:
-              value:
-                errors:
-                  - source:
-                      field: documentType
-                    description: Missing mandatory parameters.
-                    code: '7001'
         '401':
           description: Unauthorized
           $ref: '#/components/responses/401ErrorResponse'
         '403':
           description: Forbidden
           $ref: '#/components/responses/403ErrorResponse'
-          examples:
-            Porting403Example:
-              value:
-                timestamp: 2022-05-19T09:25:20.991+0000
-                status: 403
-                error: Forbidden
-                message: Access Denied
-                path: /external/ports/validation
         '404':
           description: Not Found
           $ref: '#/components/responses/404ErrorResponse'
@@ -859,7 +773,7 @@ components:
           description: State of the end user's address.
           example: State of the end user's address.
         countryCodeA3:
-          $ref: '#/components/schemas/countryCodeA3'
+          $ref: '#/components/schemas/countryCodeA3Requirement'
         title:
           type: array
           description: COMPANY
@@ -976,7 +890,7 @@ components:
           description: State of the end user's address.
           example: State of the end user's address.
         countryCodeA3:
-          $ref: '#/components/schemas/countryCodeA3'
+          $ref: '#/components/schemas/countryCodeA3Requirement'
         title:
           example:
             - MR
@@ -1086,7 +1000,7 @@ components:
           description: State of the end user's mailbox.
           example: State of the end user's mailbox.
         countryCodeA3:
-          $ref: '#/components/schemas/countryCodeA3'
+          $ref: '#/components/schemas/countryCodeA3Requirement'
     error:
       description: Generic error.
       type: object
@@ -1331,6 +1245,10 @@ components:
       maxLength: 3
       description: ISO 3166-1 standard 3-letter country code.
       example: ITA
+    countryCodeA3Requirement:
+      type: string
+      title: Requirement for CountryCodeA3
+      example: ISO 3166-1 standard 3-letter country code.
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
@@ -1357,6 +1275,16 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/error'
+          examples:
+            createOrderSuccessResponse:
+              $ref: '#/components/examples/createOrderSuccessResponse'
+            requestCancellationSuccessResponse:
+              $ref: >-
+                #/components/examples/requestCancellationPortInOrderSuccessResponse
+            modifyOrderSuccessResponse:
+              $ref: '#/components/examples/modifyPortInOrderSuccessResponse'
+            submitOrderSuccessResponse:
+              $ref: '#/components/examples/submitPortInOrderSucessResponse'
     portInOrderArraySuccessResponse:
       description: Get port-in orders success response.
       content:
@@ -1389,7 +1317,7 @@ components:
                 items:
                   $ref: '#/components/schemas/error'
     documentUploadSuccessResponse:
-      description: Document update success response.
+      description: Document upload success response.
       content:
         application/json:
           schema:
@@ -1411,8 +1339,11 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/error'
+          examples:
+            uploadDocumentSuccessResponse:
+              $ref: '#/components/examples/uploadDocumentsSuccessResponse'
     documentDownloadSuccessResponse:
-      description: Document update success response.
+      description: Document download success response.
       content:
         application/json:
           schema:
@@ -1430,7 +1361,8 @@ components:
                   on its status.
                 items:
                   $ref: '#/components/schemas/link'
-    checkPortabilitySuccessResponse:
+          examples: {}
+    portabilityCheckSuccessResponse:
       description: Check portability success response.
       content:
         application/json:
@@ -1454,6 +1386,9 @@ components:
                       request.
                     items:
                       $ref: '#/components/schemas/phoneNumberDetails'
+          examples:
+            checkPortabilitySuccessResponse:
+              $ref: '#/components/examples/checkPortabilitySuccessResponse'
     400ErrorResponse:
       description: General port-in order 400 error response.
       content:
@@ -1613,7 +1548,81 @@ components:
                 items:
                   type: string
                   example: '[     "+32498914698",     "+3228090001"   ]'
+          examples:
+            requestCancellationRequest:
+              $ref: '#/components/examples/requestCancellationPortInOrderRequest'
+            submitOrderRequest:
+              $ref: '#/components/examples/submitPortInOrderRequest'
+            modifyOrderRequest:
+              $ref: '#/components/examples/modifyPortInOrderRequest'
       description: General port-in order request.
+    documentUploadRequest:
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+        application/json:
+          schema:
+            type: object
+            properties: {}
+    portInOrderCreationRequest:
+      content:
+        application/json:
+          schema:
+            description: Request body.
+            type: object
+            properties:
+              numbersOwner:
+                $ref: '#/components/schemas/numbersOwner'
+              currentProviderName:
+                type: string
+                minLength: 1
+                description: >-
+                  The losing carrier who's currently the operator on the number
+                  to be ported in.
+                example: BT
+              preferredPortInDate:
+                type: string
+                minLength: 1
+                format: date-time
+                description: >-
+                  Date that you prefer to have numbers become available in
+                  Bandwidth.
+                example: '2022-03-10T17:32:28Z'
+              phoneNumbers:
+                type: array
+                description: Array of telephone numbers in E.164 format.
+                items:
+                  type: string
+                  example: '[     "+32498914698",     "+3228090001"   ]'
+            required:
+              - numbersOwner
+              - currentProviderName
+              - phoneNumbers
+          examples:
+            createOrderRequest:
+              $ref: '#/components/examples/createOrderRequest'
+      description: ''
+    portabilityCheckRequest:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              phoneNumbers:
+                type: array
+                description: Array of telephone numbers in E.164 format.
+                items:
+                  type: string
+                  minLength: 1
+                  maxLength: 999
+                  example: '+33123456789'
+            required:
+              - phoneNumbers
+          examples:
+            checkPortabilityRequest:
+              $ref: '#/components/examples/checkPortabilityRequest'
+      description: ''
   examples:
     checkPortabilityRequest:
       summary: Check portability request.
@@ -2026,6 +2035,7 @@ components:
             href: https://support.voxbone.com/hc/en-us/requests/295782
             type: GET
     uploadDocumentsSuccessResponse:
+      description: Success response for document upload endpoint
       value:
         data:
           documents:
@@ -2050,10 +2060,18 @@ components:
   parameters:
     portInOrderId:
       name: Id of a port-in order.
-      in: query
+      in: path
       required: true
       schema:
         type: integer
+        example: 123567
+    documentId:
+      name: Id of a document.
+      in: path
+      required: true
+      schema:
+        type: integer
+        example: 457766088
     status:
       name: Status of a port order. E.g. DRAFT, SUBMITTED, etc.
       in: query
