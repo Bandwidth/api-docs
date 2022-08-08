@@ -43,7 +43,7 @@ module.exports = {
             hideOnScroll: false,
             logo: {
                 alt: 'Bandwidth',
-                src: 'img/bw-horizontal.svg',
+                src: 'img/dev-docs-logo.svg',
             },
             items: [{
                 type: 'dropdown',
@@ -90,7 +90,7 @@ module.exports = {
             }, {
                 href: 'https://www.bandwidth.com/login/',
                 position: 'right', 
-                className: 'header-dashboard-link bw-link',
+                className: 'header-login-link',
                 title: 'Login'
             }]
         },
