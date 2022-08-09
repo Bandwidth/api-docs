@@ -5,27 +5,27 @@ import LandingPage from '../components/LandingPage';
 const productList = [
     {
         title: 'Numbers',
-        Svg: require('../../static/img/icon-numbers.svg').default,
+        Svg: require('../../static/img/docs-numbers.svg').default,
         link: '/docs/numbers',
     },
     {
         title: 'Emergency',
-        Svg: require('../../static/img/icon-emergency.svg').default,
+        Svg: require('../../static/img/docs-emergency.svg').default,
         link: '/docs/emergency',
     },
     {
         title: 'Voice',
-        Svg: require('../../static/img/icon-voice.svg').default,
+        Svg: require('../../static/img/docs-voice.svg').default,
         link: '/docs/voice',
     },
     {
         title: 'Multi-Factor Authentication',
-        Svg: require('../../static/img/icon-mfa.svg').default,
+        Svg: require('../../static/img/docs-mfa.svg').default,
         link: '/docs/mfa',
     },
     {
         title: 'Messaging',
-        Svg: require('../../static/img/icon-messaging.svg').default,
+        Svg: require('../../static/img/docs-messaging.svg').default,
         link: '/docs/messaging',
     },
     {
