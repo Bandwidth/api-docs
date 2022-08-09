@@ -4,7 +4,7 @@ import sdkStyles from '../../css/sdks.module.css';
 import GitHubLink from '../../components/GitHubLink';
 
 const Title = 'Python';
-const Svg = require('../../../static/img/python.svg').default;
+const Svg = require('@site/static/img/python.svg').default;
 
 
 export default function sdkPage() {

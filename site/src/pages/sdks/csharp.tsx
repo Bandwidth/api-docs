@@ -4,7 +4,7 @@ import sdkStyles from '../../css/sdks.module.css';
 import GitHubLink from '../../components/GitHubLink';
 
 const Title = 'C#';
-const Svg = require('../../../static/img/csharp.svg').default;
+const Svg = require('@site/static/img/csharp.svg').default;
 
 export default function sdkPage() {
     return(

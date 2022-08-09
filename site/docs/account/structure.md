@@ -15,7 +15,7 @@ image: ../../static/img/bw-icon.svg
 ---
 
 <img
-  src={require('../../static/img/docs-diagrams/account/structure.png').default}
+  src={require('@site/static/img/docs-diagrams/account/structure.png').default}
   alt="Account Structure"
   class="center"
 />

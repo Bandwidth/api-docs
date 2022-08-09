@@ -4,7 +4,7 @@ import sdkStyles from '../../css/sdks.module.css';
 import GitHubLink from '../../components/GitHubLink';
 
 const Title = 'Ruby';
-const Svg = require('../../../static/img/ruby.svg').default;
+const Svg = require('@site/static/img/ruby.svg').default;
 
 
 export default function sdkPage() {

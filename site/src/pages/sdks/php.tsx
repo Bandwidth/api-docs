@@ -4,7 +4,7 @@ import sdkStyles from '../../css/sdks.module.css';
 import GitHubLink from '../../components/GitHubLink';
 
 const Title = 'PHP';
-const Svg = require('../../../static/img/php.svg').default;
+const Svg = require('@site/static/img/php.svg').default;
 
 
 export default function sdkPage() {

@@ -4,7 +4,7 @@ import sdkStyles from '../../css/sdks.module.css';
 import GitHubLink from '../../components/GitHubLink';
 
 const Title = 'Node';
-const Svg = require('../../../static/img/node.svg').default;
+const Svg = require('@site/static/img/node.svg').default;
 
 
 export default function sdkPage() {

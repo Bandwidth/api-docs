@@ -5,7 +5,7 @@ import apiStyles from '../../css/apis.module.css';
 const productList = [
     {
         productName: 'Numbers',
-        Svg: require('../../../static/img/icons/numbers.svg').default,
+        Svg: require('@site/static/img/icons/numbers.svg').default,
         apis: [
             {
                 name: 'Numbers',
@@ -19,7 +19,7 @@ const productList = [
     },
     {
         productName: 'Voice',
-        Svg: require('../../../static/img/icons/voice.svg').default,
+        Svg: require('@site/static/img/icons/voice.svg').default,
         apis: [
             {
                 name: 'Voice',
@@ -29,7 +29,7 @@ const productList = [
     },
     {
         productName: 'Messaging',
-        Svg: require('../../../static/img/icons/messaging.svg').default,
+        Svg: require('@site/static/img/icons/messaging.svg').default,
         apis: [
             {
                 name: 'Messaging',
@@ -43,7 +43,7 @@ const productList = [
     },
     {
         productName: 'Emergency',
-        Svg: require('../../../static/img/icons/emergency.svg').default,
+        Svg: require('@site/static/img/icons/emergency.svg').default,
         apis: [
             {
                 name: 'DASH',
@@ -57,7 +57,7 @@ const productList = [
     },
     {
         productName: 'Authentication',
-        Svg: require('../../../static/img/icons/mfa.svg').default,
+        Svg: require('@site/static/img/icons/mfa.svg').default,
         apis: [
             {
                 name: 'Multi-Factor Authentication',
@@ -67,7 +67,7 @@ const productList = [
     },
     {
         productName: 'WebRTC',
-        Svg: require('../../../static/img/icons/webrtc.svg').default,
+        Svg: require('@site/static/img/icons/webrtc.svg').default,
         apis: [
             {
                 name: 'WebRTC',
@@ -77,7 +77,7 @@ const productList = [
     },
     {
         productName: 'Insights',
-        Svg: require('../../../static/img/icons/insights.svg').default,
+        Svg: require('@site/static/img/icons/insights.svg').default,
         apis: [
             {
                 name: 'Insights',

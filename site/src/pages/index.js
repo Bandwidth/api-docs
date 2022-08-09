@@ -5,39 +5,39 @@ import LandingPage from '../components/LandingPage';
 const productList = [
     {
         title: 'Numbers',
-        Svg: require('../../static/img/icons/numbers-bg.svg').default,
+        Svg: require('@site/static/img/icons/numbers-bg.svg').default,
         link: '/docs/numbers',
     },
     {
         title: 'Emergency',
-        Svg: require('../../static/img/icons/emergency-bg.svg').default,
+        Svg: require('@site/static/img/icons/emergency-bg.svg').default,
         link: '/docs/emergency',
     },
     {
         title: 'Voice',
-        Svg: require('../../static/img/icons/voice-bg.svg').default,
+        Svg: require('@site/static/img/icons/voice-bg.svg').default,
         link: '/docs/voice',
     },
     {
         title: 'Multi-Factor Authentication',
-        Svg: require('../../static/img/icons/mfa-bg.svg').default,
+        Svg: require('@site/static/img/icons/mfa-bg.svg').default,
         link: '/docs/mfa',
     },
     {
         title: 'Messaging',
-        Svg: require('../../static/img/icons/messaging-bg.svg').default,
+        Svg: require('@site/static/img/icons/messaging-bg.svg').default,
         link: '/docs/messaging',
     },
     {
         title: 'WebRTC',
-        Svg: require('../../static/img/icons/webrtc-bg.svg').default,
+        Svg: require('@site/static/img/icons/webrtc-bg.svg').default,
         link: '/docs/webrtc',
     },
 ];
 
 const props = {
     itemList: productList,
-    Svg: require('../../static/img/home-landing.svg').default,
+    Svg: require('@site/static/img/home-landing.svg').default,
     h1Text: 'Bandwidth API Documentation',
     h2Text: "Learn about Bandwidth's product APIs"
 };

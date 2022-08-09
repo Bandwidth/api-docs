@@ -6,39 +6,39 @@ import { Player } from '@lottiefiles/react-lottie-player';
 const sdkList = [
     {
         title: 'Node',
-        Svg: require('../../../static/img/icons/sdk-logos/node-bg.svg').default,
+        Svg: require('@site/static/img/icons/sdk-logos/node-bg.svg').default,
         link: '/sdks/node'
     },
     {
         title: 'Python',
-        Svg: require('../../../static/img/icons/sdk-logos/python-bg.svg').default,
+        Svg: require('@site/static/img/icons/sdk-logos/python-bg.svg').default,
         link: '/sdks/python'
     },
     {
         title: 'Java',
-        Svg: require('../../../static/img/icons/sdk-logos/java-bg.svg').default,
+        Svg: require('@site/static/img/icons/sdk-logos/java-bg.svg').default,
         link: '/sdks/java'
     },
     {
         title: 'PHP',
-        Svg: require('../../../static/img/icons/sdk-logos/php-bg.svg').default,
+        Svg: require('@site/static/img/icons/sdk-logos/php-bg.svg').default,
         link: '/sdks/php'
     },
     {
         title: 'Ruby',
-        Svg: require('../../../static/img/ruby.svg').default,
+        Svg: require('@site/static/img/ruby.svg').default,
         link: '/sdks/ruby'
     },
     {
         title: 'C#',
-        Svg: require('../../../static/img/icons/sdk-logos/csharp-bg.svg').default,
+        Svg: require('@site/static/img/icons/sdk-logos/csharp-bg.svg').default,
         link: '/sdks/csharp'
     },
 ];
 
 const props = {
     itemList: sdkList,
-    Svg: require('../../../static/img/sdks-landing.svg').default,
+    Svg: require('@site/static/img/sdks-landing.svg').default,
     h1Text: 'Bandwidth SDKs',
     h2Text: 'Build with Bandwidth'
 }
