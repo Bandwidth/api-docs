@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from '@theme/Layout';
-import LandingPage from '../components/LandingPage';
+import LandingPage from '@site/src/components/LandingPage';
 
 const productList = [
     {

@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from '@theme/Layout';
-import apiStyles from '../../css/apis.module.css';
+import apiStyles from '@site/src/css/apis.module.css';
 
 const productList = [
     {

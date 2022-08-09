@@ -1,7 +1,7 @@
 import React from 'react';
 import Layout from '@theme/Layout';
-import sdkStyles from '../../css/sdks.module.css';
-import GitHubLink from '../../components/GitHubLink';
+import sdkStyles from '@site/src/css/sdks.module.css';
+import GitHubLink from '@site/src/components/GitHubLink';
 
 const Title = 'PHP';
 const Svg = require('@site/static/img/php.svg').default;
