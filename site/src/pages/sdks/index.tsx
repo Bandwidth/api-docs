@@ -5,8 +5,7 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import styles from '../index.module.css';
 import sdkStyles from '../../css/sdks.module.css';
-import RunInPostman from '../../components/RunInPostman';
-import ItemGrid from '../../components/gridItem'
+import ItemGrid from '../../components/gridItem';
 
 const SdkList = [
   {
@@ -53,10 +52,7 @@ function Header() {
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
       <div className="container">
         <h1 className="hero__title">Bandwidth SDKs</h1>
-      <p className="hero__subtitle">Build Faster with Bandwidth</p>
-      <div className={styles.PostmanContainer}>
-        <RunInPostman />
-      </div>
+        <p className="hero__subtitle">Build Faster with Bandwidth</p>
       </div>
     </header>
   );
