@@ -8,7 +8,7 @@ keywords:
   - numbers
   - webhooks
 hide_title: True
-image: ../../static/img/bw-icon.svg
+image: '@site/static/img/bw-icon.svg'
 ---
 
 Bandwidth uses HTTP [webhooks](https://webhooks.pbworks.com/w/page/13385124/FrontPage) to send events to any publicly addressable url.

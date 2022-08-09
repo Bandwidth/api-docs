@@ -7,7 +7,7 @@ keywords:
   - bandwidth
   - numbers
   - webhooks
-image: ../../static/img/bw-icon.svg
+image: '@site/static/img/bw-icon.svg'
 ---
 
 # Portout Validation Webhook

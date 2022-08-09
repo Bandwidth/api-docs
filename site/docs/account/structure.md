@@ -11,7 +11,7 @@ keywords:
   - location
   - site
   - sippeer
-image: ../../static/img/bw-icon.svg
+image: '@site/static/img/bw-icon.svg'
 ---
 
 ![Account Structure](@site/static/img/docs-diagrams/account/structure.png)
