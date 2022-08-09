@@ -5,32 +5,32 @@ import LandingPage from '../components/LandingPage';
 const productList = [
     {
         title: 'Numbers',
-        Svg: require('../../static/img/docs-numbers.svg').default,
+        Svg: require('../../static/img/icons/numbers-bg.svg').default,
         link: '/docs/numbers',
     },
     {
         title: 'Emergency',
-        Svg: require('../../static/img/docs-emergency.svg').default,
+        Svg: require('../../static/img/icons/emergency-bg.svg').default,
         link: '/docs/emergency',
     },
     {
         title: 'Voice',
-        Svg: require('../../static/img/docs-voice.svg').default,
+        Svg: require('../../static/img/icons/voice-bg.svg').default,
         link: '/docs/voice',
     },
     {
         title: 'Multi-Factor Authentication',
-        Svg: require('../../static/img/docs-mfa.svg').default,
+        Svg: require('../../static/img/icons/mfa-bg.svg').default,
         link: '/docs/mfa',
     },
     {
         title: 'Messaging',
-        Svg: require('../../static/img/docs-messaging.svg').default,
+        Svg: require('../../static/img/icons/messaging-bg.svg').default,
         link: '/docs/messaging',
     },
     {
         title: 'WebRTC',
-        Svg: require('../../static/img/docs-webrtc.svg').default,
+        Svg: require('../../static/img/icons/webrtc-bg.svg').default,
         link: '/docs/webrtc',
     },
 ];

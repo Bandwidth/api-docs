@@ -4,10 +4,12 @@ import itemGridStyles from './css/ItemGrid.module.css';
 function Item({Svg, title, link}) {
     return (
         <div className={itemGridStyles.item}>
-            <a href={link}>
+            <a href={link} className={itemGridStyles.itemImage}>
                 <Svg className={itemGridStyles.itemSvg} alt={title} />
             </a>
-            <h2>{title}</h2>
+            <div className={itemGridStyles.itemText}>
+                <h3>{title}</h3>
+            </div>
         </div>
     );
 }
