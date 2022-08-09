@@ -38,7 +38,7 @@ const sdkList = [
 
 const props = {
     itemList: sdkList,
-    Svg: require('@site/static/img/sdks-landing.svg').default,
+    Svg: require('@site/static/img/landing-sdks.svg').default,
     h1Text: 'Bandwidth SDKs',
     h2Text: 'Build with Bandwidth'
 }
