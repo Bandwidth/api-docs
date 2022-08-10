@@ -67,7 +67,7 @@ https://dashboard.bandwidth.com/api/accounts/{accountId}/bulkPortins
 
 > Response
 
-```
+```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <BulkPortinResponse>
     <BulkPortin>
@@ -89,7 +89,7 @@ https://dashboard.bandwidth.com/api/accounts/{accountId}/bulkPortins
 </TabItem>
 <TabItem value="curl">
 
-```cURL
+```xml
 Note: Remember to add authentication for your application if needed!
 
 curl 'https://dashboard.bandwidth.com/api/accounts/{BW_ACCOUNT_ID}/bulkPortins' \
@@ -104,15 +104,36 @@ curl 'https://dashboard.bandwidth.com/api/accounts/{BW_ACCOUNT_ID}/bulkPortins' 
 </BulkPortin>'
 ```
 
+> Response
+
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<BulkPortinResponse>
+    <BulkPortin>
+        <CustomerOrderId>Order Id for all child orders</CustomerOrderId>
+        <RequestedFocDate>2021-06-30T00:00:00.000Z</RequestedFocDate>
+        <SiteId>14020</SiteId>
+        <PeerId>521434</PeerId>
+        <ProcessingStatus>DRAFT</ProcessingStatus>
+        <AccountId>9900572</AccountId>
+        <CreatedByUser>jgilmore</CreatedByUser>
+        <LastModifiedBy>jgilmore</LastModifiedBy>
+        <LastModifiedDate>2021-06-21T19:42:34.760Z</LastModifiedDate>
+        <OrderCreateDate>2021-06-21T19:42:34.760Z</OrderCreateDate>
+        <OrderId>ac2c8ab2-7a63-44da-a307-edcabe0b6c81</OrderId>
+    </BulkPortin>
+</BulkPortinResponse>
+```
+
 </TabItem>
 </Tabs>
 
-When bulk port-in is created, it has ```DRAFT``` status, which means it has not been processed yet.
-If you want to update your bulk port-in (either in ```DRAFT``` or other further state) follow the [How to update Bulk Port-in](/docs/numbers/guides/porting/updateBulkPortins) guide.
+When a Bulk Port-in is created, it has ```DRAFT``` status, which means it has not been processed yet.
+If you want to update your Bulk Port-in (either in ```DRAFT``` or other further state) follow the [How to update Bulk Port-in](/docs/numbers/guides/porting/updateBulkPortins) guide.
 
 ## Provide telephone number(s) to port
 
-After Bulk Port-in is created the next step is to add telephone numbers to the order. To do it you must send a <Highlight color="#9a59c5">PUT</Highlight> request to our [API /bulkPortins/{orderId}/tnList](/apis/numbers/#operation/UpdateBulkTnList) endpoint. This can be done through tools like Postman, or in command line.
+After the Bulk Port-in is created, add telephone numbers to the order by sending a <Highlight color="#9a59c5">PUT</Highlight> request to our [API /bulkPortins/{orderId}/tnList](/apis/numbers/#operation/UpdateBulkTnList) endpoint. This can be done through tools like Postman, or in command line.
 
 <Highlight color="#9a59c5">PUT</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/bulkPortins/{orderId}/tnList</code>
 <Tabs
@@ -143,7 +164,7 @@ https://dashboard.bandwidth.com/api/accounts/{accountId}/bulkPortins/{orderId}/t
 
 > Response
 
-```
+```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <TnListResponse>
     <OrderId>ac2c8ab2-7a63-44da-a307-edcabe0b6c81</OrderId>
@@ -154,7 +175,7 @@ https://dashboard.bandwidth.com/api/accounts/{accountId}/bulkPortins/{orderId}/t
 </TabItem>
 <TabItem value="curl">
 
-```cURL
+```xml
 Note: Remember to add authentication for your application if needed!
 
 curl 'https://dashboard.bandwidth.com/api/accounts/{accountId}/bulkPortins/{orderId}/tnList' \
@@ -170,10 +191,68 @@ curl 'https://dashboard.bandwidth.com/api/accounts/{accountId}/bulkPortins/{orde
 </TnList>'
 ```
 
+> Response
+
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<TnListResponse>
+    <OrderId>ac2c8ab2-7a63-44da-a307-edcabe0b6c81</OrderId>
+    <ProcessingStatus>VALIDATE_DRAFT_TNS</ProcessingStatus>
+</TnListResponse>
+```
+
 </TabItem>
 </Tabs>
 
-After submitting a tnList with the ```PUT``` operation, you will need to poll for completion of the validation and decomposition using the GET [API /bulkPortins/{orderId}/tnList](/apis/numbers/#operation/ListBulkTns). Check the ```ProcessingStatus``` field. If all the telephone numbers in the tnList are portable, the bulk port-in transitions to the ```VALID_DRAFT_TNS``` state.
+### Polling vs. Webhooks
+
+After submitting a tnList with the ```PUT``` operation, you will need to check the validation and decomposition completion. As times can vary and are not guaranteed Bandwidth recommends configuring your account with a subscription. Follow the [How to setup Notification Webhook](/docs/numbers/webhooks/orderWebhook) to learn more.
+
+> Example
+
+```xml
+Note: Remember to add authentication for your application if needed!
+
+PUT https://dashboard.bandwidth.com/api/accounts/{accountId}/subscriptions
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Subscription>
+  <OrderType>bulkPortins</OrderType>
+  <CallbackSubscription>
+    <URL>"http://yourhost:8080/path/to/resource"</URL>
+    <Expiry>12000</Expiry>
+    <CallbackCredentials>
+      <BasicAuthentication>
+        <Username>superuser</Username>
+        <Password>s3cure</Password>
+      </BasicAuthentication>
+      <PublicKey>LS0tLS1CRUdJTiBDRVJUSU [...] kQgQ0VSVElGSUNBVEUtLS0tLQ0K</PublicKey>
+    </CallbackCredentials>
+  </CallbackSubscription>
+</Subscription>
+```
+
+When notification is sent, you need to check `Status` field
+
+> Notification example
+
+```xml
+POST your_url.com/webhookService HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+
+<?xml version="1.0"?>
+<Notification>
+    <SubscriptionId>...</SubscriptionId>
+    <OrderType>bulkPortins</OrderType>
+    <CustomerOrderId>...</CustomerOrderId>
+    <Status>VALID_DRAFT_TNS</Status>
+</Notification>
+```
+
+
+If you want to use polling you can make a [GET /bulkPortins/{orderId}/tnList](/apis/numbers/#operation/ListBulkTns) request and check the ```ProcessingStatus``` field.
+
+If all the telephone numbers in the tnList are portable, the bulk port-in transitions to the ```VALID_DRAFT_TNS``` state.
 
 :::caution
 If at least one of the telephone numbers in the tnList <b>is not portable</b>, the bulk port-in transitions to the ```INVALID_DRAFT_TNS``` state. You will see reasons why telephone numbers are non-portable in response body. To fix it you’ll need to update the tnList to remove non-portable telephone numbers.
