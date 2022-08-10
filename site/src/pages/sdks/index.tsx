@@ -6,32 +6,32 @@ import { Player } from '@lottiefiles/react-lottie-player';
 const sdkList = [
     {
         title: 'Node',
-        Svg: require('@site/static/img/icons/sdk-logos/node-bg.svg').default,
+        Svg: require('@site/static/img/sdk-logos/node.svg').default,
         link: '/sdks/node'
     },
     {
         title: 'Python',
-        Svg: require('@site/static/img/icons/sdk-logos/python-bg.svg').default,
+        Svg: require('@site/static/img/sdk-logos/python.svg').default,
         link: '/sdks/python'
     },
     {
         title: 'Java',
-        Svg: require('@site/static/img/icons/sdk-logos/java-bg.svg').default,
+        Svg: require('@site/static/img/sdk-logos/java.svg').default,
         link: '/sdks/java'
     },
     {
         title: 'PHP',
-        Svg: require('@site/static/img/icons/sdk-logos/php-bg.svg').default,
+        Svg: require('@site/static/img/sdk-logos/php.svg').default,
         link: '/sdks/php'
     },
     {
         title: 'Ruby',
-        Svg: require('@site/static/img/ruby.svg').default,
+        Svg: require('@site/static/img/sdk-logos/ruby.svg').default,
         link: '/sdks/ruby'
     },
     {
         title: 'C#',
-        Svg: require('@site/static/img/icons/sdk-logos/csharp-bg.svg').default,
+        Svg: require('@site/static/img/sdk-logos/csharp.svg').default,
         link: '/sdks/csharp'
     },
 ];

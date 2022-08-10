@@ -1,10 +1,28 @@
 import React from 'react';
 import Layout from '@theme/Layout';
-import sdkStyles from '@site/src/css/sdks.module.css';
-import GitHubLink from '@site/src/components/GitHubLink';
+import SdkPage from '@site/src/components/SdkPage.js';
 
-const Title = 'Java';
-const Svg = require('@site/static/img/java.svg').default;
+const Svg = require('@site/static/img/sdk-logos/java.svg').default;
+
+const props = {
+  Svg: Svg,
+  title: 'Java',
+  repoLinks: [
+    {
+      packageLink: 'https://mvnrepository.com/artifact/com.bandwidth.sdk/bandwidth-sdk',
+      title: 'com.bandwidth.sdk/bandwidth-sdk',
+      description: 'Manage Phone Calls with BXML, Create Outbound Calls, SMS Messages, MMS Messages',
+      ghLink: 'https://github.com/Bandwidth/java-sdk'
+    },
+    {
+      packageLink: 'https://mvnrepository.com/artifact/com.bandwidth.sdk/bandwidth-java-iris-sdk',
+      title: 'com.bandwidth.sdk/bandwidth-java-iris-sdk',
+      description: 'Manage Phone Numbers and Account Settings',
+      ghLink: 'https://github.com/Bandwidth/java-bandwidth-iris'
+    }
+  ],
+  samplesLink: 'https://github.com/orgs/Bandwidth-Samples/repositories?language=java'
+};
 
 export default function sdkPage() {
     return(
@@ -12,39 +30,7 @@ export default function sdkPage() {
         title={`Java SDK`}
         description="A list of resources for the Java SDK."
         keywords="Bandwidth,SDK,Java">
-        <div className="text--center">
-          <Svg className={sdkStyles.sdkSvg} alt={Title} />
-        </div>
-        <div className={sdkStyles.sdkProductTable}>
-          <table>
-          <thead>
-            <tr>
-              <th>Resource</th>
-              <th>Description</th>
-              <th>Github</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><a href="https://mvnrepository.com/artifact/com.bandwidth.sdk/bandwidth-sdk"><code>com.bandwidth.sdk/bandwidth-sdk</code></a></td>
-              <td>Manage Phone Calls with BXML, Create Outbound Calls, SMS Messages, MMS Messages</td>
-              <td><GitHubLink GHLink={"https://github.com/Bandwidth/java-sdk"}/></td>
-            </tr>
-            <tr>
-              <td><a href="https://mvnrepository.com/artifact/com.bandwidth.sdk/bandwidth-java-iris-sdk"><code>com.bandwidth.sdk/bandwidth-java-iris-sdk</code></a></td>
-              <td>Manage Phone Numbers and Account Settings</td>
-              <td><GitHubLink GHLink={"https://github.com/Bandwidth/java-bandwidth-iris"}/></td>
-            </tr>
-            <tr>
-              <td>Code Samples</td>
-              <td>Code Samples showing how to utilize the Bandwidth Java SDK</td>
-              <td><GitHubLink GHLink={"https://github.com/orgs/Bandwidth-Samples/repositories?language=java"}/></td>
-            </tr>
-          </tbody>
-          </table>
-        </div>
-        <br/>
-        <br/>
+        <SdkPage {...props} />
       </Layout>
     );
   }

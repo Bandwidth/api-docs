@@ -1,5 +1,5 @@
 import React from 'react';
-import itemGridStyles from './css/ItemGrid.module.css';
+import itemGridStyles from '@site/src/components/css/ItemGrid.module.css';
 
 function Item({Svg, title, link}) {
     return (

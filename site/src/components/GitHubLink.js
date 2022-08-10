@@ -1,5 +1,5 @@
 import React from 'react';
-import githubLinkStyles from './css/GitHubLink.module.css';
+import githubLinkStyles from '@site/src/components/css/GitHubLink.module.css';
 
 export default function GitHubLink(props) {
     return (
