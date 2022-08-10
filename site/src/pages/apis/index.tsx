@@ -39,7 +39,7 @@ const apiList = [
         link: '/apis/dash'
     },
     {
-        name: 'Emergency Notifications',
+        title: 'Emergency Notifications',
         Svg: require('@site/static/img/api-icons/emergency-notifications.svg').default,
         link: '/apis/dash-notifications'
 
@@ -50,7 +50,7 @@ const apiList = [
         link: '/apis/webrtc'
     },
     {
-        productName: 'Insights',
+        title: 'Insights',
         Svg: require('@site/static/img/api-icons/insights.svg').default,
         link: '/apis/insights'
     }

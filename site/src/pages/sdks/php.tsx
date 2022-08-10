@@ -2,7 +2,7 @@ import React from 'react';
 import Layout from '@theme/Layout';
 import SdkPage from '@site/src/components/SdkPage.js';
 
-const Svg = require('@site/static/img/sdk-logos/php.svg').default;
+const Svg = require('@site/static/img/sdk-icons/php.svg').default;
 
 const props = {
   Svg: Svg,

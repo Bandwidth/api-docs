@@ -2,7 +2,7 @@ import React from 'react';
 import Layout from '@theme/Layout';
 import SdkPage from '@site/src/components/SdkPage.js';
 
-const Svg = require('@site/static/img/sdk-logos/java.svg').default;
+const Svg = require('@site/static/img/sdk-icons/java.svg').default;
 
 const props = {
   Svg: Svg,
