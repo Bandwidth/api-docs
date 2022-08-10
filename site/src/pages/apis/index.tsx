@@ -1,11 +1,12 @@
 import React from 'react';
 import Layout from '@theme/Layout';
+import LandingPage from '@site/src/components/LandingPage.js';
 
 const apiList = [
     {
-        title: 'Numbers',
-        Svg: require('@site/static/img/api-icons/numbers.svg').default,
-        link: '/apis/numbers'
+        title: 'Voice',
+        Svg: require('@site/static/img/api-icons/voice.svg').default,
+        link: '/apis/voice'
     },
     {
         title: 'Phone Number Lookup',
@@ -13,9 +14,14 @@ const apiList = [
         link: '/apis/number-lookup'
     },
     {
-        title: 'Voice',
-        Svg: require('@site/static/img/api-icons/voice.svg').default,
-        link: '/apis/voice'
+        title: 'Numbers',
+        Svg: require('@site/static/img/api-icons/numbers.svg').default,
+        link: '/apis/numbers'
+    },
+    {
+        title: 'Multi-Factor Authentication',
+        Svg: require('@site/static/img/api-icons/mfa.svg').default,
+        link: '/apis/multifactorauth'
     },
     {
         title: 'Messaging',
@@ -39,11 +45,6 @@ const apiList = [
 
     },
     {
-        title: 'Multi-Factor Authentication',
-        Svg: require('@site/static/img/api-icons/mfa.svg').default,
-        link: '/apis/multifactorauth'
-    },
-    {
         title: 'WebRTC',
         Svg: require('@site/static/img/api-icons/webrtc.svg').default,
         link: '/apis/webrtc'
@@ -55,6 +56,13 @@ const apiList = [
     }
 ];
 
+const props = {
+    itemList: apiList,
+    Svg: require('@site/static/img/landing-apis.svg').default,
+    h1Text: 'API Reference',
+    h2Text: 'Technical reference for Bandwidth APIs'
+}
+
 
 export default function Apis() {
     return (
@@ -62,11 +70,7 @@ export default function Apis() {
             title="Bandwidth APIs"
             description="Bandwidth API Reference, documentation, SDKs, guides, examples and more. Get everything you need to build with Bandwidth."
             keywords="Bandwidth,API">
-                    <div>
-                        <h1>API Reference</h1>
-                        <h2>Technical reference for Bandwidth APIs</h2>
-                        <p>Our API Reference for US and Canada APIs is organized around product APIs and phone number management APIs.</p>
-                    </div>
+            <LandingPage {...props} />
         </Layout>
     );
 }
