@@ -303,3 +303,57 @@ The `./sdk-generation` directory contains code and config for our SDK generation
 | php | PHP >= 7.2
 | phpold | Does not have XML support |
 | node | Highly recommended to generate with a specified spec |
+
+
+## Api Doc preprocessor
+
+The `/preprocessor` directory contains `apiDocPreProcessor.jar` file that can remove marked `JSON`
+and/or `XML`objects in api doc spec payload. This was developed to have  a possibility to create 
+`internal` and `external` API doc.
+To mark `JSON` object to be removed you need to add `internal:true` 
+field to object that should be removed:
+
+1) Example for JSON Object:
+```
+ {...},
+ "AccountId": {
+    "type": "integer",
+    "format": "int32",
+    "internal": true, <-- marker to remove object
+ },
+ {...}
+```
+Added `internal` property that is set as true will remove `AccountId` object from payload.
+
+2) Example for XML Object:
+```
+    ...
+    <Contact internal=`true`> <-- contains marker
+      <FirstName>Sanjay</FirstName>
+      <LastName>Rao</LastName>
+      <Phone>9195441234</Phone>
+      <Email>srao@bandwidth.com</Email>
+    </Contact>
+    <AltSpid>X455</AltSpid>
+    <SPID>9999</SPID>
+    <PortCarrierType internal=`true`>WIRELINE</PortCarrierType> <--contains marker
+    ...
+```
+In this case form all `XML` payload would be removed `Contact` Object with all nested fields and objects.
+Also, would be removed `PortCarrierType` field that contains `internal=true`.
+
+`apiDocPreProcessor` runs as simple jar file with some cmd arguments.
+There are two required arguments `-r` and `-w`.
+
+For `-r` arg we have to provide full path to file that contain JSON payload that should be processed.
+For `-w` arg we have to provide full path to file to save result.
+
+There is also two optional arguments `-i` and `-d`. 
+That means ` create internal doc` and `add XML declaration` 
+Those arguments are using as flags and no additional values should be provided.
+
+If `-i` is set `apiDocPreProcessor` would remove just `internal=true` markers from `JSON` and `XML`
+payloads. This flag was added to have a possibility create pure internal api doc without 
+additional markers
+
+If `-d` is set `apiDocPreProcessor` would add to every `XML` payload default declaration
