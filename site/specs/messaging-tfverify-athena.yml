@@ -12,26 +12,49 @@ info:
 servers:
   - url: https://dashboard.bandwidth.com
 tags:
-  - name: Get Verification Information
-    description: >-
-      This API will provide verification status for a phone number that is
-      provisioned to your account.
-  - name: Delete Verification Information
-    description: >-
-      This API will remove verification status for a phone number that is
-      provisioned to your account.
   - name: Submit Verification Request
     description: Submit a request for verification of a toll-free phone number.
+  - name: Get Verification Information
+    description: Get the verification status of an owned toll-free phone number
+  - name: Get Use Cases
+    description: Get a list of valid toll-free use cases
 security:
   - Basic: []
 paths:
+  /v1/accounts/{accountId}/tollFreeVerificationRequests:
+    post:
+      tags:
+        - Submit Verification Request
+      summary: Submit a toll-free verification request
+      description: Submit a request for verification of a toll-free phone number.
+      operationId: requestVerification
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+      requestBody:
+        $ref: '#/components/requestBodies/verificationRequest'
+      responses:
+        '202':
+          $ref: '#/components/responses/Accepted-202'
+        '400':
+          $ref: '#/components/responses/BadRequest-400'
+        '401':
+          $ref: '#/components/responses/Unauthorized-401'
+        '403':
+          $ref: '#/components/responses/Forbidden-403'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed-405'
+        '429':
+          $ref: '#/components/responses/TooManyRequests-429'
+        '500':
+          $ref: '#/components/responses/ServerError-500'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable-503'
+      x-codegen-request-body-name: submit
   /v1/accounts/{accountId}/tollFreeVerificationRequests/{phoneNumber}:
     get:
       tags:
         - Get Verification Information
-      summary: >-
-        This API will provide verification status for a phone number that is
-        provisioned to your account.
+      summary: Get the verification status of a toll-free phone number
       description: >-
         This API will provide verification status for a phone number that is
         provisioned to your account.
@@ -58,63 +81,32 @@ paths:
           $ref: '#/components/responses/ServerError-500'
         '503':
           $ref: '#/components/responses/ServiceUnavailable-503'
-    delete:
+  /v1/tollFreeVerificationRequests/useCases:
+    get:
       tags:
-        - Delete Verification Information
-      summary: >-
-        This API will remove verification status for a phone number that is
-        provisioned to your account.
-      description: >-
-        This API will remove verification status for a phone number that is
-        provisioned to your account.
-      operationId: deleteVerificationStatus
-      parameters:
-        - $ref: '#/components/parameters/accountId'
-        - $ref: '#/components/parameters/phoneNumber'
+        - Get Use Cases
+      summary: Get valid use cases for toll-free traffic
+      description: provides a list of valid toll-free use cases
+      operationId: getUseCases
       responses:
-        '204':
-          $ref: '#/components/responses/NoContent-204'
+        '200':
+          $ref: '#/components/responses/Success-200-UseCases'
         '400':
-          $ref: '#/components/responses/BadRequest-400'
+          $ref: '#/components/responses/BadRequest-400-UseCases'
         '401':
           $ref: '#/components/responses/Unauthorized-401'
         '403':
           $ref: '#/components/responses/Forbidden-403'
+        '404':
+          $ref: '#/components/responses/NotFound-404'
         '405':
           $ref: '#/components/responses/MethodNotAllowed-405'
         '429':
           $ref: '#/components/responses/TooManyRequests-429'
         '500':
           $ref: '#/components/responses/ServerError-500'
-  /v1/accounts/{accountId}/tollFreeVerificationRequests:
-    post:
-      tags:
-        - Submit Verification Request
-      summary: >-
-        Submit a set of phone numbers for verification with identical metadata
-        (address, contact, etc.)
-      description: Submit a request for verification of a toll-free phone number.
-      operationId: requestVerification
-      parameters:
-        - $ref: '#/components/parameters/accountId'
-      requestBody:
-        $ref: '#/components/requestBodies/verificationRequest'
-      responses:
-        '202':
-          $ref: '#/components/responses/Accepted-202'
-        '400':
-          $ref: '#/components/responses/BadRequest-400'
-        '401':
-          $ref: '#/components/responses/Unauthorized-401'
-        '403':
-          $ref: '#/components/responses/Forbidden-403'
-        '405':
-          $ref: '#/components/responses/MethodNotAllowed-405'
-        '429':
-          $ref: '#/components/responses/TooManyRequests-429'
-        '500':
-          $ref: '#/components/responses/ServerError-500'
-      x-codegen-request-body-name: submit
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable-503'
 components:
   parameters:
     accountId:
@@ -288,6 +280,21 @@ components:
         status:
           type: string
           example: Verified
+    OkGetUseCases:
+      type: array
+      items:
+        type: string
+      example:
+        - 2FA
+        - App Notifications
+        - Appointments
+        - Auctions
+        - Auto Repair Services
+        - Bank Transfers
+        - Billing
+        - Booking Confirmations
+        - Business Updates
+        - COVID-19 Alerts
     AcceptedContent:
       type: object
       properties:
@@ -309,6 +316,15 @@ components:
         message:
           type: string
           example: Phone Number is not in E.164 format
+    BadRequestContentUseCases:
+      type: object
+      properties:
+        status:
+          type: number
+          example: 400
+        message:
+          type: string
+          example: Bad Request
     ErrorResponse401:
       type: object
       required:
@@ -320,7 +336,7 @@ components:
           example: 401
         message:
           type: string
-          example: User not authorized to query phone number
+          example: Client must authenticate itself
     ErrorResponse403:
       type: object
       required:
@@ -332,7 +348,7 @@ components:
           example: 403
         message:
           type: string
-          example: Forbidden - user is not a BW admin
+          example: Client is forbidden from accessing this resource
     MethodNotAllowedContent:
       type: object
       properties:
@@ -350,7 +366,7 @@ components:
           example: 429
         message:
           type: string
-          example: User has issued too many requests
+          example: Client has issued too many requests
     ServerErrorContent:
       type: object
       properties:
@@ -368,7 +384,7 @@ components:
           example: 503
         message:
           type: string
-          example: Service is unavailable
+          example: Service unavailable
     ErrorResponse:
       type: object
       required:
@@ -394,25 +410,35 @@ components:
         Example: `Authorization: Basic ZGVtbZpwQDU1dzByZA==`
   responses:
     Success-200:
-      description: Success
+      description: Ok
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/OkGetContent'
+    Success-200-UseCases:
+      description: Ok
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OkGetUseCases'
     Accepted-202:
       description: Accepted
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/AcceptedContent'
-    NoContent-204:
-      description: No Content
     BadRequest-400:
       description: Bad Request
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/BadRequestContent'
+    BadRequest-400-UseCases:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BadRequestContentUseCases'
     Unauthorized-401:
       description: Unauthorized
       content:
