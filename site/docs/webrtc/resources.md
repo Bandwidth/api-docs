@@ -19,8 +19,8 @@ If you are an SDK user, there are a pair of them that you will want: a client SD
 | Environment                                                        | Notes                                                                                 |
 | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------- |
 | [Browser](https://www.npmjs.com/package/@bandwidth/webrtc-browser) | The Bandwidth Browser SDK                                                             |
-| [IOS](https://github.com/Bandwidth/bandwidth-webrtc-swift)         | An OSS implementation of Bandwidth WebRTC suitable for iOS devices. Currently in Beta |
-| [Android](https://github.com/Bandwidth/bandwidth-android)          | Bandwidth Android SDK. Currently in Beta                                              |
+| [IOS](https://github.com/Bandwidth/bandwidth-webrtc-swift)         | An OSS implementation of Bandwidth WebRTC suitable for iOS devices. Currently in Limited Availability |
+| [Android](https://github.com/Bandwidth/bandwidth-android)          | Bandwidth Android SDK. Currently in Limited Availability                                              |
 
 - The Bandwidth Server API SDKs
 
