@@ -37,4 +37,4 @@ export default function SdkPage({Svg, title, repoLinks, samplesLink}) {
             </div>
       </div>
     );
-};
+}
