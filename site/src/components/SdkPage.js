@@ -33,8 +33,6 @@ export default function SdkPage({Svg, title, repoLinks, samplesLink}) {
                     </tbody>
                 </table>
             </div>
-      <br/>
-      <br/>
       </div>
     );
 };
