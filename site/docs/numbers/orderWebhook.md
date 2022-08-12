@@ -7,7 +7,7 @@ keywords:
   - bandwidth
   - numbers
   - webhooks
-image: ../../static/img/bw-icon.svg
+image: '@site/static/img/bw-icon.svg'
 ---
 
 The notification webhook API is used to notify customers of events and changes that occur with various feature and service orders that are being processed by the Bandwidth Numbers API on their behalf. In general this notification webhook will be called whenever an order that is in-scope changes state or has a note added to it. Alternatively, notification webhook will be called whenever a subscribed event occurs

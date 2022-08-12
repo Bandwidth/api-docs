@@ -1,5 +1,5 @@
 import React from 'react'; 
-import specVersionDropdownStyles from './css/SpecVersionDropdown.module.css';
+import specVersionDropdownStyles from '@site/src/components/css/SpecVersionDropdown.module.css';
 
 export default function SpecVersionDropdown(props) {
   function versionChange(e){

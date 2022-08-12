@@ -227,7 +227,7 @@ The Docusaurus flavored markdown also supports setting markdown attributes in th
     hide_title: false    <!--Whether to hide the title at the top of the doc. By default it is false.-->
     sidebar_label: Document Title    <!--The text shown in the document sidebar and in the next/previous button for this document. If this field is not present, the document's sidebar_label will default to its title.-->
     custom_edit_url: github.com/repo/thisFile.mdx   <!--The URL for editing this document. If this field is not present, the document's edit URL will fall back to editUrl from options fields passed to docusaurus-plugin-content-docs-->
-    image: ../../static/img/myImg.png    <!--Cover or thumbnail image that will be used when displaying the link to your post.-->
+    image: '@site/static/img/myImg.png'    <!--Cover or thumbnail image that will be used when displaying the link to your post.-->
     ---
 
 The above example is YAML, so it is suggested to remove comments as well as wrap strings with special characters like `:` in quotes.

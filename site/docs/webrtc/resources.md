@@ -7,7 +7,7 @@ keywords:
   - bandwidth
   - webrtc
   - video
-image: ../../static/img/bw-icon.svg
+image: '@site/static/img/bw-icon.svg'
 ---
 
 ## SDKs

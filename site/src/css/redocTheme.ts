@@ -1,9 +1,8 @@
 const DOCUSAURUS = {
-  darkGray: '#303846',
+  backgroundColor: 'transparent',
   dark: {
     primaryText: '#FFFFFF',
     secondaryText: 'rgba(255, 255, 255, 1)',
-    backgroundColor: '#121212',
   },
 };
 
@@ -52,10 +51,10 @@ export function lightTheme(primaryColor) {
       },
       sidebar: {
         width: '300px',
-        backgroundColor: '#ffffff',
+        backgroundColor: DOCUSAURUS.backgroundColor,
       },
       rightPanel: {
-        backgroundColor: 'transparent',
+        backgroundColor: DOCUSAURUS.backgroundColor,
       }
     }
   )
@@ -108,20 +107,20 @@ export function darkTheme(primaryColor) {
         },
       },
       schema: {
-        nestedBackground: DOCUSAURUS.dark.backgroundColor,
+        nestedBackground: DOCUSAURUS.backgroundColor,
         typeNameColor: DOCUSAURUS.dark.secondaryText,
         typeTitleColor: DOCUSAURUS.dark.secondaryText,
       },
       sidebar: {
         width: '300px',
-        backgroundColor: DOCUSAURUS.dark.backgroundColor,
+        backgroundColor: DOCUSAURUS.backgroundColor,
         textColor: DOCUSAURUS.dark.primaryText,
         arrow: {
           color: DOCUSAURUS.dark.primaryText,
         },
       },
       rightPanel: {
-        backgroundColor: DOCUSAURUS.dark.backgroundColor,
+        backgroundColor: DOCUSAURUS.backgroundColor,
       },
     }
   )

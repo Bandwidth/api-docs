@@ -11,14 +11,10 @@ keywords:
   - location
   - site
   - sippeer
-image: ../../static/img/bw-icon.svg
+image: '@site/static/img/bw-icon.svg'
 ---
 
-<img
-  src={require('../../static/img/account-structure.png').default}
-  alt="Account Structure"
-  class="center"
-/>
+![Account Structure](@site/static/img/docs-diagrams/account/structure.png)
 
 This guide serves to explain the hierarchical structure of your Bandwidth Dashboard Account. It covers Sub-accounts (Sites), Locations (SIP Peers), and Applications, how they are used, and some cases for creating one or multiples of each.
 

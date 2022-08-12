@@ -7,7 +7,7 @@ keywords:
   - bandwidth
   - API
   - credentials
-image: ../../static/img/bw-icon.svg
+image: '@site/static/img/bw-icon.svg'
 ---
 
 This guide will cover the credentials for interacting with Bandwidth's APIs.

@@ -1,119 +1,68 @@
 import React from 'react';
 import Layout from '@theme/Layout';
-import apiStyles from '../../css/apis.module.css';
+import LandingPage from '@site/src/components/LandingPage.js';
 
-const productList = [
+const apiList = [
     {
-        productName: 'Numbers',
-        Svg: require('../../../static/img/icon-numbers.svg').default,
-        apis: [
-            {
-                name: 'Numbers',
-                link: '/apis/numbers'
-            },
-            {
-                name: 'Phone Number Lookup',
-                link: '/apis/number-lookup'
-            }
-        ]
+        title: 'Voice API',
+        Svg: require('@site/static/img/api-icons/voice.svg').default,
+        link: '/apis/voice'
     },
     {
-        productName: 'Voice',
-        Svg: require('../../../static/img/icon-voice.svg').default,
-        apis: [
-            {
-                name: 'Voice',
-                link: '/apis/voice'
-            }
-        ]
+        title: 'Phone Number Lookup API',
+        Svg: require('@site/static/img/api-icons/phone-number-lookup.svg').default,
+        link: '/apis/number-lookup'
     },
     {
-        productName: 'Messaging',
-        Svg: require('../../../static/img/icon-messaging.svg').default,
-        apis: [
-            {
-                name: 'Messaging',
-                link: '/apis/messaging'
-            },
-            {
-                name: 'International Messaging',
-                link: '/apis/messaging-international'
-            }
-        ]
+        title: 'Numbers API',
+        Svg: require('@site/static/img/api-icons/numbers.svg').default,
+        link: '/apis/numbers'
     },
     {
-        productName: 'Emergency',
-        Svg: require('../../../static/img/icon-emergency.svg').default,
-        apis: [
-            {
-                name: 'DASH',
-                link: '/apis/dash'
-            },
-            {
-                name: 'DASH Notifications',
-                link: '/apis/dash-notifications'
-            }
-        ]
+        title: 'Multi-Factor Authentication API',
+        Svg: require('@site/static/img/api-icons/mfa.svg').default,
+        link: '/apis/multifactorauth'
     },
     {
-        productName: 'Authentication',
-        Svg: require('../../../static/img/icon-mfa.svg').default,
-        apis: [
-            {
-                name: 'Multi-Factor Authentication',
-                link: '/apis/multifactorauth'
-            }
-        ]
+        title: 'Messaging API',
+        Svg: require('@site/static/img/api-icons/messaging.svg').default,
+        link: '/apis/messaging'
     },
     {
-        productName: 'WebRTC',
-        Svg: require('../../../static/img/icon-webrtc.svg').default,
-        apis: [
-            {
-                name: 'WebRTC',
-                link: '/apis/webrtc'
-            }
-        ]
+        title: 'International Messaging API',
+        Svg: require('@site/static/img/api-icons/international-messaging.svg').default,
+        link: '/apis/messaging-international'
     },
     {
-        productName: 'Insights',
-        Svg: require('../../../static/img/icon-insights.svg').default,
-        apis: [
-            {
-                name: 'Insights',
-                link: '/apis/insights'
-            }
-        ]
+        title: 'Emergency API',
+        Svg: require('@site/static/img/api-icons/emergency.svg').default,
+        link: '/apis/dash'
+    },
+    {
+        title: 'Emergency Notifications API',
+        Svg: require('@site/static/img/api-icons/emergency-notifications.svg').default,
+        link: '/apis/dash-notifications'
+
+    },
+    {
+        title: 'WebRTC API',
+        Svg: require('@site/static/img/api-icons/webrtc.svg').default,
+        link: '/apis/webrtc'
+    },
+    {
+        title: 'Insights API',
+        Svg: require('@site/static/img/api-icons/insights.svg').default,
+        link: '/apis/insights'
     }
 ];
 
-function ProductInfo({productName, apis}) {
-    return (
-        <div className={apiStyles.productInfo}>
-            <h1>{productName} API</h1>
-            <div className={apiStyles.apiList}>
-                <ul>
-                    {apis.map((api, idx) => (
-                        <li key={idx}><a href={api.link}>{api.name}</a></li>
-                    ))}
-                </ul>
-            </div>
-        </div>
-    )
+const props = {
+    itemList: apiList,
+    Svg: require('@site/static/img/landing-apis.svg').default,
+    h1Text: 'API Reference',
+    h2Text: 'Technical reference for Bandwidth APIs'
 }
 
-function ProductGrid() {
-    return (
-        <div className={apiStyles.products}>
-            {productList.map((product) => (
-                <div className={apiStyles.product}>
-                    <product.Svg className={`${apiStyles.productSvg} ${product.productName}`} title={product.productName}/>
-                    <ProductInfo productName={product.productName} apis={product.apis}/>
-                </div>
-            ))}
-        </div>
-    );
-}
 
 export default function Apis() {
     return (
@@ -121,19 +70,7 @@ export default function Apis() {
             title="Bandwidth APIs"
             description="Bandwidth API Reference, documentation, SDKs, guides, examples and more. Get everything you need to build with Bandwidth."
             keywords="Bandwidth,API">
-            <div className={apiStyles.landing}>
-                <div className={apiStyles.top}>
-                    <div className={apiStyles.title}>
-                        <h1>API Reference</h1>
-                        <h2>Technical reference for Bandwidth APIs</h2>
-                        <p>Our API Reference for US and Canada APIs is organized around product APIs and phone number management APIs.</p>
-                    </div>
-                    <div className={apiStyles.image}></div>
-                </div>
-                <div className={apiStyles.bottom}>
-                    <ProductGrid/>
-                </div>
-            </div>
+            <LandingPage {...props} />
         </Layout>
     );
 }
