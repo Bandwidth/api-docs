@@ -11,7 +11,7 @@ const RedocConfig = (props) => {
                       expandSingleSchemaField: true,
                       expandResponses: "200,201,202,204",
                       menuToggle: true,
-                      theme: colorMode === 'dark' ? darkTheme(props.color) : lightTheme(props.color)
+                      theme: colorMode === 'dark' ? darkTheme('#FFFFFF') : lightTheme(props.color)
                   }}/>
 }
 
