@@ -136,13 +136,9 @@ function Footer() {
                   <a href="https://www.bandwidth.com/contact/" target="_blank" rel="noopener">GET IN TOUCH</a>
                 </div>
               </div>
-              <div className={footerStyles.menu}>
-                <div className={footerStyles.menuTitle}>Call Us</div>
-                <div className={footerStyles.menuLink}><a href="tel:+18445675048" target="_self">+1 844 567 5048</a></div>
-              </div>
             </div>
           </div>
-
+          
         </div>
       </div>
     </div>
