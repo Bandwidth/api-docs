@@ -4,53 +4,53 @@ import LandingPage from '@site/src/components/LandingPage.js';
 
 const apiList = [
     {
-        title: 'Voice',
+        title: 'Voice API',
         Svg: require('@site/static/img/api-icons/voice.svg').default,
         link: '/apis/voice'
     },
     {
-        title: 'Phone Number Lookup',
+        title: 'Phone Number Lookup API',
         Svg: require('@site/static/img/api-icons/phone-number-lookup.svg').default,
         link: '/apis/number-lookup'
     },
     {
-        title: 'Numbers',
+        title: 'Numbers API',
         Svg: require('@site/static/img/api-icons/numbers.svg').default,
         link: '/apis/numbers'
     },
     {
-        title: 'Multi-Factor Authentication',
+        title: 'Multi-Factor Authentication API',
         Svg: require('@site/static/img/api-icons/mfa.svg').default,
         link: '/apis/multifactorauth'
     },
     {
-        title: 'Messaging',
+        title: 'Messaging API',
         Svg: require('@site/static/img/api-icons/messaging.svg').default,
         link: '/apis/messaging'
     },
     {
-        title: 'International Messaging',
+        title: 'International Messaging API',
         Svg: require('@site/static/img/api-icons/international-messaging.svg').default,
         link: '/apis/messaging-international'
     },
     {
-        title: 'Emergency',
+        title: 'Emergency API',
         Svg: require('@site/static/img/api-icons/emergency.svg').default,
         link: '/apis/dash'
     },
     {
-        title: 'Emergency Notifications',
+        title: 'Emergency Notifications API',
         Svg: require('@site/static/img/api-icons/emergency-notifications.svg').default,
         link: '/apis/dash-notifications'
 
     },
     {
-        title: 'WebRTC',
+        title: 'WebRTC API',
         Svg: require('@site/static/img/api-icons/webrtc.svg').default,
         link: '/apis/webrtc'
     },
     {
-        title: 'Insights',
+        title: 'Insights API',
         Svg: require('@site/static/img/api-icons/insights.svg').default,
         link: '/apis/insights'
     }
