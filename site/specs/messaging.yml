@@ -1074,7 +1074,7 @@ paths:
         '202':
           $ref: '#/components/responses/createMessageResponse'
         '400':
-          $ref: '#/components/responses/messagingBadRequestError'
+          $ref: '#/components/responses/createMessageBadRequestError'
         '401':
           $ref: '#/components/responses/messagingUnauthorizedError'
         '403':
@@ -1432,7 +1432,7 @@ components:
       required: false
       description: The direction of the message. One of INBOUND OUTBOUND.
       schema:
-        $ref: '#/components/schemas/messageDirectionEnum'
+        $ref: '#/components/schemas/listMessageDirectionEnum'
     carrierName:
       in: query
       name: carrierName
@@ -1512,9 +1512,9 @@ components:
       type: string
       description: The priority specified by the user.
       enum:
-        - DEFAULT
-        - HIGH
-      example: DEFAULT
+        - default
+        - high
+      example: default
     messageStatusEnum:
       type: string
       description: >-
@@ -1549,6 +1549,19 @@ components:
         - sms
         - mms
       example: sms
+    fieldError:
+      type: object
+      properties:
+        fieldName:
+          type: string
+          description: The name of the field that contains the error
+          example: from
+        description:
+          type: string
+          description: The error associated with the field
+          example: >-
+            '+invalid' must be replaced with a valid E164 formatted telephone
+            number
     messagesList:
       title: MessagesList
       type: object
@@ -1610,6 +1623,7 @@ components:
         messageSize:
           type: integer
           description: The size of the message including message content and headers.
+          nullable: true
           example: 27
         messageLength:
           type: integer
@@ -1618,14 +1632,17 @@ components:
         attachmentCount:
           type: integer
           description: The number of attachments the message has.
+          nullable: true
           example: 1
         recipientCount:
           type: integer
           description: The number of recipients the message has.
+          nullable: true
           example: 1
         campaignClass:
           type: string
           description: The campaign class of the message if it has one.
+          nullable: true
           example: T
     pageInfo:
       title: PageInfo
@@ -1657,6 +1674,21 @@ components:
           type: string
         description:
           type: string
+      required:
+        - type
+        - description
+    createMessageRequestError:
+      title: CreateMessageRequestError
+      type: object
+      properties:
+        type:
+          type: string
+        description:
+          type: string
+        fieldErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/fieldError'
       required:
         - type
         - description
@@ -1862,6 +1894,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/messagingRequestError'
+    createMessageBadRequestError:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/createMessageRequestError'
     messagingUnauthorizedError:
       description: Unauthorized
       content:
