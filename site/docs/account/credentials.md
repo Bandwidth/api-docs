@@ -1,6 +1,6 @@
 ---
 id: credentials
-title: Credentials
+title: How to create API Credentials
 slug: /account/credentials
 description: A general overview of Bandwidth's API Credentials
 keywords:
@@ -68,3 +68,10 @@ Usernames and Passwords are **case sensitive**!
 | `username`      | Your API user's **username**                                                                                                                                  | `jdoe`                                             |
 | `password`      | Your API user's **password**                                                                                                                                  | `correct-horse-battery-staple`                     |
 | `accountId`     | Your unique **account id**. The `accountId` is used as part of the url to make API requests, e.g. `https://dashboard.bandwidth.com/api/accounts/{accountId}/` | `920012`                                           |
+
+## Where to next?
+
+Now that you have successfully created API user credentials, start using them to build with Bandwidth!
+- [Search and order phone numbers](/docs/numbers/guides/searchingForNumbers/)
+- [Voice Quick Start Guide](/docs/voice/quickStart/)
+- [Messaging Quick Start Guide](/docs/messaging/quickStart/)
