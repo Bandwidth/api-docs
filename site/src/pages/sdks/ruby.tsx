@@ -1,11 +1,28 @@
 import React from 'react';
 import Layout from '@theme/Layout';
-import styles from '../../css/sdks.module.css';
-import GitHubLink from '../../components/GitHubLink';
+import SdkPage from '@site/src/components/SdkPage.js';
 
-const Title = 'Ruby';
-const Svg = require('../../../static/img/ruby.svg').default;
+const Svg = require('@site/static/img/sdk-icons/ruby.svg').default;
 
+const props = {
+  Svg: Svg,
+  title: 'Ruby',
+  repoLinks: [
+    {
+      packageLink: 'https://rubygems.org/gems/bandwidth-sdk',
+      title: 'bandwidth-sdk',
+      description: 'Manage Phone Calls with BXML, Create Outbound Calls, SMS Messages, MMS Messages',
+      ghLink: 'https://github.com/Bandwidth/ruby-sdk'
+    },
+    {
+      packageLink: 'https://rubygems.org/gems/ruby-bandwidth-iris',
+      title: 'ruby-bandwidth-iris',
+      description: 'Manage Phone Numbers and Account Settings',
+      ghLink: 'https://github.com/Bandwidth/ruby-bandwidth-iris'
+    }
+  ],
+  samplesLink: 'https://github.com/orgs/Bandwidth-Samples/repositories?language=ruby'
+};
 
 export default function sdkPage() {
     return(
@@ -13,39 +30,7 @@ export default function sdkPage() {
         title={`Ruby SDK`}
         description="A list of resources for the Ruby SDK."
         keywords="Bandwidth,SDK,Ruby">
-        <div className="text--center">
-          <Svg className={styles.sdkSvg} alt={Title} />
-        </div>
-        <div className={styles.sdkProductTable}>
-          <table>
-          <thead>
-            <tr>
-              <th>Resource</th>
-              <th>Description</th>
-              <th>Github</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><a href="https://rubygems.org/gems/bandwidth-sdk"><code>bandwidth-sdk</code></a></td>
-              <td>Manage Phone Calls with BXML, Create Outbound Calls, SMS Messages, MMS Messages</td>
-              <td><GitHubLink GHLink={"https://github.com/Bandwidth/ruby-sdk"}/></td>
-            </tr>
-            <tr>
-              <td><a href="https://rubygems.org/gems/ruby-bandwidth-iris"><code>ruby-bandwidth-iris</code></a></td>
-              <td>Manage Phone Numbers and Account Settings</td>
-              <td><GitHubLink GHLink={"https://github.com/Bandwidth/ruby-bandwidth-iris"}/></td>
-            </tr>
-            <tr>
-              <td>Code Samples</td>
-              <td>Code Samples showing how to utilize the Bandwidth Ruby SDK</td>
-              <td><GitHubLink GHLink={"https://github.com/orgs/Bandwidth-Samples/repositories?language=ruby"}/></td>
-            </tr>
-          </tbody>
-          </table>
-        </div>
-        <br/>
-        <br/>
+        <SdkPage {...props} />
       </Layout>
     );
   }

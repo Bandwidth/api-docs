@@ -1,74 +1,55 @@
 import React from 'react';
-import clsx from 'clsx';
 import Layout from '@theme/Layout';
-import Link from '@docusaurus/Link';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import styles from '../index.module.css';
-import sdkStyles from '../../css/sdks.module.css';
-import ItemGrid from '../../components/gridItem';
+import LandingPage from '@site/src/components/LandingPage.js';
+import { Player } from '@lottiefiles/react-lottie-player';
 
-const SdkList = [
-  {
-    title: 'Node',
-    Svg: require('../../../static/img/node.svg').default,
-    style: sdkStyles.sdkSvg,
-    link: '/sdks/node'
-  },
-  {
-    title: 'Python',
-    Svg: require('../../../static/img/python.svg').default,
-    style: sdkStyles.sdkSvg,
-    link: '/sdks/python'
-  },
-  {
-    title: 'Ruby',
-    Svg: require('../../../static/img/ruby.svg').default,
-    style: sdkStyles.sdkSvg,
-    link: '/sdks/ruby'
-  },
-  {
-    title: 'Java',
-    Svg: require('../../../static/img/java.svg').default,
-    style: sdkStyles.sdkSvg,
-    link: '/sdks/java'
-  },
-  {
-    title: 'C#',
-    Svg: require('../../../static/img/csharp.svg').default,
-    style: sdkStyles.sdkSvg,
-    link: '/sdks/csharp'
-  },
-  {
-    title: 'PHP',
-    Svg: require('../../../static/img/php.svg').default,
-    style: sdkStyles.sdkSvg,
-    link: '/sdks/php'
-  },
+const sdkList = [
+    {
+        title: 'Node',
+        Svg: require('@site/static/img/sdk-icons/node.svg').default,
+        link: '/sdks/node'
+    },
+    {
+        title: 'Python',
+        Svg: require('@site/static/img/sdk-icons/python.svg').default,
+        link: '/sdks/python'
+    },
+    {
+        title: 'Java',
+        Svg: require('@site/static/img/sdk-icons/java.svg').default,
+        link: '/sdks/java'
+    },
+    {
+        title: 'PHP',
+        Svg: require('@site/static/img/sdk-icons/php.svg').default,
+        link: '/sdks/php'
+    },
+    {
+        title: 'Ruby',
+        Svg: require('@site/static/img/sdk-icons/ruby.svg').default,
+        link: '/sdks/ruby'
+    },
+    {
+        title: 'C#',
+        Svg: require('@site/static/img/sdk-icons/csharp.svg').default,
+        link: '/sdks/csharp'
+    },
 ];
 
-function Header() {
-  const {siteConfig} = useDocusaurusContext();
-  return (
-    <header className={clsx('hero hero--primary', styles.heroBanner)}>
-      <div className="container">
-        <h1 className="hero__title">Bandwidth SDKs</h1>
-        <p className="hero__subtitle">Build Faster with Bandwidth</p>
-      </div>
-    </header>
-  );
+const props = {
+    itemList: sdkList,
+    Svg: require('@site/static/img/landing-sdks.svg').default,
+    h1Text: 'Bandwidth SDKs',
+    h2Text: 'Build with Bandwidth'
 }
 
 export default function Sdks() {
-  const {siteConfig} = useDocusaurusContext();
-  return (
-    <Layout
-      title="Bandwidth SDKs"
-      description="Bandwidth API Reference, documentation, SDKs, guides, examples and more. Get everything you need to build with Bandwidth."
-      keywords="Bandwidth,SDK,guide,documentation,resources,Java,C#,Node,JavaScript,Python,Ruby,PHP">
-      <Header />
-      <main>
-        <ItemGrid itemList={SdkList} className={sdkStyles.sdks}/>
-      </main>
-    </Layout>
-  );
+    return (
+        <Layout
+            title="Bandwidth SDKs"
+            description="Bandwidth API Reference, documentation, SDKs, guides, examples and more. Get everything you need to build with Bandwidth."
+            keywords="Bandwidth,SDK,guide,documentation,resources,Java,C#,Node,JavaScript,Python,Ruby,PHP">
+            <LandingPage {...props} />
+        </Layout>
+    );
 }
