@@ -1,7 +1,7 @@
 const DOCUSAURUS = {
   backgroundColor: 'transparent',
   dark: {
-    primaryText: 'var(--white)',
+    primaryText: '#FFFFFF',
     secondaryText: 'rgba(255, 255, 255, 1)',
   },
 };
