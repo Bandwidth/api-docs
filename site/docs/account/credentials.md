@@ -25,17 +25,32 @@ An account admin is required to create API credentials that allow software devel
 The email used must be different from your existing dashboard account. The username can't be changed once the user is created, so please make sure to double-check it before saving. The phone number must be typed in a 10-digit format. Each user will need to verify it using the same exact format.
 :::
 
-5. Administration level: An account admin can manage users, while a basic user can only edit and view their own profile.
+5. **Administration level:** An account admin can manage users, while a basic user can only edit and view their own profile.
+
+    <img
+      src=https://support.bandwidth.com/hc/article_attachments/7874870668311/administration-level.png
+      alt="Administration-level"
+      class="center"
+    />
+<br/>
+
 6. **User access methods:** Determine how this user should interact with the Bandwidth Dashboard or APIs by selecting one of the following user access methods:
 
-- **Allow user credentials to authenticate API:** This user will be allowed to use their credentials specifically to authenticate API calls. Since API users are expected to do automated processes, they won't be required to reset their password but also will not be able to use it to log into the Bandwidth Dashboard. To address this, many developers choose to have two sets of credentials: one to access the Bandwidth Dashboard and another API-only to validate API calls.
+    - **Allow user credentials to authenticate API:** This user will be allowed to use their credentials specifically to authenticate API calls. Since API users are expected to do automated processes, they won't be required to reset their password but also will not be able to use it to log into the Bandwidth Dashboard. To address this, many developers choose to have two sets of credentials: one to access the Bandwidth Dashboard and another API-only to validate API calls.
+
+      <img
+      src=https://support.bandwidth.com/hc/article_attachments/7875402232855/bandwidth-dashboard-access.png
+      alt="Access-methods"
+      class="center"
+      />
+<br/>
 
 Important: You can also check both boxes, but it should only be done in special cases and isn't recommended for most users. Although we don't force password resets for users with API-only or both access methods, we do encourage you to enforce your own automated password reset best practices.
 
-7. Password: As an account admin, you must set this user's password.
-8. Roles: Set the permissions for this account. From here, click to toggle the permissions your user will need to access for their job. User role definitions are available below.
-9. Accounts: If your company has multiple Bandwidth Dashboard accounts, you can grant access to those here.
-10. Click Save Changes.
+7. **Password:** As an account admin, you must set this user's password.
+8. **Roles:** Set the permissions for this account. From here, click to toggle the permissions your user will need to access for their job. User role definitions are available below.
+9. **Accounts:** If your company has multiple Bandwidth Dashboard accounts, you can grant access to those here.
+10. Click **Save Changes.**
 11. The user will receive an email containing their username and asking them to verify their account information. Once they verify it, they'll receive a second email containing their password. If you didn't create a password for the user, they'll be able to do so themselves.
 
 ## API Credentials
