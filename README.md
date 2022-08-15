@@ -94,7 +94,7 @@ export default function ApiReferencePage() {
           description=""
           keywords="Bandwidth,API,International,Voxbone">
             <SpecVersionDropdown options={options} default={version} />
-            <ApiReference spec={siteConfig.customFields.bwiSpec} color={siteConfig.customFields.voxbonePurple} />
+            <ApiReference spec={siteConfig.customFields.bwiSpec} color={siteConfig.customFields.bwBlue} />
         </Layout>
     );
 }

@@ -140,7 +140,6 @@ module.exports = {
         // CSS Colors
         bwBlue: '#079CEE',
         voicePurple: '#9a59c5',
-        voxbonePurple: '#6600ff',
         messagingGreen: '#00bf8c',
         emergencyOrange: '#ff6f47',
         numbersMaroon: '#652B51',

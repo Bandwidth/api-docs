@@ -19,7 +19,7 @@ export default function ApiReferencePage() {
           description=""
           keywords="Bandwidth,API,Global,Voxbone">
             <SpecVersionDropdown options={options} default={version} />
-            <ApiReference spec={siteConfig.customFields.globalSpec_v2} color={siteConfig.customFields.voxbonePurple} />
+            <ApiReference spec={siteConfig.customFields.globalSpec_v2} color={siteConfig.customFields.bwBlue} />
         </Layout>
     );
 }

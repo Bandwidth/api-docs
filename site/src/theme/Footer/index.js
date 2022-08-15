@@ -90,7 +90,7 @@ function Footer() {
               ]
         }
       ],
-    copyright: `© ${new Date().getFullYear()} Bandwidth Inc. Built with Docusaurus.`,
+    copyright: `Bandwidth.com CLEC, LLC is a wholly owned subsidiary of Bandwidth Inc. ©${new Date().getFullYear()}. Built with Docusaurus.`,
   }
 
   const Clouds = require('@site/static/img/footer-clouds.svg').default;
@@ -140,7 +140,10 @@ function Footer() {
           </div>
           
         </div>
+        <div className={footerStyles.copyright}>{footer.copyright}</div>
       </div>
+
+
     </div>
   );
 }
