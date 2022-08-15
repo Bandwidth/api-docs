@@ -9,20 +9,26 @@ module.exports = {
             label: "Account Management",
             items: [
                 "account/about",
-                "account/credentials",
                 "account/structure",
                 {
                     type: "category",
-                    label: "Setup",
+                    label: "Account Setup",
                     items: [
                         "account/dashboard-setup",
+                        "account/credentials",
                         "account/programmatic-setup",
                     ]
                 },
-                "account/applications",
-                "account/subscriptions",
-                "account/networkBridge",
-                "account/sipRegistrar",
+                {
+                    type: "category",
+                    label: "Guides and Tutorials",
+                    items: [
+                        "account/applications",
+                        "account/subscriptions",
+                        "account/networkBridge",
+                        "account/sipRegistrar",
+                    ],
+                },
             ],
         },
         {
@@ -55,6 +61,7 @@ module.exports = {
                         "numbers/lookupNumbers",
                         "numbers/downloadingReports",
                         "numbers/lsrOrders",
+                        "voice/cnamPerDipGuide",
                     ],
                 },
                 "numbers/errors",
@@ -130,7 +137,6 @@ module.exports = {
                     type: "category",
                     label: "Guides and Tutorials",
                     items: [
-                        "voice/quickStart",
                         "voice/outboundCallGuide",
                         "voice/mediaAndTTSGuide",
                         "voice/recordingGuide",
@@ -142,7 +148,6 @@ module.exports = {
                         "voice/callInformationGuide",
                         "voice/callQueueingGuide",
                         "voice/migrationGuide",
-                        "voice/cnamPerDipGuide",
                     ],
                 },
                 "voice/rateLimits",
