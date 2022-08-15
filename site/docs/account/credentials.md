@@ -28,7 +28,7 @@ The email used must be different from your existing dashboard account. The usern
 5. **Administration level:** An account admin can manage users, while a basic user can only edit and view their own profile.
 
     <img
-      src=https://support.bandwidth.com/hc/article_attachments/7874870668311/administration-level.png
+      src={require('../../static/img/adminstration-level.png').default}
       alt="Administration-level"
       class="center"
     />
@@ -39,7 +39,7 @@ The email used must be different from your existing dashboard account. The usern
     - **Allow user credentials to authenticate API:** This user will be allowed to use their credentials specifically to authenticate API calls. Since API users are expected to do automated processes, they won't be required to reset their password but also will not be able to use it to log into the Bandwidth Dashboard. To address this, many developers choose to have two sets of credentials: one to access the Bandwidth Dashboard and another API-only to validate API calls.
 
       <img
-      src=https://support.bandwidth.com/hc/article_attachments/7875402232855/bandwidth-dashboard-access.png
+      src={require('../../static/img/api-access-method.png').default}
       alt="Access-methods"
       class="center"
       />
