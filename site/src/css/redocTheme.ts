@@ -1,7 +1,7 @@
 const DOCUSAURUS = {
   backgroundColor: 'transparent',
   dark: {
-    primaryText: '#FFFFFF',
+    primaryText: 'var(--white)',
     secondaryText: 'rgba(255, 255, 255, 1)',
   },
 };
@@ -38,7 +38,7 @@ export function lightTheme(primaryColor) {
           100: '#F5F5F5',
         },
         border: {
-          dark: '#ffffff',
+          dark: 'var(--white)',
           light: 'rgba(0,0,0, 0.1)',
         },
         http: {
@@ -79,7 +79,7 @@ export function darkTheme(primaryColor) {
           lineHeight: 'var(--ifm-pre-line-height)',
         },
         links: {
-          color: '#ffffff'
+          color: 'var(--white)'
         }
       },
       colors: {
@@ -95,7 +95,7 @@ export function darkTheme(primaryColor) {
           100: '#F5F5F5',
         },
         border: {
-          dark: '#ffffff',
+          dark: 'var(--white)',
           light: 'rgba(0,0,0, 0.1)',
         },
         http: {
