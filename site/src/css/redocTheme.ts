@@ -79,7 +79,7 @@ export function darkTheme(primaryColor) {
           lineHeight: 'var(--ifm-pre-line-height)',
         },
         links: {
-          color: 'var(--white)'
+          color: '#FFFFFF'
         }
       },
       colors: {
