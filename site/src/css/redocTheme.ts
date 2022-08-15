@@ -42,11 +42,11 @@ export function lightTheme(primaryColor) {
           light: 'rgba(0,0,0, 0.1)',
         },
         http: {
-          get: '#00bf8c',
-          post: '#079CEE',
-          put: '#9a59c5',
-          patch: '#652B51',
-          delete: '#ff6f47',
+          get: 'var(--messagingGreen)',
+          post: 'var(--bwBlue)',
+          put: 'var(--voicePurple)',
+          patch: 'var(--numbersMaroon)',
+          delete: 'var(--emergencyOrange)',
         },
       },
       sidebar: {
@@ -99,11 +99,11 @@ export function darkTheme(primaryColor) {
           light: 'rgba(0,0,0, 0.1)',
         },
         http: {
-          get: '#00bf8c',
-          post: '#079CEE',
-          put: '#9a59c5',
-          patch: '#652B51',
-          delete: '#ff6f47',
+          get: 'var(--messagingGreen)',
+          post: 'var(--bwBlue)',
+          put: 'var(--voicePurple)',
+          patch: 'var(--numbersMaroon)',
+          delete: 'var(--emergencyOrange)',
         },
       },
       schema: {
