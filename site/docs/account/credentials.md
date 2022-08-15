@@ -38,7 +38,7 @@ The email used must be different from your existing dashboard account. The usern
     - **Allow user credentials to authenticate API:** This user will be allowed to use their credentials specifically to authenticate API calls. Since API users are expected to do automated processes, they won't be required to reset their password but also will not be able to use it to log into the Bandwidth Dashboard. To address this, many developers choose to have two sets of credentials: one to access the Bandwidth Dashboard and another API-only to validate API calls.
 
 <img
-  src={require('../../static/img/api-access-level').default}
+  src={require('../../static/img/api-access-level.png').default}
   alt="API Access"
   class="center"
 />
