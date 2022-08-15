@@ -38,15 +38,15 @@ export function lightTheme(primaryColor) {
           100: '#F5F5F5',
         },
         border: {
-          dark: 'var(--white)',
+          dark: '#FFFFFF',
           light: 'rgba(0,0,0, 0.1)',
         },
         http: {
-          get: 'var(--messagingGreen)',
-          post: 'var(--bwBlue)',
-          put: 'var(--voicePurple)',
-          patch: 'var(--numbersMaroon)',
-          delete: 'var(--emergencyOrange)',
+          get: '#00BF8C',
+          post: '#079CEE',
+          put: '#9A59C5',
+          patch: '#652B51',
+          delete: '#FF6F47',
         },
       },
       sidebar: {
@@ -95,15 +95,15 @@ export function darkTheme(primaryColor) {
           100: '#F5F5F5',
         },
         border: {
-          dark: 'var(--white)',
+          dark: '#FFFFFF',
           light: 'rgba(0,0,0, 0.1)',
         },
         http: {
-          get: 'var(--messagingGreen)',
-          post: 'var(--bwBlue)',
-          put: 'var(--voicePurple)',
-          patch: 'var(--numbersMaroon)',
-          delete: 'var(--emergencyOrange)',
+          get: '#00BF8C',
+          post: '#079CEE',
+          put: '#9A59C5',
+          patch: '#652B51',
+          delete: '#FF6F47',
         },
       },
       schema: {
