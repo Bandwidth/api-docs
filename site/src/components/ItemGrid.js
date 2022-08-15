@@ -8,7 +8,7 @@ function Item({Svg, title, link}) {
                 <Svg className={itemGridStyles.itemSvg} alt={title} />
             </a>
             <div className={itemGridStyles.itemText}>
-                <h3>{title}</h3>
+                <a href={link} className={itemGridStyles.textLink}><h3>{title}</h3></a>
             </div>
         </div>
     );
