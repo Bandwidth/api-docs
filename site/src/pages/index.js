@@ -1,41 +1,54 @@
 import React from 'react';
-import clsx from 'clsx';
 import Layout from '@theme/Layout';
-import Link from '@docusaurus/Link';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import styles from './index.module.css';
-import HomepageProducts from '../components/HomepageProducts';
+import LandingPage from '@site/src/components/LandingPage';
 
-function HomepageHeader() {
-  const {siteConfig} = useDocusaurusContext();
-  return (
-    <header className={clsx('hero hero--primary', styles.heroBanner)}>
-      <div className="container">
-        <h1 className="hero__title">{siteConfig.title}</h1>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
-        <div className={styles.buttons}>
-          <Link
-            className="button button--secondary button--lg"
-            to="https://dashboard.bandwidth.com/portal/r/">
-            Dashboard Login
-          </Link>
-        </div>
-      </div>
-    </header>
-  );
-}
+const productList = [
+    {
+        title: 'Numbers',
+        Svg: require('@site/static/img/product-icons/numbers.svg').default,
+        link: '/docs/numbers',
+    },
+    {
+        title: 'Emergency',
+        Svg: require('@site/static/img/product-icons/emergency.svg').default,
+        link: '/docs/emergency',
+    },
+    {
+        title: 'Voice',
+        Svg: require('@site/static/img/product-icons/voice.svg').default,
+        link: '/docs/voice',
+    },
+    {
+        title: 'Multi-Factor Authentication',
+        Svg: require('@site/static/img/product-icons/mfa.svg').default,
+        link: '/docs/mfa',
+    },
+    {
+        title: 'Messaging',
+        Svg: require('@site/static/img/product-icons/messaging.svg').default,
+        link: '/docs/messaging',
+    },
+    {
+        title: 'WebRTC',
+        Svg: require('@site/static/img/product-icons/webrtc.svg').default,
+        link: '/docs/webrtc',
+    },
+];
+
+const props = {
+    itemList: productList,
+    Svg: require('@site/static/img/landing-home.svg').default,
+    h1Text: 'Bandwidth API Documentation',
+    h2Text: "Learn about Bandwidth's product APIs"
+};
 
 export default function Home() {
-  const {siteConfig} = useDocusaurusContext();
-  return (
-    <Layout
-      title={`Home`}
-      description="Bandwidth API Reference, documentation, SDKs, guides, examples and more. Get everything you need to build with Bandwidth."
-      keywords="Bandwidth,API,documentation,SDK,guide">
-      <HomepageHeader />
-      <main>
-        <HomepageProducts />
-      </main>
-    </Layout>
-  );
+    return (
+        <Layout
+            title={`Home`}
+            description="Bandwidth API Reference, documentation, SDKs, guides, examples and more. Get everything you need to build with Bandwidth."
+            keywords="Bandwidth,API,documentation,SDK,guide">
+            <LandingPage {...props} />
+        </Layout>
+    );
 }

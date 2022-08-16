@@ -1,10 +1,28 @@
 import React from 'react';
 import Layout from '@theme/Layout';
-import styles from '../../css/sdks.module.css';
-import GitHubLink from '../../components/GitHubLink';
+import SdkPage from '@site/src/components/SdkPage';
 
-const Title = 'C#';
-const Svg = require('../../../static/img/csharp.svg').default;
+const Svg = require('@site/static/img/sdk-icons/csharp.svg').default;
+
+const props = {
+  Svg: Svg,
+  title: 'C#',
+  repoLinks: [
+    {
+      packageLink: 'https://www.nuget.org/packages/Bandwidth.Sdk/',
+      title: 'bandwidth-sdk',
+      description: 'Manage Phone Calls with BXML, Create Outbound Calls, SMS Messages, MMS Messages',
+      ghLink: 'https://github.com/Bandwidth/csharp-sdk'
+    },
+    {
+      packageLink: 'https://www.nuget.org/packages/Bandwidth.Iris/',
+      title: 'bandwidth-iris',
+      description: 'Manage Phone Numbers and Account Settings',
+      ghLink: 'https://github.com/Bandwidth/csharp-bandwidth-iris'
+    }
+  ],
+  samplesLink: 'https://github.com/orgs/Bandwidth-Samples/repositories?language=c%23'
+};
 
 export default function sdkPage() {
     return(
@@ -12,39 +30,7 @@ export default function sdkPage() {
         title={`C# SDK`}
         description="A list of resources for the C# SDK."
         keywords="Bandwidth,SDK,C#,.NET">
-        <div className="text--center">
-          <Svg className={styles.sdkSvg} alt={Title} />
-        </div>
-        <div className={styles.sdkProductTable}>
-          <table>
-          <thead>
-            <tr>
-              <th>Resource</th>
-              <th>Description</th>
-              <th>Github</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><a href="https://www.nuget.org/packages/Bandwidth.Sdk/"><code>bandwidth-sdk</code></a></td>
-              <td>Manage Phone Calls with BXML, Create Outbound Calls, SMS Messages, MMS Messages</td>
-              <td><GitHubLink GHLink={"https://github.com/Bandwidth/csharp-sdk"}/></td>
-            </tr>
-            <tr>
-              <td><a href="https://www.nuget.org/packages/Bandwidth.Iris/"><code>bandwidth-iris</code></a></td>
-              <td>Manage Phone Numbers and Account Settings</td>
-              <td><GitHubLink GHLink={"https://github.com/Bandwidth/csharp-bandwidth-iris"}/></td>
-            </tr>
-            <tr>
-              <td>Code Samples</td>
-              <td>Code Samples showing how to utilize the Bandwidth C# SDK</td>
-              <td><GitHubLink GHLink={"https://github.com/orgs/Bandwidth-Samples/repositories?language=c%23"}/></td>
-            </tr>
-          </tbody>
-          </table>
-        </div>
-        <br/>
-        <br/>
+        <SdkPage {...props} />
       </Layout>
     );
   }
