@@ -18,20 +18,20 @@ An account admin is required to create API credentials that allow software devel
 
 1. Log into the [Bandwidth Dashboard](https://dashboard.bandwidth.com/).
 2. In the top navigation menu, select **Account** and click **Users**.
-3. Click **Add**.
-4. Enter a username, first and last name, email address, and work phone number. This is a critical step as it’ll be used for validation later.
-
-:::note
-The email used must be different from your existing dashboard account. The username can't be changed once the user is created, so please make sure to double-check it before saving. The phone number must be typed in a 10-digit format. Each user will need to verify it using the same exact format.
-:::
-
-5. **Administration level:** An account admin can manage users, while a basic user can only edit and view their own profile.
-6. **User access methods:** Determine how this user should interact with the Bandwidth Dashboard or APIs by selecting one of the following user access methods:
-
-    - **Allow user credentials to authenticate API:** This user will be allowed to use their credentials specifically to authenticate API calls. Since API users are expected to do automated processes, they won't be required to reset their password but also will not be able to use it to log into the Bandwidth Dashboard. To address this, many developers choose to have two sets of credentials: one to access the Bandwidth Dashboard and another API-only to validate API calls.
+3. Click **Add** and scroll down to the **User Information** section.
+4. Under **Administration level**, select whether the user should be a Basic User or an Account Admin.
+    - Basic User: Can only see themselves
+    - Account Admin: Can manage all users on shared accounts.
+5. Under **User access methods:** choose how the user should be able to use their credentials. Select **Allow user credentials to authenticate API** to allow this user to use their credentials to authenticate API calls. Since an API user is expected to perform automated processes, they won't be required to reset their password but also won't be able to use these credentials to log into the Bandwidth Dashboard. To address this, many developers choose to have one set of credentials to access the Bandwidth Dashboard and another to validate API calls.
 
 :::note 
 You can also check both boxes, but it should only be done in special cases and isn't recommended for most users. Although we don't force password resets for users with API-only or both access methods, we do encourage you to enforce your own automated password reset best practices.
+:::
+
+6. Enter a username, first and last name, email address, and work phone number. This is a critical step as it’ll be used for validation later.
+
+:::info
+**The email used must be different from your existing dashboard account**. The username can't be changed once the user is created, so please make sure to double-check it before saving. The phone number must be typed in a 10-digit format. Each user will need to verify it using the same exact format.
 :::
 
 7. **Password:** As an account admin, you must set this user's password.
