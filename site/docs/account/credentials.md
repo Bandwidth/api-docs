@@ -7,7 +7,7 @@ keywords:
   - bandwidth
   - API
   - credentials
-image: ../../static/img/bandwidth-logo.png
+image: '@site/static/img/bw-icon.svg'
 ---
 
 This guide will cover the creation of an API user and generation of credentials for interacting with Bandwidth's APIs.

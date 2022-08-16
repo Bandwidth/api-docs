@@ -50,7 +50,7 @@ module.exports = {
                     type: "category",
                     label: "Guides and Tutorials",
                     items: [
-                        "numbers/searchingAdnOrderingNumbers",
+                        "numbers/searchingAndOrderingNumbers",
                         "numbers/portingNumbers",
                         "numbers/csrLookupTool",
                         "numbers/hostingNumbers",
