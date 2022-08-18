@@ -38,8 +38,8 @@ const productList = [
 const props = {
     itemList: productList,
     Svg: require('@site/static/img/landing-home.svg').default,
-    h1Text: 'Bandwidth API Documentation',
-    h2Text: "Learn about Bandwidth's product APIs"
+    h1Text: `Bandwidth API Documentation`,
+    h2Text: `Learn about Bandwidth's Product APIs`
 };
 
 export default function Home() {
