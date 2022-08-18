@@ -7,24 +7,24 @@ info:
     email: support@bandwidth.com
     url: https://support.bandwidth.com
   description: >-
-    Submission, management, and querying of requests to verify toll-free US
-    phone numbers for message campaigns
+    Submission, management, and querying of requests to verify toll-free phone
+    numbers for message campaigns
 servers:
-  - url: https://dashboard.bandwidth.com
+  - url: https://dashboard.bandwidth.com/api/v1
 tags:
-  - name: Submit Verification Request
+  - name: Verification Request
     description: Submit a request for verification of a toll-free phone number.
-  - name: Get Verification Information
+  - name: Verification Information
     description: Get the verification status of an owned toll-free phone number
-  - name: Get Use Cases
+  - name: Verification Use Cases
     description: Get a list of valid toll-free use cases
 security:
   - Basic: []
 paths:
-  /v1/accounts/{accountId}/tollFreeVerificationRequests:
+  /accounts/{accountId}/tollFreeVerificationRequests:
     post:
       tags:
-        - Submit Verification Request
+        - Verification Request
       summary: Submit a toll-free verification request
       description: Submit a request for verification of a toll-free phone number.
       operationId: requestVerification
@@ -49,11 +49,10 @@ paths:
           $ref: '#/components/responses/ServerError-500'
         '503':
           $ref: '#/components/responses/ServiceUnavailable-503'
-      x-codegen-request-body-name: submit
-  /v1/accounts/{accountId}/tollFreeVerificationRequests/{phoneNumber}:
+  /accounts/{accountId}/tollFreeVerificationRequests/{phoneNumber}:
     get:
       tags:
-        - Get Verification Information
+        - Verification Information
       summary: Get the verification status of a toll-free phone number
       description: >-
         This API will provide verification status for a phone number that is
@@ -81,13 +80,13 @@ paths:
           $ref: '#/components/responses/ServerError-500'
         '503':
           $ref: '#/components/responses/ServiceUnavailable-503'
-  /v1/tollFreeVerificationRequests/useCases:
+  /tollFreeVerificationRequests/useCases:
     get:
       tags:
-        - Get Use Cases
-      summary: Get valid use cases for toll-free traffic
+        - Verification Use Cases
+      summary: List valid use cases for toll-free traffic
       description: provides a list of valid toll-free use cases
-      operationId: getUseCases
+      operationId: listUseCases
       responses:
         '200':
           $ref: '#/components/responses/Success-200-UseCases'
@@ -177,6 +176,11 @@ components:
       minLength: 0
       maxLength: 500
       nullable: false
+    NullableString:
+      type: string
+      minLength: 0
+      maxLength: 500
+      nullable: true
     Address:
       type: object
       nullable: false
@@ -193,7 +197,7 @@ components:
         addressLine1:
           $ref: '#/components/schemas/String'
         addressLine2:
-          $ref: '#/components/schemas/String'
+          $ref: '#/components/schemas/NullableString'
         city:
           $ref: '#/components/schemas/String'
         state:
@@ -266,12 +270,12 @@ components:
         optInWorkflow:
           $ref: '#/components/schemas/OptInWorkflow'
         additionalInformation:
-          $ref: '#/components/schemas/String'
+          $ref: '#/components/schemas/NullableString'
         internalTicketNumber:
-          $ref: '#/components/schemas/String'
+          $ref: '#/components/schemas/NullableString'
         isvReseller:
-          $ref: '#/components/schemas/String'
-    OkGetContent:
+          $ref: '#/components/schemas/NullableString'
+    TfvStatus:
       type: object
       properties:
         phoneNumber:
@@ -280,7 +284,7 @@ components:
         status:
           type: string
           example: Verified
-    OkGetUseCases:
+    UseCases:
       type: array
       items:
         type: string
@@ -385,7 +389,7 @@ components:
         message:
           type: string
           example: Service unavailable
-    ErrorResponse:
+    NotFound:
       type: object
       required:
         - status
@@ -393,10 +397,10 @@ components:
       properties:
         status:
           type: number
-          example: 412
+          example: 404
         message:
           type: string
-          example: Request failed required preconditions
+          example: Resource not found
   securitySchemes:
     Basic:
       type: http
@@ -414,13 +418,13 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/OkGetContent'
+            $ref: '#/components/schemas/TfvStatus'
     Success-200-UseCases:
       description: Ok
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/OkGetUseCases'
+            $ref: '#/components/schemas/UseCases'
     Accepted-202:
       description: Accepted
       content:
@@ -456,7 +460,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ErrorResponse'
+            $ref: '#/components/schemas/NotFound'
     MethodNotAllowed-405:
       description: Method Not Allowed
       content:
