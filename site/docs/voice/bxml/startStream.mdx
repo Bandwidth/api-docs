@@ -63,6 +63,37 @@ You may specify up to 12 `<StreamParam/>` elements nested within a `<StartStream
 
 ## Websocket Packet Format
 
+At the destination end, the websocket will receive messages containing JSON for the duration of the stream. There will be an initial `start` message when the connection is first established. This will be followed by zero or more `media` messages containing the encoded audio for the tracks being streamed. Finally when a stream is stopped a `stop` message will be sent.
+
+### Start and Stop Message Parameters
+
+| Parameter    | Description |
+|:-------------|:------------|
+| eventType    | What type of message this is, one of `start`, or `stop` |
+| metadata     | Details about the stream this message is for. See further details below. |
+| streamParams | (optional) (`start` message only) If any `<StreamParam/>` elements were specified in the `<StartStream>` request, they will be copied here as a map of `name : value` pairs |
+
+#### Metadata Parameters
+
+| Parameter                     | Description |
+|:------------------------------|:------------|
+| accountId                     | The user account associated with the call |
+| callId                        | The call id associated with the stream |
+| streamId                      | The unique id of the stream |
+| tracks                        | A list of one or more tracks being sent in this stream |
+| tracks.name                   | The name of the track being sent, will be used to identify which media messages belong to which track |
+| tracks.mediaFormat            | The format the media will take for this track |
+| tracks.mediaFormat.encoding   | The encoding of the media for this track, currently only `audio/PCMU` is supported |
+| tracks.mediaFormat.sampleRate | The sample rate of the media for this track, currently only `8000` is supported |
+
+### Media Message Parameters
+
+| Parameter | Description            |
+|:----------|:-----------------------|
+| eventType | Will always be `media` |
+| track     | The name of the track this media packet is for, will be one of the names specified in the `start` message |
+| payload   | A base64 encoded string of actual media. The encoding of the media itself is as specified in the `start` message |
+
 ## Examples
 
 ### Stream Both Legs of A Call
