@@ -40,7 +40,7 @@ There is no text content available to be set for the `<StartStream>` verb.
 | username           | (optional) The username to send in the HTTP request to `streamEventUrl`. If specified, the URLs must be TLS-encrypted (i.e., `https`).                                           |
 | password           | (optional) The password to send in the HTTP request to `streamEventUrl`. If specified, the URLs must be TLS-encrypted (i.e., `https`).                                           |
 
-If the `streamEventsUrl` attribute is specified, then the [Media Stream Started][2], [Media Stream Rejected][3] and [Media Stream Stopped][4] events will be sent to the URL when the stream starts, if there is an error starting the stream and when the stream ends respectively. BXML returned in response to this callback will be ignored.
+If the `streamEventUrl` attribute is specified, then the [Media Stream Started][2], [Media Stream Rejected][3] and [Media Stream Stopped][4] events will be sent to the URL when the stream starts, if there is an error starting the stream and when the stream ends respectively. BXML returned in response to this callback will be ignored.
 
 :::note
 While multiple streams for the same call are allowed, each stream MUST have a unique name. Attempting to start a stream on the same call with the name of an already existing stream will result in a [Media Stream Rejected][3] event.
@@ -84,6 +84,7 @@ At the destination end, the websocket will receive messages containing JSON for 
 | accountId                     | The user account associated with the call |
 | callId                        | The call id associated with the stream |
 | streamId                      | The unique id of the stream |
+| streamName                    | The user supplied name of the stream |
 | tracks                        | A list of one or more tracks being sent in this stream |
 | tracks.name                   | The name of the track being sent, will be used to identify which media messages belong to which track |
 | tracks.mediaFormat            | The format the media will take for this track |
@@ -121,7 +122,7 @@ At the destination end, the websocket will receive messages containing JSON for 
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
     <SpeakSentence voice="bridget">This call is being streamed to a live studio audience.</SpeakSentence>
-    <StartStream name="live_audience" tracks="both" destination="wss://live-studio-audience.myapp.example.com" streamEventsUrl="https://myapp.example.com/noBXML">
+    <StartStream name="live_audience" tracks="both" destination="wss://live-studio-audience.myapp.example.com" streamEventUrl="https://myapp.example.com/noBXML">
         <StreamParam name="internal_id" value="call_ABC" />
     </StartStream>
     <SpeakSentence voice="bridget">This will now be streamed to the destination as well as played to the call participants.</SpeakSentence>
@@ -146,7 +147,7 @@ StartStream startStream = StartStream.builder()
         .name("live_audience")
         .tracks("both")
         .destination("wss://live-studio-audience.myapp.example.com")
-        .streamEventsUrl("https://myapp.example.com/noBXML")
+        .streamEventUrl("https://myapp.example.com/noBXML")
         .streamParams(streamParam)
         .build();
 
@@ -184,7 +185,7 @@ StartStream startStream = new StartStream
     Name = "live_audience",
     Tracks = "both",
     Destination = "wss://live-studio-audience.myapp.example.com",
-    StreamEventsUrl = "https://myapp.example.com/noBXML",
+    StreamEventUrl = "https://myapp.example.com/noBXML",
     StreamParams = new StreamParams[] { streamParam }
 };
 
@@ -255,7 +256,7 @@ const startStream = new StartStream({
     name: "live_audience",
     tracks: "both",
     destination: "wss://live-studio-audience.myapp.example.com",
-    streamEventsUrl: "https://myapp.example.com/noBXML",
+    streamEventUrl: "https://myapp.example.com/noBXML",
     streamParams: [streamParam]
 });
 
@@ -321,7 +322,7 @@ $streamParam->value("call_ABC");
 $startStream = new BandwidthLib\Voice\Bxml\StartStream("wss://live-studio-audience.myapp.example.com");
 $startStream->name("live_audience");
 $startStream->tracks("both")
-$startStream->streamEventsUrl("https://myapp.example.com/noBXML")
+$startStream->streamEventUrl("https://myapp.example.com/noBXML")
 $startStream->streamParams(array($streamParam));
 
 $speakSentenceEnd = new BandwidthLib\Voice\Bxml\SpeakSentence("This will now be streamed to the destination as well as played to the call participants.");
@@ -337,6 +338,80 @@ echo $response->toBxml();
 
 </TabItem>
 </Tabs>
+
+### A `start` Websocket Message
+
+```json
+{
+  "eventType": "start",
+  "metadata": {
+    "accountId": "5555555",
+    "callId": "c-2a913f94-7fa91773-a426-4118-8b8b-b691ab0a0ae1",
+    "streamId": "s-2a913f94-93e372e2-60da-4c89-beb0-0d3a219b287c",
+    "streamName": "live_audience",
+    "tracks": [
+      {
+        "name": "inbound",
+        "mediaFormat": {
+          "encoding": "PCMU",
+          "sampleRate": 8000
+        }
+      },
+      {
+        "name": "outbound",
+        "mediaFormat": {
+          "encoding": "PCMU",
+          "sampleRate": 8000
+        }
+      }
+    ]
+  },
+  "streamParams": {
+    "foo": "bar",
+    "foos": "bars"
+  }
+}
+```
+
+### A `media` Websocket Message
+
+```json
+{
+  "eventType": "media",
+  "track": "inbound",
+  "payload": "3Ob2dV1NRUpSXfTy69bHvbzD09PL0trpaWZMTV5PT05DRUpNYeLyb+jc1tPW3tfN1/r4cFZd5PxXXGjo2M/M0NTU0Nvi31ZFTFhLQERKT19safHd18zIycjHyc3Z4+7s609GSktMS1hmVFBm3eZk2tB4ffJ17/5r5dLb5uLd1c3UdmZnc/jt3eH9a3H06dvV3WNPYXxjS0BJT05VXm53+A=="
+}
+```
+
+### A `stop` Websocket Message
+
+```json
+{
+  "eventType": "stop",
+  "metadata": {
+    "accountId": "5555555",
+    "callId": "c-2a913f94-7fa91773-a426-4118-8b8b-b691ab0a0ae1",
+    "streamId": "s-2a913f94-93e372e2-60da-4c89-beb0-0d3a219b287c",
+    "streamName": "live_audience",
+    "tracks": [
+      {
+        "name": "inbound",
+        "mediaFormat": {
+          "encoding": "PCMU",
+          "sampleRate": 8000
+        }
+      },
+      {
+        "name": "outbound",
+        "mediaFormat": {
+          "encoding": "PCMU",
+          "sampleRate": 8000
+        }
+      }
+    ]
+  }
+}
+```
 
 [1]: /docs/voice/bxml/stopStream
 [2]: /docs/voice/webhooks/mediaStreamStarted
