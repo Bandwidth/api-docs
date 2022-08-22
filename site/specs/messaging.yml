@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.0.3
 info:
   title: Messaging
   version: 4.3.0
@@ -1088,8 +1088,8 @@ paths:
         '500':
           $ref: '#/components/responses/messagingInternalServerError'
       callbacks:
-        messageSending:
-          '{messagingApplicationCallbackUrl}':
+        messageReceived:
+          '{inboundCallbackUrl}':
             post:
               requestBody:
                 required: true
@@ -1098,11 +1098,366 @@ paths:
                     schema:
                       type: object
                       properties:
+                        time:
+                          type: string
+                          format: date-time
+                          example: 2016-09-14T18:20:16.000Z
+                        type:
+                          type: string
+                          example: message-received
+                        to:
+                          type: string
+                          example: '+15552223333'
+                        description:
+                          type: string
+                          example: Incoming message received
+                        message:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: 1661365814859loidf7mcwd4qacn7
+                            owner:
+                              type: string
+                              example: '+15553332222'
+                            applicationId:
+                              type: string
+                              example: 93de2206-9669-4e07-948d-329f4b722ee2
+                            time:
+                              type: string
+                              format: date-time
+                              example: 2016-09-14T18:20:16.000Z
+                            segmentCount:
+                              type: integer
+                              example: 1
+                            direction:
+                              $ref: '#/components/schemas/messageDirectionEnum'
+                            to:
+                              uniqueItems: true
+                              type: array
+                              items:
+                                type: string
+                              example:
+                                - '+15552223333'
+                            from:
+                              type: string
+                              example: '+15553332222'
+                            text:
+                              type: string
+                              example: Hello world
+                            tag:
+                              type: string
+                              example: custom string
+                            media:
+                              type: array
+                              items:
+                                type: string
+                                format: uri
+                              example:
+                                - >-
+                                  https://dev.bandwidth.com/images/bandwidth-logo.png
+                                - >-
+                                  https://dev.bandwidth.com/images/github_logo.png
+                            priority:
+                              $ref: '#/components/schemas/priorityEnum'
+                          required:
+                            - id
+                            - owner
+                            - applicationId
+                            - time
+                            - segmentCount
+                            - direction
+                            - to
+                            - from
+                            - text
+                      required:
+                        - time
+                        - type
+                        - to
+                        - description
+                        - message
+              responses:
+                '200':
+                  description: OK
+        messageSending:
+          '{outboundCallbackUrl}':
+            post:
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        time:
+                          type: string
+                          format: date-time
+                          example: 2016-09-14T18:20:16.000Z
                         type:
                           type: string
                           example: message-sending
+                        to:
+                          type: string
+                          example: '+15552223333'
+                        description:
+                          type: string
+                          example: Message is sending to carrier
+                        message:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: 1661365814859loidf7mcwd4qacn7
+                            owner:
+                              type: string
+                              example: '+15553332222'
+                            applicationId:
+                              type: string
+                              example: 93de2206-9669-4e07-948d-329f4b722ee2
+                            time:
+                              type: string
+                              format: date-time
+                              example: 2016-09-14T18:20:16.000Z
+                            segmentCount:
+                              type: integer
+                              example: 1
+                            direction:
+                              $ref: '#/components/schemas/messageDirectionEnum'
+                            to:
+                              uniqueItems: true
+                              type: array
+                              items:
+                                type: string
+                              example:
+                                - '+15552223333'
+                            from:
+                              type: string
+                              example: '+15553332222'
+                            text:
+                              type: string
+                              example: ''
+                            tag:
+                              type: string
+                              example: custom string
+                            media:
+                              type: array
+                              items:
+                                type: string
+                                format: uri
+                              example:
+                                - >-
+                                  https://dev.bandwidth.com/images/bandwidth-logo.png
+                                - >-
+                                  https://dev.bandwidth.com/images/github_logo.png
+                            priority:
+                              $ref: '#/components/schemas/priorityEnum'
+                          required:
+                            - id
+                            - owner
+                            - applicationId
+                            - time
+                            - segmentCount
+                            - direction
+                            - to
+                            - from
+                            - text
+                            - media
+                            - priority
                       required:
+                        - time
                         - type
+                        - to
+                        - description
+                        - message
+              responses:
+                '200':
+                  description: OK
+        messageDelivered:
+          '{outboundCallbackUrl}':
+            post:
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        time:
+                          type: string
+                          format: date-time
+                          example: 2016-09-14T18:20:16.000Z
+                        type:
+                          type: string
+                          example: message-delivered
+                        to:
+                          type: string
+                          example: '+15552223333'
+                        description:
+                          type: string
+                          example: Message delivered to carrier.
+                        message:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: 1661365814859loidf7mcwd4qacn7
+                            owner:
+                              type: string
+                              example: '+15553332222'
+                            applicationId:
+                              type: string
+                              example: 93de2206-9669-4e07-948d-329f4b722ee2
+                            time:
+                              type: string
+                              format: date-time
+                              example: 2016-09-14T18:20:16.000Z
+                            segmentCount:
+                              type: integer
+                              example: 1
+                            direction:
+                              $ref: '#/components/schemas/messageDirectionEnum'
+                            to:
+                              uniqueItems: true
+                              type: array
+                              items:
+                                type: string
+                              example:
+                                - '+15552223333'
+                            from:
+                              type: string
+                              example: '+15553332222'
+                            text:
+                              type: string
+                              example: ''
+                            tag:
+                              type: string
+                              example: custom string
+                            media:
+                              type: array
+                              items:
+                                type: string
+                                format: uri
+                              example:
+                                - >-
+                                  https://dev.bandwidth.com/images/bandwidth-logo.png
+                                - >-
+                                  https://dev.bandwidth.com/images/github_logo.png
+                            priority:
+                              $ref: '#/components/schemas/priorityEnum'
+                          required:
+                            - id
+                            - owner
+                            - applicationId
+                            - time
+                            - segmentCount
+                            - direction
+                            - to
+                            - from
+                            - text
+                            - tag
+                      required:
+                        - time
+                        - type
+                        - to
+                        - description
+                        - message
+              responses:
+                '200':
+                  description: OK
+        messageFailed:
+          '{outboundCallbackUrl}':
+            post:
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        time:
+                          type: string
+                          format: date-time
+                          example: 2016-09-14T18:20:16.000Z
+                        type:
+                          type: string
+                          example: message-failed
+                        to:
+                          type: string
+                          example: '+15552223333'
+                        description:
+                          type: string
+                          example: rejected-unallocated-from-number
+                        message:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: 1661365814859loidf7mcwd4qacn7
+                            owner:
+                              type: string
+                              example: '+15553332222'
+                            applicationId:
+                              type: string
+                              example: 93de2206-9669-4e07-948d-329f4b722ee2
+                            time:
+                              type: string
+                              format: date-time
+                              example: 2016-09-14T18:20:16.000Z
+                            segmentCount:
+                              type: integer
+                              example: 1
+                            direction:
+                              $ref: '#/components/schemas/messageDirectionEnum'
+                            to:
+                              uniqueItems: true
+                              type: array
+                              items:
+                                type: string
+                              example:
+                                - '+15552223333'
+                            from:
+                              type: string
+                              example: '+15553332222'
+                            text:
+                              type: string
+                              example: ''
+                            tag:
+                              type: string
+                              example: custom string
+                            media:
+                              type: array
+                              items:
+                                type: string
+                                format: uri
+                              example:
+                                - >-
+                                  https://dev.bandwidth.com/images/bandwidth-logo.png
+                                - >-
+                                  https://dev.bandwidth.com/images/github_logo.png
+                            priority:
+                              $ref: '#/components/schemas/priorityEnum'
+                          required:
+                            - id
+                            - owner
+                            - applicationId
+                            - time
+                            - segmentCount
+                            - direction
+                            - to
+                            - from
+                            - text
+                            - tag
+                            - priority
+                        errorCode:
+                          type: integer
+                          example: 9902
+                      required:
+                        - time
+                        - type
+                        - to
+                        - description
+                        - message
+                        - errorCode
               responses:
                 '200':
                   description: OK
