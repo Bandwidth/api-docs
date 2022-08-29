@@ -48,7 +48,6 @@ module.exports = {
                         "numbers/portingNumbers",
                         "numbers/csrLookupTool",
                         "numbers/hostingNumbers",
-                        "numbers/manageNumberFeatures",
                         "numbers/manageInventory",
                         "numbers/disconnectNumbers",
                         "numbers/bulkportins",
