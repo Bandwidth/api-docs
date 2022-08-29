@@ -1,0 +1,419 @@
+---
+id: startStream
+title: Start Stream
+slug: /voice/bxml/startStream
+description: A general overview of Bandwidth's StartStream BXML Verb
+keywords:
+  - bandwidth
+  - voice
+  - bxml
+  - start
+  - streaming
+hide_title: false
+image: ../../static/img/bandwidth-logo.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+The StartStream verb allows a segment of a call to be sent off to another destination for additional processing.
+
+When used on a call, audio from one or both sides (tracks) of the call will be sent to the specified destination. The stream will continue until the call ends or the [`<StopStream>`][1] verb is used. A total of 4 concurrent track streams are allowed on a call. A `<StartStream>` request that uses `both` tracks will count as 2 concurrent streams.
+A call has only two tracks, which are named after the direction of the media from the perspective of the Programmable Voice platform:
+- `inbound`: media received by Programmable Voice from the call executing the BXML;
+- `outbound`: media sent by Programmable Voice to the call executing the BXML.
+
+Note that this has no correlation to the direction of the call itself. For example, if either an inbound or outbound call is being streamed and executes a `<SpeakSentence>`, the `inbound` track will be the callee's audio and the `outbound` track will be the text-to-speech audio.
+## Text Content
+
+There is no text content available to be set for the `<StartStream>` verb.
+
+## Attributes
+
+| Attribute          | Description                                                                                                                                                                                                                        |
+|:-------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| name               | (optional) A name to refer to this stream by. Used when sending [`<StopStream>`][1]. If not provided, it will default to the generated stream id as sent in the [`Media Stream Started`][2] webhook.                                             |
+| tracks             | (optional) The part of the call to send a stream from. `inbound`, `outbound` or `both`. Default is `inbound`.                                                                                                                    |
+| destination        | (required) A websocket URI to send the stream to. The audio from the specified tracks will be sent via websocket to this URL as base64-encoded PCMU/G711 audio. See below for more details on the websocket packet format. |
+| streamEventUrl    | (optional) URL to send the associated Webhook events to during this stream's lifetime. Does not accept BXML. May be a relative URL.                                         |
+| streamEventMethod | (optional) The HTTP method to use for the request to `streamEventUrl`. GET or POST. Default value is POST.                                                                                                  |
+| username           | (optional) The username to send in the HTTP request to `streamEventUrl`. If specified, the URLs must be TLS-encrypted (i.e., `https`).                                           |
+| password           | (optional) The password to send in the HTTP request to `streamEventUrl`. If specified, the URLs must be TLS-encrypted (i.e., `https`).                                           |
+
+If the `streamEventUrl` attribute is specified, then the [Media Stream Started][2], [Media Stream Rejected][3] and [Media Stream Stopped][4] events will be sent to the URL when the stream starts, if there is an error starting the stream and when the stream ends respectively. BXML returned in response to this callback will be ignored.
+
+:::note
+While multiple streams for the same call are allowed, each stream MUST have a unique name. Attempting to start a stream on the same call with the name of an already existing stream will result in a [Media Stream Rejected][3] event.
+:::
+
+## Webhooks Received
+
+| Webhooks                   | Can reply with more BXML |
+|:---------------------------|:-------------------------|
+| [Media Stream Started][2]  | No                       |
+| [Media Stream Rejected][3] | No                       |
+| [Media Stream Stopped][4]  | No                       |
+
+## Nested Tags
+
+You may specify up to 12 `<StreamParam/>` elements nested within a `<StartStream>` tag. These elements define optional user specified parameters that will be sent to the destination URL when the stream is first started.
+
+### StreamParam Attributes
+
+| Attribute | Description                                                    |
+|:----------|:---------------------------------------------------------------|
+| name      | (required) The name of this parameter, up to 256 characters.   |
+| value     | (required) The value of this parameter, up to 2048 characters. |
+
+## Websocket Packet Format
+
+At the destination end, the websocket will receive messages containing JSON for the duration of the stream. There will be an initial `start` message when the connection is first established. This will be followed by zero or more `media` messages containing the encoded audio for the tracks being streamed. Finally, when a stream is stopped, a `stop` message will be sent.
+
+### Start and Stop Message Parameters
+
+| Parameter    | Description |
+|:-------------|:------------|
+| eventType    | What type of message this is, one of `start`, or `stop` |
+| metadata     | Details about the stream this message is for. See further details below. |
+| streamParams | (optional) (`start` message only) If any `<StreamParam/>` elements were specified in the `<StartStream>` request, they will be copied here as a map of `name : value` pairs |
+
+#### Metadata Parameters
+
+| Parameter                     | Description |
+|:------------------------------|:------------|
+| accountId                     | The user account associated with the call |
+| callId                        | The call id associated with the stream |
+| streamId                      | The unique id of the stream |
+| streamName                    | The user supplied name of the stream |
+| tracks                        | A list of one or more tracks being sent in this stream |
+| tracks.name                   | The name of the track being sent, will be used to identify which media messages belong to which track |
+| tracks.mediaFormat            | The format the media will take for this track |
+| tracks.mediaFormat.encoding   | The encoding of the media for this track; currently only `audio/PCMU` is supported |
+| tracks.mediaFormat.sampleRate | The sample rate of the media for this track, currently only `8000` is supported |
+
+### Media Message Parameters
+
+| Parameter | Description            |
+|:----------|:-----------------------|
+| eventType | Will always be `media` |
+| track     | The name of the track this media packet is for, will be one of the names specified in the `start` message |
+| payload   | A base64 encoded string of actual media. The encoding of the media itself is as specified in the `start` message |
+
+## Examples
+
+### Stream Both Legs of A Call
+
+<Tabs
+  groupId="bxml"
+  defaultValue="xml"
+  values={[
+    { label: 'XML', value: 'xml', },
+    { label: 'Java', value: 'java', },
+    { label: 'C#', value: 'csharp', },
+    { label: 'Ruby', value: 'ruby', },
+    { label: 'NodeJS', value: 'nodejs', },
+    { label: 'Python', value: 'python', },
+    { label: 'PHP', value: 'php', },
+  ]
+}>
+<TabItem value="xml">
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+    <SpeakSentence voice="bridget">This call is being streamed to a live studio audience.</SpeakSentence>
+    <StartStream name="live_audience" tracks="both" destination="wss://live-studio-audience.myapp.example.com" streamEventUrl="https://myapp.example.com/noBXML">
+        <StreamParam name="internal_id" value="call_ABC" />
+    </StartStream>
+    <SpeakSentence voice="bridget">This will now be streamed to the destination as well as played to the call participants.</SpeakSentence>
+</Response>
+```
+
+</TabItem>
+<TabItem value="java">
+
+```java
+SpeakSentence speakSentenceStart = SpeakSentence.builder()
+        .text("This call is being streamed to a live studio audience.")
+        .voice("bridget")
+        .build();
+
+StreamParam streamParam = StreamParam.builder()
+        .name("internal_id")
+        .value("call_ABC")
+        .build();
+
+StartStream startStream = StartStream.builder()
+        .name("live_audience")
+        .tracks("both")
+        .destination("wss://live-studio-audience.myapp.example.com")
+        .streamEventUrl("https://myapp.example.com/noBXML")
+        .streamParams(streamParam)
+        .build();
+
+SpeakSentence speakSentenceEnd = SpeakSentence.builder()
+        .text("This will now be streamed to the destination as well as played to the call participants.")
+        .voice("bridget")
+        .build();
+
+Response response = Response.builder().build()
+        .add(speakSentenceStart)
+        .add(startStream)
+        .add(speakSentenceEnd);
+
+System.out.println(response.toBXML());
+```
+
+</TabItem>
+<TabItem value="csharp">
+
+```csharp
+SpeakSentence speakSentenceStart = new SpeakSentence
+{
+    Sentence = "This call is being streamed to a live studio audience.",
+    Voice = "bridget"
+};
+
+StreamParam streamParam = new StreamParam
+{
+    Name = "internal_id",
+    Value = "call_ABC",
+};
+
+StartStream startStream = new StartStream
+{
+    Name = "live_audience",
+    Tracks = "both",
+    Destination = "wss://live-studio-audience.myapp.example.com",
+    StreamEventUrl = "https://myapp.example.com/noBXML",
+    StreamParams = new StreamParams[] { streamParam }
+};
+
+SpeakSentence speakSentenceEnd = new SpeakSentence
+{
+    Sentence = "This will now be streamed to the destination as well as played to the call participants.",
+    Voice = "bridget"
+};
+
+Response response = new Response();
+response.Add(speakSentenceStart);
+response.Add(startStream);
+response.Add(speakSentenceEnd);
+
+Console.WriteLine(response.ToBXML());
+```
+
+</TabItem>
+<TabItem value="ruby">
+
+```ruby
+speak_sentence_start = Bandwidth::Voice::SpeakSentence.new({
+    :sentence => "This call is being streamed to a live studio audience.",
+    :voice => "bridget"
+})
+
+stream_param = Bandwidth::Voice::StreamParam.new({
+    :name => "internal_id",
+    :value => "call_ABC"
+})
+
+start_stream = Bandwidth::Voice::StartStream.new({
+    :name => "live_audience",
+    :tracks => "both",
+    :destination => "wss://live-studio-audience.myapp.example.com",
+    :stream_events_url = "https://myapp.example.com/noBXML"
+    :stream_params => [stream_param]
+})
+
+speak_sentence_end = Bandwidth::Voice::SpeakSentence.new({
+    :sentence => "This will now be streamed to the destination as well as played to the call participants.",
+    :voice => "bridget"
+})
+
+response = Bandwidth::Voice::Response.new()
+response.push(speak_sentence_start)
+response.push(start_stream)
+response.push(speak_sentence_end)
+
+puts response.to_bxml()
+```
+
+</TabItem>
+<TabItem value="nodejs">
+
+```js
+const speakSentenceStart = new SpeakSentence({
+    sentence: "This call is being streamed to a live studio audience.",
+    voice: "bridget"
+});
+
+const streamParam = new StreamParam({
+    name: "internal_id",
+    value: "call_ABC"
+});
+
+const startStream = new StartStream({
+    name: "live_audience",
+    tracks: "both",
+    destination: "wss://live-studio-audience.myapp.example.com",
+    streamEventUrl: "https://myapp.example.com/noBXML",
+    streamParams: [streamParam]
+});
+
+const speakSentenceEnd = new SpeakSentence({
+    sentence: "This will now be streamed to the destination as well as played to the call participants.",
+    voice: "bridget"
+});
+
+const response = new Response(speakSentenceStart, startStream, speakSentenceEnd);
+
+console.log(response.toBxml());
+```
+
+</TabItem>
+<TabItem value="python">
+
+```python
+speak_sentence_start = SpeakSentence(
+    sentence="This call is being streamed to a live studio audience.",
+    voice="bridget"
+)
+
+stream_param = StreamParam(
+    name="internal_id",
+    value="call_ABC"
+)
+
+start_stream = StartStream(
+    name="live_audience",
+    tracks="both",
+    destination="wss://live-studio-audience.myapp.example.com",
+    stream_events_url="https://myapp.example.com/noBXML",
+    stream_params=[stream_param]
+)
+
+speak_sentence_end = SpeakSentence(
+    sentence="This will now be streamed to the destination as well as played to the call participants.",
+    voice="bridget"
+)
+
+response = Response()
+response.add_verb(speak_sentence_start)
+response.add_verb(start_stream)
+response.add_verb(speak_sentence_end)
+
+print(response.to_bxml())
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+$speakSentenceStart = new BandwidthLib\Voice\Bxml\SpeakSentence("This call is being recorded. Please wait while we transfer you.");
+$speakSentenceStart->voice("bridget");
+
+$startRecording = new BandwidthLib\Voice\Bxml\StartRecording();
+$startRecording->recordingAvailableUrl("https://myapp.com/noBXML");
+
+$streamParam = new BandwidthLib\Voice\Bxml\StreamParam();
+$streamParam->name("internal_id");
+$streamParam->value("call_ABC");
+
+$startStream = new BandwidthLib\Voice\Bxml\StartStream("wss://live-studio-audience.myapp.example.com");
+$startStream->name("live_audience");
+$startStream->tracks("both")
+$startStream->streamEventUrl("https://myapp.example.com/noBXML")
+$startStream->streamParams(array($streamParam));
+
+$speakSentenceEnd = new BandwidthLib\Voice\Bxml\SpeakSentence("This will now be streamed to the destination as well as played to the call participants.");
+$speakSentenceEnd->voice("bridget");
+
+$response = new BandwidthLib\Voice\Bxml\Response();
+$response->addVerb($speakSentenceStart);
+$response->addVerb($startStream);
+$response->addVerb($speakSentenceEnd);
+
+echo $response->toBxml();
+```
+
+</TabItem>
+</Tabs>
+
+### A `start` Websocket Message
+
+```json
+{
+  "eventType": "start",
+  "metadata": {
+    "accountId": "5555555",
+    "callId": "c-2a913f94-7fa91773-a426-4118-8b8b-b691ab0a0ae1",
+    "streamId": "s-2a913f94-93e372e2-60da-4c89-beb0-0d3a219b287c",
+    "streamName": "live_audience",
+    "tracks": [
+      {
+        "name": "inbound",
+        "mediaFormat": {
+          "encoding": "PCMU",
+          "sampleRate": 8000
+        }
+      },
+      {
+        "name": "outbound",
+        "mediaFormat": {
+          "encoding": "PCMU",
+          "sampleRate": 8000
+        }
+      }
+    ]
+  },
+  "streamParams": {
+    "foo": "bar",
+    "foos": "bars"
+  }
+}
+```
+
+### A `media` Websocket Message
+
+```json
+{
+  "eventType": "media",
+  "track": "inbound",
+  "payload": "3Ob2dV1NRUpSXfTy69bHvbzD09PL0trpaWZMTV5PT05DRUpNYeLyb+jc1tPW3tfN1/r4cFZd5PxXXGjo2M/M0NTU0Nvi31ZFTFhLQERKT19safHd18zIycjHyc3Z4+7s609GSktMS1hmVFBm3eZk2tB4ffJ17/5r5dLb5uLd1c3UdmZnc/jt3eH9a3H06dvV3WNPYXxjS0BJT05VXm53+A=="
+}
+```
+
+### A `stop` Websocket Message
+
+```json
+{
+  "eventType": "stop",
+  "metadata": {
+    "accountId": "5555555",
+    "callId": "c-2a913f94-7fa91773-a426-4118-8b8b-b691ab0a0ae1",
+    "streamId": "s-2a913f94-93e372e2-60da-4c89-beb0-0d3a219b287c",
+    "streamName": "live_audience",
+    "tracks": [
+      {
+        "name": "inbound",
+        "mediaFormat": {
+          "encoding": "PCMU",
+          "sampleRate": 8000
+        }
+      },
+      {
+        "name": "outbound",
+        "mediaFormat": {
+          "encoding": "PCMU",
+          "sampleRate": 8000
+        }
+      }
+    ]
+  }
+}
+```
+
+[1]: /docs/voice/bxml/stopStream
+[2]: /docs/voice/webhooks/mediaStreamStarted
+[3]: /docs/voice/webhooks/mediaStreamRejected
+[4]: /docs/voice/webhooks/mediaStreamStopped
