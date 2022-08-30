@@ -11,6 +11,8 @@ export default defineConfig({
   requestTimeout: 30000,
   viewportWidth: 1440,
   viewportHeight: 900,
+  video: false,
   videoUploadOnPasses: false,
+  screenshotOnRunFailure: true,  
   retries: 1,
 });
