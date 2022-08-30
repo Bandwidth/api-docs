@@ -29,11 +29,11 @@ export const Highlight = ({children, color}) => (
     </span>
   );
 
-[The bulkPortins endpoint](/apis/numbers#operation/CreateBulkPortin) is used to manage requests to port a diverse collection of Telephone Numbers into the Bandwidth Dashboard. These telephone numbers will be decomposed into a set of individual port-in orders based on port-type, losing carrier, losing RespOrg, etc., making all reasonable attempts to treat the individual port-in requests in a uniform manner. The elements supplied in the bulk port-in payload are cascaded to the child port-in orders when possible. This is useful, for example, if you want all of the child orders to have the same CustomerOrderId, or RequestedFocDate.
+[The bulkPortins endpoint](/apis/numbers#operation/CreateBulkPortin) is used to manage requests to port a diverse collection of telephone numbers into the Bandwidth network. These telephone numbers will be decomposed into a set of individual port-in orders based on port-type, losing carrier, losing RespOrg, etc., making all reasonable attempts to treat the individual port-in requests in a uniform manner. The elements supplied in the bulk port-in payload are cascaded to the child port-in orders when possible. This is useful, for example, if you want all of the child orders to have the same CustomerOrderId or RequestedFocDate.
 
 ## Create Bulk Port-in Draft
 
-To create Bulk Port-in request order, you must make a <Highlight color="#079CEE">POST</Highlight> request to our [API /bulkPortins](/apis/numbers/#operation/CreateBulkPortin) endpoint. This order is used to manage the porting event throughout the lifecycle of the request. This can be done through tools like Postman, or in command line. Note the ```OrderId``` field in response. It will be used for the next steps.
+To create Bulk Port-in request order, you must make a <Highlight color="#079CEE">POST</Highlight> request to our [API /bulkPortins](/apis/numbers/#operation/CreateBulkPortin) endpoint. This order is used to manage the porting event throughout the lifecycle of the request. This can be done through tools like Postman or cURL. Note the ```OrderId``` field in response. It will be used for the next steps.
 
 :::info
 Only fields that you wish to use as defaults for all of the child port-in orders should be included in the bulk port-in order.
@@ -53,7 +53,7 @@ Only fields that you wish to use as defaults for all of the child port-in orders
 > Request
 
 ```xml
-Note: Make sure an authentication header is added with your BANDWIDTH_USERNAME and BANDWIDTH:PASSWORD
+Note: Make sure an authentication header is added with your BANDWIDTH_USERNAME and BANDWIDTH_PASSWORD
 
 https://dashboard.bandwidth.com/api/accounts/{accountId}/bulkPortins
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n
@@ -77,8 +77,8 @@ https://dashboard.bandwidth.com/api/accounts/{accountId}/bulkPortins
         <PeerId>521434</PeerId>
         <ProcessingStatus>DRAFT</ProcessingStatus>
         <AccountId>9900572</AccountId>
-        <CreatedByUser>jgilmore</CreatedByUser>
-        <LastModifiedBy>jgilmore</LastModifiedBy>
+        <CreatedByUser>testuser</CreatedByUser>
+        <LastModifiedBy>testuser</LastModifiedBy>
         <LastModifiedDate>2021-06-21T19:42:34.760Z</LastModifiedDate>
         <OrderCreateDate>2021-06-21T19:42:34.760Z</OrderCreateDate>
         <OrderId>ac2c8ab2-7a63-44da-a307-edcabe0b6c81</OrderId>
@@ -94,7 +94,7 @@ Note: Remember to add authentication for your application if needed!
 
 curl 'https://dashboard.bandwidth.com/api/accounts/{BW_ACCOUNT_ID}/bulkPortins' \
 -X POST \
--U '{BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}' \
+-U '{BANDWIDTH_USERNAME}:{BANDWIDTH_PASSWORD}' \
 -H 'Content-Type: application/xml' \
 -d '<BulkPortin>
     <CustomerOrderId>Order Id for all child orders</CustomerOrderId>
@@ -116,8 +116,8 @@ curl 'https://dashboard.bandwidth.com/api/accounts/{BW_ACCOUNT_ID}/bulkPortins' 
         <PeerId>521434</PeerId>
         <ProcessingStatus>DRAFT</ProcessingStatus>
         <AccountId>9900572</AccountId>
-        <CreatedByUser>jgilmore</CreatedByUser>
-        <LastModifiedBy>jgilmore</LastModifiedBy>
+        <CreatedByUser>testuser</CreatedByUser>
+        <LastModifiedBy>testuser</LastModifiedBy>
         <LastModifiedDate>2021-06-21T19:42:34.760Z</LastModifiedDate>
         <OrderCreateDate>2021-06-21T19:42:34.760Z</OrderCreateDate>
         <OrderId>ac2c8ab2-7a63-44da-a307-edcabe0b6c81</OrderId>
@@ -133,7 +133,7 @@ If you want to update your Bulk Port-in (either in ```DRAFT``` or other further 
 
 ## Provide telephone number(s) to port
 
-After the Bulk Port-in is created, add telephone numbers to the order by sending a <Highlight color="#9a59c5">PUT</Highlight> request to our [API /bulkPortins/{orderId}/tnList](/apis/numbers/#operation/UpdateBulkTnList) endpoint. This can be done through tools like Postman, or in command line.
+After the Bulk Port-in is created, add telephone numbers to the order by sending a <Highlight color="#9a59c5">PUT</Highlight> request to our [API /bulkPortins/{orderId}/tnList](/apis/numbers/#operation/UpdateBulkTnList) endpoint. This can be done through tools like Postman or cURL.
 
 <Highlight color="#9a59c5">PUT</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/bulkPortins/{orderId}/tnList</code>
 <Tabs
@@ -149,7 +149,7 @@ After the Bulk Port-in is created, add telephone numbers to the order by sending
 > Request
 
 ```xml
-Note: Make sure an authentication header is added with your BANDWIDTH_USERNAME and BANDWIDTH:PASSWORD
+Note: Make sure an authentication header is added with your BANDWIDTH_USERNAME and BANDWIDTH_PASSWORD
 
 https://dashboard.bandwidth.com/api/accounts/{accountId}/bulkPortins/{orderId}/tnList
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n
@@ -180,7 +180,7 @@ Note: Remember to add authentication for your application if needed!
 
 curl 'https://dashboard.bandwidth.com/api/accounts/{accountId}/bulkPortins/{orderId}/tnList' \
 -X POST \
--U '{BANDWIDTH_USERNAME}:{BANDWIDTH:PASSWORD}' \
+-U '{BANDWIDTH_USERNAME}:{BANDWIDTH_PASSWORD}' \
 -H 'Content-Type: application/xml' \
 -d '<TnList>
     <TN>[telephone number]</TN>
@@ -204,35 +204,43 @@ curl 'https://dashboard.bandwidth.com/api/accounts/{accountId}/bulkPortins/{orde
 </TabItem>
 </Tabs>
 
-### Polling vs. Webhooks
+### Checking the Decomposition Status of a Bulk Port-in
 
-After submitting a tnList with the ```PUT``` operation, you will need to check the validation and decomposition completion. As times can vary and are not guaranteed Bandwidth recommends configuring your account with a subscription. Follow the [How to setup Notification Webhook](/docs/numbers/webhooks/orderWebhook) to learn more.
+After submitting a tnList with the ```PUT``` operation it takes some time for the phone numbers to be validated and child port-ins to be created. This is done asynchronously which means you will need to check the validation and decomposition completion later. There are two ways to do that - using subscription or polling. As times can vary and are not guaranteed Bandwidth recommends configuring your account with a subscription.
 
-> Example
+<Tabs
+    groupId="pollDecompositionStatus"
+    defaultValue="subscription"
+    values={[
+        { label: 'Using subscription', value: 'subscription', },
+        { label: 'Polling', value: 'polling', },
+    ]
+    }>
+<TabItem value="subscription">
+
+Below is a basic example of configuring the subscription. Follow the [How to setup Notification Webhook](/docs/numbers/webhooks/orderWebhook) to learn more.
+
+<Highlight color="#9a59c5">PUT</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/subscriptions</code>
 
 ```xml
 Note: Remember to add authentication for your application if needed!
 
-PUT https://dashboard.bandwidth.com/api/accounts/{accountId}/subscriptions
-
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Subscription>
-  <OrderType>bulkPortins</OrderType>
-  <CallbackSubscription>
-    <URL>"http://yourhost:8080/path/to/resource"</URL>
-    <Expiry>12000</Expiry>
-    <CallbackCredentials>
-      <BasicAuthentication>
-        <Username>superuser</Username>
-        <Password>s3cure</Password>
-      </BasicAuthentication>
-      <PublicKey>LS0tLS1CRUdJTiBDRVJUSU [...] kQgQ0VSVElGSUNBVEUtLS0tLQ0K</PublicKey>
-    </CallbackCredentials>
-  </CallbackSubscription>
+    <OrderType>bulkPortins</OrderType>
+    <CallbackSubscription>
+        <URL>"http://yourhost:8080/path/to/resource"</URL>
+        <Expiry>12000</Expiry>
+        <CallbackCredentials>
+            <BasicAuthentication>
+                <Username>superuser</Username>
+                <Password>s3cure</Password>
+            </BasicAuthentication>
+            <PublicKey>LS0tLS1CRUdJTiBDRVJUSU [...] kQgQ0VSVElGSUNBVEUtLS0tLQ0K</PublicKey>
+        </CallbackCredentials>
+    </CallbackSubscription>
 </Subscription>
 ```
-
-When notification is sent, you need to check `Status` field
 
 > Notification example
 
@@ -249,10 +257,49 @@ Content-Type: application/xml; charset=utf-8
 </Notification>
 ```
 
+When notification is sent, you need to check `Status` field. If all the telephone numbers in the tnList are portable, the bulk port-in transitions to the ```VALID_DRAFT_TNS``` state.
+
+</TabItem>
+<TabItem value="polling">
 
 If you want to use polling you can make a [GET /bulkPortins/{orderId}/tnList](/apis/numbers/#operation/ListBulkTns) request and check the ```ProcessingStatus``` field.
+<Highlight color="#00bf8c">GET</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/bulkPortins/{orderId}/tnList</code>
+
+> Response example
+
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<TnListResponse>
+    <ProcessingStatus>VALID_DRAFT_TNS</ProcessingStatus>
+    <OrderId>ac2c8ab2-7a63-44da-a307-edcabe0b6c81</OrderId>
+    <ChildPortinOrderList>
+        <ChildPortinOrder>
+            <OrderId>xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx1</OrderId>
+            <TnList>
+                <Tn>[telephone number]</Tn>
+            </TnList>
+        </ChildPortinOrder>
+        <ChildPortinOrder>
+            <OrderId>xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx2</OrderId>
+            <TnList>
+                <Tn>[telephone number]</Tn>
+            </TnList>
+        </ChildPortinOrder>
+        <ChildPortinOrder>
+            <OrderId>xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx3</OrderId>
+            <TnList>
+                <Tn>[telephone number]</Tn>
+                <Tn>[telephone number]</Tn>
+            </TnList>
+        </ChildPortinOrder>
+    </ChildPortinOrderList>
+</TnListResponse>
+```
 
 If all the telephone numbers in the tnList are portable, the bulk port-in transitions to the ```VALID_DRAFT_TNS``` state.
+
+</TabItem>
+</Tabs>
 
 :::caution
 If at least one of the telephone numbers in the tnList <b>is not portable</b>, the bulk port-in transitions to the ```INVALID_DRAFT_TNS``` state. You will see reasons why telephone numbers are non-portable in response body. To fix it you’ll need to update the tnList to remove non-portable telephone numbers.
