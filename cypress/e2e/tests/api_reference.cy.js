@@ -122,7 +122,7 @@ context('Number API Text Link on Homepage', () => {
   beforeEach(() => {
     cy.visit('/apis/')
     cy.get('a')
-      .contains('Number API')
+      .contains('Numbers API')
       .click()
   })
 
@@ -207,7 +207,7 @@ context('Messaging API Text Link on Homepage', () => {
   beforeEach(() => {
     cy.visit('/apis/')
     cy.get('a')
-      .contains('Messaging')
+      .contains('Messaging API')
       .click()
   })
 
@@ -256,27 +256,27 @@ context('Messaging API Text Link on Homepage', () => {
 context('Emergency API SVG Link on Homepage', () => {
   beforeEach(() => {
     cy.visit('/apis/')
-    cy.get('svg[alt="Emergency"]')
+    cy.get('svg[alt="Emergency API"]')
       .click()
   })
 
   it('cy.go() - go back or forward in the browser\'s history', () => {
 
-    cy.location('pathname').should('include', '/apis/emergency')
+    cy.location('pathname').should('include', '/apis/dash')
 
     cy.go('back')
-    cy.location('pathname').should('not.include', '/apis/emergency')
+    cy.location('pathname').should('not.include', '/apis/dash')
 
     cy.go('forward')
-    cy.location('pathname').should('include', '/apis/emergency')
+    cy.location('pathname').should('include', '/apis/dash')
 
     // clicking back
     cy.go(-1)
-    cy.location('pathname').should('not.include', '/apis/emergency')
+    cy.location('pathname').should('not.include', '/apis/dash')
 
     // clicking forward
     cy.go(1)
-    cy.location('pathname').should('include', '/apis/emergency')
+    cy.location('pathname').should('include', '/apis/dash')
   })
 
   it('cy.reload() - reload the page', () => {
@@ -298,21 +298,21 @@ context('Emergency API Text Link on Homepage', () => {
 
   it('cy.go() - go back or forward in the browser\'s history', () => {
 
-    cy.location('pathname').should('include', '/apis/emergency')
+    cy.location('pathname').should('include', '/apis/dash')
 
     cy.go('back')
-    cy.location('pathname').should('not.include', '/apis/emergency')
+    cy.location('pathname').should('not.include', '/apis/dash')
 
     cy.go('forward')
-    cy.location('pathname').should('include', '/apis/emergency')
+    cy.location('pathname').should('include', '/apis/dash')
 
     // clicking back
     cy.go(-1)
-    cy.location('pathname').should('not.include', '/apis/emergency')
+    cy.location('pathname').should('not.include', '/apis/dash')
 
     // clicking forward
     cy.go(1)
-    cy.location('pathname').should('include', '/apis/emergency')
+    cy.location('pathname').should('include', '/apis/dash')
   })
 
   it('cy.reload() - reload the page', () => {
@@ -322,9 +322,9 @@ context('Emergency API Text Link on Homepage', () => {
     cy.reload(true)
   })
 
-  it('visits /apis/emergency directly', () => {
+  it('visits /apis/dash directly', () => {
 
-    cy.visit('/apis/emergency', {
+    cy.visit('/apis/dash', {
       timeout: 50000, // increase total time for the visit to resolve
       onBeforeLoad (contentWindow) {
         // contentWindow is the remote page's window object
@@ -578,7 +578,7 @@ context('Multi-Factor Authentication API Text Link on Homepage', () => {
     cy.reload(true)
   })
 
-  it('visits /apis/mfa directly', () => {
+  it('visits /apis/multifactorauth directly', () => {
 
     cy.visit('/apis/multifactorauth', {
       timeout: 50000, // increase total time for the visit to resolve
