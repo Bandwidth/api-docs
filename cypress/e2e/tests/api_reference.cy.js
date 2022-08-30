@@ -518,21 +518,21 @@ context('Multi-Factor Authentication API SVG Link on Homepage', () => {
 
   it('cy.go() - go back or forward in the browser\'s history', () => {
 
-    cy.location('pathname').should('include', '/apis/mfa')
+    cy.location('pathname').should('include', '/apis/multifactorauth')
 
     cy.go('back')
-    cy.location('pathname').should('not.include', '/apis/mfa')
+    cy.location('pathname').should('not.include', '/apis/multifactorauth')
 
     cy.go('forward')
-    cy.location('pathname').should('include', '/apis/mfa')
+    cy.location('pathname').should('include', '/apis/multifactorauth')
 
     // clicking back
     cy.go(-1)
-    cy.location('pathname').should('not.include', '/apis/mfa')
+    cy.location('pathname').should('not.include', '/apis/multifactorauth')
 
     // clicking forward
     cy.go(1)
-    cy.location('pathname').should('include', '/apis/mfa')
+    cy.location('pathname').should('include', '/apis/multifactorauth')
   })
 
   it('cy.reload() - reload the page', () => {
@@ -554,21 +554,21 @@ context('Multi-Factor Authentication API Text Link on Homepage', () => {
 
   it('cy.go() - go back or forward in the browser\'s history', () => {
 
-    cy.location('pathname').should('include', '/apis/mfa')
+    cy.location('pathname').should('include', '/apis/multifactorauth')
 
     cy.go('back')
-    cy.location('pathname').should('not.include', '/apis/mfa')
+    cy.location('pathname').should('not.include', '/apis/multifactorauth')
 
     cy.go('forward')
-    cy.location('pathname').should('include', '/apis/mfa')
+    cy.location('pathname').should('include', '/apis/multifactorauth')
 
     // clicking back
     cy.go(-1)
-    cy.location('pathname').should('not.include', '/apis/mfa')
+    cy.location('pathname').should('not.include', '/apis/multifactorauth')
 
     // clicking forward
     cy.go(1)
-    cy.location('pathname').should('include', '/apis/mfa')
+    cy.location('pathname').should('include', '/apis/multifactorauth')
   })
 
   it('cy.reload() - reload the page', () => {
@@ -580,7 +580,7 @@ context('Multi-Factor Authentication API Text Link on Homepage', () => {
 
   it('visits /apis/mfa directly', () => {
 
-    cy.visit('/apis/mfa', {
+    cy.visit('/apis/multifactorauth', {
       timeout: 50000, // increase total time for the visit to resolve
       onBeforeLoad (contentWindow) {
         // contentWindow is the remote page's window object
