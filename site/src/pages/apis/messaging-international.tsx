@@ -10,7 +10,7 @@ export default function ApiReferencePage() {
           title={`International Messaging API Reference`}
           description="Authentication and Messages. Everything you'll need to start working with our International Messaging API."
           keywords="Bandwidth,API,Messaging,International">
-            <ApiReference spec={siteConfig.customFields.messagingInternationalSpec} color={siteConfig.customFields.messagingGreen} />
+            <ApiReference spec={siteConfig.customFields.messagingInternationalSpec} color={siteConfig.customFields.messagingGreen} downloadDefinitionUrl="https://github.com/Bandwidth/api-docs/blob/main/site/specs/messagingInternational.json"/>
         </Layout>
     );
 }
