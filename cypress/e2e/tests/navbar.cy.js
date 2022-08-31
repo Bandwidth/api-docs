@@ -42,7 +42,6 @@ context('Docs', () => {
   })
 
   it('visits /docs/ directly', () => {
-
     cy.visit('/docs/', {
       timeout: 50000, // increase total time for the visit to resolve
       onBeforeLoad (contentWindow) {
@@ -57,6 +56,7 @@ context('Docs', () => {
     cy.go(-1)
     })
 })
+
 context('API Reference', () => {
   beforeEach(() => {
     cy.visit('/')
@@ -110,6 +110,7 @@ context('API Reference', () => {
     cy.go(-1)
     })
 })
+
 context('SDKs', () => {
   beforeEach(() => {
     cy.visit('/')
@@ -163,6 +164,7 @@ context('SDKs', () => {
     cy.go(-1)
     })
 })
+
 describe('Bandwidth Sample', () => {
 
 it('Should verify the external link worked', () => {
@@ -247,20 +249,20 @@ describe('Github Link', () => {
     })
   })
 
-  describe('Postman Link', () => {
-    it('Should verify the external link worked', () => {
-      cy.visit('/')
-      cy.get('a.navbar__item.navbar__link.header-postman-link.bw-link')
-        .should('have.attr', 'href', 'https://www.postman.com/bandwidth')
-      })
+describe('Postman Link', () => {
+  it('Should verify the external link worked', () => {
+    cy.visit('/')
+    cy.get('a.navbar__item.navbar__link.header-postman-link.bw-link')
+      .should('have.attr', 'href', 'https://www.postman.com/bandwidth')
     })
+  })
 
-  describe('Login Link', () => {
-    it('Should verify the external link worked', () => {
-      cy.visit('/')
-      cy.get('a.navbar__item.navbar__link.header-login-link')
-        .should('have.attr', 'href', 'https://www.bandwidth.com/login/')
-      })
+describe('Login Link', () => {
+  it('Should verify the external link worked', () => {
+    cy.visit('/')
+    cy.get('a.navbar__item.navbar__link.header-login-link')
+      .should('have.attr', 'href', 'https://www.bandwidth.com/login/')
     })
-
+  })
+  
 })

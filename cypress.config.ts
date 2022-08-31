@@ -8,7 +8,7 @@ export default defineConfig({
   baseUrl: 'http://localhost:3000'
   },
   projectId: "oz7rpf",
-  requestTimeout: 30000,
+  requestTimeout: 60000,
   viewportWidth: 1440,
   viewportHeight: 900,
   video: false,
