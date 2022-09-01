@@ -47,6 +47,15 @@ npm run start   # run a dynamic site locally
 # or
 npm run build    # build a static site to the /site/build folder
 nmp run serve    # host the static site in the /site/build folder
+
+```
+
+## Cypress Testing
+
+After building the site and serving it locally you can run the following cypress cli command to run the cypress tests against the static site.
+
+```sh
+npx cypress run
 ```
 
 ## Adding a New Spec
