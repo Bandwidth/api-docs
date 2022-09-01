@@ -34,15 +34,15 @@ Bandwidth provides a 'user-based' permission and authentication scheme. It's rec
 :::note
 By default users with no assigned role(s) will have the ability to perform GET requests against the following endpoints:
 * Orders:  
-  * `https://eng.dashboard.bandwidth.com/api/accounts/{accountId}/orders`
+  * `https://dashboard.bandwidth.com/api/accounts/{accountId}/orders`
 * Order Details: 
-  * `https://eng.dashboard.bandwidth.com/api/accounts/{accountId}/orders{orderId}`
+  * `https://dashboard.bandwidth.com/api/accounts/{accountId}/orders{orderId}`
 * SIP Peer Details: 
-  * `https://eng.dashboard.bandwidth.com/api/accounts/{accountId}/sites/{siteId}/sippeers`
+  * `https://dashboard.bandwidth.com/api/accounts/{accountId}/sites/{siteId}/sippeers`
 * Admin Edge Settings: 
-  * `https://eng.dashboard.bandwidth.com/api/accounts/{accountId}/products/edgemanagement/settings`
+  * `https://dashboard.bandwidth.com/api/accounts/{accountId}/products/edgemanagement/settings`
 * Subscriptions API: 
-  * `https://eng.dashboard.bandwidth.com/api/accounts/{accountId}/subscriptions`
+  * `https://dashboard.bandwidth.com/api/accounts/{accountId}/subscriptions`
 :::
 
 ## API User Credentials
