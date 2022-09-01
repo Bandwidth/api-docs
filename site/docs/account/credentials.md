@@ -32,7 +32,7 @@ Bandwidth provides a 'user-based' permission and authentication scheme. It's rec
 
 
 :::note
-By default users with no assigned role(s) will have the ability to perform GET requests against the following endpoints:
+By default, users with no assigned role(s) will have the ability to perform GET requests against the following endpoints:
 * Orders:  
   * `https://dashboard.bandwidth.com/api/accounts/{accountId}/orders`
 * Order Details: 
