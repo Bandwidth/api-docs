@@ -1,83 +1,68 @@
 import React from 'react';
-import clsx from 'clsx';
 import Layout from '@theme/Layout';
-import styles from '../index.module.css';
-import apiStyles from '../../css/apis.module.css';
-import ItemGrid from '../../components/gridItem'
+import LandingPage from '@site/src/components/LandingPage.js';
 
-const ApiList = [
+const apiList = [
     {
-        title: 'Voice',
-        Svg: require('../../../static/img/icon-voice-complex-no-bg.svg').default,
-        style: apiStyles.apiSvg,
+        title: 'Voice API',
+        Svg: require('@site/static/img/api-icons/voice.svg').default,
         link: '/apis/voice'
     },
     {
-        title: 'Messaging',
-        Svg: require('../../../static/img/icon-messaging-complex-no-bg.svg').default,
-        style: apiStyles.apiSvg,
-        link: '/apis/messaging'
-    },
-    {
-        title: 'Numbers',
-        Svg: require('../../../static/img/icon-numbers-complex-no-bg.svg').default,
-        style: apiStyles.apiSvg,
-        link: '/apis/numbers'
-    },
-    {
-        title: 'Phone Number Lookup',
-        Svg: require('../../../static/img/icon-phone-number-lookup-complex-no-bg.svg').default,
-        style: apiStyles.apiSvg,
+        title: 'Phone Number Lookup API',
+        Svg: require('@site/static/img/api-icons/phone-number-lookup.svg').default,
         link: '/apis/number-lookup'
     },
     {
-        title: 'International Messaging',
-        Svg: require('../../../static/img/icon-int-messaging-complex-no-bg.svg').default,
-        style: apiStyles.apiSvg,
-        link: '/apis/messaging-international'
+        title: 'Numbers API',
+        Svg: require('@site/static/img/api-icons/numbers.svg').default,
+        link: '/apis/numbers'
     },
     {
-        title: 'Multi-Factor Authentication',
-        Svg: require('../../../static/img/icon-multi-factor-complex-no-bg.svg').default,
-        style: apiStyles.apiSvg,
+        title: 'Multi-Factor Authentication API',
+        Svg: require('@site/static/img/api-icons/mfa.svg').default,
         link: '/apis/multifactorauth'
     },
     {
-        title: 'WebRTC',
-        Svg: require('../../../static/img/icon-webrtc-complex-no-bg.svg').default,
-        style: apiStyles.apiSvg,
-        link: '/apis/webrtc'
+        title: 'Messaging API',
+        Svg: require('@site/static/img/api-icons/messaging.svg').default,
+        link: '/apis/messaging'
     },
     {
-        title: 'DASH',
-        Svg: require('../../../static/img/icon-dash-complex-no-bg.svg').default,
-        style: apiStyles.apiSvg,
+        title: 'International Messaging API',
+        Svg: require('@site/static/img/api-icons/international-messaging.svg').default,
+        link: '/apis/messaging-international'
+    },
+    {
+        title: 'Emergency API',
+        Svg: require('@site/static/img/api-icons/emergency.svg').default,
         link: '/apis/dash'
     },
     {
-        title: 'DASH Notifications',
-        Svg: require('../../../static/img/icon-dash-notifications-complex-no-bg.svg').default,
-        style: apiStyles.apiSvg,
+        title: 'Emergency Notifications API',
+        Svg: require('@site/static/img/api-icons/emergency-notifications.svg').default,
         link: '/apis/dash-notifications'
+
     },
     {
-        title: 'Insights',
-        Svg: require('../../../static/img/icon-insights-complex-no-bg.svg').default,
-        style: apiStyles.apiSvg,
+        title: 'WebRTC API',
+        Svg: require('@site/static/img/api-icons/webrtc.svg').default,
+        link: '/apis/webrtc'
+    },
+    {
+        title: 'Insights API',
+        Svg: require('@site/static/img/api-icons/insights.svg').default,
         link: '/apis/insights'
     }
 ];
 
-function Header() {
-    return (
-        <header className={clsx('hero hero--primary', styles.heroBanner)}>
-            <div className="container">
-                <h1 className="hero__title">Bandwidth APIs</h1>
-                <p className="hero__subtitle">Build with Bandwidth</p>
-            </div>
-        </header>
-    );
+const props = {
+    itemList: apiList,
+    Svg: require('@site/static/img/landing-apis.svg').default,
+    h1Text: 'API Reference',
+    h2Text: 'Technical reference for Bandwidth APIs'
 }
+
 
 export default function Apis() {
     return (
@@ -85,10 +70,7 @@ export default function Apis() {
             title="Bandwidth APIs"
             description="Bandwidth API Reference, documentation, SDKs, guides, examples and more. Get everything you need to build with Bandwidth."
             keywords="Bandwidth,API">
-            <Header />
-            <main>
-                <ItemGrid itemList={ApiList} className={apiStyles.apis} />
-            </main>
+            <LandingPage {...props} />
         </Layout>
     );
 }
