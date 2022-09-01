@@ -36,7 +36,7 @@ By default, users with no assigned role(s) will have the ability to perform GET 
 * Orders:  
   * `https://dashboard.bandwidth.com/api/accounts/{accountId}/orders`
 * Order Details: 
-  * `https://dashboard.bandwidth.com/api/accounts/{accountId}/orders{orderId}`
+  * `https://dashboard.bandwidth.com/api/accounts/{accountId}/orders/{orderId}`
 * SIP Peer Details: 
   * `https://dashboard.bandwidth.com/api/accounts/{accountId}/sites/{siteId}/sippeers`
 * Admin Edge Settings: 
