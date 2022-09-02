@@ -30,6 +30,21 @@ All of Bandwidth's APIs are protected with Basic Authorization over HTTPS. Basic
 
 Bandwidth provides a 'user-based' permission and authentication scheme. It's recommended to [create a new user](https://support.bandwidth.com/hc/en-us/articles/115007187088-How-to-Create-New-Users-in-the-Bandwidth-Dashboard) with **ONLY** API access and the necessary roles on your account. The API user can be leveraged to access all of Bandwidth's APIs.
 
+
+:::note
+By default, users with no assigned role(s) will have the ability to perform GET requests against the following endpoints:
+* Orders:  
+  * `https://dashboard.bandwidth.com/api/accounts/{accountId}/orders`
+* Order Details: 
+  * `https://dashboard.bandwidth.com/api/accounts/{accountId}/orders/{orderId}`
+* SIP Peer Details: 
+  * `https://dashboard.bandwidth.com/api/accounts/{accountId}/sites/{siteId}/sippeers`
+* Admin Edge Settings: 
+  * `https://dashboard.bandwidth.com/api/accounts/{accountId}/products/edgemanagement/settings`
+* Subscriptions API: 
+  * `https://dashboard.bandwidth.com/api/accounts/{accountId}/subscriptions`
+:::
+
 ## API User Credentials
 
 ⚠️ The API user is meant to be separate from your Dashboard user and **should not** be used to access the Dashboard. Further, your Dashboard user **should not** be used to access Bandwidth's APIs.
