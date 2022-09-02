@@ -209,9 +209,6 @@ context('Global Docs and API Ref', () => {
   })
 
   it('cy.reload() - reload the page', () => {
-    cy.reload()
-
-    // reload the page without using the cache
     cy.reload(true)
   })
 
@@ -264,5 +261,5 @@ describe('Login Link', () => {
       .should('have.attr', 'href', 'https://www.bandwidth.com/login/')
     })
   })
-  
+
 })
