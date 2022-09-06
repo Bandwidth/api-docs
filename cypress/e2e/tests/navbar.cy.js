@@ -208,17 +208,10 @@ context('Global Docs and API Ref', () => {
     cy.location('pathname').should('include', '/apis/global/')
   })
 
-  it('cy.reload() - reload the page', () => {
-    cy.reload()
-
-    // reload the page without using the cache
-    cy.reload(true)
-  })
-
   it('visits /apis/global/ directly', () => {
 
-    cy.visit('//apis/global/', {
-      timeout: 50000, // increase total time for the visit to resolve
+    cy.visit('/apis/global/', {
+      timeout: 120000, // increase total time for the visit to resolve
       onBeforeLoad (contentWindow) {
         // contentWindow is the remote page's window object
         expect(typeof contentWindow === 'object').to.be.true
