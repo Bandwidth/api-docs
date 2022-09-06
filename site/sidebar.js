@@ -48,7 +48,15 @@ module.exports = {
                         "numbers/portingNumbers",
                         "numbers/csrLookupTool",
                         "numbers/hostingNumbers",
-                        "numbers/manageInventory",
+                        {
+                            type: "category",
+                            label: "How to manage your inventory",
+                            items: [
+                                "numbers/manage-inventory/searchYourNumbers",
+                                "numbers/manage-inventory/applyTnOptionsAndFeatures",
+                                "numbers/manage-inventory/setFailoverUri"
+                            ]
+                        },
                         "numbers/disconnectNumbers",
                         "numbers/bulkportins",
                         "numbers/lookupNumbers",
