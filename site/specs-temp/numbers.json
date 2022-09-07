@@ -2688,7 +2688,7 @@
         "tags": [
           "Porting"
         ],
-        "description": "Retrieves the csr orders for the given account ID.\nPlease visit <a href='/docs/numbers/guides/csrLookupTool'>Guides and Tutorials</a>",
+        "description": "Retrieves the csr orders for the given account ID.\nPlease visit <a href='/docs/numbers/guides/porting/csrLookupTool'>Guides and Tutorials</a>",
         "summary": "List CSR orders",
         "operationId": "ReadCsrOrders",
         "parameters": [
@@ -2805,7 +2805,16 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/CsrResponse"
+                  "title": "CsrResponse",
+                  "type": "object",
+                  "properties": {
+                    "OrderId": {
+                      "type": "string"
+                    },
+                    "Status": {
+                      "type": "string"
+                    }
+                  }
                 }
               }
             }
@@ -2819,6 +2828,9 @@
                     "description": "example",
                     "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<CsrOrderResponse>\n    <Errors>\n        <Error>\n            <Code>54321</Code>\n            <Description>Some error description</Description>\n        </Error>\n    </Errors>\n</CsrOrderResponse>\n"
                   }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/CsrErrorResponse"
                 }
               }
             }
@@ -2839,14 +2851,7 @@
             "$ref": "#/components/parameters/AccountIdPathParam"
           },
           {
-            "name": "orderId",
-            "description": "Order ID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "example": "1234567"
+            "$ref": "#/components/parameters/OrderIdPathParam"
           }
         ],
         "responses": {
@@ -2878,6 +2883,9 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/AccountIdPathParam"
+          },
+          {
+            "$ref": "#/components/parameters/OrderIdPathParam"
           }
         ],
         "requestBody": {
@@ -2916,6 +2924,9 @@
             "description": "Bad Response - there were errors in evaluating the body of the request",
             "content": {
               "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/CsrErrorResponse"
+                },
                 "examples": {
                   "example": {
                     "description": "example",
@@ -2928,7 +2939,7 @@
         }
       }
     },
-    "/accounts/{accountId}/csrs/{csrsId}/notes": {
+    "/accounts/{accountId}/csrs/{orderId}/notes": {
       "get": {
         "tags": [
           "Porting"
@@ -2941,14 +2952,7 @@
             "$ref": "#/components/parameters/AccountIdPathParam"
           },
           {
-            "name": "csrsId",
-            "description": "Csrs Order ID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "example": "59e69657-44d2-4e7e-90f8-777988be4aef"
+            "$ref": "#/components/parameters/OrderIdPathParam"
           }
         ],
         "responses": {
@@ -2982,14 +2986,7 @@
             "$ref": "#/components/parameters/AccountIdPathParam"
           },
           {
-            "name": "csrsId",
-            "description": "Csrs Order ID",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "example": "59e69657-44d2-4e7e-90f8-777988be4aef"
+            "$ref": "#/components/parameters/OrderIdPathParam"
           }
         ],
         "requestBody": {
@@ -3020,6 +3017,9 @@
                     "description": "example",
                     "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<NoteResponse>\n    <ResponseStatus>\n        <ErrorCode>12501</ErrorCode>\n        <Description>Username is required</Description>\n    </ResponseStatus>\n</NoteResponse>\n"
                   }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/NoteErrorResponse"
                 }
               }
             }
@@ -3027,7 +3027,7 @@
         }
       }
     },
-    "/accounts/{accountId}/csrs/{csrsId}/notes/{noteId}": {
+    "/accounts/{accountId}/csrs/{orderId}/notes/{noteId}": {
       "put": {
         "tags": [
           "Porting"
@@ -3088,6 +3088,9 @@
                     "description": "example",
                     "value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<NoteResponse>\n    <ResponseStatus>\n        <ErrorCode>12501</ErrorCode>\n        <Description>Username is required</Description>\n    </ResponseStatus>\n</NoteResponse>\n"
                   }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/NoteErrorResponse"
                 }
               }
             }
@@ -21420,12 +21423,17 @@
             "type": "object",
             "properties": {
               "Name": {
-                "type": "string"
+                "type": "string",
+                "description": "The name of the order.",
+                "maxLength": 50
               },
               "DisconnectTelephoneNumberOrderType": {
                 "$ref": "#/components/schemas/DisconnectTelephoneNumberOrderType"
               }
-            }
+            },
+            "required": [
+              "Name"
+            ]
           }
         }
       },
@@ -21434,17 +21442,32 @@
         "properties": {
           "TelephoneNumberList": {
             "type": "array",
+            "description": "A list of telephone numbers to disconnect.",
             "items": {
               "$ref": "#/components/schemas/TelephoneNumber"
             }
           },
           "DisconnectMode": {
-            "type": "string"
+            "type": "string",
+            "description": "The severity of disconnect order. Typically Normal.",
+            "enum": [
+              "NORMAL",
+              "PURGE"
+            ]
           },
           "Protected": {
-            "type": "string"
+            "type": "string",
+            "description": "Change protected status of telephones during disconnection. Typically `UNCHANGED`.",
+            "enum": [
+              "TRUE",
+              "FALSE",
+              "UNCHANGED"
+            ]
           }
-        }
+        },
+        "required": [
+          "TelephoneNumberList"
+        ]
       },
       "DldaOrder": {
         "type": "object",
@@ -25549,8 +25572,38 @@
           }
         }
       },
+      "CsrErrorResponse": {
+        "title": "CsrOrderResponse",
+        "type": "object",
+        "properties": {
+          "CsrOrderResponse": {
+            "type": "object",
+            "properties": {
+              "Errors": {
+                "type": "array",
+                "items": {
+                  "title": "Error",
+                  "properties": {
+                    "Code": {
+                      "type": "integer"
+                    },
+                    "Description": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "CsrGetResponse": {
         "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Csr"
+          }
+        ],
         "properties": {
           "CustomerOrderId": {
             "type": "string"
@@ -25567,9 +25620,6 @@
           "LastModifiedDate": {
             "type": "string"
           },
-          "WorkingOrBillingTelephoneNumber": {
-            "type": "string"
-          },
           "WorkingTelephoneNumber": {
             "type": "string"
           },
@@ -25582,123 +25632,107 @@
           "AuthorizingPersonName": {
             "type": "string"
           },
-          "AccountNumber": {
-            "type": "string"
-          },
           "WorkingTelephoneNumbersOnAccount": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/TelephoneNumber"
             }
-          },
-          "CsrServiceAddress": {
-            "$ref": "#/components/schemas/Address"
-          },
-          "AccountTelephoneNumber": {
-            "type": "string"
-          },
-          "EndUserName": {
-            "type": "string"
-          },
-          "AuthorizingUserName": {
-            "type": "string"
-          },
-          "CustomerCode": {
-            "type": "string"
-          },
-          "EndUserPIN": {
-            "type": "string"
-          },
-          "EndUserPassword": {
-            "type": "string"
-          },
-          "AddressLine1": {
-            "type": "string"
-          },
-          "City": {
-            "type": "string"
-          },
-          "State": {
-            "type": "string"
-          },
-          "ZIPCode": {
-            "type": "string"
-          },
-          "TypeOfService": {
-            "type": "string"
-          },
-          "Status": {
-            "type": "string"
           }
         }
       },
       "Csr": {
         "type": "object",
         "properties": {
+          "CustomerOrderId": {
+            "type": "string",
+            "description": "Internal customer order id for tracking the order.",
+            "format": "Alphanumeric values, dashes and spaces",
+            "maxLength": 40
+          },
           "WorkingOrBillingTelephoneNumber": {
-            "type": "string"
-          },
-          "WorkingTelephoneNumber": {
-            "type": "string"
-          },
-          "BillingTelephoneNumber": {
-            "type": "string"
-          },
-          "CustomerName": {
-            "type": "string"
-          },
-          "AuthorizingPersonName": {
-            "type": "string"
+            "type": "string",
+            "maxLength": 10,
+            "description": "Working or Billing telephone number in 10-digits format NPANXXXXXX."
           },
           "AccountNumber": {
-            "type": "string"
-          },
-          "WorkingTelephoneNumbersOnAccount": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TelephoneNumber"
-            }
-          },
-          "CsrServiceAddress": {
-            "$ref": "#/components/schemas/Address"
+            "type": "string",
+            "description": "Identifies the main account number on your bill, assigned by the current service provider.",
+            "format": "Alphanumeric",
+            "maxLength": 20
           },
           "AccountTelephoneNumber": {
-            "type": "string"
+            "type": "string",
+            "description": "Identifies the account telephone number assigned by the current service provider.",
+            "format": "Alphanumeric",
+            "maxLength": 10
           },
           "EndUserName": {
-            "type": "string"
+            "type": "string",
+            "description": "Identifies the name of the end user associated with the telephone number being queried.",
+            "format": "Alphanumeric",
+            "maxLength": 100
           },
           "AuthorizingUserName": {
-            "type": "string"
+            "type": "string",
+            "description": "Identifies the name of the end user who signed the authorization.",
+            "format": "Alphanumeric",
+            "maxLength": 100
           },
           "CustomerCode": {
-            "type": "string"
+            "type": "string",
+            "description": "Identifies the customer code associated with the service provider.",
+            "format": "Numeric",
+            "maxLength": 3
           },
           "EndUserPIN": {
-            "type": "string"
+            "type": "string",
+            "description": "Identifies the end user’s personal identification number (PIN).",
+            "format": "Alphanumeric",
+            "maxLength": 50
           },
           "EndUserPassword": {
-            "type": "string"
+            "type": "string",
+            "description": "Identifies the end user’s password to access the CSR, if applicable.",
+            "format": "Alphanumeric",
+            "maxLength": 100
           },
           "AddressLine1": {
-            "type": "string"
+            "type": "string",
+            "description": "Identifies the address line 1 portion of the service address.",
+            "format": "Alphanumeric",
+            "maxLength": 200
           },
           "City": {
-            "type": "string"
+            "type": "string",
+            "description": "Identifies the city of the end user where the telephone number is being serviced.",
+            "format": "Alphanumeric",
+            "maxLength": 100
           },
           "State": {
-            "type": "string"
+            "type": "string",
+            "description": "Identifies the abbreviation for the state or province of the end user where the telephone number is being serviced. Must be alphabetic characters in the format XX which is the state or province abbreviation.",
+            "format": "Alphabetic",
+            "maxLength": 2
           },
           "ZIPCode": {
-            "type": "string"
+            "type": "string",
+            "description": "Identifies the ZIP code, ZIP Code + extension, or postal code or the end user where the telephone number is being serviced.",
+            "format": "Alphanumeric (including the dash if using ZIP Code with extension)",
+            "maxLength": 10
           },
           "TypeOfService": {
-            "type": "string"
+            "type": "string",
+            "description": "The type of service identifying the end user account.",
+            "format": "Alphabetic",
+            "maxLength": 50
           },
           "Status": {
             "type": "string"
           }
-        }
+        },
+        "required": [
+          "WorkingOrBillingTelephoneNumber"
+        ]
       },
       "LongCodeImportCampaignsErrorResponse": {
         "type": "object",
@@ -30667,8 +30701,18 @@
                   }
                 }
               },
-              "DisconnectTelephoneNumberOrderType": {
-                "$ref": "#/components/schemas/DisconnectTelephoneNumberOrderType"
+              "orderRequest": {
+                "type": "object",
+                "properties": {
+                  "OrderCreateDate": {
+                    "type": "string",
+                    "format": "datetime",
+                    "example": "2019-11-19T14:06:57.254Z"
+                  },
+                  "DisconnectTelephoneNumberOrderType": {
+                    "$ref": "#/components/schemas/DisconnectTelephoneNumberOrderType"
+                  }
+                }
               }
             }
           }

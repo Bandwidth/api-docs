@@ -49,6 +49,7 @@ module.exports = {
                             type: "category",
                             label: "Porting numbers",
                             items: [
+                                "numbers/porting/csrLookupTool",
                                 "numbers/porting/lnpChecker",
                                 "numbers/porting/portingNumbers",
                                 "numbers/porting/loaUpload",
@@ -58,7 +59,6 @@ module.exports = {
                                 "numbers/porting/submitBulkPortins",
                             ],
                         },
-                        "numbers/csrLookupTool",
                         "numbers/hostingNumbers",
                         "numbers/manageNumberFeatures",
                         "numbers/searchNumbers",

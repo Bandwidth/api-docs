@@ -1,6 +1,6 @@
 ---
 id: disconnectNumbers
-title: Disconnecting Numbers
+title: How to disconnect phone numbers
 slug: /numbers/guides/disconnectNumbers
 description: How to disconnect numbers from account using the Bandwidth API
 keywords:
@@ -32,18 +32,10 @@ export const Highlight = ({children, color}) => (
 Disconnecting a phone number leaves it in all applicable inventories, but makes it available for activation with a new subscriber.
 
 ## Create a Disconnect Order
+To create a Disconnect Order, you must make a <Highlight color="#079CEE">POST</Highlight> request to our [/disconnects API](/apis/numbers/#operation/CreateDisconnectOrder) endpoint.
 
 ### Request URL
 <Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/disconnects</code>
-
-### Request Parameters
-
-| Parameter             | Required | Description                                                                                                                       |
-|:----------------------|:---------|:----------------------------------------------------------------------------------------------------------------------------------|
-| `Name`                | Yes      | The name of the order. Max length restricted to 50 characters                                                                     |
-| `TelephoneNumberList` | Yes      | A list of telephone numbers to disconnect.                                                                                        |
-| `DisconnectMode`      | No       | The severity of disconnect order. Typically `Normal`.                                                                             |
-| `Protected`           | No       | Change protected status of telephones during disconnection. Possible values: `TRUE`, `FALSE`, `UNCHANGED`. Typically `UNCHANGED`. |
 
 ### Example
 > Request
@@ -89,14 +81,44 @@ Location: https://dashboard.bandwidth.com/api/accounts/{accountId}/disconnects/d
 </DisconnectTelephoneNumberOrderResponse>
 ```
 
-## Fetching Disconnect Order Status {#get-disconnect-info}
-A GET Request to an existing disconnect will return it's status as well as any information originally used to create the disconnect.
+## Checking Disconnect Order Status {#get-disconnect-info}
+
+Disconnects are asynchronous which means the orders are processed and the order status is updated asynchronously. As times can vary and are not guaranteed Bandwidth recommends configuring your account with a subscription instead of polling the order resource for `<OrderStatus>`. Please follow the [How to setup Notification Webhook](/docs/numbers/webhooks/orderWebhook) guide.
+If you want to poll, you can still use a [GET /disconnects/{disconnectId} request](/apis/numbers/#operation/ReadDisconnectOrder).
+
+<Tabs
+    groupId="disconnect_search"
+    defaultValue="webhook_disconnect_status"
+    values={[
+        { label: 'Disconnect Status Webhook', value: 'webhook_disconnect_status', },
+        { label: 'Poll for Disconnect Status', value: 'poll_disconnect_status', },
+    ]
+    }>
+<TabItem value="webhook_disconnect_status">
+
+:::info
+This is a webhook that bandwidth sends to _your_ server upon order completion/failure - there is no need to poll the resource if using this recommended method.
+:::
+
+```xml
+POST your_url.com/webhookService HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+
+<?xml version="1.0"?>
+<Notification>
+    <SubscriptionId>...</SubscriptionId>
+    <OrderType>disconnects</OrderType>
+    <OrderId>b05de7e6-0cab-4c83-81bb-9379cba8efd0</OrderId>
+    <CustomerOrderId>...</CustomerOrderId>
+    <Status>COMPLETE</Status>
+</Notification>
+```
+
+</TabItem>
+<TabItem value="poll_disconnect_status">
 
 ### Request URL
 <Highlight color="#00bf8c">GET</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/disconnects/{disconnectId}</code>
-
-### Example
-> Request
 
 ```http
 GET https://dashboard.bandwidth.com/api/accounts/{accountId}/disconnects/df2gc2e2-653d-466c-945d-8f292f09ce55 HTTP/1.1
@@ -132,3 +154,8 @@ Content-Type: application/xml; charset=utf-8
 </DisconnectTelephoneNumberOrderResponse>
 
 ```
+
+</TabItem>
+</Tabs>
+
+
