@@ -11,7 +11,8 @@ const RedocConfig = (props) => {
                       expandSingleSchemaField: true,
                       expandResponses: "200,201,202,204",
                       menuToggle: true,
-                      theme: colorMode === 'dark' ? darkTheme('#FFFFFF') : lightTheme(props.color)
+                      theme: colorMode === 'dark' ? darkTheme('#FFFFFF') : lightTheme(props.color),
+                      downloadDefinitionUrl: props.downloadDefinitionUrl
                   }}/>
 }
 
@@ -19,7 +20,7 @@ export default function ApiReference(props) {
     return (
         <main>
             <div className="RedocStandalone">
-              <RedocConfig spec={props.spec} color={props.color}/>
+              <RedocConfig spec={props.spec} color={props.color} downloadDefinitionUrl={props.downloadDefinitionUrl}/>
             </div>
         </main>
     );
