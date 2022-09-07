@@ -29,7 +29,7 @@ module.exports = {
     organizationName: 'bandwidth', 
     projectName: 'api-docs', 
     themeConfig: {
-        image: 'img/bandwidth.png', // used for meta tag
+        image: 'img/bw-icon.svg', // used for meta tag
         colorMode: {
             disableSwitch: false // for disabling dark mode
         },
@@ -39,19 +39,12 @@ module.exports = {
             indexName: 'bandwidth',
             contextualSearch: false, // useful for versioned Docusaurus sites
         },
-        announcementBar: {
-            id: 'new_docsite_flag', // Any value that will identify this message.
-            content: 'Welcome to the new home of Bandwidth\'s Developer Documentation. Please take a minute to <a target="_blank" href="https://forms.gle/CgaaBoNRzSp1XoWbA">provide any feedback you may have</a> on our new docsite!',
-            backgroundColor: '#FFFFFF', // Defaults to `#fff`.
-            textColor: '#079CEE', // Defaults to `#000`.
-            isCloseable: false, // Defaults to `true`.
-        },
         navbar: {
             title: '',
             hideOnScroll: false,
             logo: {
                 alt: 'Bandwidth',
-                src: 'img/bandwidth-logo-navbar.png',
+                src: 'img/dev-docs-logo.svg',
             },
             items: [{
                 type: 'dropdown',
@@ -71,7 +64,7 @@ module.exports = {
                         label: 'SDKs',
                         activeBasePath: 'sdks'
                     }, {
-                        href: 'https://github.com/Bandwidth-Samples',
+                        to: 'https://github.com/Bandwidth-Samples',
                         label: 'Samples',
                     }
                 ]
@@ -88,56 +81,21 @@ module.exports = {
             }, {
                 href: 'https://github.com/Bandwidth',
                 position: 'right', 
-                className: 'header-github-link'
+                className: 'header-github-link bw-link',
+                title: 'Github Organization'
+            }, {
+                href: 'https://www.postman.com/bandwidth',   // TODO: update with real postman url
+                position: 'right', 
+                className: 'header-postman-link bw-link',
+                title: 'Postman Collection'
+            }, {
+                href: 'https://www.bandwidth.com/login/',
+                position: 'right', 
+                className: 'header-login-link',
+                title: 'Login'
             }]
         },
-        footer: {
-            style: "dark",
-            logo: {
-                alt: 'Bandwidth',
-                src: 'img/bandwidth-logo-footer.png',
-                href: 'https://www.bandwidth.com',
-            },
-            links: [{
-                    title: 'Docs',
-                    items: [{
-                            label: 'Guides & Tutorials',
-                            to: '/docs/',
-                        }, {
-                            to: 'changelog',
-                            activeBasePath: 'changelog',
-                            label: 'Changelog',
-                        },
-                    ],
-                },
-                {
-                    title: 'Community',
-                    items: [{
-                        label: 'Developer Forum',
-                        href: 'http://bandwidthdashboard.discussion.community/',
-                    }],
-                },
-                {
-                    title: 'More',
-                    items: [
-                        // 'Blog' 404's with no md files in the blog folder
-                        // {
-                        //   label: 'Blog',
-                        //   to: '/blog',
-                        // },
-                        {
-                            label: 'GitHub',
-                            href: 'https://github.com/Bandwidth',
-                        }, {
-                            label: 'Try Sandbox',
-                            href: 'https://sandbox.bandwidth.com'
-                        }
-                    ],
-                }
-            ],
-            copyright: `Copyright © ${new Date().getFullYear()} Bandwidth Inc.`,
-        },
-        // Now this breaks redoc :sad: 
+        // Now this breaks redoc :sad: (Now missing prism dependency as well)
         // prism: {
         //     additionalLanguages: ['csharp', 'java', 'ruby', 'php'],
         //   },
@@ -184,7 +142,6 @@ module.exports = {
         // CSS Colors
         bwBlue: '#079CEE',
         voicePurple: '#9a59c5',
-        voxbonePurple: '#6600ff',
         messagingGreen: '#00bf8c',
         emergencyOrange: '#ff6f47',
         numbersMaroon: '#652B51',

@@ -1,8 +1,8 @@
 import React from 'react';
 import Layout from '@theme/Layout';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import ApiReference from '../../../components/ApiReference';
-import SpecVersionDropdown from '../../../components/SpecVersionDropdown';
+import ApiReference from '@site/src/components/ApiReference';
+import SpecVersionDropdown from '@site/src/components/SpecVersionDropdown';
 
 export default function ApiReferencePage() {
     const {siteConfig} = useDocusaurusContext();
@@ -19,7 +19,7 @@ export default function ApiReferencePage() {
           description=""
           keywords="Bandwidth,API,Global,Voxbone">
             <SpecVersionDropdown options={options} default={version} />
-            <ApiReference spec={siteConfig.customFields.globalSpec_beta} color={siteConfig.customFields.voxbonePurple} />
+            <ApiReference spec={siteConfig.customFields.globalSpec_beta} color={siteConfig.customFields.bwBlue} downloadDefinitionUrl="https://github.com/Bandwidth/api-docs/blob/main/site/specs/global-beta.yml"/>
         </Layout>
     );
 }
