@@ -257,5 +257,5 @@ describe('Login Link', () => {
       .should('have.attr', 'href', 'https://www.bandwidth.com/login/')
     })
   })
-  
+
 })
