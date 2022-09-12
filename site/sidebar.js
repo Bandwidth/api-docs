@@ -1,7 +1,7 @@
 module.exports = {
     mySidebar: [{
-            type: "link",
-            href: "/docs",
+            type: "doc",
+            id: "intro",
             label: "Introduction",
         },
         {
