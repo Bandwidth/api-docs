@@ -26,13 +26,17 @@ const sdks = [
     {
         link: '/sdks/csharp',
         Svg: require('@site/static/img/sdk-icons/csharp.svg').default
-    },
+    }
 ]
 
-export default function DocsSdks({sdksText}) {
+export default function DocsSdks({postmanLink}) {
     return (
         <div className={docsAboutStyles.sdks}>
-            <div className={docsAboutStyles.sdksText}>{sdksText}</div>
+            <div className={docsAboutStyles.sdksText}>
+                With a few lines of code we will show you how to use our REST APIs and webhooks through our docs, 
+                code samples and SDKs to build your application.
+                Select the SDK of your choice or start testing with our <a className={docsAboutStyles.postmanLink} href={postmanLink} target="_blank" rel="noopener">Postman Collection</a> straight away.
+            </div>
             <div className={docsAboutStyles.sdksImages}>
                 <div className={docsAboutStyles.sdkImageContainer}>
                     {sdks.map(({link, Svg}, idx) => (
