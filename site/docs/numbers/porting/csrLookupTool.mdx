@@ -30,10 +30,6 @@ export const Highlight = ({children, color}) => (
 
 This guide will walk you through how to programmatically lookup Customer Service Records (CSRs) for phone numbers before porting into your Bandwidth account.
 
-## Polling vs. Webhooks
-
-CSR orders are processed and updated asynchronously. Processing times can vary. For status updates, it is recommended to use subscriptions versus polling the order resource for `<OrderStatus>`.
-
 ## Create a CSR Order
 
 Before creating the order, collect any information from the end user as described in the request body schema for the POST method [/csrs API](/apis/numbers/#operation/CreateCsrOrder).
@@ -65,52 +61,11 @@ Location: https://dashboard.bandwidth.com/api/accounts/{{accountId}}/csrs/{{orde
 
 ## Fetch Order Status
 
-### Examples
+CSR orders are processed and updated asynchronously. Processing times can vary. For status updates, it is recommended to use subscriptions versus polling the order resource for `<OrderStatus>`.
+Please follow the [How to setup Notification Webhook](/docs/numbers/webhooks/orderWebhook) guide.
+If you want to poll, you can still use a [GET /csrs/{orderId} request](/apis/numbers/#operation/ReadCsrOrder).
+
 <Highlight color="#00bf8c">GET</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/csrs/{orderId}</code>
-
-<Tabs
-  groupId="http_importTnOrder_search"
-  defaultValue="webhook_CsrOrder_status"
-  values={[
-    { label: 'CsrOrder Status Webhook', value: 'webhook_CsrOrder_status', },
-    { label: 'Poll for CsrOrder Status', value: 'poll_CsrOrder_status', },
-  ]
-}>
-<TabItem value="webhook_CsrOrder_status">
-
-CsrOrder Status Webhook
-
-:::info
-This is a webhook that bandwidth sends to _your_ server upon order completion/failure - there is no need to poll the resource if using this recommended method.
-:::
-
-```xml
-POST your_url.com/webhookService HTTP/1.1
-Content-Type: application/xml; charset=utf-8
-
-<?xml version="1.0"?>
-<Notification>
-    <SubscriptionId>...</SubscriptionId>
-    <OrderType>csrs</OrderType>
-    <OrderId>b05de7e6-0cab-4c83-81bb-9379cba8efd0</OrderId>
-    <CustomerOrderId>...</CustomerOrderId>
-    <Status>COMPLETE</Status>
-</Notification>
-```
-
-</TabItem>
-<TabItem value="poll_CsrOrder_status">
-
-Poll Order Information
-> Request
-
-```http
-GET https://dashboard.bandwidth.com/api/accounts/{accountId}/csrs/b05de7e6-0cab-4c83-81bb-9379cba8efd0 HTTP/1.1
-Content-Type: application/xml; charset=utf-8
-Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
-```
-
-> Response
 
 ```xml
 HTTP 200 OK
@@ -143,12 +98,9 @@ Content-Type: application/xml; charset=utf-8
 </CsrResponse>
 ```
 
-</TabItem>
-</Tabs>
-
 ## Update an Order
 
-A <Highlight color="#9a59c5">PUT</Highlight> method provides the ability to update a CSR order with additional information requested by the carrier. CSR orders will be in either a `PROCESSING` or `ACTION_REQUIRED` status in this scenario.
+A <Highlight color="#9a59c5">PUT</Highlight> [/csrs/{orderId} request](/apis/numbers/#operation/UpdateCsrOrder) method provides the ability to update a CSR order with additional information requested by the carrier. CSR orders will be in either a `PROCESSING` or `ACTION_REQUIRED` status in this scenario.
 The <Highlight color="#9a59c5">PUT</Highlight> method can also be used to cancel a CSR order. You must submit a request body with a `Status` element set to `REQUESTED_CANCEL` in order for the cancellation process to begin.
 
 ### Examples
