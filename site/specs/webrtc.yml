@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 2.0.0
+  version: 1.2.0
   title: WebRTC
   description: |-
     Bandwidth WebRTC API
@@ -31,6 +31,217 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/createParticipantResponse'
+        '400':
+          $ref: '#/components/responses/webrtcBadRequestError'
+        '401':
+          $ref: '#/components/responses/webrtcUnauthorizedError'
+        '403':
+          $ref: '#/components/responses/webrtcForbiddenError'
+        '500':
+          $ref: '#/components/responses/webrtcInternalServerError'
+      callbacks:
+        myEvent:
+          '{$request.body#/callbackUrl}':
+            post:
+              summary: Called on detection of an event related to the Participant
+              description: >-
+                The callback initiated by the Bandwidth WebRTC system on events 
+                that occur in signalling or dialog handling
+              requestBody:
+                $ref: '#/components/requestBodies/createEventRequest'
+              responses:
+                '200':
+                  description: OK
+      x-codeSamples:
+        - lang: cURL
+          source: >
+            curl
+            'https://api.webrtc.bandwidth.com/v1/accounts/12345/participants' \
+                -X POST \
+                -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=' \
+                -H 'Content-Type: application/json' \
+                -d '{
+                    "callbackUrl": "https://example.com/callback",
+                    "publishPermissions": [
+                        "VIDEO",
+                        "AUDIO"
+                    ],
+                    "tag": "participant1",
+                    "deviceApiVersion": "V3"
+                }'
+        - lang: C#
+          source: "\uFEFFusing System;\nusing System.Collections.Generic;\nusing System.Threading.Tasks;\nusing Bandwidth.Standard;\nusing Bandwidth.Standard.Exceptions;\nusing Bandwidth.Standard.WebRtc.Models;\n\nclass Program\n{\n    static async Task Main(string[] args)\n    {\n        var username = \"api-username\";\n        var password = \"api-pasword\";\n        var accountId = \"12345\";\n\n        var client = new BandwidthClient.Builder()\n            .WebRtcBasicAuthCredentials(username, password)\n            .Build();\n\n        var participant = new Participant()\n        {\n            PublishPermissions = new List<PublishPermissionEnum>() { PublishPermissionEnum.AUDIO, PublishPermissionEnum.VIDEO }\n        };\n\n        try\n        {\n            var response = await client.WebRtc.APIController.CreateParticipantAsync(accountId, participant);\n            Console.WriteLine(response.Data);\n        }\n        catch (ApiException e)\n        {\n            Console.WriteLine(e.Message);\n        }\n    }\n}\n"
+        - lang: Java
+          source: |
+            import com.bandwidth.BandwidthClient;
+            import com.bandwidth.http.response.ApiResponse;
+            import com.bandwidth.webrtc.models.AccountsParticipantsResponse;
+            import com.bandwidth.webrtc.models.Participant;
+            import com.bandwidth.webrtc.models.PublishPermissionEnum;
+
+            import java.util.concurrent.CompletableFuture;
+            import java.util.concurrent.ExecutionException;
+            import java.util.Arrays;
+            import java.util.List;
+
+            public class Sample {
+                public static final String USERNAME = "api-username";
+                public static final String PASSWORD = "api-password";
+                public static final String ACCOUNT_ID = "12345";
+
+                public static void main(String[] args) {
+                    BandwidthClient client = new BandwidthClient.Builder()
+                            .webRtcBasicAuthCredentials(USERNAME, PASSWORD)
+                            .build();
+
+                    Participant participant = new Participant();
+                    List<PublishPermissionEnum> publishPermissions = Arrays.asList(PublishPermissionEnum.AUDIO, PublishPermissionEnum.VIDEO);
+                    participant.setPublishPermissions(publishPermissions);
+
+                    try {
+                        CompletableFuture<ApiResponse<AccountsParticipantsResponse>> completableFuture = client.getWebRtcClient().getAPIController().createParticipantAsync(ACCOUNT_ID, participant);
+                    } catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                }
+            }
+        - lang: Node.js
+          source: |
+            import { Client, ApiController } from '@bandwidth/webrtc';
+
+            const BW_USERNAME = "api-username";
+            const BW_PASSWORD = "api-password";
+            const BW_ACCOUNT_ID = "12345";
+
+            const client = new Client({
+              basicAuthUserName: BW_USERNAME,
+              basicAuthPassword: BW_PASSWORD
+            });
+
+            const controller = new ApiController(client);
+
+            const accountId = BW_ACCOUNT_ID;
+
+            const createParticipant = async function() {
+              try {
+                const response = await controller.createParticipant(accountId, {
+                  callbackUrl: "http://www.myapp.com/new",
+                  publishPermissions: ["AUDIO"]
+                })
+                console.log(response.body);
+              } catch(error) {
+                console.error(error);
+              }
+            }
+
+            createParticipant();
+        - lang: PHP
+          source: |
+            <?php
+              
+            require "vendor/autoload.php";
+
+            api-username = "api-username";
+            api-password = "api-pasword";
+            12345 = "12345";
+
+            $config = new BandwidthLib\Configuration(
+                array(
+                    'webRtcBasicAuthUserName' => $BW_USERNAME,
+                    'webRtcBasicAuthPassword' => $BW_PASSWORD,
+                )
+            );
+            $client = new BandwidthLib\BandwidthClient($config);
+
+            $webRtcClient = $client->getWebRtc()->getClient();
+
+            $body = new BandwidthLib\WebRtc\Models\Participant();
+            $body->publishPermissions = array("AUDIO", "VIDEO");
+            $body->deviceApiVersion = "V3";
+
+            try {
+                $response = $webRtcClient->createParticipant($BW_ACCOUNT_ID, $body);
+                print_r($response->getResult()->participant->id);
+            } catch (BandwidthLib\APIException $e) {
+                print_r($e->getResponseCode());
+            }
+        - lang: Python
+          source: |
+            from bandwidth.bandwidth_client import BandwidthClient
+            from bandwidth.exceptions.api_exception import APIException
+            from bandwidth.webrtc.models.participant import Participant
+
+            import os
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = BandwidthClient(
+                web_rtc_basic_auth_user_name=BW_USERNAME,
+                web_rtc_basic_auth_password=BW_PASSWORD
+            )
+
+            web_rtc_client = bandwidth_client.web_rtc_client.client
+
+            body = Participant()
+            body.publish_permissions = ["AUDIO", "VIDEO"]
+            body.device_api_version = "V3"
+
+            try:
+                response = web_rtc_client.create_participant(BW_ACCOUNT_ID, body)
+                print(response.body.participant.id)
+            except APIException as e:
+                print(e.response_code)
+        - lang: Ruby
+          source: |
+            require 'bandwidth'
+
+            include Bandwidth
+            include Bandwidth::WebRtc
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = Bandwidth::Client.new(
+                web_rtc_basic_auth_user_name: BW_USERNAME,
+                web_rtc_basic_auth_password: BW_PASSWORD
+            )
+
+            web_rtc_client = bandwidth_client.web_rtc_client.client
+
+            body = Participant.new
+            body.publish_permissions = ["AUDIO", "VIDEO"]
+            body.device_api_version = "V3"
+
+            begin
+                response = web_rtc_client.create_participant(BW_ACCOUNT_ID, :body => body)
+                puts response.data.participant.id
+            rescue APIException => e
+                puts e.response_code
+            end
+  /accounts/{accountId}/participants/{participantId}/dialogs:
+    post:
+      tags:
+        - Dialogs
+      summary: Create a Dialog
+      description: >-
+        Create a new Dialog for this participant.   The dialog will be used to
+        control the user-level state of the participant,  handling and managing
+        user-level events.   The user-level events are dependent on the 'type'
+        of the dialog. For Example, if the Dialog is a 'SIP' dialog, then the
+        body of the Dialog contains information related to SIP calling such as
+        to: and from: information
+      operationId: createDialog
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/participantId'
+      requestBody:
+        $ref: '#/components/requestBodies/createDialogRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/createDialogResponse'
         '400':
           $ref: '#/components/responses/webrtcBadRequestError'
         '401':
@@ -2321,13 +2532,21 @@ components:
       enum:
         - AUDIO
         - VIDEO
+    dialogType:
+      type: string
+      description: Required field describing the type of Dialog
+      example: SIP
+      enum:
+        - SIP
+        - PUSH
     deviceApiVersionEnum:
       type: string
       description: Optional field to define the device api version of this participant.
       example: V3
-      default: V3
+      default: V2
       enum:
         - V3
+        - V2
     session:
       type: object
       description: Session object.
@@ -2421,6 +2640,172 @@ components:
           example: participant1
         deviceApiVersion:
           $ref: '#/components/schemas/deviceApiVersionEnum'
+    sipDialogStateData:
+      type: object
+      description: The state data associated with a Dialog - dependent on the dialogType
+      required:
+        - to
+        - from
+      properties:
+        to:
+          type: string
+          description: the destination telephone number
+          example: '+16136211234'
+        toTag:
+          type: string
+          description: a tag associated with the destination
+          example: Fraud Queue
+        from:
+          type: string
+          description: the caller's telephone number, or the string UNKNOWN or RESTRICTED
+          example: '+16136211234'
+        fromTag:
+          type: string
+          description: a tag associated with the source
+          example: Priority customer
+    dialogEventData:
+      type: object
+      description: Information about the event that triggered the state change
+      properties:
+        eventReason:
+          type: string
+          description: A summary of why the event happened
+          example: FAR END BUSY
+        eventErrorReason:
+          type: string
+          description: If the event was an error, a text description of the error
+          example: Destination Server unavailable
+        eventErrorCode:
+          type: number
+          description: >-
+            An error number to help classifiy the error condition - retain this
+            for support
+          example: 1022
+    sipDialogRequestBody:
+      type: object
+      description: Create a SIP Dialog owned by a Participant.
+      required:
+        - dialogType
+      properties:
+        dialogType:
+          $ref: '#/components/schemas/dialogType'
+        dialogStateData:
+          $ref: '#/components/schemas/sipDialogStateData'
+        tag:
+          type: string
+          description: >-
+            User defined tag to associate with the dialog.  Must not contain
+            PII.
+          example: sip-patron-dialog
+    pushDialogRequestBody:
+      type: object
+      description: Create a PUSH Dialog owned by a Participant.  Not yet implemented
+      required:
+        - dialogType
+      properties:
+        dialogType:
+          $ref: '#/components/schemas/dialogType'
+    createDialogResponse:
+      type: object
+      description: Response generated when a Dialog is created.
+      properties:
+        dialog:
+          $ref: '#/components/schemas/participant'
+        token:
+          type: string
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyfQ.L8i6g3PfcHlioHCCPURC9pmXT7gdJpx3kOoyAfNUwCc
+          description: >-
+            Auth token for the returned participant.  This should be passed to
+            the participant so that they can connect to the platform.
+    createDialogRequest:
+      oneOf:
+        - $ref: '#/components/schemas/sipDialogRequestBody'
+        - $ref: '#/components/schemas/pushDialogRequestBody'
+      discriminator:
+        propertyName: dialogType
+        mapping:
+          SIP: '#/components/schemas/sipDialogRequestBody'
+          PUSH: '#/components/schemas/pushDialogRequestBody'
+    eventBody:
+      oneOf:
+        - $ref: '#/components/schemas/dialogEventBody'
+        - $ref: '#/components/schemas/onLeaveEventBody'
+        - $ref: '#/components/schemas/onDisconnectEventBody'
+        - $ref: '#/components/schemas/onConnectEventBody'
+      discriminator:
+        propertyName: event
+        mapping:
+          onDialogStateChange: '#/components/schemas/dialogEventBody'
+          onLeave: '#/components/schemas/onLeaveEventBody'
+          onDisconnect: '#/components/schemas/onDisconnectEventBody'
+          onConnect: '#/components/schemas/onConnectEventBody'
+    baseEventBody:
+      type: object
+      description: the common properties shared by all events
+      required:
+        - event
+      properties:
+        event:
+          type: string
+          description: >-
+            the name of the event, and the condition that describes the body
+            that will be present
+          example: onDialogStateChange
+          enum:
+            - onDialogStateChange
+            - onLeave
+            - onDisconnect
+            - onConnect
+        timestamp:
+          type: string
+          description: the time, in milliseconds, when the event happened
+          example: '1628786234676'
+        participantId:
+          type: string
+          description: the ID of Participant on which the event was detected
+          example: be199214-1a03-402a-a7b6-d002470a0465
+        tag:
+          type: string
+          description: >-
+            the tag associated with the Participant on which the event was
+            detected.
+          example: hello-world-browser
+      discriminator:
+        propertyName: event
+    dialogEventBody:
+      allOf:
+        - $ref: '#/components/schemas/baseEventBody'
+        - $ref: '#/components/schemas/dialogEventContents'
+    onLeaveEventBody:
+      allOf:
+        - $ref: '#/components/schemas/baseEventBody'
+    onDisconnectEventBody:
+      allOf:
+        - $ref: '#/components/schemas/baseEventBody'
+    onConnectEventBody:
+      allOf:
+        - $ref: '#/components/schemas/baseEventBody'
+    dialogEventContents:
+      type: object
+      description: The content of a Dialog Notification.
+      properties:
+        dialogType:
+          $ref: '#/components/schemas/dialogType'
+        dialogStateName:
+          type: string
+          description: the name of the state that the Dialog has entered
+          example: ANSWERED
+        dialogStateData:
+          oneOf:
+            - $ref: '#/components/schemas/sipDialogStateData'
+          discriminator:
+            propertyName: dialogType
+            mapping:
+              SIP: '#/components/schemas/dialogEventBody'
+              PUSH: '#/components/schemas/onLeaveEventBody'
+        dialogEventData:
+          $ref: '#/components/schemas/dialogEventData'
     subscriptions:
       type: object
       readOnly: true
@@ -2504,12 +2889,24 @@ components:
             forbidden.
           example: Missing Authentication Token
   responses:
+    eventCallbackResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/createParticipantResponse'
     createParticipantResponse:
       description: OK
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/createParticipantResponse'
+    createDialogResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/createDialogResponse'
     getParticipantResponse:
       description: OK
       content:
@@ -2604,12 +3001,24 @@ components:
         type: string
       example: 62e0ecb9-0b1b-5115-aae4-4f36123d6bb1
   requestBodies:
+    createEventRequest:
+      description: Create an event-notification request body.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/eventBody'
     createParticipantRequest:
       description: Create participant request body.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/createParticipantRequest'
+    createDialogRequest:
+      description: Body for Dialog creation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/createDialogRequest'
     createSessionRequest:
       description: Create session request body.
       content:
@@ -2668,4 +3077,5 @@ security:
   - Basic: []
 tags:
   - name: Participants
+  - name: Dialogs
   - name: Sessions
