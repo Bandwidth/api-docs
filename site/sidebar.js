@@ -60,8 +60,15 @@ module.exports = {
                             ],
                         },
                         "numbers/hostingNumbers",
-                        "numbers/manageNumberFeatures",
-                        "numbers/searchNumbers",
+                        {
+                            type: "category",
+                            label: "How to manage your inventory",
+                            items: [
+                                "numbers/manage-inventory/searchYourNumbers",
+                                "numbers/manage-inventory/applyTnOptionsAndFeatures",
+                                "numbers/manage-inventory/setFailoverUri"
+                            ]
+                        },
                         "numbers/disconnectNumbers",
                         "numbers/lookupNumbers",
                         "numbers/downloadingReports",

@@ -1,0 +1,214 @@
+---
+id: setFailoverUri
+title: Set Final Destination URI
+slug: /numbers/guides/manage-inventory/setFailoverUri
+description: How to set failover uri on locations/numbers
+keywords:
+  - bandwidth
+  - numbers
+  - manage
+  - inventory
+  - change
+  - tnOptions
+  - features
+  - failover
+image: '@site/static/img/bw-icon.svg'
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+export const TNs = "{tns}";
+export const tn = "{tn}";
+export const accountId = "{accountId}"
+export const siteId = "{siteId}";
+export const sippeerId = "{sippeerId}"
+export const orderId = "{orderId}"
+export const address = "{address}"
+export const host = "{host}"
+
+export const Highlight = ({children, color}) => (
+    <span
+      style={{
+        backgroundColor: color,
+        borderRadius: '2px',
+        color: '#fff',
+        padding: '0.2rem',
+      }}>
+      {children}
+    </span>
+  );
+
+In this guide, we will show you how to set Final Destination URI on your locations or telephone numbers.
+
+**Please Note that the Failover URI functionality is only available for SIP Voice users at this time.**
+
+Setting a failover URI (Final Destination URI) allows Bandwidth to forward voice traffic to an alternate number in the event of a delivery failure to your original call route.
+
+More detailed information on setting a Final Destination URI can be found [here](https://www.bandwidth.com/blog/establishing-automatic-failover-for-routing-calls-in-case-of-failure-final-destination-uri/).
+
+## Set a Failover URI
+
+<Tabs
+groupId="fetch_order_status"
+defaultValue="location"
+values={[
+{ label: 'Setup Failover on a Location (Sip-Peer)', value: 'location', },
+{ label: 'Setup Failover on a Single Number/Group of Numbers', value: 'single', }
+]
+}>
+<TabItem value="location">
+
+To setup a failover for a location (sip-peer), make a <Highlight color="#9a59c5">PUT</Highlight> request to our [Update SipPeer API](../../../../apis/numbers#tag/accounts/operation/UpdateSipPeer) endpoint.
+This can be done through tools like [Postman](https://github.com/Bandwidth/postman) or in the cURL.
+
+:::danger
+This PUT request is idempotent - it will overwrite the existing location (sip-peer) settings when made so be sure to include any previous settings that must persist on the location or you risk replacing them with their default `null` values
+:::
+
+* Sip URI Format: `sip:{address}@{host}`
+* PSTN Format: `+13332221111@PSTN`
+
+#### Examples:
+
+<Tabs
+groupId="multiple_example"
+defaultValue="payload"
+values={[
+    { label: 'Payload', value: 'payload', },
+    { label: 'cURL', value: 'curl', }
+]
+}>
+
+<TabItem value="payload">
+
+#### Request URL:
+<p><Highlight color="#9a59c5">PUT</Highlight><code>https://dashboard.bandwidth.com/api/accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}</code></p>
+
+```xml
+<SipPeer>
+    <PeerName>location_name</PeerName>
+    <FinalDestinationUri>sip:+12345678901@1.2.3.4:5060</FinalDestinationUri>
+    <IsDefaultPeer>true</IsDefaultPeer>
+</SipPeer>
+```
+</TabItem>
+
+<TabItem value="curl">
+
+```curl
+curl -X PUT 'https://dashboard.bandwidth.com/api/accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/tns/{tn}'
+-U '{userName}:{password}'
+-H 'Content-Type: application/xml'
+-d '<SipPeer>
+        <PeerName>location_name</PeerName>
+        <FinalDestinationUri>sip:+12345678901@1.2.3.4:5060</FinalDestinationUri>
+        <IsDefaultPeer>true</IsDefaultPeer>
+    </SipPeer>'
+```
+
+</TabItem>
+
+</Tabs>
+
+> Response
+
+```xml
+HTTP 200 OK
+```
+</TabItem>
+
+<TabItem value="single">
+
+To setup a failover for a Single Number/Group of Numbers, make a <Highlight color="#079CEE">POST</Highlight> request to our [Create TN Option Order API](../../../../apis/numbers#tag/accounts/operation/CreateTnOptionOrder) endpoint.
+This can be done through tools like [Postman](https://github.com/Bandwidth/postman) or in the cURL.
+
+* Sip URI Format: `name@ip-address:port`
+* PSTN Format: `3332221111`
+
+#### Examples:
+
+<Tabs
+groupId="multiple_example"
+defaultValue="payload"
+values={[
+    { label: 'Payload', value: 'payload', },
+    { label: 'cURL', value: 'curl', }
+]
+}>
+
+<TabItem value="payload">
+
+#### Request URL:
+<p><Highlight color="#079CEE">POST</Highlight><code>https://dashboard.bandwidth.com/api/accounts/{accountId}/tnoptions</code></p>
+
+```xml
+<TnOptionOrder>
+    <TnOptionGroups>
+        <TnOptionGroup>
+            <FinalDestinationURI>sip:+12345678901@1.2.3.4:5060</FinalDestinationURI>
+            <TelephoneNumbers>
+                <TelephoneNumber>2013452345</TelephoneNumber>
+                <TelephoneNumber>2013452346</TelephoneNumber>
+            </TelephoneNumbers>
+        </TnOptionGroup>
+    </TnOptionGroups>
+</TnOptionOrder>
+```
+</TabItem>
+
+<TabItem value="curl">
+
+```curl
+curl -X PUT 'https://dashboard.bandwidth.com/api/accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/tns/{tn}'
+-U '{userName}:{password}'
+-H 'Content-Type: application/xml'
+-d '<TnOptionOrder>
+        <TnOptionGroups>
+            <TnOptionGroup>
+                <FinalDestinationURI>sip:+12345678901@1.2.3.4:5060</FinalDestinationURI>
+                <TelephoneNumbers>
+                    <TelephoneNumber>2013452345</TelephoneNumber>
+                    <TelephoneNumber>2013452346</TelephoneNumber>
+                </TelephoneNumbers>
+            </TnOptionGroup>
+        </TnOptionGroups>
+    </TnOptionOrder>'
+```
+
+</TabItem>
+
+</Tabs>
+
+> Response
+
+```xml
+<TnOptionOrderResponse>
+<TnOptionOrder>
+    <OrderCreateDate>2016-01-15T12:01:14.324Z</OrderCreateDate>
+    <AccountId>14</AccountId>
+    <CreatedByUser>jbm</CreatedByUser>
+    <OrderId>ddbdc72e-dc27-490c-904e-d0c11291b095</OrderId>
+    <LastModifiedDate>2016-01-15T12:01:14.324Z</LastModifiedDate>
+    <ProcessingStatus>RECEIVED</ProcessingStatus>
+    <CustomerOrderId>TnOptionOrder1</CustomerOrderId>
+    <TnOptionGroups>
+        <TnOptionGroup>
+            <FinalDestinationURI>sip:+12345678901@1.2.3.4:5060</FinalDestinationURI>
+            <TelephoneNumbers>
+                <TelephoneNumber>2013452345</TelephoneNumber>
+                <TelephoneNumber>2013452346</TelephoneNumber>
+            </TelephoneNumbers>
+        </TnOptionGroup>
+    </TnOptionGroups>
+    <ErrorList/>
+</TnOptionOrder>
+</TnOptionOrderResponse>
+```
+
+</TabItem>
+</Tabs>
+
+## Where to next?
+Now that you have learned how to manage number inventory in your Bandwidth accounts, check out some of the other available actions in our guides:
+- [How to disconnect numbers](/docs/numbers/guides/disconnectNumbers)
