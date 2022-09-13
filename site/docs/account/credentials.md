@@ -18,7 +18,9 @@ An account admin is required to create API credentials that allow software devel
 
 1. Log into the [Bandwidth Dashboard](https://dashboard.bandwidth.com/).
 2. In the top navigation menu, select **Account** and click **Users**.
-3. Click **Add** and scroll down to the **User Information** section.
+3. Click **Add** and go to the **User Information** section.
+
+**User Information**
 4. Under **Administration level**, select whether the user should be a Basic User or an Account Admin.
     - Basic User: Can only see themselves
     - Account Admin: Can manage all users on shared accounts.
@@ -28,17 +30,54 @@ An account admin is required to create API credentials that allow software devel
 You can also check both boxes, but it should only be done in special cases and isn't recommended for most users. Although we don't force password resets for users with API-only or both access methods, we do encourage you to enforce your own automated password reset best practices.
 :::
 
-6. Enter a username, first and last name, email address, and work phone number. This is a critical step as it’ll be used for validation later.
+6. A **Username** will be automatically generated for you. Please remember to take note of this and you can change the username if you choose to do so.
+7. Enter a first and last name, email address, and work phone number. 
+    - The **email address** is critical along with the first name and last name as it’ll be used to validate your API user later on.
 
 :::info
 **The email used must be different from your existing dashboard account**. The username can't be changed once the user is created, so please make sure to double-check it before saving. The phone number must be typed in a 10-digit format. Each user will need to verify it using the same exact format.
 :::
 
-7. **Password:** As an account admin, you must set this user's password.
-8. **Roles:** Set the permissions for this account. From here, click to toggle the permissions your user will need to access for their job. User role definitions are available below.
-9. **Accounts:** If your company has multiple Bandwidth Dashboard accounts, you can grant access to those here.
-10. Click **Save Changes.**
-11. The user will receive an email containing their username and asking them to verify their account information. Once they verify it, they'll receive a second email containing their password. If you didn't create a password for the user, they'll be able to do so themselves.
+**Password**
+8. **Password:** As an account admin, you must set this user's password.
+
+**Roles**
+9. **Roles:** Set the permissions for this account. From here, click to toggle the permissions your user will need to access for their job. User role definitions are available below.
+    - **Billing Reports** -	Allows user to create and view billing reports.
+    - **Campaign Management**	- Allows user to manage campaign provisioning.
+    - **Configuration** -	Allows user to configure Sub-accounts and Locations.
+    - **Disconnect**	- Allows user to disconnect phone numbers.
+    - **E911 Management** -	Allows user to manage E911 settings (applicable for UC accounts).
+    - **External TNs** -	Allows user to access external TNs API and UI (applicable for Hosted Messaging).
+    - **HTTP Application Management** -	Allows user to manage HTTP applications in the UI (applicable for Messaging API accounts).
+    - **HTTP Voice** - Allows user to make HTTP Voice API calls.
+    - **Line Features** -	Allows user to manage phone number line features, such as CNAM and DL/DA.
+    - **Messaging Insights** -	Allows user to view messaging insights.
+    - **Numbers Insights** -	Allows user to view numbers insights.
+    - **Ordering** -	Allows user to search and order new phone numbers from Bandwidth's inventory.
+    - **Porting**	- Allows user to port phone numbers in and out of their Bandwidth account.
+    - **Reporting** -	Allows user to access available reports for their account and create or manage notifications. As long as the product for which the notification is being created is active on the account, an API user can set it up using this process.
+    - **SIP Credentials** -	Allows user to view and manage SIP credentials. 
+    - **TN Lookup** -	Allows user to access the TN Lookup API. This also requires TN Lookup to be enabled at the account level.
+    - **Voice Insights** - Allows user to view voice insights.
+
+**Accounts**
+10. **Accounts:** If your company has multiple Bandwidth Dashboard accounts, you can grant access to those here.
+
+11. Click **Save Changes.**
+
+## Activating an API User
+
+By default all API users that are created are inactive. To activate their account you must follow the steps below.
+
+1. Once an API user is created, an email will be sent to the email address specified during account creation.
+2. Click the link in the email to verify their account information.
+3. Verify the API user information including the first name, last name and work phone number,
+4. If a password was not created for this user, they'll receive a second email containing their password.
+
+:::note 
+You should be logged out from the dashboard when attempting to activate an API user.
+:::
 
 ## API Credentials
 
