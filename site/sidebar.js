@@ -60,8 +60,15 @@ module.exports = {
                         },
                         "numbers/csrLookupTool",
                         "numbers/hostingNumbers",
-                        "numbers/manageNumberFeatures",
-                        "numbers/searchNumbers",
+                        {
+                            type: "category",
+                            label: "How to manage your inventory",
+                            items: [
+                                "numbers/manage-inventory/searchYourNumbers",
+                                "numbers/manage-inventory/applyTnOptionsAndFeatures",
+                                "numbers/manage-inventory/setFailoverUri"
+                            ]
+                        },
                         "numbers/disconnectNumbers",
                         "numbers/lookupNumbers",
                         "numbers/downloadingReports",
@@ -146,7 +153,6 @@ module.exports = {
                     type: "category",
                     label: "Guides and Tutorials",
                     items: [
-                        "voice/quickStart",
                         "voice/outboundCallGuide",
                         "voice/mediaAndTTSGuide",
                         "voice/recordingGuide",
