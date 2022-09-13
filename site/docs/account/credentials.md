@@ -25,7 +25,8 @@ An account admin is required to create API credentials that allow software devel
 4. Under **Administration level**, select whether the user should be a Basic User or an Account Admin.
     - Basic User: Can only see themselves
     - Account Admin: Can manage all users on shared accounts.
-5. Under **User access methods:** choose how the user should be able to use their credentials. Select **Allow user credentials to authenticate API** to allow this user to use their credentials to authenticate API calls. Since an API user is expected to perform automated processes, they won't be required to reset their password but also won't be able to use these credentials to log into the Bandwidth Dashboard. To address this, many developers choose to have one set of credentials to access the Bandwidth Dashboard and another to validate API calls.
+5. Under **User access methods:** choose how the user should be able to use their credentials. 
+    - Select **Allow user credentials to authenticate API** to allow this user to use their credentials to authenticate API calls. Since an API user is expected to perform automated processes, they won't be required to reset their password but also won't be able to use these credentials to log into the Bandwidth Dashboard. To address this, many developers choose to have one set of credentials to access the Bandwidth Dashboard and another to validate API calls.
 
 :::note 
 You can also check both boxes, but it should only be done in special cases and isn't recommended for most users. Although we don't force password resets for users with API-only or both access methods, we do encourage you to enforce your own automated password reset best practices.
@@ -33,7 +34,8 @@ You can also check both boxes, but it should only be done in special cases and i
 
 6. A **Username** will be automatically generated for you. Please remember to take note of this and you can change the username if you choose to do so.
 7. Enter a first and last name, email address, and work phone number. 
-    - The **email address** is critical along with the first name and last name as it’ll be used to validate your API user later on.
+    - The **email address** is critical as this is where the activation email will be sent.
+    - The **first name**, **last name** and **work phone number** will be used to validate your API user from the activation email.
 
 :::info
 **The email used must be different from your existing dashboard account**. The username can't be changed once the user is created, so please make sure to double-check it before saving. The phone number must be typed in a 10-digit format. Each user will need to verify it using the same exact format.
@@ -76,7 +78,7 @@ By default all API users that are created are inactive. To activate their accoun
 
 1. Once an API user is created, an email will be sent to the email address specified during account creation.
 2. Click the link in the email to verify their account information.
-3. Verify the API user information including the first name, last name and work phone number,
+3. Verify the API user information including the first name, last name and work phone number.
 4. If a password was not created for this user, they'll receive a second email containing their password.
 
 :::note 
