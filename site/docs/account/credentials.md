@@ -20,7 +20,8 @@ An account admin is required to create API credentials that allow software devel
 2. In the top navigation menu, select **Account** and click **Users**.
 3. Click **Add** and go to the **User Information** section.
 
-**User Information**
+### User Information
+
 4. Under **Administration level**, select whether the user should be a Basic User or an Account Admin.
     - Basic User: Can only see themselves
     - Account Admin: Can manage all users on shared accounts.
@@ -38,10 +39,12 @@ You can also check both boxes, but it should only be done in special cases and i
 **The email used must be different from your existing dashboard account**. The username can't be changed once the user is created, so please make sure to double-check it before saving. The phone number must be typed in a 10-digit format. Each user will need to verify it using the same exact format.
 :::
 
-**Password**
+### Password
+
 8. **Password:** As an account admin, you must set this user's password.
 
-**Roles**
+### Roles
+
 9. **Roles:** Set the permissions for this account. From here, click to toggle the permissions your user will need to access for their job. User role definitions are available below.
     - **Billing Reports** -	Allows user to create and view billing reports.
     - **Campaign Management**	- Allows user to manage campaign provisioning.
@@ -61,7 +64,8 @@ You can also check both boxes, but it should only be done in special cases and i
     - **TN Lookup** -	Allows user to access the TN Lookup API. This also requires TN Lookup to be enabled at the account level.
     - **Voice Insights** - Allows user to view voice insights.
 
-**Accounts**
+### Accounts
+
 10. **Accounts:** If your company has multiple Bandwidth Dashboard accounts, you can grant access to those here.
 
 11. Click **Save Changes.**
