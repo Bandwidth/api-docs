@@ -8,8 +8,48 @@ on:
       - published
 
 jobs:
+  cypress:
+    name: Cypress Tests
+    runs-on: ${{ matrix.os }}
+    container:
+      image: cypress/browsers:node16.13.2-chrome97-ff96
+      options: --user 1001 --shm-size=2g     
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        browser: [chrome]
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+      - run: node -v   
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress run 
+        uses: cypress-io/github-action@v4.2.0
+        timeout-minutes: 40
+        with:
+          record: true
+          browser: ${{ matrix.browser }}
+          start: npm start
+          wait-on: http://localhost:3000
+          wait-on-timeout: 180
+          config-file: ./cypress.config.ts          
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_PROJECT_ID: ${{ secrets.PROJECT_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # overwrite commit message sent to Dashboard
+          COMMIT_INFO_MESSAGE: ${{github.event.pull_request.title}}
+          # re-enable PR comment bot
+          COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}    
   publish:
     name: Publish Docsite
+    needs: cypress    
     runs-on: ubuntu-latest
     if: ${{ !github.event.release.prerelease && github.event.release.target_commitish == 'main' }}
     steps:
@@ -22,7 +62,7 @@ jobs:
     - name: Generate Static Site
       run: |
           cd site
-          yarn install --frozen-lockfile
+          yarn install --pure-lockfile
           npm run build
 
     - name: Configure AWS Credentials
@@ -49,3 +89,41 @@ jobs:
     - name: Invalidate Cloudfront Cache
       run: 
         aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID}} --paths "/" "/*"
+
+  cypress_post_test:
+    runs-on: ${{ matrix.os }}
+    needs: [cypress, publish]
+    container:
+      image: cypress/browsers:node16.13.2-chrome97-ff96
+      options: --user 1001 --shm-size=2g     
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        browser: [chrome, firefox]   
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+      - run: node -v   
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress Post Deployment Test
+        timeout-minutes: 40
+        with:
+          record: true
+          browser: ${{ matrix.browser }}
+          config-file: ./cypress.config.ts
+          tag: production          
+        env:
+          CYPRESS_host: https://dev.bandwidth.com/
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_PROJECT_ID: ${{ secrets.PROJECT_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # overwrite commit message sent to Dashboard
+          COMMIT_INFO_MESSAGE: ${{github.event.pull_request.title}}
+          # re-enable PR comment bot
+          COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}
