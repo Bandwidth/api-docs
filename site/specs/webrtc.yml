@@ -434,10 +434,33 @@ paths:
         - $ref: '#/components/parameters/participantId'
         - $ref: '#/components/parameters/dialogId'
       requestBody:
-        $ref: '#/components/requestBodies/createDialogRequest'
+        $ref: '#/components/requestBodies/updateDialogRequest'
       responses:
         '200':
           $ref: '#/components/responses/createDialogResponse'
+        '400':
+          $ref: '#/components/responses/webrtcBadRequestError'
+        '401':
+          $ref: '#/components/responses/webrtcUnauthorizedError'
+        '403':
+          $ref: '#/components/responses/webrtcForbiddenError'
+        '500':
+          $ref: '#/components/responses/webrtcInternalServerError'
+    delete:
+      tags:
+        - Dialogs
+      summary: Remove a dialog
+      description: >-
+        Remove a Dialog.  Typically this involves cancellation of any
+        communication related to that Dialog
+      operationId: deleteDialog
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/participantId'
+        - $ref: '#/components/parameters/dialogId'
+      responses:
+        '204':
+          description: No Content
         '400':
           $ref: '#/components/responses/webrtcBadRequestError'
         '401':
@@ -2689,6 +2712,44 @@ components:
           example: participant1
         deviceApiVersion:
           $ref: '#/components/schemas/deviceApiVersionEnum'
+    createDialogRequest:
+      oneOf:
+        - $ref: '#/components/schemas/sipCreateDialogRequestBody'
+        - $ref: '#/components/schemas/pushCreateDialogRequestBody'
+      discriminator:
+        propertyName: dialogType
+        mapping:
+          SIP: '#/components/schemas/sipDialogRequestBody'
+          PUSH: '#/components/schemas/pushDialogRequestBody'
+    createDialogResponse:
+      type: object
+      description: a Dialog is used for exchanging user-level state information
+      properties:
+        dialogId:
+          type: string
+          description: Unique id of the participant.
+          readOnly: true
+          example: 320e2af6-13ec-498d-8b51-daba52c37853
+      oneOf:
+        - $ref: '#/components/schemas/sipCreateDialogResponseBody'
+        - $ref: '#/components/schemas/pushCreateDialogResponseBody'
+      discriminator:
+        propertyName: dialogType
+        mapping:
+          SIP: '#/components/schemas/sipDialogRequestBody'
+          PUSH: '#/components/schemas/pushDialogRequestBody'
+    updateDialogRequest:
+      oneOf:
+        - $ref: '#/components/schemas/sipUpdateDialogRequestBody'
+        - $ref: '#/components/schemas/pushUpdateDialogRequestBody'
+      discriminator:
+        propertyName: dialogType
+        mapping:
+          SIP: '#/components/schemas/sipDialogRequestBody'
+          PUSH: '#/components/schemas/pushDialogUpdateRequestData'
+    updateDialogResponse:
+      type: string
+      example: OK
     sipDialogStateData:
       type: object
       description: The state data associated with a Dialog - dependent on the dialogType
@@ -2712,31 +2773,13 @@ components:
           type: string
           description: a tag associated with the source
           example: Priority customer
-    dialogEventData:
-      type: object
-      description: Information about the event that triggered the state change
-      properties:
-        eventReason:
-          type: string
-          description: A summary of why the event happened
-          example: FAR END BUSY
-        eventErrorReason:
-          type: string
-          description: If the event was an error, a text description of the error
-          example: Destination Server unavailable
-        eventErrorCode:
-          type: number
-          description: >-
-            An error number to help classifiy the error condition - retain this
-            for support
-          example: 1022
     pushDialogStateData:
       type: string
       description: An indication of whether the phone is registered
       enum:
         - REGISTERED
         - UNREGISTERED
-    sipDialogRequestBody:
+    sipCreateDialogRequestBody:
       type: object
       description: Create a SIP Dialog owned by a Participant.
       required:
@@ -2752,7 +2795,7 @@ components:
             User defined tag to associate with the dialog.  Must not contain
             PII.
           example: sip-patron-dialog
-    pushDialogRequestBody:
+    pushCreateDialogRequestBody:
       type: object
       description: Create a PUSH Dialog owned by a Participant.  Not yet implemented
       required:
@@ -2760,21 +2803,53 @@ components:
       properties:
         dialogType:
           $ref: '#/components/schemas/dialogType'
-    createDialogResponse:
+        dialogStateData:
+          $ref: '#/components/schemas/sipDialogStateData'
+        tag:
+          type: string
+          description: >-
+            User defined tag to associate with the dialog.  Must not contain
+            PII.
+          example: sip-patron-dialog
+    sipCreateDialogResponseBody:
       type: object
-      description: Response generated when a Dialog is created.
+      description: Respond to an Update of a SIP Dialog owned by a Participant.
       properties:
-        dialog:
-          $ref: '#/components/schemas/dialog'
-    createDialogRequest:
-      oneOf:
-        - $ref: '#/components/schemas/sipDialogRequestBody'
-        - $ref: '#/components/schemas/pushDialogRequestBody'
-      discriminator:
-        propertyName: dialogType
-        mapping:
-          SIP: '#/components/schemas/sipDialogRequestBody'
-          PUSH: '#/components/schemas/pushDialogRequestBody'
+        dialogStateName:
+          type: string
+          description: the name of the state that the Dialog has entered
+          example: ANSWERED
+        tag:
+          type: string
+          description: >-
+            User defined tag to associate with the dialog.  Must not contain
+            PII.
+          example: sip-patron-dialog
+    pushCreateDialogResponseBody:
+      type: string
+      example: OK
+    sipUpdateDialogRequestBody:
+      type: object
+      description: Update a SIP Dialog owned by a Participant.
+      properties:
+        dialogStateName:
+          type: string
+          description: the name of the state that the Dialog has entered
+          example: ANSWERED
+        tag:
+          type: string
+          description: >-
+            User defined tag to associate with the dialog.  Must not contain
+            PII.
+          example: sip-patron-dialog
+    pushUpdateDialogRequestBody:
+      type: object
+      description: Update a PUSH Dialog owned by a Participant.  Not yet implemented
+      required:
+        - dialogType
+      properties:
+        dialogType:
+          $ref: '#/components/schemas/pushDialogStateData'
     eventBody:
       oneOf:
         - $ref: '#/components/schemas/dialogEventBody'
@@ -2821,6 +2896,24 @@ components:
           example: hello-world-browser
       discriminator:
         propertyName: event
+    dialogEventData:
+      type: object
+      description: Information about the event that triggered the state change
+      properties:
+        eventReason:
+          type: string
+          description: A summary of why the event happened
+          example: FAR END BUSY
+        eventErrorReason:
+          type: string
+          description: If the event was an error, a text description of the error
+          example: Destination Server unavailable
+        eventErrorCode:
+          type: number
+          description: >-
+            An error number to help classifiy the error condition - retain this
+            for support
+          example: 1022
     dialogEventBody:
       allOf:
         - $ref: '#/components/schemas/baseEventBody'
@@ -2944,6 +3037,8 @@ components:
           schema:
             $ref: '#/components/schemas/createParticipantResponse'
     createDialogResponse:
+      description: OK
+    updateDialogResponse:
       description: OK
       content:
         application/json:
@@ -3069,6 +3164,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/createDialogRequest'
+    updateDialogRequest:
+      description: Body for Dialog creation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/updateDialogRequest'
     createSessionRequest:
       description: Create session request body.
       content:
