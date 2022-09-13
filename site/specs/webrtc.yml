@@ -221,7 +221,6 @@ paths:
             rescue APIException => e
                 puts e.response_code
             end
-  #
   /accounts/{accountId}/participants/{participantId}/dialogs:
     post:
       tags:
@@ -420,6 +419,33 @@ paths:
             rescue APIException => e
                 puts e.response_code
             end
+  /accounts/{accountId}/participants/{participantId}/dialogs/{dialogId}:
+    patch:
+      tags:
+        - Dialogs
+      summary: Update the state of a Dialog
+      description: >-
+        Update the State for this participant.   Typically this only involves
+        updating  the named state of the Dialog, although there are cases where
+        the Dialog state data can be updated.
+      operationId: updateDialogDialog
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/participantId'
+        - $ref: '#/components/parameters/dialogId'
+      requestBody:
+        $ref: '#/components/requestBodies/createDialogRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/createDialogResponse'
+        '400':
+          $ref: '#/components/responses/webrtcBadRequestError'
+        '401':
+          $ref: '#/components/responses/webrtcUnauthorizedError'
+        '403':
+          $ref: '#/components/responses/webrtcForbiddenError'
+        '500':
+          $ref: '#/components/responses/webrtcInternalServerError'
   /accounts/{accountId}/participants/{participantId}:
     get:
       tags:
@@ -2540,6 +2566,15 @@ components:
       enum:
         - SIP
         - PUSH
+    dialogStateData:
+      oneOf:
+        - $ref: '#/components/schemas/sipDialogStateData'
+        - $ref: '#/components/schemas/pushDialogStateData'
+      discriminator:
+        propertyName: dialogType
+        mapping:
+          SIP: '#/components/schemas/sipDialogRequestBody'
+          PUSH: '#/components/schemas/pushDialogRequestBody'
     deviceApiVersionEnum:
       type: string
       description: Optional field to define the device api version of this participant.
@@ -2604,6 +2639,19 @@ components:
           example: participant1
         deviceApiVersion:
           $ref: '#/components/schemas/deviceApiVersionEnum'
+    dialog:
+      type: object
+      description: a Dialog is used for exchanging user-level state information
+      properties:
+        dialogId:
+          type: string
+          description: Unique id of the participant.
+          readOnly: true
+          example: 320e2af6-13ec-498d-8b51-daba52c37853
+        dialogType:
+          $ref: '#/components/schemas/dialogType'
+        dialogStateData:
+          $ref: '#/components/schemas/dialogStateData'
     createParticipantResponse:
       type: object
       description: Response generated when a Participant is created.
@@ -2682,6 +2730,12 @@ components:
             An error number to help classifiy the error condition - retain this
             for support
           example: 1022
+    pushDialogStateData:
+      type: string
+      description: An indication of whether the phone is registered
+      enum:
+        - REGISTERED
+        - UNREGISTERED
     sipDialogRequestBody:
       type: object
       description: Create a SIP Dialog owned by a Participant.
@@ -2711,14 +2765,7 @@ components:
       description: Response generated when a Dialog is created.
       properties:
         dialog:
-          $ref: '#/components/schemas/participant'
-        token:
-          type: string
-          example: >-
-            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyfQ.L8i6g3PfcHlioHCCPURC9pmXT7gdJpx3kOoyAfNUwCc
-          description: >-
-            Auth token for the returned participant.  This should be passed to
-            the participant so that they can connect to the platform.
+          $ref: '#/components/schemas/dialog'
     createDialogRequest:
       oneOf:
         - $ref: '#/components/schemas/sipDialogRequestBody'
@@ -2798,8 +2845,7 @@ components:
           description: the name of the state that the Dialog has entered
           example: ANSWERED
         dialogStateData:
-          oneOf:
-            - $ref: '#/components/schemas/sipDialogStateData'
+          $ref: '#/components/schemas/dialogStateData'
           discriminator:
             propertyName: dialogType
             mapping:
@@ -2997,6 +3043,14 @@ components:
       name: participantId
       in: path
       description: Participant ID
+      required: true
+      schema:
+        type: string
+      example: 62e0ecb9-0b1b-5115-aae4-4f36123d6bb1
+    dialogId:
+      name: dialogId
+      in: path
+      description: The ID of the Dialog assigned to the Participant
       required: true
       schema:
         type: string
