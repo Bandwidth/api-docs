@@ -1,7 +1,6 @@
 import React from 'react';
 import Layout from '@theme/Layout';
 import LandingPage from '@site/src/components/LandingPage.js';
-import { Player } from '@lottiefiles/react-lottie-player';
 
 const sdkList = [
     {
@@ -39,8 +38,8 @@ const sdkList = [
 const props = {
     itemList: sdkList,
     Svg: require('@site/static/img/landing-sdks.svg').default,
-    h1Text: 'Bandwidth SDKs',
-    h2Text: 'Build with Bandwidth'
+    h1Text: `Bandwidth SDKs`,
+    h2Text: `Build with Bandwidth`
 }
 
 export default function Sdks() {
