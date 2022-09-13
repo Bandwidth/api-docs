@@ -10,7 +10,7 @@ export default function ApiReferencePage() {
           title={`DASH Notifications API Reference`}
           description="Authentication and Notifications. Everything you'll need to start working with our DASH Notifications API."
           keywords="Bandwidth,API,DASH,Notification">
-            <ApiReference spec={siteConfig.customFields.dashNotificationsSpec} color={siteConfig.customFields.emergencyOrange} />
+            <ApiReference spec={siteConfig.customFields.dashNotificationsSpec} color={siteConfig.customFields.emergencyOrange} downloadDefinitionUrl="https://github.com/Bandwidth/api-docs/blob/main/site/specs/dashNotifications.json"/>
         </Layout>
     );
 }

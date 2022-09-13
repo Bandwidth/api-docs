@@ -10,7 +10,7 @@ export default function ApiReferencePage() {
           title={`Multi-Factor Authentication API Reference`}
           description="Voice &amp; Messaging MFA and MFA Verification. Everything you'll need to start working with our MFA API."
           keywords="Bandwidth,API,MFA,2FA,Authentication">
-            <ApiReference spec={siteConfig.customFields.multiFactorAuthSpec} color={siteConfig.customFields.mfaGreen} />
+            <ApiReference spec={siteConfig.customFields.multiFactorAuthSpec} color={siteConfig.customFields.mfaGreen} downloadDefinitionUrl="https://github.com/Bandwidth/api-docs/blob/main/site/specs/multi-factor-auth.yml"/>
         </Layout>
     );
 }
