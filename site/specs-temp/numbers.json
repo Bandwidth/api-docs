@@ -19913,6 +19913,45 @@
           }
         }
       }
+    },
+    "/accounts/{accountId}/products/{productName}/tntotals": {
+      "get": {
+        "tags": [
+          "/accounts"
+        ],
+        "description": "Get Product Tn Totals",
+        "operationId": "GetProductTnTotals",
+        "summary": "Get Product Tn Totals",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AccountIdPathParam"
+          },
+          {
+            "name": "productName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "Origination",
+                "Messaging",
+                "TollFree"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductTnHistoryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -19923,6 +19962,97 @@
       }
     },
     "schemas": {
+      "AbstractOriginationSmsTnHistory": {
+        "type": "object",
+        "properties": {
+          "NPANXXDetailList": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "title": "NPANXXDetail",
+              "properties": {
+                "TerminationHost": {
+                  "type": "object",
+                  "properties": {
+                    "NPANXX": {
+                      "type": "string"
+                    },
+                    "Tier": {
+                      "type": "integer"
+                    },
+                    "Count": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "OriginationTnHistory": {
+        "type": "object",
+        "properties": {
+          "Origination": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AbstractOriginationSmsTnHistory"
+              }
+            ]
+          }
+        }
+      },
+      "SmsTnHistory": {
+        "type": "object",
+        "properties": {
+          "Sms": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AbstractOriginationSmsTnHistory"
+              }
+            ]
+          }
+        }
+      },
+      "TollfreeTnHistory": {
+        "type": "object",
+        "properties": {
+          "Tollfree": {
+            "type": "object",
+            "properties": {
+              "Count": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      },
+      "ProductTnHistoryResponse": {
+        "type": "object",
+        "properties": {
+          "ProductTNDetailsResponse": {
+            "$ref": "#/components/schemas/ProductTnReportWrapper"
+          }
+        }
+      },
+      "ProductTnReportWrapper": {
+        "type": "object",
+        "properties": {
+          "ProductTNDetails": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/OriginationTnHistory"
+              },
+              {
+                "$ref": "#/components/schemas/SmsTnHistory"
+              },
+              {
+                "$ref": "#/components/schemas/TollfreeTnHistory"
+              }
+            ]
+          }
+        }
+      },
       "UcTrunkingPremiseSettings": {
         "type": "object",
         "properties": {
