@@ -92,7 +92,7 @@ module.exports = {
         },
         {
             type: "category",
-            label: "Voice",
+            label: "Voice API",
             items: [
                 "voice/about",
                 "voice/quickStart",
@@ -129,6 +129,23 @@ module.exports = {
                 },
                 {
                     type: "category",
+                    label: "Guides and Tutorials",
+                    items: [
+                        "voice/outboundCallGuide",
+                        "voice/mediaAndTTSGuide",
+                        "voice/recordingGuide",
+                        "voice/interactiveVoiceResponseGuide",
+                        "voice/machineDetectionGuide",
+                        "voice/conferenceGuide",
+                        "voice/modifyInProgressCallGuide",
+                        "voice/transferGuide",
+                        "voice/callInformationGuide",
+                        "voice/callQueueingGuide",
+                        "voice/migrationGuide",
+                    ],
+                },
+                {
+                    type: "category",
                     label: "BXML",
                     items: [
                         "voice/bxml/about",
@@ -156,23 +173,6 @@ module.exports = {
                         "voice/bxml/tag",
                     ],
                 },
-                {
-                    type: "category",
-                    label: "Guides and Tutorials",
-                    items: [
-                        "voice/outboundCallGuide",
-                        "voice/mediaAndTTSGuide",
-                        "voice/recordingGuide",
-                        "voice/interactiveVoiceResponseGuide",
-                        "voice/machineDetectionGuide",
-                        "voice/conferenceGuide",
-                        "voice/modifyInProgressCallGuide",
-                        "voice/transferGuide",
-                        "voice/callInformationGuide",
-                        "voice/callQueueingGuide",
-                        "voice/migrationGuide",
-                    ],
-                },
                 "voice/rateLimits",
                 "voice/errors",
                 {
@@ -184,7 +184,7 @@ module.exports = {
         },
         {
             type: "category",
-            label: "Messaging",
+            label: "Messaging API",
             items: [
                 "messaging/about",
                 "messaging/quickStart",

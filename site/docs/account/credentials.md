@@ -104,6 +104,6 @@ Usernames and Passwords are **case sensitive**!
 ## Where to next?
 
 Now that you have successfully created API user credentials, start using them to build with Bandwidth!
-- [Search and order phone numbers](/docs/numbers/guides/searchingForNumbers/)
+- Search and order phone numbers ([API](/docs/numbers/guides/searchingForNumbers/) or [Dashboard](https://support.bandwidth.com/hc/en-us/articles/360011094753-How-do-I-search-and-order-phone-numbers))
 - [Voice Quick Start Guide](/docs/voice/quickStart/)
 - [Messaging Quick Start Guide](/docs/messaging/quickStart/)
