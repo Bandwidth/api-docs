@@ -211,7 +211,7 @@ context('Global Docs and API Ref', () => {
   it('visits /apis/global/ directly', () => {
 
     cy.visit('/apis/global/', {
-      timeout: 120000, // increase total time for the visit to resolve
+      timeout: 50000, // increase total time for the visit to resolve
       onBeforeLoad (contentWindow) {
         // contentWindow is the remote page's window object
         expect(typeof contentWindow === 'object').to.be.true
