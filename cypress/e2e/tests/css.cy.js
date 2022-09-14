@@ -10,13 +10,12 @@ describe('Lightmode/Darkmode', () => {
       })
     })
 
-    describe('Main font', () => {
-        it('Should verify that the correct font it being used in the Navbar', () => {
-          cy.visit('/')
-            .get('a.navbar__link')
-            .contains('US & Canada APIs')
-            .should('have.css', 'font-family')
-            .and('match', /Overpass Bold/)
-          })
-        })
- 
+describe('Main font', () => {
+    it('Should verify that the correct font it being used in the Navbar', () => {
+      cy.visit('/')
+        .get('a.navbar__link')
+        .contains('US & Canada APIs')
+        .should('have.css', 'font-family')
+        .and('match', /Overpass Bold/)
+      })
+    })
