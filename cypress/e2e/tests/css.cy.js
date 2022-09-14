@@ -19,4 +19,3 @@ describe('Lightmode/Darkmode', () => {
             .and('match', /Overpass Bold/)
           })
         })
-        

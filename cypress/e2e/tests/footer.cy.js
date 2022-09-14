@@ -218,4 +218,3 @@ describe('Call to Action', () => {
       .should('have.attr', 'href', 'https://www.bandwidth.com/contact/')
     })
   })
- 
