@@ -45,13 +45,31 @@ module.exports = {
                     label: "Guides and Tutorials",
                     items: [
                         "numbers/searchingAndOrderingNumbers",
-                        "numbers/portingNumbers",
+                        {
+                            type: "category",
+                            label: "Porting numbers",
+                            items: [
+                                "numbers/porting/lnpChecker",
+                                "numbers/porting/portingNumbers",
+                                "numbers/porting/loaUpload",
+                                "numbers/porting/updatePortin",
+                                "numbers/porting/createBulkPortins",
+                                "numbers/porting/updateBulkPortins",
+                                "numbers/porting/submitBulkPortins",
+                            ],
+                        },
                         "numbers/csrLookupTool",
                         "numbers/hostingNumbers",
-                        "numbers/manageNumberFeatures",
-                        "numbers/searchNumbers",
+                        {
+                            type: "category",
+                            label: "How to manage your inventory",
+                            items: [
+                                "numbers/manage-inventory/searchYourNumbers",
+                                "numbers/manage-inventory/applyTnOptionsAndFeatures",
+                                "numbers/manage-inventory/setFailoverUri"
+                            ]
+                        },
                         "numbers/disconnectNumbers",
-                        "numbers/bulkportins",
                         "numbers/lookupNumbers",
                         "numbers/downloadingReports",
                         "numbers/lsrOrders",
@@ -135,7 +153,6 @@ module.exports = {
                     type: "category",
                     label: "Guides and Tutorials",
                     items: [
-                        "voice/quickStart",
                         "voice/outboundCallGuide",
                         "voice/mediaAndTTSGuide",
                         "voice/recordingGuide",
