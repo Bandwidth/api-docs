@@ -2588,22 +2588,6 @@ components:
       example: SIP
       enum:
         - SIP
-        - PUSH
-    dialogStateData:
-      description: >
-        The dialogStateData contains the infromation that represents the current
-        state of the dialog. Depending on the characteristics and state of the
-        Dialog this information may be missing,  current, out of date, or
-        idempotent.  Please see the TExt documentatoin about the use of Dialogs
-        for further information.
-      oneOf:
-        - $ref: '#/components/schemas/sipDialogStateData'
-        - $ref: '#/components/schemas/pushDialogStateData'
-      discriminator:
-        propertyName: dialogType
-        mapping:
-          SIP: '#/components/schemas/sipDialogRequestBody'
-          PUSH: '#/components/schemas/pushDialogRequestBody'
     deviceApiVersionEnum:
       type: string
       description: Optional field to define the device api version of this participant.
@@ -2668,19 +2652,6 @@ components:
           example: participant1
         deviceApiVersion:
           $ref: '#/components/schemas/deviceApiVersionEnum'
-    dialog:
-      type: object
-      description: a Dialog is used for exchanging user-level state information
-      properties:
-        dialogId:
-          type: string
-          description: Unique id of the participant.
-          readOnly: true
-          example: 320e2af6-13ec-498d-8b51-daba52c37853
-        dialogType:
-          $ref: '#/components/schemas/dialogType'
-        dialogStateData:
-          $ref: '#/components/schemas/dialogStateData'
     createParticipantResponse:
       type: object
       description: Response generated when a Participant is created.
@@ -2726,8 +2697,7 @@ components:
           $ref: '#/components/schemas/dialogType'
         dialogStateData:
           oneOf:
-            - $ref: '#/components/schemas/sipDialogStateData'
-            - $ref: '#/components/schemas/pushDialogStateData'
+            - $ref: '#/components/schemas/sipDialogRequestStateData'
     createDialogResponse:
       type: object
       description: a Dialog is used for exchanging user-level state information
@@ -2739,22 +2709,46 @@ components:
           example: 320e2af6-13ec-498d-8b51-daba52c37853
         dialogStateData:
           oneOf:
-            - $ref: '#/components/schemas/sipCreateDialogResponseBody'
-            - $ref: '#/components/schemas/pushCreateDialogResponseBody'
+            - $ref: '#/components/schemas/sipDialogResponseStateData'
     updateDialogRequest:
       oneOf:
         - $ref: '#/components/schemas/sipUpdateDialogRequestBody'
-        - $ref: '#/components/schemas/pushUpdateDialogRequestBody'
-    updateDialogResponse:
-      description: OK
-    sipDialogStateData:
+    sipDialogRequestStateData:
       type: object
       description: The state data associated with a Dialog - dependent on the dialogType
       required:
         - to
         - from
       properties:
-        stateName:
+        to:
+          type: string
+          description: the destination telephone number in e.164 format
+          example: '+16136211234'
+        from:
+          type: string
+          description: >-
+            the caller's telephone number in e.164 format, or the string UNKNOWN
+            or RESTRICTED
+          example: '+16136211234'
+        userToUser:
+          type: string
+          description: >
+            Information that will be handed to the SIP client to be passed
+            towards the far end user. The formatting of the contents is
+            completely dependent on the ability of the  end system to parse and
+            understand the contents
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c;encoding=jwt
+    sipDialogResponseStateData:
+      type: object
+      description: >
+        The dialogStateData contains the information that represents the current
+        state of the dialog.  Depending on the characteristics and state of the
+        Dialog this information may be missing,  current, out of date, or
+        idempotent.  Please see the Text documentation about the use of Dialogs
+        for further information.
+      properties:
+        state:
           type: string
           description: the name of the state that the Dialog has entered
           example: ANSWERED
@@ -2766,57 +2760,28 @@ components:
             - TERMINATED
         to:
           type: string
-          description: the destination telephone number
+          description: the destination telephone number in e.164 format
           example: '+16136211234'
-        toTag:
-          type: string
-          description: a tag associated with the destination
-          example: Fraud Queue
         from:
           type: string
-          description: the caller's telephone number, or the string UNKNOWN or RESTRICTED
-          example: '+16136211234'
-        fromTag:
-          type: string
-          description: a tag associated with the source
-          example: Priority customer
-    pushDialogStateData:
-      type: object
-      description: An indication of whether the phone is registered
-      properties:
-        stateName:
-          type: string
-          description: the state that the Push dialog can assume
-          example: REGISTERED
-          enum:
-            - REGISTERED
-            - UNREGISTERED
-        emei:
-          type: string
-          description: the SIP Mobile if registered
-          example: sadfkhasdfkhsa
-    sipCreateDialogResponseBody:
-      type: object
-      description: Respond to an Update of a SIP Dialog owned by a Participant.
-      properties:
-        dialogStateName:
-          type: string
-          description: the name of the state that the Dialog has entered
-          example: ANSWERED
-        tag:
-          type: string
           description: >-
-            User defined tag to associate with the dialog.  Must not contain
-            PII.
-          example: sip-patron-dialog
-    pushCreateDialogResponseBody:
-      type: string
-      example: OK
+            the caller's telephone number in e.164 format, or the string UNKNOWN
+            or RESTRICTED
+          example: '+16136211234'
+        userToUser:
+          type: string
+          description: >
+            Information that will be handed to the SIP client to be passed
+            towards the far end user. The formatting of the contents is
+            completely dependent on the ability of the  end system to parse and
+            understand the contents
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c;encoding=jwt
     sipUpdateDialogRequestBody:
       type: object
       description: Update a SIP Dialog owned by a Participant.
       properties:
-        dialogStateName:
+        state:
           type: string
           description: the name of the state that the Dialog has entered
           example: ANSWERED
@@ -2826,17 +2791,8 @@ components:
             User defined tag to associate with the dialog.  Must not contain
             PII.
           example: sip-patron-dialog
-    pushUpdateDialogRequestBody:
-      type: object
-      description: Update a PUSH Dialog owned by a Participant.  Not yet implemented
-      required:
-        - dialogType
-      properties:
-        dialogType:
-          $ref: '#/components/schemas/pushDialogStateData'
     eventBody:
       oneOf:
-        - $ref: '#/components/schemas/dialogEventBody'
         - $ref: '#/components/schemas/sipDialogEventBody'
         - $ref: '#/components/schemas/onLeaveEventBody'
         - $ref: '#/components/schemas/onDisconnectEventBody'
@@ -2844,7 +2800,6 @@ components:
       discriminator:
         propertyName: event
         mapping:
-          onDialogStateChange: '#/components/schemas/dialogEventBody'
           onSipDialogStateChange: '#/components/schemas/sipDialogEventBody'
           onLeave: '#/components/schemas/onLeaveEventBody'
           onDisconnect: '#/components/schemas/onDisconnectEventBody'
@@ -2862,7 +2817,6 @@ components:
             that will be present
           example: onDialogStateChange
           enum:
-            - onDialogStateChange
             - onSipDialogStateChange
             - onLeave
             - onDisconnect
@@ -2910,10 +2864,6 @@ components:
             An error number to help classifiy the error condition - retain this
             for support
           example: 1022
-    dialogEventBody:
-      allOf:
-        - $ref: '#/components/schemas/baseEventBody'
-        - $ref: '#/components/schemas/dialogEventContents'
     sipDialogEventBody:
       allOf:
         - $ref: '#/components/schemas/baseEventBody'
@@ -2927,59 +2877,11 @@ components:
     onConnectEventBody:
       allOf:
         - $ref: '#/components/schemas/baseEventBody'
-    dialogEventContents:
-      type: object
-      description: The content of a Dialog Notification.
-      properties:
-        dialogType:
-          $ref: '#/components/schemas/dialogType'
-        dialogStateData:
-          $ref: '#/components/schemas/dialogStateData'
-        dialogEventData:
-          $ref: '#/components/schemas/dialogEventData'
     sipDialogEventContents:
       type: object
       properties:
         dialogStateData:
-          type: object
-          description: >
-            The dialogStateData contains the information that represents the
-            current state of the dialog.  Depending on the characteristics and
-            state of the Dialog this information may be missing,  current, out
-            of date, or idempotent.  Please see the Text documentatoin about the
-            use of Dialogs for further information.
-          required:
-            - to
-            - from
-          properties:
-            stateName:
-              type: string
-              description: the name of the state that the Dialog has entered
-              example: ANSWERED
-              enum:
-                - NEW
-                - CALLING
-                - ANSWERED
-                - RINGING
-                - TERMINATED
-            to:
-              type: string
-              description: the destination telephone number
-              example: '+16136211234'
-            toTag:
-              type: string
-              description: a tag associated with the destination
-              example: Fraud Queue
-            from:
-              type: string
-              description: >-
-                the caller's telephone number, or the string UNKNOWN or
-                RESTRICTED
-              example: '+16136211234'
-            fromTag:
-              type: string
-              description: a tag associated with the source
-              example: Priority customer
+          $ref: '#/components/schemas/sipDialogResponseStateData'
         dialogEventData:
           $ref: '#/components/schemas/dialogEventData'
     subscriptions:
