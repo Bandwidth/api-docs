@@ -213,8 +213,8 @@ describe('LinkedIn, Twitter, Youtube, Github', () => {
 describe('Call to Action', () => {
   it('Should verify that the call to action link exists', () => {
     cy.get('[class*="callToAction"]')
+      .siblings('div')
       .children('a')
       .should('have.attr', 'href', 'https://www.bandwidth.com/contact/')
     })
   })
- 

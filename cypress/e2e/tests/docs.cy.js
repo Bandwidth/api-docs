@@ -397,5 +397,3 @@ describe('Edit This Page Link', () => {
       .should('have.attr', 'href', 'https://github.com/Bandwidth/api-docs/edit/main/site/docs/intro.mdx')
     })
   })
-
-
