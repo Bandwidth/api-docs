@@ -13,7 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     container:
       image: cypress/browsers:node16.13.2-chrome97-ff96
-      options: --user 1001 --shm-size=2g     
+      options: --user 1001 --shm-size=2g
     strategy:
       fail-fast: false
       matrix:
@@ -28,18 +28,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - run: cd site
-
-      - name: Cypress run 
+      - name: Cypress run
         uses: cypress-io/github-action@v4.2.0
         timeout-minutes: 40
         with:
           record: true
           browser: ${{ matrix.browser }}
-          start: npm start
+          start: yarn start
           wait-on: http://localhost:3000
           wait-on-timeout: 180
-          config-file: ./cypress.config.js          
+          working-directory: ./site
+          config-file: cypress.config.js
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           CYPRESS_PROJECT_ID: ${{ secrets.PROJECT_ID }}
@@ -47,11 +46,11 @@ jobs:
           # overwrite commit message sent to Dashboard
           COMMIT_INFO_MESSAGE: ${{github.event.pull_request.title}}
           # re-enable PR comment bot
-          COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}    
-  
+          COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}
+
   publish:
     name: Publish Docsite
-    needs: cypress    
+    needs: cypress
     runs-on: ubuntu-latest
     if: ${{ !github.event.release.prerelease && github.event.release.target_commitish == 'main' }}
     steps:
@@ -75,7 +74,7 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
-        
+
     - name: Create Bucket
       run: |
         echo $BUCKET_NAME
@@ -89,9 +88,9 @@ jobs:
         aws s3 sync ./site/build s3://$BUCKET_NAME --acl public-read --delete
       env:
         BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
-        
+
     - name: Invalidate Cloudfront Cache
-      run: 
+      run:
         aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID}} --paths "/" "/*"
 
   cypress_post_test:
@@ -99,12 +98,12 @@ jobs:
     needs: [cypress, publish]
     container:
       image: cypress/browsers:node16.13.2-chrome97-ff96
-      options: --user 1001 --shm-size=2g     
+      options: --user 1001 --shm-size=2g
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        browser: [chrome]   
+        browser: [chrome]
     steps:
       - name: Setup Node
         uses: actions/setup-node@v2
@@ -122,7 +121,7 @@ jobs:
           record: true
           browser: ${{ matrix.browser }}
           config-file: ./cypress.config.js
-          tag: production          
+          tag: production
         env:
           CYPRESS_host: https://dev.bandwidth.com/
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}

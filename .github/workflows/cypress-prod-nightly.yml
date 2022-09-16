@@ -9,22 +9,20 @@ jobs:
     runs-on: ${{ matrix.os }}
     container:
       image: cypress/browsers:node16.13.2-chrome97-ff96
-      options: --user 1001 --shm-size=2g     
+      options: --user 1001 --shm-size=2g
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        browser: [chrome]   
+        browser: [chrome]
     steps:
       - name: Setup Node
         uses: actions/setup-node@v2
         with:
-          node-version: 16  
+          node-version: 16
 
       - name: Checkout
         uses: actions/checkout@v2
-
-      - run: cd site
 
       - name: Cypress nightly tests
         uses: cypress-io/github-action@v4.2.0
@@ -32,8 +30,12 @@ jobs:
         with:
           record: true
           browser: ${{ matrix.browser }}
-          config-file: ./cypress.config.js
-          tag: production          
+          start: yarn start
+          wait-on: http://localhost:3000
+          wait-on-timeout: 180
+          working-directory: ./site
+          config-file: cypress.config.js
+          tag: production
         env:
           CYPRESS_host: https://dev.bandwidth.com/
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}

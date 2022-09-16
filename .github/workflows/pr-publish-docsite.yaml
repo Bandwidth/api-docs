@@ -16,7 +16,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     container:
       image: cypress/browsers:node16.13.2-chrome97-ff96
-      options: --user 1001 --shm-size=2g     
+      options: --user 1001 --shm-size=2g
     strategy:
       fail-fast: false
       matrix:
@@ -26,16 +26,12 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v2
         with:
-          node-version: 16 
+          node-version: 16
 
       - name: Checkout
         uses: actions/checkout@v2
 
-      - run: |
-          cd site
-          ls
-
-      - name: Cypress run 
+      - name: Cypress run
         uses: cypress-io/github-action@v4.2.0
         timeout-minutes: 40
         with:
@@ -45,7 +41,7 @@ jobs:
           wait-on: http://localhost:3000
           wait-on-timeout: 180
           working-directory: ./site
-          config-file: cypress.config.js          
+          config-file: cypress.config.js
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           CYPRESS_PROJECT_ID: ${{ secrets.PROJECT_ID }}
@@ -53,7 +49,7 @@ jobs:
           # overwrite commit message sent to Dashboard
           COMMIT_INFO_MESSAGE: ${{github.event.pull_request.title}}
           # re-enable PR comment bot
-          COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}  
+          COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}
 
   publish:
     name: Publish Temp Docsite
@@ -66,7 +62,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v2
         with:
-          node-version: 16 
+          node-version: 16
 
       - name: Generate Static Site
         run: |
@@ -138,17 +134,17 @@ jobs:
           message: http://${{ steps.create_name.outputs.bucket_name }}.s3-website-us-east-1.amazonaws.com/
           allow-repeats: true
 
-  alert_if_failure: 
-    name: Alert for failure 
+  alert_if_failure:
+    name: Alert for failure
     needs: [cypress, publish]
     if: failure() && !github.event.pull_request.draft
     runs-on: ubuntu-latest
-    steps: 
+    steps:
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Get Branch Name
-        run: | 
+        run: |
           echo "BRANCH_NAME=${GITHUB_HEAD_REF#refs/heads/}" >> $GITHUB_ENV
 
       - name: Check for Corresponding api-specs PR
@@ -160,10 +156,10 @@ jobs:
 
           url=$(echo $response | jq '.[0].url')
           number=$(echo $response | jq '.[0].number')
-          
-          if [ -z $number ]; then 
+
+          if [ -z $number ]; then
             echo "No Corresponding PR found on api-specs";
-          else 
+          else
             echo "URL=$url" >> $GITHUB_ENV;
             echo "SPECS_PR_NUMBER=$number" >> $GITHUB_ENV;
             echo "RESULT=true" >> $GITHUB_ENV;
@@ -173,13 +169,13 @@ jobs:
         if: ${{ env.RESULT == 'true' }}
         run: |
           echo "DOCS_PR_NUMBER=$(hub pr list -h ${{ env.BRANCH_NAME }} -f %I)" >> $GITHUB_ENV
-        env: 
+        env:
           GITHUB_TOKEN: ${{ secrets.DX_GITHUB_TOKEN }}
 
       - name: Make PR Comment
         if: ${{ env.RESULT == 'true' }}
         uses: ./.github/actions/add_pr_comment
-        with: 
+        with:
           username: ${{ secrets.DX_GITHUB_USERNAME }}
           token: ${{ secrets.DX_GITHUB_TOKEN }}
           repo-name: api-specs
