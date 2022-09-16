@@ -32,6 +32,9 @@ paths:
         - $ref: '#/components/parameters/accountId'
       requestBody:
         $ref: '#/components/requestBodies/verificationRequest'
+      callbacks:
+        tfvWebhook:
+          $ref: '#/components/callbacks/tfvWebhook'
       responses:
         '202':
           description: Accepted
@@ -132,6 +135,15 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/verificationRequest'
+    verificationWebhookRequest:
+      description: Verification callback status of a toll-free phone number.
+      required: true
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/verificationWebhookRequest'
+              - $ref: '#/components/schemas/verificationUnverifiedWebhookRequest'
   schemas:
     phoneNumber:
       type: string
@@ -292,7 +304,17 @@ components:
           description: Telephone number in E.164 format
         status:
           type: string
-          example: Verified
+          example: VERIFIED
+    tfvCallbackStatus:
+      type: string
+      enum:
+        - VERIFIED
+        - UNVERIFIED
+        - PENDING
+      example: VERIFIED
+    tfvUnverifiedStatus:
+      type: string
+      default: UNVERIFIED
     useCases:
       type: array
       items:
@@ -322,6 +344,40 @@ components:
       required:
         - type
         - description
+    accountId:
+      type: integer
+      description: Your Bandwidth Account ID
+      example: 9900000
+    verificationWebhookRequest:
+      type: object
+      properties:
+        phoneNumber:
+          $ref: '#/components/schemas/phoneNumber'
+        accountId:
+          $ref: '#/components/schemas/accountId'
+        status:
+          $ref: '#/components/schemas/tfvCallbackStatus'
+    denialStatusCode:
+      description: Reason code for denial
+      type: integer
+      example: 511
+    denialReasonDescription:
+      description: Denial reason explanation
+      type: string
+      example: Disallowed Content - Gambling
+    verificationUnverifiedWebhookRequest:
+      type: object
+      properties:
+        phoneNumber:
+          $ref: '#/components/schemas/phoneNumber'
+        accountId:
+          $ref: '#/components/schemas/accountId'
+        status:
+          $ref: '#/components/schemas/tfvUnverifiedStatus'
+        denialStatusCode:
+          $ref: '#/components/schemas/denialStatusCode'
+        denialReasonDescription:
+          $ref: '#/components/schemas/denialReasonDescription'
   securitySchemes:
     Basic:
       type: http
@@ -394,3 +450,31 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/verificationRequestError'
+  callbacks:
+    tfvWebhook:
+      '{$request.body#/webhookUrl}':
+        post:
+          summary: Toll free verification callback
+          description: '----'
+          operationId: tfvRequest
+          requestBody:
+            $ref: '#/components/requestBodies/verificationWebhookRequest'
+          responses:
+            '202':
+              description: Success response
+            '400':
+              $ref: '#/components/responses/badRequestResponse'
+            '401':
+              $ref: '#/components/responses/unauthorizedResponse'
+            '403':
+              $ref: '#/components/responses/forbiddenResponse'
+            '404':
+              $ref: '#/components/responses/notFoundResponse'
+            '405':
+              $ref: '#/components/responses/notAllowedResponse'
+            '429':
+              $ref: '#/components/responses/tooManyRequestsResponse'
+            '500':
+              $ref: '#/components/responses/serverErrorResponse'
+            '503':
+              $ref: '#/components/responses/serviceUnavailableResponse'
