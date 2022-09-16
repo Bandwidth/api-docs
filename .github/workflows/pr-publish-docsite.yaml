@@ -1,4 +1,4 @@
-# Deploys the doc site to an S3 bucket
+# Runs Cypress tests and if they pass then deploys the doc site to an S3 bucket
 
 name: PR Publish Docsite
 
@@ -11,25 +11,73 @@ on:
   workflow_dispatch:
 
 jobs:
+  cypress:
+    name: Cypress Tests
+    runs-on: ${{ matrix.os }}
+    container:
+      image: cypress/browsers:node16.13.2-chrome97-ff96
+      options: --user 1001 --shm-size=2g     
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        browser: [chrome]
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16 
+    
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - run: cd site
+
+      - name: Cypress run 
+        uses: cypress-io/github-action@v4.2.0
+        timeout-minutes: 40
+        with:
+          record: true
+          browser: ${{ matrix.browser }}
+          start: npm start
+          wait-on: http://localhost:3000
+          wait-on-timeout: 180
+          config-file: ./cypress.config.js          
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_PROJECT_ID: ${{ secrets.PROJECT_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # overwrite commit message sent to Dashboard
+          COMMIT_INFO_MESSAGE: ${{github.event.pull_request.title}}
+          # re-enable PR comment bot
+          COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}  
+  
   publish:
     name: Publish Temp Docsite
+    needs: cypress
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version: 16 
+      
       - name: Generate Static Site
         run: |
             cd site
-            yarn install --frozen-lockfile
+            yarn install --pure-lockfile
             npm run build
+      
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+      
       - name: Create Bucket Name
         id: create_name
         run: |
@@ -38,6 +86,7 @@ jobs:
           BUCKET_NAME=$(echo "$BUCKET_NAME" | sed -e "s/[^a-z0-9]/-/g") #replace all remaining non alphanumerics with -
           echo $BUCKET_NAME
           echo "::set-output name=bucket_name::$BUCKET_NAME"
+      
       - name: Create Bucket
         run: |
           echo $BUCKET_NAME
@@ -45,6 +94,7 @@ jobs:
           aws s3 website s3://$BUCKET_NAME --index-document index.html
         env:
           BUCKET_NAME: ${{ steps.create_name.outputs.bucket_name }}
+      
       - name: Put Lifecycle
         run: |
           cat >lifecycle.xml <<EOL
@@ -70,11 +120,13 @@ jobs:
           aws s3api put-bucket-lifecycle --bucket $BUCKET_NAME --lifecycle-configuration file://lifecycle.xml
         env:
           BUCKET_NAME: ${{ steps.create_name.outputs.bucket_name }}
+      
       - name: Sync zip to Bucket
         run: |
           aws s3 sync ./site/build s3://$BUCKET_NAME --acl public-read
         env:
           BUCKET_NAME: ${{ steps.create_name.outputs.bucket_name }}
+      
       - name: Comment on PR
         uses: mshick/add-pr-comment@v1
         env:
@@ -85,17 +137,18 @@ jobs:
   
   alert_if_failure: 
     name: Alert for failure 
-    needs: [publish]
+    needs: [cypress, publish]
     if: failure() && !github.event.pull_request.draft
     runs-on: ubuntu-latest
     steps: 
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
       - name: Get Branch Name
         run: | 
           echo "BRANCH_NAME=${GITHUB_HEAD_REF#refs/heads/}" >> $GITHUB_ENV
 
-      - name: Check for Cooresponding api-specs PR
+      - name: Check for Corresponding api-specs PR
         run: |
           response=$(curl \
             -H "Accept: application/vnd.github.v3+json" \
@@ -106,7 +159,7 @@ jobs:
           number=$(echo $response | jq '.[0].number')
           
           if [ -z $number ]; then 
-            echo "No Cooresponding PR found on api-specs";
+            echo "No Corresponding PR found on api-specs";
           else 
             echo "URL=$url" >> $GITHUB_ENV;
             echo "SPECS_PR_NUMBER=$number" >> $GITHUB_ENV;

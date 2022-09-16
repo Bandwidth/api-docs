@@ -42,16 +42,21 @@ The `./site/package.json` file contains node scripts that let you run dynamic do
 cd site
 yarn install
 
-npm run start   # run a dynamic site locally
+yarn start   # run a dynamic site locally
 
 # or
-npm run build    # build a static site to the /site/build folder
-nmp run serve    # host the static site in the /site/build folder
+yarn run build    # build a static site to the /site/build folder
+yarn run serve    # host the static site in the /site/build folder
 ```
+
+## Cypress Testing
+
+After building and serving the site locally using one of the methods above, from within the `/site` directory, you may run `yarn test` to run all cypress tests in the command line,
+or `yarn run cy:open` to open the cypress client and runs tests from the cypress GUI.
 
 ## Adding a New Spec
 
-To add a new spec (or update an existing spec), please head over to our [api-specs](https://github.com/Bandwidth/api-specs) repository, as this is the source of truth for all of Bandwidth's internal and external API Specs. You may also follow the guide [here](https://bandwidth-jira.atlassian.net/wiki/spaces/DX/pages/4098359409/How+to+Update+API+Specifications+and+Contribute+to+Developer+Documentation) that exaplains in detail how to add new spec files to the `api-specs` repo.
+To add a new spec (or update an existing spec), please head over to our [api-specs](https://github.com/Bandwidth/api-specs) repository, as this is the source of truth for all of Bandwidth's internal and external API Specs. You may also follow the guide [here](https://bandwidth-jira.atlassian.net/wiki/spaces/DX/pages/4098359409/How+to+Update+API+Specifications+and+Contribute+to+Developer+Documentation) that explains in detail how to add new spec files to the `api-specs` repo.
 
 ### Versioned Specs 
 
@@ -210,12 +215,12 @@ The `./postman` directory contains code and templates to generate our public fac
 
 ## Markdown
 
-Docusaurus supports the use of .MDX files - making the use of markdown even more powerful than the previous docsite repositor. This allows us to generate JSX directly in the markdown files that will be rendered nicely in docusaurus. A good resource on the capabilities of MDX in docusaurus can be found [here](https://docusaurus.io/docs/markdown-features).
+Docusaurus supports the use of .MDX files - making the use of markdown even more powerful than the previous docsite repository. This allows us to generate JSX directly in the markdown files that will be rendered nicely in docusaurus. A good resource on the capabilities of MDX in docusaurus can be found [here](https://docusaurus.io/docs/markdown-features).
 
 The Docusaurus flavored markdown also supports setting markdown attributes in the guide - it is recommended to start each `.md` or `.mdx` file with the following:
 
     ---
-    id: docId    <!--the document id - used as a referece in the sidebar.js folder-->
+    id: docId    <!--the document id - used as a reference in the sidebar.js folder-->
     title: Document Title    <!--Used by Docusaurus to generate the title properly (for SEO)-->
     slug: /{product}/docName    <!--generates the path after the base URL to provide a neat link for sharing-->
     description: description of your document <!--becomes the <meta name="description" content="..."/> and <meta property="og:description" content="..."/> in <head>, used by search engines. If this field is not present, it will default to the first line of the contents.-->
@@ -234,7 +239,7 @@ The above example is YAML, so it is suggested to remove comments as well as wrap
 
 ### Embedding React Components
 
-MDX supports JSX within the markdown and generates it as React componetns - making possibilites endless.
+MDX supports JSX within the markdown and generates it as React components - making possibilities endless.
 
 The below adds a language switcher in line with text in an MDX file:
 
