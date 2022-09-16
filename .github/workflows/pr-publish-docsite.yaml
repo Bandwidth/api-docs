@@ -27,9 +27,13 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 16 
-    
+
       - name: Checkout
         uses: actions/checkout@v2
+
+      - run: |
+          cd site
+          ls
 
       - name: Cypress run 
         uses: cypress-io/github-action@v4.2.0
@@ -50,7 +54,7 @@ jobs:
           COMMIT_INFO_MESSAGE: ${{github.event.pull_request.title}}
           # re-enable PR comment bot
           COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}  
-  
+
   publish:
     name: Publish Temp Docsite
     needs: cypress
@@ -63,20 +67,20 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 16 
-      
+
       - name: Generate Static Site
         run: |
             cd site
             yarn install --pure-lockfile
             npm run build
-      
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-      
+
       - name: Create Bucket Name
         id: create_name
         run: |
@@ -85,7 +89,7 @@ jobs:
           BUCKET_NAME=$(echo "$BUCKET_NAME" | sed -e "s/[^a-z0-9]/-/g") #replace all remaining non alphanumerics with -
           echo $BUCKET_NAME
           echo "::set-output name=bucket_name::$BUCKET_NAME"
-      
+
       - name: Create Bucket
         run: |
           echo $BUCKET_NAME
@@ -93,7 +97,7 @@ jobs:
           aws s3 website s3://$BUCKET_NAME --index-document index.html
         env:
           BUCKET_NAME: ${{ steps.create_name.outputs.bucket_name }}
-      
+
       - name: Put Lifecycle
         run: |
           cat >lifecycle.xml <<EOL
@@ -119,13 +123,13 @@ jobs:
           aws s3api put-bucket-lifecycle --bucket $BUCKET_NAME --lifecycle-configuration file://lifecycle.xml
         env:
           BUCKET_NAME: ${{ steps.create_name.outputs.bucket_name }}
-      
+
       - name: Sync zip to Bucket
         run: |
           aws s3 sync ./site/build s3://$BUCKET_NAME --acl public-read
         env:
           BUCKET_NAME: ${{ steps.create_name.outputs.bucket_name }}
-      
+
       - name: Comment on PR
         uses: mshick/add-pr-comment@v1
         env:
@@ -133,7 +137,7 @@ jobs:
         with:
           message: http://${{ steps.create_name.outputs.bucket_name }}.s3-website-us-east-1.amazonaws.com/
           allow-repeats: true
-  
+
   alert_if_failure: 
     name: Alert for failure 
     needs: [cypress, publish]
@@ -164,7 +168,7 @@ jobs:
             echo "SPECS_PR_NUMBER=$number" >> $GITHUB_ENV;
             echo "RESULT=true" >> $GITHUB_ENV;
           fi
-     
+
       - name: Get Docs PR Number
         if: ${{ env.RESULT == 'true' }}
         run: |
