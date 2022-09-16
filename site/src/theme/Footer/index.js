@@ -1,6 +1,7 @@
 import React from 'react';
 import footerStyles from '@site/src/css/footer.module.css';
 import FooterColumn from '@site/src/components/FooterColumn';
+import BlueButton from '@site/src/components/BlueButton.js';
 
 function Footer() {
   const footer = {
@@ -91,6 +92,11 @@ function Footer() {
         }
       ],
     copyright: `Bandwidth.com CLEC, LLC is a wholly owned subsidiary of Bandwidth Inc. ©${new Date().getFullYear()}. Built with Docusaurus.`,
+  };
+
+  const getInTouch = {
+    text: 'Get In Touch',
+    link: 'https://www.bandwidth.com/contact/'
   }
 
   const Clouds = require('@site/static/img/footer-clouds.svg').default;
@@ -114,10 +120,10 @@ function Footer() {
           <div className={footerStyles.socialRow}>
             <div className={footerStyles.logo}/>
             <div className={footerStyles.socialLinks}>
-              <a class={footerStyles.socialLink} href="https://www.linkedin.com/company/bandwidth-inc" target="_blank" rel="noopener"><LinkedIn/></a>
-              <a class={footerStyles.socialLink} href="https://twitter.com/bandwidth" target="_blank" rel="noopener"><Twitter/></a>
-              <a class={footerStyles.socialLink} href="https://www.youtube.com/user/bandwidth" target="_blank" rel="noopener"><YouTube/></a>
-              <a class={footerStyles.socialLink} href="https://github.com/Bandwidth" target="_blank" rel="noopener"><GitHub/></a>
+              <a className={footerStyles.socialLink} href="https://www.linkedin.com/company/bandwidth-inc" target="_blank" rel="noopener"><LinkedIn/></a>
+              <a className={footerStyles.socialLink} href="https://twitter.com/bandwidth" target="_blank" rel="noopener"><Twitter/></a>
+              <a className={footerStyles.socialLink} href="https://www.youtube.com/user/bandwidth" target="_blank" rel="noopener"><YouTube/></a>
+              <a className={footerStyles.socialLink} href="https://github.com/Bandwidth" target="_blank" rel="noopener"><GitHub/></a>
             </div>
           </div>
 
@@ -132,9 +138,7 @@ function Footer() {
                   Have a support question? Want to add SMS to your app? Need to talk to legal? Have a great minestrone soup recipe?
                   Whatever the reason you need to chat, let us know and we'll give you a call.
                 </div>
-                <div className={footerStyles.callToActionButton}>
-                  <a href="https://www.bandwidth.com/contact/" target="_blank" rel="noopener">GET IN TOUCH</a>
-                </div>
+                <BlueButton {...getInTouch}/>
               </div>
             </div>
           </div>

@@ -64,8 +64,8 @@ const apiList = [
 const props = {
     itemList: apiList,
     Svg: require('@site/static/img/landing-apis.svg').default,
-    h1Text: 'API Reference',
-    h2Text: 'Technical reference for Bandwidth APIs'
+    h1Text: `API Reference`,
+    h2Text: `Technical Reference for Bandwidth APIs`
 }
 
 
