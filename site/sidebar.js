@@ -222,6 +222,15 @@ module.exports = {
                         },
                     ],
                 },
+                {
+                    type: "category",
+                    label: "Toll-Free Verification",
+                    items: [
+                        "messaging/toll-free-verification/about",
+                        "messaging/toll-free-verification/request",
+                        "messaging/toll-free-verification/webhooks"
+                    ]
+                },
                 "messaging/rateLimits",
                 "messaging/errors",
                 {
