@@ -17,7 +17,7 @@ WebRTC utilizes two forms of communication: the media streams themselves and sig
 - Setting up media streams between local and remote endpoints by negotiating and exchanging connectivity and media format information.
 - Acting as a control channel where messages are exchanged about devices and streams coming and going
 
-Bandwidth’s signaling implementation relies on session and participant objects, which must be set up in order for media streams to be created. The Bandwidth WebRTC API allows you to create and manage sessions, participants, and the streams they are subscribed to.
+Bandwidth’s signaling implementation relies on session and participant objects, which must be set up in order for media streams to be created. The Bandwidth WebRTC API allows you to create and manage sessions, participants, and the streams they are subscribed to.  The signalling model also includes a dialog capability that allows for user to application events to be passed between the customer application and the end user, to communicate key state and event information.  The dialog capability is currently in Limited Availabliity.
 
 ## Streams
 
@@ -149,6 +149,54 @@ A participant stream level subscription adds further detail to a participant bas
             "participantId": "0275e47f-dd21-4cf0-a1e1-dfdc719e73a7"
         }
     ]
+}
+```
+
+## Dialogs (Limited Availability)
+
+Occasionally communications systems need to pass event data between users, or between users and the application that is controlling the flow of communications. 
+These are evident in a "normal" phone call for example, where the event "they answered the call" are important to managing the communication, even once the session, 
+participants and subscriptions have been solidified.  Dialogs will initially be used for interconnecting with voice telephone networks, but will be useful for other services  up as those services are developed.
+
+A dialog is a resource that can optionally be associated with a participant.  Dialog resources have a "type" that governs the events that can be exchanged using that Participant.  The first dialog type that can be supported is the "SIP" dialog; it will be used for exchanging events with Telephone networks.
+
+Creating a dialog requires a [POST to a specific participant](https://dev.bandwidth.com/apis/webrtc/#tag/Participants/operation/postDialog) that communicates the necessary data to establish the channel for communication of user-level events.  The POST is to the ID of the participant that the dialog is attached to.
+
+```
+/sessions/{sessionId}/participants/{participantId}/dialogs
+```
+ Dialogs contains state information to enable the setup of the end-end communication.  That state information is initially established in the creation of the dialog.  The payload body for the creation of a SIP dialog contains, not surprisingly, the to: and from: telephone numbers that result in the end-to-end connection.
+ The POST body looks like...
+ 
+ ```
+ {
+    "dialogType": "SIP",
+    "dialogStateData": {
+        "to"  : "+19195551212",
+        "from": "+18045551212"
+    }
+}
+```
+
+Updates to established dialogs can be done by the customer application to enforce a state change, or can happen "in the outside world", resulting in a state change
+that must be passed along to the customer application.
+
+Changes to the dialog state imposed by the customer application are caused by [applying the PATCH method to the dialog](https://dev.bandwidth.com/apis/webrtc/#tag/Participants/operation/patchDialog).
+
+Changes to the dialog state that result from events in the outside world (for example, a user answering a telephone) are communicated as a callback to the callback URL defined in the creation of the participant.  The Bandwidth WebRTC system will invoke the callback URL using a POST, including a payload that includes the important details
+about the extrinsic state change.  An example of an event caused by the far-end user answering the phone would include standard callback fields, and the change of state to "ANSWERED".
+ 
+ ```
+{
+  "event": "onSipDialogStateChange",
+  "timestamp": "1628786234676",
+  "participantId": "be199214-1a03-402a-a7b6-d002470a0465",
+  "dialogId": "be199214-1a03-402a-a7b6-d002470a0465",
+  "dialogStateData": {
+    "state": "ANSWERED",
+    "to": "+16136211234",
+    "from": "+16136211234"
+  }
 }
 ```
 

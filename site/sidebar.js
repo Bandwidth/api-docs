@@ -246,6 +246,7 @@ module.exports = {
                         "webrtc/resources",
                         "webrtc/voice-iw",
                         "webrtc/callflow",
+                        "webrtc/dialogquickstart",
                     ],
                 },
                 "webrtc/errors",

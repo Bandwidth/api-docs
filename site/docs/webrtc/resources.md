@@ -60,6 +60,7 @@ To make things easier to find, those same Bandwidth Sample Applications are list
 | [webrtc-voiceconf-ts](https://github.com/Bandwidth-Samples/webrtc-voiceconf-ts)                                     | JavaScript/ Node/ React | This sample uses the Magic of Bandwidth V2 voice to add a broad suite of capabilities to webRTC by anchoring the call on a V2 voice conference |
 | [webrtc-voicebridge-ts](https://github.com/Bandwidth-Samples/webrtc-voicebridge-ts)                                 | JavaScript/ Node/ React | This sample app demonstrates the use of the Programmable Voice Bridge verb to efficiently join webrtc and voice endpoints                      |
 | [webrtc-phone-advanced-react](https://github.com/Bandwidth-Samples/webrtc-phone-advanced-react)  | JavaScript/ Node/ React | This sample app demonstrates another pattern for use of the Bridge verb in the creation of a simplistic dialpad phone in a browser, capable of bidirectional calling and DTMF. |
+| [webrtc-dialog-sipphone-react](https://github.com/Bandwidth-Samples/webrtc-dialog-sipphone-react)  | JavaScript/ Node/ React | This sample application demonstrates the use of the dialog resource placing and receiving SIP Calls.  Note that this capability is in Limited Availability status.  Contact your sales rep for access to this capability |
 
 ## Other Required Resources
 
