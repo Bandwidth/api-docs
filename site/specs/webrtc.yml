@@ -46,7 +46,7 @@ paths:
               summary: Called on detection of an event related to the Participant
               description: >-
                 The callback initiated by the Bandwidth WebRTC system on events 
-                that occur in signalling or dialog handling
+                that occur in signaling or dialog handling
               requestBody:
                 $ref: '#/components/requestBodies/createEventRequest'
               responses:
@@ -228,11 +228,13 @@ paths:
       summary: Create a Dialog
       description: >-
         Create a new Dialog for this participant.   The dialog will be used to
-        control the user-level state of the participant,  handling and managing
-        user-level events.   The user-level events are dependent on the 'type'
-        of the dialog. For Example, if the Dialog is a 'SIP' dialog, then the
-        body of the Dialog contains information related to SIP calling such as
-        to: and from: information
+        control the high-level state of the participant,  handling and managing
+        events that might be of interest to the users of the system like a call
+        being answered.   These high-level events are dependent on the 'type' of
+        the dialog. The state information contained in a Dialog is specific to
+        this dialog type as well.  For example if the Dialog is a 'SIP' dialog,
+        then the body of the Dialog contains information related to SIP calling
+        such as to: and from: information
       operationId: createDialog
       parameters:
         - $ref: '#/components/parameters/accountId'
@@ -2427,6 +2429,16 @@ components:
       enum:
         - V3
         - V2
+    sipDialogStateEnum:
+      type: string
+      description: The set of possible states that a SIP dialog may assume
+      example: ANSWERED
+      enum:
+        - NEW
+        - CALLING
+        - RINGING
+        - ANSWERED
+        - TERMINATED
     session:
       type: object
       description: Session object.
@@ -2445,7 +2457,7 @@ components:
       properties:
         id:
           type: string
-          description: Unique id of the participant.
+          description: Unique ID of the participant.
           readOnly: true
           example: 320e2af6-13ec-498d-8b51-daba52c37853
         callbackUrl:
@@ -2522,20 +2534,23 @@ components:
           $ref: '#/components/schemas/deviceApiVersionEnum'
     createDialogRequest:
       type: object
-      description: The important things to specify if for the success of the dialog
+      description: The payload for a request to create a Dialog
       properties:
         dialogType:
           $ref: '#/components/schemas/dialogType'
         dialogStateData:
           oneOf:
-            - $ref: '#/components/schemas/sipDialogRequestStateData'
+            - $ref: '#/components/schemas/createSipDialogRequest'
     createDialogResponse:
       type: object
-      description: a Dialog is used for exchanging user-level state information
+      description: >
+        A Dialog is used for exchanging high-level state information, the types
+        of states and events that might be of interest to the users of the
+        system - thing like "the other end answered the call"
       properties:
         dialogId:
           type: string
-          description: Unique id of the participant.
+          description: Unique ID of the dialog.
           readOnly: true
           example: 320e2af6-13ec-498d-8b51-daba52c37853
         dialogStateData:
@@ -2544,9 +2559,11 @@ components:
     updateDialogRequest:
       oneOf:
         - $ref: '#/components/schemas/sipUpdateDialogRequestBody'
-    sipDialogRequestStateData:
+    createSipDialogRequest:
       type: object
-      description: The state data associated with a Dialog - dependent on the dialogType
+      description: >-
+        The state data associated with a Dialog - dependent on type of the
+        Dialog
       required:
         - to
         - from
@@ -2580,15 +2597,8 @@ components:
         for further information.
       properties:
         state:
-          type: string
-          description: the name of the state that the Dialog has entered
-          example: ANSWERED
-          enum:
-            - NEW
-            - CALLING
-            - ANSWERED
-            - RINGING
-            - TERMINATED
+          description: the state that the Dialog has entered
+          $ref: '#/components/schemas/sipDialogStateEnum'
         to:
           type: string
           description: the destination telephone number in e.164 format
@@ -2613,15 +2623,8 @@ components:
       description: Update a SIP Dialog owned by a Participant.
       properties:
         state:
-          type: string
-          description: the name of the state that the Dialog has entered
-          example: ANSWERED
-        tag:
-          type: string
-          description: >-
-            User defined tag to associate with the dialog.  Must not contain
-            PII.
-          example: sip-patron-dialog
+          description: then name of the state that the application wishes to change to.
+          $ref: '#/components/schemas/sipDialogStateEnum'
     eventBody:
       oneOf:
         - $ref: '#/components/schemas/sipDialogEventBody'
@@ -2681,20 +2684,26 @@ components:
         of the details of the Dialog Event may affect the business logic choices
         for the receiving application.
       properties:
-        eventReason:
+        reason:
           type: string
-          description: A summary of why the event happened
+          description: >
+            A summary of the event that happened to trigger the state change.  
+            For states where the reason is implicit in the state, this value may
+            be missing.
           example: FAR END BUSY
-        eventErrorReason:
+          enum:
+            - ERROR
+            - ANSWER
+            - RINGING
+            - FAR END BUSY
+            - FAR END DECLINED
+            - FAR END NOT FOUND
+        details:
           type: string
-          description: If the event was an error, a text description of the error
-          example: Destination Server unavailable
-        eventErrorCode:
-          type: number
-          description: >-
-            An error number to help classifiy the error condition - retain this
-            for support
-          example: 1022
+          description: >
+            Optional information about the nature of the event. Not present with
+            all events
+          example: System Failure
     sipDialogEventBody:
       allOf:
         - $ref: '#/components/schemas/baseEventBody'
@@ -2933,13 +2942,13 @@ components:
           schema:
             $ref: '#/components/schemas/createParticipantRequest'
     createDialogRequest:
-      description: Body for Dialog creation
+      description: Dialog creation request body
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/createDialogRequest'
     updateDialogRequest:
-      description: Body for Dialog creation
+      description: Body for Dialog update
       content:
         application/json:
           schema:
