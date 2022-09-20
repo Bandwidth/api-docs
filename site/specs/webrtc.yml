@@ -2431,7 +2431,9 @@ components:
         - V2
     sipDialogStateEnum:
       type: string
-      description: The set of possible states that a SIP dialog may assume
+      description: >
+        The desired state of the Dialog on requests,  and the current state of
+        the Dialog on responses and callbacks
       example: ANSWERED
       enum:
         - NEW
@@ -2536,9 +2538,9 @@ components:
       type: object
       description: The payload for a request to create a Dialog
       properties:
-        dialogType:
+        type:
           $ref: '#/components/schemas/dialogType'
-        dialogStateData:
+        dialogState:
           oneOf:
             - $ref: '#/components/schemas/createSipDialogRequest'
     createDialogResponse:
@@ -2553,12 +2555,30 @@ components:
           description: Unique ID of the dialog.
           readOnly: true
           example: 320e2af6-13ec-498d-8b51-daba52c37853
-        dialogStateData:
+        dialogState:
           oneOf:
             - $ref: '#/components/schemas/sipDialogResponseStateData'
     updateDialogRequest:
       oneOf:
         - $ref: '#/components/schemas/sipUpdateDialogRequestBody'
+    sipTo:
+      type: string
+      description: the destination telephone number in e.164 format
+      example: '+16136211234'
+    sipFrom:
+      type: string
+      description: >-
+        the caller's telephone number in e.164 format, or the string UNKNOWN or
+        RESTRICTED
+      example: '+16136211234'
+    sipUserToUser:
+      type: string
+      description: >
+        Information that will be handed to the SIP client to be passed towards
+        the far end user. The formatting of the contents is completely dependent
+        on the ability of the  end system to parse and understand the contents
+      example: >-
+        eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c;encoding=jwt
     createSipDialogRequest:
       type: object
       description: >-
@@ -2569,62 +2589,37 @@ components:
         - from
       properties:
         to:
-          type: string
-          description: the destination telephone number in e.164 format
-          example: '+16136211234'
+          $ref: '#/components/schemas/sipTo'
         from:
-          type: string
-          description: >-
-            the caller's telephone number in e.164 format, or the string UNKNOWN
-            or RESTRICTED
-          example: '+16136211234'
+          $ref: '#/components/schemas/sipFrom'
         userToUser:
-          type: string
-          description: >
-            Information that will be handed to the SIP client to be passed
-            towards the far end user. The formatting of the contents is
-            completely dependent on the ability of the  end system to parse and
-            understand the contents
-          example: >-
-            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c;encoding=jwt
+          $ref: '#/components/schemas/sipUserToUser'
     sipDialogResponseStateData:
       type: object
       description: >
-        The dialogStateData contains the information that represents the current
-        state of the dialog.  Depending on the characteristics and state of the
-        Dialog this information may be missing,  current, out of date, or
-        idempotent.  Please see the Text documentation about the use of Dialogs
-        for further information.
+        The response contains the information that represents the current state
+        of the dialog.  Depending on the characteristics and state of the Dialog
+        this information may be missing,  current, out of date, or idempotent. 
+        Please see the Text documentation about the use of Dialogs for further
+        information.
       properties:
         state:
-          description: the state that the Dialog has entered
           $ref: '#/components/schemas/sipDialogStateEnum'
         to:
-          type: string
-          description: the destination telephone number in e.164 format
-          example: '+16136211234'
+          $ref: '#/components/schemas/sipTo'
         from:
-          type: string
-          description: >-
-            the caller's telephone number in e.164 format, or the string UNKNOWN
-            or RESTRICTED
-          example: '+16136211234'
+          $ref: '#/components/schemas/sipFrom'
         userToUser:
-          type: string
-          description: >
-            Information that will be handed to the SIP client to be passed
-            towards the far end user. The formatting of the contents is
-            completely dependent on the ability of the  end system to parse and
-            understand the contents
-          example: >-
-            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c;encoding=jwt
+          $ref: '#/components/schemas/sipUserToUser'
     sipUpdateDialogRequestBody:
       type: object
       description: Update a SIP Dialog owned by a Participant.
       properties:
-        state:
-          description: then name of the state that the application wishes to change to.
-          $ref: '#/components/schemas/sipDialogStateEnum'
+        dialogState:
+          type: object
+          properties:
+            state:
+              $ref: '#/components/schemas/sipDialogStateEnum'
     eventBody:
       oneOf:
         - $ref: '#/components/schemas/sipDialogEventBody'
@@ -2678,11 +2673,11 @@ components:
     dialogEventData:
       type: object
       description: >
-        The dialogEventData element contains information about the event that
-        triggered the transition to the  current Dialog state. This data is
-        dependent on extrinsic events that impact the Dialog. An understanding
-        of the details of the Dialog Event may affect the business logic choices
-        for the receiving application.
+        The event element contains information about the event that triggered
+        the transition to the  current Dialog state. This data is dependent on
+        extrinsic events that impact the Dialog. An understanding of the details
+        of the Dialog Event may affect the business logic choices for the
+        receiving application.
       properties:
         reason:
           type: string
@@ -2720,9 +2715,9 @@ components:
     sipDialogEventContents:
       type: object
       properties:
-        dialogStateData:
+        dialogState:
           $ref: '#/components/schemas/sipDialogResponseStateData'
-        dialogEventData:
+        event:
           $ref: '#/components/schemas/dialogEventData'
     subscriptions:
       type: object
