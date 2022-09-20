@@ -15,10 +15,25 @@ image: '@site/static/img/bw-icon.svg'
 Bandwidth uses HTTP callback webhooks to send status updates about your toll-free verification request.
 
 ## Overview
+ * All status updates are sent for one individual toll-free phone number, regardless of how many were passed in the verification request.
  * All status callbacks are sent to the `webhookUrl` passed in your verification POST request // TODO: Figure out linking
- * You **MUST** reply with a `HTTP 2xx` status code for _every_ callback/delivery receipt. Bandwidth will retry unacknowledged updates. For more information, see `Retry Logic`. // TODO: LINK
+ * You **MUST** reply with a `HTTP 2xx` status code for _every_ callback/delivery receipt. Bandwidth will retry unacknowledged updates. For more information, see `Retry Logic`.
  
 ### Retry Logic
+
+* Your server must respond with a `HTTTP 2xx` status code within 10 seconds for the callback to be considered accepted.
+* Bandwidth's webhook system will continue retrying at an initial interval of 5 minutes, with a backoff coefficient of 2 and a maximum interval of 1 hour, for a total period of 24 hours.
+* Your server should return a response smaller than 16kB.
+* It is possible (though unlikely) to receive duplicate status update events. Therefore, your server should be capable of handling duplicate events.
+
+### Body Parameters
+| Parameter               | Type     | Description                                            |
+|:------------------------|:---------|:----------------------------------------------------------------------------------------------------------------------------------------|
+| phoneNumber             | `string` | Subject phone number of the status update                                                                                               |
+| accountId               | `string` | Bandwidth Account ID corresponding to the phone number                                                                                  |
+| status                  | `string` | Enum: one of "PENDING", "UNVERIFIED", "VERIFIED"                                                                                        | 
+| denialStatusCode        | `int`    | A status code describing your denial reason. Only populated with a `status` of "UNVERIFIED". For more information, see `Denial reasons` |
+| denialReasonDescription | `string` | A short description of your denial reason. Only populated with a `status` of "UNVERIFIED". For more information, see `Denial reasons`   |
 
 ### Examples
 
