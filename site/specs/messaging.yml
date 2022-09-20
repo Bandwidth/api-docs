@@ -407,6 +407,10 @@ paths:
       description: >-
         Upload a file. You may add headers to the request in order to provide
         some control to your media file.
+
+
+        A list of supported media types can be found
+        [here](https://support.bandwidth.com/hc/en-us/articles/360014128994-What-MMS-file-types-are-supported-).
       operationId: uploadMedia
       tags:
         - Media
@@ -1074,7 +1078,7 @@ paths:
         '202':
           $ref: '#/components/responses/createMessageResponse'
         '400':
-          $ref: '#/components/responses/messagingBadRequestError'
+          $ref: '#/components/responses/createMessageBadRequestError'
         '401':
           $ref: '#/components/responses/messagingUnauthorizedError'
         '403':
@@ -1432,7 +1436,7 @@ components:
       required: false
       description: The direction of the message. One of INBOUND OUTBOUND.
       schema:
-        $ref: '#/components/schemas/messageDirectionEnum'
+        $ref: '#/components/schemas/listMessageDirectionEnum'
     carrierName:
       in: query
       name: carrierName
@@ -1466,7 +1470,7 @@ components:
       description: >-
         The start of the date range to search in ISO 8601 format. Uses the
         message receive time. The date range to search in is currently 14 days.
-      example: 2016-09-14T18:20:16.000Z
+      example: 2022-09-14T18:20:16.000Z
       schema:
         type: string
     toDateTime:
@@ -1476,7 +1480,7 @@ components:
       description: >-
         The end of the date range to search in ISO 8601 format. Uses the message
         receive time. The date range to search in is currently 14 days.
-      example: 2016-09-14T18:20:16.000Z
+      example: 2022-09-14T18:20:16.000Z
       schema:
         type: string
     sort:
@@ -1512,9 +1516,9 @@ components:
       type: string
       description: The priority specified by the user.
       enum:
-        - DEFAULT
-        - HIGH
-      example: DEFAULT
+        - default
+        - high
+      example: default
     messageStatusEnum:
       type: string
       description: >-
@@ -1549,6 +1553,19 @@ components:
         - sms
         - mms
       example: sms
+    fieldError:
+      type: object
+      properties:
+        fieldName:
+          type: string
+          description: The name of the field that contains the error
+          example: from
+        description:
+          type: string
+          description: The error associated with the field
+          example: >-
+            '+invalid' must be replaced with a valid E164 formatted telephone
+            number
     messagesList:
       title: MessagesList
       type: object
@@ -1603,6 +1620,7 @@ components:
           example: 2020-04-07T14:03:07.000Z
         carrierName:
           type: string
+          nullable: true
           description: >-
             The name of the carrier. Not currently supported for MMS coming
             soon.
@@ -1610,6 +1628,7 @@ components:
         messageSize:
           type: integer
           description: The size of the message including message content and headers.
+          nullable: true
           example: 27
         messageLength:
           type: integer
@@ -1618,14 +1637,17 @@ components:
         attachmentCount:
           type: integer
           description: The number of attachments the message has.
+          nullable: true
           example: 1
         recipientCount:
           type: integer
           description: The number of recipients the message has.
+          nullable: true
           example: 1
         campaignClass:
           type: string
           description: The campaign class of the message if it has one.
+          nullable: true
           example: T
     pageInfo:
       title: PageInfo
@@ -1657,6 +1679,21 @@ components:
           type: string
         description:
           type: string
+      required:
+        - type
+        - description
+    createMessageRequestError:
+      title: CreateMessageRequestError
+      type: object
+      properties:
+        type:
+          type: string
+        description:
+          type: string
+        fieldErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/fieldError'
       required:
         - type
         - description
@@ -1705,7 +1742,7 @@ components:
         time:
           type: string
           description: The datetime stamp of the message in ISO 8601
-          example: 2016-09-14T18:20:16.000Z
+          example: 2022-09-14T18:20:16.000Z
         segmentCount:
           type: integer
           description: >-
@@ -1817,7 +1854,179 @@ components:
       required: true
     uploadMediaRequest:
       content:
-        application/octet-stream:
+        application/json:
+          schema:
+            type: string
+            format: binary
+        application/ogg:
+          schema:
+            type: string
+            format: binary
+        application/pdf:
+          schema:
+            type: string
+            format: binary
+        application/rtf:
+          schema:
+            type: string
+            format: binary
+        application/zip:
+          schema:
+            type: string
+            format: binary
+        application/x-tar:
+          schema:
+            type: string
+            format: binary
+        application/xml:
+          schema:
+            type: string
+            format: binary
+        application/gzip:
+          schema:
+            type: string
+            format: binary
+        application/x-bzip2:
+          schema:
+            type: string
+            format: binary
+        application/x-gzip:
+          schema:
+            type: string
+            format: binary
+        application/smil:
+          schema:
+            type: string
+            format: binary
+        application/javascript:
+          schema:
+            type: string
+            format: binary
+        audio/mp4:
+          schema:
+            type: string
+            format: binary
+        audio/mpeg:
+          schema:
+            type: string
+            format: binary
+        audio/ogg:
+          schema:
+            type: string
+            format: binary
+        audio/flac:
+          schema:
+            type: string
+            format: binary
+        audio/webm:
+          schema:
+            type: string
+            format: binary
+        audio/wav:
+          schema:
+            type: string
+            format: binary
+        audio/amr:
+          schema:
+            type: string
+            format: binary
+        audio/3gpp:
+          schema:
+            type: string
+            format: binary
+        image/bmp:
+          schema:
+            type: string
+            format: binary
+        image/gif:
+          schema:
+            type: string
+            format: binary
+        image/jpeg:
+          schema:
+            type: string
+            format: binary
+        image/pjpeg:
+          schema:
+            type: string
+            format: binary
+        image/png:
+          schema:
+            type: string
+            format: binary
+        image/svg+xml:
+          schema:
+            type: string
+            format: binary
+        image/tiff:
+          schema:
+            type: string
+            format: binary
+        image/webp:
+          schema:
+            type: string
+            format: binary
+        image/x-icon:
+          schema:
+            type: string
+            format: binary
+        text/css:
+          schema:
+            type: string
+            format: binary
+        text/csv:
+          schema:
+            type: string
+            format: binary
+        text/calendar:
+          schema:
+            type: string
+            format: binary
+        text/plain:
+          schema:
+            type: string
+            format: binary
+        text/javascript:
+          schema:
+            type: string
+            format: binary
+        text/vcard:
+          schema:
+            type: string
+            format: binary
+        text/vnd.wap.wml:
+          schema:
+            type: string
+            format: binary
+        text/xml:
+          schema:
+            type: string
+            format: binary
+        video/avi:
+          schema:
+            type: string
+            format: binary
+        video/mp4:
+          schema:
+            type: string
+            format: binary
+        video/mpeg:
+          schema:
+            type: string
+            format: binary
+        video/ogg:
+          schema:
+            type: string
+            format: binary
+        video/quicktime:
+          schema:
+            type: string
+            format: binary
+        video/webm:
+          schema:
+            type: string
+            format: binary
+        video/x-ms-wmv:
           schema:
             type: string
             format: binary
@@ -1862,6 +2071,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/messagingRequestError'
+    createMessageBadRequestError:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/createMessageRequestError'
     messagingUnauthorizedError:
       description: Unauthorized
       content:

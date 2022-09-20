@@ -1,20 +1,21 @@
 ---
 id: lookupNumbers
-title: Number Lookup Service
+title: How to use phone number lookup
 slug: /numbers/guides/lookupNumbers
 description: How to look up external numbers using the Bandwidth API
 keywords:
   - bandwidth
   - numbers
   - lookup
-image: ../../static/img/bandwidth-logo.png
+  - request
+image: '@site/static/img/bw-icon.svg'
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 export const accountId = "{accountId}";
-export const orderId = "{orderId}";
+export const requestId = "{requestId}"
 
 export const Highlight = ({children, color}) => (
     <span
@@ -32,15 +33,12 @@ A guide that walks through the Bandwidth API to provide carrier information for 
 
 Currently, this service supports lookups of telephone numbers in the mainland United States, Alaska, Hawaii, District of Columbia, and the provinces of Canada. Telephone numbers submitted must be in E.164 format to be processed.
 
-## Submit Number Lookup Order
+## Submit Number Lookup Request
 
-### Request URL
-<Highlight color="#079CEE">POST</Highlight> <code>https://numbers.bandwidth.com/api/v1/accounts/{accountId}/tnlookup</code>
-
-### Examples
+To start the process of looking up information for a phone number, make a <Highlight color="#079CEE">POST</Highlight> request to the [Create Lookup Request API](../../../../apis/number-lookup#tag/Phone-Number-Lookup/operation/createLookup) endpoint.
 
 <Tabs
-  groupId="http_number_lookup_order"
+  groupId="http_number_lookup_request"
   defaultValue="single_tn"
   values={[
     { label: 'Single Number Lookup', value: 'single_tn', },
@@ -49,57 +47,110 @@ Currently, this service supports lookups of telephone numbers in the mainland Un
 }>
 <TabItem value="single_tn">
 
-> Request
+Use one of the examples to create Single Number Lookup request. This can be done through tools like [Postman](https://github.com/Bandwidth/postman) or cURL.
 
-```http
-POST https://numbers.bandwidth.com/api/v1/accounts/{accountId}/tnlookup HTTP/1.1
-Content-Type: application/json
-Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+#### Examples:
 
+<Tabs
+groupId="lookup_numbers"
+defaultValue="payload"
+values={[
+    { label: 'Payload', value: 'payload', },
+    { label: 'cURL', value: 'curl', }
+]
+}>
+
+<TabItem value="payload">
+
+<p><Highlight color="#079CEE">POST</Highlight> <code>https://numbers.bandwidth.com/api/v1/accounts/{accountId}/tnlookup</code></p>
+
+```json
 {
-  "tns": [
-    "19196104423"
-  ]
+    "tns": [
+        "19196104423"
+    ]
 }
 ```
+</TabItem>
+
+<TabItem value="curl">
+
+```cURL
+curl -X POST 'https://numbers.bandwidth.com/api/v1/accounts/{accountId}/tnlookup'
+-U '{userName}:{password}'
+-H 'Content-Type: application/json'
+-d '{
+        "tns": [
+            "19196104423"
+        ]
+    }'
+```
+</TabItem>
+</Tabs>
 
 > Response
 
-```http
-HTTP 202 Accepted
+```json
+HTTP/1.1 202 Accepted
 Content-Type: application/json
-Location: https://numbers.bandwidth.com/api/v1/accounts/9999999/tnlookup/004223a0-8b17-41b1-bf81-20732adf5590
 
 {
-  "requestId": "004223a0-8b17-41b1-bf81-20732adf5590",
-  "status": "IN_PROGRESS"
+    "requestId": "004223a0-8b17-41b1-bf81-20732adf5590",
+    "status": "IN_PROGRESS"
 }
 ```
 
 </TabItem>
 <TabItem value="multiple_tn">
 
-> Request
+Use one of the examples to create Multiple Number Lookup request. This can be done through tools like [Postman](https://github.com/Bandwidth/postman) or cURL.
 
-```http
-POST https://numbers.bandwidth.com/api/v1/accounts/{accountId}/tnlookup HTTP/1.1
-Content-Type: application/json
-Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+#### Examples:
 
+<Tabs
+groupId="lookup_numbers"
+defaultValue="payload"
+values={[
+    { label: 'Payload', value: 'payload', },
+    { label: 'cURL', value: 'curl', }
+]
+}>
+
+<TabItem value="payload">
+
+<p><Highlight color="#079CEE">POST</Highlight> <code>https://numbers.bandwidth.com/api/v1/accounts/{accountId}/tnlookup</code></p>
+
+```json
 {
-  "tns": [
-    "19196104423",
-    "+19196104424"
-  ]
+    "tns": [
+        "19196104423",
+        "+19196104424"
+    ]
 }
 ```
+</TabItem>
+
+<TabItem value="curl">
+
+```cURL
+curl -X POST 'https://numbers.bandwidth.com/api/v1/accounts/{accountId}/tnlookup'
+-U '{userName}:{password}'
+-H 'Content-Type: application/json'
+-d '{
+        "tns": [
+            "19196104423",
+            "+19196104424"
+        ]
+    }'
+```
+</TabItem>
+</Tabs>
 
 > Response
 
-```http
-HTTP 202 Accepted
+```json
+HTTP/1.1 202 Accepted
 Content-Type: application/json
-Location: https://numbers.bandwidth.com/api/v1/accounts/9999999/tnlookup/004223a0-8b17-41b1-bf81-20732adf5590
 
 {
   "requestId": "004223a0-8b17-41b1-bf81-20732adf5590",
@@ -110,36 +161,54 @@ Location: https://numbers.bandwidth.com/api/v1/accounts/9999999/tnlookup/004223a
 </TabItem>
 </Tabs>
 
-## Fetch Order Information
+## Fetch Request Information
 
-### Request URL
+Since the TN Lookup request processing is asynchronous,  make a <Highlight color="#00bf8c">GET</Highlight> request
+to our [Get Lookup Request Status API](../../../../apis/number-lookup#tag/Phone-Number-Lookup/operation/getLookupStatus) endpoint to determine the status.
+This can be done through tools like [Postman](https://github.com/Bandwidth/postman) or cURL.
 
-<Highlight color="#00bf8c">GET</Highlight> <code>https://numbers.bandwidth.com/api/v1/accounts/{accountId}/tnlookup/{orderId}</code>
 
-### Examples
+### Examples:
+
+#### Request URL
+
+<Highlight color="#00bf8c">GET</Highlight> <code>https://numbers.bandwidth.com/api/v1/accounts/{accountId}/tnlookup/{requestId}</code>
+
 
 <Tabs
-  groupId="http_number_lookup_order_status"
+groupId="numbers_lookup"
+defaultValue="curl"
+values={[
+    { label: 'cURL', value: 'curl', }
+]
+}>
+
+<TabItem value="curl">
+
+```cURL
+curl 'https://numbers.bandwidth.com/api/v1/accounts/{accountId}/tnlookup/{requestId}'
+-U '{userName}:{password}'
+```
+</TabItem>
+</Tabs>
+
+#### Status Information Displayed in the Response Body
+
+As indicated in the response body, the status for single phone number requests can be 'IN_PROGRESS', 'COMPLETE', or 'FAILED'. In addition to these statuses, multiple phone number requests can also be in a 'PARTIAL_COMPLETE' state.
+'COMPLETE', 'PARTIAL_COMPLETE', and 'FAILED' are terminal states, indicating that the request has finished processing. Refer to the examples below of responses for each of the possible statuses.
+
+<Tabs
+  groupId="http_number_lookup_request_status"
   defaultValue="in_progress"
   values={[
-    { label: 'IN PROGRESS', value: 'in_progress', },
-    { label: 'One TN - COMPLETE', value: 'one_tn_complete', },
-    { label: 'Multiple TNs - COMPLETE', value: 'multiple_tn_complete', },
-    { label: 'Multiple TNs - PARTIAL_COMPLETE', value: 'multiple_tn_partial_complete', },
-    { label: 'No Information - COMPLETE', value: 'complete_no_info', },
+    { label: 'IN_PROGRESS', value: 'in_progress', },
+    { label: 'COMPLETE', value: 'complete', },
+    { label: 'PARTIAL_COMPLETE', value: 'partial_complete', },
     { label: 'FAILED', value: 'failed', },
   ]
 }>
+
 <TabItem value="in_progress">
-
-> Request
-
-```http
-GET https://numbers.bandwidth.com/api/v1/accounts/{accountId}/tnlookup/{orderId} HTTP/1.1
-Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
-```
-
-> Response
 
 ```json
 HTTP/1.1 200 OK
@@ -152,16 +221,18 @@ Content-Type: application/json
 ```
 
 </TabItem>
+<TabItem value="complete">
+
+<Tabs
+groupId="complete_status"
+defaultValue="one_tn_complete"
+values={[
+    { label: 'One TN', value: 'one_tn_complete', },
+    { label: 'Multiple TNs', value: 'multiple_tn_complete', },
+    { label: 'No Information', value: 'complete_no_info', }
+]
+}>
 <TabItem value="one_tn_complete">
-
-> Request
-
-```http
-GET https://numbers.bandwidth.com/api/v1/accounts/{accountId}/tnlookup/{orderId} HTTP/1.1
-Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
-```
-
-> Response
 
 ```json
 HTTP/1.1 200 OK
@@ -185,18 +256,9 @@ Content-Type: application/json
   ]
 }
 ```
-
 </TabItem>
+
 <TabItem value="multiple_tn_complete">
-
-> Request
-
-```http
-GET https://numbers.bandwidth.com/api/v1/accounts/{accountId}/tnlookup/{orderId} HTTP/1.1
-Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
-```
-
-> Response
 
 ```json
 HTTP/1.1 200 OK
@@ -233,16 +295,34 @@ Content-Type: application/json
 ```
 
 </TabItem>
-<TabItem value="multiple_tn_partial_complete">
 
-> Request
+<TabItem value="complete_no_info">
 
-```http
-GET https://numbers.bandwidth.com/api/v1/accounts/{accountId}/tnlookup/{orderId} HTTP/1.1
-Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```json
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "requestId": "004223a0-8b17-41b1-bf81-20732adf5590",
+  "status": "COMPLETE",
+  "result": [
+    {
+      "Response Code": 3,
+      "Message": "NXDOMAIN",
+      "E.164 Format": "19196104425",
+      "Formatted": "(919) 610-4425",
+      "Country": "US"
+    }
+  ]
+}
 ```
 
-> Response
+</TabItem>
+
+</Tabs>
+</TabItem>
+
+<TabItem value="partial_complete">
 
 ```json
 HTTP/1.1 200 OK
@@ -271,47 +351,7 @@ Content-Type: application/json
 ```
 
 </TabItem>
-<TabItem value="complete_no_info">
-
-> Request
-
-```http
-GET https://numbers.bandwidth.com/api/v1/accounts/{accountId}/tnlookup/{orderId} HTTP/1.1
-Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
-```
-
-> Response
-
-```json
-HTTP/1.1 200 OK
-Content-Type: application/json
-
-{
-  "requestId": "004223a0-8b17-41b1-bf81-20732adf5590",
-  "status": "COMPLETE",
-  "result": [
-    {
-      "Response Code": 3,
-      "Message": "NXDOMAIN",
-      "E.164 Format": "19196104425",
-      "Formatted": "(919) 610-4425",
-      "Country": "US"
-    }
-  ]
-}
-```
-
-</TabItem>
 <TabItem value="failed">
-
-> Request
-
-```http
-GET https://numbers.bandwidth.com/api/v1/accounts/{accountId}/tnlookup/{orderId} HTTP/1.1
-Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
-```
-
-> Response
 
 ```json
 HTTP/1.1 200 OK
@@ -328,3 +368,8 @@ Content-Type: application/json
 
 </TabItem>
 </Tabs>
+
+
+## Where to next?
+Now that you have learned how to lookup information for phone numbers, check out some of the other available actions in our guides:
+- [How to order numbers](/docs/numbers/guides/searchingForNumbers)

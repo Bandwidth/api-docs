@@ -7,7 +7,7 @@ keywords:
   - bandwidth
   - webrtc
   - video
-image: ../../static/img/bandwidth-logo.png
+image: '@site/static/img/bw-icon.svg'
 ---
 
 ## Connecting WebRTC to Programmable Voice
@@ -22,7 +22,7 @@ By combining our WebRTC and programmable voice APIs, you can create composite ca
 
 To create a Programmable Voice call that involves WebRTC endpoints, your application first establishes a connection from the Programmable Voice network to the WebRTC platform.
 
-![Summary of interconnection](../../static/img/webrtc-pv-summary.png "summary")
+![Summary of interconnection](@site/static/img/docs-diagrams/webrtc/pv-summary.png "summary")
 
 To interconnect a WebRTC participant to the PV network capabilities, your application first creates a WebRTC Participant to host the interconnection. The Participant security token is handed to the PV platform which sends a pre-authenticated SIP INVITE to the WebRTC service. This INVITE includes a UUI header containing the Participant authentication token which enables the system to securely identify and interconnect the PV voice capabilities and the WebRTC participants.
 
@@ -44,7 +44,7 @@ These three interaction models are described in greater detail below.
 
 The transfer verb creates a single PV call with two endpoints. Your application sets one end of the PV call as WebRTC, and the other as the Voice Phone.
 
-![Transfer Verb Model](../../static/img/webrtc-pv-transfer.png "Transfer")
+![Transfer Verb Model](@site/static/img/docs-diagrams/webrtc/pv-transfer.png "Transfer")
 
 Use of the Transfer BXML Verb creates a single call that will typically be taken down from end to end when one end hangs up (or times out waiting for an answer). The call ends if the person you are transferring to does not respond. Also, any modifications to the call will take down the connection between WebRTC and the Voice Network.
 
@@ -114,7 +114,7 @@ Use of the Bridge verb allows creation of two independent PV calls that are Brid
 
 This model allows your application to maintain the connection between WebRTC and Programmable Voice after the call representing the voice network phone is taken down. Various modifications can be made while the bridge exists, unlike the Transfer verb.
 
-![Bridge Verb Model](../../static/img/webrtc-pv-bridge.png "Bridge")
+![Bridge Verb Model](@site/static/img/docs-diagrams/webrtc/pv-bridge.png "Bridge")
 
 Here’s [an example](https://github.com/Bandwidth-Samples/webrtc-voicebridge-ts) of how you can use the Bridge Verb:
 
@@ -137,7 +137,7 @@ If reducing delays in interconnection of voice and WebRTC legs is important, the
 
 Although use of the Conference verb has higher costs than the previous methods, it would be the most sustainable option for dealing with a large group of voice callers. If you expect more than two voice callers in one session, the Conference method is effective if Programmable Voice services are needed for those callers. You can have 20 calls in a conference and keep the session for 24 hours. You also have the freedom to add and remove participants from the conference.
 
-![Conference Verb Model](../../static/img/webrtc-pv-conference.png "Conference")
+![Conference Verb Model](@site/static/img/docs-diagrams/webrtc/pv-conference.png "Conference")
 
 Conferencing is actively supported by both the WebRTC and Voice platforms, however, if both platforms are interconnected, and the power of PV is needed on the voice-only call legs, use of the Conference BXML verb is valuable. If fine-grained control over media in a conference scenario is needed, or if video is required in the conference, it is likely wise to use the conferencing capability inherent in the WebRTC platform and APIs.
 
