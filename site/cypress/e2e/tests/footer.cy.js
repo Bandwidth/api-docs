@@ -1,112 +1,49 @@
-context('Footer Get Started', () => {
-  beforeEach(() => {
-    cy.visit('/')
-    cy.get('div')
-      .contains('Get Started')
-      .siblings('div')
-      .as('getStarted')
+import {footerExtLinkTester} from '../../utils/utils'
+
+context('Get Started Section Voice Link', () => {
+  footerExtLinkTester('Get Started', 'Voice', 'https://www.bandwidth.com/voice/')
   })
 
-describe('Voice', () => {
-  it('Should verify the external link exists', () => {
-    cy.get('@getStarted')
-      .contains('Voice')
-      .should('have.attr', 'href', 'https://www.bandwidth.com/voice/')
-    })
+context('Get Started Section Messaging Link', () => {
+  footerExtLinkTester('Get Started', 'Messaging', 'https://www.bandwidth.com/messaging/')
   })
 
-describe('Messaging', () => {
-  it('Should verify the external link exists', () => {
-    cy.get('@getStarted')
-      .contains('Messaging')
-      .should('have.attr', 'href', 'https://www.bandwidth.com/messaging/')
-    })
+context('Get Started Section Enterprise 911 Link', () => {
+  footerExtLinkTester('Get Started', 'Enterprise 911', 'https://www.bandwidth.com/911/')
   })
 
-describe('Enterprise 911', () => {
-  it('Should verify the external link exists', () => {
-    cy.get('@getStarted')
-      .contains('Enterprise 911')
-      .should('have.attr', 'href', 'https://www.bandwidth.com/911/')
-    })
+context('Get Started Section Phone Number Management Link', () => {
+  footerExtLinkTester('Get Started', 'Phone Number Management', 'https://www.bandwidth.com/phone-numbers/')
   })
 
-describe('Phone Number Management', () => {
-  it('Should verify the external link exists', () => {
-    cy.get('@getStarted')
-      .contains('Phone Number Management')
-      .should('have.attr', 'href', 'https://www.bandwidth.com/phone-numbers/')
-    })
+context('Get Started Section Try the APIs Link', () => {
+  footerExtLinkTester('Get Started', 'Try the APIs', 'https://www.bandwidth.com/free-trial/')
   })
 
-describe('Try the APIs', () => {
-  it('Should verify the external link exists', () => {
-    cy.get('@getStarted')
-      .contains('Try the APIs')
-      .should('have.attr', 'href', 'https://www.bandwidth.com/free-trial/')
-    })
+context('Company Section About Us Link', () => {
+  footerExtLinkTester('Company', 'About Us', 'https://www.bandwidth.com/company/')
   })
 
-})
-
-context('Footer Company', () => {
-  beforeEach(() => {
-    cy.visit('/')
-    cy.get('div')
-      .contains('Company')
-      .siblings('div')
-      .as('company')
+context('Company Section Contact Link', () => {
+  footerExtLinkTester('Company', 'Contact', 'https://www.bandwidth.com/contact/')
   })
 
-describe('About Us', () => {
-  it('Should verify the external link exists', () => {
-    cy.get('@company')
-      .contains('About Us')
-      .should('have.attr', 'href', 'https://www.bandwidth.com/company/')
-    })
+context('Company Section Newsroom Link', () => {
+  footerExtLinkTester('Company', 'Newsroom', 'ttps://www.bandwidth.com/newsroom/')
   })
 
-describe('Contact', () => {
-  it('Should verify the external link exists', () => {
-    cy.get('@company')
-      .contains('Contact')
-      .should('have.attr', 'href', 'https://www.bandwidth.com/contact/')
-    })
+context('Company Section Careers Link', () => {
+  footerExtLinkTester('Company', 'Careers', 'https://www.bandwidth.com/careers/')
   })
 
-describe('Newsroom', () => {
-  it('Should verify the external link exists', () => {
-    cy.get('@company')
-      .contains('Newsroom')
-      .should('have.attr', 'href', 'https://www.bandwidth.com/newsroom/')
-    })
+context('Company Section Investor Relations Link', () => {
+  footerExtLinkTester('Company', 'Investor Relations', 'https://investors.bandwidth.com/')
   })
 
-describe('Careers', () => {
-  it('Should verify the external link exists', () => {
-    cy.get('@company')
-      .contains('Careers')
-      .should('have.attr', 'href', 'https://www.bandwidth.com/careers/')
-    })
+context('Company Section Leadership Link', () => {
+  footerExtLinkTester('Company', 'Leadership', 'https://www.bandwidth.com/leadership/')
   })
 
-describe('Investor Relations', () => {
-  it('Should verify the external link exists', () => {
-    cy.get('@company')
-      .contains('Investor Relations')
-      .should('have.attr', 'href', 'https://investors.bandwidth.com/')
-    })
-  })
-
-describe('Leadership', () => {
-  it('Should verify the external link exists', () => {
-    cy.get('@company')
-      .contains('Leadership')
-      .should('have.attr', 'href', 'https://www.bandwidth.com/leadership/')
-    })
-  })
-
-})
 
 context('Footer More', () => {
   beforeEach(() => {
@@ -117,7 +54,7 @@ context('Footer More', () => {
       .as('more')
   })
 
-describe('Release Notes', () => {
+context('Release Notes', () => {
   it('Should verify the external link exists', () => {
     cy.get('@more')
       .contains('Release Notes')
@@ -125,7 +62,7 @@ describe('Release Notes', () => {
     })
   })
 
-describe('Sandbox', () => {
+context('Sandbox', () => {
   it('Should verify the external link exists', () => {
     cy.get('@more')
       .contains('Sandbox')
@@ -133,7 +70,7 @@ describe('Sandbox', () => {
     })
   })
 
-describe('Status', () => {
+context('Status', () => {
   it('Should verify the external link exists', () => {
     cy.get('@more')
       .contains('Status')
@@ -141,7 +78,7 @@ describe('Status', () => {
     })
   })
 
-describe('Support', () => {
+context('Support', () => {
   it('Should verify the external link exists', () => {
     cy.get('@more')
       .contains('Support')
@@ -160,7 +97,7 @@ context('Footer Community', () => {
       .as('community')
   })
 
-describe('Blog', () => {
+context('Blog', () => {
   it('Should verify the external link exists', () => {
     cy.get('@community')
       .contains('Blog')
@@ -168,7 +105,7 @@ describe('Blog', () => {
     })
   })
 
-describe('Github', () => {
+context('Github', () => {
   it('Should verify the external link exists', () => {
     cy.get('@community')
       .contains('GitHub')
@@ -176,7 +113,7 @@ describe('Github', () => {
     })
   })
 
-describe('Postman', () => {
+context('Postman', () => {
   it('Should verify the external link exists', () => {
     cy.get('@community')
       .contains('Postman')
@@ -194,7 +131,7 @@ context('Social Media Links', () => {
       .as('socialMedia')
   })
 
-describe('LinkedIn, Twitter, Youtube, Github', () => {
+context('LinkedIn, Twitter, Youtube, Github', () => {
   it('Should verify the external links exist for the social media accounts', () => {
     cy.get('@socialMedia')
       .first()
@@ -210,7 +147,7 @@ describe('LinkedIn, Twitter, Youtube, Github', () => {
 
 })
 
-describe('Call to Action', () => {
+context('Call to Action', () => {
   it('Should verify that the call to action link exists', () => {
     cy.get('[class*="callToAction"]')
       .siblings('div')

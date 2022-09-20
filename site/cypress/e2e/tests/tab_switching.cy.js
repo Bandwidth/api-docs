@@ -1,4 +1,4 @@
-describe('Verifying that the code examples react tab actually switches examples', () => {
+context('Verifying that the code examples react tab actually switches examples', () => {
     it('Should find the examples tab, click a different language, and verify that the example switched.', () => {
         cy.visit('/docs/voice/bxml/pause/')
         cy.get('div.language-xml')
