@@ -2421,6 +2421,39 @@ components:
       example: SIP
       enum:
         - SIP
+    sipTo:
+      type: string
+      description: the destination telephone number in e.164 format
+      example: '+16136211234'
+    sipFrom:
+      type: string
+      description: >-
+        the caller's telephone number in e.164 format, or the string UNKNOWN or
+        RESTRICTED
+      example: '+16136211234'
+    sipUserToUser:
+      type: string
+      description: >
+        Information that will be handed to the SIP client to be passed towards
+        the far end user. The formatting of the contents is completely dependent
+        on the ability of the  end system to parse and understand the contents
+      example: >-
+        eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c;encoding=jwt
+    sipDialogData:
+      type: object
+      description: >-
+        The state data associated with a Dialog - dependent on type of the
+        Dialog
+      required:
+        - to
+        - from
+      properties:
+        to:
+          $ref: '#/components/schemas/sipTo'
+        from:
+          $ref: '#/components/schemas/sipFrom'
+        userToUser:
+          $ref: '#/components/schemas/sipUserToUser'
     deviceApiVersionEnum:
       type: string
       description: Optional field to define the device api version of this participant.
@@ -2534,16 +2567,7 @@ components:
           example: participant1
         deviceApiVersion:
           $ref: '#/components/schemas/deviceApiVersionEnum'
-    createDialogRequest:
-      type: object
-      description: The payload for a request to create a Dialog
-      properties:
-        type:
-          $ref: '#/components/schemas/dialogType'
-        dialogState:
-          oneOf:
-            - $ref: '#/components/schemas/createSipDialogRequest'
-    createDialogResponse:
+    sipCreateDialogResponse:
       type: object
       description: >
         A Dialog is used for exchanging high-level state information, the types
@@ -2555,71 +2579,47 @@ components:
           description: Unique ID of the dialog.
           readOnly: true
           example: 320e2af6-13ec-498d-8b51-daba52c37853
-        dialogState:
+        type:
+          $ref: '#/components/schemas/dialogType'
+        state:
+          $ref: '#/components/schemas/sipDialogStateEnum'
+        data:
+          $ref: '#/components/schemas/sipDialogData'
+    createDialogRequest:
+      type: object
+      description: The payload for a request to create a Dialog
+      properties:
+        type:
+          $ref: '#/components/schemas/dialogType'
+        data:
           oneOf:
-            - $ref: '#/components/schemas/sipDialogResponseStateData'
+            - $ref: '#/components/schemas/sipDialogData'
+    createDialogResponse:
+      type: object
+      oneOf:
+        - $ref: '#/components/schemas/sipCreateDialogResponse'
     updateDialogRequest:
       oneOf:
         - $ref: '#/components/schemas/sipUpdateDialogRequestBody'
-    sipTo:
-      type: string
-      description: the destination telephone number in e.164 format
-      example: '+16136211234'
-    sipFrom:
-      type: string
-      description: >-
-        the caller's telephone number in e.164 format, or the string UNKNOWN or
-        RESTRICTED
-      example: '+16136211234'
-    sipUserToUser:
-      type: string
-      description: >
-        Information that will be handed to the SIP client to be passed towards
-        the far end user. The formatting of the contents is completely dependent
-        on the ability of the  end system to parse and understand the contents
-      example: >-
-        eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c;encoding=jwt
-    createSipDialogRequest:
-      type: object
-      description: >-
-        The state data associated with a Dialog - dependent on type of the
-        Dialog
-      required:
-        - to
-        - from
-      properties:
-        to:
-          $ref: '#/components/schemas/sipTo'
-        from:
-          $ref: '#/components/schemas/sipFrom'
-        userToUser:
-          $ref: '#/components/schemas/sipUserToUser'
-    sipDialogResponseStateData:
-      type: object
-      description: >
-        The response contains the information that represents the current state
-        of the dialog.  Depending on the characteristics and state of the Dialog
-        this information may be missing,  current, out of date, or idempotent. 
-        Please see the Text documentation about the use of Dialogs for further
-        information.
-      properties:
-        state:
-          $ref: '#/components/schemas/sipDialogStateEnum'
-        to:
-          $ref: '#/components/schemas/sipTo'
-        from:
-          $ref: '#/components/schemas/sipFrom'
-        userToUser:
-          $ref: '#/components/schemas/sipUserToUser'
+    updateDialogResponse:
+      oneOf:
+        - $ref: '#/components/schemas/sipUpdateDialogResponseBody'
     sipUpdateDialogRequestBody:
       type: object
       description: Update a SIP Dialog owned by a Participant.
       properties:
-        dialogState:
-          type: object
-          properties:
-            state:
-              $ref: '#/components/schemas/sipDialogStateEnum'
+        state:
+          $ref: '#/components/schemas/sipDialogStateEnum'
+    sipUpdateDialogResponseBody:
+      type: object
+      description: Update a SIP Dialog owned by a Participant.
+      properties:
+        type:
+          $ref: '#/components/schemas/dialogType'
+        state:
+          $ref: '#/components/schemas/sipDialogStateEnum'
+        data:
+          $ref: '#/components/schemas/sipDialogData'
     eventBody:
       oneOf:
         - $ref: '#/components/schemas/sipDialogEventBody'
@@ -2715,8 +2715,12 @@ components:
     sipDialogEventContents:
       type: object
       properties:
-        dialogState:
-          $ref: '#/components/schemas/sipDialogResponseStateData'
+        type:
+          $ref: '#/components/schemas/dialogType'
+        state:
+          $ref: '#/components/schemas/sipDialogStateEnum'
+        data:
+          $ref: '#/components/schemas/sipDialogData'
         event:
           $ref: '#/components/schemas/dialogEventData'
     subscriptions:
@@ -2822,6 +2826,10 @@ components:
             $ref: '#/components/schemas/createDialogResponse'
     updateDialogResponse:
       description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/updateDialogResponse'
     getParticipantResponse:
       description: OK
       content:
@@ -3005,6 +3013,6 @@ components:
 security:
   - Basic: []
 tags:
-  - name: Sessions
   - name: Participants
   - name: Dialogs
+  - name: Sessions
