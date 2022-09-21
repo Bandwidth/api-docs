@@ -1,0 +1,715 @@
+openapi: 3.0.3
+info:
+  title: Identity Management
+  description: Bandwidth Identity API
+  contact: {}
+  version: 1.1.0-alpha
+  x-server-configuration:
+    default-environment: Production
+    default-server: Production
+    environments:
+      - name: Production
+      - name: Custom
+        servers:
+          - name: default
+            url: '{base_url}'
+    parameters:
+      - name: base_url
+        description: ''
+        type: string
+        example: https://www.example.com
+paths:
+  /idps:
+    get:
+      tags:
+        - Identity Provider Management
+      summary: getIdps
+      description: Returns all the IdPs that the requesting user has access to.
+      operationId: getIdps
+      parameters:
+        - name: accountId
+          in: query
+          description: Filter results by this accountId.
+          style: form
+          explode: true
+          schema:
+            type: string
+        - name: active
+          in: query
+          description: Filter results by the IdP active status.
+          style: form
+          explode: true
+          schema:
+            type: boolean
+        - name: offset
+          in: query
+          description: The number of IDPs to skip when executing the query
+          style: form
+          explode: true
+          schema:
+            type: integer
+            format: int32
+            default: 0
+            minimum: 0
+        - name: limit
+          in: query
+          description: The number of IDPs to return.
+          style: form
+          explode: true
+          schema:
+            type: integer
+            format: int32
+            default: 20
+            minimum: 1
+      responses:
+        '200':
+          description: >-
+            Successful response. A list of IdPs is returned. If there are no
+            IdPs to return, an empty list is returned.
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    oneOf:
+                      - $ref: '#/components/schemas/SAMLIdP'
+                  totalCount:
+                    type: integer
+                    description: The total number of IdPs found with the specified filters
+                description: ''
+        '401':
+          description: Unauthorized
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: An internal error occurred attempting to process a request
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      deprecated: false
+    post:
+      tags:
+        - Identity Provider Management
+      summary: postIdps
+      description: Creates a new IdP.
+      operationId: postIdps
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewSAMLIdP'
+        required: true
+      responses:
+        '201':
+          description: Successful Response. Returns the newly created IdP resource.
+          headers:
+            Location:
+              description: The URL of the created resource.
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                    description: The URL of the created resource.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/SAMLIdP'
+        '400':
+          description: Invalid Request.
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: You have an error in your request. Please review and try again
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: An internal error occurred attempting to process a request
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      deprecated: false
+  /idps/{IdpId}:
+    put:
+      tags:
+        - Identity Provider Management
+      summary: putIdp
+      description: Modifies an IdP.
+      operationId: putIdp
+      parameters:
+        - name: IdpId
+          in: path
+          description: The IdP id.
+          required: true
+          style: simple
+          schema:
+            type: string
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewSAMLIdP'
+        required: true
+      responses:
+        '200':
+          description: Successful Response. Returns the modified IdP resource.
+          headers: {}
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/SAMLIdP'
+        '400':
+          description: Invalid Request.
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: IdP not found.
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: >-
+            Conflict. You are attempting to modify an IdP in a way it cannot be
+            changed
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: An internal error occurred attempting to process a request
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      deprecated: false
+    get:
+      tags:
+        - Identity Provider Management
+      summary: getIdp
+      description: Returns the IdP with the given id.
+      operationId: getIdp
+      parameters:
+        - name: IdpId
+          in: path
+          description: The IdP id.
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: 0ob620cjl5JqUwZ8u4x2
+      responses:
+        '200':
+          description: Successful response. The IdP resource, if it exists.
+          headers: {}
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/SAMLIdP'
+        '401':
+          description: Unauthorized
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: IdP not found.
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: An internal error occurred attempting to process a request
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      deprecated: false
+    delete:
+      tags:
+        - Identity Provider Management
+      summary: deleteIdp
+      description: Deletes the IdP with the given id.
+      operationId: deleteIdp
+      parameters:
+        - name: IdpId
+          in: path
+          description: The IdP id.
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: 0ob620cjl5JqUwZ8u4x2
+      responses:
+        '204':
+          description: Successful response. The IdP resource was deleted.
+          headers: {}
+          content: {}
+        '401':
+          description: Unauthorized
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: IdP not found.
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: A conflict on the IdP occurred
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: An internal error occurred attempting to process a request
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      deprecated: false
+  /.well-known/webfinger:
+    get:
+      tags:
+        - Webfinger
+      summary: Webfinger
+      description: Returns a Webfinger response for the provided resource.
+      operationId: Webfinger
+      parameters:
+        - name: resource
+          in: query
+          description: The resource to get information about
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+            example: okta:acct:user@company.com
+      responses:
+        '200':
+          description: A webfinger standard response for the requested resource.
+          headers: {}
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/WebfingerIdPEnabledResponse'
+        '500':
+          description: An internal error occurred attempting to process a request
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      deprecated: false
+      security: []
+components:
+  schemas:
+    NewSAMLIdP:
+      title: NewSAMLIdP
+      allOf:
+        - $ref: '#/components/schemas/NewIdP'
+        - required:
+            - accountId
+            - active
+          type: object
+          properties:
+            accountId:
+              type: string
+              description: The Bandwidth account id that will use this Identity Provider.
+            active:
+              type: boolean
+              description: >-
+                Whether this IdP is active or not. Only one IdP can be active
+                for a given accountId.
+              example: false
+            usernameField:
+              type: string
+              description: The field in the SAML assertion that container the username
+            issuerUri:
+              type: string
+              description: >-
+                URI of the Identity Provider. This value is usually the SAML
+                Metadata EntityID of the IdP EntityDescriptor.
+            singleSignOnUrl:
+              type: string
+              description: >-
+                The binding-specific IdP Authentication Request Protocol
+                endpoint that receives SAML AuthnRequest messages.
+            signatureCertificate:
+              type: string
+              description: >-
+                The PEM or DER encoded public key certificate of the Identity
+                Provider used to verify SAML message and assertion signatures.
+    SAMLIdP:
+      title: SAMLIdP
+      allOf:
+        - $ref: '#/components/schemas/IdP'
+        - required:
+            - accountId
+            - active
+            - id
+            - entityId
+            - acsUrl
+          type: object
+          properties:
+            accountId:
+              type: string
+              description: The Bandwidth account id that will use this Identity Provider.
+            active:
+              type: boolean
+              description: >-
+                Whether this IdP is active or not. Only one IdP can be active
+                for a given accountId.
+              example: false
+            id:
+              type: string
+              description: The identifier for this Identity Provider.
+            entityId:
+              type: string
+              description: >-
+                The IdP entity id. This should be used as input to configure the
+                source provider.
+            acsUrl:
+              type: string
+              description: >-
+                The consumer assertion URL. This should be used as input to
+                configure the source provider.
+            usernameField:
+              type: string
+              description: The field in the SAML assertion that container the username
+            issuerUri:
+              type: string
+              description: >-
+                URI of the Identity Provider. This value is usually the SAML
+                Metadata EntityID of the IdP EntityDescriptor.
+            singleSignOnUrl:
+              type: string
+              description: >-
+                The binding-specific IdP Authentication Request Protocol
+                endpoint that receives SAML AuthnRequest messages.
+            signatureCertificate:
+              type: string
+              description: >-
+                The PEM or DER encoded public key certificate of the Identity
+                Provider used to verify SAML message and assertion signatures.
+    NewProperties:
+      title: NewProperties
+      required:
+        - accountId
+        - protocol
+        - active
+      type: object
+      properties:
+        accountId:
+          type: string
+          description: The Bandwidth account id that will use this Identity Provider.
+        protocol:
+          enum:
+            - SAML
+          type: string
+          description: >-
+            The protocol used by this Identity Provider. Only SAML is supported
+            for now.
+          example: SAML
+        active:
+          type: boolean
+          description: >-
+            Whether this IdP is active or not. Only one IdP can be active for a
+            given accountId.
+          example: false
+    GeneralProperties:
+      title: GeneralProperties
+      required:
+        - id
+        - entityId
+        - acsUrl
+      type: object
+      properties:
+        id:
+          type: string
+          description: The identifier for this Identity Provider.
+        entityId:
+          type: string
+          description: >-
+            The IdP entity id. This should be used as input to configure the
+            source provider.
+        acsUrl:
+          type: string
+          description: >-
+            The consumer assertion URL. This should be used as input to
+            configure the source provider.
+    SamlProperties:
+      title: SamlProperties
+      type: object
+      properties:
+        usernameField:
+          type: string
+          description: The field in the SAML assertion that container the username
+        issuerUri:
+          type: string
+          description: >-
+            URI of the Identity Provider. This value is usually the SAML
+            Metadata EntityID of the IdP EntityDescriptor.
+        singleSignOnUrl:
+          type: string
+          description: >-
+            The binding-specific IdP Authentication Request Protocol endpoint
+            that receives SAML AuthnRequest messages.
+        signatureCertificate:
+          type: string
+          description: >-
+            The PEM or DER encoded public key certificate of the Identity
+            Provider used to verify SAML message and assertion signatures.
+    ErrorResponse:
+      title: ErrorResponse
+      type: object
+      properties:
+        timestamp:
+          type: string
+          description: The timestamp in ISO 8601 format of when the error was encountered
+          format: date-time
+        httpStatus:
+          type: integer
+          description: >-
+            The HTTP status code returned by the server for the error
+            encountered
+          format: int32
+          example: 401
+        message:
+          type: string
+          description: A short description about the error encountered
+        traceId:
+          type: string
+          description: A unique trace ID used to identify the request and response.
+          example: b77a5ea79036d5b9
+    ErrorResponse_Error:
+      title: ErrorResponse_Error
+      type: object
+      properties:
+        timestamp:
+          type: string
+          description: The timestamp in ISO 8601 format of when the error was encountered
+          format: date-time
+        statusCode:
+          type: integer
+          description: >-
+            The HTTP status code returned by the server for the error
+            encountered
+          format: int32
+          example: 401
+        statusText:
+          type: string
+          description: A short description about the error encountered
+        traceId:
+          type: string
+          description: A unique trace ID used to identify the request and response.
+          example: b77a5ea79036d5b9
+    IdP:
+      title: IdP
+      required:
+        - protocol
+      type: object
+      properties:
+        protocol:
+          type: string
+      discriminator:
+        propertyName: protocol
+        mapping:
+          SAML: SAMLIdP
+    NewIdP:
+      title: NewIdP
+      required:
+        - protocol
+      type: object
+      properties:
+        protocol:
+          type: string
+      discriminator:
+        propertyName: protocol
+        mapping:
+          SAML: NewSAMLIdP
+    WebfingerIdPEnabledResponse:
+      title: WebfingerIdPEnabledResponse
+      required:
+        - subject
+        - links
+      type: object
+      properties:
+        subject:
+          type: string
+          description: The resource
+          xml:
+            attribute: true
+            wrapped: false
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/webfinger_links'
+          description: ''
+          example:
+            - href: >-
+                https://login.bandwidth.com/sso/idps/0oahx4rqfARaXDIas4x6?login_hint=user%40company.com#
+              rel: okta:idp
+              properties:
+                okta:idp:id: 0obhx4rqfARaXDIas4x2
+                okta:idp:metadata: >-
+                  https://login.bandwidth.com/api/v1/idps/0obhx4rqfARaXDIas4x2/metadata.xml
+                okta:idp:type: SAML2
+              titles:
+                und: Company IdP
+      description: The response from the Webfinger for a resource with BYOIdP enabled
+      example:
+        subject: okta:acct:user@company;com
+        links:
+          - href: >-
+              https://login.bandwidth.com/sso/idps/0oahx4rqfARaXDIas4x6?login_hint=user%40company.com#
+            rel: okta:idp
+            properties:
+              okta:idp:id: 0obhx4rqfARaXDIas4x2
+              okta:idp:metadata: >-
+                https://login.bandwidth.com/api/v1/idps/0obhx4rqfARaXDIas4x2/metadata.xml
+              okta:idp:type: SAML2
+            titles:
+              und: Company IdP
+    webfinger_links_titles:
+      title: webfinger_links_titles
+      required:
+        - und
+      type: object
+      properties:
+        und:
+          type: string
+          description: Title of the link of the resource
+          xml:
+            attribute: true
+            wrapped: false
+      description: ''
+    webfinger_links_properties:
+      title: webfinger_links_properties
+      required:
+        - okta:idp:id
+        - okta:idp:metadata
+        - okta:idp:type
+      type: object
+      properties:
+        okta:idp:id:
+          type: string
+          description: The IdP ID
+          xml:
+            attribute: true
+            wrapped: false
+        okta:idp:metadata:
+          type: string
+          description: Link to the IdP metadata
+          xml:
+            attribute: true
+            wrapped: false
+        okta:idp:type:
+          type: string
+          description: The IdP type or protocol
+          xml:
+            attribute: true
+            wrapped: false
+          example: SAML2
+      description: ''
+    webfinger_links:
+      title: webfinger_links
+      required:
+        - href
+        - rel
+        - properties
+        - titles
+      type: object
+      properties:
+        href:
+          type: string
+          description: Direct link to initiate resource login process
+          xml:
+            attribute: true
+            wrapped: false
+        rel:
+          type: string
+          xml:
+            attribute: true
+            wrapped: false
+          example: okta:idp
+        properties:
+          $ref: '#/components/schemas/webfinger_links_properties'
+        titles:
+          $ref: '#/components/schemas/webfinger_links_titles'
+      description: Links for the resource in the subject
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: jwt
+    basicAuth:
+      type: http
+      scheme: basic
+security:
+  - basicAuth: []
+  - bearerAuth: []
+tags:
+  - name: Identity Provider Management
+    description: ''
+  - name: Webfinger
+    description: ''
+servers:
+  - description: Production
+    url: https://id.management.bandwidth.com
+    variables: {}
+  - url: '{base_url}'
+    variables:
+      base_url:
+        default: https://www.example.com
+        description: ''
