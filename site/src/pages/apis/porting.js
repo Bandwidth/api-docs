@@ -10,7 +10,7 @@ export default function ApiReferencePage() {
           title={`Porting API Reference`}
           description="Everything you'll need to start working with our Porting API."
           keywords="Bandwidth,API,Porting">
-            <ApiReference spec={siteConfig.customFields.portingSpec} color={siteConfig.customFields.numbersMaroon} />
+            <ApiReference spec={siteConfig.customFields.globalSpec_v3} color={siteConfig.customFields.numbersMaroon} />
         </Layout>
     );
 }
