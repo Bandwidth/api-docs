@@ -1,61 +1,49 @@
-import {navTester, testSvgLink, testTextLink} from '../../utils/utils'
+import {testSvgLink, testTextLink} from '../../utils/utils'
 
 context('Numbers Docs SVG Link on Homepage', () => {
-  testSvgLink('/','svg[alt="Numbers"]')
-  navTester('docs/numbers')
+  testSvgLink('/','svg[alt="Numbers"]', 'docs/numbers')
 })
 
 context('Numbers Docs Text Link on Homepage', () => {
-  testTextLink('/','Numbers')
-  navTester('docs/numbers')
+  testTextLink('/','Numbers', 'docs/numbers')
 })
 
 context('Voice Docs SVG Link on Homepage', () => {
-  testSvgLink('/','svg[alt="Voice"]')
-  navTester('docs/voice')
+  testSvgLink('/','svg[alt="Voice"]', 'docs/voice')
 })
 
 context('Voice Docs Text Link on Homepage', () => {
-  testTextLink('/','Voice')
-  navTester('docs/voice')
+  testTextLink('/','Voice', 'docs/voice')
 })
 
 context('Messaging Docs SVG Link on Homepage', () => {
-  testSvgLink('/','svg[alt="Messaging"]')
-  navTester('docs/messaging')
+  testSvgLink('/','svg[alt="Messaging"]', 'docs/messaging')
 })
 
 context('Messaging Docs Text Link on Homepage', () => {
-  testTextLink('/','Messaging')
-  navTester('docs/messaging')
+  testTextLink('/','Messaging', 'docs/messaging')
 })
 
 context('Emergency Docs SVG Link on Homepage', () => {
-  testSvgLink('/','svg[alt="Emergency"]')
-  navTester('docs/emergency')
+  testSvgLink('/','svg[alt="Emergency"]', 'docs/emergency')
 })
 
 context('Emergency Docs Text Link on Homepage', () => {
-  testTextLink('/','Emergency')
-  navTester('docs/emergency')
+  testTextLink('/','Emergency', 'docs/emergency')
 })
 
 context('Multi-Factor Authentication Docs SVG Link on Homepage', () => {
-  testSvgLink('/','svg[alt="Multi-Factor Authentication"]')
-  navTester('docs/mfa')
+  testSvgLink('/','svg[alt="Multi-Factor Authentication"]', 'docs/mfa')
 })
 
 context('Multi-Factor Authentication Docs Text Link on Homepage', () => {
-  testTextLink('/','Multi-Factor Authentication')
-  navTester('docs/mfa')
+  testTextLink('/','Multi-Factor Authentication', 'docs/mfa')
 })
 
 context('WebRTC Docs SVG Link on Homepage', () => {
-  testSvgLink('/','svg[alt="WebRTC"]')
-  navTester('docs/webrtc')
+  testSvgLink('/','svg[alt="WebRTC"]', 'docs/webrtc')
 })
 
 context('WebRTC Docs Text Link on Homepage', () => {
-  testTextLink('/','WebRTC')
-  navTester('docs/webrtc')
+  testTextLink('/','WebRTC', 'docs/webrtc')
 })

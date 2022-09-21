@@ -23,12 +23,9 @@ export const navBarContext = (pathName, hidden, viewportWidth = 1400, viewportHe
 
 export const navTester = (path) => {
     it('checks that nagivation back or forward in the browser\'s history from the page works', () => {
-  
       cy.location('pathname').should('include', path)
-  
       cy.go(-1)
       cy.location('pathname').should('not.include', path)
-  
       cy.go(1)
       cy.location('pathname').should('include', path)
     })
