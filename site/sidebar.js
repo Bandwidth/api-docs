@@ -222,6 +222,20 @@ module.exports = {
                         },
                     ],
                 },
+                {
+                    type: "category",
+                    label: "Toll-Free Verification",
+                    items: [
+                        "messaging/toll-free-verification/about",
+                        "messaging/toll-free-verification/request",
+                        "messaging/toll-free-verification/webhooks", 
+                        {
+                            type: "link",
+                            label: "API Reference",
+                            href: "https://dev.bandwidth.com/apis/tfVerify"
+                        }
+                    ]
+                },                
                 "messaging/rateLimits",
                 "messaging/errors",
                 {
