@@ -49,6 +49,7 @@ module.exports = {
                             type: "category",
                             label: "Porting numbers",
                             items: [
+                                "numbers/porting/csrLookup",
                                 "numbers/porting/lnpChecker",
                                 "numbers/porting/portingNumbers",
                                 "numbers/porting/loaUpload",
@@ -58,7 +59,6 @@ module.exports = {
                                 "numbers/porting/submitBulkPortins",
                             ],
                         },
-                        "numbers/csrLookupTool",
                         "numbers/hostingNumbers",
                         {
                             type: "category",
@@ -153,7 +153,6 @@ module.exports = {
                     type: "category",
                     label: "Guides and Tutorials",
                     items: [
-                        "voice/quickStart",
                         "voice/outboundCallGuide",
                         "voice/mediaAndTTSGuide",
                         "voice/recordingGuide",
