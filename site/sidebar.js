@@ -229,6 +229,8 @@ module.exports = {
                         "messaging/toll-free-verification/about",
                         "messaging/toll-free-verification/request",
                         "messaging/toll-free-verification/webhooks", 
+                        "messaging/toll-free-verification/get-status",
+                        "messaging/toll-free-verification/get-use-cases",
                         {
                             type: "link",
                             label: "API Reference",
