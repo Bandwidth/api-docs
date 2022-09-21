@@ -53,11 +53,6 @@ const apiList = [
         title: 'Insights API',
         Svg: require('@site/static/img/api-icons/insights.svg').default,
         link: '/apis/insights'
-    },
-    {
-        title: 'Porting',
-        Svg: require('../../../static/img/icon-complex-phone-globe.svg').default,
-        link: '/apis/porting'
     }
 ];
 

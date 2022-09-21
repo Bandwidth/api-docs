@@ -11,9 +11,9 @@ const multiFactorAuthSpec = fs.readFileSync('./specs/multi-factor-auth.yml', 'ut
 const dashSpec = fs.readFileSync('./specs/dash.json', 'utf-8');
 const dashNotificationsSpec = fs.readFileSync('./specs/dashNotifications.json', 'utf-8');
 const messagingInternationalSpec = fs.readFileSync('./specs/messagingInternational.json', 'utf-8');
-const portingSpec = fs.readFileSync('./specs/porting.yml', 'utf-8');
 const globalSpec = fs.readFileSync('./specs/global.yml', 'utf-8');
 const globalSpec_v2 = fs.readFileSync('./specs/global-v2.yml', 'utf-8');
+const globalSpec_v3 = fs.readFileSync('./specs/global-v3.yml', 'utf-8');
 const globalSpec_beta = fs.readFileSync('./specs/global-beta.yml', 'utf-8');
 const insightsSpec = fs.readFileSync('./specs/insights.yml', 'utf-8');
 
@@ -133,9 +133,9 @@ module.exports = {
         multiFactorAuthSpec: YAML.parse(multiFactorAuthSpec),
         dashSpec: JSON.parse(dashSpec),
         dashNotificationsSpec: JSON.parse(dashNotificationsSpec),
-        portingSpec: YAML.parse(portingSpec),
         globalSpec: YAML.parse(globalSpec),
         globalSpec_v2: YAML.parse(globalSpec_v2),
+        globalSpec_v3: YAML.parse(globalSpec_v3),
         globalSpec_beta: YAML.parse(globalSpec_beta),
         insightsSpec: YAML.parse(insightsSpec),
 
