@@ -313,5 +313,13 @@ module.exports = {
                 "emergency/emergencyCallingApi",
             ],
         },
-    ],
+    {
+      type: 'category',
+      label: 'Identity Management',
+      items: [
+          'identity/about',
+          'identity/identityProvidersOverview',
+      ],
+    }
+  ],
 };

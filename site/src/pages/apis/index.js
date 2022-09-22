@@ -53,7 +53,13 @@ const apiList = [
         title: 'Insights API',
         Svg: require('@site/static/img/api-icons/insights.svg').default,
         link: '/apis/insights'
-    }
+    },
+    {
+        title: 'Identity Providers',
+        Svg: require('@site/static/img/api-icons/byoidp.svg').default,
+        style: apiStyles.apiSvg,
+        link: '/apis/identity'
+    },
 ];
 
 const props = {
