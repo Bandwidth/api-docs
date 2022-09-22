@@ -117,3 +117,60 @@ export const navTester = (path) => {
           .should('have.attr', 'href', `${url}`)
         })
   }
+
+  export const tabSwitchingTester = (path, tab1, tab2, tab2Btn, text) => {
+    it('Should verify that a tab is visible and another hidden, then click a button and verify that they switched visibiility.', () => {
+      cy.visit(`${path}`)
+      cy.get(`${tab1}`)
+        .should('be.visible')
+      cy.get(`${tab2}`)
+        .should('not.be.visible')                  
+      cy.get(`${tab2Btn}`)
+        .contains(`${text}`)
+        .click()
+      cy.get(`${tab2}`)
+        .should('be.visible')
+      cy.get(`${tab1}`)
+      .should('not.be.visible')         
+    })
+  }
+
+export const algoliaSearchTester = (searchText) => {
+  before(() => {
+    cy.visit('/');
+})
+
+it('search box is clickable and brings up modal', () => {
+    cy.get('.DocSearch').click();
+    cy.get('.DocSearch-Modal').should('exist');
+    cy.get('.DocSearch-Form').should('exist');
+    cy.get('.DocSearch-Dropdown').should('exist');
+    cy.get('.DocSearch-Footer').should('exist');
+})
+
+it('type in searchbar', () => {
+    cy.get('#docsearch-input').type(`${searchText}`);
+    cy.get('.DocSearch-Dropdown-Container').children().should('have.length.greaterThan', 1);
+    cy.get('.DocSearch-Hit-source').first().should('contain', `${searchText}`);
+    cy.get('.DocSearch-HitsFooter > a').invoke('text').should('match', /See all \d+ results/);
+    cy.get('.DocSearch-Reset').click();
+    cy.get('#docsearch-input').should('have.text', '');
+    cy.get('#docsearch-input').should('have.attr', 'placeholder', 'Search docs');
+})
+
+it('close Algolia search modal', () => {
+    cy.get(':nth-child(1) > .DocSearch').click();
+    cy.get('.DocSearch-Modal').should('not.exist');
+})
+}  
+
+export const redocSearchTester = (path, searchText) => {
+  it('verifies that the redoc search bar works', () => {
+    cy.visit(`${path}`);
+    cy.get('.menu-content [role="search"]').type(`${searchText}`);
+    cy.get('.search-input').should('have.value', `${searchText}`);
+    cy.get('[data-role="search:results"]').should('exist');
+    cy.get('[data-role="search:results"]').children().should('have.length.greaterThan', 0);
+    cy.get('.menu-content [role="search"] i').click();
+  })
+}
