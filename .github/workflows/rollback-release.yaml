@@ -1,0 +1,68 @@
+# Deletes the bad release and then publishes the preferred release selected in the dispatch.
+
+name: Rollback Release and Publish Docsite
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_to_delete:
+        description: 'Tag marking the latest release that we want to delete. This will delete the release and the tag. Additionally, please select above the exact release tag that is to be used to publish to the docsite in its place.'
+        required: true 
+        type: string
+
+jobs:
+  rollback:
+    name: Rollback Release
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Delete the marked tag/release
+      uses: author/action-rollback@stable
+      with:
+        tag: ${{inputs.tag_to_delete}}
+        delete_orphan_tag: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish:
+    needs: rollback
+    name: Publish Docsite
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+
+    - name: Generate Static Site
+      run: |
+          cd site
+          yarn install --frozen-lockfile
+          npm run build
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+        
+    - name: Create Bucket
+      run: |
+        echo $BUCKET_NAME
+        aws s3 mb s3://$BUCKET_NAME --region us-east-1
+        aws s3 website s3://$BUCKET_NAME --index-document index.html
+      env:
+        BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
+
+    - name: Sync zip to Bucket
+      run: |
+        aws s3 sync ./site/build s3://$BUCKET_NAME --acl public-read --delete
+      env:
+        BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
+        
+    - name: Invalidate Cloudfront Cache
+      run: 
+        aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID}} --paths "/" "/*"
