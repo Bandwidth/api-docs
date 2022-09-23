@@ -7,7 +7,7 @@ export default function ApiReferencePage() {
     const {siteConfig} = useDocusaurusContext();
     return (
         <Layout
-        title={"TFVerification API Reference"}                         // SEO metadata tags
+        title={"Toll-Fee Verification API Reference"}                         // SEO metadata tags
         description="Submission, management, and querying of requests to verify toll-free US phone numbers for message campaigns"
         keywords="Bandwidth,API,Messaging,Toll-Free Verification">
             <ApiReference                                       // ReDoc API Reference Component
