@@ -1,4 +1,4 @@
-describe('Lightmode/Darkmode', () => {
+context('Lightmode/Darkmode', () => {
     it('Should verify that lightmode and darkmode switching works', () => {
       cy.visit('/')
         .get('[data-theme="light"]')
@@ -10,7 +10,7 @@ describe('Lightmode/Darkmode', () => {
       })
     })
 
-describe('Main font', () => {
+context('Main font', () => {
     it('Should verify that the correct font it being used in the Navbar', () => {
       cy.visit('/')
         .get('a.navbar__link')
