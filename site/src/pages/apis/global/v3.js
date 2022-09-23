@@ -20,7 +20,7 @@ export default function ApiReferencePage() {
           description=""
           keywords="Bandwidth,API,Global,Voxbone,Porting">
             <SpecVersionDropdown options={options} default={version} />
-            <ApiReference spec={siteConfig.customFields.globalSpec_v3} color={siteConfig.customFields.bwBlue} downloadDefinitionUrl="https://github.com/Bandwidth/api-docs/blob/main/site/specs/global-v2.yml"/>
+            <ApiReference spec={siteConfig.customFields.globalSpec_v3} color={siteConfig.customFields.bwBlue} downloadDefinitionUrl="https://github.com/Bandwidth/api-docs/blob/main/site/specs/global-v3.yml"/>
         </Layout>
     );
 }
