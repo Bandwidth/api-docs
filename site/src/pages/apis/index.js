@@ -57,7 +57,6 @@ const apiList = [
     {
         title: 'Identity Providers',
         Svg: require('@site/static/img/api-icons/byoidp.svg').default,
-        style: apiStyles.apiSvg,
         link: '/apis/identity'
     },
 ];
