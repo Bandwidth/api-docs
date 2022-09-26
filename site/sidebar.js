@@ -5,6 +5,11 @@ module.exports = {
             label: "Introduction",
         },
         {
+            type: "doc",
+            id: "versions",
+            label: "Versions"
+        },
+        {
             type: "category",
             label: "Account Management",
             items: [
