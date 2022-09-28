@@ -7,9 +7,9 @@ export default function ApiReferencePage() {
     const {siteConfig} = useDocusaurusContext();
     return (
         <Layout
-          title={`Phone Number Lookup API Reference`}
-          description="Authentication and Number Lookup. Everything you'll need to start working with our Phone Number Lookup API."
-          keywords="Bandwidth,API,Phone,Number,Lookup">
+          title={`Phone Insights API Reference`}
+          description="Account metrics and information. Everything you'll need to start working with our Insights API."
+          keywords="Bandwidth,API,Insights,Metrics">
             <ApiReference spec={siteConfig.customFields.insightsSpec} color={siteConfig.customFields.voicePurple} downloadDefinitionUrl="https://github.com/Bandwidth/api-docs/blob/main/site/specs/insights.yml"/>
         </Layout>
     );
