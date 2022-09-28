@@ -126,6 +126,38 @@ jobs:
         env:
           BUCKET_NAME: ${{ steps.create_name.outputs.bucket_name }}
 
+      - name: Create Cloudfront distribution
+        run: |
+          cat >dist-config.json <<EOL
+           {
+              "Id": "",
+              "DomainName": "${{ steps.create_name.outputs.bucket_name }}.s3.us-east-1.amazonaws.com",
+              "OriginPath": "",
+              "CustomHeaders": {
+                  "Quantity": 0
+              },
+              "CustomOriginConfig": {
+                  "HTTPPort": 80,
+                  "HTTPSPort": 443,
+                  "OriginProtocolPolicy": "http-only",
+                  "OriginSslProtocols": {
+                      "Quantity": 3,
+                      "Items": ["TLSv1", "TLSv1.1", "TLSv1.2"]
+                  },
+                  "OriginReadTimeout": 30,
+                  "OriginKeepaliveTimeout": 5
+              },
+              "ConnectionAttempts": 3,
+              "ConnectionTimeout": 10,
+              "OriginShield": {
+                  "Enabled": true,
+                  "OriginShieldRegion": "us-east-1"
+              }
+           }
+          EOL
+          aws cloudfront create-distribution \
+          --distribution-config file://dist-config.json
+
       - name: Comment on PR
         uses: mshick/add-pr-comment@v1
         env:
