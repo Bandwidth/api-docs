@@ -4,23 +4,23 @@ import Carousel from '@site/src/components/Carousel.js';
 
 const guides = {
     title: 'Check out our guides',
-    text: 'TODO',
+    text: `Explore our API guides to learn more about Bandwidth's APIs and the things you can do with us.`,
     linkText: 'Read the guides →',
     link: '/docs'
 }
 const guidesImage = require('@site/static/img/guides-splash.svg').default;
 
 const apis = {
-    title: 'Check out our APIs',
-    text: `TODO`,
-    linkText: 'Reference our APIs →',
+    title: 'Dig into our API reference',
+    text: `Use the API technical reference to get the detailed information developers need when coding. Get the nitty-gritty details about resources in our APIs.`,
+    linkText: 'See our API reference →',
     link: '/apis'
 }
 const apisImage = require('@site/static/img/apis-splash.svg').default;
 
 const sdks = {
     title: 'Looking for our SDKs?',
-    text: `TODO`,
+    text: `We offer SDKs for several popular languages. Build your apps using our official SDKs in the language of your choice.`,
     linkText: 'Build with Bandwidth →',
     link: '/sdks'
 }
@@ -28,35 +28,46 @@ const sdksImage = require('@site/static/img/sdks-splash.svg').default;
 
 const carousel = [
     {
-        Svg: require('@site/static/img/product-icons/mfa.svg').default,
-        product: 'Multi-Factor Authentication1',
-        link: '/docs/mfa/',
-        linkText: 'MFA Guide'
+        Svg: require('@site/static/img/product-icons/messaging.svg').default,
+        product: 'Messaging',
+        link: '/docs/messaging/errors/',
+        linkText: 'Messaging Errors'
+    },{
+        Svg: require('@site/static/img/product-icons/voice.svg').default,
+        product: 'Voice',
+        link: '/docs/voice/bxml/hangup/',
+        linkText: 'Hangup BXML Verb'
     },
     {
-        Svg: require('@site/static/img/product-icons/mfa.svg').default,
-        product: 'Multi-Factor Authentication2',
-        link: '/docs/mfa/',
-        linkText: 'MFA Guide'
+        Svg: require('@site/static/img/product-icons/voice.svg').default,
+        product: 'Voice',
+        link: '/docs/voice/',
+        linkText: 'Voice About Page'
     },
     {
-        Svg: require('@site/static/img/product-icons/mfa.svg').default,
-        product: 'Multi-Factor Authentication3',
-        link: '/docs/mfa/',
-        linkText: 'MFA Guide'
+        Svg: require('@site/static/img/product-icons/numbers.svg').default,
+        product: 'Numbers',
+        link: '/docs/numbers/guides/manage-inventory/searchingNumbers/',
+        linkText: 'Searching Numbers'
     },
     {
-        Svg: require('@site/static/img/product-icons/mfa.svg').default,
-        product: 'Multi-Factor Authentication4',
-        link: '/docs/mfa/',
-        linkText: 'MFA Guide'
+        Svg: require('@site/static/img/product-icons/numbers.svg').default,
+        product: 'Numbers',
+        link: '/docs/numbers/guides/manage-inventory/applyTnOptionsAndFeatures/',
+        linkText: 'Apply TN Options'
     },
     {
-        Svg: require('@site/static/img/product-icons/mfa.svg').default,
-        product: 'Multi-Factor Authentication5',
-        link: '/docs/mfa/',
-        linkText: 'MFA Guide'
-    }
+        Svg: require('@site/static/img/product-icons/account.svg').default,
+        product: 'Account',
+        link: '/docs/account/credentials/',
+        linkText: 'Account Credentials'
+    },
+    {
+        Svg: require('@site/static/img/product-icons/account.svg').default,
+        product: 'Account',
+        link: '/docs/account/sipRegistrar/',
+        linkText: 'Sip Registrar'
+    },
 ]
 
 function SplashRow({left, right}) {
@@ -91,11 +102,11 @@ export default function SplashPage() {
         <div className={splashPageStyles.splash}>
             <div className={splashPageStyles.header}>
                 <h1>Bandwidth Developer Documentation</h1>
-                <h2>Explore our guides, API references, and SDKs to integrate with Bandwidth's APIs.</h2>
+                <h2>Explore our guides, API reference, and SDKs to integrate with Bandwidth's APIs.</h2>
             </div>
             <SplashRow left={<SplashPageTextBlock {...guides}/>} right={<SplashPageImage Svg={guidesImage}/>}/>
             <SplashRow left={<SplashPageImage Svg={apisImage}/>} right={<SplashPageTextBlock {...apis}/>}/>
-            <Carousel itemList={carousel}/>
+            <Carousel itemList={carousel} title={'Recent Documentation Updates'}/>
             <SplashRow left={<SplashPageTextBlock {...sdks}/>} right={<SplashPageImage Svg={sdksImage}/>}/>
         </div>
     );
