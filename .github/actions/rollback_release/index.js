@@ -22,7 +22,7 @@ async function rollbackRelease() {
   }
 
   cleanData(data)
-  cleanedData.sort((a,b) => (a.name > b.name) ? -1 : ((b.name > a.name) ? 1 : 0));
+  cleanedData.sort((a,b) => (a.published_at > b.published_at) ? -1 : ((b.published_at > a.published_at) ? 1 : 0));
   
   const badRelease = cleanedData[0].name
   const badReleaseId = cleanedData[0].id
