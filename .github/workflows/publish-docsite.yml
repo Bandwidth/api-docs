@@ -1,4 +1,4 @@
-# Deploys the doc site to an S3 bucket
+# Runs Cypress tests locally, deploys the doc site to an S3 bucket and runs post deployment cypress tests again
 
 name: Publish Docsite
 
@@ -6,6 +6,8 @@ on:
   release:
     types:
       - published
+  workflow_dispatch:
+    
 
 jobs:
   cypress:
@@ -43,9 +45,7 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           CYPRESS_PROJECT_ID: ${{ secrets.PROJECT_ID }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # overwrite commit message sent to Dashboard
           COMMIT_INFO_MESSAGE: ${{github.event.pull_request.title}}
-          # re-enable PR comment bot
           COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}
 
   publish:
@@ -90,8 +90,33 @@ jobs:
           BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
 
       - name: Invalidate Cloudfront Cache
+        id: invalidate1
+        continue-on-error: true
         run:
           aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID}} --paths "/" "/*"
+
+      - name: Invalidate Cloudfront Cache Attempt 2
+        id: invalidate2
+        if: steps.invalidate1.outcome=='failure'
+        continue-on-error: true
+        run:
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID}} --paths "/" "/*"
+
+      - name: Invalidate Cloudfront Cache Attempt 3
+        continue-on-error: true
+        id: invalidate3
+        if: steps.invalidate2.outcome=='failure'
+        run:
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID}} --paths "/" "/*"
+
+      - name: Cloudfront Cache Invalidation Status
+        if: always()
+        run: |
+          if ${{ steps.invalidate1.outcome=='success' || steps.invalidate2.outcome=='success' || steps.invalidate3.outcome=='success' }}; then
+             echo invalidation successful
+          else
+             exit 1
+          fi          
 
   cypress_post_test:
     name: Cypress run on prod
@@ -127,14 +152,12 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           CYPRESS_PROJECT_ID: ${{ secrets.PROJECT_ID }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # overwrite commit message sent to Dashboard
           COMMIT_INFO_MESSAGE: ${{github.event.pull_request.title}}
-          # re-enable PR comment bot
           COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}
 
-      # - name: Rollback For Failed Cypress Tests
-      #   if: ${{ failure() }}
-      #   id: rollback
-      #   uses: ./.github/actions/get_penultimate_release
-      #   with:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Rollback For Failed Cypress Tests
+        if: ${{ failure() }}
+        id: rollback
+        uses: ./.github/actions/rollback_release
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
