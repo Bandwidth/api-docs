@@ -15,27 +15,35 @@ image: ../../static/img/bandwidth-logo.png
 
 Configuring your identity provider for Bandwidth will require you have a few pieces of information ready. You will need
 
-- `usernameField` - this is the value of the `usernameField` in the SAML assertion. It is a form of attribute mapping settings that tells us which field to use as the username in your provider.
+### Information we need from you
 
-> TODO: this might be obsolete with org-wide auth server. And even if we still had it, I think this is inaccurate because _we_ would tell _them_ the auth server issuer URI (?)
-- `issuerUri` - this is the URI of the Authorization Server in your Identity Provider which will issue or mint tokens for your users. 
+Our service needs information about your identity provider in order to know whom to trust about your users' information and where to go to try to initiate single sign-on.
 
+- `usernameField` - This indicates which field in your SAML assertion represents the username of the user signing in. This value must match the username in our system.
+By default, this will be using the `NameId` of the `Subject` in the assertion.
+- `issuerUri` - this is the Entity ID of your SAML Identity Provider which will send the SAML assertion back to us upon a successful sign-in.
 - `singleSignOnUrl` - the SAML endpoint on your Identity Provider that we will `POST` to in order to initiate an authentication on behalf of a user.
+	- NOTE: we only support a `POST` binding when initiating SSO.
 - `signatureCertificate` - either a PEM or DER decoded certificate to verify the authenticity of your SAML Identity Provider.
 
-Some SSO or Federated Authentication services don't make this information easy to get access to without creating an application ahead of time. To create an application some, services require values from the configured sending application. We send these values back as read-only properties when creating a new IdP. These properties are
+### Information you need from us
 
-- `entityId`- the entity ID of the provider to provide to the application in your provider
+Your identity provider will need information about our service provider to know whom to trust and whither to send information.
 
-> TODO: oh wait, is _this_ the thing that will be a constant with the org-wide auth server?
+<!-- > TODO: ONEID-1573 either or both of these may become constant. The customer will still need them from us but would not need to give us anything before we would be able to provide these.
+They will still show up on the UI page -->
+
+- `issuer` URI - the entity ID of our SAML _Service Provider_, which will be the _issuer_ of the SSO request. You will need to tell your Identity Provider to trust this entity.
 - `acsUrl` - the URL where your provider will send signed tokens back to be consumed by Bandwidth
+
+<!-- > TODO: ONEID-1573 we won't need any dummy values when we change things to be org-wide constants -->
 
 To make the back-and-forth easier, we allow you to create an IdP with "dummy" values to get back the `entityId` and `acsUrl` to configure in your applications. You can update configuration values using `PUT` requests using the `Location` supplied when the IdP was initially created. Only when you send a `PUT` request to activate the IdP (`active: true`) will we validate the fields you have provided. If the values do not pass validation, the IdP will not be activated.
 
 ## FAQs
 ### If I update an IdP to be active, what happens to other IdPs?
 
-> TODO: this first sentence might not be true either. 
+<!-- TODO: this first sentence might not be true either. ONEID-1574 -->
 
 There can only be one active IdP per account. Therefore, if another IdP is already active when attempting to activate a different IdP, the initially active IdP will be set to inactive.
 
