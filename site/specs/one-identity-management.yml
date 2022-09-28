@@ -27,40 +27,10 @@ paths:
       description: Returns all the IdPs that the requesting user has access to.
       operationId: getIdps
       parameters:
-        - name: accountId
-          in: query
-          description: Filter results by this accountId.
-          style: form
-          explode: true
-          schema:
-            type: string
-        - name: active
-          in: query
-          description: Filter results by the IdP active status.
-          style: form
-          explode: true
-          schema:
-            type: boolean
-        - name: offset
-          in: query
-          description: The number of IDPs to skip when executing the query
-          style: form
-          explode: true
-          schema:
-            type: integer
-            format: int32
-            default: 0
-            minimum: 0
-        - name: limit
-          in: query
-          description: The number of IDPs to return.
-          style: form
-          explode: true
-          schema:
-            type: integer
-            format: int32
-            default: 20
-            minimum: 1
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/active'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
       responses:
         '200':
           description: >-
@@ -86,6 +56,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '405':
+          description: Method Not Allowed
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MethodNotAllowedResponse'
         '500':
           description: An internal error occurred attempting to process a request
           headers: {}
@@ -353,6 +330,58 @@ paths:
       deprecated: false
       security: []
 components:
+  parameters:
+    limit:
+      in: query
+      name: limit
+      required: false
+      description: The maximum records requested in search result. Default 20
+      style: form
+      explode: true
+      schema:
+        type: integer
+        format: int32
+        default: 20
+        minimum: 1
+      example: 50
+    offset:
+      in: query
+      name: offset
+      required: false
+      description: >-
+        The amount of records to skip in search result. Combine with offset to
+        fetch results one page at a time.
+      style: form
+      explode: true
+      schema:
+        type: integer
+      example: 50
+    active:
+      in: query
+      name: active
+      required: false
+      description: >-
+        Set this to true to find only active IdPs. Or false to find only
+        inactive ones.
+      style: form
+      explode: true
+      schema:
+        type: boolean
+      example: true
+    accountId:
+      in: query
+      name: accountId
+      required: false
+      description: >-
+        The accountId associated with a specific IdP. If you have access to
+        multiple accounts with their own IdPs, use this filter to narrow the
+        results down to just a particular account or accounts (can be specified
+        multiple times).
+      style: form
+      explode: true
+      schema:
+        type: string
+      example: 9999999
   schemas:
     NewSAMLIdP:
       title: NewSAMLIdP
@@ -510,6 +539,17 @@ components:
           description: >-
             The PEM or DER encoded public key certificate of the Identity
             Provider used to verify SAML message and assertion signatures.
+    MethodNotAllowedResponse:
+      title: MethodNotAllowedResponse
+      type: object
+      properties:
+        httpStatus:
+          type: integer
+          description: >-
+            The HTTP status code returned by the server for the error
+            encountered
+          format: int32
+          example: 405
     ErrorResponse:
       title: ErrorResponse
       type: object
