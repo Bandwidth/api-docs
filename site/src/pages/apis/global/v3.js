@@ -12,15 +12,15 @@ export default function ApiReferencePage() {
       {title: "V3", link: "/apis/global/v3"},
       {title: "Beta", link: "/apis/global/beta"}
     ];
-    const version = "Beta"
+    const version = "V3"
 
     return (
         <Layout
-          title={`Global API Beta Reference`}
+          title={`Global API V3 Reference`}
           description=""
-          keywords="Bandwidth,API,Global,Voxbone">
+          keywords="Bandwidth,API,Global,Voxbone,Porting">
             <SpecVersionDropdown options={options} default={version} />
-            <ApiReference spec={siteConfig.customFields.globalSpec_beta} color={siteConfig.customFields.bwBlue} downloadDefinitionUrl="https://github.com/Bandwidth/api-docs/blob/main/site/specs/global-beta.yml"/>
+            <ApiReference spec={siteConfig.customFields.globalSpec_v3} color={siteConfig.customFields.bwBlue} downloadDefinitionUrl="https://github.com/Bandwidth/api-docs/blob/main/site/specs/global-v3.yml"/>
         </Layout>
     );
 }
