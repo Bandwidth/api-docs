@@ -34,11 +34,11 @@ export default function Carousel({itemList, title}) {
         height: `${navButtonSize}px`
     }
     
-    const scrollCarousel = (newIndex) => {
+    const scrollCarousel = (newIndex) => {  // allow nav buttons to scroll carousel
         setCurrentIndex(newIndex);
     };
 
-    useEffect(() => {
+    useEffect(() => {   // carousel dynamic resizing based on screen width
         const resizeCarousel = () => {
             if (window.innerWidth > 996) {
                 itemWidthVar = 380;
@@ -66,34 +66,34 @@ export default function Carousel({itemList, title}) {
         return () => window.removeEventListener('resize', resizeCarousel);
     }, [])
 
-    useEffect(() => {
-        if (currentIndex > itemList.length * 2) {
-            setNavDisabled(true);
-            setTimeout(() => {
+    useEffect(() => {   // make carousel infinite
+        if (currentIndex > itemList.length * 2) {   // keep index near the middle of the list when moving left
+            setNavDisabled(true);   // disable nav buttons while silently moving to different card
+            setTimeout(() => {  // disable transition animation after card slides, then snap to same card prior in the list
                 setHasTransitionClass(false);
                 setCurrentIndex(currentIndex - itemList.length);
             }, 250)
             
         }
-        if (currentIndex == itemList.length) {
+        if (currentIndex == itemList.length) {  // keep index near the middle of the list when moving right
             setNavDisabled(true);
             setTimeout(() => {
                 setHasTransitionClass(false);
                 setCurrentIndex(currentIndex + itemList.length);
             }, 250)
         }
-        if (hasTransitionClass === false) {
+        if (hasTransitionClass === false) { // turn transition animation back on after 25ms
             setTimeout(() => {
                 setHasTransitionClass(true);
                 setNavDisabled(false);
             }, 25)
         }
-    }, [currentIndex])
+    }, [currentIndex])  // update when currentIndex is changed (from button click)
 
     function CarouselItem({Svg, product, link, linkText}) {
     
         var slideStyle = {
-            padding: `0 ${slidePadding}px`
+            margin: `0 ${slidePadding}px`
         }
     
         var itemStyle = {

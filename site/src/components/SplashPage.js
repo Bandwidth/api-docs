@@ -1,15 +1,6 @@
 import React from 'react';
 import splashPageStyles from '@site/src/components/css/SplashPage.module.css';
 import Carousel from '@site/src/components/Carousel.js';
-// import splashCarousel from '@site/src/splashCarousel.json';
-// console.log(splashCarousel.items)
-// splashCarousel.items.forEach((item) => {
-    // var voice = `@site/static/img/product-icons/voice.svg`;
-    // var bruh = require(`${voice}`).default;
-    // item.newSvg = eval(item.Svg);
-    // console.log(item)
-// })
-// console.log(splashCarousel.items)
 
 const guides = {
     title: 'Check out our guides',
@@ -78,7 +69,6 @@ const carousel = [
         linkText: 'Sip Registrar'
     }
 ]
-// console.log(carousel)
 
 function SplashRow({left, right}) {
     return (
