@@ -129,31 +129,117 @@ jobs:
       - name: Create Cloudfront distribution
         run: |
           cat >dist-config.json <<EOL
-           {
-              "Id": "${{ steps.create_name.outputs.bucket_name }}.s3.us-east-1.amazonaws.com",
-              "DomainName": "${{ steps.create_name.outputs.bucket_name }}.s3.us-east-1.amazonaws.com",
-              "OriginPath": "",
-              "CustomHeaders": {
-                  "Quantity": 0
-              },
-              "CustomOriginConfig": {
-                  "HTTPPort": 80,
-                  "HTTPSPort": 443,
-                  "OriginProtocolPolicy": "http-only",
-                  "OriginSslProtocols": {
-                      "Quantity": 3,
-                      "Items": ["TLSv1", "TLSv1.1", "TLSv1.2"]
-                  },
-                  "OriginReadTimeout": 30,
-                  "OriginKeepaliveTimeout": 5
-              },
-              "ConnectionAttempts": 3,
-              "ConnectionTimeout": 10,
-              "OriginShield": {
-                  "Enabled": true,
-                  "OriginShieldRegion": "us-east-1"
-              }
-           }
+          {
+            "CallerReference": "cli",
+            "Aliases": {
+                "Quantity": 0
+            },
+            "DefaultRootObject": "index.html",
+            "Origins": {
+                "Quantity": 1,
+                "Items": [
+                    {
+                        "Id": "${{ steps.create_name.outputs.bucket_name }}",
+                        "DomainName": "${{ steps.create_name.outputs.bucket_name }}.s3.us-east-1.amazonaws.com",
+                        "OriginPath": "",
+                        "CustomHeaders": {
+                            "Quantity": 0
+                        },
+                        "CustomOriginConfig": {
+                            "HTTPPort": 80,
+                            "HTTPSPort": 443,
+                            "OriginProtocolPolicy": "http-only",
+                            "OriginSslProtocols": {
+                                "Quantity": 3,
+                                "Items": ["TLSv1", "TLSv1.1", "TLSv1.2"]
+                            },
+                            "OriginReadTimeout": 30,
+                            "OriginKeepaliveTimeout": 5
+                        },
+                        "ConnectionAttempts": 3,
+                        "ConnectionTimeout": 10,
+                        "OriginShield": {
+                            "Enabled": false
+                        }
+                     }
+                ]
+            },
+            "OriginGroups": {
+                "Quantity": 0
+            },
+            "DefaultCacheBehavior": {
+                "TargetOriginId": "${{ steps.create_name.outputs.bucket_name }}",
+                "ForwardedValues": {
+                    "QueryString": false,
+                    "Cookies": {
+                        "Forward": "none"
+                    },
+                    "Headers": {
+                        "Quantity": 0
+                    },
+                    "QueryStringCacheKeys": {
+                        "Quantity": 0
+                    }
+                },
+                "TrustedSigners": {
+                    "Enabled": false,
+                    "Quantity": 0
+                },
+                "ViewerProtocolPolicy": "allow-all",
+                "MinTTL": 0,
+                "AllowedMethods": {
+                    "Quantity": 2,
+                    "Items": [
+                        "HEAD",
+                        "GET"
+                    ],
+                    "CachedMethods": {
+                        "Quantity": 2,
+                        "Items": [
+                            "HEAD",
+                            "GET"
+                        ]
+                    }
+                },
+                "SmoothStreaming": false,
+                "DefaultTTL": 86400,
+                "MaxTTL": 31536000,
+                "Compress": false,
+                "LambdaFunctionAssociations": {
+                    "Quantity": 0
+                },
+                "FieldLevelEncryptionId": ""
+            },
+            "CacheBehaviors": {
+                "Quantity": 0
+            },
+            "CustomErrorResponses": {
+                "Quantity": 0
+            },
+            "Comment": "",
+            "Logging": {
+                "Enabled": false,
+                "IncludeCookies": false,
+                "Bucket": "",
+                "Prefix": ""
+            },
+            "PriceClass": "PriceClass_All",
+            "Enabled": true,
+            "ViewerCertificate": {
+                "CloudFrontDefaultCertificate": true,
+                "MinimumProtocolVersion": "TLSv1",
+                "CertificateSource": "cloudfront"
+            },
+            "Restrictions": {
+                "GeoRestriction": {
+                    "RestrictionType": "none",
+                    "Quantity": 0
+                }
+            },
+            "WebACLId": "",
+            "HttpVersion": "http2",
+            "IsIPV6Enabled": true
+          }
           EOL
           aws cloudfront create-distribution --distribution-config file://dist-config.json
 
