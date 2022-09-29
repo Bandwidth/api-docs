@@ -54,7 +54,7 @@ module.exports = {
                     {
                         to: 'docs',
                         activeBasePath: 'docs',
-                        label: 'Docs',
+                        label: 'Guides',
                     }, {
                         to: 'apis',
                         label: 'API Reference',
