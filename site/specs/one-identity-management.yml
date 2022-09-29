@@ -97,7 +97,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/InternalErrorResponse'
       deprecated: false
     post:
       tags:
@@ -115,7 +115,15 @@ paths:
         required: true
       responses:
         '201':
-          $ref: '#/components/responses/createdResponse'
+          description: Successful Response. Returns the newly created IdP resource.
+          headers:
+            Location:
+              description: The URL of the created resource.
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                    description: The URL of the created resource.
           content:
             application/json:
               schema:
@@ -162,7 +170,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ConflictResponse'
         '429':
           description: Too Many Requests
           headers: {}
@@ -176,7 +184,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/InternalErrorResponse'
       deprecated: false
   /idps/{IdpId}:
     put:
@@ -252,7 +260,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ConflictResponse'
         '429':
           description: Too Many Requests
           headers: {}
@@ -266,7 +274,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/InternalErrorResponse'
       deprecated: false
     get:
       tags:
@@ -340,7 +348,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/InternalErrorResponse'
       deprecated: false
     delete:
       tags:
@@ -403,7 +411,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ConflictResponse'
         '429':
           description: Too Many Requests
           headers: {}
@@ -417,7 +425,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/InternalErrorResponse'
       deprecated: false
   /.well-known/webfinger:
     get:
@@ -493,21 +501,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/InternalErrorResponse'
       deprecated: false
       security: []
 components:
-  responses:
-    createdResponse:
-      description: Successful Response. Returns the newly created IdP resource.
-      headers:
-        Location:
-          description: The URL of the created resource.
-          content:
-            text/plain:
-              schema:
-                type: string
-                description: The URL of the created resource.
   parameters:
     limit:
       in: query
@@ -728,6 +725,28 @@ components:
             encountered
           format: int32
           example: 400
+    ConflictResponse:
+      title: ConflictResponse
+      type: object
+      properties:
+        timestamp:
+          type: string
+          description: The timestamp in ISO 8601 format of when the error was encountered
+          format: date-time
+        statusCode:
+          type: integer
+          description: >-
+            The HTTP status code returned by the server for the error
+            encountered
+          format: int32
+          example: 409
+        statusText:
+          type: string
+          description: A short description about the error encountered
+        traceId:
+          type: string
+          description: A unique trace ID used to identify the request and response.
+          example: b77a5ea79036d5b9
     ForbiddenResponse:
       title: ForbiddenResponse
       type: object
@@ -799,8 +818,8 @@ components:
           type: string
           description: the path that was requested
           example: /api/v1/idps/1
-    ErrorResponse_Error:
-      title: ErrorResponse_Error
+    InternalErrorResponse:
+      title: InternalErrorResponse
       type: object
       properties:
         timestamp:
@@ -813,7 +832,7 @@ components:
             The HTTP status code returned by the server for the error
             encountered
           format: int32
-          example: 401
+          example: 500
         statusText:
           type: string
           description: A short description about the error encountered
