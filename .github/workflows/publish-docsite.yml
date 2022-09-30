@@ -156,9 +156,25 @@ jobs:
           COMMIT_INFO_MESSAGE: ${{github.event.pull_request.title}}
           COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}
 
-      - name: Rollback For Failed Cypress Tests
-        if: ${{ failure() && github.event_name != 'workflow_dispatch' }}
-        id: rollback
-        uses: ./.github/actions/rollback_release
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  rollback_if_failed:
+    needs: [cypress, publish, cypress_post_tests]
+    name: Rollback Release
+    if: ${{ failure() && github.event_name != 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup Node
+      uses: actions/setup-node@v2
+      with:
+        node-version: 16
+
+    - name: Install Dependencies
+      run: |
+          cd ./.github/actions/rollback_release
+          npm install
+    - name: Rollback For Failed Cypress Tests
+      id: rollback
+      uses: ./.github/actions/rollback_release
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
