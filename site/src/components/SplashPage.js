@@ -29,38 +29,38 @@ const sdksImage = require('@site/static/img/sdks-splash.svg').default;
 const carousel = [
     {
         Svg: require('@site/static/img/product-icons/messaging.svg').default,
-        product: 'Messaging',
         link: '/docs/messaging/errors/',
-        linkText: 'Messaging Errors'
+        linkText: 'Messaging Errors',
+        tags: ['messaging', 'errors']
     },{
         Svg: require('@site/static/img/product-icons/voice.svg').default,
-        product: 'Voice',
         link: '/docs/voice/bxml/hangup/',
-        linkText: 'Hangup BXML Verb'
+        linkText: 'Hangup BXML Verb',
+        tags: ['voice', 'bxml']
     },
     {
         Svg: require('@site/static/img/product-icons/voice.svg').default,
-        product: 'Voice',
         link: '/docs/voice/',
-        linkText: 'Voice About Page'
+        linkText: 'Voice About Page',
+        tags: ['voice', 'about', 'quick start']
     },
     {
         Svg: require('@site/static/img/product-icons/numbers.svg').default,
-        product: 'Numbers',
         link: '/docs/numbers/guides/manage-inventory/searchingNumbers/',
-        linkText: 'Searching Numbers'
+        linkText: 'Searching Numbers',
+        tags: ['numbers','inventory', 'search']
     },
     {
         Svg: require('@site/static/img/product-icons/numbers.svg').default,
-        product: 'Numbers',
         link: '/docs/numbers/guides/manage-inventory/applyTnOptionsAndFeatures/',
-        linkText: 'Apply TN Options'
+        linkText: 'Apply TN Options',
+        tags: ['numbers', 'inventory', 'options']
     },
     {
         Svg: require('@site/static/img/product-icons/account.svg').default,
-        product: 'Account',
         link: '/docs/account/credentials/',
-        linkText: 'Account Credentials'
+        linkText: 'Account Credentials',
+        tags: ['account', 'credentials']
     }
 ]
 

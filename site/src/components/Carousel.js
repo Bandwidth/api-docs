@@ -90,7 +90,7 @@ export default function Carousel({itemList, title}) {
         }
     }, [currentIndex])  // update when currentIndex is changed (from button click)
 
-    function CarouselItem({Svg, product, link, linkText}) {
+    function CarouselItem({Svg,link, linkText, tags}) {
     
         var slideStyle = {
             margin: `0 ${slidePadding}px`
@@ -105,8 +105,12 @@ export default function Carousel({itemList, title}) {
             <div className={carouselStyles.slide} style={slideStyle}>
                 <div className={carouselStyles.item} style={itemStyle}>
                     <div className={carouselStyles.icon}><Svg/></div>
-                    <div className={carouselStyles.product}>{product}</div>
                     <div className={carouselStyles.link}><a href={link}>{linkText}</a></div>
+                    <div className={carouselStyles.tags}>
+                        {tags.map((tag, idx) => (
+                            <div className={carouselStyles.tag} key={idx}>{tag}</div>
+                        ))}
+                    </div>
                 </div>
             </div>
         )
