@@ -61,12 +61,6 @@ const carousel = [
         product: 'Account',
         link: '/docs/account/credentials/',
         linkText: 'Account Credentials'
-    },
-    {
-        Svg: require('@site/static/img/product-icons/account.svg').default,
-        product: 'Account',
-        link: '/docs/account/sipRegistrar/',
-        linkText: 'Sip Registrar'
     }
 ]
 

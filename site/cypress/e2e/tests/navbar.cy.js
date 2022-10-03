@@ -1,13 +1,13 @@
 import {navTester, extLinkTester, navBarContext} from '../../utils/utils'
 
 context('The Home Page', () => {
-  it('Successfuly loads', () => {
+  it('Successfully loads', () => {
     cy.visit('/')
   })
 })
 
 context('Docs', () => {
-  navBarContext('Docs');
+  navBarContext('Guides');
   navTester('docs');
 })
 
