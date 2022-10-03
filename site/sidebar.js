@@ -72,7 +72,14 @@ module.exports = {
                         },
                         "numbers/disconnectNumbers",
                         "numbers/lookupNumbers",
-                        "numbers/downloadingReports",
+                        {
+                            type: "category",
+                            label: "How to request Numbers reports",
+                            items: [
+                                "numbers/setup-reports/accountReports",
+                                "numbers/setup-reports/billingReports",
+                            ]
+                        },
                     ],
                 },
                 "numbers/errors",
