@@ -1,29 +1,57 @@
-import {testTextLink} from '../../utils/utils'
+import {testTextLink, testSvgLink} from '../../utils/utils'
 
-context('Account Link', () => {
+context('Account Text Link', () => {
   testTextLink('/docs', 'Account', 'docs/account', '.textLink_src-components-css-ItemGrid-module')
 })
 
-context('Numbers Link', () => {
+context('Account SVG Link', () => {
+  testSvgLink('/docs/','svg[alt="Account"]', 'docs/account')
+})
+
+context('Numbers Text Link', () => {
   testTextLink('/docs','Numbers','docs/numbers', '.textLink_src-components-css-ItemGrid-module')
 })
 
-context('Voice Link', () => {
+context('Numbers SVG Link', () => {
+  testSvgLink('/docs/','svg[alt="Numbers"]', 'docs/numbers')
+})
+
+context('Voice Text Link', () => {
   testTextLink('/docs','Voice', 'docs/voice', '.textLink_src-components-css-ItemGrid-module')
 })
 
-context('Messaging Link', () => {
+context('Voice SVG Link', () => {
+  testSvgLink('/docs/','svg[alt="Voice"]', 'docs/voice')
+})
+
+context('Messaging Text Link', () => {
   testTextLink('/docs','Messaging','docs/messaging', '.textLink_src-components-css-ItemGrid-module')
 })
 
-context('WebRTC Link', () => {
+context('Messaging SVG Link', () => {
+  testSvgLink('/docs/','svg[alt="Messaging"]', 'docs/messaging')
+})
+
+context('WebRTC Text Link', () => {
   testTextLink('/docs','WebRTC', 'docs/webrtc' ,'.textLink_src-components-css-ItemGrid-module')
 })
 
-context('Multi-Factor Authentication Link', () => {
+context('WebRTC SVG Link', () => {
+  testSvgLink('/docs/','svg[alt="WebRTC"]', 'docs/webrtc')
+})
+
+context('Multi-Factor Authentication Text Link', () => {
   testTextLink('/docs','Multi-Factor Authentication', 'docs/mfa' ,'.textLink_src-components-css-ItemGrid-module')
 })
 
-context('Emergency Link', () => {
+context('Multi-Factor Authentication SVG Link', () => {
+  testSvgLink('/docs/','svg[alt="Multi-Factor Authentication"]', 'docs/mfa')
+})
+
+context('Emergency Text Link', () => {
   testTextLink('/docs','Emergency', 'docs/emergency' ,'.textLink_src-components-css-ItemGrid-module')
+})
+
+context('Emergency SVG Link', () => {
+  testSvgLink('/docs/','svg[alt="Emergency"]', 'docs/emergency')
 })
