@@ -4,7 +4,7 @@ context('Node SDK SVG Link on SDK Page', () => {
   testSvgLink('/sdks/','svg[alt="Node"]', 'sdks/node')
 })
 
-context('Numbers Docs Text Link on SDK Page', () => {
+context('Node Docs Text Link on SDK Page', () => {
   testTextLink('/sdks/','Node', 'sdks/node')
 })
 
