@@ -1,0 +1,344 @@
+---
+id: accountReports
+title: How to request account reports
+slug: /numbers/guides/setup-reports/accountReports
+description: How to request and download account reports using the Bandwidth APIs
+keywords:
+  - bandwidth
+  - numbers
+  - reports
+  - account
+image: '@site/static/img/bw-icon.svg'
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+export const accountId = "{accountId}";
+export const reportId = "{reportId}";
+export const instanceId = "{instanceId}";
+
+export const Highlight = ({children, color}) => (
+    <span
+      style={{
+        backgroundColor: color,
+        borderRadius: '2px',
+        color: '#fff',
+        padding: '0.2rem',
+      }}>
+      {children}
+    </span>
+  );
+
+The Bandwidth numbers API allows you to automate the creation and download of certain reports related to account usage.
+
+## Available Account Reports
+
+To list all available account report types with their ID and description, make a <Highlight color="#00bf8c">GET</Highlight> request to our [List Reports API](../../../../../apis/numbers#tag/Reports/operation/ListReports) endpoint.
+The report ID needs to be passed in to the URL of the API request to indicate which type of report to create.
+This can be done through tools like [Postman](https://github.com/Bandwidth/postman) or cURL.
+
+#### Request URL:
+
+<p><Highlight color="#00bf8c">GET</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/reports</code></p>
+
+<Tabs
+groupId="list_account_reports"
+defaultValue="curl"
+values={[
+    { label: 'cURL', value: 'curl', }
+]
+}>
+
+<TabItem value="curl">
+
+```cURL
+curl 'https://dashboard.bandwidth.com/api/accounts/{accountId}/reports'
+-U '{userName}:{password}'
+```
+
+> Response
+
+```xml
+<ReportsResponse>
+   <Reports>
+      <Report>
+         <Name>Report 1</Name>
+         <Id>10</Id>
+         <Description>Report 1 Description</Description>
+      </Report>
+      <Report>
+         <Name>Report 2</Name>
+         <Id>11</Id>
+         <Description>Report 2 Description</Description>
+      </Report>
+   </Reports>
+</ReportsResponse>
+```
+
+</TabItem>
+</Tabs>
+
+### Report Details
+
+To retrieve details for a specific report, like a description and the parameters needed to define boundaries for the report,
+make a <Highlight color="#00bf8c">GET</Highlight> request to our [Retrieve Report API](../../../../../apis/numbers#tag/Reports/operation/RetrieveReport) endpoint.
+This can be done through tools like [Postman](https://github.com/Bandwidth/postman) or cURL.
+
+
+#### Request URL:
+
+<p><Highlight color="#00bf8c">GET</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/reports/{reportId}</code></p>
+
+<Tabs
+groupId="report_details"
+defaultValue="curl"
+values={[
+    { label: 'cURL', value: 'curl', }
+]
+}>
+
+<TabItem value="curl">
+
+```cURL
+curl 'https://dashboard.bandwidth.com/api/accounts/{accountId}/reports/{reportId}'
+-U '{userName}:{password}'
+```
+
+> Response
+
+```xml
+<ReportResponse>
+   <Report>
+      <Id>10</Id>
+      <Name>Report 1</Name>
+      <Parameters>
+         <Parameter>
+            <Name>Report Parameter</Name>
+            <Type>Enum</Type>
+            <Required>false</Required>
+            <ValueFilter>Value1;Value2;</ValueFilter>
+            <Values>
+               <Value>
+                  <InternalName>Value1</InternalName>
+                  <DisplayName>Display Value2</DisplayName>
+               </Value>
+               <Value>
+                  <InternalName>Value2</InternalName>
+                  <DisplayName>Value2</DisplayName>
+               </Value>
+            </Values>
+            <Description>Report Parameter Description</Description>
+            <MultiSelectAllowed>true</MultiSelectAllowed>
+            <HelpInformation>Report Parameter Help Text</HelpInformation>
+         </Parameter>
+      </Parameters>
+   </Report>
+</ReportResponse>
+```
+
+</TabItem>
+</Tabs>
+
+## Request a Report {#request-account-report}
+
+To generate a specific report, you must make a <Highlight color="#079CEE">POST</Highlight> request to our [Create Report Instance API](../../../../../apis/numbers#tag/accounts/operation/CreateReportInstance) endpoint.
+Response will contain a location header used to query the status of the report.
+This can be done through tools like [Postman](https://github.com/Bandwidth/postman) or cURL.
+
+<Tabs
+groupId="generate_report"
+defaultValue="payload"
+values={[
+    { label: 'Payload', value: 'payload', },
+    { label: 'cURL', value: 'curl', }
+]
+}>
+
+<TabItem value="payload">
+
+<p><Highlight color="#079CEE">POST</Highlight><code>https://dashboard.bandwidth.com/api/accounts/{accountId}/reports/{reportId}/instances</code></p>
+
+```xml
+<Instance>
+    <OutputFormat>pdf</OutputFormat>
+    <Parameters>
+        <Parameter>
+            <Name>Account</Name>
+            <Value>1</Value>
+        </Parameter>
+        <Parameter>
+            <Name>Sub-account</Name>
+            <Value>1</Value>
+        </Parameter>
+        <Parameter>
+            <Name>MultiValueEnum</Name>
+            <Value>value1</Value>
+            <Value>value2</Value>
+        </Parameter>
+    </Parameters>
+    <ExpiresAt>2020-11-25</ExpiresAt>
+</Instance>
+```
+</TabItem>
+
+<TabItem value="curl">
+
+```cURL
+curl -X POST 'https://dashboard.bandwidth.com/api/accounts/{accountId}/reports/{reportId}/instances'
+-U '{userName}:{password}'
+-H 'Content-Type: application/xml'
+-d '<Instance>
+        <OutputFormat>pdf</OutputFormat>
+        <Parameters>
+            <Parameter>
+                <Name>Account</Name>
+                <Value>1</Value>
+            </Parameter>
+            <Parameter>
+                <Name>Sub-account</Name>
+                <Value>1</Value>
+            </Parameter>
+            <Parameter>
+                <Name>MultiValueEnum</Name>
+                <Value>value1</Value>
+                <Value>value2</Value>
+            </Parameter>
+        </Parameters>
+        <ExpiresAt>2020-11-25</ExpiresAt>
+    </Instance>'
+```
+
+</TabItem>
+</Tabs>
+
+> Response
+
+```http
+HTTP/1.1 201 Created
+Content-Type: application/xml; charset=utf-8
+Location: https://dashboard.bandwidth.com/api/accounts/{accountId}/reports/{reportId}/instances/789
+```
+
+## Fetch Report Status
+
+Since the account report request generation is asynchronous, make a <Highlight color="#00bf8c">GET</Highlight> request to our [Retrieve Report Instance API](../../../../../apis/numbers#tag/Reports/operation/RetrieveReportInstance) endpoint to determine the status.
+This can be done through tools like [Postman](https://github.com/Bandwidth/postman) or cURL.
+
+#### Request URL:
+
+<p><Highlight color="#00bf8c">GET</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/reports/{reportId}/instances/{instanceId}</code></p>
+
+<Tabs
+groupId="report_status"
+defaultValue="curl"
+values={[
+    { label: 'cURL', value: 'curl', }
+]
+}>
+
+<TabItem value="curl">
+
+```cURL
+curl 'https://dashboard.bandwidth.com/api/accounts/{accountId}/reports/{reportId}/instances/{instanceId}'
+-U '{userName}:{password}'
+```
+
+> Response
+
+```xml
+<ReportInstanceResponse>
+    <Instance>
+        <Id>789</Id>
+        <ReportId>10</ReportId>
+        <ReportName>Sample Report</ReportName>
+        <OutputFormat>pdf</OutputFormat>
+        <RequestedByUserName>user</RequestedByUserName>
+        <RequestedAt>2022-9-16 11:05:12</RequestedAt>
+        <Parameters>
+            <Parameter>
+                <Name>AccountId</Name>
+                <Value>1</Value>
+            </Parameter>
+        </Parameters>
+        <Status>Ready</Status>
+        <ExpiresAt>2022-10-16</ExpiresAt>
+    </Instance>
+</ReportInstanceResponse>
+```
+
+</TabItem>
+</Tabs>
+
+
+## Download the Report
+
+If the report status is `Ready`, then you are ready to download the requested report.
+This can be done by making a <Highlight color="#00bf8c">GET</Highlight> request to our [Download Report Instance File API](../../../../../apis/numbers#tag/Reports/operation/DownloadReportInstanceFile) endpoint.
+There are two possible successful responses: `200 OK` or `307 Temporary Redirect`.
+
+:::info
+Ensure that your client is configured to omit the `Authorization` header when following cross-origin redirects returned by this endpoint,
+as the redirect URL includes auth in the query parameters. Requests to the redirect url that include multiple auth mechanisms will be rejected with `400 Bad Request`.
+:::
+
+#### Request URL:
+
+<p><Highlight color="#00bf8c">GET</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/reports/{reportId}/instances/{instanceId}/file</code></p>
+
+<Tabs
+groupId="report_details"
+defaultValue="curl"
+values={[
+    { label: 'cURL', value: 'curl', }
+]
+}>
+
+<TabItem value="curl">
+
+```cURL
+curl 'https://dashboard.bandwidth.com/api/accounts/{accountId}/reports/{reportId}/instances/{instanceId}/file'
+-U '{userName}:{password}'
+```
+
+</TabItem>
+</Tabs>
+
+#### Response types
+
+<Tabs
+groupId="response_status"
+defaultValue="200"
+values={[
+    { label: '200 - OK', value: '200', },
+    { label: '307 - Temporary Redirect', value: '307', }
+]
+}>
+
+<TabItem value="200">
+
+The `200` response will include a `Content-Disposition` header indicating the filename. Downloading of the file will begin.
+
+```http
+HTTP/1.1 200 OK
+Content-Disposition: attachment; filename=output.pdf
+```
+
+</TabItem>
+
+<TabItem value="307">
+
+The 307 response will include a `Location` header that includes the link to the file.  Follow the link in order to download the file.
+
+```http
+HTTP/1.1 307 Temporary Redirect
+Location: some_file_link
+```
+
+</TabItem>
+</Tabs>
+
+## Where to next?
+Now that you have learned how to request account reports, check out some of the other available actions in our guides:
+- [How to request billing reports](/docs/numbers/guides/setup-reports/billingReports)
+
