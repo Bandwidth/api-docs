@@ -1,49 +1,29 @@
-import {testSvgLink, testTextLink} from '../../utils/utils'
+import {splashRowTester, testTextLink, testCarousel} from '../../utils/utils'
 
-context('Numbers Docs SVG Link on Homepage', () => {
-  testSvgLink('/','svg[alt="Numbers"]', 'docs/numbers')
+context('Guides Splash Row Content', () => {
+  splashRowTester('/', 'Check out our guides', '.splash_src-components-css-SplashPage-module > :nth-child(2)', 'Read the guides →')
 })
 
-context('Numbers Docs Text Link on Homepage', () => {
-  testTextLink('/','Numbers', 'docs/numbers')
+context('Read the guides link', () => {
+  testTextLink('/','Read the guides', 'docs' ,'.link_src-components-css-SplashPage-module')
 })
 
-context('Voice Docs SVG Link on Homepage', () => {
-  testSvgLink('/','svg[alt="Voice"]', 'docs/voice')
+context('APIS Splash Row Content', () => {
+  splashRowTester('/', 'Dig into our API reference', '.splash_src-components-css-SplashPage-module > :nth-child(3)', 'See our API reference →')
 })
 
-context('Voice Docs Text Link on Homepage', () => {
-  testTextLink('/','Voice', 'docs/voice')
+context('See our API reference link', () => {
+  testTextLink('/','See our API reference', 'apis' ,'.link_src-components-css-SplashPage-module')
 })
 
-context('Messaging Docs SVG Link on Homepage', () => {
-  testSvgLink('/','svg[alt="Messaging"]', 'docs/messaging')
+context('SDKS Splash Row Content', () => {
+  splashRowTester('/', 'Looking for our SDKs?', '.splash_src-components-css-SplashPage-module > :nth-child(5)', 'Build with Bandwidth →')
 })
 
-context('Messaging Docs Text Link on Homepage', () => {
-  testTextLink('/','Messaging', 'docs/messaging')
+context('Build with Bandwidth link', () => {
+  testTextLink('/','Build with Bandwidth', 'sdks' ,'.link_src-components-css-SplashPage-module')
 })
 
-context('Emergency Docs SVG Link on Homepage', () => {
-  testSvgLink('/','svg[alt="Emergency"]', 'docs/emergency')
-})
-
-context('Emergency Docs Text Link on Homepage', () => {
-  testTextLink('/','Emergency', 'docs/emergency')
-})
-
-context('Multi-Factor Authentication Docs SVG Link on Homepage', () => {
-  testSvgLink('/','svg[alt="Multi-Factor Authentication"]', 'docs/mfa')
-})
-
-context('Multi-Factor Authentication Docs Text Link on Homepage', () => {
-  testTextLink('/','Multi-Factor Authentication', 'docs/mfa')
-})
-
-context('WebRTC Docs SVG Link on Homepage', () => {
-  testSvgLink('/','svg[alt="WebRTC"]', 'docs/webrtc')
-})
-
-context('WebRTC Docs Text Link on Homepage', () => {
-  testTextLink('/','WebRTC', 'docs/webrtc')
+context('Carousel Tests', () => {
+  testCarousel('/', 6, 'Recent Documentation Updates')
 })
