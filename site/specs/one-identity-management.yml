@@ -57,12 +57,7 @@ paths:
       operationId: postIdps
       parameters: []
       requestBody:
-        description: ''
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/NewSAMLIdP'
-        required: true
+        $ref: '#/components/requests/CreateIdpRequest'
       responses:
         '201':
           $ref: '#/components/responses/CreatedResponse'
@@ -89,13 +84,7 @@ paths:
       description: Modifies an IdP.
       operationId: putIdp
       parameters:
-        - name: IdpId
-          in: path
-          description: The IdP id.
-          required: true
-          style: simple
-          schema:
-            type: string
+        - $ref: '#/components/parameters/idpId'
       requestBody:
         description: ''
         content:
@@ -130,17 +119,10 @@ paths:
       description: Returns the IdP with the given id.
       operationId: getIdp
       parameters:
-        - name: IdpId
-          in: path
-          description: The IdP id.
-          required: true
-          style: simple
-          schema:
-            type: string
-            example: 0ob620cjl5JqUwZ8u4x2
+        - $ref: '#/components/parameters/idpId'
       responses:
         '200':
-          $ref: '#/components/requests/GetIdpResponse'
+          $ref: '#/components/responses/GetIdpResponse'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
         '401':
@@ -163,14 +145,7 @@ paths:
       description: Deletes the IdP with the given id.
       operationId: deleteIdp
       parameters:
-        - name: IdpId
-          in: path
-          description: The IdP id.
-          required: true
-          style: simple
-          schema:
-            type: string
-            example: 0ob620cjl5JqUwZ8u4x2
+        - $ref: '#/components/parameters/idpId'
       responses:
         '204':
           $ref: '#/components/responses/DeleteResponse'
@@ -199,73 +174,24 @@ paths:
       description: Returns a Webfinger response for the provided resource.
       operationId: Webfinger
       parameters:
-        - name: resource
-          in: query
-          description: The resource to get information about
-          required: true
-          style: form
-          explode: true
-          schema:
-            type: string
-            example: okta:acct:user@company.com
+        - $ref: '#/components/parameters/webfingerResource'
       responses:
         '200':
-          description: A webfinger standard response for the requested resource.
-          headers: {}
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/WebfingerIdPEnabledResponse'
+          $ref: '#/components/responses/WebfingerResponse'
         '400':
-          description: Bad Request
-          headers: {}
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequestResponse'
+          $ref: '#/components/responses/BadRequestResponse'
         '401':
-          description: Unauthorized
-          headers: {}
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UnauthorizedResponse'
+          $ref: '#/components/responses/UnauthorizedResponse'
         '403':
-          description: Forbidden
-          headers: {}
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ForbiddenResponse'
+          $ref: '#/components/responses/ForbiddenResponse'
         '404':
-          description: Resource not found.
-          headers: {}
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFoundResponse'
+          $ref: '#/components/responses/NotFoundResponse'
         '405':
-          description: Method Not Allowed
-          headers: {}
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MethodNotAllowedResponse'
+          $ref: '#/components/responses/MethodNotAllowedResponse'
         '429':
-          description: Too Many Requests
-          headers: {}
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TooManyRequestsResponse'
+          $ref: '#/components/responses/TooManyRequestsResponse'
         '500':
-          description: An internal error occurred attempting to process a request
-          headers: {}
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/InternalErrorResponse'
+          $ref: '#/components/responses/InternalErrorResponse'
       deprecated: false
       security: []
 components:
@@ -321,6 +247,32 @@ components:
       schema:
         type: string
       example: '9999999'
+    idpId:
+      name: IdpId
+      in: path
+      description: The IdP id.
+      required: true
+      style: simple
+      schema:
+        type: string
+    webfingerResource:
+      name: resource
+      in: query
+      description: The resource to get information about
+      required: true
+      style: form
+      explode: true
+      schema:
+        type: string
+        example: okta:acct:user@company.com
+  requests:
+    CreateIdpRequest:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NewSAMLIdP'
+      required: true
   responses:
     CreatedResponse:
       description: Successful Response. Returns the newly created IdP resource.
@@ -374,6 +326,14 @@ components:
           schema:
             oneOf:
               - $ref: '#/components/schemas/SAMLIdP'
+    WebfingerResponse:
+      description: A webfinger standard response for the requested resource.
+      headers: {}
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/WebfingerIdPEnabledResponse'
     BadRequestResponse:
       description: Bad Request
       headers: {}
