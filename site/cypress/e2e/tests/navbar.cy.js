@@ -7,7 +7,7 @@ context('The Home Page', () => {
 })
 
 context('Docs', () => {
-  navBarContext('Docs');
+  navBarContext('Guides');
   navTester('docs');
 })
 
