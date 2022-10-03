@@ -1,37 +1,29 @@
-import {testTextLink, extLinkTester} from '../../utils/utils'
+import {testTextLink} from '../../utils/utils'
 
-context('Account Management Link', () => {
-  testTextLink('/docs','Account Management','docs/account/', '.docs-intro-grid-item')
+context('Account Link', () => {
+  testTextLink('/docs', 'Account', 'docs/account', '.textLink_src-components-css-ItemGrid-module')
 })
 
 context('Numbers Link', () => {
-  testTextLink('/docs','Numbers','docs/numbers/', '.docs-intro-grid-item')
+  testTextLink('/docs','Numbers','docs/numbers', '.textLink_src-components-css-ItemGrid-module')
 })
 
 context('Voice Link', () => {
-  testTextLink('/docs','Voice', 'docs/voice/', '.docs-intro-grid-item')
+  testTextLink('/docs','Voice', 'docs/voice', '.textLink_src-components-css-ItemGrid-module')
 })
 
 context('Messaging Link', () => {
-  testTextLink('/docs','Messaging','docs/messaging/', '.docs-intro-grid-item')
+  testTextLink('/docs','Messaging','docs/messaging', '.textLink_src-components-css-ItemGrid-module')
 })
 
 context('WebRTC Link', () => {
-  testTextLink('/docs','WebRTC', 'docs/webrtc/' ,'.docs-intro-grid-item')
+  testTextLink('/docs','WebRTC', 'docs/webrtc' ,'.textLink_src-components-css-ItemGrid-module')
 })
 
 context('Multi-Factor Authentication Link', () => {
-  testTextLink('/docs','Multi-Factor Authentication', 'docs/mfa/' ,'.docs-intro-grid-item')
+  testTextLink('/docs','Multi-Factor Authentication', 'docs/mfa' ,'.textLink_src-components-css-ItemGrid-module')
 })
 
-context('Emergency Services Link', () => {
-  testTextLink('/docs','Emergency Services', 'docs/emergency/' ,'.docs-intro-grid-item')
-})
-
-context('Next - About Link', () => {
-  testTextLink('/docs','About', 'docs/account/' ,'a.pagination-nav__link')
-})
-
-context('Edit This Page Link', () => {
-  extLinkTester('/docs', 'a.theme-edit-this-page', 'https://github.com/Bandwidth/api-docs/edit/main/site/docs/intro.mdx')
+context('Emergency Link', () => {
+  testTextLink('/docs','Emergency', 'docs/emergency' ,'.textLink_src-components-css-ItemGrid-module')
 })
