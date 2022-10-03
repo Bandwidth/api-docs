@@ -1,6 +1,6 @@
 
 export const navBarContext = (pathName, hidden, viewportWidth = 1400, viewportHeight = 900) => {
-  it('checks that nagivation back or forward in the browser\'s history from the page works', () => {
+  it('checks that navigation back or forward in the browser\'s history from the page works', () => {
     cy.visit('/')
     if (viewportWidth && viewportHeight) {
       cy.viewport(viewportWidth,viewportHeight) 
@@ -22,7 +22,7 @@ export const navBarContext = (pathName, hidden, viewportWidth = 1400, viewportHe
 }
 
 export const navTester = (path) => {
-    it('checks that nagivation back or forward in the browser\'s history from the page works', () => {
+    it('checks that navigation back or forward in the browser\'s history from the page works', () => {
       cy.location('pathname').should('include', path)
       cy.go(-1)
       cy.location('pathname').should('not.include', path)
@@ -119,7 +119,7 @@ export const navTester = (path) => {
   }
 
   export const tabSwitchingTester = (path, tab1, tab2, tab2Btn, text) => {
-    it('Should verify that a tab is visible and another hidden, then click a button and verify that they switched visibiility.', () => {
+    it('Should verify that a tab is visible and another hidden, then click a button and verify that they switched visibility.', () => {
       cy.visit(`${path}`)
       cy.get(`${tab1}`)
         .should('be.visible')
