@@ -57,7 +57,7 @@ paths:
       operationId: postIdps
       parameters: []
       requestBody:
-        $ref: '#/components/requests/CreateIdpRequest'
+        $ref: '#/components/requestBodies/CreateIdpRequest'
       responses:
         '201':
           $ref: '#/components/responses/CreatedResponse'
@@ -76,7 +76,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalErrorResponse'
       deprecated: false
-  /idps/{IdpId}:
+  /idps/{idpId}:
     put:
       tags:
         - Identity Provider Management
@@ -86,12 +86,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/idpId'
       requestBody:
-        description: ''
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/NewSAMLIdP'
-        required: true
+        $ref: '#/components/requestBodies/CreateIdpRequest'
       responses:
         '200':
           $ref: '#/components/responses/PutIdpsResponse'
@@ -172,7 +167,7 @@ paths:
         - Webfinger
       summary: Webfinger
       description: Returns a Webfinger response for the provided resource.
-      operationId: Webfinger
+      operationId: webfinger
       parameters:
         - $ref: '#/components/parameters/webfingerResource'
       responses:
@@ -248,7 +243,7 @@ components:
         type: string
       example: '9999999'
     idpId:
-      name: IdpId
+      name: idpId
       in: path
       description: The IdP id.
       required: true
@@ -265,7 +260,7 @@ components:
       schema:
         type: string
         example: okta:acct:user@company.com
-  requests:
+  requestBodies:
     CreateIdpRequest:
       description: ''
       content:
@@ -413,7 +408,7 @@ components:
               example: false
             usernameField:
               type: string
-              description: The field in the SAML assertion that container the username
+              description: The field in the SAML assertion that contains the username
             issuerUri:
               type: string
               description: >-
@@ -481,74 +476,6 @@ components:
               description: >-
                 The PEM or DER encoded public key certificate of the Identity
                 Provider used to verify SAML message and assertion signatures.
-    NewProperties:
-      title: NewProperties
-      required:
-        - accountId
-        - protocol
-        - active
-      type: object
-      properties:
-        accountId:
-          type: string
-          description: The Bandwidth account id that will use this Identity Provider.
-        protocol:
-          enum:
-            - SAML
-          type: string
-          description: >-
-            The protocol used by this Identity Provider. Only SAML is supported
-            for now.
-          example: SAML
-        active:
-          type: boolean
-          description: >-
-            Whether this IdP is active or not. Only one IdP can be active for a
-            given accountId.
-          example: false
-    GeneralProperties:
-      title: GeneralProperties
-      required:
-        - id
-        - entityId
-        - acsUrl
-      type: object
-      properties:
-        id:
-          type: string
-          description: The identifier for this Identity Provider.
-        entityId:
-          type: string
-          description: >-
-            The IdP entity id. This should be used as input to configure the
-            source provider.
-        acsUrl:
-          type: string
-          description: >-
-            The consumer assertion URL. This should be used as input to
-            configure the source provider.
-    SamlProperties:
-      title: SamlProperties
-      type: object
-      properties:
-        usernameField:
-          type: string
-          description: The field in the SAML assertion that container the username
-        issuerUri:
-          type: string
-          description: >-
-            URI of the Identity Provider. This value is usually the SAML
-            Metadata EntityID of the IdP EntityDescriptor.
-        singleSignOnUrl:
-          type: string
-          description: >-
-            The binding-specific IdP Authentication Request Protocol endpoint
-            that receives SAML AuthnRequest messages.
-        signatureCertificate:
-          type: string
-          description: >-
-            The PEM or DER encoded public key certificate of the Identity
-            Provider used to verify SAML message and assertion signatures.
     BadRequestResponse:
       title: BadRequestResponse
       type: object
@@ -694,7 +621,13 @@ components:
       type: object
       properties:
         protocol:
+          enum:
+            - SAML
           type: string
+          description: >-
+            The protocol used by this Identity Provider. Only SAML is supported
+            for now.
+          example: SAML
       discriminator:
         propertyName: protocol
         mapping:
