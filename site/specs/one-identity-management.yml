@@ -266,7 +266,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/NewSAMLIdP'
+            $ref: '#/components/schemas/newIdP'
       required: true
   responses:
     createdResponse:
@@ -282,8 +282,7 @@ components:
       content:
         application/json:
           schema:
-            oneOf:
-              - $ref: '#/components/schemas/SAMLIdP'
+            $ref: '#/components/schemas/idP'
     deleteResponse:
       description: Successful response. The IdP resource was deleted.
       headers: {}
@@ -294,8 +293,7 @@ components:
       content:
         application/json:
           schema:
-            oneOf:
-              - $ref: '#/components/schemas/SAMLIdP'
+            $ref: '#/components/schemas/idP'
     getIdpsResponse:
       description: >-
         Successful response. A list of IdPs is returned. If there are no IdPs to
@@ -307,8 +305,7 @@ components:
             type: object
             properties:
               items:
-                oneOf:
-                  - $ref: '#/components/schemas/SAMLIdP'
+                $ref: '#/components/schemas/idP'
               totalCount:
                 type: integer
                 description: The total number of IdPs found with the specified filters
@@ -319,8 +316,7 @@ components:
       content:
         application/json:
           schema:
-            oneOf:
-              - $ref: '#/components/schemas/SAMLIdP'
+            $ref: '#/components/schemas/idP'
     webfingerResponse:
       description: A webfinger standard response for the requested resource.
       headers: {}
@@ -388,94 +384,98 @@ components:
           schema:
             $ref: '#/components/schemas/unauthorizedResponse'
   schemas:
-    NewSAMLIdP:
+    newSAMLIdP:
       title: NewSAMLIdP
-      allOf:
-        - $ref: '#/components/schemas/newIdp'
-        - required:
-            - accountId
-            - active
-          type: object
-          properties:
-            accountId:
-              type: string
-              description: The Bandwidth account id that will use this Identity Provider.
-            active:
-              type: boolean
-              description: >-
-                Whether this IdP is active or not. Only one IdP can be active
-                for a given accountId.
-              example: false
-            usernameField:
-              type: string
-              description: The field in the SAML assertion that contains the username
-            issuerUri:
-              type: string
-              description: >-
-                URI of the Identity Provider. This value is usually the SAML
-                Metadata EntityID of the IdP EntityDescriptor.
-            singleSignOnUrl:
-              type: string
-              description: >-
-                The binding-specific IdP Authentication Request Protocol
-                endpoint that receives SAML AuthnRequest messages.
-            signatureCertificate:
-              type: string
-              description: >-
-                The PEM or DER encoded public key certificate of the Identity
-                Provider used to verify SAML message and assertion signatures.
+      required:
+        - accountId
+        - active
+      type: object
+      properties:
+        protocol:
+          enum:
+            - SAML
+          type: string
+          description: >-
+            The protocol used by this Identity Provider. Only SAML is supported
+            for now.
+          example: SAML
+        accountId:
+          type: string
+          description: The Bandwidth account id that will use this Identity Provider.
+        active:
+          type: boolean
+          description: >-
+            Whether this IdP is active or not. Only one IdP can be active for a
+            given accountId.
+          example: false
+        usernameField:
+          type: string
+          description: The field in the SAML assertion that contains the username
+        issuerUri:
+          type: string
+          description: >-
+            URI of the Identity Provider. This value is usually the SAML
+            Metadata EntityID of the IdP EntityDescriptor.
+        singleSignOnUrl:
+          type: string
+          description: >-
+            The binding-specific IdP Authentication Request Protocol endpoint
+            that receives SAML AuthnRequest messages.
+        signatureCertificate:
+          type: string
+          description: >-
+            The PEM or DER encoded public key certificate of the Identity
+            Provider used to verify SAML message and assertion signatures.
     SAMLIdP:
       title: SAMLIdP
-      allOf:
-        - $ref: '#/components/schemas/idp'
-        - required:
-            - accountId
-            - active
-            - id
-            - entityId
-            - acsUrl
-          type: object
-          properties:
-            accountId:
-              type: string
-              description: The Bandwidth account id that will use this Identity Provider.
-            active:
-              type: boolean
-              description: >-
-                Whether this IdP is active or not. Only one IdP can be active
-                for a given accountId.
-              example: false
-            id:
-              type: string
-              description: The identifier for this Identity Provider.
-            entityId:
-              type: string
-              description: >-
-                The IdP entity id. This should be used as input to configure the
-                source provider.
-            acsUrl:
-              type: string
-              description: >-
-                The consumer assertion URL. This should be used as input to
-                configure the source provider.
-            usernameField:
-              type: string
-              description: The field in the SAML assertion that container the username
-            issuerUri:
-              type: string
-              description: >-
-                URI of the Identity Provider. This value is usually the SAML
-                Metadata EntityID of the IdP EntityDescriptor.
-            singleSignOnUrl:
-              type: string
-              description: >-
-                The binding-specific IdP Authentication Request Protocol
-                endpoint that receives SAML AuthnRequest messages.
-            signatureCertificate:
-              type: string
-              description: >-
-                The PEM or DER encoded public key certificate of the Identity
-                Provider used to verify SAML message and assertion signatures.
+      required:
+        - accountId
+        - active
+        - id
+        - entityId
+        - acsUrl
+      type: object
+      properties:
+        accountId:
+          type: string
+          description: The Bandwidth account id that will use this Identity Provider.
+        active:
+          type: boolean
+          description: >-
+            Whether this IdP is active or not. Only one IdP can be active for a
+            given accountId.
+          example: false
+        id:
+          type: string
+          description: The identifier for this Identity Provider.
+        entityId:
+          type: string
+          description: >-
+            The IdP entity id. This should be used as input to configure the
+            source provider.
+        acsUrl:
+          type: string
+          description: >-
+            The consumer assertion URL. This should be used as input to
+            configure the source provider.
+        usernameField:
+          type: string
+          description: The field in the SAML assertion that container the username
+        issuerUri:
+          type: string
+          description: >-
+            URI of the Identity Provider. This value is usually the SAML
+            Metadata EntityID of the IdP EntityDescriptor.
+        singleSignOnUrl:
+          type: string
+          description: >-
+            The binding-specific IdP Authentication Request Protocol endpoint
+            that receives SAML AuthnRequest messages.
+        signatureCertificate:
+          type: string
+          description: >-
+            The PEM or DER encoded public key certificate of the Identity
+            Provider used to verify SAML message and assertion signatures.
     badRequestResponse:
       title: badRequestResponse
       type: object
@@ -602,36 +602,22 @@ components:
           type: string
           description: A unique trace ID used to identify the request and response.
           example: b77a5ea79036d5b9
-    idp:
+    idP:
       title: IdP
-      required:
-        - protocol
-      type: object
-      properties:
-        protocol:
-          type: string
+      oneOf:
+        - $ref: '#/components/schemas/SAMLIdP'
       discriminator:
         propertyName: protocol
         mapping:
           SAML: SAMLIdP
-    newIdp:
+    newIdP:
       title: NewIdP
-      required:
-        - protocol
-      type: object
-      properties:
-        protocol:
-          enum:
-            - SAML
-          type: string
-          description: >-
-            The protocol used by this Identity Provider. Only SAML is supported
-            for now.
-          example: SAML
+      oneOf:
+        - $ref: '#/components/schemas/newSAMLIdP'
       discriminator:
         propertyName: protocol
         mapping:
-          SAML: NewSAMLIdP
+          SAML: newSAMLIdP
     webfingerIdPEnabledResponse:
       title: webfingerIdPEnabledResponse
       required:
@@ -648,7 +634,7 @@ components:
         links:
           type: array
           items:
-            $ref: '#/components/schemas/webfinger_links'
+            $ref: '#/components/schemas/webfingerLinks'
           description: ''
           example:
             - href: >-
