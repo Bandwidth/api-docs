@@ -55,6 +55,8 @@ jobs:
     name: Publish Temp Docsite
     needs: cypress
     runs-on: ubuntu-latest
+    outputs:
+      distribution-domain: ${{steps.cloudfront-distribution.outputs.distribution-domain}}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -118,7 +120,7 @@ jobs:
           EOL
           aws s3api put-bucket-lifecycle --bucket $BUCKET_NAME --lifecycle-configuration file://lifecycle.xml
         env:
-          BUCKET_NAME: ${{ steps.create_name.outputs.bucket_name }}
+          BUCKET_NAME: ${{ steps.create_name.outputs.bucket_name }}      
 
       - name: Sync zip to Bucket
         run: |
@@ -127,6 +129,7 @@ jobs:
           BUCKET_NAME: ${{ steps.create_name.outputs.bucket_name }}
 
       - name: Create Cloudfront distribution
+        id: cloudfront-distribution
         run: |
           cat >dist-config.json <<EOL
           {
@@ -241,7 +244,7 @@ jobs:
             "IsIPV6Enabled": true
           }
           EOL
-          aws cloudfront create-distribution --distribution-config file://dist-config.json
+          echo "::set-output name=distribution-domain:$(aws cloudfront create-distribution --distribution-config file://dist-config.json --output text --query "Distribution[].["DomainName":]")"
 
       - name: Comment on PR
         uses: mshick/add-pr-comment@v1
@@ -250,6 +253,66 @@ jobs:
         with:
           message: http://${{ steps.create_name.outputs.bucket_name }}.s3-website-us-east-1.amazonaws.com/
           allow-repeats: true
+
+  cypress_cloudfront_test:
+    name: Cypress run on prod
+    needs: [cypress, publish]
+    runs-on: ${{ matrix.os }}
+    container:
+      image: cypress/browsers:node16.13.2-chrome97-ff96
+      options: --user 1001 --shm-size=2g
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        browser: [chrome]
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Create Cypress Config
+        run: |
+          cat >staged-cypress.config.js <<EOL
+          const { defineConfig } = require("cypress");
+
+          module.exports = defineConfig({
+            e2e: {
+              setupNodeEvents(on, config) {
+                // implement node event listeners here
+              },
+            baseUrl: '${{needs.publish.outputs.distribution-domain}}/'
+            },
+            projectId: "oz7rpf",
+            pageLoadTimeout: 60000,
+            viewportWidth: 1440,
+            viewportHeight: 900,
+            video: false,
+            videoUploadOnPasses: false,
+            screenshotOnRunFailure: true,  
+            retries: 3,
+          });
+          EOL  
+
+      - name: Cypress Staged Cloudfront Deployment Test
+        uses: cypress-io/github-action@v4.2.0
+        timeout-minutes: 40
+        with:
+          record: true
+          browser: ${{ matrix.browser }}
+          working-directory: ./site
+          config-file: staged-cypress.config.js
+          tag: production
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_PROJECT_ID: ${{ secrets.PROJECT_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMIT_INFO_MESSAGE: ${{github.event.pull_request.title}}
+          COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}
 
   alert_if_failure:
     name: Alert for failure
