@@ -45,15 +45,40 @@ module.exports = {
                     label: "Guides and Tutorials",
                     items: [
                         "numbers/searchingAndOrderingNumbers",
-                        "numbers/portingNumbers",
-                        "numbers/csrLookupTool",
+                        {
+                            type: "category",
+                            label: "Porting numbers",
+                            items: [
+                                "numbers/porting/csrLookup",
+                                "numbers/porting/lnpChecker",
+                                "numbers/porting/portingNumbers",
+                                "numbers/porting/loaUpload",
+                                "numbers/porting/updatePortin",
+                                "numbers/porting/createBulkPortins",
+                                "numbers/porting/updateBulkPortins",
+                                "numbers/porting/submitBulkPortins",
+                            ],
+                        },
                         "numbers/hostingNumbers",
-                        "numbers/manageNumberFeatures",
-                        "numbers/searchNumbers",
+                        {
+                            type: "category",
+                            label: "How to manage your inventory",
+                            items: [
+                                "numbers/manage-inventory/searchYourNumbers",
+                                "numbers/manage-inventory/applyTnOptionsAndFeatures",
+                                "numbers/manage-inventory/setFailoverUri"
+                            ]
+                        },
                         "numbers/disconnectNumbers",
-                        "numbers/bulkportins",
                         "numbers/lookupNumbers",
-                        "numbers/downloadingReports",
+                        {
+                            type: "category",
+                            label: "How to request Numbers reports",
+                            items: [
+                                "numbers/setup-reports/accountReports",
+                                "numbers/setup-reports/billingReports",
+                            ]
+                        },
                         "numbers/lsrOrders",
                     ],
                 },
@@ -90,6 +115,9 @@ module.exports = {
                         "voice/webhooks/gather",
                         "voice/webhooks/initiate",
                         "voice/webhooks/machineDetectionComplete",
+                        "voice/webhooks/mediaStreamStarted",
+                        "voice/webhooks/mediaStreamRejected",
+                        "voice/webhooks/mediaStreamStopped",
                         "voice/webhooks/recordComplete",
                         "voice/webhooks/recordingAvailable",
                         "voice/webhooks/redirect",
@@ -123,6 +151,8 @@ module.exports = {
                         "voice/bxml/startGather",
                         "voice/bxml/stopGather",
                         "voice/bxml/sendDtmf",
+                        "voice/bxml/startStream",
+                        "voice/bxml/stopStream",
                         "voice/bxml/tag",
                     ],
                 },
@@ -130,7 +160,6 @@ module.exports = {
                     type: "category",
                     label: "Guides and Tutorials",
                     items: [
-                        "voice/quickStart",
                         "voice/outboundCallGuide",
                         "voice/mediaAndTTSGuide",
                         "voice/recordingGuide",

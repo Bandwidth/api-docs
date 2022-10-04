@@ -1,0 +1,224 @@
+---
+id: portingNumbers
+title: Create Port-in
+slug: /numbers/guides/porting/portingNumbers
+description: How to port numbers using the Bandwidth API
+keywords:
+  - bandwidth
+  - numbers
+  - porting
+  - portin
+  - port-in
+  - lnp
+  - port
+image: '@site/static/img/bw-icon.svg'
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+export const accountId = "{accountId}";
+export const orderId = "{orderId}";
+
+export const Highlight = ({children, color}) => (
+    <span
+      style={{
+        backgroundColor: color,
+        borderRadius: '2px',
+        color: '#fff',
+        padding: '0.2rem',
+      }}>
+      {children}
+    </span>
+  );
+
+The `/portins` API is used to submit port-in requests. These requests to move phone numbers from a “losing carrier” to Bandwidth are part of the Local Number Portability (LNP) process. These LNP requests are automatically validated and processed.
+
+In order to successfully port telephone numbers they need to correspond to a set of criteria. To check them follow the [How to Check Numbers Portability](/docs/numbers/guides/porting/lnpChecker) guide.
+
+## Create a Port-in Order
+
+The API allows a user to create a new LNP order. An order id will be auto-generated and provided to the customer. The order must pass synchronous and asynchronous validation. Synchronous validation will return validation failures immediately in the response. If synchronous validation passes, but asynchronous validation fails, the customer will not receive the error response until they check the order status.
+
+To create port-in request, you must make a <Highlight color="#079CEE">POST</Highlight> request to our [API /portins](/apis/numbers/#operation/CreatePortin) endpoint. This can be done using tools like Postman or cURL.
+
+### Examples
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/portins</code>
+<Tabs
+    groupId="createPortin"
+    defaultValue="payload"
+    values={[
+        { label: 'Request Payload', value: 'payload', },
+        { label: 'cURL', value: 'curl', },
+    ]
+    }>
+<TabItem value="payload">
+
+>Request
+
+```xml
+Note: Remember to add authentication for your application if needed!
+
+https://dashboard.bandwidth.com/api/accounts/{accountId}/portins
+//Make sure an authentication header is added with your BANDWIDTH_USERNAME and BANDWIDTH_PASSWORD
+<LnpOrder>
+    <RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>
+    <AlternateSpid>X455</AlternateSpid>
+    <BillingTelephoneNumber>9195551234</BillingTelephoneNumber>
+    <NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>
+    <SiteId>12345</SiteId>
+    <PeerId>660123</PeerId>
+    <Subscriber>
+        <SubscriberType>BUSINESS</SubscriberType>
+        <FirstName>First</FirstName>
+        <LastName>Last</LastName>
+        <ServiceAddress>
+            <HouseNumber>11235</HouseNumber>
+            <StreetName>Back</StreetName>
+            <City>Denver</City>
+            <StateCode>CO</StateCode>
+            <Zip>27541</Zip>
+            <County>Canyon</County>
+        </ServiceAddress>
+    </Subscriber>
+    <LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>
+    <WirelessInfo>
+        <AccountNumber>771297665AABC</AccountNumber>
+        <PinNumber>1234</PinNumber>
+    </WirelessInfo>
+    <ListOfPhoneNumbers>
+        <PhoneNumber>9195551234</PhoneNumber>
+        <PhoneNumber>9195554321</PhoneNumber>
+    </ListOfPhoneNumbers>
+    <Triggered>true</Triggered>
+</LnpOrder>
+```
+
+>Response
+
+```xml
+<LnpOrderResponse>
+    <OrderId>d28b36f7-fa96-49eb-9556-a40fca49f7c6</OrderId>
+    <Status>
+        <Code>201</Code>
+        <Description>Order request received. Please use the order id to check the status of your order later.</Description>
+    </Status>
+    <ProcessingStatus>PENDING_DOCUMENTS</ProcessingStatus>
+    <RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>
+    <AlternateSpid>X455</AlternateSpid>
+    <BillingTelephoneNumber>9195551234</BillingTelephoneNumber>
+    <NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>
+    <SiteId>12345</SiteId>
+    <PeerId>660123</PeerId>
+    <Subscriber>
+        <SubscriberType>BUSINESS</SubscriberType>
+        <FirstName>First</FirstName>
+        <LastName>Last</LastName>
+        <ServiceAddress>
+            <HouseNumber>11235</HouseNumber>
+            <StreetName>Back</StreetName>
+            <City>Denver</City>
+            <StateCode>CO</StateCode>
+            <Zip>27541</Zip>
+            <County>Canyon</County>
+        </ServiceAddress>
+    </Subscriber>
+    <LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>
+    <WirelessInfo>
+        <AccountNumber>771297665AABC</AccountNumber>
+        <PinNumber>1234</PinNumber>
+    </WirelessInfo>
+    <ListOfPhoneNumbers>
+        <PhoneNumber>9195551234</PhoneNumber>
+        <PhoneNumber>9195554321</PhoneNumber>
+    </ListOfPhoneNumbers>
+    <Triggered>true</Triggered>
+</LnpOrderResponse>
+```
+
+</TabItem>
+<TabItem value="curl">
+
+```xml
+Note: Remember to add authentication for your application if needed!
+
+curl 'https://dashboard.bandwidth.com/api/accounts/{BW_ACCOUNT_ID}/portins' \
+-X POST \
+-U '{BANDWIDTH_USERNAME}:{BANDWIDTH_PASSWORD}' \
+-H 'Content-Type: application/xml' \
+-d '<LnpOrder>
+    <RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>
+    <AlternateSpid>X455</AlternateSpid>
+    <BillingTelephoneNumber>9195551234</BillingTelephoneNumber>
+    <NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>
+    <SiteId>12345</SiteId>
+    <PeerId>660123</PeerId>
+    <Subscriber>
+        <SubscriberType>BUSINESS</SubscriberType>
+        <FirstName>First</FirstName>
+        <LastName>Last</LastName>
+        <ServiceAddress>
+            <HouseNumber>11235</HouseNumber>
+            <StreetName>Back</StreetName>
+            <City>Denver</City>
+            <StateCode>CO</StateCode>
+            <Zip>27541</Zip>
+            <County>Canyon</County>
+        </ServiceAddress>
+    </Subscriber>
+    <LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>
+    <WirelessInfo>
+        <AccountNumber>771297665AABC</AccountNumber>
+        <PinNumber>1234</PinNumber>
+    </WirelessInfo>
+    <ListOfPhoneNumbers>
+        <PhoneNumber>9195551234</PhoneNumber>
+        <PhoneNumber>9195554321</PhoneNumber>
+    </ListOfPhoneNumbers>
+    <Triggered>true</Triggered>
+</LnpOrder>'
+```
+
+</TabItem>
+</Tabs>
+
+### Polling vs. Webhooks
+
+Porting numbers in the Bandwidth Dashboard is asynchronous which means the orders are processed and the order status is updated asynchronously. As times can vary and are not guaranteed Bandwidth recommends configuring your account with a subscription instead of polling the order resource for `<OrderStatus>`. Please follow the [How to setup Notification Webhook](/docs/numbers/webhooks/orderWebhook) guide.
+
+To poll for information about your port-in you can still use a <Highlight color="#00bf8c">GET</Highlight> request to [accounts/{accountId}/portins API](/apis/numbers/#operation/GetPortin). This can be done using tools like Postman or cURL.
+
+<Highlight color="#00bf8c">GET</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/portins/{orderId}</code>
+<Tabs
+    groupId="getPortin"
+    defaultValue="curl"
+    values={[
+        { label: 'cURL', value: 'curl', },
+    ]
+    }>
+<TabItem value="curl">
+
+```cURL
+curl 'https://dashboard.bandwidth.com/api/accounts/{BW_ACCOUNT_ID}/portins' \
+-X GET \
+-U '{BANDWIDTH_USERNAME}:{BANDWIDTH_PASSWORD}' \
+-H 'Content-Type: application/xml' \
+-H 'Accept: application/xml'
+```
+
+</TabItem>
+</Tabs>
+
+:::info
+If your port-on order stuck in a ```PENDING_DOCUMENTS``` status and does not transit to ```SUBMITTED``` then [LOA (Letter of authorization) upload](/docs/numbers/guides/porting/loaUpload) is required action.
+:::
+
+## Where to next?
+
+Now that you have learned how to create a port-in order, check out some of the other available actions in the following guides:
+
+- [How to Check Numbers Portability ←](/docs/numbers/guides/porting/lnpChecker)
+- [How to lookup Customer Service Records ←](/docs/numbers/guides/porting/csrLookup)
+- [How to Upload LOA (Letter of authorization) →](/docs/numbers/guides/porting/loaUpload)
+- [How to Manage Port-in →](/docs/numbers/guides/porting/updatePortin)
+- [How to Create Bulk Port-in →](/docs/numbers/guides/porting/createBulkPortins)
