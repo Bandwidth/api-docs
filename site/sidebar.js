@@ -313,13 +313,15 @@ module.exports = {
                 "emergency/emergencyCallingApi",
             ],
         },
-    {
-      type: 'category',
-      label: 'Identity Management',
-      items: [
-          'identity/about',
-          'identity/identityProvidersOverview',
-      ],
-    }
+        /* TODO ONEID-1304
+        {
+          type: 'category',
+          label: 'Identity Management',
+          items: [
+              'identity/about',
+              'identity/identityProvidersOverview',
+          ],
+        },
+        */
   ],
 };

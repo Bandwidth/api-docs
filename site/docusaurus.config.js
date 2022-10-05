@@ -15,7 +15,9 @@ const globalSpec = fs.readFileSync('./specs/global.yml', 'utf-8');
 const globalSpec_v2 = fs.readFileSync('./specs/global-v2.yml', 'utf-8');
 const globalSpec_beta = fs.readFileSync('./specs/global-beta.yml', 'utf-8');
 const insightsSpec = fs.readFileSync('./specs/insights.yml', 'utf-8');
+/* TODO ONEID-1304
 const identitySpec = fs.readFileSync('./specs/one-identity-management.yml', 'utf-8');
+*/
 
 module.exports = {
     title: 'Bandwidth API Docs',
@@ -137,7 +139,8 @@ module.exports = {
         globalSpec_v2: YAML.parse(globalSpec_v2),
         globalSpec_beta: YAML.parse(globalSpec_beta),
         insightsSpec: YAML.parse(insightsSpec),
-        identitySpec: YAML.parse(identitySpec),
+        // TODO ONEID-1304
+        // identitySpec: YAML.parse(identitySpec),
 
         // CSS Colors
         bwBlue: '#079CEE',
