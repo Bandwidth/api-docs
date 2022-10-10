@@ -57,6 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       domain: ${{steps.distribution.outputs.distribution-domain}}
+      id: ${{steps.distribution.outputs.distribution-id}}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -120,7 +121,7 @@ jobs:
           EOL
           aws s3api put-bucket-lifecycle --bucket $BUCKET_NAME --lifecycle-configuration file://lifecycle.xml
         env:
-          BUCKET_NAME: ${{ steps.create_name.outputs.bucket_name }}      
+          BUCKET_NAME: ${{ steps.create_name.outputs.bucket_name }}
 
       - name: Sync zip to Bucket
         run: |
@@ -244,7 +245,9 @@ jobs:
             "IsIPV6Enabled": true
           }
           EOL
-          echo "::set-output name=distribution-domain::$(aws cloudfront create-distribution --distribution-config file://dist-config.json --output text --query "Distribution.DomainName")"
+          response=$(aws cloudfront create-distribution --distribution-config file://dist-config.json)
+          echo "::set-output name=distribution-domain::$(jq .Distribution.DomainName $response -r)"
+          echo "::set-output name=distribution-id::$(jq .Distribution.Id $response -r)"
 
       - name: Comment on PR
         uses: mshick/add-pr-comment@v1
@@ -278,7 +281,7 @@ jobs:
       - name: Create Cypress Config
         run: |
           cd ./site
-          sleep 1200  
+          aws cloudfront wait distribution-deployed --id ${{ needs.publish.outputs.id }}
           cat >staged-cypress.config.js <<EOL
           const { defineConfig } = require("cypress");
 
@@ -315,6 +318,19 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COMMIT_INFO_MESSAGE: ${{github.event.pull_request.title}}
           COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}
+
+      - name: Cleanup Cloudfront Distribution
+        run: |
+          cloudfront.json=$(mktemp /tmp/script.XXXXXX)
+          distribution.json=$(mktemp /tmp/script.XXXXXX)
+          aws cloudfront get-distribution-config --id ${{ needs.publish.outputs.id }} | \
+             jq .DistributionConfig.Enabled=false > $cloudfront.json
+          jq -r .DistributionConfig $cloudfront.json > $distribution.json
+          response=$(aws cloudfront update-distribution --id ${{ needs.publish.outputs.id }} \
+              --if-match $(jq .ETag $cloudfront.json -r) \
+              --distribution-config file://$distribution.json)
+          aws cloudfront wait distribution-deployed --id ${{ needs.publish.outputs.id }}       
+          aws cloudfront delete-distribution --id ${{ needs.publish.outputs.id }} --if-match $(jq .ETag $response -r)
 
   alert_if_failure:
     name: Alert for failure
