@@ -325,14 +325,14 @@ jobs:
 
       - name: Cleanup Cloudfront Distribution
         run: |
-          cloudfront.json=$(mktemp /tmp/script.XXXXXX)
-          distribution.json=$(mktemp /tmp/script.XXXXXX)
+          cat >cloudfront.json
+          cat >distribution.json
           aws cloudfront get-distribution-config --id ${{ needs.publish.outputs.id }} | \
-             jq .DistributionConfig.Enabled=false > $cloudfront.json
-          jq -r .DistributionConfig $cloudfront.json > $distribution.json
+             jq .DistributionConfig.Enabled=false > cloudfront.json
+          jq -r .DistributionConfig cloudfront.json > distribution.json
           response=$(aws cloudfront update-distribution --id ${{ needs.publish.outputs.id }} \
-              --if-match $(jq .ETag $cloudfront.json -r) \
-              --distribution-config file://$distribution.json)
+              --if-match $(jq .ETag cloudfront.json -r) \
+              --distribution-config file://distribution.json)
           aws cloudfront wait distribution-deployed --id ${{ needs.publish.outputs.id }}       
           aws cloudfront delete-distribution --id ${{ needs.publish.outputs.id }} --if-match $(echo $response | jq .Distribution.Id -r)
 
