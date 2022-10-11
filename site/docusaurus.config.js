@@ -26,8 +26,8 @@ module.exports = {
     onBrokenMarkdownLinks: 'warn',
     favicon: 'img/favicon.ico',
     trailingSlash: true,
-    organizationName: 'bandwidth', 
-    projectName: 'api-docs', 
+    organizationName: 'bandwidth',
+    projectName: 'api-docs',
     themeConfig: {
         image: 'img/bw-icon.svg', // used for meta tag
         colorMode: {
@@ -80,17 +80,17 @@ module.exports = {
                 ]
             }, {
                 href: 'https://github.com/Bandwidth',
-                position: 'right', 
+                position: 'right',
                 className: 'header-github-link bw-link',
                 title: 'Github Organization'
             }, {
                 href: 'https://www.postman.com/bandwidth',   // TODO: update with real postman url
-                position: 'right', 
+                position: 'right',
                 className: 'header-postman-link bw-link',
                 title: 'Postman Collection'
             }, {
                 href: 'https://www.bandwidth.com/login/',
-                position: 'right', 
+                position: 'right',
                 className: 'header-login-link',
                 title: 'Login'
             }]
@@ -155,6 +155,15 @@ module.exports = {
         redocCodeBackground: '#263238',
     },
     plugins: [
-        path.resolve(__dirname, 'redoc-plugin')
+        path.resolve(__dirname, 'redoc-plugin'),
+        [
+            '@docusaurus/plugin-content-docs',
+            {
+                id: 'miration-guides',
+                path: 'migration-guides',
+                routeBasePath: 'migration-guides',
+                sidebarPath: require.resolve('./sidebarsMigrationGuides.js'),
+            },
+        ]
     ],
 };
