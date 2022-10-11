@@ -124,7 +124,7 @@ module.exports = {
         ],
     ],
     customFields: {
-        numbersSpec: JSON.parse(numbersSpec),
+        numbersSpec: YAML.parse(numbersSpec),
         phoneNumberLookupSpec: YAML.parse(phoneNumberLookupSpec),
         voiceSpec: YAML.parse(voiceSpec),
         messagingSpec: YAML.parse(messagingSpec),
