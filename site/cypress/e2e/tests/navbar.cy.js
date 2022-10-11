@@ -58,4 +58,3 @@ context('Postman Link', () => {
 context('Login Link', () => {
   extLinkTester('/','a.navbar__item.navbar__link.header-login-link', 'https://www.bandwidth.com/login/')
   })
-
