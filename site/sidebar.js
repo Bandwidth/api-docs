@@ -57,6 +57,7 @@ module.exports = {
                                 "numbers/porting/createBulkPortins",
                                 "numbers/porting/updateBulkPortins",
                                 "numbers/porting/submitBulkPortins",
+                                "numbers/porting/lsrOrders",
                             ],
                         },
                         "numbers/hostingNumbers",
@@ -71,8 +72,14 @@ module.exports = {
                         },
                         "numbers/disconnectNumbers",
                         "numbers/lookupNumbers",
-                        "numbers/downloadingReports",
-                        "numbers/lsrOrders",
+                        {
+                            type: "category",
+                            label: "How to request Numbers reports",
+                            items: [
+                                "numbers/setup-reports/accountReports",
+                                "numbers/setup-reports/billingReports",
+                            ]
+                        },
                     ],
                 },
                 "numbers/errors",
