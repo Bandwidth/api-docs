@@ -2,7 +2,7 @@ const YAML = require('yaml');
 const fs = require('fs');
 const path = require('path');
 
-const numbersSpec = fs.readFileSync('./specs-temp/numbers.json', 'utf-8');
+const numbersSpec = fs.readFileSync('./specs/numbers.yml', 'utf-8');
 const phoneNumberLookupSpec = fs.readFileSync('./specs/phone-number-lookup.yml', 'utf-8');
 const voiceSpec = fs.readFileSync('./specs/voice.yml', 'utf-8');
 const messagingSpec = fs.readFileSync('./specs/messaging.yml', 'utf-8');
@@ -124,7 +124,7 @@ module.exports = {
         ],
     ],
     customFields: {
-        numbersSpec: JSON.parse(numbersSpec),
+        numbersSpec: YAML.parse(numbersSpec),
         phoneNumberLookupSpec: YAML.parse(phoneNumberLookupSpec),
         voiceSpec: YAML.parse(voiceSpec),
         messagingSpec: YAML.parse(messagingSpec),
