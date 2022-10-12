@@ -1,0 +1,385 @@
+# Runs Cypress tests and if they pass then deploys the doc site to an S3 bucket
+
+name: PR Publish Docsite
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - 'site/**'
+  workflow_dispatch:
+
+jobs:
+  cypress:
+    name: Cypress Tests
+    runs-on: ${{ matrix.os }}
+    container:
+      image: cypress/browsers:node16.13.2-chrome97-ff96
+      options: --user 1001 --shm-size=2g
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        browser: [chrome]
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v4.2.0
+        timeout-minutes: 40
+        with:
+          record: true
+          browser: ${{ matrix.browser }}
+          start: yarn start
+          wait-on: http://localhost:3000
+          wait-on-timeout: 180
+          working-directory: ./site
+          config-file: cypress.config.js
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_PROJECT_ID: ${{ secrets.PROJECT_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # overwrite commit message sent to Dashboard
+          COMMIT_INFO_MESSAGE: ${{github.event.pull_request.title}}
+          # re-enable PR comment bot
+          COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}
+
+  publish:
+    name: Publish Temp Docsite
+    needs: cypress
+    runs-on: ubuntu-latest
+    outputs:
+      domain: ${{steps.distribution.outputs.distribution-domain}}
+      id: ${{steps.distribution.outputs.distribution-id}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: Generate Static Site
+        run: |
+            cd site
+            yarn install --pure-lockfile
+            npm run build
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Create Bucket Name
+        id: create_name
+        run: |
+          BUCKET_NAME=bw-api-docs-${GITHUB_HEAD_REF#refs/heads/}
+          BUCKET_NAME=$(echo "$BUCKET_NAME" | tr '[:upper:]' '[:lower:]') #convert to lowercase for AWS bucket (can't be uppercase)
+          BUCKET_NAME=$(echo "$BUCKET_NAME" | sed -e "s/[^a-z0-9]/-/g") #replace all remaining non alphanumerics with -
+          echo $BUCKET_NAME
+          echo "::set-output name=bucket_name::$BUCKET_NAME"
+
+      - name: Create Bucket
+        run: |
+          echo $BUCKET_NAME
+          aws s3 mb s3://$BUCKET_NAME --region us-east-1
+          aws s3 website s3://$BUCKET_NAME --index-document index.html
+        env:
+          BUCKET_NAME: ${{ steps.create_name.outputs.bucket_name }}
+
+      - name: Put Lifecycle
+        run: |
+          cat >lifecycle.xml <<EOL
+            {
+              "Rules": [
+                  {
+                      "Expiration": {
+                          "Days": 30
+                      },
+                      "ID": "Expire Old Objects",
+                      "Prefix": "",
+                      "Status": "Enabled",
+                      "NoncurrentVersionExpiration": {
+                          "NoncurrentDays": 30
+                      },
+                      "AbortIncompleteMultipartUpload": {
+                          "DaysAfterInitiation": 30
+                      }
+                  }
+              ]
+          }
+          EOL
+          aws s3api put-bucket-lifecycle --bucket $BUCKET_NAME --lifecycle-configuration file://lifecycle.xml
+        env:
+          BUCKET_NAME: ${{ steps.create_name.outputs.bucket_name }}
+
+      - name: Sync zip to Bucket
+        run: |
+          aws s3 sync ./site/build s3://$BUCKET_NAME --acl public-read
+        env:
+          BUCKET_NAME: ${{ steps.create_name.outputs.bucket_name }}
+
+      - name: Create Cloudfront distribution
+        id: distribution
+        run: |
+          cat >dist-config.json <<EOL
+          {
+            "CallerReference": "${{ steps.create_name.outputs.bucket_name }}",
+            "Aliases": {
+                "Quantity": 0
+            },
+            "DefaultRootObject": "index.html",
+            "Origins": {
+                "Quantity": 1,
+                "Items": [
+                    {
+                        "Id": "${{ steps.create_name.outputs.bucket_name }}",
+                        "DomainName": "${{ steps.create_name.outputs.bucket_name }}.s3-website-us-east-1.amazonaws.com",
+                        "OriginPath": "",
+                        "CustomHeaders": {
+                            "Quantity": 0
+                        },
+                        "CustomOriginConfig": {
+                            "HTTPPort": 80,
+                            "HTTPSPort": 443,
+                            "OriginProtocolPolicy": "http-only",
+                            "OriginSslProtocols": {
+                                "Quantity": 3,
+                                "Items": ["TLSv1", "TLSv1.1", "TLSv1.2"]
+                            },
+                            "OriginReadTimeout": 30,
+                            "OriginKeepaliveTimeout": 5
+                        },
+                        "ConnectionAttempts": 3,
+                        "ConnectionTimeout": 10,
+                        "OriginShield": {
+                            "Enabled": false
+                        }
+                     }
+                ]
+            },
+            "OriginGroups": {
+                "Quantity": 0
+            },
+            "DefaultCacheBehavior": {
+                "TargetOriginId": "${{ steps.create_name.outputs.bucket_name }}",
+                "ForwardedValues": {
+                    "QueryString": false,
+                    "Cookies": {
+                        "Forward": "none"
+                    },
+                    "Headers": {
+                        "Quantity": 0
+                    },
+                    "QueryStringCacheKeys": {
+                        "Quantity": 0
+                    }
+                },
+                "TrustedSigners": {
+                    "Enabled": false,
+                    "Quantity": 0
+                },
+                "ViewerProtocolPolicy": "allow-all",
+                "MinTTL": 0,
+                "AllowedMethods": {
+                    "Quantity": 2,
+                    "Items": [
+                        "HEAD",
+                        "GET"
+                    ],
+                    "CachedMethods": {
+                        "Quantity": 2,
+                        "Items": [
+                            "HEAD",
+                            "GET"
+                        ]
+                    }
+                },
+                "SmoothStreaming": false,
+                "DefaultTTL": 86400,
+                "MaxTTL": 31536000,
+                "Compress": false,
+                "LambdaFunctionAssociations": {
+                    "Quantity": 0
+                },
+                "FieldLevelEncryptionId": ""
+            },
+            "CacheBehaviors": {
+                "Quantity": 0
+            },
+            "CustomErrorResponses": {
+                "Quantity": 0
+            },
+            "Comment": "",
+            "Logging": {
+                "Enabled": false,
+                "IncludeCookies": false,
+                "Bucket": "",
+                "Prefix": ""
+            },
+            "PriceClass": "PriceClass_All",
+            "Enabled": true,
+            "ViewerCertificate": {
+                "CloudFrontDefaultCertificate": true,
+                "MinimumProtocolVersion": "TLSv1",
+                "CertificateSource": "cloudfront"
+            },
+            "Restrictions": {
+                "GeoRestriction": {
+                    "RestrictionType": "none",
+                    "Quantity": 0
+                }
+            },
+            "WebACLId": "",
+            "HttpVersion": "http2",
+            "IsIPV6Enabled": true
+          }
+          EOL
+          response=$(aws cloudfront create-distribution --distribution-config file://dist-config.json)
+          echo "::set-output name=distribution-domain::$(echo $response | jq .Distribution.DomainName -r)"
+          echo "::set-output name=distribution-id::$(echo $response | jq .Distribution.Id -r)"
+
+      - name: Comment on PR
+        uses: mshick/add-pr-comment@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          message: http://${{ steps.create_name.outputs.bucket_name }}.s3-website-us-east-1.amazonaws.com/
+          allow-repeats: true
+
+  cypress_cloudfront:
+    name: Cypress run on prod
+    needs: [cypress, publish]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        browser: [chrome]
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Create Cypress Config
+        run: |
+          cd ./site
+          aws cloudfront wait distribution-deployed --id ${{ needs.publish.outputs.id }}
+          cat >staged-cypress.config.js <<EOL
+          const { defineConfig } = require("cypress");
+
+          module.exports = defineConfig({
+            e2e: {
+              setupNodeEvents(on, config) {
+                // implement node event listeners here
+              },
+            baseUrl: "https://${{ needs.publish.outputs.domain }}/"
+            },
+            projectId: "oz7rpf",
+            pageLoadTimeout: 60000,
+            viewportWidth: 1440,
+            viewportHeight: 900,
+            video: false,
+            videoUploadOnPasses: false,
+            screenshotOnRunFailure: true,  
+            retries: 3,
+          });
+          EOL
+
+      - name: Cypress Staged Cloudfront Deployment Test
+        uses: cypress-io/github-action@v4.2.0
+        timeout-minutes: 40
+        with:
+          record: true
+          browser: ${{ matrix.browser }}
+          working-directory: ./site
+          config-file: staged-cypress.config.js
+          tag: production
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_PROJECT_ID: ${{ secrets.PROJECT_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMIT_INFO_MESSAGE: ${{github.event.pull_request.title}}
+          COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}
+
+      - name: Cleanup Cloudfront Distribution
+        run: |
+          cat >cloudfront.json
+          cat >distribution.json
+          aws cloudfront get-distribution-config --id ${{ needs.publish.outputs.id }} | \
+             jq .DistributionConfig.Enabled=false > cloudfront.json
+          jq -r .DistributionConfig cloudfront.json > distribution.json
+          response=$(aws cloudfront update-distribution --id ${{ needs.publish.outputs.id }} \
+              --if-match $(jq .ETag cloudfront.json -r) \
+              --distribution-config file://distribution.json)
+          aws cloudfront wait distribution-deployed --id ${{ needs.publish.outputs.id }}       
+          aws cloudfront delete-distribution --id ${{ needs.publish.outputs.id }} --if-match $(echo $response | jq .ETag -r)
+
+  alert_if_failure:
+    name: Alert for failure
+    needs: [cypress, publish, cypress_cloudfront]
+    if: failure() && !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Get Branch Name
+        run: |
+          echo "BRANCH_NAME=${GITHUB_HEAD_REF#refs/heads/}" >> $GITHUB_ENV
+
+      - name: Check for Corresponding api-specs PR
+        run: |
+          response=$(curl \
+            -H "Accept: application/vnd.github.v3+json" \
+            -u ${{ secrets.DX_GITHUB_USERNAME }}:${{ secrets.DX_GITHUB_TOKEN }} \
+            https://api.github.com/repos/Bandwidth/api-specs/pulls?head=Bandwidth:$BRANCH_NAME)
+
+          url=$(echo $response | jq '.[0].url')
+          number=$(echo $response | jq '.[0].number')
+
+          if [ -z $number ]; then
+            echo "No Corresponding PR found on api-specs";
+          else
+            echo "URL=$url" >> $GITHUB_ENV;
+            echo "SPECS_PR_NUMBER=$number" >> $GITHUB_ENV;
+            echo "RESULT=true" >> $GITHUB_ENV;
+          fi
+
+      - name: Get Docs PR Number
+        if: ${{ env.RESULT == 'true' }}
+        run: |
+          echo "DOCS_PR_NUMBER=$(hub pr list -h ${{ env.BRANCH_NAME }} -f %I)" >> $GITHUB_ENV
+        env:
+          GITHUB_TOKEN: ${{ secrets.DX_GITHUB_TOKEN }}
+
+      - name: Make PR Comment
+        if: ${{ env.RESULT == 'true' }}
+        uses: ./.github/actions/add_pr_comment
+        with:
+          username: ${{ secrets.DX_GITHUB_USERNAME }}
+          token: ${{ secrets.DX_GITHUB_TOKEN }}
+          repo-name: api-specs
+          pr-number: ${{ env.SPECS_PR_NUMBER }}
+          message: 'Error generating staging site - please see [corresponding PR](https://github.com/Bandwidth/api-docs/pull/${{ env.DOCS_PR_NUMBER }}) on api-docs.'
