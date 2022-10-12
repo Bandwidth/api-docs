@@ -1,0 +1,56 @@
+name: Create LTS Versions
+
+on:
+  schedule:
+    - cron: '0 0 1,16 * *'
+
+jobs:
+  lts_needed:
+    name: Check for Diff Between Main and the Last LTS Version
+    runs-on: ubuntu-latest
+    outputs:
+      no_release: ${{ steps.get_releases.outputs.no_release }}
+      new_lts_zip: ${{ steps.get_releases.outputs.new_lts_zip }}
+      release_name: ${{ steps.get_releases.outputs.release_name }}
+    steps:
+      - name: Get Releases
+        id: get_releases
+        run: |
+          LTS_TIME=$(jq -r 'first(.[] | select(.name | match(".+LTS")) | .published_at)' <<< $(curl -Ls -H "Accept: application/vnd.github+json" -H "Authorization: token $TOKEN" $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases)) # Get latest LTS version release time
+          read REL_TIME REL_ID REL_NAME REL_ZIP < <(echo $(curl -Ls -H "Accept: application/vnd.github+json" -H "Authorization: token $TOKEN" $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases/latest | jq -r '.published_at, .id, .name, .zipball_url'))  # Get info about latest release
+          if [ $REL_TIME '>' $LTS_TIME ]; then curl -s -X PATCH -H "Accept: application/vnd.github+json" -H "Authorization: token $TOKEN" $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases/$REL_ID -d '{"name":"'"${REL_NAME}-LTS"'"}' > /dev/null; echo "::set-output name=new_lts_zip::$REL_ZIP"; echo "::set-output name=release_name::$REL_NAME"; else echo "::set-output name=no_release::true"; fi # If there has been a non-LTS release since the last LTS release, create a new LTS release
+        env:
+          TOKEN: ${{ secrets.DX_GITHUB_TOKEN }}
+  
+  create_lts:
+    name: Create A New LTS Release
+    runs-on: ubuntu-latest
+    needs: lts_needed
+    if: ${{!needs.lts_needed.outputs.no_release}}
+    steps:
+      - name: Download, Extract, and Build Site from Release
+        run: |
+          mkdir lts; curl -Lfs -H "Accept: application/vnd.github+json" -H "Authorization: token $TOKEN" $LTS_ZIP --output lts.zip; unzip -q lts.zip -d lts # Get and Unzip Release Archive
+          cd $(find ./ -type d -name "site"); mv ./* ../../; cd ../../; yarn install --pure-lockfile; yarn build  # Build Static Site
+        env:
+          TOKEN: ${{ secrets.DX_GITHUB_TOKEN }}
+          LTS_ZIP: ${{ needs.lts_needed.outputs.new_lts_zip }}
+          REL_NAME: ${{ needs.lts_needed.outputs.release_name }}
+
+      - name: Update Bucket Name
+        id: bucket_name
+        run: |
+          BUCKET_NAME=$(echo "bandwidth-api-docs-${BUCKET_NAME}" | tr '[:upper:]' '[:lower:]' | sed -e "s/[^a-z0-9]/-/g") #convert to lowercase and convert non-alphanumerics with dashes
+          echo "::set-output name=bucket_name::$BUCKET_NAME"
+        env:
+          BUCKET_NAME: ${{ needs.lts_needed.outputs.release_name }}
+
+      - name: Sync to S3
+        uses: Bandwidth/s3-sync-action@v1.2.0
+        with:
+          bucket-name: ${{ steps.bucket_name.outputs.bucket_name }}
+          bucket-expiration: '180'
+          bucket-region: 'us-east-1'
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          content-path: ./lts/build
