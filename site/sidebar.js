@@ -57,6 +57,7 @@ module.exports = {
                                 "numbers/porting/createBulkPortins",
                                 "numbers/porting/updateBulkPortins",
                                 "numbers/porting/submitBulkPortins",
+                                "numbers/porting/lsrOrders",
                             ],
                         },
                         "numbers/hostingNumbers",
@@ -79,7 +80,6 @@ module.exports = {
                                 "numbers/setup-reports/billingReports",
                             ]
                         },
-                        "numbers/lsrOrders",
                     ],
                 },
                 "numbers/errors",
