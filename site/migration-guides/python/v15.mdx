@@ -46,7 +46,6 @@ configuration = bandwidth.Configuration(
 api_client = bandwidth.ApiClient(configuration)
 
 account_id = "5500000"
-
 ```
 
 </TabItem>
@@ -178,6 +177,8 @@ except APIException as e:
 <TabItem value="v15">
 
 ```py
+from bandwidth.api import calls_api
+
 calls_api_instance = calls_api.CallsApi(api_client)
 
 create_call = CreateCall(
@@ -218,6 +219,8 @@ except APIException as e:
 <TabItem value="v15">
 
 ```py
+from bandwidth.api import calls_api
+
 calls_api_instance = calls_api.CallsApi(api_client)
 
 call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
@@ -258,6 +261,7 @@ except APIException as e:
 <TabItem value="v15">
 
 ```py
+from bandwidth.api import calls_api
 from bandwidth.model.update_call import UpdateCall
 from bandwidth.model.call_state_enum import CallStateEnum
 
@@ -309,6 +313,7 @@ except APIException as e:
 <TabItem value="v15">
 
 ```py
+from bandwidth.api import calls_api
 from bandwidth.model.bxml.bxml import Bxml
 from bandwidth.model.bxml.verbs import SpeakSentence
 
@@ -342,12 +347,29 @@ except bandwidth.ApiException as e:
 <TabItem value="v14">
 
 ```py
+voice_client = bandwidth_client.voice_client.client
+
+try:
+    response = voice_client.get_conferences(account_id)
+    if len(response.body) > 0:
+        print(response.body[0].id)
+except APIException as e:
+    print(e.response_code)
 ```
 
 </TabItem>
 <TabItem value="v15">
 
 ```py
+from bandwidth.api import conferences_api
+
+conferences_api_instance = conferences_api.ConferencesApi(api_client)
+
+try:
+    api_response = conferences_api_instance.list_conferences(account_id)
+    print(api_response)
+except bandwidth.ApiException as e:
+    print("Exception when calling ConferencesApi->list_conferences: %s\n" % e)
 ```
 
 </TabItem>
@@ -359,12 +381,32 @@ except bandwidth.ApiException as e:
 <TabItem value="v14">
 
 ```py
+voice_client = bandwidth_client.voice_client.client
+
+conference_id = "conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9"
+
+try:
+    response = voice_client.get_conference(account_id, conference_id)
+    print(response.body.name)
+except APIException as e:
+    print(e.response_code)
 ```
 
 </TabItem>
 <TabItem value="v15">
 
 ```py
+from bandwidth.api import conferences_api
+
+conferences_api_instance = conferences_api.ConferencesApi(api_client)
+
+conference_id = "conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9"
+
+try:
+    api_response = conferences_api_instance.get_conference(account_id, conference_id)
+    print(api_response)
+except bandwidth.ApiException as e:
+    print("Exception when calling ConferencesApi->get_conference: %s\n" % e)
 ```
 
 </TabItem>
@@ -376,12 +418,43 @@ except bandwidth.ApiException as e:
 <TabItem value="v14">
 
 ```py
+from bandwidth.voice.models.modify_conference_request import ModifyConferenceRequest
+from bandwidth.voice.models.status_enum import StatusEnum
+
+voice_client = bandwidth_client.voice_client.client
+
+body = ModifyConferenceRequest()
+body.status = StatusEnum.ACTIVE
+body.redirect_url = "https://myServer.com/bandwidth/webhooks/conferenceRedirect"
+
+conference_id = "conf-1234"
+
+try:
+    voice_client.modify_conference(BW_ACCOUNT_ID, conference_id, body)
+except APIException as e:
+    print(e.response_code)
 ```
 
 </TabItem>
 <TabItem value="v15">
 
 ```py
+from bandwidth.api import conferences_api
+from bandwidth.model.update_conference import UpdateConference
+from bandwidth.model.conference_state_enum import ConferenceStateEnum
+
+conferences_api_instance = conferences_api.ConferencesApi(api_client)
+
+conference_id = "conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9"
+update_conference = UpdateConference(
+    status=ConferenceStateEnum("active"),
+    redirect_url="https://myServer.com/bandwidth/webhooks/conferenceRedirect"
+)
+
+try:
+    conferences_api_instance.update_conference(account_id, conference_id, update_conference)
+except bandwidth.ApiException as e:
+    print("Exception when calling ConferencesApi->update_conference: %s\n" % e)
 ```
 
 </TabItem>
@@ -392,13 +465,32 @@ except bandwidth.ApiException as e:
 <Tabs groupId="python_v14_v15_migration" defaultValue="v15" values={[ { label: 'v14', value: 'v14', }, { label: 'v15', value: 'v15', } ]}>
 <TabItem value="v14">
 
-```py
+```
+N/A - Not implemented
 ```
 
 </TabItem>
 <TabItem value="v15">
 
 ```py
+from bandwidth.api import conferences_api
+
+conferences_api_instance = conferences_api.ConferencesApi(api_client)
+
+conference_id = "conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9"
+
+bxml = Bxml()
+speak_sentence = SpeakSentence(
+    text='This is a test.',
+    voice="julie"
+)
+
+bxml.add_verb(speak_sentence)
+
+try:
+    conferences_api_instance.update_conference_bxml(account_id, conference_id, bxml.to_bxml())
+except bandwidth.ApiException as e:
+    print("Exception when calling ConferencesApi->update_conference_bxml: %s\n" % e)
 ```
 
 </TabItem>
@@ -410,12 +502,35 @@ except bandwidth.ApiException as e:
 <TabItem value="v14">
 
 ```py
+voice_client = bandwidth_client.voice_client.client
+
+conference_id = "conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9"
+member_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    response = voice_client.get_conference_member(BW_ACCOUNT_ID, conference_id, member_id)
+    print(response.body.member_url)
+except APIException as e:
+    print(e.response_code)
 ```
 
 </TabItem>
 <TabItem value="v15">
 
 ```py
+from bandwidth.api import conferences_api
+
+conferences_api_instance = conferences_api.ConferencesApi(api_client)
+
+conference_id = "conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9"
+member_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+# example passing only required values which don't have defaults set
+try:
+    api_response = conferences_api_instance.get_conference_member(account_id, conference_id, member_id)
+    print(api_response)
+except bandwidth.ApiException as e:
+    print("Exception when calling ConferencesApi->get_conference_member: %s\n" % e)
 ```
 
 </TabItem>
@@ -427,12 +542,42 @@ except bandwidth.ApiException as e:
 <TabItem value="v14">
 
 ```py
+voice_client = bandwidth_client.voice_client.client
+
+conference_id = "conf-1234"
+call_id = "c-1234"
+
+body = ConferenceMemberState()
+body.mute = True
+
+try:
+    voice_client.modify_conference_member(BW_ACCOUNT_ID, conference_id, call_id, body)
+except APIException as e:
+    print(e.response_code)
 ```
 
 </TabItem>
 <TabItem value="v15">
 
 ```py
+from bandwidth.api import conferences_api
+from bandwidth.model.update_conference_member import UpdateConferenceMember
+
+conferences_api_instance = conferences_api.ConferencesApi(api_client)
+
+conference_id = "conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9"
+member_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+update_conference_member = UpdateConferenceMember(
+    mute=False,
+    hold=False,
+    call_ids_to_coach=["c-25ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"],
+)
+
+try:
+    api_instance.update_conference_member(account_id, conference_id, member_id, update_conference_member)
+except bandwidth.ApiException as e:
+    print("Exception when calling ConferencesApi->update_conference_member: %s\n" % e)
 ```
 
 </TabItem>
@@ -444,12 +589,33 @@ except bandwidth.ApiException as e:
 <TabItem value="v14">
 
 ```py
+voice_client = bandwidth_client.voice_client.client
+
+conference_id = "conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9"
+
+try:
+    response = voice_client.get_conference_recordings(BW_ACCOUNT_ID, conference_id)
+    if len(response.body) > 0:
+        print(response.body[0].name)
+except APIException as e:
+    print(e.response_code)
 ```
 
 </TabItem>
 <TabItem value="v15">
 
 ```py
+from bandwidth.api import conferences_api
+
+conferences_api_instance = conferences_api.ConferencesApi(api_client)
+
+conference_id = "conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9"
+
+try:
+    api_response = conferences_api_instance.list_conference_recordings(account_id, conference_id)
+    print(api_response)
+except bandwidth.ApiException as e:
+    print("Exception when calling ConferencesApi->list_conference_recordings: %s\n" % e)
 ```
 
 </TabItem>
@@ -461,12 +627,34 @@ except bandwidth.ApiException as e:
 <TabItem value="v14">
 
 ```py
+voice_client = bandwidth_client.voice_client.client
+
+conference_id = "conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9"
+recording_id = "r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    response = voice_client.get_conference_recording(BW_ACCOUNT_ID, conference_id, recording_id)
+    print(response.body.application_id)
+except APIException as e:
+    print(e.response_code)
 ```
 
 </TabItem>
 <TabItem value="v15">
 
 ```py
+from bandwidth.api import conferences_api
+
+conferences_api_instance = conferences_api.ConferencesApi(api_client)
+
+conference_id = "conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9"
+recording_id = "r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    api_response = conferences_api_instance.get_conference_recording(account_id, conference_id, recording_id)
+    print(api_response)
+except bandwidth.ApiException as e:
+    print("Exception when calling ConferencesApi->get_conference_recording: %s\n" % e)
 ```
 
 </TabItem>
@@ -478,12 +666,34 @@ except bandwidth.ApiException as e:
 <TabItem value="v14">
 
 ```py
+voice_client = bandwidth_client.voice_client.client
+
+conference_id = "conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9"
+recording_id = "r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    response = voice_client.get_download_conference_recording(BW_ACCOUNT_ID, conference_id, recording_id)
+    downloaded_recording = response.body
+except APIException as e:
+    print(e.response_code)
 ```
 
 </TabItem>
 <TabItem value="v15">
 
 ```py
+from bandwidth.api import conferences_api
+
+conferences_api_instance = conferences_api.ConferencesApi(api_client)
+
+conference_id = "conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9"
+recording_id = "r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    api_response = api_instance.download_conference_recording(account_id, conference_id, recording_id)
+    print(api_response)
+except bandwidth.ApiException as e:
+    print("Exception when calling ConferencesApi->download_conference_recording: %s\n" % e)
 ```
 
 </TabItem>
@@ -805,7 +1015,7 @@ code_request = CodeRequest(
 
 try:
     api_response = api_instance.generate_voice_code(account_id, code_request)
-    pprint(api_response)
+    print(api_response)
 except bandwidth.ApiException as e:
     print("Exception when calling MFAApi->generate_messaging_code: %s\n" % e)
 ```
