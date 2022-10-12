@@ -154,12 +154,44 @@ except bandwidth.ApiException as e:
 <TabItem value="v14">
 
 ```py
+from bandwidth.voice.models.create_call_request import CreateCallRequest
+
+bandwidth_client = BandwidthClient(
+    voice_basic_auth_user_name=BW_USERNAME,
+    voice_basic_auth_password=BW_PASSWORD
+)
+voice_client = bandwidth_client.voice_client.client
+
+body = CreateCallRequest()
+body.application_id = BW_VOICE_APPLICATION_ID
+body.to = "+19195551234"
+body.mfrom = "+19195554321"
+body.answer_url = "https://www.myCallbackServer.com/webhooks/answer"
+try:
+    response = voice_client.create_call(account_id, body)
+    print(response.body.call_id)
+except APIException as e:
+    print(e.response_code)
 ```
 
 </TabItem>
 <TabItem value="v15">
 
 ```py
+calls_api_instance = calls_api.CallsApi(api_client)
+
+create_call = CreateCall(
+    to="+19195551234",
+    _from="+19195554321",
+    application_id="1234-qwer-5679-tyui",
+    answer_url="https://www.myCallbackServer.com/webhooks/answer",
+)
+
+try:
+    api_response = calls_api_instance.create_call(account_id, create_call)
+    print(api_response)
+except bandwidth.ApiException as e:
+    print("Exception when calling CallsApi->create_call: %s\n" % e)
 ```
 
 </TabItem>
@@ -171,12 +203,30 @@ except bandwidth.ApiException as e:
 <TabItem value="v14">
 
 ```py
+voice_client = bandwidth_client.voice_client.client
+
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    result = voice_client.get_call(BW_ACCOUNT_ID, call_id)
+    print(result.body.state)
+except APIException as e:
+    print(e.response_code)
 ```
 
 </TabItem>
 <TabItem value="v15">
 
 ```py
+calls_api_instance = calls_api.CallsApi(api_client)
+
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    api_response = calls_api_instance.get_call_state(account_id, call_id)
+    print(api_response)
+except bandwidth.ApiException as e:
+    print("Exception when calling CallsApi->get_call_state: %s\n" % e)
 ```
 
 </TabItem>
@@ -188,12 +238,41 @@ except bandwidth.ApiException as e:
 <TabItem value="v14">
 
 ```py
+from bandwidth.voice.models.modify_call_request import ModifyCallRequest
+
+voice_client = bandwidth_client.voice_client.client
+
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+body = ModifyCallRequest()
+body.redirect_url = "https://myServer.com/bandwidth/webhooks/redirect"
+body.state = "active"
+
+try:
+    voice_client.modify_call(account_id, call_id, body)
+except APIException as e:
+    print(e.response_code)
 ```
 
 </TabItem>
 <TabItem value="v15">
 
 ```py
+from bandwidth.model.update_call import UpdateCall
+from bandwidth.model.call_state_enum import CallStateEnum
+
+calls_api_instance = calls_api.CallsApi(api_client)
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+update_call = UpdateCall(
+    state=CallStateEnum("active"),
+    redirect_url="https://myServer.com/bandwidth/webhooks/redirect",
+)
+
+try:
+    calls_api_instance.update_call(account_id, call_id, update_call)
+except bandwidth.ApiException as e:
+    print("Exception when calling CallsApi->update_call: %s\n" % e)
 ```
 
 </TabItem>
@@ -205,12 +284,51 @@ except bandwidth.ApiException as e:
 <TabItem value="v14">
 
 ```py
+from bandwidth.voice.bxml.bxml import Bxml
+from bandwidth.voice.bxml.verbs import *
+
+voice_client = bandwidth_client.voice_client.client
+
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+bxml = Bxml()
+speak_sentence = SpeakSentence(
+    sentence="This is a test.",
+    voice="julie"
+)
+
+bxml.add_verb(speak_sentence)
+
+try:
+    voice_client.modify_call_bxml(account_id, call_id, bxml.to_bxml())
+except APIException as e:
+    print(e.response_code)
 ```
 
 </TabItem>
 <TabItem value="v15">
 
 ```py
+from bandwidth.model.bxml.bxml import Bxml
+from bandwidth.model.bxml.verbs import SpeakSentence
+
+calls_api_instance = calls_api.CallsApi(api_client)
+
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+bxml = Bxml()
+speak_sentence = SpeakSentence(
+    text='This is a test.',
+    voice="julie"
+)
+
+bxml.add_verb(speak_sentence)
+
+# example passing only required values which don't have defaults set
+try:
+    api_instance.update_call_bxml(account_id, call_id, bxml.to_bxml())
+except bandwidth.ApiException as e:
+    print("Exception when calling CallsApi->update_call_bxml: %s\n" % e)
 ```
 
 </TabItem>
