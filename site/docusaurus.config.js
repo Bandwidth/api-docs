@@ -2,6 +2,7 @@ const YAML = require('yaml');
 const fs = require('fs');
 const path = require('path');
 
+const customConfig = require('./custom.config.json');
 const numbersSpec = fs.readFileSync('./specs/numbers.yml', 'utf-8');
 const phoneNumberLookupSpec = fs.readFileSync('./specs/phone-number-lookup.yml', 'utf-8');
 const voiceSpec = fs.readFileSync('./specs/voice.yml', 'utf-8');
@@ -125,29 +126,29 @@ module.exports = {
     ],
     customFields: {
         numbersSpec: YAML.parse(numbersSpec),
-        numbersSpecLink: 'https://github.com/Bandwidth/api-docs/blob/main/site/specs/numbers.yml',
+        numbersSpecLink: `${customConfig.numbersSpecLink}`,
         phoneNumberLookupSpec: YAML.parse(phoneNumberLookupSpec),
-        phoneNumberLookupSpecLink: 'https://github.com/Bandwidth/api-docs/blob/main/site/specs/phone-number-lookup.yml',
+        phoneNumberLookupSpecLink: `${customConfig.phoneNumberLookupSpecLink}`,
         voiceSpec: YAML.parse(voiceSpec),
-        voiceSpecLink: 'https://github.com/Bandwidth/api-docs/blob/main/site/specs/voice.yml',
+        voiceSpecLink: `${customConfig.voiceSpecLink}`,
         messagingSpec: YAML.parse(messagingSpec),
-        messagingSpecLink: 'https://github.com/Bandwidth/api-docs/blob/main/site/specs/messaging.yml',
+        messagingSpecLink: `${customConfig.messagingSpecLink}`,
         messagingInternationalSpec: JSON.parse(messagingInternationalSpec),
-        messagingInternationalSpecLink: 'https://github.com/Bandwidth/api-docs/blob/main/site/specs/messagingInternational.json',
+        messagingInternationalSpecLink: `${customConfig.messagingInternationalSpecLink}`,
         webRTCSpec: YAML.parse(webRtcSpec),
-        webRtcSpecLink: 'https://github.com/Bandwidth/api-docs/blob/main/site/specs/webrtc.yml',
+        webRtcSpecLink: `${customConfig.webRtcSpecLink}`,
         multiFactorAuthSpec: YAML.parse(multiFactorAuthSpec),
-        multiFactorAuthSpecLink: 'https://github.com/Bandwidth/api-docs/blob/main/site/specs/multi-factor-auth.yml',
+        multiFactorAuthSpecLink: `${customConfig.multiFactorAuthSpecLink}`,
         dashSpec: JSON.parse(dashSpec),
-        dashSpecLink: 'https://github.com/Bandwidth/api-docs/blob/main/site/specs/dash.json',
+        dashSpecLink: `${customConfig.dashSpecLink}`,
         dashNotificationsSpec: JSON.parse(dashNotificationsSpec),
-        dashNotificationsSpecLink: 'https://github.com/Bandwidth/api-docs/blob/main/site/specs/dashNotifications.json',
+        dashNotificationsSpecLink: `${customConfig.dashNotificationsSpecLink}`,
         globalSpec: YAML.parse(globalSpec),
         globalSpec_v2: YAML.parse(globalSpec_v2),
         globalSpec_v3: YAML.parse(globalSpec_v3),
         globalSpec_beta: YAML.parse(globalSpec_beta),
         insightsSpec: YAML.parse(insightsSpec),
-        insightsSpecLink: 'https://github.com/Bandwidth/api-docs/blob/main/site/specs/insights.yml',
+        insightsSpecLink: `${customConfig.insightsSpecLink}`,
 
         // CSS Colors
         bwBlue: '#079CEE',
