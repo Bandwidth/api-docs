@@ -90,8 +90,10 @@ export default function Carousel({itemList, title}) {
         }
     }, [currentIndex])  // update when currentIndex is changed (from button click)
 
-    function CarouselItem({Svg,link, linkText, tags}) {
+    function CarouselItem({image, category, categoryLink, postLink, postTitle}) {
     
+        var itemContentWidth = itemWidth * .8;
+
         var slideStyle = {
             margin: `0 ${slidePadding}px`
         }
@@ -100,16 +102,29 @@ export default function Carousel({itemList, title}) {
             width: `${itemWidth}px`,
             height: `${itemHeight}px`
         }
+
+        var imageStyle = {
+            width: `${itemContentWidth}px`,
+            height: `${itemContentWidth * .51}px`
+        }
+
+        var categoryStyle = {
+            width: `${itemContentWidth}px`,
+        }
+
+        var postStyle = {
+            width: `${itemContentWidth}px`,
+        }
         
         return (
             <div className={carouselStyles.slide} style={slideStyle}>
                 <div className={carouselStyles.item} style={itemStyle}>
-                    <div className={carouselStyles.icon}><Svg/></div>
-                    <div className={carouselStyles.link}><a href={link}>{linkText}</a></div>
-                    <div className={carouselStyles.tags}>
-                        {tags.map((tag, idx) => (
-                            <div className={carouselStyles.tag} key={idx}>{tag}</div>
-                        ))}
+                    <div className={carouselStyles.image} style={imageStyle}><img src={image} style={imageStyle}></img></div>
+                    <div className={carouselStyles.category} style={categoryStyle}>
+                        <a href={categoryLink}>{category}</a>
+                    </div>
+                    <div className={carouselStyles.post} style={postStyle}>
+                        <a href={postLink}>{postTitle}</a>
                     </div>
                 </div>
             </div>

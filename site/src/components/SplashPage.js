@@ -2,6 +2,9 @@ import React from 'react';
 import splashPageStyles from '@site/src/components/css/SplashPage.module.css';
 import Carousel from '@site/src/components/Carousel.js';
 
+import voiceQuality from '@site/static/img/Blog_Voice-Quality-CCaaS.png';
+import callFromUK from '@site/static/img/Blog_CallUKFromUS.png';
+
 const guides = {
     title: 'Check out our guides',
     text: `Explore our API guides to learn more about Bandwidth's APIs and the things you can do with us.`,
@@ -28,39 +31,37 @@ const sdksImage = require('@site/static/img/sdks-splash.svg').default;
 
 const carousel = [
     {
-        Svg: require('@site/static/img/product-icons/messaging.svg').default,
-        link: '/docs/messaging/errors/',
-        linkText: 'Messaging Errors',
-        tags: ['messaging', 'errors']
+        image: voiceQuality,
+        category: 'Voice',
+        categoryLink: 'https://www.bandwidth.com/blog/category/voice/',
+        postLink: 'https://www.bandwidth.com/blog/improving-the-agent-experience/',
+        postTitle: `Voice quality: The unsung hero of agent experience`,
     },{
-        Svg: require('@site/static/img/product-icons/voice.svg').default,
-        link: '/docs/voice/bxml/hangup/',
-        linkText: 'Hangup BXML Verb',
-        tags: ['voice', 'bxml']
+        image: callFromUK,
+        category: 'Voice',
+        categoryLink: 'https://www.bandwidth.com/blog/category/voice/',
+        postLink: 'https://www.bandwidth.com/blog/how-to-dial-the-uk-from-the-us/',
+        postTitle: `How to Dial the U.K. from the U.S. - Bandwidth's Calling Guide`,
     },
     {
         Svg: require('@site/static/img/product-icons/voice.svg').default,
         link: '/docs/voice/',
-        linkText: 'Voice About Page',
-        tags: ['voice', 'about', 'quick start']
+        linkText: 'Voice About Page'
     },
     {
         Svg: require('@site/static/img/product-icons/numbers.svg').default,
         link: '/docs/numbers/guides/manage-inventory/searchingNumbers/',
-        linkText: 'Searching Numbers',
-        tags: ['numbers','inventory', 'search']
+        linkText: 'Searching Numbers'
     },
     {
         Svg: require('@site/static/img/product-icons/numbers.svg').default,
         link: '/docs/numbers/guides/manage-inventory/applyTnOptionsAndFeatures/',
-        linkText: 'Apply TN Options',
-        tags: ['numbers', 'inventory', 'options']
+        linkText: 'Apply TN Options'
     },
     {
         Svg: require('@site/static/img/product-icons/account.svg').default,
         link: '/docs/account/credentials/',
-        linkText: 'Account Credentials',
-        tags: ['account', 'credentials']
+        linkText: 'Account Credentials'
     }
 ]
 
@@ -100,7 +101,7 @@ export default function SplashPage() {
             </div>
             <SplashRow left={<SplashPageTextBlock {...guides}/>} right={<SplashPageImage Svg={guidesImage}/>}/>
             <SplashRow left={<SplashPageImage Svg={apisImage}/>} right={<SplashPageTextBlock {...apis}/>}/>
-            <Carousel itemList={carousel} title={'Recent Documentation Updates'}/>
+            <Carousel itemList={carousel} title={'Recent Blog Posts'}/>
             <SplashRow left={<SplashPageTextBlock {...sdks}/>} right={<SplashPageImage Svg={sdksImage}/>}/>
         </div>
     );
