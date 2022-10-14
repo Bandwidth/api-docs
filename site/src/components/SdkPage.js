@@ -2,7 +2,7 @@ import React from 'react';
 import sdkStyles from '@site/src/components/css/SdkPage.module.css';
 import GitHubLink from '@site/src/components/GitHubLink';
 
-export default function SdkPage({Svg, title, repoLinks, samplesLink}) {
+export default function SdkPage({Svg, title, repoLinks, samplesLink, migrationGuides}) {
     return (
         <div className={sdkStyles.sdkPage}>
             <div className={sdkStyles.sdkImage}>
@@ -31,6 +31,13 @@ export default function SdkPage({Svg, title, repoLinks, samplesLink}) {
                                 <td>Code Samples showing how to utilize the Bandwidth {title} SDK</td>
                                 <td><GitHubLink GHLink={samplesLink}/></td>
                             </tr>
+                            { migrationGuides == true &&
+                                <tr className={sdkStyles.sdkMigrationGuides}>
+                                    <td />
+                                    <td><a href={"/migration-guides/" + title}>Migration Guides</a></td>
+                                    <td />
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>

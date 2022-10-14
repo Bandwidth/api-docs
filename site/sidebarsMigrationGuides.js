@@ -9,6 +9,7 @@ module.exports = {
       type: "category",
       label: "Python",
       items: [
+        "python/python-migration-guides",
         "python/v15"
       ]
     },
