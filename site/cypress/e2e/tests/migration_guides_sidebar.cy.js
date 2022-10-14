@@ -8,8 +8,5 @@ context('Testing the Migration Guides Sidebar Tabs', () => {
 
   it('Should verify that the Python tab and subtabs opens and closes properly', () => {
     testSidebar('Python')
-    testSidebar('About')
-    testSidebar('v14 -> v15')
   })
-
 })
