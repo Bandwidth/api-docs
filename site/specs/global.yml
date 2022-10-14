@@ -732,6 +732,29 @@ info:
     |`TEST_DID_NOT_CANCELLABLE`|`418`|Dids that have been assigned to you in
     test cannot be cancelled using this operation. Please contact your account
     manager to cancel test dids.|
+
+    |`EXCEEDED_MAX_ALLOWED_QUANTITY`|`419`|Exceeded maximum allowed quantity for
+    number ordering.|
+
+    |`ORDERING_FORBIDDEN_FOR_NON_VALID_ACCOUNTS`|`420`|Sorry, DID is not
+    available for cancellation yet. Please check Cancellation Available dates.|
+
+    |`INVALID_CANCELLATION_NOT_AVAILABLE_CAPACITY_CUSTOMER`|`421`|Sorry, DID is
+    not available for cancellation yet. Please check Cancellation Available
+    dates.|
+
+    |`BOTH_PARAMS_CANNOT_BE_SELECTED`|`422`|Quantity and phoneNumbers cannot be
+    selected for removal at the same time. Please select only one option.|
+
+    |`ONE_PARAM_MUST_BE_SELECTED`|`423`|Either quantity or phoneNumbers must be
+    provided.|
+
+    |`INVALID_PHONE_NUMBERS`|`424`|The selected phoneNumbers do not exist in
+    your cart: |
+
+    |`QUANTITY_RELATED_NUMBERS_CANNOT_RELATE_TO_PHONE_NUMBERS`|`425`|Invalid DID
+    Request. The user has to indicate the phoneNumbers if the numbers being
+    removed were added via Number Selection.|
   contact:
     name: Bandwidth
   version: '1.0'
@@ -771,7 +794,7 @@ tags:
 
       2. To buy numbers, you can either:
         * Get the associated didGroupId for a country/area code from listDidGroup method (Inventory module), and add a certain quantity of DIDs (didCartItem) from a didGroupId to the CartIdentifier using addToCart
-        * Coming Q2 2022: Provide a list of telephone numbers you've searched and found in the Voxbone inventory, for sale.
+        * Provide a list of telephone numbers you've searched and found in the Voxbone inventory, for sale.
 
       3. Check your funds with accountBalance
 
@@ -790,10 +813,6 @@ tags:
       operation, the response contains a list of productCheckout elements. These
       elements give you an orderReference for each product type contained in
       your cart, which can be used as a filter for the listDid operation
-
-
-
-      Coming Q3 2022: Review the Number(s) and number information of the order
   - name: Service Activation
     description: >
       Service activation module contains a list of operations that allow you to
@@ -1081,14 +1100,6 @@ paths:
         in the query parameter. 
 
         - Response can return a maximum of 5000 numbers
-
-        - The ability to submit selected numbers available to your cart to
-        purchase will be available August 2022.
-
-
-        Coming Q3 2022:
-
-        - Ability to vanity search for a number in the Voxbone inventory
       operationId: listDidGroup
       parameters:
         - name: countryCodeA3
@@ -1400,7 +1411,9 @@ paths:
         always need to create at least one cart to place an order
         (checkoutCart). You can place multiple orders per cart or you can create
         separate carts for each order. Note that different product types (DID,
-        Capacity or prepaid credits) can be added into one single cart.
+        Capacity or prepaid credits) can be added into one single cart. You
+        cannot add a didGroup and quantity, and a list of phoneNumbers of the
+        same didGroup in the same cart.
       operationId: createCart
       requestBody:
         content:
@@ -1434,10 +1447,9 @@ paths:
         Set quantity to 0 if you want to remove the product from the cart. 
 
 
-        At present, you are able to see a list of numbers available (BETA). The
-        ability to submit selected numbers available to your cart to purchase
-        will be available August 2022. The ability to remove selected numbers in
-        your cart to purchase will be available August 2022.
+        If phoneNumbers exist in the cart - you will need to submit the E164 of
+        the phoneNumber to remove the number(s). Quantity of an OrderProductId
+        will not remove phoneNumbers, only a didGroup and quantity.
       operationId: removeFromCart
       parameters:
         - name: cartIdentifier
@@ -1456,9 +1468,11 @@ paths:
             format: int32
       requestBody:
         content:
-          '*/*':
+          application/json:
             schema:
-              $ref: '#/components/schemas/RemoveFromCartRequest'
+              oneOf:
+                - $ref: '#/components/schemas/RemoveQuantityFromCartRequest'
+                - $ref: '#/components/schemas/RemovePhoneNumbersFromCartRequest'
         required: true
       responses:
         '200':
@@ -1544,13 +1558,22 @@ paths:
         team.
 
 
-        When adding numbers to your cart (to purchase) you will need to request
-        the didGroupId and quantity of. 
+        When adding numbers to your cart (to purchase) you will need to either:
+
+        - Request the didGroupId and quantity of.
+
+        - Request the phoneNumbers to place in the cart via the phoneNumbers
+        object.
 
 
-        At present, you are able to see a list of numbers available (BETA). The
-        ability to submit selected numbers available to your cart to purchase
-        will be available August 2022.
+        Numbers selected (not quantity and didGroup) will remain in cart for a
+        maximum of 10 minutes, holding. No other customer will be able to see
+        the number(s) you are holding in cart.
+
+        You can place a maximum of 5000 numbers selected in cart
+
+        You cannot add a didGroup and quantity, and a list of phoneNumbers of
+        the same didGroup in the same cart.
       operationId: addToCart
       parameters:
         - name: cartIdentifier
@@ -5519,26 +5542,12 @@ components:
             - WARNING
             - ERROR
       x-examples: {}
-    RemoveFromCartRequest:
+    RemoveQuantityFromCartRequest:
       type: object
       x-examples:
         example-1:
-          cartIdentifier: -2147483648
-          orderProductId: -2147483648
           quantity: -2147483648
-          phoneNumbers:
-            - '+31208908115'
-            - '+31208908116'
-            - '+31208908117'
       properties:
-        cartIdentifier:
-          type: integer
-          description: The identifier of the cart.
-          format: int32
-        orderProductId:
-          type: integer
-          description: The identifier of the product.
-          format: int32
         quantity:
           type: integer
           description: >-
@@ -5547,6 +5556,17 @@ components:
             orderProductId will be removed from the Cart. Note that capacity
             must be removed in multiple of 10.
           format: int32
+      required:
+        - quantity
+    RemovePhoneNumbersFromCartRequest:
+      type: object
+      x-examples:
+        example-1:
+          phoneNumbers:
+            - '+31208908115'
+            - '+31208908116'
+            - '+31208908117'
+      properties:
         phoneNumbers:
           type: array
           items:
@@ -5557,8 +5577,7 @@ components:
             - '+31208908116'
             - '+31208908117'
       required:
-        - cartIdentifier
-        - orderProductId
+        - phoneNumbers
     AccountBalance:
       type: object
       properties:
