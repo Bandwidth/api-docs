@@ -18,7 +18,7 @@ jobs:
         run: |
           LTS_TIME=$(jq -r 'first(.[] | select(.name | match(".+LTS")) | .published_at)' <<< $(curl -Ls -H "Accept: application/vnd.github+json" -H "Authorization: token $TOKEN" $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases)) # Get latest LTS version release time
           read REL_TIME REL_ID REL_NAME REL_ZIP < <(echo $(curl -Ls -H "Accept: application/vnd.github+json" -H "Authorization: token $TOKEN" $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases/latest | jq -r '.published_at, .id, .name, .zipball_url'))  # Get info about latest release
-          if [ $REL_TIME '>' $LTS_TIME ]; then curl -s -X PATCH -H "Accept: application/vnd.github+json" -H "Authorization: token $TOKEN" $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases/$REL_ID -d '{"name":"'"${REL_NAME}-LTS"'"}' > /dev/null; echo "::set-output name=new_lts_zip::$REL_ZIP"; echo "::set-output name=release_name::$REL_NAME"; else echo "::set-output name=no_release::true"; fi # If there has been a non-LTS release since the last LTS release, create a new LTS release
+          if [ $REL_TIME '>' $LTS_TIME ]; then curl -s -X PATCH -H "Accept: application/vnd.github+json" -H "Authorization: token $TOKEN" $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases/$REL_ID -d '{"name":"'"${REL_NAME}-LTS"'"}' > /dev/null; echo "new_lts_zip=$REL_ZIP" >> $GITHUB_OUTPUT; echo "release_name=$REL_NAME" >> $GITHUB_OUTPUT; else echo "no_release=true" >> $GITHUB_OUTPUT; fi # If there has been a non-LTS release since the last LTS release, create a new LTS release
         env:
           TOKEN: ${{ secrets.DX_GITHUB_TOKEN }}
   
@@ -31,7 +31,9 @@ jobs:
       - name: Download, Extract, and Build Site from Release
         run: |
           mkdir lts; curl -Lfs -H "Accept: application/vnd.github+json" -H "Authorization: token $TOKEN" $LTS_ZIP --output lts.zip; unzip -q lts.zip -d lts # Get and Unzip Release Archive
-          cd $(find ./ -type d -name "site"); mv ./* ../../; cd ../../; yarn install --pure-lockfile; yarn build  # Build Static Site
+          cd $(find ./ -type d -name "site"); mv ./* ../../; cd ../../  # Move contents of site directory to root of unzipped folder
+          tmpfile=$(mktemp); cp custom.config.json $tmpfile; jq "(.[] | select(.)) |= gsub(\"main\"; \"$REL_NAME\")" $tmpfile > custom.config.json; rm -f -- "$tmpfile"  # Update Config for Spec Download Links
+          yarn install --pure-lockfile; yarn build  # Install Packages and Build Static Site
         env:
           TOKEN: ${{ secrets.DX_GITHUB_TOKEN }}
           LTS_ZIP: ${{ needs.lts_needed.outputs.new_lts_zip }}
@@ -41,7 +43,7 @@ jobs:
         id: bucket_name
         run: |
           BUCKET_NAME=$(echo "bandwidth-api-docs-${BUCKET_NAME}" | tr '[:upper:]' '[:lower:]' | sed -e "s/[^a-z0-9]/-/g") #convert to lowercase and convert non-alphanumerics with dashes
-          echo "::set-output name=bucket_name::$BUCKET_NAME"
+          echo "bucket_name=$BUCKET_NAME" >> $GITHUB_OUTPUT
         env:
           BUCKET_NAME: ${{ needs.lts_needed.outputs.release_name }}
 
