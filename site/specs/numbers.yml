@@ -2548,7 +2548,7 @@ components:
         DldaOrderResponse:
           properties:
             DldaOrder:
-              $ref: '#/components/schemas/DldaOrderPayload'
+              $ref: '#/components/schemas/DldaOrderResponsePayload'
             ResponseStatus:
               $ref: '#/components/schemas/ResponseStatus'
           type: object
@@ -2579,8 +2579,48 @@ components:
         DldaOrderResponse:
           properties:
             DldaOrder:
-              $ref: '#/components/schemas/DldaOrderPayload'
+              $ref: '#/components/schemas/DldaOrderResponsePayload'
           type: object
+      type: object
+    DldaOrderResponsePayload:
+      properties:
+        AccountId:
+          type: integer
+        CreatedByUser:
+          type: string
+        CustomerOrderId:
+          description: >-
+            The Customer Order ID is an ID assigned by the account owner to
+            provide a reference number for the Order. Only alphanumeric values,
+            dashes and spaces are allowed.
+          maxLength: 40
+          type: string
+        DldaTnGroups:
+          items:
+            $ref: '#/components/schemas/DldaTnGroup'
+          type: array
+        ErrorList:
+          items:
+            properties:
+              Error:
+                properties:
+                  Code:
+                    format: int32
+                    type: integer
+                  Description:
+                    type: string
+                  TelephoneNumber:
+                    type: string
+                type: object
+          type: array
+        LastModifiedDate:
+          type: string
+        OrderCreateDate:
+          type: string
+        OrderId:
+          type: string
+        ProcessingStatus:
+          type: string
       type: object
     DldaTnGroup:
       description: AddressType has to be DLDA
@@ -3570,6 +3610,11 @@ components:
             $ref: '#/components/schemas/TelephoneNumber'
           type: array
       type: object
+    ErrorResponse:
+      properties:
+        ErrorResponse:
+          $ref: '#/components/schemas/ResponseStatus'
+      type: object
     ExistingTelephoneNumberOrderType:
       properties:
         ReservationIdList:
@@ -4550,6 +4595,7 @@ components:
       required:
         - UseType
         - Visibility
+      title: LidbTnGroup
       type: object
     LidbOrder:
       properties:
@@ -4570,7 +4616,23 @@ components:
     LidbOrderErrorResponse:
       properties:
         LidbOrderResponse:
-          $ref: '#/components/schemas/ResponseStatus'
+          properties:
+            ErrorList:
+              items:
+                $ref: '#/components/schemas/LidbOrderError'
+              type: array
+            LidbOrder:
+              $ref: '#/components/schemas/LidbOrderPayload'
+            Status:
+              properties:
+                Code:
+                  description: Numeric designation of corresponding error
+                  type: integer
+                Description:
+                  description: 'Detailed explanation about error '
+                  type: string
+              type: object
+          type: object
       type: object
     LidbOrderHistoryResponse:
       properties:
@@ -4608,6 +4670,11 @@ components:
         SiteId:
           format: int32
           type: integer
+      type: object
+    LidbOrderReportErrorResponse:
+      properties:
+        LidbOrderReportResponse:
+          $ref: '#/components/schemas/ResponseStatus'
       type: object
     LidbOrderResponse:
       properties:
@@ -20918,7 +20985,7 @@ paths:
                         </ResponseStatus>
                     </LidbOrderReportResponse>
               schema:
-                $ref: '#/components/schemas/LidbOrderErrorResponse'
+                $ref: '#/components/schemas/LidbOrderReportErrorResponse'
           description: |
             <p>NOT FOUND - the order id does not exist in the system</p>
       summary: Fetch LIDB order status
@@ -23402,7 +23469,7 @@ paths:
                         </ResponseStatus>
                     </ErrorResponse>
               schema:
-                $ref: '#/components/schemas/NoteErrorResponse'
+                $ref: '#/components/schemas/ErrorResponse'
           description: NOT FOUND - the order id does not exist in the system.
       summary: Retrieve Telephone Number order history
       tags:
@@ -23452,10 +23519,6 @@ paths:
             OK - there are Notes associated with the order, and they have been
             returned in the response
         '204':
-          content:
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/NotesResponse'
           description: >-
             No Content - there are no Notes associated with the order. Since the
             notes resource is an aggregate rather than addressed resource the
