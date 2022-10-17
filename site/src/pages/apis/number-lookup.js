@@ -10,7 +10,7 @@ export default function ApiReferencePage() {
           title={`Phone Number Lookup API Reference`}
           description="Authentication and Number Lookup. Everything you'll need to start working with our Phone Number Lookup API."
           keywords="Bandwidth,API,Phone,Number,Lookup">
-            <ApiReference spec={siteConfig.customFields.phoneNumberLookupSpec} color={siteConfig.customFields.numbersMaroon} downloadDefinitionUrl="https://github.com/Bandwidth/api-docs/blob/main/site/specs/phone-number-lookup.yml"/>
+            <ApiReference spec={siteConfig.customFields.phoneNumberLookupSpec} color={siteConfig.customFields.numbersMaroon} downloadDefinitionUrl={siteConfig.customFields.phoneNumberLookupSpecLink}/>
         </Layout>
     );
 }
