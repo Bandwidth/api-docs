@@ -10,6 +10,10 @@ on:
       - 'site/**'
   workflow_dispatch:
 
+concurrency: 
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
+
 jobs:
   cypress:
     name: Cypress Tests
@@ -258,7 +262,7 @@ jobs:
           allow-repeats: true
 
   cypress_cloudfront:
-    name: Cypress run on prod
+    name: Cypress Against Cloudfront Staged Site
     needs: [cypress, publish]
     runs-on: ubuntu-latest
     strategy:
@@ -324,6 +328,7 @@ jobs:
           COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}
 
       - name: Cleanup Cloudfront Distribution
+        if: ${{ always() }}
         run: |
           cat >cloudfront.json
           cat >distribution.json

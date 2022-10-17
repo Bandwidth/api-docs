@@ -1433,7 +1433,7 @@ components:
               description: |-
                 Only allowed for PUT and PATCH requests.
 
-                 When toll free numbers are included in a port-in order, Bandwidth accesses a vendor to determine if the numbers are portable, and if so, from which RespOrg. In the event that we do not receive a response from our vendor after a number of retries, we give up and place the order in the INVALID_DRAFT_TNS state. This scenario can occur if our toll free porting vendor is performing maintenance, for example. Including RetryValidation with a value of true will cause the order to return to VALIDATE_DRAFT_TNS and we will repeat our attempts to retrieve the portability data from the vendor. This element is included in the synchronous response to the PUT or PATCH, when included in the request, but is not included in subsequent GET requests for the order.
+                 When telephone numbers are included in a bulk port-in order, Bandwidth accesses a vendor to determine if the numbers are portable, and who currently serves the numbers. In the event that we do not receive a response from our vendor after a number of retries, we give up and place the order in the INVALID_DRAFT_TNS state. This scenario can occur if our vendor is performing maintenance. Including RetryValidation with a value of true will cause the order to return to VALIDATE_DRAFT_TNS and we will repeat our attempts to retrieve the portability data from the vendor. This element is included in the synchronous response to the PUT or PATCH, when included in the request, but is not included in subsequent GET requests for the order.
               type: boolean
             SiteId:
               description: >-
@@ -2372,14 +2372,21 @@ components:
       properties:
         DisconnectTelephoneNumberOrder:
           properties:
+            CustomerOrderId:
+              description: >-
+                The CustomerOrderId is an optional field that may be provided by
+                the customer and will remain with the order. Only alphanumeric
+                values, dashes and spaces are allowed.The value is opaque to
+                Bandwidth.
+              maxLength: 40
+              type: string
             DisconnectTelephoneNumberOrderType:
               $ref: '#/components/schemas/DisconnectTelephoneNumberOrderType'
             Name:
+              deprecated: true
               description: The name of the order.
               maxLength: 50
               type: string
-          required:
-            - Name
           type: object
       type: object
     DisconnectTelephoneNumberOrderErrorResponse:
@@ -2435,15 +2442,15 @@ components:
     DisconnectTelephoneNumberOrderType:
       properties:
         DisconnectMode:
-          description: The severity of disconnect order. Typically Normal.
+          default: NORMAL
+          description: The severity of disconnect order.
           enum:
             - NORMAL
             - PURGE
           type: string
         Protected:
-          description: >-
-            Change protected status of telephones during disconnection.
-            Typically `UNCHANGED`.
+          default: UNCHANGED
+          description: Change protected status of telephones during disconnection.
           enum:
             - 'TRUE'
             - 'FALSE'
@@ -2952,7 +2959,7 @@ components:
         - AddedAssociations
       title: >-
         Creating an order to adding emergency endpoint associations from an
-        emergency notification group 
+        emergency notification group
       type: object
     EmergencyNotificationEndpointOrderForRemoveAssociation:
       properties:
@@ -2991,7 +2998,7 @@ components:
         - AddedAssociations
       title: >-
         Creating an order to removing emergency endpoint associations from an
-        emergency notification group 
+        emergency notification group
       type: object
     EmergencyNotificationEndpointOrderResponse:
       description: Emergency Notification Endpoint Order Response
@@ -6126,7 +6133,7 @@ components:
               description: >-
                 Partner Supported Rate Center information for the indicated set
                 of ratecenters, containing City, State, LATA and the list of TNs
-                for which that Rate Center applies. 
+                for which that Rate Center applies.
 
                 The Tier information is provided for offnet rate centers.
               properties:
@@ -6151,7 +6158,7 @@ components:
               description: >-
                 Supported Rate Center information for the indicated set of
                 ratecenters, containing City, State, LATA and the list of TNs
-                for which that Rate Center applies. 
+                for which that Rate Center applies.
 
                 The Tier information is provided for offnet rate centers.
               properties:
@@ -6173,7 +6180,7 @@ components:
               description: >-
                 Unsupported Rate Center information for the indicated set of
                 ratecenters, containing City, State, LATA and the list of TNs
-                for which that Rate Center applies. 
+                for which that Rate Center applies.
 
                 The Tier information is provided for offnet rate centers.
               properties:
@@ -10320,7 +10327,7 @@ components:
           description: >-
             Is a list of toll free telephone numbers for which you want
             information about the status and RespOrg from SOMOS. The list may
-            consist of up to 5,000 toll free telephone numbers in one order. 
+            consist of up to 5,000 toll free telephone numbers in one order.
             The more numbers in the order, the longer it will take the order to
             complete.
           items:
@@ -11897,7 +11904,7 @@ paths:
             A 202 Accepted means that the request has been received and will be
             processed.  Processing the request takes time, so this does not
             indicate that the information is available, it simply indicates that
-            the request has started processing. 
+            the request has started processing.
 
             The response also includes header information in the Location Header
             that can be used for retrieving the state of the request.
@@ -12370,7 +12377,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
         - description: >-
-            The full bulk port-in orderId of the first order of the page. 
+            The full bulk port-in orderId of the first order of the page.
             Special value `1` is used
 
             to indicate the first port-in for the accountId matching any other
@@ -12388,7 +12395,7 @@ paths:
             default: '1'
             type: string
         - description: >-
-            The maximum number of results to include in the response payload. 
+            The maximum number of results to include in the response payload.
             The
 
             value should be between 1 and 1000.  Larger values may be specified,
@@ -13015,7 +13022,7 @@ paths:
         - Bulk Port-In
     post:
       description: >-
-        <p>POSTing to the /loas resource will enable the upload of the file. 
+        <p>POSTing to the /loas resource will enable the upload of the file.
         The key attribute to the POST is ensuring that the headers are correctly
         set to support the file upload.<br>
 
@@ -13387,7 +13394,7 @@ paths:
           description: The list was replaced successfully and no errors were detected.
         '400':
           description: >-
-            There was an error - one or more of the port-in orders was invalid. 
+            There was an error - one or more of the port-in orders was invalid.
             The response payload will indicate the errors that were detected,
             and no changes will be made to the list of portin orders associated
             with the bulk order.
@@ -14390,7 +14397,7 @@ paths:
         - Porting
     post:
       description: |-
-        Updates the Notes resource by adding a note. Adding a note to a Csrs 
+        Updates the Notes resource by adding a note. Adding a note to a Csrs
          order causes a notification to be sent to Bandwidth Operations, so that they may assist as necessary. A note may be up to 500 characters in length
       operationId: CreateCsrsOrderNote
       parameters:
@@ -14743,7 +14750,7 @@ paths:
                 value: |-
                   <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                   <DisconnectTelephoneNumberOrder>
-                      <name>training run</name>
+                      <CustomerOrderId>My OrderId</CustomerOrderId>
                       <DisconnectTelephoneNumberOrderType>
                           <TelephoneNumberList>
                               <TelephoneNumber>4158714245</TelephoneNumber>
@@ -14766,19 +14773,20 @@ paths:
                     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                     <DisconnectTelephoneNumberOrderResponse>
                         <orderRequest>
-                            <CustomerOrderId/>
+                            <CustomerOrderId>My OrderId</CustomerOrderId>
                             <id>ba05e04b-192a-47cb-b182-b1bf6cfef0d7</id>
-                            <OrderCreateDate>2014-07-03T14-12-57.840Z</OrderCreateDate>
+                            <OrderCreateDate>2022-05-25T14-12-57.840Z</OrderCreateDate>
                             <DisconnectTelephoneNumberOrderType>
+                                <DisconnectMode>normal</DisconnectMode>
+                                <Protected>UNCHANGED</Protected>
                                 <TelephoneNumberList>
                                     <TelephoneNumber>4158714245</TelephoneNumber>
                                     <TelephoneNumber>4352154439</TelephoneNumber>
                                     <TelephoneNumber>4352154466</TelephoneNumber>
                                 </TelephoneNumberList>
-                                <DisconnectMode>normal</DisconnectMode>
-                                <Protected>UNCHANGED</Protected>
                             </DisconnectTelephoneNumberOrderType>
                         </orderRequest>
+                        <OrderStatus>RECEIVED</OrderStatus>
                     </DisconnectTelephoneNumberOrderResponse>
               schema:
                 $ref: '#/components/schemas/DisconnectTelephoneNumberOrderResponse'
@@ -14864,17 +14872,17 @@ paths:
                     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                     <DisconnectTelephoneNumberOrderResponse>
                       <DisconnectedTelephoneNumberList>
-                        <TelephoneNumber>9199998830</TelephoneNumber>
+                        <TelephoneNumber>9194392566</TelephoneNumber>
                       </DisconnectedTelephoneNumberList>
                       <orderRequest>
                         <id>4ffe9262-1965-4479-a1d5-b8584440667d</id>
                         <OrderCreateDate>2013-12-04T21:59:32.243Z</OrderCreateDate>
                         <DisconnectTelephoneNumberOrderType>
-                          <TelephoneNumberList>
-                            <TelephoneNumber>9199998830</TelephoneNumber>
-                          </TelephoneNumberList>
                           <DisconnectMode>normal</DisconnectMode>
                           <Protected>UNCHANGED</Protected>
+                          <TelephoneNumberList>
+                            <TelephoneNumber>9194392566</TelephoneNumber>
+                          </TelephoneNumberList>
                         </DisconnectTelephoneNumberOrderType>
                       </orderRequest>
                       <OrderStatus>COMPLETE</OrderStatus>
@@ -14941,7 +14949,7 @@ paths:
     post:
       description: >-
         Updates the Notes resource by adding a note. Adding a note to a
-        disconnect 
+        disconnect
          order causes a notification to be sent to Bandwidth Operations, so that they may assist as necessary. A note may be up to 500 characters in length. Please visit <a href='/docs/numbers/guides/disconnectNumbers'>Guides and Tutorials</a>
       operationId: CreateDisconnectOrderNote
       parameters:
@@ -15456,7 +15464,7 @@ paths:
                 $ref: '#/components/schemas/DldaOrderResponse'
           description: >
             The descriptive payload for the Lidb Orders query provides a broad
-            range of information about the DLDA Order identified in the URL. 
+            range of information about the DLDA Order identified in the URL.
             Included amongst the information is:
 
             <ul>
@@ -15651,7 +15659,7 @@ paths:
   /accounts/{accountId}/dldas/{orderid}/history:
     get:
       description: >-
-        Retrieve the history information associated with a named DLDA order. 
+        Retrieve the history information associated with a named DLDA order.
         This indicates the various states that the order has passed through, as
         well as the current state of the order as the last entry.
       operationId: ReadDldaOrderHistory
@@ -15743,7 +15751,7 @@ paths:
         Retrieve a list of the E911 orders that are associated with the account.
         A maximum of 1,000 orders can be retrieved per request. If no date range
         or specific query parameter (marked by <b class="required">*</b> below)
-        is provided, the order results will be limited to the last two years. 
+        is provided, the order results will be limited to the last two years.
 
         Please visit <a href='/docs/numbers/guides/e911s'>Guides and
         Tutorials</a>
@@ -16422,7 +16430,7 @@ paths:
   /accounts/{accountId}/e911s/{orderid}:
     get:
       description: >-
-        Retrieve information about a E911 Order with specified ID. 
+        Retrieve information about a E911 Order with specified ID.
 
         Please visit <a href='/docs/numbers/guides/e911s'>Guides and
         Tutorials</a>
@@ -16545,7 +16553,7 @@ paths:
                 $ref: '#/components/schemas/E911OrderFetchResponse'
           description: >
             The descriptive payload for the E911 Orders query provides a broad
-            range of information about the E911 Order identified in the URL. 
+            range of information about the E911 Order identified in the URL.
             Included amongst the information is:
 
             <ul>
@@ -16577,7 +16585,7 @@ paths:
   /accounts/{accountId}/e911s/{orderid}/history:
     get:
       description: >-
-        Retrieve the history information associated with an order. 
+        Retrieve the history information associated with an order.
 
         Please visit <a href='/docs/numbers/guides/e911s'>Guides and
         Tutorials</a>
@@ -16662,7 +16670,7 @@ paths:
         The GET operation provides a means to query any Emergency Notification
         Endpoint Order associated with the account. This endpoint is for
         querying "orders", not the emergency endpoint to emergency notification
-        group associations themselves. 
+        group associations themselves.
 
         <p>The GET operation has no payload, although the accountId URI
         parameter is mandatory and a number of optional query parameters may be
@@ -16964,7 +16972,7 @@ paths:
             valign="top"> <p> Invalid emergency notification group identifier
             </p> </td> <td width="451" valign="top"> <p> Emergency Notification
             Group Identifier xxx does not exist., where xxx is replaced by the
-            emergency notification group identifier supplied in the request. 
+            emergency notification group identifier supplied in the request.
             Note:<b></b> This error can be used also for the case where the
             emergency notification group ID exists, but not for this Iris
             account. </p> </td> </tr> <tr> <td valign="top"> <p> Attempt to add
@@ -17332,9 +17340,9 @@ paths:
             valign="top"> <p> The username of the user that created this order.
             </p> </td> </tr> <tr> <td valign="top"> <p> ProcessingStatus </p>
             </td> <td width="351" valign="top"> <p>The processing status of this
-            order. Values may be:<b></b> PROCESSING, COMPLETED, FAILED. 
-            PROCESSING means that the system is still processing the order. 
-            COMPLETED means that the order has been successfully completed. 
+            order. Values may be:<b></b> PROCESSING, COMPLETED, FAILED.
+            PROCESSING means that the system is still processing the order.
+            COMPLETED means that the order has been successfully completed.
             FAILED means that errors occurred while processing the order, and
             that the order did not make any changes to the system. </p> </td>
             </tr> <tr> <td valign="top"> <p> Identifier </p> </td> <td
@@ -17477,7 +17485,7 @@ paths:
         201 response to the order creation. <br>
 
         When you query an order-id, look for the "ProcessingStatus" element in
-        the 200 response.  Values may be: PROCESSING, COMPLETED, or FAILED. 
+        the 200 response.  Values may be: PROCESSING, COMPLETED, or FAILED.
         PROCESSING means that the system is still processing the order.  Please
         wait a couple of minutes and fetch the order results again.  COMPLETED
         means that the order has been successfully completed.  FAILED means that
@@ -18575,7 +18583,7 @@ paths:
         <p>Create a externalTns order to add or remove telephone numbers
         provided by the customer from the Bandwidth network.</p><p>Note: the
         attempt to import a telephone number that is already present in the
-        account will <em>not</em> create an error, but will reset all of the 
+        account will <em>not</em> create an error, but will reset all of the
         attributes of that telephone number in the Dashboard system as if the
         telephone number was being imported for the first time.</p>
       operationId: CreateExternalTnsOrder
@@ -18917,7 +18925,7 @@ paths:
           schema:
             type: string
         - description: >-
-            <p>A status value to filter the hosts returned in the payload. 
+            <p>A status value to filter the hosts returned in the payload.
             Values that can be accepted
             include:</p><ul><li>SMS</li><li>TERMINATION</li><li>ORIGINATION</li></ul>
           example: TERMINATION
@@ -19533,7 +19541,7 @@ paths:
                                 <p align="left">
                                     Order cannot contain duplicate telephone numbers.
                             </td>
-                        </tr>            
+                        </tr>
                     </tbody>
                 </table>
       summary: Import Voice Tn order
@@ -19632,7 +19640,7 @@ paths:
                                     SIP peer submitted is invalid.
                                 </p>
                             </td>
-                        </tr>            
+                        </tr>
                     </tbody>
                 </table>
       summary: Fetch Import Voice Tn order status
@@ -20595,7 +20603,7 @@ paths:
         causes an update of a person's calling name identification in a network
         Database. The entry of this information in the network database in turn
         causes the display of their name on the phone of the people that they
-        call. 
+        call.
 
         This API call supports GET to retrieve information about outstanding
         LIDBs orders, and POST to create those orders.
@@ -20752,7 +20760,7 @@ paths:
         causes an update of a person's calling name identification in a network
         Database. The entry of this information in the network database in turn
         causes the display of their name on the phone of the people that they
-        call. 
+        call.
 
         This API call supports GET to retrieve information about outstanding
         LIDBs orders, and POST to create those orders.
@@ -20768,7 +20776,7 @@ paths:
         causes an update of a person's calling name identification in a network
         Database. The entry of this information in the network database in turn
         causes the display of their name on the phone of the people that they
-        call. 
+        call.
 
         This API call supports GET to retrieve information about outstanding
         LIDBs orders, and POST to create those orders.
@@ -20825,7 +20833,7 @@ paths:
                 $ref: '#/components/schemas/LidbOrderResponsePayload'
           description: >
             The descriptive payload for the Lidb Orders query provides a broad
-            range of information about the Lidb Order identified in the URL. 
+            range of information about the Lidb Order identified in the URL.
             Included amongst the information is:
 
 
@@ -20899,7 +20907,7 @@ paths:
                 </tr>
                 <tr>
                     <td>offnetportability</td>
-                    <td>in addition to on-net information return off-net port information in <i>&lt;PartnerSupportedRateCenters&gt;</i> element with Partner/Vendor that the port will be supported on. 
+                    <td>in addition to on-net information return off-net port information in <i>&lt;PartnerSupportedRateCenters&gt;</i> element with Partner/Vendor that the port will be supported on.
                     Contains a list of the TNs that are supported in partner rate centers, and for which we will execute a port if requested
                     </td>
                 </tr>
@@ -21083,7 +21091,7 @@ paths:
         filter the list of LSR Orders as documented below. A maximum of 1,000
         orders can be retrieved per request. If no date range or specific query
         parameter (marked by <b class="required">*</b> below) is provided, the
-        order results will be limited to the last two years. 
+        order results will be limited to the last two years.
 
         Please visit <a href='/docs/numbers/guides/porting/lsrOrders'>Guides and
         Tutorials</a>
@@ -21244,7 +21252,7 @@ paths:
         - Porting
     post:
       description: >-
-        A POST creates a LSR order request to initiate a port-out action. 
+        A POST creates a LSR order request to initiate a port-out action.
 
         Please visit <a href='/docs/numbers/guides/porting/lsrOrders'>Guides and
         Tutorials</a>
@@ -21263,19 +21271,19 @@ paths:
                     <!-- By customer. Alphanumeric and "#","-","_". Up to 25 character long. (required) -->
                     <Pon>ATT-011515-324234</Pon>
                     <!-- By customer. Alphanumeric and " ","-". Up to 40 character long. (optional) -->
-                    <CustomerOrderId>FineCustomerid</CustomerOrderId> 
+                    <CustomerOrderId>FineCustomerid</CustomerOrderId>
                     <!-- By customer. Alphanumeric. Up to 4 character long. (required if account value "mult") -->
-                    <SPID>123C</SPID> 
+                    <SPID>123C</SPID>
                     <!-- Non-toll-free btn (optional) -->
                     <BillingTelephoneNumber>9192381468</BillingTelephoneNumber>
-                    <!-- Requested date (not past, optional, default next day) -->  
+                    <!-- Requested date (not past, optional, default next day) -->
                     <RequestedFocDate>2015-11-15</RequestedFocDate>
                     <AuthorizingPerson>Jim Hopkins</AuthorizingPerson>
                     <Subscriber>
                         <!--Type of the subscriber. BUSINESS | RESIDENTIAL (optional) (RESIDENTIAL if not specified)-->
-                        <SubscriberType>BUSINESS</SubscriberType> 
-                        <!-- Up to 25 character long (required) -->  
-                        <BusinessName>BusinessName</BusinessName>     
+                        <SubscriberType>BUSINESS</SubscriberType>
+                        <!-- Up to 25 character long (required) -->
+                        <BusinessName>BusinessName</BusinessName>
                         <ServiceAddress>
                             <!-- HouseNumber up to 45 characters (required) -->
                             <HouseNumber>11</HouseNumber>
@@ -21292,12 +21300,12 @@ paths:
                         </ServiceAddress>
                         <!-- Alphanumeric up to 32 character long (optional) -->
                         <AccountNumber>123463</AccountNumber>
-                        <!-- Alphanumeric up to 10 character long (optional) --> 
-                        <PinNumber>1231</PinNumber> 
+                        <!-- Alphanumeric up to 10 character long (optional) -->
+                        <PinNumber>1231</PinNumber>
                     </Subscriber>
                     <!-- Toll-free number not allowed -->
-                    <ListOfTelephoneNumbers>  
-                        <TelephoneNumber>9192381468</TelephoneNumber> 
+                    <ListOfTelephoneNumbers>
+                        <TelephoneNumber>9192381468</TelephoneNumber>
                         <TelephoneNumber>9192381467</TelephoneNumber>
                     </ListOfTelephoneNumbers>
                   </LsrOrder>
@@ -21439,7 +21447,7 @@ paths:
   /accounts/{accountId}/lsrorders/{orderid}:
     get:
       description: >-
-        Retrieves the information associated with the specified LSR ID number. 
+        Retrieves the information associated with the specified LSR ID number.
 
         Please visit <a href='/docs/numbers/guides/porting/lsrOrders'>Guides and
         Tutorials</a>
@@ -21514,7 +21522,7 @@ paths:
         - Porting
     put:
       description: >-
-        Updates the information associated with the specified LSR. 
+        Updates the information associated with the specified LSR.
 
         Please visit <a href='/docs/numbers/guides/porting/lsrOrders'>Guides and
         Tutorials</a>. This is also used to cancel an order, by changing the
@@ -21702,7 +21710,7 @@ paths:
   /accounts/{accountId}/lsrorders/{orderid}/history:
     get:
       description: >-
-        Retrieves the history of the specified LSR order. 
+        Retrieves the history of the specified LSR order.
 
         Please visit <a href='/docs/numbers/guides/porting/lsrOrders'>Guides and
         Tutorials</a>
@@ -21767,7 +21775,7 @@ paths:
   /accounts/{accountId}/lsrorders/{orderid}/notes:
     get:
       description: >-
-        Retrieve all notes associated with the order. 
+        Retrieve all notes associated with the order.
 
         Please visit <a href='/docs/numbers/guides/porting/lsrOrders'>Guides and
         Tutorials</a>
@@ -21827,7 +21835,7 @@ paths:
         Updates the Notes resource by adding a note. Adding a note to a port-in
         norder causes a notification to be sent to Bandwidth Operations, so that
         they may nassist as necessary. A note may be up to 500 characters in
-        length. 
+        length.
 
         Please visit <a href='/docs/numbers/guides/porting/lsrOrders'>Guides and
         Tutorials</a>
@@ -21890,7 +21898,7 @@ paths:
   /accounts/{accountId}/lsrorders/{orderid}/notes/{noteId}:
     put:
       description: >-
-        Update a specified note. Notes may only be updated, not deleted. 
+        Update a specified note. Notes may only be updated, not deleted.
 
         Please visit <a href='/docs/numbers/guides/porting/lsrOrders'>Guides and
         Tutorials</a>
@@ -23199,7 +23207,7 @@ paths:
                   <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 
                   <Order>
-                      <Name>Available Telephone Number order</Name>    
+                      <Name>Available Telephone Number order</Name>
                       <CustomerOrderId>123456789</CustomerOrderId>
                   <!-- Only alphanumeric values, dashes and spaces are allowed.
                   Max length is 40 characters. -->
@@ -23673,7 +23681,7 @@ paths:
         - description: >
             <p>Displays the port-in orders with the specified status (possible
             values: draft, pending<em>documents, submitted, exception,
-            requested</em>supp, foc, requested_cancel, cancelled, complete). 
+            requested</em>supp, foc, requested_cancel, cancelled, complete).
             Note: draft status orders are NOT included unless status=draft is
             included in the query parameters (along with page and size).</p>
           example: complete
@@ -24158,10 +24166,10 @@ paths:
                           <FirstName>TestName</FirstName>
                           <LastName>TestLastName</LastName>
                           <ServiceAddress>
-                              <!-- If true will overwrite all address fields, 
+                              <!-- If true will overwrite all address fields,
                                those which should be required remain required.
                                Affect only supp. Default false. -->
-                              <ResetAddressFields>true</ResetAddressFields> 
+                              <ResetAddressFields>true</ResetAddressFields>
                               <HouseNumber>115</HouseNumber>
                               <StreetName>Monarch Way</StreetName>
                               <City>Cary</City>
@@ -24243,7 +24251,7 @@ paths:
             update processing are not entirely synchronous, you should NOT rely
             on the ProcessingStatus
 
-            in the synchronous response to a PUT operation on a port-in order. 
+            in the synchronous response to a PUT operation on a port-in order.
             Instead, always perform
 
             a GET on the order to see the actual processing status of the order.
@@ -25404,12 +25412,12 @@ paths:
       description: >-
         Creates a port-out request.<br>In the payload, CallbackUrl and
         InternalPort are optional.<br>There are also multiple options for the
-        following:<table>    <tr>        <th>Option</th>       
-        <th>Choices</th>    </tr>    <tr>       
-        <td>Supplemental</td><td>NONE<br>CANCEL<br>UPDATE<br>OTHER<br></td>   
-        </tr>    <tr>       
-        <td>PortOutAction</td><td>NEW<br>SUPP<br>MODIFY<br>CANCEL<br></td>   
-        </tr>    <tr>        <td>InternalPort</td><td>true or false<br></td>   
+        following:<table>    <tr>        <th>Option</th>
+        <th>Choices</th>    </tr>    <tr>
+        <td>Supplemental</td><td>NONE<br>CANCEL<br>UPDATE<br>OTHER<br></td>
+        </tr>    <tr>
+        <td>PortOutAction</td><td>NEW<br>SUPP<br>MODIFY<br>CANCEL<br></td>
+        </tr>    <tr>        <td>InternalPort</td><td>true or false<br></td>
         </tr></table>
       operationId: CreatePortOut
       parameters:
@@ -25593,11 +25601,11 @@ paths:
         Updates or cancels a port-out ID. The payload to this method is similar
         to the GET on /accounts/{accountid}/portouts.<br>In the payload,
         CallbackUrl and InternalPort are optional additives.<br>There are also
-        multiple options for the following:<table>    <tr>       
-        <th>Option</th>        <th>Choices</th>    </tr>    <tr>       
-        <td>Supplemental</td><td>NONE<br>CANCEL<br>UPDATE<br>OTHER<br></td>   
-        </tr>    <tr>       
-        <td>PortOutAction</td><td>NEW<br>SUPP<br>MODIFY<br>CANCEL<br></td>   
+        multiple options for the following:<table>    <tr>
+        <th>Option</th>        <th>Choices</th>    </tr>    <tr>
+        <td>Supplemental</td><td>NONE<br>CANCEL<br>UPDATE<br>OTHER<br></td>
+        </tr>    <tr>
+        <td>PortOutAction</td><td>NEW<br>SUPP<br>MODIFY<br>CANCEL<br></td>
         </tr></table>
       operationId: UpdatePortOut
       parameters:
@@ -27851,7 +27859,7 @@ paths:
                                 <p align="left">
                                     Order cannot contain duplicate telephone numbers.
                             </td>
-                        </tr>            
+                        </tr>
                     </tbody>
                 </table>
 
@@ -27928,7 +27936,7 @@ paths:
                                     Telephone number hasn't been previously imported.
                                 </p>
                             </td>
-                        </tr>           
+                        </tr>
                     </tbody>
                 </table>
       summary: Retrieve Remove Imported Voice Tn Order
@@ -28417,7 +28425,7 @@ paths:
         retrieved in the initial call to define the data that is
         needed</li></ol>
 
-        The Location header will provide a link to the created report instance. 
+        The Location header will provide a link to the created report instance.
         Note that the report instance itself contains only the metadata
         describing the instance.  A subsequent call to
         /report/report-id/instances/instance-id/file must be made to actually
@@ -34277,7 +34285,7 @@ paths:
   /accounts/{accountId}/tollFreePortingValidations:
     get:
       description: >
-        Fetch toll free porting validation orders associated with this account. 
+        Fetch toll free porting validation orders associated with this account.
         The get operation on /accounts/{accountId}/tollFreePortingValidations
         allows you to find recent toll free porting validation orders.  This
         might be useful if, for example, you lose the order id that was returned
@@ -34490,7 +34498,7 @@ paths:
         numbers that are malformed or in a state that makes them unavailable for
         use.</li><li>A list of toll free telephone numbers that are currently
         associated with RespOrgs.  The list will be broken down by RespOrg
-        Identifier.</li><li>A list of DISCONNECTED toll free telephone numbers. 
+        Identifier.</li><li>A list of DISCONNECTED toll free telephone numbers.
         These are numbers that have been disconnected by the controlling RespOrg
         and must be manually ported with Bandwidth's assistance.</li><li>A list
         of TRANSITIONAL toll free telephone numbers.  These are numbers that
@@ -34995,7 +35003,7 @@ paths:
         - Porting
     patch:
       description: >-
-        Cancel a toll free porting validation order in the PROCESSING state. 
+        Cancel a toll free porting validation order in the PROCESSING state.
         This may be used if the order is taking too long, or if you decide that
         you no longer need the results of the query.
       operationId: CancelTollFreePortingValidation
@@ -35672,7 +35680,7 @@ paths:
             available TNs are not included for each rate center by default. For
             example if the payload should contain a list of the Cities covered
             by the Rate Centers then embed=cities would be included as a query
-            parameter. A list of vendors is available only for admin users. 
+            parameter. A list of vendors is available only for admin users.
 
             No filter parameters are supported if LocalRateCenters is specified.
             In this case only size, page and any other embed parameters are
@@ -36524,7 +36532,7 @@ paths:
             the TN(s) that were found in the Query. Information about the City,
             State, LATA, Rate Center, Tier, Vendor, Status, Owning Account and
             Last Modified Date is provided for each TN in the payload. The
-            Payload also can contain <ErrorList> where invalid or non-existing 
+            Payload also can contain <ErrorList> where invalid or non-existing
             on account(s) TNs are specified. Aging numbers will be displayed if
             user has access to the previous accountId. Pagination doesn't work
             in this case.
