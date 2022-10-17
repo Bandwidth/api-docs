@@ -28,8 +28,8 @@ context('Emergency Services Link', () => {
   testTextLink('/docs','Emergency Services', 'docs/emergency' ,'.docs-intro-grid-item')
 })
 
-context('Next - About Link', () => {
-  testTextLink('/docs','About', 'docs/account' ,'a.pagination-nav__link')
+context('Next - Versions Link', () => {
+  testTextLink('/docs','Versions', 'docs/versions' ,'a.pagination-nav__link')
 })
 
 context('Edit This Page Link', () => {
