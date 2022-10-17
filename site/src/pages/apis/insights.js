@@ -10,7 +10,7 @@ export default function ApiReferencePage() {
           title={`Insights API Reference`}
           description="Account metrics and information. Everything you'll need to start working with our Insights API."
           keywords="Bandwidth,API,Insights,Metrics">
-            <ApiReference spec={siteConfig.customFields.insightsSpec} color={siteConfig.customFields.voicePurple} downloadDefinitionUrl="https://github.com/Bandwidth/api-docs/blob/main/site/specs/insights.yml"/>
+            <ApiReference spec={siteConfig.customFields.insightsSpec} color={siteConfig.customFields.voicePurple} downloadDefinitionUrl={siteConfig.customFields.insightsSpecLink}/>
         </Layout>
     );
 }
