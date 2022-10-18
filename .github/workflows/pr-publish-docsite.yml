@@ -215,12 +215,16 @@ jobs:
           echo "::set-output name=distribution-id::$(echo $response | jq .Distribution.Id -r)"
 
       - name: Comment on PR
-        uses: mshick/add-pr-comment@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: actions/github-script@v3
         with:
-          message: http://${{ env.BUCKET_NAME }}.s3-website-us-east-1.amazonaws.com/
-          allow-repeats: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'http://${{ env.BUCKET_NAME }}.s3-website-us-east-1.amazonaws.com/'
+            })
 
   cypress_cloudfront:
     name: Cypress Against Cloudfront Staged Site
@@ -340,12 +344,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.DX_GITHUB_TOKEN }}
 
-      - name: Make PR Comment
+      - name: Comment on PR
         if: ${{ env.RESULT == 'true' }}
-        uses: ./.github/actions/add_pr_comment
+        uses: actions/github-script@v3
         with:
-          username: ${{ secrets.DX_GITHUB_USERNAME }}
-          token: ${{ secrets.DX_GITHUB_TOKEN }}
-          repo-name: api-specs
-          pr-number: ${{ env.SPECS_PR_NUMBER }}
-          message: 'Error generating staging site - please see [corresponding PR](https://github.com/Bandwidth/api-docs/pull/${{ env.DOCS_PR_NUMBER }}) on api-docs.'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.issues.createComment({
+              issue_number: '${{ env.SPECS_PR_NUMBER }}',
+              owner: 'Bandwidth',
+              repo: 'api-specs',
+              body: 'http://${{ env.BUCKET_NAME }}.s3-website-us-east-1.amazonaws.com/'
+            })
