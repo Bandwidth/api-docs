@@ -19086,7 +19086,90 @@ paths:
       summary: List hosts
       tags:
         - Account
-  /accounts/{accountId}/importTnChecker: null
+  /accounts/{accountId}/importTnChecker:
+    post:
+      description: >-
+        <p>Request portability information on a set of TNs. SipPeerId is an
+        optional value. If SipPeerId is not specified, the id of the default
+        Sip-Peer for the provided SiteId will be used.</p>
+      operationId: CreateRequestImportTnChecker
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+      requestBody:
+        content:
+          application/xml:
+            examples:
+              example:
+                description: example
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <ImportTnCheckerPayload>
+                    <TelephoneNumbers>
+                      <TelephoneNumber>3032281000</TelephoneNumber>
+                      <TelephoneNumber>4109235436</TelephoneNumber>
+                      <TelephoneNumber>4104685864</TelephoneNumber>
+                    </TelephoneNumbers>
+                    <SiteId>486</SiteId>
+                    <SipPeerId>500025</SipPeerId>
+                  </ImportTnCheckerPayload>
+            schema:
+              $ref: '#/components/schemas/ImportTnCheckerPayload'
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <ImportTnCheckerResponse>
+                      <ImportTnCheckerPayload>
+                        <TelephoneNumbers>
+                          <TelephoneNumber>3032281000</TelephoneNumber>
+                        </TelephoneNumbers>
+                        <ImportTnErrors>
+                          <ImportTnError>
+                            <Code>19006</Code>
+                            <Description>Bandwidth numbers cannot be imported by this account at this time.</Description>
+                            <TelephoneNumbers>
+                              <TelephoneNumber>4109235436</TelephoneNumber>
+                              <TelephoneNumber>4104685864</TelephoneNumber>
+                            </TelephoneNumbers>
+                          </ImportTnError>
+                        </ImportTnErrors>
+                      </ImportTnCheckerPayload>
+                    </ImportTnCheckerResponse>
+              schema:
+                $ref: '#/components/schemas/ImportTnCheckerResponse'
+          description: <p>A successful check has been performed.</p>
+        '400':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <ImportTnCheckerResponse>
+                    <Errors>
+                      <Code>7201</Code>
+                        <Description>61746052083 is not a valid NANPA telephone number.</Description>
+                      </Errors>
+                      <Errors>
+                        <Code>7201</Code>
+                        <Description>61746052082 is not a valid NANPA telephone number.</Description>
+                      </Errors>
+                    </ImportTnCheckerResponse>
+              schema:
+                $ref: '#/components/schemas/ImportTnCheckerErrorResponse'
+          description: >-
+            <p>Bad Response - there were errors in evaluating the body of the
+            request.</p> <p>Potential errors include:</p><ul><li> List of TNs is
+            empty.<li> List of TNs is more than 5000 TNs.<li> The account does
+            not have the necessary (IMPORT_TNS) flag.<li> TNs are invalid (they
+            are not actual TNs, and there are duplicates).</ul>
+      summary: Check Tns portability
+      tags:
+        - Import Hosted Tn
   /accounts/{accountId}/importTnOrders:
     get:
       description: >
@@ -19235,7 +19318,32 @@ paths:
           application/xml:
             examples:
               example:
-                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ImportTnOrder>\n\t    <CustomerOrderId>ICPA123ABC</CustomerOrderId>\n\t<SiteId>743</SiteId>\n\t   <SipPeerId>303716</SipPeerId>\n\t    <Subscriber>\n\t\t        <Name>ABC Inc.</Name>\n\t\t       <ServiceAddress>\n\t\t\t            <HouseNumber>11235</HouseNumber>\n\t\t\t            <StreetName>Back</StreetName>\n\t\t\t           <City>Denver</City>\n\t\t\t            <StateCode>CO</StateCode>\n\t\t\t            <Zip>27541</Zip>\n\t\t\t            <County>Canyon</County>\n\t\t        </ServiceAddress>\n\t    </Subscriber>\n\t    <LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>\n\t    <LoaType>CARRIER</LoaType>\n\t    <TelephoneNumbers>\n\t\t        <TelephoneNumber>9199918388</TelephoneNumber>\n\t\t        <TelephoneNumber>4158714245</TelephoneNumber>\n\t\t        <TelephoneNumber>4352154439</TelephoneNumber>\n\t\t        <TelephoneNumber>4352154466</TelephoneNumber>\n\t    </TelephoneNumbers>\n</ImportTnOrder>"
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <ImportTnOrder>
+                        <CustomerOrderId>ICPA123ABC</CustomerOrderId>
+                    <SiteId>743</SiteId>
+                       <SipPeerId>303716</SipPeerId>
+                        <Subscriber>
+                              <Name>ABC Inc.</Name>
+                             <ServiceAddress>
+                                    <HouseNumber>11235</HouseNumber>
+                                    <StreetName>Back</StreetName>
+                                   <City>Denver</City>
+                                    <StateCode>CO</StateCode>
+                                    <Zip>27541</Zip>
+                                    <County>Canyon</County>
+                              </ServiceAddress>
+                        </Subscriber>
+                        <LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>
+                        <LoaType>CARRIER</LoaType>
+                        <TelephoneNumbers>
+                              <TelephoneNumber>9199918388</TelephoneNumber>
+                              <TelephoneNumber>4158714245</TelephoneNumber>
+                              <TelephoneNumber>4352154439</TelephoneNumber>
+                              <TelephoneNumber>4352154466</TelephoneNumber>
+                        </TelephoneNumbers>
+                  </ImportTnOrder>
             schema:
               $ref: '#/components/schemas/ImportTnOrderRequest'
       responses:
@@ -19244,7 +19352,41 @@ paths:
             application/xml:
               examples:
                 example:
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ImportTnOrderResponse>\n\t <ImportTnOrder>\n\t\t<CustomerOrderId>SJM000001</CustomerOrderId>\n\t\t <OrderCreateDate>2018-01-20T02:59:54.000Z</OrderCreateDate>\n\t\t <AccountId>9900012</AccountId>\n\t\t <CreatedByUser>smckinnon</CreatedByUser>\n\t\t <OrderId>b05de7e6-0cab-4c83-81bb-9379cba8efd0</OrderId>\n\t\t <LastModifiedDate>2018-01-20T02:59:54.000Z</LastModifiedDate>\n\t\t <SiteId>202</SiteId>\n\t\t <SipPeerId>520565</SipPeerId>\n\t\t <Subscriber>\n\t\t\t <Name>ABC Inc.</Name>\n\t\t\t <ServiceAddress>\n\t\t\t\t <HouseNumber>11235</HouseNumber>\n\t\t\t\t <StreetName>Back</StreetName>\n\t\t\t\t <City>Denver</City>\n\t\t\t\t <StateCode>CO</StateCode>\n\t\t\t\t <Zip>27541</Zip>\n\t\t\t\t <County>Canyon</County>\n\t\t\t\t </ServiceAddress>\n\t\t\t </Subscriber>\n\t\t <LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>\n\t\t <LoaType>CARRIER</LoaType>\n\t\t <TelephoneNumbers>\n\t\t\t <TelephoneNumber>9199918388</TelephoneNumber>\n\t\t\t <TelephoneNumber>4158714245</TelephoneNumber>\n\t\t\t <TelephoneNumber>4352154439</TelephoneNumber>\n\t\t\t <TelephoneNumber>4352154466</TelephoneNumber>\n\t\t </TelephoneNumbers>\n\t\t <ProcessingStatus>PROCESSING</ProcessingStatus>\n\t\t <Errors/>\n\t </ImportTnOrder>\n </ImportTnOrderResponse>"
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <ImportTnOrderResponse>
+                       <ImportTnOrder>
+                        <CustomerOrderId>SJM000001</CustomerOrderId>
+                         <OrderCreateDate>2018-01-20T02:59:54.000Z</OrderCreateDate>
+                         <AccountId>9900012</AccountId>
+                         <CreatedByUser>smckinnon</CreatedByUser>
+                         <OrderId>b05de7e6-0cab-4c83-81bb-9379cba8efd0</OrderId>
+                         <LastModifiedDate>2018-01-20T02:59:54.000Z</LastModifiedDate>
+                         <SiteId>202</SiteId>
+                         <SipPeerId>520565</SipPeerId>
+                         <Subscriber>
+                           <Name>ABC Inc.</Name>
+                           <ServiceAddress>
+                             <HouseNumber>11235</HouseNumber>
+                             <StreetName>Back</StreetName>
+                             <City>Denver</City>
+                             <StateCode>CO</StateCode>
+                             <Zip>27541</Zip>
+                             <County>Canyon</County>
+                             </ServiceAddress>
+                           </Subscriber>
+                         <LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>
+                         <LoaType>CARRIER</LoaType>
+                         <TelephoneNumbers>
+                           <TelephoneNumber>9199918388</TelephoneNumber>
+                           <TelephoneNumber>4158714245</TelephoneNumber>
+                           <TelephoneNumber>4352154439</TelephoneNumber>
+                           <TelephoneNumber>4352154466</TelephoneNumber>
+                         </TelephoneNumbers>
+                         <ProcessingStatus>PROCESSING</ProcessingStatus>
+                         <Errors/>
+                       </ImportTnOrder>
+                     </ImportTnOrderResponse>
               schema:
                 $ref: '#/components/schemas/ImportTnOrderResponse'
           description: >-
@@ -19255,7 +19397,19 @@ paths:
             application/xml:
               examples:
                 example:
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ImportTnOrderResponse>\n\t <ProcessingStatus>FAILED</ProcessingStatus>\n\t <Errors>\n\t\t <Code>7309</Code>\n\t\t <Description>The site id was not supplied or is invalid.</Description>\n\t </Errors>\n\t <Errors>\n\t\t <Code>7312</Code>\n\t\t <Description>The sippeer id is invalid.</Description>\n\t </Errors>\n </ImportTnOrderResponse>"
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <ImportTnOrderResponse>
+                       <ProcessingStatus>FAILED</ProcessingStatus>
+                       <Errors>
+                         <Code>7309</Code>
+                         <Description>The site id was not supplied or is invalid.</Description>
+                       </Errors>
+                       <Errors>
+                         <Code>7312</Code>
+                         <Description>The sippeer id is invalid.</Description>
+                       </Errors>
+                     </ImportTnOrderResponse>
               schema:
                 $ref: '#/components/schemas/ImportTnOrderError'
           description: >-
@@ -19744,7 +19898,47 @@ paths:
             application/xml:
               examples:
                 example:
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ImportTnOrder>\n\t <OrderCreateDate>2018-01-09T02:58:04.615Z</OrderCreateDate>\n\t <AccountId>9900012</AccountId>\n\t <CreatedByUser>sjm</CreatedByUser>\n\t <OrderId>bf1305b8-8998-1111-2222-51ba3ce52d4e</OrderId>\n\t <LastModifiedDate>2018-01-09T02:58:05.298Z</LastModifiedDate>\n\t <SiteId>65487</SiteId>\n\t <SipPeerId>885544</SipPeerId>\n\t <Subscriber>\n\t\t <Name>First</Name>\n\t\t <ServiceAddress>\n\t\t\t <HouseNumber>11235</HouseNumber>\n\t\t\t <StreetName>Back</StreetName>\n\t\t\t <City>Denver</City>\n\t\t\t <StateCode>CO</StateCode>\n\t\t\t <Zip>27541</Zip>\n\t\t\t <County>Canyon</County>\n\t\t </ServiceAddress>\n\t </Subscriber>\n\t <LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>\n\t <LoaType>CARRIER</LoaType>\n\t <TelephoneNumbers>\n\t\t <TelephoneNumber>2106078250</TelephoneNumber>\n\t\t <TelephoneNumber>2109678273</TelephoneNumber>\n\t\t <TelephoneNumber>2109678331</TelephoneNumber>\n\t\t <TelephoneNumber>2109678337</TelephoneNumber>\n\t\t <TelephoneNumber>2266401468</TelephoneNumber>\n\t </TelephoneNumbers>\n\t <ProcessingStatus>PARTIAL</ProcessingStatus>\n\t <Errors>\n\t\t <Error>\n\t\t\t <Code>7518</Code>\n\t\t\t <Description>Telephone Number Not Active.</Description>\n\t\t\t <TelephoneNumbers>\n\t\t\t\t <TelephoneNumber>2262665583</TelephoneNumber>\n\t\t\t </TelephoneNumbers>\n\t\t </Error>\n\t </Errors>\n </ImportTnOrder>"
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <ImportTnOrder>
+                       <OrderCreateDate>2018-01-09T02:58:04.615Z</OrderCreateDate>
+                       <AccountId>9900012</AccountId>
+                       <CreatedByUser>sjm</CreatedByUser>
+                       <OrderId>bf1305b8-8998-1111-2222-51ba3ce52d4e</OrderId>
+                       <LastModifiedDate>2018-01-09T02:58:05.298Z</LastModifiedDate>
+                       <SiteId>65487</SiteId>
+                       <SipPeerId>885544</SipPeerId>
+                       <Subscriber>
+                         <Name>First</Name>
+                         <ServiceAddress>
+                           <HouseNumber>11235</HouseNumber>
+                           <StreetName>Back</StreetName>
+                           <City>Denver</City>
+                           <StateCode>CO</StateCode>
+                           <Zip>27541</Zip>
+                           <County>Canyon</County>
+                         </ServiceAddress>
+                       </Subscriber>
+                       <LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>
+                       <LoaType>CARRIER</LoaType>
+                       <TelephoneNumbers>
+                         <TelephoneNumber>2106078250</TelephoneNumber>
+                         <TelephoneNumber>2109678273</TelephoneNumber>
+                         <TelephoneNumber>2109678331</TelephoneNumber>
+                         <TelephoneNumber>2109678337</TelephoneNumber>
+                         <TelephoneNumber>2266401468</TelephoneNumber>
+                       </TelephoneNumbers>
+                       <ProcessingStatus>PARTIAL</ProcessingStatus>
+                       <Errors>
+                         <Error>
+                           <Code>7518</Code>
+                           <Description>Telephone Number Not Active.</Description>
+                           <TelephoneNumbers>
+                             <TelephoneNumber>2262665583</TelephoneNumber>
+                           </TelephoneNumbers>
+                         </Error>
+                       </Errors>
+                     </ImportTnOrder>
               schema:
                 $ref: '#/components/schemas/ImportTnOrderResponse'
           description: >-
@@ -19772,7 +19966,28 @@ paths:
             application/xml:
               examples:
                 example:
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<OrderHistoryWrapper>\n\t <OrderHistory>\n\t\t <OrderDate>2015-06-16T14:03:10.225Z</OrderDate>\n\t\t <Note>Import TN order is received.</Note>\n\t\t <Author>admin</Author>\n\t\t <Status>RECEIVED</Status>\n\t </OrderHistory>\n\t <OrderHistory>\n\t\t <OrderDate>2015-06-16T14:03:10.330Z</OrderDate>\n\t\t <Note>Import TN order is processing.</Note>\n\t\t <Author>admin</Author>\n\t\t <Status>PROCESSING</Status>\n\t </OrderHistory>\n\t <OrderHistory>\n\t\t <OrderDate>2015-06-16T14:03:10.789Z</OrderDate>\n\t\t <Note>Import TN order is partial.</Note>\n\t\t <Author>admin</Author>\n\t\t <Status>PARTIAL</Status>\n\t </OrderHistory>\n </OrderHistoryWrapper>"
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <OrderHistoryWrapper>
+                       <OrderHistory>
+                         <OrderDate>2015-06-16T14:03:10.225Z</OrderDate>
+                         <Note>Import TN order is received.</Note>
+                         <Author>admin</Author>
+                         <Status>RECEIVED</Status>
+                       </OrderHistory>
+                       <OrderHistory>
+                         <OrderDate>2015-06-16T14:03:10.330Z</OrderDate>
+                         <Note>Import TN order is processing.</Note>
+                         <Author>admin</Author>
+                         <Status>PROCESSING</Status>
+                       </OrderHistory>
+                       <OrderHistory>
+                         <OrderDate>2015-06-16T14:03:10.789Z</OrderDate>
+                         <Note>Import TN order is partial.</Note>
+                         <Author>admin</Author>
+                         <Status>PARTIAL</Status>
+                       </OrderHistory>
+                     </OrderHistoryWrapper>
               schema:
                 $ref: '#/components/schemas/OrderHistoryWrapper'
           description: >-
@@ -19811,7 +20026,19 @@ paths:
             application/xml:
               examples:
                 example:
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<fileListResponse>\n\t    <fileCount>1</fileCount>\n\t    <fileData>\n\t        <FileName>eeceff88-c11e-4bd8-86f3-8e3482888500-1624044440058.pdf</FileName>\n\t        <FileMetaData>\n\t\t            <DocumentType>LOA</DocumentType>\n\t        </FileMetaData>\n\t    </fileData>\n\t    <resultCode>0</resultCode>\n\t    <resultMessage>LOA file list successfully returned</resultMessage>\n</fileListResponse>"
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <fileListResponse>
+                          <fileCount>1</fileCount>
+                          <fileData>
+                              <FileName>eeceff88-c11e-4bd8-86f3-8e3482888500-1624044440058.pdf</FileName>
+                              <FileMetaData>
+                                    <DocumentType>LOA</DocumentType>
+                              </FileMetaData>
+                          </fileData>
+                          <resultCode>0</resultCode>
+                          <resultMessage>LOA file list successfully returned</resultMessage>
+                    </fileListResponse>
               schema:
                 $ref: '#/components/schemas/FileListResponse'
           description: >-
@@ -19866,7 +20093,13 @@ paths:
             application/xml:
               examples:
                 example:
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<fileUploadResponse>\n\t    <filename>63097af1-37ae-432f-8a0d-9b0e6517a35b-1429550165581.pdf</filename>\n\t    <resultCode>0</resultCode>\n\t    <resultMessage>LOA file uploaded successfully for order 63097af1-37ae-432f-8a0d-9b0e6517a35b</resultMessage>\n</fileUploadResponse>"
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <fileUploadResponse>
+                          <filename>63097af1-37ae-432f-8a0d-9b0e6517a35b-1429550165581.pdf</filename>
+                          <resultCode>0</resultCode>
+                          <resultMessage>LOA file uploaded successfully for order 63097af1-37ae-432f-8a0d-9b0e6517a35b</resultMessage>
+                    </fileUploadResponse>
               schema:
                 $ref: '#/components/schemas/FileUploadResponse'
           description: >-
@@ -19972,7 +20205,13 @@ paths:
             application/xml:
               examples:
                 example:
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<fileUploadResponse>\n\t    <filename>63097af1-37ae-432f-8a0d-9b0e6517a35b-1429550165581.pdf</filename>\n\t    <resultCode>0</resultCode>\n\t    <resultMessage>LOA file uploaded successfully for order 63097af1-37ae-432f-8a0d-9b0e6517a35b</resultMessage>\n</fileUploadResponse>"
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <fileUploadResponse>
+                          <filename>63097af1-37ae-432f-8a0d-9b0e6517a35b-1429550165581.pdf</filename>
+                          <resultCode>0</resultCode>
+                          <resultMessage>LOA file uploaded successfully for order 63097af1-37ae-432f-8a0d-9b0e6517a35b</resultMessage>
+                    </fileUploadResponse>
               schema:
                 $ref: '#/components/schemas/FileUploadResponse'
           description: >-
@@ -20045,7 +20284,12 @@ paths:
             application/xml:
               examples:
                 example:
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<FileMetaData>\n\t   <DocumentName> [string] </DocumentName>\n\t   <DocumentType> [LOA | INVOICE | CSR | OTHER] </DocumentType>\n</FileMetaData>"
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <FileMetaData>
+                         <DocumentName> [string] </DocumentName>
+                         <DocumentType> [LOA | INVOICE | CSR | OTHER] </DocumentType>
+                    </FileMetaData>
               schema:
                 $ref: '#/components/schemas/FileMetaData'
           description: The Metatdata has been successfully retrieved.
@@ -20083,7 +20327,12 @@ paths:
           application/xml:
             examples:
               example:
-                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<FileMetaData>\n\t   <DocumentName>fileName</DocumentName>\n\t   <DocumentType>LOA</DocumentType>\n</FileMetaData>"
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <FileMetaData>
+                       <DocumentName>fileName</DocumentName>
+                       <DocumentType>LOA</DocumentType>
+                  </FileMetaData>
             schema:
               $ref: '#/components/schemas/FileMetaDataRequest'
       responses:
@@ -37339,89 +37588,6 @@ paths:
       summary: Retrieve tn reservation info for that tn
       tags:
         - Tns
-  post:
-    description: >-
-      <p>Request portability information on a set of TNs. SipPeerId is an
-      optional value. If SipPeerId is not specified, the id of the default
-      Sip-Peer for the provided SiteId will be used.</p>
-    operationId: CreateRequestImportTnChecker
-    parameters:
-      - $ref: '#/components/parameters/AccountIdPathParam'
-    requestBody:
-      content:
-        application/xml:
-          examples:
-            example:
-              description: example
-              value: |-
-                <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                <ImportTnCheckerPayload>
-                  <TelephoneNumbers>
-                    <TelephoneNumber>3032281000</TelephoneNumber>
-                    <TelephoneNumber>4109235436</TelephoneNumber>
-                    <TelephoneNumber>4104685864</TelephoneNumber>
-                  </TelephoneNumbers>
-                  <SiteId>486</SiteId>
-                  <SipPeerId>500025</SipPeerId>
-                </ImportTnCheckerPayload>
-          schema:
-            $ref: '#/components/schemas/ImportTnCheckerPayload'
-    responses:
-      '200':
-        content:
-          application/xml:
-            examples:
-              example:
-                value: |-
-                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                  <ImportTnCheckerResponse>
-                    <ImportTnCheckerPayload>
-                      <TelephoneNumbers>
-                        <TelephoneNumber>3032281000</TelephoneNumber>
-                      </TelephoneNumbers>
-                      <ImportTnErrors>
-                        <ImportTnError>
-                          <Code>19006</Code>
-                          <Description>Bandwidth numbers cannot be imported by this account at this time.</Description>
-                          <TelephoneNumbers>
-                            <TelephoneNumber>4109235436</TelephoneNumber>
-                            <TelephoneNumber>4104685864</TelephoneNumber>
-                          </TelephoneNumbers>
-                        </ImportTnError>
-                      </ImportTnErrors>
-                    </ImportTnCheckerPayload>
-                  </ImportTnCheckerResponse>
-            schema:
-              $ref: '#/components/schemas/ImportTnCheckerResponse'
-        description: <p>A successful check has been performed.</p>
-      '400':
-        content:
-          application/xml:
-            examples:
-              example:
-                value: |-
-                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                  <ImportTnCheckerResponse>
-                  <Errors>
-                    <Code>7201</Code>
-                      <Description>61746052083 is not a valid NANPA telephone number.</Description>
-                    </Errors>
-                    <Errors>
-                      <Code>7201</Code>
-                      <Description>61746052082 is not a valid NANPA telephone number.</Description>
-                    </Errors>
-                  </ImportTnCheckerResponse>
-            schema:
-              $ref: '#/components/schemas/ImportTnCheckerErrorResponse'
-        description: >-
-          <p>Bad Response - there were errors in evaluating the body of the
-          request.</p> <p>Potential errors include:</p><ul><li> List of TNs is
-          empty.<li> List of TNs is more than 5000 TNs.<li> The account does not
-          have the necessary (IMPORT_TNS) flag.<li> TNs are invalid (they are
-          not actual TNs, and there are duplicates).</ul>
-    summary: Check Tns portability
-    tags:
-      - Import Hosted Tn
 security:
   - httpBasic: []
 servers:
