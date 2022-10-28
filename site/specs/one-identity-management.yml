@@ -86,7 +86,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/idpId'
       requestBody:
-        $ref: '#/components/requestBodies/createIdpRequest'
+        $ref: '#/components/requestBodies/updateIdpRequest'
       responses:
         '200':
           $ref: '#/components/responses/putIdpsResponse'
@@ -268,6 +268,13 @@ components:
           schema:
             $ref: '#/components/schemas/newIdP'
       required: true
+    updateIdpRequest:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/updateIdP'
+      required: true
   responses:
     createdResponse:
       description: Successful Response. Returns the newly created IdP resource.
@@ -391,6 +398,53 @@ components:
       required:
         - accountId
         - active
+        - issuerUri
+        - singleSignOnUrl
+      type: object
+      properties:
+        protocol:
+          enum:
+            - SAML2
+          type: string
+          description: >-
+            The protocol used by this Identity Provider. Only SAML2 is supported
+            for now.
+          example: SAML2
+        accountId:
+          type: string
+          description: The Bandwidth account id that will use this Identity Provider.
+        active:
+          type: boolean
+          description: >-
+            Whether this IdP is active or not. Only one IdP can be active for a
+            given accountId.
+          example: false
+        usernameField:
+          type: string
+          description: The field in the SAML assertion that contains the username
+        issuerUri:
+          type: string
+          description: >-
+            URI of the Identity Provider. This value is usually the SAML
+            Metadata EntityID of the IdP EntityDescriptor.
+        singleSignOnUrl:
+          type: string
+          description: >-
+            The binding-specific IdP Authentication Request Protocol endpoint
+            that receives SAML AuthnRequest messages.
+        signatureCertificate:
+          type: string
+          description: >-
+            The PEM or DER encoded public key certificate of the Identity
+            Provider used to verify SAML message and assertion signatures.
+    updateSAMLIdP:
+      title: UpdateSAMLIdP
+      required:
+        - accountId
+        - active
+        - issuerUri
+        - singleSignOnUrl
+        - signatureCertificate
       type: object
       properties:
         protocol:
@@ -620,6 +674,14 @@ components:
         propertyName: protocol
         mapping:
           SAML2: '#/components/schemas/newSAMLIdP'
+    updateIdP:
+      title: UpdateIdP
+      oneOf:
+        - $ref: '#/components/schemas/updateSAMLIdP'
+      discriminator:
+        propertyName: protocol
+        mapping:
+          SAML2: '#/components/schemas/updateSAMLIdP'
     webfingerIdPEnabledResponse:
       title: webfingerIdPEnabledResponse
       required:
