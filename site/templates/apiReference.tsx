@@ -8,7 +8,7 @@ export default function ApiReferencePage() {
     return (
         <Layout
           title={`Product API Reference`}
-          description="Product Description"
+          description="Product"
           keywords="Bandwidth,API,Product,Keywords">
             <ApiReference spec={siteConfig.customFields.apiSpec} color={siteConfig.customFields.productColor} />
         </Layout>
