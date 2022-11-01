@@ -137,6 +137,60 @@ components:
             type: object
           type: array
       type: object
+    Account:
+      properties:
+        AccountId:
+          format: int32
+          type: integer
+        AccountRelationship:
+          type: string
+        AccountType:
+          type: string
+        Address:
+          $ref: '#/components/schemas/Address'
+        AltSpid:
+          type: string
+        AssociatedCatapultAccount:
+          type: string
+        BillingCycle:
+          format: int32
+          type: integer
+        CompanyName:
+          type: string
+        Contact:
+          $ref: '#/components/schemas/Contact'
+        CustomerSegment:
+          type: string
+        Default911Provider:
+          type: string
+        ExternalId:
+          type: string
+        GlobalAccountNumber:
+          type: string
+        MaxTnsForAutomatedPort:
+          format: int32
+          type: integer
+        NenaId:
+          type: string
+        PenaltyType:
+          type: string
+        PortCarrierType:
+          enum:
+            - WIRELESS
+            - WIRELINE
+          type: string
+        Pricing:
+          type: string
+        SPID:
+          type: string
+        Tiers:
+          properties:
+            Tier:
+              items:
+                $ref: '#/components/schemas/Tier'
+              type: array
+          type: object
+      type: object
     AccountMmsFeatureSettingsResponse:
       properties:
         mmsSettings:
@@ -171,6 +225,16 @@ components:
       properties:
         Product:
           $ref: '#/components/schemas/AccountProduct'
+      type: object
+    AccountResponse:
+      properties:
+        Account:
+          $ref: '#/components/schemas/Account'
+      type: object
+    AccountResponseWrapper:
+      properties:
+        AccountResponse:
+          $ref: '#/components/schemas/AccountResponse'
       type: object
     AccountSipCredentials:
       properties:
@@ -1721,6 +1785,29 @@ components:
         State:
           type: string
         Zip:
+          type: string
+      type: object
+    Contact:
+      properties:
+        Email:
+          type: string
+        Fax:
+          type: string
+        FirstName:
+          type: string
+        LastName:
+          type: string
+        Mobile:
+          type: string
+        OtherPhone:
+          type: string
+        Phone:
+          type: string
+        Suffix:
+          type: string
+        Title:
+          type: string
+        WebsiteAddress:
           type: string
       type: object
     ConventionalAddressDeletionE911Order:
@@ -9184,6 +9271,9 @@ components:
           type: string
       title: GatewayAttribute
       type: object
+    Tier:
+      format: int32
+      type: integer
     Tiers:
       properties:
         Count:
@@ -10248,8 +10338,75 @@ info:
   version: 1.0.0
 openapi: 3.0.1
 paths:
-  /accounts: {}
-  /accounts/{accountId}: {}
+  /accounts/{accountId}:
+    get:
+      description: >-
+        <p>The account is the root resource for many of the operations in the
+        Bandwidth Dashboard API.</p> <p>The account is represented by an account
+        id, which is the resource that represents a Bandwidth customer,
+        providing a root resource for all of the customer's attributes and
+        services.</p> <p>The API calls that are used to manage the details of a
+        customer account, and to manage the resources that a Bandwidth customer
+        has access to or control over, are accessed through the /accounts
+        resource.</p> <p>This API call retrieves information about the account
+        indicated by the Account ID.</p>
+      operationId: GetAccount
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  description: example
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <AccountResponse>
+                      <Account>
+                        <AccountId>14</AccountId>
+                        <AssociatedCatapultAccount>u-ertyhgfd12dcvdhnboklk</AssociatedCatapultAccount>
+                        <GlobalAccountNumber>globalAccount</GlobalAccountNumber>
+                        <CompanyName>CWI Hosting</CompanyName>
+                        <AccountType>Business</AccountType>
+                        <NenaId/>
+                        <CustomerSegment>Trial</CustomerSegment>
+                        <Tiers>
+                          <Tier>0</Tier>
+                        </Tiers>
+                        <Address>
+                          <HouseNumber>904</HouseNumber>
+                          <HouseSuffix>E</HouseSuffix>
+                          <PreDirectional/>
+                          <StreetName>Anson</StreetName>
+                          <StreetSuffix>St</StreetSuffix>
+                          <PostDirectional/>
+                          <AddressLine2/>
+                          <City>Marshalltown</City>
+                          <StateCode>IA</StateCode>
+                          <Zip>50158</Zip>
+                          <PlusFour/>
+                          <County/>
+                          <Country>United States</Country>
+                          <AddressType>Billing</AddressType>
+                        </Address>
+                        <Contact>
+                          <FirstName>Sanjay</FirstName>
+                          <LastName>Rao</LastName>
+                          <Phone>9195441234</Phone>
+                          <Email>srao@bandwidth.com</Email>
+                        </Contact>
+                        <AltSpid>X455</AltSpid>
+                        <SPID>9999</SPID>
+                        <PortCarrierType>WIRELINE</PortCarrierType>
+                      </Account>
+                    </AccountResponse>
+              schema:
+                $ref: '#/components/schemas/AccountResponseWrapper'
+          description: Retrieve Account information.
+      summary: Retrieve account
+      tags:
+        - Account
   /accounts/{accountId}/addresses:
     get:
       description: GET is used to retrieve all addresses.
@@ -10545,8 +10702,6 @@ paths:
       summary: Retrieve AEUI
       tags:
         - DLR
-  /accounts/{accountId}/analytics: {}
-  /accounts/{accountId}/analytics/numbersassignmentdata: {}
   /accounts/{accountId}/applications:
     get:
       description: >-
@@ -11848,7 +12003,6 @@ paths:
       summary: Download billing report
       tags:
         - Reports
-  /accounts/{accountId}/billingsettings: {}
   /accounts/{accountId}/bulkPortins:
     get:
       description: >-
@@ -13116,7 +13270,6 @@ paths:
       summary: Update bulk port-in order tn list
       tags:
         - Bulk Port-In
-  /accounts/{accountId}/campaignManagement/10dlc: {}
   /accounts/{accountId}/campaignManagement/10dlc/brands:
     get:
       description: Retrieve a list of campaign registry brands for the account
@@ -13316,9 +13469,6 @@ paths:
           description: Error Response
       tags:
         - 10DLC
-  /accounts/{accountId}/campaignManagement/10dlc/brands/{brandId}: {}
-  /accounts/{accountId}/campaignManagement/10dlc/brands/{brandId}/campaigns: {}
-  /accounts/{accountId}/campaignManagement/10dlc/campaigns: {}
   /accounts/{accountId}/campaignManagement/10dlc/campaigns/imports:
     get:
       description: >-
@@ -13545,8 +13695,6 @@ paths:
       summary: Retrieve imported campaign
       tags:
         - 10DLC
-  /accounts/{accountId}/campaignManagement/10dlc/campaigns/{campaignId}: {}
-  /accounts/{accountId}/configuration/{service}: {}
   /accounts/{accountId}/csrs:
     get:
       description: >-
@@ -20089,8 +20237,6 @@ paths:
       summary: Fetch Import to Account order history
       tags:
         - Import Tn
-  /accounts/{accountId}/importToAccount/{orderid}/notes: {}
-  /accounts/{accountId}/importToAccount/{orderid}/notes/{noteId}: {}
   /accounts/{accountId}/inserviceNumbers:
     get:
       description: >-
@@ -21503,7 +21649,6 @@ paths:
       summary: Update LSR order
       tags:
         - Porting
-  /accounts/{accountId}/lsrorders/{orderid}/adminparameters: {}
   /accounts/{accountId}/lsrorders/{orderid}/history:
     get:
       description: >-
@@ -25037,7 +25182,6 @@ paths:
       summary: List port-in npaNxx
       tags:
         - Porting
-  /accounts/{accountId}/portins/{orderid}/restartAutomation: {}
   /accounts/{accountId}/portins/{orderid}/tns:
     get:
       description: >-
@@ -25437,14 +25581,6 @@ paths:
       summary: Update/cancel port-out request
       tags:
         - Porting
-  /accounts/{accountId}/portouts/{orderid}/adminparameters: {}
-  /accounts/{accountId}/products: {}
-  /accounts/{accountId}/products/analytics: {}
-  /accounts/{accountId}/products/campaignmanagement: {}
-  /accounts/{accountId}/products/e911: {}
-  /accounts/{accountId}/products/e911/settings: {}
-  /accounts/{accountId}/products/edgemanagement: {}
-  /accounts/{accountId}/products/edgemanagement/settings: {}
   /accounts/{accountId}/products/edgemanagement/settings/sipauthentication:
     get:
       description: Retrieve existing SIP authentication configuration on account.
@@ -25511,8 +25647,6 @@ paths:
       summary: Retrieve sipauthentication settings on account
       tags:
         - Account
-  /accounts/{accountId}/products/identity: {}
-  /accounts/{accountId}/products/messaging: {}
   /accounts/{accountId}/products/messaging/a2pCampaigns:
     get:
       description: Retrieve existing a2pCampaigns configuration on account.
@@ -25546,9 +25680,6 @@ paths:
       summary: Retrieve a2pCampaigns settings on account
       tags:
         - Account
-  /accounts/{accountId}/products/messaging/features/http: {}
-  /accounts/{accountId}/products/messaging/features/mms: {}
-  /accounts/{accountId}/products/messaging/features/mms/mm4settings: {}
   /accounts/{accountId}/products/messaging/features/mms/settings:
     get:
       description: Retrieve existing messaging mms feature settings on account.
@@ -25576,31 +25707,6 @@ paths:
       summary: Retrieve messaging mms feature settings on account
       tags:
         - Account
-  /accounts/{accountId}/products/messaging/features/sms: {}
-  /accounts/{accountId}/products/messaging/routes: {}
-  /accounts/{accountId}/products/messaging/settings: {}
-  /accounts/{accountId}/products/messaging/tntotals: {}
-  /accounts/{accountId}/products/numbermanagement: {}
-  /accounts/{accountId}/products/numbermanagement/settings: {}
-  /accounts/{accountId}/products/origination: {}
-  /accounts/{accountId}/products/origination/cics: {}
-  /accounts/{accountId}/products/origination/rors: {}
-  /accounts/{accountId}/products/origination/settings: {}
-  /accounts/{accountId}/products/origination/tntotals: {}
-  /accounts/{accountId}/products/termination: {}
-  /accounts/{accountId}/products/termination/attribute: {}
-  /accounts/{accountId}/products/termination/attribute/{attributeId}: {}
-  /accounts/{accountId}/products/termination/product: {}
-  /accounts/{accountId}/products/termination/product/{productId}: {}
-  /accounts/{accountId}/products/termination/product/{productId}/toAssign: {}
-  /accounts/{accountId}/products/termination/ratedeck: {}
-  /accounts/{accountId}/products/termination/ratedeck/{assignmentId}: {}
-  /accounts/{accountId}/products/termination/settings: {}
-  /accounts/{accountId}/products/termination/settings/migrate: {}
-  /accounts/{accountId}/products/tollfree: {}
-  /accounts/{accountId}/products/tollfree/settings: {}
-  /accounts/{accountId}/products/tollfree/tntotals: {}
-  /accounts/{accountId}/products/uctrunking: {}
   /accounts/{accountId}/products/uctrunking/features/hosted/settings:
     get:
       description: Retrieve existing uctrunking hosted settings on account.
@@ -25770,8 +25876,6 @@ paths:
       summary: Update uctrunking hosted feature settings on account
       tags:
         - Account
-  /accounts/{accountId}/products/uctrunking/settings: {}
-  /accounts/{accountId}/products/virtualinventory: {}
   /accounts/{accountId}/products/{productName}:
     get:
       description: Discover whether product is currently enabled on the account
@@ -29119,9 +29223,6 @@ paths:
       summary: Update Site
       tags:
         - Site Management
-  /accounts/{accountId}/sites/{siteId}/bdrsummary: {}
-  /accounts/{accountId}/sites/{siteId}/billingId: {}
-  /accounts/{accountId}/sites/{siteId}/contract: {}
   /accounts/{accountId}/sites/{siteId}/inserviceNumbers:
     get:
       description: >-
@@ -29256,7 +29357,6 @@ paths:
       summary: Retrieve Site in-service numbers
       tags:
         - In-service Numbers
-  /accounts/{accountId}/sites/{siteId}/lock: {}
   /accounts/{accountId}/sites/{siteId}/orders:
     get:
       description: Retrieves all orders associated with the given Site
@@ -29465,7 +29565,6 @@ paths:
       summary: Retrieve Order TNs of Site
       tags:
         - Tns
-  /accounts/{accountId}/sites/{siteId}/partnerpricing: {}
   /accounts/{accountId}/sites/{siteId}/portins:
     get:
       description: Retrieves Port-in orders associated with the given Site
@@ -31839,14 +31938,6 @@ paths:
       summary: Get SipPeer Premise Trunks
       tags:
         - SipPeer Management
-  /accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/bdrsummary: {}
-  /accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/products/edgemanagement: {}
-  /accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/products/termination/hosts: {}
-  /accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/products/termination/hosts/{gatewayId}: {}
-  /accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/products/termination/hosts/{gatewayId}/settings: {}
-  /accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/products/termination/hosts/{gatewayId}/settings/{attributeId}: {}
-  /accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/tftotals: {}
-  /accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/tns: {}
   /accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/tns/{tn}:
     get:
       description: Retrieve information about telephone number on Sip Peer
@@ -32055,7 +32146,6 @@ paths:
       summary: Retrieve Sip Peer TNs count
       tags:
         - SipPeer Management
-  /accounts/{accountId}/sites/{siteId}/tftotals: {}
   /accounts/{accountId}/sites/{siteId}/totalSeats:
     get:
       description: Retrieves the total number of seats on site
@@ -34413,7 +34503,6 @@ paths:
       summary: Get Total Number of Seats for Account
       tags:
         - Account
-  /accounts/{accountId}/trunkgroups: {}
   /accounts/{accountId}/{orderType}/{orderId}/adminparameters:
     delete:
       description: Remove order admin parameters
@@ -34489,69 +34578,6 @@ paths:
       summary: Update Order Admin Parameters
       tags:
         - Orders
-  /admin/coverageMatrix: {}
-  /admin/coverageMatrix/bulk: {}
-  /admin/coverageMatrix/bulk/{taskId}: {}
-  /admin/data/a2pClasses: {}
-  /admin/data/a2pClasses/{messageClass}: {}
-  /admin/data/a2pSubIds: {}
-  /admin/data/a2pSubIds/{subId}: {}
-  /admin/data/accountReclamationSettings: {}
-  /admin/data/accountReclamationSettings/{accountId}: {}
-  /admin/data/bandwidthRespOrgIds: {}
-  /admin/data/bandwidthRespOrgIds/{respOrgId}: {}
-  /admin/data/blockedaccount/{id}: {}
-  /admin/data/breakOutCountries: {}
-  /admin/data/breakOutCountries/{breakOutCountry}: {}
-  /admin/data/bwspids: {}
-  /admin/data/bwspids/{id}: {}
-  /admin/data/countries: {}
-  /admin/data/countries/{id}: {}
-  /admin/data/customerSipHeaders: {}
-  /admin/data/customerSipHeaders/{id}: {}
-  /admin/data/internationalVendorSettings: {}
-  /admin/data/internationalVendorSettings/{id}: {}
-  /admin/data/messagingBlockedAccountIds: {}
-  /admin/data/messagingBlockedAccountIds/{accountId}: {}
-  /admin/data/nnroutes: {}
-  /admin/data/nnroutes/{id}: {}
-  /admin/data/npaBackorderRestrictions: {}
-  /admin/data/npaBackorderRestrictions/{npa}: {}
-  /admin/data/npaExpirations: {}
-  /admin/data/npaExpirations/{npa}: {}
-  /admin/data/npaNxxBlockRatecenter: {}
-  /admin/data/proxypeers: {}
-  /admin/data/proxypeers/{name}: {}
-  /admin/data/sbcNodeGroups: {}
-  /admin/data/systemEventSubscriptions: {}
-  /admin/data/systemEventSubscriptions/{id}: {}
-  /admin/data/tntypes: {}
-  /admin/data/tntypes/{id}: {}
-  /admin/data/tpa: {}
-  /admin/data/tpa/{spid}: {}
-  /admin/data/vendors: {}
-  /admin/data/vendors/{id}: {}
-  /admin/data/whitelistIps: {}
-  /admin/data/whitelistIps/{id}: {}
-  /admin/migrationControls/campaignSubIds: {}
-  /admin/migrationControls/e911cleanup: {}
-  /admin/migrationControls/nnidAccountSync: {}
-  /admin/migrationControls/tnHistory: {}
-  /admin/settings/{id}: {}
-  /aeuis: {}
-  /agingnumbers: {}
-  /audit: {}
-  /audit/controlPoint: {}
-  /availablenumbers: {}
-  /availablenumbers/orders: {}
-  /availablenumbers/orders/{orderid}: {}
-  /availablenumbers/totals: {}
-  /batches: {}
-  /batches/{batchName}: {}
-  /billing/dth/customers/{customerId}: {}
-  /bulkPortins: {}
-  /bulkPortins/{orderId}: {}
-  /bulkPortins/{orderId}/history: {}
   /callbacks/notificationCallbackApi:
     post:
       description: >
@@ -35287,74 +35313,6 @@ paths:
       summary: Retrieve Covered Rate Centers
       tags:
         - Rate Centers
-  /csrs/{orderid}: {}
-  /dldas: {}
-  /dldas/cancel: {}
-  /dldas/cancel/{taskId}: {}
-  /dldas/{orderId}: {}
-  /dldas/{orderId}/history: {}
-  /e911s: {}
-  /e911s/{orderId}: {}
-  /e911s/{orderId}/history: {}
-  /endpoints: {}
-  /externalTns: {}
-  /externalTns/{orderId}: {}
-  /externalTns/{orderId}/history: {}
-  /identitydomains: {}
-  /identitydomains/adminmigration: {}
-  /identitydomains/migration: {}
-  /identitydomains/userPreferences: {}
-  /identitydomains/{domainName}: {}
-  /identitydomains/{domainName}/accounts: {}
-  /identitydomains/{domainName}/accounts/{accountId}: {}
-  /identitydomains/{domainName}/permissions: {}
-  /identitydomains/{domainName}/permissions/{permissionId}: {}
-  /identitydomains/{domainName}/roles: {}
-  /identitydomains/{domainName}/roles/{roleId}: {}
-  /identitydomains/{domainName}/roles/{roleId}/permissions: {}
-  /identitydomains/{domainName}/roles/{roleId}/permissions/{permissionId}: {}
-  /identitydomains/{domainName}/tokens: {}
-  /identitydomains/{domainName}/tokens/{tokenId}: {}
-  /identitydomains/{domainName}/users: {}
-  /identitydomains/{domainName}/users/permittedaccess: {}
-  /identitydomains/{domainName}/users/{userId}: {}
-  /identitydomains/{domainName}/users/{userId}/accounts: {}
-  /identitydomains/{domainName}/users/{userId}/accounts/accountid: {}
-  /identitydomains/{domainName}/users/{userId}/logs: {}
-  /identitydomains/{domainName}/users/{userId}/logs/{eventId}: {}
-  /identitydomains/{domainName}/users/{userId}/password: {}
-  /identitydomains/{domainName}/users/{userId}/preferences: {}
-  /identitydomains/{domainName}/users/{userId}/preferences/{preferenceName}: {}
-  /identitydomains/{domainName}/users/{userId}/profile: {}
-  /identitydomains/{domainName}/users/{userId}/roles: {}
-  /identitydomains/{domainName}/users/{userId}/roles/{roleId}: {}
-  /identitydomains/{domainName}/users/{userId}/settings: {}
-  /identitydomains/{domainName}/validation: {}
-  /identitydomains/{domainName}/validation/{key}: {}
-  /importTnOrders: {}
-  /importTnOrders/{orderid}: {}
-  /importTnOrders/{orderid}/history: {}
-  /lidbs: {}
-  /lidbs/{orderId}: {}
-  /lidbs/{orderId}/history: {}
-  /lsrorders: {}
-  /lsrorders/{orderid}: {}
-  /lsrorders/{orderid}/history: {}
-  /moveTns: {}
-  /moveTns/{orderid}: {}
-  /moveTns/{orderid}/history: {}
-  /numbersAssignment: {}
-  /numbersAssignment/{orderId}: {}
-  /orders: {}
-  /orders/cancel: {}
-  /orders/cancel/{taskId}: {}
-  /orders/{orderId}: {}
-  /orders/{orderId}/history: {}
-  /portins: {}
-  /portins/{orderid}: {}
-  /portins/{orderid}/history: {}
-  /portouts: {}
-  /portouts/{orderid}: {}
   /rateCenters:
     get:
       description: >-
@@ -35520,58 +35478,6 @@ paths:
       summary: List Rate Centers
       tags:
         - Rate Centers
-  /regions: {}
-  /regions/{region}/rateCenters: {}
-  /regions/{region}/rateCenters/{abbreviation}: {}
-  /regions/{region}/rateCenters/{abbreviation}/coverage: {}
-  /regions/{region}/rateCenters/{abbreviation}/vendors/{vendor}/coverage: {}
-  /removeImportedTnOrders: {}
-  /removeImportedTnOrders/{orderid}: {}
-  /removeImportedTnOrders/{orderid}/history: {}
-  /reports: {}
-  /reports/instances: {}
-  /reports/{reportId}: {}
-  /reports/{reportId}/instances: {}
-  /reports/{reportId}/instances/{instanceId}: {}
-  /reports/{reportId}/instances/{instanceId}/file: {}
-  /reprovisionTns: {}
-  /sipcredentials: {}
-  /sipcredentials/{userName}: {}
-  /snapbackChecker: {}
-  /suggestions: {}
-  /terminationProducts/account: {}
-  /terminationProducts/attributes: {}
-  /terminationProducts/attributes/origin: {}
-  /terminationProducts/attributes/type: {}
-  /terminationProducts/attributes/{id}: {}
-  /terminationProducts/carrier: {}
-  /terminationProducts/carriermask: {}
-  /terminationProducts/carriermask/file/{fileName}/{carrierMaskName}/{carrierMaskType}: {}
-  /terminationProducts/carriermask/metadata: {}
-  /terminationProducts/carriermask/metadata/search: {}
-  /terminationProducts/carriermask/metadata/{id}: {}
-  /terminationProducts/carriermask/{id}: {}
-  /terminationProducts/product: {}
-  /terminationProducts/product/{productId}: {}
-  /terminationProducts/product/{productId}/attribute: {}
-  /terminationProducts/product/{productId}/attribute/{attributeId}: {}
-  /terminationProducts/ratedeck: {}
-  /terminationProducts/ratedeck/file/{fileName}/{ratedeckName}: {}
-  /terminationProducts/ratedeck/filetype/{deckId}: {}
-  /terminationProducts/ratedeck/type/{deckType}: {}
-  /terminationProducts/ratedeck/{rateDeckId}: {}
-  /terminationProducts/ratedeckassignment: {}
-  /terminationProducts/ratedeckassignment/account/{accountId}: {}
-  /terminationProducts/ratedeckassignment/{assignmentId}: {}
-  /terminationProducts/ratedeckassignment/{assignmentId}/account/{accountId}: {}
-  /terminationProducts/routingexception: {}
-  /terminationProducts/routingexception/file/{fileName}/{routingExceptionName}: {}
-  /terminationProducts/routingexception/{id}: {}
-  /tnoptions: {}
-  /tnoptions/cancel: {}
-  /tnoptions/cancel/{taskId}: {}
-  /tnoptions/{orderId}: {}
-  /tnoptions/{orderId}/history: {}
   /tns:
     get:
       description: >-
@@ -36126,7 +36032,6 @@ paths:
       summary: Retrieve e911 for that tn
       tags:
         - Tns
-  /tns/{tn}/history: {}
   /tns/{tn}/lata:
     get:
       description: Retrieves the lata associated with that telephone number.
