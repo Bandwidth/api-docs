@@ -23,7 +23,7 @@ Guides cover a wide range of possibilities, but typically any step by step proce
 
 ## API Specs
 
-The source of truth for all OpenAPI definitons are kept in a private repository - but the spec files in `./site/specs` mirror the source of truth. PRs against those files wont be accepted - but can be migrated to the private repo.
+The source of truth for all OpenAPI definitions are kept in a private repository - but the spec files in `./site/specs` mirror the source of truth. PRs against those files wont be accepted - but can be migrated to the private repo.
 
 ## SDK Docs Strategy Overview
 
