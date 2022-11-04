@@ -1286,6 +1286,116 @@ components:
               $ref: '#/components/schemas/Brand'
           type: object
       type: object
+    BrandVetting:
+      properties:
+        VettingClass:
+          description: Identifies the vetting classification.
+          enum:
+            - STANDARD
+            - ENHANCED
+            - POLITICAL
+          type: string
+        VettingId:
+          description: >-
+            Unique ID that identifies a vetting transaction performed by a
+            vetting provider. This ID is provided by the vetting provider at
+            time of vetting.
+          type: string
+      type: object
+    BrandVettingImportRequest:
+      properties:
+        BrandVetting:
+          properties:
+            EvpId:
+              description: >-
+                External vetting provider ID for the brand. AEGIS(Aegis Mobile),
+                CV(Campaign Verify), WMC(WMC Global)
+              enum:
+                - AEGIS
+                - CV
+                - WMC
+              type: string
+            VettingId:
+              description: >-
+                Unique ID that identifies a vetting transaction performed by a
+                vetting provider. This ID is provided by the vetting provider at
+                time of vetting.
+              type: string
+          type: object
+      type: object
+    BrandVettingImportResponse:
+      properties:
+        BrandVetting:
+          properties:
+            BrandId:
+              description: Unique ID that identifies a brand.
+              type: string
+            EvpId:
+              description: >-
+                External vetting provider ID for the brand. AEGIS(Aegis Mobile),
+                CV(Campaign Verify), WMC(WMC Global)
+              enum:
+                - AEGIS
+                - CV
+                - WMC
+              type: string
+            VettingId:
+              description: >-
+                Unique ID that identifies a vetting transaction performed by a
+                vetting provider. This ID is provided by the vetting provider at
+                time of vetting.
+              type: string
+            VettingStatus:
+              description: >-
+                Identifies the vetting request status.  PENDING, UNSCORE,
+                ACTIVE, FAILED, EXPIRED ]
+              enum:
+                - PENDING
+                - UNSCORE
+                - ACTIVE
+                - FAILED
+                - EXPIRED
+              type: string
+          type: object
+      type: object
+    BrandVettingRequest:
+      properties:
+        BrandVetting:
+          properties:
+            EvpId:
+              description: >-
+                External vetting provider ID for the brand. AEGIS(Aegis Mobile),
+                CV(Campaign Verify), WMC(WMC Global)
+              enum:
+                - AEGIS
+                - CV
+                - WMC
+              type: string
+            VettingClass:
+              description: Identifies the vetting classification.
+              enum:
+                - STANDARD
+                - ENHANCED
+                - POLITICAL
+              type: string
+          type: object
+      type: object
+    BrandVettingsErrorResponse:
+      properties:
+        BrandVettingsResponse:
+          properties:
+            BrandVetting:
+              $ref: '#/components/schemas/ResponseStatus'
+          type: object
+      type: object
+    BrandVettingsResponse:
+      properties:
+        BrandVettingsResponse:
+          properties:
+            BrandVetting:
+              $ref: '#/components/schemas/BrandVetting'
+          type: object
+      type: object
     BrandsErrorResponse:
       properties:
         BrandsResponse:
@@ -3727,7 +3837,6 @@ components:
               enum:
                 - IMPORT
                 - REMOVE
-              required: true
               type: string
             CustomerOrderId:
               description: An order ID created by the customer for their tracking purposes
@@ -3740,26 +3849,26 @@ components:
               enum:
                 - CARRIER
                 - SUBSCRIBER
-              required: false
               type: string
             SipPeerId:
               description: >-
                 The ID of the SIP Peer that the Telephone Numbers are to be
                 provisioned to
               format: int32
-              required: false
               type: integer
             SiteId:
               description: >-
                 The ID of the Site that the Telephone Numbers are to be
                 provisioned to
               format: int32
-              required: true
               type: integer
             TelephoneNumbers:
               items:
                 $ref: '#/components/schemas/TelephoneNumber'
               type: array
+          required:
+            - SiteId
+            - Action
           type: object
       type: object
     ExternalTnsOrderResponse:
@@ -3864,14 +3973,12 @@ components:
         RequestAddress:
           properties:
             AddressLine1:
-              required: true
               type: string
             AddressLine2:
               type: string
             AddressType:
               type: string
             City:
-              required: true
               type: string
             Country:
               type: string
@@ -3892,7 +3999,6 @@ components:
             ResetAddressFields:
               type: boolean
             StateCode:
-              required: true
               type: string
             StreetName:
               type: string
@@ -3900,6 +4006,10 @@ components:
               type: string
             Zip:
               type: string
+          required:
+            - AddressLine1
+            - City
+            - StateCode
           type: object
       type: object
     GeocodeRequestConflictResponse:
@@ -4461,8 +4571,9 @@ components:
             CampaignId:
               description: Campaign ID generated by TCR
               maximum: 12
-              required: true
               type: string
+          required:
+            - CampaignId
           type: object
       type: object
     ImportedTelephoneNumberDetailList:
@@ -12364,7 +12475,7 @@ paths:
       summary: Create billing report in range
       tags:
         - Reports
-  /accounts/{accountId}/billingreports/{reportid}:
+  /accounts/{accountId}/billingreports/{reportId}:
     get:
       description: >
         <p>The resource will query the status of the report that is being
@@ -12372,9 +12483,9 @@ paths:
       operationId: GetBillingReportStatus
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: ''
+        - description: Unique Report ID
           in: path
-          name: bdrid
+          name: reportId
           required: true
           schema:
             type: string
@@ -12441,7 +12552,7 @@ paths:
       summary: Retrieve billing report status or redirect to download
       tags:
         - Reports
-  /accounts/{accountId}/billingreports/{reportid}/file:
+  /accounts/{accountId}/billingreports/{reportId}/file:
     get:
       description: >
         <p>A GET on the /file resource subtending a report ID will cause the
@@ -12450,9 +12561,9 @@ paths:
       operationId: DownloadBillingReport
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: ''
+        - description: Unique Report ID
           in: path
-          name: bdrid
+          name: reportId
           required: true
           schema:
             type: string
@@ -13855,14 +13966,17 @@ paths:
       tags:
         - 10DLC
     post:
-      description: >-
-        <p>Create campaign registry brand on the Account</p><p>My Brand Note:
-        Regardless of if you are a DirectCustomer or Reseller, you will need to
-        create a 'My Brand'. You can only create one of these. On the Request
-        Body you can indicate a 'My Brand' by setting the IsMain flag to
-        true.</p><p>Please visit <a
-        href='/docs/messaging/campaign-management/csp/reseller-brand-api/'>Brand
-        and Reseller Management.</a></p>
+      description: >
+        Create campaign registry brand on the Account.
+
+        My Brand Note Regardless of if you are a DirectCustomer or Reseller, you
+        will need to create a My Brand. 
+
+        You can only create one of these. On the Request Body you can indicate a
+        My Brand by setting the IsMain flag to true.
+
+        Please visit [Brand and Reseller
+        Management](/docs/messaging/campaign-management/csp/reseller-brand-api)
       operationId: Create brand
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
@@ -13973,6 +14087,190 @@ paths:
                      </BrandResponse>
               schema:
                 $ref: '#/components/schemas/BrandErrorResponse'
+          description: Error Response
+      tags:
+        - 10DLC
+  /accounts/{accountId}/campaignManagement/10dlc/brands/{brandId}/vetting:
+    get:
+      description: Retrieve brand external vetting records
+      operationId: Retrieve brand vettings
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: Brand id.
+          example: B5DG4HH
+          in: path
+          name: brandId
+          required: true
+          schema:
+            type: string
+        - description: Vetting provider ID.
+          example: AEGIS
+          in: query
+          name: evpId
+          schema:
+            type: string
+        - description: Vetting class.
+          example: STANDARD
+          in: query
+          name: vettingClass
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BrandVettingResponse>
+                      <BrandVetting>
+                        <VettingId>69823255-96b3-412f-9120-3e77f94c6be5</VettingId>
+                        <VettingStatus>PENDING</VettingStatus>
+                      </BrandVetting>
+                    </BrandVettingResponse>
+              schema:
+                $ref: '#/components/schemas/BrandVettingsResponse'
+          description: OK
+        '400':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BrandVettingResponse>
+                      <ResponseStatus>
+                        <ErrorCode>12055</ErrorCode>
+                        <Description>'LONG_CODE' feature is not enabled on account 900000</Description>
+                      </ResponseStatus>
+                    </BrandVettingResponse>
+              schema:
+                $ref: '#/components/schemas/BrandVettingsErrorResponse'
+          description: Error Response
+      tags:
+        - 10DLC
+    post:
+      description: Create brand an external vetting
+      operationId: Create brand vetting
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: Brand id.
+          example: B5DG4HH
+          in: path
+          name: brandId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/xml:
+            examples:
+              example:
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <Brand>
+                    <EvpId>AEGIS</EvpId>
+                    <VettingClass>STANDARD</VettingClass>
+                  </Brand>
+            schema:
+              $ref: '#/components/schemas/BrandVettingRequest'
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BrandVettingResponse>
+                      <BrandVetting>
+                        <EvpId>BJDHM3</EvpId>
+                        <VettingId>CMHSJ9</VettingId>
+                        <VettingStatus>ACTIVE</VettingStatus>
+                        <BrandId>111111111</BrandId>
+                      </BrandVetting>
+                    </BrandVettingResponse>
+              schema:
+                $ref: '#/components/schemas/BrandVettingsResponse'
+          description: OK
+        '400':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BrandVettingResponse>
+                      <ResponseStatus>
+                        <ErrorCode>12055</ErrorCode>
+                        <Description>'LONG_CODE' feature is not enabled on account 900000</Description>
+                       </ResponseStatus>
+                    </BrandVettingResponse>
+              schema:
+                $ref: '#/components/schemas/BrandVettingsErrorResponse'
+          description: Error Response
+      tags:
+        - 10DLC
+    put:
+      description: Import brand external vetting records
+      operationId: Import brand vetting
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: Brand id.
+          example: B5DG4HH
+          in: path
+          name: brandId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/xml:
+            examples:
+              example:
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <Brand>
+                    <EvpId>AEGIS</EvpId>
+                    <VettingId>b62ed6ba-20f7-4031-a5fa-68e96cd6c036</VettingId>
+                  </Brand>
+            schema:
+              $ref: '#/components/schemas/BrandVettingImportRequest'
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BrandVettingResponse>
+                      <BrandVetting>
+                        <EvpId>BJDHM3</EvpId>
+                        <VettingId>CMHSJ9</VettingId>
+                        <VettingStatus>PUBLIC_PROFIT</VettingStatus>
+                        <BrandId>111111111</BrandId>
+                      </BrandVetting>
+                    </BrandVettingResponse>
+              schema:
+                $ref: '#/components/schemas/BrandVettingImportResponse'
+          description: OK
+        '400':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BrandVettingResponse>
+                      <ResponseStatus>
+                        <ErrorCode>12055</ErrorCode>
+                        <Description>'LONG_CODE' feature is not enabled on account 900000</Description>
+                       </ResponseStatus>
+                    </BrandVettingResponse>
+              schema:
+                $ref: '#/components/schemas/BrandVettingsErrorResponse'
           description: Error Response
       tags:
         - 10DLC
@@ -14612,10 +14910,10 @@ paths:
       operationId: UpdateCsrsOrderNote
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: CSRs Order ID
-          example: 59e69657-44d2-4e7e-90f8-777988be4aef
+        - description: CSR Order id
+          example: 34adcd9f-2c4a-4631-9dae-d1f318ed57bc
           in: path
-          name: csrsId
+          name: orderId
           required: true
           schema:
             type: string
@@ -19393,6 +19691,7 @@ paths:
             enum:
               - SUBSCRIBER
               - CARRIER
+              - ALL
             type: string
       responses:
         '200':
@@ -20208,7 +20507,7 @@ paths:
             metadata
 
             at the same time you upload the file.
-          example: documentType=LOA
+          example: LOA
           in: query
           name: documentType
           required: false
@@ -22920,7 +23219,7 @@ paths:
       summary: Telephone Numbers Assignment Order
       tags:
         - Numbers Assignment
-  /accounts/{accountId}/numbersAssignment/{orderid}:
+  /accounts/{accountId}/numbersAssignment/{orderId}:
     get:
       description: >-
         Retrieve information about a TelephoneNumbersAssignment order with
@@ -23537,6 +23836,70 @@ paths:
       summary: Get New Number Order TN Count Totals
       tags:
         - Orders
+  /accounts/{accountId}/orders/{orderId}/notes/{noteId}:
+    put:
+      description: >-
+        Update a specified note. Notes may only be updated, not deleted.
+        <p>Please visit <a
+        href='/docs/numbers/guides/searchingForNumbers/'>Guides and
+        Tutorials</a> to learn more.</p>
+      operationId: UpdateOrderNote
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: Order id
+          example: 34adcd9f-2c4a-4631-9dae-d1f318ed57bc
+          in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+        - description: Note ID
+          example: '123'
+          in: path
+          name: noteId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/xml:
+            examples:
+              example:
+                description: example
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <Note>
+                     <UserId>userId</UserId>
+                     <Description>note text</Description>
+                  </Note>
+            schema:
+              $ref: '#/components/schemas/Note'
+      responses:
+        '200':
+          description: OK - note has been updated. No body is returned.
+        '400':
+          content:
+            application/xml:
+              examples:
+                example:
+                  description: example
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <NoteResponse>
+                        <ResponseStatus>
+                            <ErrorCode>12501</ErrorCode>
+                            <Description>Username is required</Description>
+                        </ResponseStatus>
+                    </NoteResponse>
+              schema:
+                $ref: '#/components/schemas/NoteErrorResponse'
+          description: >-
+            Bad Request - the note has not been updated because the payload is
+            incomplete or in error. An error payload is provided in the
+            response.
+      summary: Update Telephone Number order note
+      tags:
+        - Orders
   /accounts/{accountId}/orders/{orderid}:
     get:
       description: >-
@@ -23917,70 +24280,6 @@ paths:
             incomplete or in error.  An error payload is provided in the
             response
       summary: Create Telephone Number order note
-      tags:
-        - Orders
-  /accounts/{accountId}/orders/{orderid}/notes/{noteId}:
-    put:
-      description: >-
-        Update a specified note. Notes may only be updated, not deleted.
-        <p>Please visit <a
-        href='/docs/numbers/guides/searchingForNumbers/'>Guides and
-        Tutorials</a> to learn more.</p>
-      operationId: UpdateOrderNote
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: Order id
-          example: 34adcd9f-2c4a-4631-9dae-d1f318ed57bc
-          in: path
-          name: orderid
-          required: true
-          schema:
-            type: string
-        - description: Note ID
-          example: '123'
-          in: path
-          name: noteId
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/xml:
-            examples:
-              example:
-                description: example
-                value: |-
-                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                  <Note>
-                     <UserId>userId</UserId>
-                     <Description>note text</Description>
-                  </Note>
-            schema:
-              $ref: '#/components/schemas/Note'
-      responses:
-        '200':
-          description: OK - note has been updated. No body is returned.
-        '400':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <NoteResponse>
-                        <ResponseStatus>
-                            <ErrorCode>12501</ErrorCode>
-                            <Description>Username is required</Description>
-                        </ResponseStatus>
-                    </NoteResponse>
-              schema:
-                $ref: '#/components/schemas/NoteErrorResponse'
-          description: >-
-            Bad Request - the note has not been updated because the payload is
-            incomplete or in error. An error payload is provided in the
-            response.
-      summary: Update Telephone Number order note
       tags:
         - Orders
   /accounts/{accountId}/orders/{orderid}/npaNxx:
@@ -25988,6 +26287,13 @@ paths:
       operationId: CancelPortOut
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: Port-out order id
+          example: ca8065d1-ec1a-43da-af40-1dcee43becb5
+          in: path
+          name: orderid
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           content:
@@ -30570,7 +30876,7 @@ paths:
       summary: Retrieve Site Order
       tags:
         - Orders
-  /accounts/{accountId}/sites/{siteId}/orders/{orderid}/tns:
+  /accounts/{accountId}/sites/{siteId}/orders/{orderId}/tns:
     get:
       description: Retrieves order TNs associated with the given Site
       operationId: RetrieveSiteOrderTns
@@ -36357,7 +36663,6 @@ paths:
         the resource.
       operationId: GetCoveredRateCenter
       parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
         - description: ''
           in: path
           name: rateCenterId
