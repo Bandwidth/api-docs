@@ -1,10 +1,5 @@
 # API-Docs
 
-| ⚠️ Please do not modify API Specs in this repository ⚠️ | 
-|:---:|
-
-API specs now reside in the [api-specs](https://github.com/Bandwidth/api-specs) repository and code snippets in the [api-docs-code-snippets](https://github.com/Bandwidth/api-docs-code-snippets) repository.
-
 ## Table of Contents
 
   1. [API Docs Strategy Overview](#api-docs-strategy-overview)
@@ -58,11 +53,11 @@ or `yarn run cy:open` to open the cypress client and runs tests from the cypress
 
 To add a new spec (or update an existing spec), please head over to our [api-specs](https://github.com/Bandwidth/api-specs) repository, as this is the source of truth for all of Bandwidth's internal and external API Specs. You may also follow the guide [here](https://bandwidth-jira.atlassian.net/wiki/spaces/DX/pages/4098359409/How+to+Update+API+Specifications+and+Contribute+to+Developer+Documentation) that explains in detail how to add new spec files to the `api-specs` repo.
 
-### Versioned Specs 
+### Versioned Specs
 
 To account for versioned API Documentation we have a [Spec Version Dropdown](./site/src/components/SpecVersionDropdown.js) component that allows you to add a dropdown menu to the api reference page with links to the other versions of your API Specification. In order to implement this feature your spec `.tsx` pages need their own directory within the `./site/src/pages/apis` directory. This will be done for you by the DevX team after you update your changes on the `api-specs` repo.
 
-Sample Directory: 
+Sample Directory:
 
 ```sh
 # ./site/src/pages
@@ -289,22 +284,3 @@ The below adds a language switcher in line with text in an MDX file:
     </Tabs>
 
     And this text will be rendered after the language switcher
-
-
-## PR Requirements
-
-## SDK Generation
-
-The `./sdk-generation` directory contains code and config for our SDK generation that supports our public SDKs. Much like the docsite generation, typically you'll interface with this through NPM commands.
-
-`npm run generate -- -l <LANGUAGE> -s <SPEC>` is the command to generate an SDK. The `-s` flag is optional; not including it will default to the SDK with all APIs. The file `./sdk-generation/bandwidth.zip` will contain the generated code.
-
-| Language | Notes |
-|--|--|
-| python | |
-| ruby | |
-| csharp | |
-| java | |
-| php | PHP >= 7.2
-| phpold | Does not have XML support |
-| node | Highly recommended to generate with a specified spec |
