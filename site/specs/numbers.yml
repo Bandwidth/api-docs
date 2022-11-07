@@ -6537,6 +6537,8 @@ components:
             - $ref: '#/components/schemas/StateSearchAndOrderType'
             - $ref: '#/components/schemas/CombinedSearchAndOrderType'
       type: object
+      xml:
+        name: Order
     OrderCreatedDate:
       description: Creation date of the order.
       type: string
@@ -6595,6 +6597,31 @@ components:
         userId:
           type: string
       type: object
+    OrderMetadata:
+      properties:
+        BackOrderRequested:
+          type: boolean
+        CloseOrder:
+          type: boolean
+        CustomerOrderId:
+          type: string
+        Name:
+          type: string
+        OrderCreateDate:
+          type: string
+        PartialAllowed:
+          type: boolean
+        PeerId:
+          format: int32
+          type: integer
+        SiteId:
+          format: int32
+          type: integer
+        TnAttributes:
+          items:
+            $ref: '#/components/schemas/TnAttribute'
+          type: array
+      type: object
     OrderNotesResponse:
       properties:
         Notes:
@@ -6614,10 +6641,22 @@ components:
           type: array
       type: object
     OrderRequest:
-      properties:
-        Order:
-          $ref: '#/components/schemas/Order'
-      type: object
+      allOf:
+        - $ref: '#/components/schemas/OrderMetadata'
+      oneOf:
+        - $ref: '#/components/schemas/ExistingTelephoneNumberOrderType'
+        - $ref: '#/components/schemas/RateCenterSearchAndOrderType'
+        - $ref: '#/components/schemas/AreaCodeSearchAndOrderType'
+        - $ref: '#/components/schemas/NPANXXSearchAndOrderType'
+        - $ref: '#/components/schemas/TollFreeWildCharSearchAndOrderType'
+        - $ref: '#/components/schemas/TollFreeVanitySearchAndOrderType'
+        - $ref: '#/components/schemas/LATASearchAndOrderType'
+        - $ref: '#/components/schemas/ZIPSearchAndOrderType'
+        - $ref: '#/components/schemas/CitySearchAndOrderType'
+        - $ref: '#/components/schemas/StateSearchAndOrderType'
+        - $ref: '#/components/schemas/CombinedSearchAndOrderType'
+      xml:
+        name: Order
     OrderSummary:
       properties:
         CountOfTNs:
@@ -9686,32 +9725,29 @@ components:
       type: object
     TelephoneNumbersAssignmentOrderResponse:
       properties:
-        TelephoneNumbersAssignmentOrderResponse:
-          properties:
-            AccountId:
-              format: int32
-              type: integer
-            CreatedByUser:
-              type: string
-            Errors:
-              items:
-                $ref: '#/components/schemas/TelephoneNumbersAssignmentError'
-              type: array
-            FailedQuantity:
-              format: int32
-              type: integer
-            OrderCreateDate:
-              type: string
-            OrderId:
-              type: string
-            OrderStatus:
-              type: string
-            TelephoneNumbersAssignmentOrder:
-              $ref: '#/components/schemas/TelephoneNumbersAssignmentOrderPayload'
-            TotalQuantity:
-              format: int32
-              type: integer
-          type: object
+        AccountId:
+          format: int32
+          type: integer
+        CreatedByUser:
+          type: string
+        Errors:
+          items:
+            $ref: '#/components/schemas/TelephoneNumbersAssignmentError'
+          type: array
+        FailedQuantity:
+          format: int32
+          type: integer
+        OrderCreateDate:
+          type: string
+        OrderId:
+          type: string
+        OrderStatus:
+          type: string
+        TelephoneNumbersAssignmentOrder:
+          $ref: '#/components/schemas/TelephoneNumbersAssignmentOrderPayload'
+        TotalQuantity:
+          format: int32
+          type: integer
       type: object
     TelephoneNumbersAssignmentOrderSummary:
       properties:
@@ -11925,6 +11961,7 @@ paths:
           example: 30
           in: query
           name: quantity
+          nullable: false
           required: false
           schema:
             default: 5000
@@ -11937,6 +11974,7 @@ paths:
             displayed along with the TN.
           in: query
           name: enableTNDetail
+          nullable: false
           required: false
           schema:
             default: false
@@ -11944,6 +11982,7 @@ paths:
         - description: <p>Values are true or false.</p>
           in: query
           name: LCA
+          nullable: false
           required: false
           schema:
             default: true
@@ -11955,6 +11994,7 @@ paths:
             anywhere in last 7 number digits. The default is false.</p>
           in: query
           name: endsIn
+          nullable: false
           required: false
           schema:
             default: false
@@ -11966,6 +12006,7 @@ paths:
           example: 435
           in: query
           name: areaCode
+          nullable: false
           required: false
           schema:
             type: integer
@@ -11977,6 +12018,7 @@ paths:
             third digits.</li></ul>
           in: query
           name: npaNxx
+          nullable: false
           required: false
           schema:
             type: integer
@@ -11988,6 +12030,7 @@ paths:
             digits.</li></ul>
           in: query
           name: npaNxxx
+          nullable: false
           required: false
           schema:
             type: integer
@@ -11995,6 +12038,7 @@ paths:
           example: 244
           in: query
           name: lata
+          nullable: false
           required: false
           schema:
             type: integer
@@ -12002,13 +12046,17 @@ paths:
           example: Cary
           in: query
           name: rateCenter
+          nullable: false
           required: false
           schema:
             type: string
-        - description: <p>The name of the city.</p>
+        - description: >-
+            <p>The name of the city. <b>NOTE:</b> `State` becomes a required
+            parameter when searching by `city`.</p>
           example: RALEIGH
           in: query
           name: city
+          nullable: false
           required: false
           schema:
             type: string
@@ -12016,6 +12064,7 @@ paths:
           example: NC
           in: query
           name: state
+          nullable: false
           required: false
           schema:
             type: string
@@ -12025,6 +12074,7 @@ paths:
           example: NEWCARS
           in: query
           name: tollFreeVanity
+          nullable: false
           required: false
           schema:
             type: string
@@ -12034,6 +12084,7 @@ paths:
           example: 8**, 80*, 87*
           in: query
           name: tollFreeWildCardPattern
+          nullable: false
           required: false
           schema:
             type: string
@@ -12043,6 +12094,7 @@ paths:
           example: NEWCARS
           in: query
           name: localVanity
+          nullable: false
           required: false
           schema:
             type: string
@@ -12050,12 +12102,14 @@ paths:
           example: 27607
           in: query
           name: zip
+          nullable: false
           required: false
           schema:
             type: integer
         - description: <p>The field by which the results should be sorted</p>
           in: query
           name: orderBy
+          nullable: false
           required: false
           schema:
             type: string
@@ -38058,7 +38112,7 @@ security:
   - httpBasic: []
 servers:
   - description: Production
-    url: https://dashboard.bandwidth.com/api/
+    url: https://dashboard.bandwidth.com/api
     variables: {}
 tags:
   - name: 10DLC
