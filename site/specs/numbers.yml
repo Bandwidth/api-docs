@@ -8,6 +8,14 @@ components:
       required: true
       schema:
         type: string
+    DomainNamePathParam:
+      description: Domain name
+      example: dashboard
+      in: path
+      name: domainName
+      required: true
+      schema:
+        type: string
     GatewayIdIdPathParam:
       in: path
       name: gatewayId
@@ -15,6 +23,14 @@ components:
       schema:
         format: int64
         type: integer
+    KeyPathParam:
+      description: Validation key
+      example: someSecretValue
+      in: path
+      name: key
+      required: true
+      schema:
+        type: string
     OrderIdPathParam:
       description: ID of order to retrieve
       example: bf1305b8-8998-1111-2222-51ba3ce52d4e
@@ -26,6 +42,22 @@ components:
     OrderTypePathParam:
       in: path
       name: orderType
+      required: true
+      schema:
+        type: string
+    PermissionIdPathParam:
+      description: Permission Id
+      example: testPermission
+      in: path
+      name: permissionId
+      required: true
+      schema:
+        type: string
+    RoleIdPathParam:
+      description: Role Id
+      example: testRole
+      in: path
+      name: roleId
       required: true
       schema:
         type: string
@@ -58,6 +90,14 @@ components:
             - FAILED
           type: string
         type: array
+    UserIdPathParam:
+      description: User Id
+      example: testUser
+      in: path
+      name: userId
+      required: true
+      schema:
+        type: string
   schemas:
     A2pSettings:
       properties:
@@ -1246,6 +1286,116 @@ components:
               $ref: '#/components/schemas/Brand'
           type: object
       type: object
+    BrandVetting:
+      properties:
+        VettingClass:
+          description: Identifies the vetting classification.
+          enum:
+            - STANDARD
+            - ENHANCED
+            - POLITICAL
+          type: string
+        VettingId:
+          description: >-
+            Unique ID that identifies a vetting transaction performed by a
+            vetting provider. This ID is provided by the vetting provider at
+            time of vetting.
+          type: string
+      type: object
+    BrandVettingImportRequest:
+      properties:
+        BrandVetting:
+          properties:
+            EvpId:
+              description: >-
+                External vetting provider ID for the brand. AEGIS(Aegis Mobile),
+                CV(Campaign Verify), WMC(WMC Global)
+              enum:
+                - AEGIS
+                - CV
+                - WMC
+              type: string
+            VettingId:
+              description: >-
+                Unique ID that identifies a vetting transaction performed by a
+                vetting provider. This ID is provided by the vetting provider at
+                time of vetting.
+              type: string
+          type: object
+      type: object
+    BrandVettingImportResponse:
+      properties:
+        BrandVetting:
+          properties:
+            BrandId:
+              description: Unique ID that identifies a brand.
+              type: string
+            EvpId:
+              description: >-
+                External vetting provider ID for the brand. AEGIS(Aegis Mobile),
+                CV(Campaign Verify), WMC(WMC Global)
+              enum:
+                - AEGIS
+                - CV
+                - WMC
+              type: string
+            VettingId:
+              description: >-
+                Unique ID that identifies a vetting transaction performed by a
+                vetting provider. This ID is provided by the vetting provider at
+                time of vetting.
+              type: string
+            VettingStatus:
+              description: >-
+                Identifies the vetting request status.  PENDING, UNSCORE,
+                ACTIVE, FAILED, EXPIRED ]
+              enum:
+                - PENDING
+                - UNSCORE
+                - ACTIVE
+                - FAILED
+                - EXPIRED
+              type: string
+          type: object
+      type: object
+    BrandVettingRequest:
+      properties:
+        BrandVetting:
+          properties:
+            EvpId:
+              description: >-
+                External vetting provider ID for the brand. AEGIS(Aegis Mobile),
+                CV(Campaign Verify), WMC(WMC Global)
+              enum:
+                - AEGIS
+                - CV
+                - WMC
+              type: string
+            VettingClass:
+              description: Identifies the vetting classification.
+              enum:
+                - STANDARD
+                - ENHANCED
+                - POLITICAL
+              type: string
+          type: object
+      type: object
+    BrandVettingsErrorResponse:
+      properties:
+        BrandVettingsResponse:
+          properties:
+            BrandVetting:
+              $ref: '#/components/schemas/ResponseStatus'
+          type: object
+      type: object
+    BrandVettingsResponse:
+      properties:
+        BrandVettingsResponse:
+          properties:
+            BrandVetting:
+              $ref: '#/components/schemas/BrandVetting'
+          type: object
+      type: object
     BrandsErrorResponse:
       properties:
         BrandsResponse:
@@ -2051,6 +2201,182 @@ components:
               type: integer
           type: object
       type: object
+    CreateGlobalAddressRequest:
+      description: Model for Create Regulation Address request
+      properties:
+        buildingLetter:
+          description: >-
+            Maximum length: 10. This is the building letter which can also be
+            used for additional information on the street number.
+          type: string
+        buildingNumber:
+          description: >-
+            Maximum length: 10. This is the number of the building or the street
+            number of the address.
+          type: string
+        city:
+          description: >-
+            Maximum length: 60. This is the city of the end user's address. Note
+            that sometimes the city and zip code will have to match the DID's
+            area code for instance in Germany (DEU), Croatia (HRV), South Korea
+            (KOR), etc. To know whether this is required, you should check the
+            local address requirements indicated in the listDidGroup method
+            (regulationRequirement.addressType=LOCAL). In those cases the
+            listZipCodes method should be used to retrieve a proper city and zip
+            code for the DID's area code.
+          type: string
+        companyDescription:
+          description: >-
+            Maximum length: 60. This is the company description for the end user
+            of the created address.
+          type: string
+        companyName:
+          description: >-
+            Maximum length: 60. This is the company name for the end user of the
+            created address. It is a mandatory field if the salutation is
+            COMPANY.
+          type: string
+        countryCodeA3:
+          description: >-
+            The country code for the address in its ISO 3166-1 alpha-3 format
+            (e.g. 'GBR' for United Kingdom, 'USA' for United States of America,
+            'BEL' for Belgium, etc.).
+          type: string
+        customerReference:
+          description: >-
+            Maximum length: 60. This is a parameter that can be used for your
+            own reference, e.g. to uniquely identify one of your customers.
+          type: string
+        destinationCountryCodeA3:
+          description: >-
+            This is country code A3 of the DID's country (USA, BEL, GBR, DEU,
+            etc.). This information is required before the address is created
+            since the address requirements change based on this information. The
+            system will perform automatically a first address validation based
+            on the DID's country and type.
+          type: string
+        didType:
+          description: >-
+            This is the DID's type (GEOGRAPHIC, NATIONAL, etc.). This
+            information is required before the address is created since the
+            address requirements change based on this information. The system
+            will perform automatically a first address validation based on the
+            DID's country and type.
+          enum:
+            - GEOGRAPHIC
+            - TOLL_FREE
+            - NATIONAL
+            - MOBILE
+            - INUM
+            - SHARED_COST
+            - SPECIAL
+          type: string
+        extraFields:
+          $ref: '#/components/schemas/GlobalAddressExtraFields'
+        firstName:
+          description: >-
+            Maximum length: 60. This is the first name for the end user of the
+            created address. It is a mandatory field if the salutation is MR or
+            MS.
+          type: string
+        identityDocumentProof:
+          $ref: '#/components/schemas/IdentityDocumentProof'
+        lastName:
+          description: >-
+            Maximum length: 60. This is the company name for the end user of the
+            created address. It is a mandatory field if the salutation is MR or
+            MS.
+          type: string
+        phoneNumber:
+          description: >-
+            This field is to be used to provide end-user telephone number (for
+            example, for China or Bahrain). Format is +xxnumber
+          type: string
+        salutation:
+          description: >-
+            This is the salutation of the end user for the created address: MR
+            or MS if firstName and lastName are used or COMPANY if companyName
+            is used.
+          enum:
+            - MR
+            - MS
+            - COMPANY
+          type: string
+        streetName:
+          description: 'Maximum length: 50. This is the name of the end user''s street.'
+          type: string
+        zipCode:
+          description: >-
+            Maximum length: 10. This is the zip code of the end user's address.
+            Note that sometimes the city and zip code will have to match the
+            DID's area code for instance in Germany (DEU), Croatia (HRV), South
+            Korea (KOR), etc. To know whether this is required, you should check
+            the local address requirements indicated in the listDidGroup method
+            (regulationRequirement.addressType=LOCAL). In those cases the
+            listZipCodes method should be used to retrieve a proper city and zip
+            code for the DID's area code.
+          type: string
+      required:
+        - buildingNumber
+        - city
+        - countryCodeA3
+        - destinationCountryCodeA3
+        - didType
+        - salutation
+        - streetName
+        - zipCode
+      type: object
+    CreateGlobalAddressResponse:
+      properties:
+        addressId:
+          description: >-
+            If the operation is successful, the operation will return an
+            addressId for the newly created address.
+          format: int32
+          type: integer
+      type: object
+    CreateProofOfIdRequest:
+      properties:
+        identityDocumentNumber:
+          description: >-
+            The document number as seen on the proof document attached.
+            Mandatory for South Africa and Italy.
+          type: string
+        identityDocumentType:
+          description: >-
+            Type of the ID proof document attached. Mandatory for South Africa
+            and Italy. Only BUSINESS_REGISTRATION is applicable for ZAF.
+          enum:
+            - PASSPORT
+            - NATIONAL_ID_CARD
+            - BUSINESS_REGISTRATION
+          type: string
+        issuingAuthority:
+          description: >-
+            The issuing authority as seen on the proof document attached.
+            Mandatory for Italy.
+          type: string
+        issuingDate:
+          description: >-
+            The issuing date as seen on the proof document attached. Mandatory
+            for Italy - Format is yyyy-mm-dd. Has to be a date in the past.
+          type: string
+        nationality:
+          description: >-
+            There is no specific format for this field. Either full country name
+            or the ISO-3166-1 alpha-3 code is acceptable.
+          type: string
+      type: object
+    CreateProofOfIdResponse:
+      properties:
+        status:
+          enum:
+            - SUCCESS
+            - PARTIAL
+            - WARNING
+            - ERROR
+          type: string
+      type: object
     CreatedBy:
       description: Order created by the user.
       type: string
@@ -2394,6 +2720,19 @@ components:
         EndDate:
           type: string
         StartDate:
+          type: string
+      type: object
+    DeleteGlobalAddressResponse:
+      properties:
+        status:
+          description: >-
+            SUCCESS message will indicate that the operation was performed
+            successfully.
+          enum:
+            - SUCCESS
+            - PARTIAL
+            - WARNING
+            - ERROR
           type: string
       type: object
     DeleteTNSpecificE911Address:
@@ -3889,6 +4228,227 @@ components:
               $ref: '#/components/schemas/Address'
           type: object
       type: object
+    GlobalAddress:
+      properties:
+        AddressRejectionReasons:
+          $ref: '#/components/schemas/GlobalAddressRejectionReasons'
+          description: Reasons for the rejection of the regulation address verification.
+        AddressStatus:
+          $ref: '#/components/schemas/GlobalAddressStatus'
+          description: This is the current status of the address.
+        AddressType:
+          $ref: '#/components/schemas/GlobalAddressType'
+        addressId:
+          description: This is the ID of the address which is returned during creation.
+          format: int32
+          type: integer
+        buildingLetter:
+          description: >-
+            This is the building letter which can also be used for additional
+            information on the street number.
+          type: string
+        buildingNumber:
+          description: The building number for the address.
+          type: string
+        city:
+          description: The city for the address.
+          type: string
+        companyDescription:
+          description: >-
+            This is the company description for the end user of the listed
+            address.
+          type: string
+        companyName:
+          description: Name of the company.
+          type: string
+        countryCodeA3:
+          description: The three letter identifier for the address's country.
+          type: string
+        customerReference:
+          description: The reference for the customer.
+          type: string
+        extraFields:
+          $ref: '#/components/schemas/GlobalAddressExtraFields'
+        firstName:
+          description: First name of the customer.
+          type: string
+        lastName:
+          description: Last name of the customer.
+          type: string
+        linked:
+          description: Flag that specifies if the addresses should be linked to a DID.
+          type: boolean
+        salutation:
+          description: >-
+            This is the salutation of the end user for the listed address: MR or
+            MS if firstName and lastName are used or COMPANY if companyName is
+            used.
+          enum:
+            - MR
+            - MS
+            - COMPANY
+          type: string
+        streetName:
+          description: The street for the address.
+          type: string
+        zipCode:
+          description: The zip code for the address.
+          type: string
+      type: object
+    GlobalAddressExtraFields:
+      description: >-
+        These are extra address parameters that are required in certain
+        countries and for certain DID types.
+      properties:
+        companyVatNumber:
+          description: >-
+            Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60.
+            Mandatory for Company end user only.
+          type: string
+        dateOfBirth:
+          description: >-
+            Italy / GEOGRAPHIC and TOLL_FREE / String (yyyy-mm-dd), maximum
+            length: 10. Validation made for age > 18 years.
+          type: string
+        firstName:
+          description: >-
+            Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60.
+            Mandatory for Company end user only.
+          type: string
+        fiscalIdentificationCode:
+          description: >-
+            Spain / Mobile / String, maximum length: 60. Only required for
+            professional addresses (salutation is COMPANY).
+          maxLength: 60
+          minLength: 0
+          type: string
+        idNumber:
+          description: >-
+            Spain / Mobile / String, maximum length: 60. Only required for
+            personal addresses (salutation is either MR or MS), additional
+            validation is performed depending on the type of ID. DNI: 8 digits
+            followed by 1 letter / NIE: 1 letter (X,Y or Z), followed by 7
+            digits, followed by 1 letter / NIF: 8 digits followed by 1 letter /
+            PASSPORT: no additional validation.
+          maxLength: 60
+          minLength: 0
+          type: string
+        idType:
+          description: >-
+            Spain / Mobile / DNI, NIE, NIF, PASSPORT. Only required for personal
+            addresses (salutation is either MR or MS).
+          enum:
+            - DNI
+            - NIF
+            - NIE
+            - PASSPORT
+          type: string
+        lastName:
+          description: >-
+            Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60.
+            Mandatory for Company end user only.
+          type: string
+        municipalityCode:
+          description: 'Denmark / ALL / String, maximum length: 4.'
+          maxLength: 4
+          minLength: 0
+          type: string
+        nationality:
+          description: >-
+            Spain / Mobile / String, maximum length: 60. The exact format can be
+            chosen freely as long as it allows a human to understand it. We
+            recommend using the full country name but the ISO-3166-1 alpha-3
+            code is acceptable if it is easier to process by your system.
+          maxLength: 60
+          minLength: 0
+          type: string
+        placeOfBirth:
+          description: >-
+            Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60. Both
+            City and country of birth is expected.
+          type: string
+        province:
+          description: >-
+            Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60.
+            Optional field.
+          type: string
+        state:
+          description: ' Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60. Optional field.'
+          type: string
+        streetCode:
+          description: 'Denmark / ALL / String, maximum length: 4.'
+          maxLength: 4
+          minLength: 0
+          type: string
+        taxCode:
+          description: >-
+            Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60.
+            Mandatory field.
+          type: string
+        title:
+          description: >-
+            Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60.
+            Mandatory for Company end user only.
+          type: string
+      type: object
+    GlobalAddressRejectionReasons:
+      enum:
+        - INVALID_DOC_NOT_RECENT_ENOUGH
+        - INVALID_DOC_CORRUPT
+        - INVALID_DOC_ILLEGIBLE
+        - INVALID_DOC_MISSING
+        - INVALID_DOC_WHOLE
+        - INVALID_DOCTYPE_INVOICES
+        - INVALID_DOCTYPE_GOVERNMENT_DOCS
+        - INVALID_DOCTYPE_VIRTUAL_ADDRESS
+        - INVALID_DOCTYPE_ATTESTATIONS
+        - INVALID_DOCTYPE_THIRD_PARTY
+        - INVALID_DOCTYPE_REQUIRED_ID
+        - INVALID_DOCTYPE_REQUIRED_ADDRESS
+        - INVALID_DOCTYPE_FIXED_LINE_PROOF
+        - INVALID_DOCTYPE_ID_TYPE
+        - INVALID_DOCTYPE_ID_TYPE_ADDRESS
+        - INVALID_DOCTYPE_PASSPORT
+        - INCOMPLETE_INFO_DATE
+        - INCOMPLETE_INFO_ADDRESS
+        - INCOMPLETE_INFO_PROOFS
+        - INCOMPLETE_INFO_BUSINESS_REG
+        - INCOMPLETE_INFO_LEGAL_REP
+        - INCOMPLETE_INFO_LEGAL_REP_ID
+        - INCOMPLETE_INFO_LEGAL_ZIP
+        - INCOMPLETE_INFO_PO_BOX
+        - INCOMPLETE_INFO_REP_PICTURE
+        - INCOMPLETE_INFO_CHINESE_RECEIPT
+        - INFO_MISMATCH_ADDRESS_PROOF
+        - INFO_MISMATCH_ID_PROOF
+        - INFO_MISMATCH_DETAILS
+        - INFO_MISMATCH_ADDRESS
+        - INFO_MISMATCH_LOCATION
+        - INFO_MISMATCH_RESIDE
+        - INFO_MISMATCH_FATHER
+        - INFO_MISMATCH_MOTHER
+        - INFO_MISMATCH_COMPANY_REG
+        - INFO_MISMATCH_ID_NUMBER
+        - INFO_MISMATCH_COMPANY_NUMBER
+        - INFO_MISMATCH_COMPANY_TAX_NUMBER
+        - INFO_MISMATCH_BIRTH_PLACE
+        - INFO_MISMATCH_BIRTH_DATE
+        - INFO_MISMATCH_ID
+        - OTHER_ABUSE
+        - OTHER_REGULATIONS
+      type: string
+    GlobalAddressStatus:
+      enum:
+        - NOT_VERIFIED
+        - VERIFIED
+        - VERIFICATION_REQUESTED
+        - REJECTED
+        - VERIFICATION_NOT_REQUIRED
+      type: string
+    GlobalAddressType:
+      enum:
+        - REGULATION
+      type: string
     Host:
       properties:
         HostName:
@@ -3944,6 +4504,49 @@ components:
       type: object
     Identifier:
       type: string
+    IdentityDocumentProof:
+      description: >-
+        Model for proof of ID document. Required when the `countryCodeA3` is
+        `FRA`(France) and `didType` is `GEOGRAPHIC` or
+        `destinationCountryCodeA3` is set as `ZAF` (South Africa) or `ITA`
+        (Italy)
+      properties:
+        identityDocumentNumber:
+          description: >-
+            Document number as seen on the ID proof document attached. Maximum
+            length: 60. Mandatory for South Africa and Italy.
+          type: string
+        identityDocumentType:
+          description: >-
+            Mandatory for South Africa and Italy. Only BUSINESS_REGISTRATION is
+            applicable for ZAF
+          enum:
+            - PASSPORT
+            - NATIONAL_ID_CARD
+            - BUSINESS_REGISTRATION
+          type: string
+        issuingAuthority:
+          description: >-
+            Name of the issuing authority as seen on the ID proof document
+            attached. Maximum length: 60. Mandatory for Italy.
+          type: string
+        issuingDate:
+          description: >-
+            Issuing date as seen on the ID proof document attached. Maximum
+            length: 10. Mandatory for Italy - Format is yyyy-mm-dd. Has to be a
+            date in the past.
+          type: string
+        nationality:
+          description: >-
+            Maximum length: 60. There is no specific format for this field.
+            Either full country name or the ISO-3166-1 alpha-3 code is
+            acceptable.
+          type: string
+      required:
+        - identityDocumentNumber
+        - identityDocumentType
+        - nationality
+      type: object
     ImportTnCheckerErrorResponse:
       properties:
         ImportTnCheckerResponse:
@@ -4512,6 +5115,16 @@ components:
         Description:
           type: string
       type: object
+    IsGlobalAddressValidResponse:
+      properties:
+        isValid:
+          description: Indicator if the address is valid or not.
+          type: boolean
+        reasons:
+          items:
+            $ref: '#/components/schemas/Reason'
+          type: array
+      type: object
     LATASearchAndOrderType:
       properties:
         LATA:
@@ -4741,6 +5354,20 @@ components:
             If the results are more than one page, this link returns the
             previous page of 'size' results.
           type: string
+      type: object
+    ListGlobalAddressResponse:
+      properties:
+        regulationAddresses:
+          description: >-
+            A list with regulation addresses corresponding to the request filter
+            (if any).
+          items:
+            $ref: '#/components/schemas/GlobalAddress'
+          type: array
+        resultCount:
+          description: The total number of records corresponding to the request filter.
+          format: int32
+          type: integer
       type: object
     LnpCheckerTnList:
       properties:
@@ -7485,6 +8112,18 @@ components:
         Realms:
           $ref: '#/components/schemas/Realms'
       type: object
+    Reason:
+      description: >-
+        If the address is not valid for the requested country and DID type, a
+        reason is returned with a code and message.
+      properties:
+        code:
+          description: The reason code.
+          type: string
+        message:
+          description: The reason message.
+          type: string
+      type: object
     RecipientCallback:
       description: Callback url and credentials
       properties:
@@ -7819,6 +8458,19 @@ components:
           items:
             $ref: '#/components/schemas/NotDetailedReport'
           type: array
+      type: object
+    RequestGlobalAddressVerificationResponse:
+      properties:
+        status:
+          description: >-
+            SUCCESS message will indicate that the operation was performed
+            successfully.
+          enum:
+            - SUCCESS
+            - PARTIAL
+            - WARNING
+            - ERROR
+          type: string
       type: object
     RequestedCallbackTypes:
       enum:
@@ -9076,22 +9728,6 @@ components:
       properties:
         delete:
           type: boolean
-      type: object
-    Subscription:
-      properties:
-        Subscription:
-          properties:
-            CallbackSubscription:
-              $ref: '#/components/schemas/CallbackSubscription'
-            EmailSubscription:
-              $ref: '#/components/schemas/EmailSubscription'
-            EventType:
-              type: string
-            OrderId:
-              type: string
-            OrderType:
-              type: string
-          type: object
       type: object
     SubscriptionOrderId:
       description: >-
@@ -10608,6 +11244,19 @@ components:
         UcTrunkingSettings:
           $ref: '#/components/schemas/UcTrunkingSettings'
       type: object
+    UploadProofOfAddressResponse:
+      properties:
+        status:
+          description: >-
+            SUCCESS message will indicate that the operation was performed
+            successfully.
+          enum:
+            - SUCCESS
+            - PARTIAL
+            - WARNING
+            - ERROR
+          type: string
+      type: object
     VendorName:
       description: >-
         The vendor that owns the number that is being ported in.  If the number
@@ -10874,6 +11523,540 @@ paths:
       summary: Retrieve account
       tags:
         - Account
+  /accounts/{accountId}/address:
+    get:
+      description: >-
+        Allows you to view addresses already created and their current status.
+        You can use these addresses to link to DIDs to satisfy LAR requirements.
+      operationId: listGlobalAddress
+      parameters:
+        - description: >-
+            This is the ID of the regulation address which is returned by
+            createGlobalAddress.
+          in: query
+          name: addressId
+          schema:
+            format: int32
+            type: integer
+        - description: Name of the company.
+          in: query
+          name: companyName
+          schema:
+            type: string
+        - description: First name of the customer.
+          in: query
+          name: firstName
+          schema:
+            type: string
+        - description: Last name of the customer.
+          in: query
+          name: lastName
+          schema:
+            type: string
+        - description: The three letter identifier for the address's country.
+          in: query
+          name: countryCodeA3
+          schema:
+            type: string
+        - description: The city for the address.
+          in: query
+          name: city
+          schema:
+            type: string
+        - description: The zip code for the address.
+          in: query
+          name: zipCode
+          schema:
+            type: string
+        - description: The street for the address.
+          in: query
+          name: streetName
+          schema:
+            type: string
+        - description: The building number for the address.
+          in: query
+          name: buildingNumber
+          schema:
+            type: string
+        - description: The reference for the customer.
+          in: query
+          name: customerReference
+          schema:
+            type: string
+        - description: The status of the regulation address.
+          in: query
+          name: status
+          schema:
+            enum:
+              - NOT_VERIFIED
+              - VERIFIED
+              - VERIFICATION_REQUESTED
+              - REJECTED
+              - VERIFICATION_NOT_REQUIRED
+            type: string
+        - description: Flag that specifies if the address has been linked to a DID.
+          in: query
+          name: linked
+          schema:
+            type: boolean
+        - description: The page number, starting at 0.
+          example: 0
+          in: query
+          name: pageNumber
+          required: true
+          schema:
+            format: int32
+            type: integer
+        - description: >-
+            The page size (max number of entities that are displayed in the
+            response).
+          example: 20
+          in: query
+          name: pageSize
+          required: true
+          schema:
+            format: int32
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListGlobalAddressResponse'
+            text/xml:
+              schema:
+                $ref: '#/components/schemas/ListGlobalAddressResponse'
+          description: successful operation
+      summary: List already created addresses
+      tags:
+        - Address
+    post:
+      description: >
+        Allows you to create a new end user's address that can be linked to
+
+        DIDs where a local address requirement (LAR) applies. The method allows
+        the
+
+        attachment of a proof of address.
+
+        If a proof of address is attached, the system automatically
+
+        triggers a request for verification so that Bandwidth can manually
+        verify
+
+        the address elements. The media type to be used is multipart/form-data.
+
+
+        ### Request Body Examples
+
+        The request body examples below demonstrate how to create an address
+        with both proofs attached in a single request wherever required. You can
+        copy and paste this on the right column while testing in the
+        console/Postman.
+
+
+        #### Create a Business Address without any proof document
+
+        Below is an example of a business address where no proof of identity or
+        address is required.
+
+        ```javascript
+
+        --XXX
+
+        Content-ID: createGlobalAddressRequest
+
+        Content-Type: application/json
+
+
+        {
+           "customerReference":"Bandwidth - GBR",
+           "didType":"GEOGRAPHIC",
+           "salutation":"COMPANY",
+           "companyName":"Bandwidth",
+           "buildingNumber":"42",
+           "streetName":"Folgate Street",
+           "zipCode":"E1 6BT",
+           "city":"London",
+           "countryCodeA3":"GBR",
+           "destinationCountryCodeA3":"GBR"
+        }
+
+        --XXX--
+
+        ```
+
+        #### Create a Business Address with Additional Information
+
+        Below is an example of a business address where no proof of identity or
+        address is required but additional information must be supplied in extra
+        fields.
+
+        ```javascript
+
+        --XXX
+
+        Content-ID: createGlobalAddressRequest
+
+        Content-Type: application/json
+
+
+        {
+           "customerReference":"Bandwidth - DNK",
+           "didType":"GEOGRAPHIC",
+           "salutation":"COMPANY",
+           "companyName":"Bandwidth",
+           "buildingNumber":"24",
+           "streetName":"Toldbodgade",
+           "zipCode":"1253",
+           "city":"København",
+           "countryCodeA3":"DNK",
+           "destinationCountryCodeA3":"DNK",
+           "extraFields":{
+              "Street Code":"2100",
+              "Municipality Code":"101"
+           }
+        }
+
+        --XXX--
+
+        ```
+
+        #### Create a Business Address with Address Proof Document
+
+        Below is an example where an address proof document is required but no
+        proof of identity.
+
+        ```javascript
+
+        --XXX
+
+        Content-ID: createGlobalAddressRequest
+
+        Content-Type: application/json
+
+
+        {
+           "customerReference":"Bandwidth - GBR",
+           "didType":"GEOGRAPHIC",
+           "salutation":"COMPANY",
+           "companyName":"Bandwidth",
+           "buildingNumber":"42",
+           "streetName":"Folgate Street",
+           "zipCode":"E1 6BT",
+           "city":"London",
+           "countryCodeA3":"GBR",
+           "destinationCountryCodeA3":"GBR"
+        }
+
+        --XXX
+
+        Content-ID: proofOfAddress
+
+        Content-Type: application/octet-stream
+
+        Content-Disposition: filename=Proof_of_address.txt
+
+
+        Proof document encoded content
+
+
+        --XXX--
+
+        ```
+
+        #### Create a Business Address with Proof of Address, Proof of Identity
+        and Identity Document Proof
+
+        Below is an example where a proof of address document, proof of identity
+        document and identity document proof is required.
+
+        ```javascript
+
+        --XXX
+
+        Content-ID: createGlobalAddressRequest
+
+        Content-Type: application/json
+
+
+        {
+           "customerReference":"Bandwidth - FRA",
+           "didType":"GEOGRAPHIC",
+           "salutation":"COMPANY",
+           "companyName":"Bandwidth",
+           "buildingNumber":"108",
+           "streetName":"Rue Saint-Lazare",
+           "zipCode":"75008",
+           "city":"Paris",
+           "countryCodeA3":"FRA",
+           "destinationCountryCodeA3":"FRA",
+           "identityDocumentProof":{
+              "nationality":"French",
+              "identityDocumentType":"PASSPORT",
+              "identityDocumentNumber":"3071931"
+           }
+        }
+
+        --XXX--
+
+
+        --XXX
+
+        Content-ID: proofOfIdentityDocument
+
+        Content-Type: application/octet-stream
+
+        Content-Transfer-Encoding: binary
+
+        Content-Disposition: file-data; name="proofOfIdentityDocument";
+        filename=passport_scan.pdf
+
+
+        Identity document proof encoded content
+
+
+        --XXX--
+
+
+        --XXX
+
+        Content-ID: proofOfAddress
+
+        Content-Type: application/octet-stream
+
+        Content-Disposition: filename=Proof_of_address.txt
+
+
+        Proof document encoded content
+
+
+        --XXX--
+
+        ```
+
+        More information is available in our __[Guide to using our LAR
+        API](https://support.voxbone.com/hc/en-us/articles/4402904174097)__.
+      operationId: createGlobalAddress
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateGlobalAddressRequest'
+        description: Request parameters
+        required: false
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateGlobalAddressResponse'
+            text/xml:
+              schema:
+                $ref: '#/components/schemas/CreateGlobalAddressResponse'
+          description: successful operation
+      summary: Create a new address
+      tags:
+        - Address
+  /accounts/{accountId}/address/{addressId}:
+    delete:
+      description: Delete an address
+      operationId: deleteGlobalAddress
+      parameters:
+        - description: >-
+            The ID of the regulation address that you want to delete. You can
+            only delete one address per request.
+          in: path
+          name: addressId
+          required: true
+          schema:
+            format: int32
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteGlobalAddressResponse'
+            text/xml:
+              schema:
+                $ref: '#/components/schemas/DeleteGlobalAddressResponse'
+          description: successful operation
+      summary: Delete an address
+      tags:
+        - Address
+    get:
+      description: Get a specific address with id
+      operationId: getGlobalAddress
+      parameters:
+        - description: The ID of the regulation address.
+          in: path
+          name: addressId
+          required: true
+          schema:
+            format: int32
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListGlobalAddressResponse'
+            text/xml:
+              schema:
+                $ref: '#/components/schemas/ListGlobalAddressResponse'
+          description: successful operation
+      summary: Get a specific address with id
+      tags:
+        - Address
+  /accounts/{accountId}/address/{addressId}/identitydocument:
+    put:
+      description: Update identity proof document
+      operationId: createProofOfIdentityDocument
+      parameters:
+        - description: The ID of the regulation address.
+          in: path
+          name: addressId
+          required: true
+          schema:
+            format: int32
+            type: integer
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateProofOfIdRequest'
+        required: false
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateProofOfIdResponse'
+            text/xml:
+              schema:
+                $ref: '#/components/schemas/CreateProofOfIdResponse'
+          description: successful operation
+      summary: Update identity proof document
+      tags:
+        - Address
+  /accounts/{accountId}/address/{addressId}/proof:
+    put:
+      description: >-
+        This can be used if you want to use an existing address which didn't
+        require verification for the DIDs it is linked to, or for which the
+        proof of address was rejected. After an uploadProofOfAddress request the
+        requestAddressVerification method must be called.
+      operationId: uploadProofOfAddress
+      parameters:
+        - description: The identifier of the regulation address.
+          in: path
+          name: addressId
+          required: true
+          schema:
+            format: int32
+            type: integer
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                proofOfAddress:
+                  description: >-
+                    List of documents - the first one will be set as proof of
+                    address.
+                  example:
+                    - 'Content-ID: proofOfAddress'
+                    - 'Content-Type: text/plain'
+                    - 'Content-Disposition: filename=Proof.txt'
+                    - This is a proof
+                  items:
+                    format: binary
+                    type: string
+                  type: array
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadProofOfAddressResponse'
+            text/xml:
+              schema:
+                $ref: '#/components/schemas/UploadProofOfAddressResponse'
+          description: successful operation
+      summary: Update proof of address
+      tags:
+        - Address
+  /accounts/{accountId}/address/{addressId}/validation:
+    get:
+      description: Check if address is valid to activate numbers
+      operationId: isAddressValid
+      parameters:
+        - description: The ID of the regulation address.
+          in: path
+          name: addressId
+          required: true
+          schema:
+            format: int32
+            type: integer
+        - description: The did type for the destination did.
+          in: query
+          name: didType
+          required: true
+          schema:
+            enum:
+              - GEOGRAPHIC
+              - TOLL_FREE
+              - NATIONAL
+              - MOBILE
+              - INUM
+              - SHARED_COST
+              - SPECIAL
+            type: string
+        - description: The three letter identifier for country of the destination did.
+          in: query
+          name: destinationCountryCodeA3
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IsGlobalAddressValidResponse'
+            text/xml:
+              schema:
+                $ref: '#/components/schemas/IsGlobalAddressValidResponse'
+          description: successful operation
+      summary: Check if address is valid to activate numbers
+      tags:
+        - Address
+  /accounts/{accountId}/address/{addressId}/verification:
+    put:
+      description: Request verification of changes to an address
+      operationId: requestAddressVerification
+      parameters:
+        - description: The identifier of the regulation address.
+          in: path
+          name: addressId
+          required: true
+          schema:
+            format: int32
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestGlobalAddressVerificationResponse'
+            text/xml:
+              schema:
+                $ref: '#/components/schemas/RequestGlobalAddressVerificationResponse'
+          description: successful operation
+      summary: Request verification of changes to an address
+      tags:
+        - Address
   /accounts/{accountId}/addresses:
     get:
       description: GET is used to retrieve all addresses.
@@ -13869,14 +15052,17 @@ paths:
       tags:
         - 10DLC
     post:
-      description: >-
-        <p>Create campaign registry brand on the Account</p><p>My Brand Note:
-        Regardless of if you are a DirectCustomer or Reseller, you will need to
-        create a 'My Brand'. You can only create one of these. On the Request
-        Body you can indicate a 'My Brand' by setting the IsMain flag to
-        true.</p><p>Please visit <a
-        href='/docs/messaging/campaign-management/csp/reseller-brand-api/'>Brand
-        and Reseller Management.</a></p>
+      description: >
+        Create campaign registry brand on the Account.
+
+        My Brand Note Regardless of if you are a DirectCustomer or Reseller, you
+        will need to create a My Brand. 
+
+        You can only create one of these. On the Request Body you can indicate a
+        My Brand by setting the IsMain flag to true.
+
+        Please visit [Brand and Reseller
+        Management](/docs/messaging/campaign-management/csp/reseller-brand-api)
       operationId: Create brand
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
@@ -13987,6 +15173,190 @@ paths:
                      </BrandResponse>
               schema:
                 $ref: '#/components/schemas/BrandErrorResponse'
+          description: Error Response
+      tags:
+        - 10DLC
+  /accounts/{accountId}/campaignManagement/10dlc/brands/{brandId}/vetting:
+    get:
+      description: Retrieve brand external vetting records
+      operationId: Retrieve brand vettings
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: Brand id.
+          example: B5DG4HH
+          in: path
+          name: brandId
+          required: true
+          schema:
+            type: string
+        - description: Vetting provider ID.
+          example: AEGIS
+          in: query
+          name: evpId
+          schema:
+            type: string
+        - description: Vetting class.
+          example: STANDARD
+          in: query
+          name: vettingClass
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BrandVettingResponse>
+                      <BrandVetting>
+                        <VettingId>69823255-96b3-412f-9120-3e77f94c6be5</VettingId>
+                        <VettingStatus>PENDING</VettingStatus>
+                      </BrandVetting>
+                    </BrandVettingResponse>
+              schema:
+                $ref: '#/components/schemas/BrandVettingsResponse'
+          description: OK
+        '400':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BrandVettingResponse>
+                      <ResponseStatus>
+                        <ErrorCode>12055</ErrorCode>
+                        <Description>'LONG_CODE' feature is not enabled on account 900000</Description>
+                      </ResponseStatus>
+                    </BrandVettingResponse>
+              schema:
+                $ref: '#/components/schemas/BrandVettingsErrorResponse'
+          description: Error Response
+      tags:
+        - 10DLC
+    post:
+      description: Create brand an external vetting
+      operationId: Create brand vetting
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: Brand id.
+          example: B5DG4HH
+          in: path
+          name: brandId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/xml:
+            examples:
+              example:
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <Brand>
+                    <EvpId>AEGIS</EvpId>
+                    <VettingClass>STANDARD</VettingClass>
+                  </Brand>
+            schema:
+              $ref: '#/components/schemas/BrandVettingRequest'
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BrandVettingResponse>
+                      <BrandVetting>
+                        <EvpId>BJDHM3</EvpId>
+                        <VettingId>CMHSJ9</VettingId>
+                        <VettingStatus>ACTIVE</VettingStatus>
+                        <BrandId>111111111</BrandId>
+                      </BrandVetting>
+                    </BrandVettingResponse>
+              schema:
+                $ref: '#/components/schemas/BrandVettingsResponse'
+          description: OK
+        '400':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BrandVettingResponse>
+                      <ResponseStatus>
+                        <ErrorCode>12055</ErrorCode>
+                        <Description>'LONG_CODE' feature is not enabled on account 900000</Description>
+                       </ResponseStatus>
+                    </BrandVettingResponse>
+              schema:
+                $ref: '#/components/schemas/BrandVettingsErrorResponse'
+          description: Error Response
+      tags:
+        - 10DLC
+    put:
+      description: Import brand external vetting records
+      operationId: Import brand vetting
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: Brand id.
+          example: B5DG4HH
+          in: path
+          name: brandId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/xml:
+            examples:
+              example:
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <Brand>
+                    <EvpId>AEGIS</EvpId>
+                    <VettingId>b62ed6ba-20f7-4031-a5fa-68e96cd6c036</VettingId>
+                  </Brand>
+            schema:
+              $ref: '#/components/schemas/BrandVettingImportRequest'
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BrandVettingResponse>
+                      <BrandVetting>
+                        <EvpId>BJDHM3</EvpId>
+                        <VettingId>CMHSJ9</VettingId>
+                        <VettingStatus>PUBLIC_PROFIT</VettingStatus>
+                        <BrandId>111111111</BrandId>
+                      </BrandVetting>
+                    </BrandVettingResponse>
+              schema:
+                $ref: '#/components/schemas/BrandVettingImportResponse'
+          description: OK
+        '400':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BrandVettingResponse>
+                      <ResponseStatus>
+                        <ErrorCode>12055</ErrorCode>
+                        <Description>'LONG_CODE' feature is not enabled on account 900000</Description>
+                       </ResponseStatus>
+                    </BrandVettingResponse>
+              schema:
+                $ref: '#/components/schemas/BrandVettingsErrorResponse'
           description: Error Response
       tags:
         - 10DLC
@@ -14704,20 +16074,22 @@ paths:
           required: true
           schema:
             default: 300
+            max: 5000
+            min: 1
             type: integer
         - description: >-
-            <p>The starting date of a search. startdate and enddate
-            <strong>must</strong> be used as a pair.</p>
-          example: yy-mm-dd
+            The starting date of a search in yy-mm-dd format. startdate and
+            enddate <strong>must</strong> be used as a pair.
+          example: 22-10-31
           in: query
           name: startdate
           required: false
           schema:
             type: string
         - description: >-
-            <p>The ending date of a search. startdate and enddate
-            <strong>must</strong> be used as a pair.</p>
-          example: yy-mm-dd
+            The ending date of a search in yy-mm-dd format. startdate and
+            enddate <strong>must</strong> be used as a pair.
+          example: 22-11-31
           in: query
           name: enddate
           required: false
@@ -14741,7 +16113,7 @@ paths:
                     </TNs>
               schema:
                 $ref: '#/components/schemas/TNs'
-          description: <p>The disconnected numbers have been retrieved successfully.</p>
+          description: The disconnected numbers have been retrieved successfully.
       summary: Retrieve disconnected tns
       tags:
         - Disconnecting Numbers
@@ -14752,18 +16124,18 @@ paths:
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
         - description: >-
-            The starting date of a search. startdate and enddate
-            <strong>must</strong> be used as a pair.
-          example: yy-mm-dd
+            The starting date of a search in yy-mm-dd format. startdate and
+            enddate <strong>must</strong> be used as a pair.
+          example: 22-10-31
           in: query
           name: startdate
           required: false
           schema:
             type: string
         - description: >-
-            The end date of a search. startdate and enddate
+            The end date of a search in yy-mm-dd format. startdate and enddate
             <strong>must</strong> be used as a pair.
-          example: yy-mm-dd
+          example: 22-11-31
           in: query
           name: enddate
           required: false
@@ -14779,10 +16151,10 @@ paths:
                     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                     <Quantity>
                       <Count>4</Count>
-                      </Quantity>
+                    </Quantity>
               schema:
                 $ref: '#/components/schemas/Quantity'
-          description: ''
+          description: OK
       summary: Retrieve total number of disconnects
       tags:
         - Disconnecting Numbers
@@ -14814,6 +16186,8 @@ paths:
           required: false
           schema:
             default: 300
+            max: 5000
+            min: 1
             type: integer
         - description: The user ID associated with disconnected phone numbers
           example: jbm
@@ -14832,7 +16206,7 @@ paths:
         - description: >-
             Retrieves all phone numbers disconnected after this date. The start
             date also requires the end date to be specified.
-          example: yy-mm-dd
+          example: 22-10-31
           in: query
           name: startdate
           required: false
@@ -14841,7 +16215,7 @@ paths:
         - description: >-
             Retrieves all phone numbers disconnected before this date. The end
             date also requires the start date to be specified.
-          example: yy-mm-dd
+          example: 22-11-31
           in: query
           name: enddate
           required: false
@@ -15005,7 +16379,7 @@ paths:
       summary: Disconnect numbers from account
       tags:
         - Disconnecting Numbers
-  /accounts/{accountId}/disconnects/{disconnectid}:
+  /accounts/{accountId}/disconnects/{disconnectId}:
     get:
       description: >-
         Retrieves the information associated with the disconnect order
@@ -15020,14 +16394,14 @@ paths:
         - description: Disconnect Order ID
           example: 59e69657-44d2-4e7e-90f8-777988be4aef
           in: path
-          name: disconnectid
+          name: disconnectId
           required: true
           schema:
             type: string
         - description: >-
             If set to true, displays the disconnect order's telephone order
             information in greater detail
-          example: true/false
+          example: true
           in: query
           name: tndetail
           required: false
@@ -15067,7 +16441,7 @@ paths:
       summary: Fetching Disconnect Order Status
       tags:
         - Disconnecting Numbers
-  /accounts/{accountId}/disconnects/{disconnectid}/notes:
+  /accounts/{accountId}/disconnects/{disconnectId}/notes:
     get:
       description: >-
         Retrieve all notes associated with the disconnect order. Please visit <a
@@ -15078,7 +16452,7 @@ paths:
         - description: Disconnect Order ID
           example: 59e69657-44d2-4e7e-90f8-777988be4aef
           in: path
-          name: disconnectid
+          name: disconnectId
           required: true
           schema:
             type: string
@@ -15130,7 +16504,7 @@ paths:
         - description: Disconnect Order ID
           example: 59e69657-44d2-4e7e-90f8-777988be4aef
           in: path
-          name: disconnectid
+          name: disconnectId
           required: true
           schema:
             type: string
@@ -15178,7 +16552,7 @@ paths:
       summary: Add disconnect order note
       tags:
         - Disconnecting Numbers
-  /accounts/{accountId}/disconnects/{disconnectid}/notes/{noteId}:
+  /accounts/{accountId}/disconnects/{disconnectId}/notes/{noteId}:
     put:
       description: >
         Update a specified note.  Notes may only be updated, not deleted. Please
@@ -15190,7 +16564,7 @@ paths:
         - description: Disconnect Order ID
           example: 59e69657-44d2-4e7e-90f8-777988be4aef
           in: path
-          name: disconnectid
+          name: disconnectId
           required: true
           schema:
             type: string
@@ -33564,7 +34938,7 @@ paths:
         GET is used to retrieve all subscriptions for the account (including
         email and callback subscriptions). The returned information reflects the
         subscription as it has been defined, and for callback subscriptions will
-        reflect the status of the latest attempt to place the callback.  The
+        reflect the status of the latest attempt to place the callback. The
         `Status` element will indicate if an error is being encountered when the
         Bandwidth Dashboard API attempts to place the callback.
       operationId: GetSubscriptions
@@ -33712,7 +35086,7 @@ paths:
                   description: Receive callback.
               summary: The notification callback by order type.
       description: >-
-        <p>A POST on the /subscriptions resource is used to request a new
+        A POST on the /subscriptions resource is used to request a new
         subscriptions for an account. The POST creates a new e-mail or callback
         subscription. A well-formed POST will create a subscription resource,
         and return a subscription ID as part of the location header. The ID is
@@ -33722,22 +35096,15 @@ paths:
         after events). OrderId is optional. If OrderId is specified only
         notifications will be sent for events related to that order. If OrderId
         is omitted, notifications will be sent related to events of all orders
-        of the specified type.</p><p>The credentials used to impose security on
-        the callbacks are defined in the <CallbackCredentials> element.  The
-        Basic authentication is straightforward, but the <PublicKey> requires a
-        little more explanation.  Please see the document to the left on Mutual
+        of the specified type. The credentials used to impose security on the
+        callbacks are defined in the <CallbackCredentials> element. The Basic
+        authentication is straightforward, but the <PublicKey> requires a little
+        more explanation.  Please see the document to the left on Mutual
         Authentication for CallBacks.<CallbackCredentials> can be omitted if the
-        url is http, but using https is recommended for security.<p> When status
+        url is http, but using https is recommended for security. When status
         changes on an order that had been subscribed to with a callback
         subscription (order update, note added to order), the following payload
-        will be POSTed to the URL of the callback subscription. More detail can
-        be found in the API documentation for the fictitious endpoint <a
-        href='/apis/numbers#operation/OrderWebhook'>/callbacks</a><p>When a
-        event happens that had been subscribed to with a callback subscription
-        (messaging lost, messaging gained etc.), the following payload will be
-        POSTed to the URL of the callback subscription. More detail can be found
-        in the API documentation for the fictitious endpoint <a
-        href='/apis/numbers#operation/OrderWebhook'>/callbacks</a>
+        will be POSTed to the URL of the callback subscription.
       operationId: CreateSubscriptions
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
@@ -33997,27 +35364,71 @@ paths:
         content:
           application/xml:
             examples:
-              example:
+              eventCallbackSubscription:
+                summary: callback subscription on event type
                 value: |-
                   <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                   <Subscription>
-                    <OrderType>[portins | portouts | orders | disconnects | dldas | lsrorders | e911s | tnoptions | externalTns | importtnorders | removeImportedTnOrders| emergencyNotificationGroup | emergencyEndpointGroup]</OrderType>
-                    <OrderId>[UUID]</OrderId>
-                    <EventType>[MESSAGING_LOST]</EventType>
+                    <EventType>MESSAGING_LOST</EventType>
                     <CallbackSubscription>
-                      <URL>[valid publically addressable URL]</URL>
-                      <Expiry>[time in seconds]</Expiry>
+                      <URL>"http://yourhost:8080/path/to/resource"</URL>
+                      <Expiry>12000</Expiry>
                       <CallbackCredentials>
                         <BasicAuthentication>
-                          <Username>[username]</Username>
-                          <Password>[password]</Password>
+                          <Username>superuser</Username>
+                          <Password>s3cure</Password>
                         </BasicAuthentication>
-                        <PublicKey>[BASE64 encoded public key]</PublicKey>
+                        <PublicKey>LS0tLS1CRUdJTiBDRVJUSU [...] kQgQ0VSVElGSUNBVEUtLS0tLQ0K</PublicKey>
                       </CallbackCredentials>
                     </CallbackSubscription>
                   </Subscription>
+              eventEmailSubscription:
+                summary: email subscription on event type
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <Subscription>
+                    <EventType>MESSAGING_LOST</EventType>
+                    <EmailSubscription>
+                      <Email>newtest@gmail.com</Email>
+                      <DigestRequested>DAILY</DigestRequested>
+                    </EmailSubscription>
+                  </Subscription>
+              orderCallbackSubscription:
+                summary: callback subscription on order type
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <Subscription>
+                    <OrderType>orders</OrderType>
+                    <CallbackSubscription>
+                      <URL>"http://yourhost:8080/path/to/resource"</URL>
+                      <Expiry>12000</Expiry>
+                      <CallbackCredentials>
+                        <BasicAuthentication>
+                          <Username>superuser</Username>
+                          <Password>s3cure</Password>
+                        </BasicAuthentication>
+                        <PublicKey>LS0tLS1CRUdJTiBDRVJUSU [...] kQgQ0VSVElGSUNBVEUtLS0tLQ0K</PublicKey>
+                      </CallbackCredentials>
+                    </CallbackSubscription>
+                  </Subscription>
+              orderEmailSubscription:
+                summary: email subscription on order type
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <Subscription>
+                    <OrderType>portins</OrderType>
+                    <OrderId>e75dc861-95ed-427e-8688-976132a69549</OrderId>
+                    <EmailSubscription>
+                      <Email>newtest@gmail.com</Email>
+                      <DigestRequested>DAILY</DigestRequested>
+                    </EmailSubscription>
+                  </Subscription>
             schema:
-              $ref: '#/components/schemas/Subscription'
+              oneOf:
+                - $ref: '#/components/schemas/EmailSubscriptionByOrderTypeRequest'
+                - $ref: '#/components/schemas/EmailSubscriptionByEventTypeRequest'
+                - $ref: '#/components/schemas/CallBackSubscriptionByOrderTypeRequest'
+                - $ref: '#/components/schemas/CallBackSubscriptionByEventTypeRequest'
       responses:
         '200':
           content:
