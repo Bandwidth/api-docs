@@ -1,11 +1,11 @@
 import React from 'react';
 
-export default function LTSVersions({versions}) {
+export default function PrevVersions({versions}) {
     return (
         <table>
             <thead>
                 <tr>
-                    <th>LTS Version</th>
+                    <th>Previous Version</th>
                     <th>Release Date</th>
                     <th>Sunset Date</th>
                     <th>Hosted Link</th>
