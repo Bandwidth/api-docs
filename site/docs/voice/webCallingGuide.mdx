@@ -1,0 +1,204 @@
+---
+id: overview
+title: Key Concepts
+slug: /voice/guides/webrtc
+description: Calling with WebRTC
+keywords:
+  - bandwidth
+  - voice
+  - webrtc
+image: '@site/static/img/bw-icon.svg'
+---
+
+# Bandwidth WebRTC-Connect calling
+
+Bandwidth offers a *WebRTC Connect* calling capability that allows our customers to use WebRTC voice capabilities present in voice and mobile devices to place calls to critical destinations served by the Bandwidth voice network, allowing access to Bandwidth network services, quality and reach to advance any and all business needs surfaced by web browsers and mobile applications
+
+The Bandwidth *WebRTC Connect* capability is designed for simplicity, reliability and voice quality; leveraging the Bandwidth Global voice network to deliver a voicepath that is managed from end to end.
+
+## Overall Solution Architecture
+
+Bandwidth WebRTC Connect is delivered by way of an SDK that is provided to the customer (that's you) to support development of your client experience.  Those Web and Mobile device SDKs enable the development of web and mobile applications that can negoitiate with our Bandwidth WebRTC Gateway to establish voice calls into our network.  The SDKs manage the initializtion, call creation, call management, and call state change events that are needed to provide a comprehensive calling user experience.
+
+In additon to managing the relationship with the WebRTC Gateway, our Bandwidth capabilities are also used to secure the connection by granting single-use tokens that will ensure that calls via the Gateway will be limited to (and billed to) your account.
+
+See below for a visual depiction of the network-level solution.
+
+![The overall Solution Architecture](@site/static/img/docs-diagrams/voice/WebRTC-solution-small.png "summary")
+
+The following segments of this document will describe...
+1. The important functions performed by the SDK,
+1. The processes used for authenticating access to the WebRTC gateway
+
+# Key elements of the SDK
+
+The key SDK functions are described in terms of the Javascript webrtc-browser SDK.  Similar usage patterns show up in the Android and IOS client SDKs.
+
+There are two important classes in the WebRTC Client SDK - The **UA** and the **Session**.   The **UA** is used to encapsulate the data and behaviors associated with the client itself, and the **Session** encapsulates actual in progress calls.   A real world model would be the phone (**UI**) and calls made by the phone (**Session**)
+
+Initialization and management of the client, and the initiation of calls is managed by the **UA**, and once a call is in progress it can be altered by changes to the **Session**.
+
+## Client Initialization
+
+There are a number of key initialization steps that are required in the web client before the client is capable of placing calls.  This ensures that 
+- the Client is appropriately configured, and capable of connecting to the WebRTC Gateway
+- The account security token has been made availalbe to the SDK to ensure that all calls will be associated with the correct account.
+- the events that will happen on active calls, and with the websocked connection can be appropriately intercepted by the client and handled
+- the connection with the WebRTC Gateway can be established and removed
+
+This is done by making changes to an instance of the UA with some of the methods described below.
+
+Once all of the above initialition steps have been completed, the client is in a position to place calls to the Bandwidth Network via the WebRTC Gateway, an respond to events from the network that result.
+
+The below methods on **phone** instance of the **UA** take care of readying the **phone** to make calls.
+
+### phone.setServerConfig(serverAddresses, serverDomain, iceServers);
+
+The _setServerConfig_ method takes 3 parameters that establish the relationship between the client and the network for making calls.   This method should be called prior to any attempts to perform any other client or calling functions.
+
+There are three parameters for the _setServerConfig_ method call:
+1. ServerAddresses:
+    - serverAddresses: List of the Bandwidth WebRTC gateway websocket IP addresses, ...OR...
+    - serverAddresses: List of prioritized Bandwidth WebRTC gateway websocket IP addresses where each 2 element array in the list contains the inetSocket Address of the AudioCodes Mediant servers and priority
+1. serverDomain : String containing the domain name to use in interactions with the WebRTC Gateway.  This domain is a necessary portion of the endpoint addresses.
+1. iceServers: List of the STUN and TURN servers, containing STUN:// or TURN:// IP addresses. This optional parameter is by default set as an empty list []. If it is used as an empty list, an external STUN server is not used during the creation of the call. This mode is useful when the client has direct visibility of the public network IP addresses of the Bandwidth WebRTC Gateway.
+
+### phone.setOAuthToken(token)
+
+All calls from web and mobile clients require a security token generated by Bandwidth to be present with any request to establish a call to the Bandwidth Network.  The setOAuthToken method invoked on an instance of the **UA** will cause this token to be registered with the client, and used in subsequent calls to ensure that the calls are authentic and contain the correct account information.
+
+More discussion of this overal security model is presented below.
+
+There is a single parameter that is required for the _setOAuthToken_ method - a string containing the Token that was previously fetched from Bandwidth.  
+1. Token : a string containing the Token minted by Bandwidht to secure the traffic from the client. 
+
+The token is cryptograpically protected from tampering, and establishes the account ownership of the customer application, ensuring that our customers will only be presented and billed for traffic that they have authorized.
+
+### phone.setListeners()
+
+There is little value in sending a call towards the Bandwidth network if there is no feedback on events that happen in the network while completing the call.  The _setListeners_ **UA** method allow the registration of callback functions that (if registered) will be invoked on various network and connection events, allowing the client to respond to normal and error conditions that are encountered in the network.
+
+The _setListeners_ configuration method is invoked on an instance of the **UA**, and has a single _listners_ object as the parameter.   This _listners_ object contains six or more elements, each of which is a function that will be invoked on the detection of the event in the network.   These functions will be described in greater detail elsewhere.
+
+The individual functions that can be provided in the _listners_ object are...
+
+1. loginStateChanged: function(isLogin, cause)
+    - the provided function is invoked when the connection state between the Bandwdith WebRTC server and the Client changes.  This can occur when a requested conneciton is established in a bi-directional manner, or when that connection fails.  There are other causes of this event that will be documented elsewhere.
+1. outgoingCallProgress: function(call, response)
+    - the provided function is invoked when there is a change in the state of thcall from the client.  A classic example of this is when a ringing state is detected.
+1. callTerminated: function(call, message, cause)
+    - the provided function is invoked when the call ends.  A cause for the end of the call is provided.
+1. callConfirmed: function(call, message, cause)
+    - the provided function is invoked when the system has determined that the call has been accepted by the Bandwidth WebRTC gateway, and further progress of the call is anticipated.
+1. callShowStreams: function(call, localStream, remoteStream)
+    - the provided function is invoked when media streams have been established.  This often corresponds with the answering of the call.
+1. callHoldStateChanged(call, isHold, isRemote)
+    - if the system is configured to support hold state conditions, this function will be invoked on changes in the hold state of the call.
+});
+
+
+### phone.init() 
+
+The _init_ method is used to establish the connection to the Bandwidth WebRTC gateway.  This method is only valid once the **UA** has been configured.
+
+### phone.deinit() 
+
+The _deinit_ method reverses the action of the _init_ method, removing the connection between the client and the Bandwidth WebRTC gateway.
+
+## Managing Calls from the Client
+
+Once the **UA** has been configured and the connection to the Bandwidth WebRTC Gateway has been established, it is time to make and manage calls.   Once the setup is done, the rest is relatively straightforward.
+
+### activeCall = phone.call(phone.AUDIO, tn)
+
+The _call_ method invoked on the **UA** instance will cause the configured and connected **UA** to launch a call towards the Bandwidth network.   Yess - it is that simple.
+
+The _call_ method takes two parameters:
+1. The first parameter reflects the desired media, and as a result of the nature of the Bandwidth Voice network, this parameter ***must*** be supplied the argument "phone.AUDIO" where the 'phone' represents the instance of the **UA** that has been created and configured.   This parameter may be used in the future to extend the capabilities to other media.
+1. The second parameter represents the destination telephone number for the outbound call.  This TN should be a valid NANP telephone number.
+
+The _call_ method returns an instance of a **Session** object, providing a handle that can be used for subsequent modification of the call while it is in progress.  The methods applicable to the **Session** object instance will be discussed below.
+
+In the sections below, the string _activeCall_ will represent the **Session** instance used for subsequent call modifications.
+
+### activeCall.terminate();
+
+Once a call has been established, one of the possible call modification actions is to end (or terminate) the call.  The _terminate_ method on the **Session** object will be used to cause the call to end.
+
+### activeCall.sendDTMF(digit)
+
+The only remaining action that can be taken on the the **Session** instance at this point is the _sendDTMF_ action which will cause a specified DTMF tone to the far end of the call connnection.   The _digit_ parameter is single character string containing a character from the set [0-9,#,*].
+
+## Utility Methods
+
+There are a variety of utility methods that can be used to manage the interaction between the client and the Bandwidht WebRTC calling capabilities.  These will be detailed in subsequent issues of this document.
+- phone.isInitialized()
+- phone.checkAvailableDevices()
+- phone.setBwLogger()
+- phone.setJsSipLogger()
+
+## Security and Permissions
+
+In order to place calls into the Bandwidth Network (andof course be subject to billing for those calls) it is necessasry to securely generate a Token that is associated with your account.   That token is used by the web or mobile application user to indicate that the communications with the WebRTC gateway should be accepted by that gateway.
+
+### the User that can generate the Token
+
+The token will be retrieved from id.bandwidth.com, the identity services endpoint for the Bandwidth network.  This token will be generated if an API user associated with your account has been created with sufficient permissions, and is then used to request that a secure token be created.
+
+The user making the request must...
+- be associated with your account, and only your account
+- must be an 'API' user, and thus incapable of accessing the portal directly
+- must have the assigned roles...
+    - HTTPVoice
+    - HTTP Application Management
+
+If this user does not exist one can be created for you by your Bandwdith Dashboard administrator.
+
+### the API Call that will retrieve a Token
+
+Retrieving a token from id.bandwidth.com involves a single straightforwared POST API call.
+
+- Method: POST
+- Domain: id.bandwidth.com
+- Path: /api/v1/oauth2/token
+- Query Parm: grant_type=client_credentials
+- Headers
+    - Authorization: Basic + the base 64 encoding of a user ID and password separated by a colon
+    - Content-Type: application/x-www-form-urlencoded
+- Body - empty
+
+Put it all together any you get an API call that looks like...
+
+    POST https://id.bandwidth.com/api/v1/oauth2/token?grant_type=client_credentials
+
+if using CURL it will look like...
+
+```
+curl \
+ --silent \
+ -X POST \
+ -u "${username}:${password}" \
+ --data-urlencode "grant_type=client_credentials" \
+ "https://id.bandwidth.com/api/v1/oauth2/token" 
+ ```
+
+ The response payload contains a JSON-encoded body element structured as follows...
+
+ ```
+ {
+    "access_token": "eyJraWQ...kwIlXLw", // abbreviated
+    "access_token_id": "a5yzUdeCaHIn89Ov8GykcGl",
+    "token_type": "Bearer",
+    "expires_in": 60
+}
+```
+
+The "useful" part of the response is the **access_token**, which is the value that will be used to grant secure access to the *WebRTC Connect* service.  More on the use of this below.
+
+### VERY IMPORTANT Usage Notes
+
+The token should be fetched from id.bandwidth.com from a server running in a secure environment, and provided to clients in a secure manner.
+
+**Bandwidth accepts no responsibility for the loss of account credentials and any resulting network traffic, fraud, or undesired account access that results from failing to manage account access credentials in a completely secure manner.**
+
+Minting of tokens is not included as a client SDK capability for the above reason.
