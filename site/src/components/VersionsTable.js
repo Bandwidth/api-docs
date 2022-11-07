@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function PrevVersions({versions}) {
+export default function VersionsTable({versions}) {
     return (
         <table>
             <thead>
