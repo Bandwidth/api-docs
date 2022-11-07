@@ -6524,6 +6524,20 @@ components:
             $ref: '#/components/schemas/TnAttribute'
           type: array
         orderType:
+          discriminator:
+            mapping:
+              AreaCodeSearchAndOrderType: '#/components/schemas/AreaCodeSearchAndOrderType'
+              CitySearchAndOrderType: '#/components/schemas/CitySearchAndOrderType'
+              CombinedSearchAndOrderType: '#/components/schemas/CombinedSearchAndOrderType'
+              ExistingTelephoneNumberOrderType: '#/components/schemas/ExistingTelephoneNumberOrderType'
+              LATASearchAndOrderType: '#/components/schemas/LATASearchAndOrderType'
+              NPANXXSearchAndOrderType: '#/components/schemas/NPANXXSearchAndOrderType'
+              RateCenterSearchAndOrderType: '#/components/schemas/RateCenterSearchAndOrderType'
+              StateSearchAndOrderType: '#/components/schemas/StateSearchAndOrderType'
+              TollFreeVanitySearchAndOrderType: '#/components/schemas/TollFreeVanitySearchAndOrderType'
+              TollFreeWildCharSearchAndOrderType: '#/components/schemas/TollFreeWildCharSearchAndOrderType'
+              ZIPSearchAndOrderType: '#/components/schemas/ZIPSearchAndOrderType'
+            propertyName: OrderType
           oneOf:
             - $ref: '#/components/schemas/ExistingTelephoneNumberOrderType'
             - $ref: '#/components/schemas/RateCenterSearchAndOrderType'
@@ -6597,31 +6611,6 @@ components:
         userId:
           type: string
       type: object
-    OrderMetadata:
-      properties:
-        BackOrderRequested:
-          type: boolean
-        CloseOrder:
-          type: boolean
-        CustomerOrderId:
-          type: string
-        Name:
-          type: string
-        OrderCreateDate:
-          type: string
-        PartialAllowed:
-          type: boolean
-        PeerId:
-          format: int32
-          type: integer
-        SiteId:
-          format: int32
-          type: integer
-        TnAttributes:
-          items:
-            $ref: '#/components/schemas/TnAttribute'
-          type: array
-      type: object
     OrderNotesResponse:
       properties:
         Notes:
@@ -6640,23 +6629,6 @@ components:
             type: object
           type: array
       type: object
-    OrderRequest:
-      allOf:
-        - $ref: '#/components/schemas/OrderMetadata'
-      oneOf:
-        - $ref: '#/components/schemas/ExistingTelephoneNumberOrderType'
-        - $ref: '#/components/schemas/RateCenterSearchAndOrderType'
-        - $ref: '#/components/schemas/AreaCodeSearchAndOrderType'
-        - $ref: '#/components/schemas/NPANXXSearchAndOrderType'
-        - $ref: '#/components/schemas/TollFreeWildCharSearchAndOrderType'
-        - $ref: '#/components/schemas/TollFreeVanitySearchAndOrderType'
-        - $ref: '#/components/schemas/LATASearchAndOrderType'
-        - $ref: '#/components/schemas/ZIPSearchAndOrderType'
-        - $ref: '#/components/schemas/CitySearchAndOrderType'
-        - $ref: '#/components/schemas/StateSearchAndOrderType'
-        - $ref: '#/components/schemas/CombinedSearchAndOrderType'
-      xml:
-        name: Order
     OrderSummary:
       properties:
         CountOfTNs:
@@ -9263,22 +9235,6 @@ components:
       properties:
         delete:
           type: boolean
-      type: object
-    Subscription:
-      properties:
-        Subscription:
-          properties:
-            CallbackSubscription:
-              $ref: '#/components/schemas/CallbackSubscription'
-            EmailSubscription:
-              $ref: '#/components/schemas/EmailSubscription'
-            EventType:
-              type: string
-            OrderId:
-              type: string
-            OrderType:
-              type: string
-          type: object
       type: object
     SubscriptionOrderId:
       description: >-
@@ -15039,20 +14995,22 @@ paths:
           required: true
           schema:
             default: 300
+            max: 5000
+            min: 1
             type: integer
         - description: >-
-            <p>The starting date of a search. startdate and enddate
-            <strong>must</strong> be used as a pair.</p>
-          example: yy-mm-dd
+            The starting date of a search in yy-mm-dd format. startdate and
+            enddate <strong>must</strong> be used as a pair.
+          example: 22-10-31
           in: query
           name: startdate
           required: false
           schema:
             type: string
         - description: >-
-            <p>The ending date of a search. startdate and enddate
-            <strong>must</strong> be used as a pair.</p>
-          example: yy-mm-dd
+            The ending date of a search in yy-mm-dd format. startdate and
+            enddate <strong>must</strong> be used as a pair.
+          example: 22-11-31
           in: query
           name: enddate
           required: false
@@ -15076,7 +15034,7 @@ paths:
                     </TNs>
               schema:
                 $ref: '#/components/schemas/TNs'
-          description: <p>The disconnected numbers have been retrieved successfully.</p>
+          description: The disconnected numbers have been retrieved successfully.
       summary: Retrieve disconnected tns
       tags:
         - Disconnecting Numbers
@@ -15087,18 +15045,18 @@ paths:
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
         - description: >-
-            The starting date of a search. startdate and enddate
-            <strong>must</strong> be used as a pair.
-          example: yy-mm-dd
+            The starting date of a search in yy-mm-dd format. startdate and
+            enddate <strong>must</strong> be used as a pair.
+          example: 22-10-31
           in: query
           name: startdate
           required: false
           schema:
             type: string
         - description: >-
-            The end date of a search. startdate and enddate
+            The end date of a search in yy-mm-dd format. startdate and enddate
             <strong>must</strong> be used as a pair.
-          example: yy-mm-dd
+          example: 22-11-31
           in: query
           name: enddate
           required: false
@@ -15114,10 +15072,10 @@ paths:
                     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                     <Quantity>
                       <Count>4</Count>
-                      </Quantity>
+                    </Quantity>
               schema:
                 $ref: '#/components/schemas/Quantity'
-          description: ''
+          description: OK
       summary: Retrieve total number of disconnects
       tags:
         - Disconnecting Numbers
@@ -15149,6 +15107,8 @@ paths:
           required: false
           schema:
             default: 300
+            max: 5000
+            min: 1
             type: integer
         - description: The user ID associated with disconnected phone numbers
           example: jbm
@@ -15167,7 +15127,7 @@ paths:
         - description: >-
             Retrieves all phone numbers disconnected after this date. The start
             date also requires the end date to be specified.
-          example: yy-mm-dd
+          example: 22-10-31
           in: query
           name: startdate
           required: false
@@ -15176,7 +15136,7 @@ paths:
         - description: >-
             Retrieves all phone numbers disconnected before this date. The end
             date also requires the start date to be specified.
-          example: yy-mm-dd
+          example: 22-11-31
           in: query
           name: enddate
           required: false
@@ -15340,7 +15300,7 @@ paths:
       summary: Disconnect numbers from account
       tags:
         - Disconnecting Numbers
-  /accounts/{accountId}/disconnects/{disconnectid}:
+  /accounts/{accountId}/disconnects/{disconnectId}:
     get:
       description: >-
         Retrieves the information associated with the disconnect order
@@ -15355,14 +15315,14 @@ paths:
         - description: Disconnect Order ID
           example: 59e69657-44d2-4e7e-90f8-777988be4aef
           in: path
-          name: disconnectid
+          name: disconnectId
           required: true
           schema:
             type: string
         - description: >-
             If set to true, displays the disconnect order's telephone order
             information in greater detail
-          example: true/false
+          example: true
           in: query
           name: tndetail
           required: false
@@ -15402,7 +15362,7 @@ paths:
       summary: Fetching Disconnect Order Status
       tags:
         - Disconnecting Numbers
-  /accounts/{accountId}/disconnects/{disconnectid}/notes:
+  /accounts/{accountId}/disconnects/{disconnectId}/notes:
     get:
       description: >-
         Retrieve all notes associated with the disconnect order. Please visit <a
@@ -15413,7 +15373,7 @@ paths:
         - description: Disconnect Order ID
           example: 59e69657-44d2-4e7e-90f8-777988be4aef
           in: path
-          name: disconnectid
+          name: disconnectId
           required: true
           schema:
             type: string
@@ -15465,7 +15425,7 @@ paths:
         - description: Disconnect Order ID
           example: 59e69657-44d2-4e7e-90f8-777988be4aef
           in: path
-          name: disconnectid
+          name: disconnectId
           required: true
           schema:
             type: string
@@ -15513,7 +15473,7 @@ paths:
       summary: Add disconnect order note
       tags:
         - Disconnecting Numbers
-  /accounts/{accountId}/disconnects/{disconnectid}/notes/{noteId}:
+  /accounts/{accountId}/disconnects/{disconnectId}/notes/{noteId}:
     put:
       description: >
         Update a specified note.  Notes may only be updated, not deleted. Please
@@ -15525,7 +15485,7 @@ paths:
         - description: Disconnect Order ID
           example: 59e69657-44d2-4e7e-90f8-777988be4aef
           in: path
-          name: disconnectid
+          name: disconnectId
           required: true
           schema:
             type: string
@@ -23785,7 +23745,7 @@ paths:
                       <SiteId>743</SiteId>
                   </Order>
             schema:
-              $ref: '#/components/schemas/OrderRequest'
+              $ref: '#/components/schemas/Order'
       responses:
         '201':
           content:
@@ -33703,7 +33663,7 @@ paths:
         GET is used to retrieve all subscriptions for the account (including
         email and callback subscriptions). The returned information reflects the
         subscription as it has been defined, and for callback subscriptions will
-        reflect the status of the latest attempt to place the callback.  The
+        reflect the status of the latest attempt to place the callback. The
         `Status` element will indicate if an error is being encountered when the
         Bandwidth Dashboard API attempts to place the callback.
       operationId: GetSubscriptions
@@ -33851,7 +33811,7 @@ paths:
                   description: Receive callback.
               summary: The notification callback by order type.
       description: >-
-        <p>A POST on the /subscriptions resource is used to request a new
+        A POST on the /subscriptions resource is used to request a new
         subscriptions for an account. The POST creates a new e-mail or callback
         subscription. A well-formed POST will create a subscription resource,
         and return a subscription ID as part of the location header. The ID is
@@ -33861,22 +33821,15 @@ paths:
         after events). OrderId is optional. If OrderId is specified only
         notifications will be sent for events related to that order. If OrderId
         is omitted, notifications will be sent related to events of all orders
-        of the specified type.</p><p>The credentials used to impose security on
-        the callbacks are defined in the <CallbackCredentials> element.  The
-        Basic authentication is straightforward, but the <PublicKey> requires a
-        little more explanation.  Please see the document to the left on Mutual
+        of the specified type. The credentials used to impose security on the
+        callbacks are defined in the <CallbackCredentials> element. The Basic
+        authentication is straightforward, but the <PublicKey> requires a little
+        more explanation.  Please see the document to the left on Mutual
         Authentication for CallBacks.<CallbackCredentials> can be omitted if the
-        url is http, but using https is recommended for security.<p> When status
+        url is http, but using https is recommended for security. When status
         changes on an order that had been subscribed to with a callback
         subscription (order update, note added to order), the following payload
-        will be POSTed to the URL of the callback subscription. More detail can
-        be found in the API documentation for the fictitious endpoint <a
-        href='/apis/numbers#operation/OrderWebhook'>/callbacks</a><p>When a
-        event happens that had been subscribed to with a callback subscription
-        (messaging lost, messaging gained etc.), the following payload will be
-        POSTed to the URL of the callback subscription. More detail can be found
-        in the API documentation for the fictitious endpoint <a
-        href='/apis/numbers#operation/OrderWebhook'>/callbacks</a>
+        will be POSTed to the URL of the callback subscription.
       operationId: CreateSubscriptions
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
@@ -34136,27 +34089,71 @@ paths:
         content:
           application/xml:
             examples:
-              example:
+              eventCallbackSubscription:
+                summary: callback subscription on event type
                 value: |-
                   <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                   <Subscription>
-                    <OrderType>[portins | portouts | orders | disconnects | dldas | lsrorders | e911s | tnoptions | externalTns | importtnorders | removeImportedTnOrders| emergencyNotificationGroup | emergencyEndpointGroup]</OrderType>
-                    <OrderId>[UUID]</OrderId>
-                    <EventType>[MESSAGING_LOST]</EventType>
+                    <EventType>MESSAGING_LOST</EventType>
                     <CallbackSubscription>
-                      <URL>[valid publically addressable URL]</URL>
-                      <Expiry>[time in seconds]</Expiry>
+                      <URL>"http://yourhost:8080/path/to/resource"</URL>
+                      <Expiry>12000</Expiry>
                       <CallbackCredentials>
                         <BasicAuthentication>
-                          <Username>[username]</Username>
-                          <Password>[password]</Password>
+                          <Username>superuser</Username>
+                          <Password>s3cure</Password>
                         </BasicAuthentication>
-                        <PublicKey>[BASE64 encoded public key]</PublicKey>
+                        <PublicKey>LS0tLS1CRUdJTiBDRVJUSU [...] kQgQ0VSVElGSUNBVEUtLS0tLQ0K</PublicKey>
                       </CallbackCredentials>
                     </CallbackSubscription>
                   </Subscription>
+              eventEmailSubscription:
+                summary: email subscription on event type
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <Subscription>
+                    <EventType>MESSAGING_LOST</EventType>
+                    <EmailSubscription>
+                      <Email>newtest@gmail.com</Email>
+                      <DigestRequested>DAILY</DigestRequested>
+                    </EmailSubscription>
+                  </Subscription>
+              orderCallbackSubscription:
+                summary: callback subscription on order type
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <Subscription>
+                    <OrderType>orders</OrderType>
+                    <CallbackSubscription>
+                      <URL>"http://yourhost:8080/path/to/resource"</URL>
+                      <Expiry>12000</Expiry>
+                      <CallbackCredentials>
+                        <BasicAuthentication>
+                          <Username>superuser</Username>
+                          <Password>s3cure</Password>
+                        </BasicAuthentication>
+                        <PublicKey>LS0tLS1CRUdJTiBDRVJUSU [...] kQgQ0VSVElGSUNBVEUtLS0tLQ0K</PublicKey>
+                      </CallbackCredentials>
+                    </CallbackSubscription>
+                  </Subscription>
+              orderEmailSubscription:
+                summary: email subscription on order type
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <Subscription>
+                    <OrderType>portins</OrderType>
+                    <OrderId>e75dc861-95ed-427e-8688-976132a69549</OrderId>
+                    <EmailSubscription>
+                      <Email>newtest@gmail.com</Email>
+                      <DigestRequested>DAILY</DigestRequested>
+                    </EmailSubscription>
+                  </Subscription>
             schema:
-              $ref: '#/components/schemas/Subscription'
+              oneOf:
+                - $ref: '#/components/schemas/EmailSubscriptionByOrderTypeRequest'
+                - $ref: '#/components/schemas/EmailSubscriptionByEventTypeRequest'
+                - $ref: '#/components/schemas/CallBackSubscriptionByOrderTypeRequest'
+                - $ref: '#/components/schemas/CallBackSubscriptionByEventTypeRequest'
       responses:
         '200':
           content:
