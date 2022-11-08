@@ -640,6 +640,60 @@ components:
         delete:
           type: boolean
       type: object
+    AddressRejectionReasons:
+      enum:
+        - INVALID_DOC_NOT_RECENT_ENOUGH
+        - INVALID_DOC_CORRUPT
+        - INVALID_DOC_ILLEGIBLE
+        - INVALID_DOC_MISSING
+        - INVALID_DOC_WHOLE
+        - INVALID_DOCTYPE_INVOICES
+        - INVALID_DOCTYPE_GOVERNMENT_DOCS
+        - INVALID_DOCTYPE_VIRTUAL_ADDRESS
+        - INVALID_DOCTYPE_ATTESTATIONS
+        - INVALID_DOCTYPE_THIRD_PARTY
+        - INVALID_DOCTYPE_REQUIRED_ID
+        - INVALID_DOCTYPE_REQUIRED_ADDRESS
+        - INVALID_DOCTYPE_FIXED_LINE_PROOF
+        - INVALID_DOCTYPE_ID_TYPE
+        - INVALID_DOCTYPE_ID_TYPE_ADDRESS
+        - INVALID_DOCTYPE_PASSPORT
+        - INCOMPLETE_INFO_DATE
+        - INCOMPLETE_INFO_ADDRESS
+        - INCOMPLETE_INFO_PROOFS
+        - INCOMPLETE_INFO_BUSINESS_REG
+        - INCOMPLETE_INFO_LEGAL_REP
+        - INCOMPLETE_INFO_LEGAL_REP_ID
+        - INCOMPLETE_INFO_LEGAL_ZIP
+        - INCOMPLETE_INFO_PO_BOX
+        - INCOMPLETE_INFO_REP_PICTURE
+        - INCOMPLETE_INFO_CHINESE_RECEIPT
+        - INFO_MISMATCH_ADDRESS_PROOF
+        - INFO_MISMATCH_ID_PROOF
+        - INFO_MISMATCH_DETAILS
+        - INFO_MISMATCH_ADDRESS
+        - INFO_MISMATCH_LOCATION
+        - INFO_MISMATCH_RESIDE
+        - INFO_MISMATCH_FATHER
+        - INFO_MISMATCH_MOTHER
+        - INFO_MISMATCH_COMPANY_REG
+        - INFO_MISMATCH_ID_NUMBER
+        - INFO_MISMATCH_COMPANY_NUMBER
+        - INFO_MISMATCH_COMPANY_TAX_NUMBER
+        - INFO_MISMATCH_BIRTH_PLACE
+        - INFO_MISMATCH_BIRTH_DATE
+        - INFO_MISMATCH_ID
+        - OTHER_ABUSE
+        - OTHER_REGULATIONS
+      type: string
+    AddressStatus:
+      enum:
+        - NOT_VERIFIED
+        - REJECTED
+        - VERIFIED
+        - VERIFICATION_REQUESTED
+        - VERIFICATION_NOT_REQUIRED
+      type: string
     AddressType:
       enum:
         - SERVICE
@@ -647,11 +701,6 @@ components:
         - DLDA
         - E911
       type: string
-    AddressTypes:
-      example: LAR
-      items:
-        type: string
-      type: array
     Addresses:
       properties:
         Address:
@@ -2302,13 +2351,11 @@ components:
               type: integer
           type: object
       type: object
-    CreateGlobalAddressRequest:
+    CreateAddressRequest:
       description: Model for Create Address request
       properties:
         addressExtraFields:
           $ref: '#/components/schemas/AddressExtraFields'
-        addressType:
-          $ref: '#/components/schemas/AddressTypes'
         buildingLetter:
           description: >-
             Maximum length: 10. This is the building letter which can also be
@@ -2402,7 +2449,7 @@ components:
         - streetName
         - buildingNumber
       type: object
-    CreateGlobalAddressResponse:
+    CreateAddressResponse:
       properties:
         addressId:
           description: >-
@@ -2798,7 +2845,7 @@ components:
         StartDate:
           type: string
       type: object
-    DeleteGlobalAddressResponse:
+    DeleteAddressResponse:
       properties:
         status:
           description: >-
@@ -4304,80 +4351,6 @@ components:
               $ref: '#/components/schemas/Address'
           type: object
       type: object
-    GlobalAddress:
-      properties:
-        addressExtraFields:
-          $ref: '#/components/schemas/AddressExtraFields'
-        addressId:
-          description: This is the ID of the address which is returned during creation.
-          format: int32
-          type: integer
-        addressType:
-          $ref: '#/components/schemas/AddressTypes'
-        buildingLetter:
-          description: >-
-            This is the building letter which can also be used for additional
-            information on the street number.
-          type: string
-        buildingNumber:
-          description: The building number for the address.
-          type: string
-        city:
-          description: The city for the address.
-          type: string
-        companyDescription:
-          description: >-
-            This is the company description for the end user of the listed
-            address.
-          type: string
-        companyName:
-          description: Name of the company.
-          type: string
-        countryCode:
-          description: The three letter identifier for the address's country.
-          type: string
-        customerReference:
-          description: The reference for the customer.
-          type: string
-        firstName:
-          description: First name of the customer.
-          type: string
-        identityDocumentProof:
-          $ref: '#/components/schemas/IdentityDocumentProof'
-        larAddressRejectionReasons:
-          $ref: '#/components/schemas/LarAddressRejectionReasons'
-          description: Reasons for the rejection of the address verification.
-        larAddressStatus:
-          $ref: '#/components/schemas/LarAddressStatus'
-          description: This is the current status of the address.
-        larIsLinkPhoneNumber:
-          description: >-
-            Flag that specifies if the addresses should be linked to a phone
-            number.
-          type: boolean
-        lastName:
-          description: Last name of the customer.
-          type: string
-        phoneNumber:
-          description: The phone number for the customer.
-          type: string
-        salutation:
-          description: >-
-            This is the salutation of the end user for the listed address: MR or
-            MS if firstName and lastName are used or COMPANY if companyName is
-            used.
-          enum:
-            - MR
-            - MS
-            - COMPANY
-          type: string
-        streetName:
-          description: The street for the address.
-          type: string
-        zipCode:
-          description: The zip code for the address.
-          type: string
-      type: object
     Host:
       properties:
         HostName:
@@ -4434,11 +4407,6 @@ components:
     Identifier:
       type: string
     IdentityDocumentProof:
-      description: >-
-        Model for proof of ID document. Required when the `countryCodeA3` is
-        `FRA`(France) and `didType` is `GEOGRAPHIC` or
-        `destinationCountryCodeA3` is set as `ZAF` (South Africa) or `ITA`
-        (Italy)
       properties:
         identityDocumentNumber:
           description: >-
@@ -4461,9 +4429,8 @@ components:
           type: string
         issuingDate:
           description: >-
-            Issuing date as seen on the ID proof document attached. Maximum
-            length: 10. Mandatory for Italy - Format is yyyy-mm-dd. Has to be a
-            date in the past.
+            Issuing date as seen on the ID proof for certain countries and phone
+            number types for Local Address Requirement.
           type: string
         nationality:
           description: >-
@@ -5044,7 +5011,7 @@ components:
         Description:
           type: string
       type: object
-    IsGlobalAddressValidResponse:
+    IsAddressValidResponse:
       properties:
         isValid:
           description: Indicator if the address is valid or not.
@@ -5074,60 +5041,6 @@ components:
               $ref: '#/components/schemas/lnpPortInfoForGivenStatus'
           type: object
       type: object
-    LarAddressRejectionReasons:
-      enum:
-        - INVALID_DOC_NOT_RECENT_ENOUGH
-        - INVALID_DOC_CORRUPT
-        - INVALID_DOC_ILLEGIBLE
-        - INVALID_DOC_MISSING
-        - INVALID_DOC_WHOLE
-        - INVALID_DOCTYPE_INVOICES
-        - INVALID_DOCTYPE_GOVERNMENT_DOCS
-        - INVALID_DOCTYPE_VIRTUAL_ADDRESS
-        - INVALID_DOCTYPE_ATTESTATIONS
-        - INVALID_DOCTYPE_THIRD_PARTY
-        - INVALID_DOCTYPE_REQUIRED_ID
-        - INVALID_DOCTYPE_REQUIRED_ADDRESS
-        - INVALID_DOCTYPE_FIXED_LINE_PROOF
-        - INVALID_DOCTYPE_ID_TYPE
-        - INVALID_DOCTYPE_ID_TYPE_ADDRESS
-        - INVALID_DOCTYPE_PASSPORT
-        - INCOMPLETE_INFO_DATE
-        - INCOMPLETE_INFO_ADDRESS
-        - INCOMPLETE_INFO_PROOFS
-        - INCOMPLETE_INFO_BUSINESS_REG
-        - INCOMPLETE_INFO_LEGAL_REP
-        - INCOMPLETE_INFO_LEGAL_REP_ID
-        - INCOMPLETE_INFO_LEGAL_ZIP
-        - INCOMPLETE_INFO_PO_BOX
-        - INCOMPLETE_INFO_REP_PICTURE
-        - INCOMPLETE_INFO_CHINESE_RECEIPT
-        - INFO_MISMATCH_ADDRESS_PROOF
-        - INFO_MISMATCH_ID_PROOF
-        - INFO_MISMATCH_DETAILS
-        - INFO_MISMATCH_ADDRESS
-        - INFO_MISMATCH_LOCATION
-        - INFO_MISMATCH_RESIDE
-        - INFO_MISMATCH_FATHER
-        - INFO_MISMATCH_MOTHER
-        - INFO_MISMATCH_COMPANY_REG
-        - INFO_MISMATCH_ID_NUMBER
-        - INFO_MISMATCH_COMPANY_NUMBER
-        - INFO_MISMATCH_COMPANY_TAX_NUMBER
-        - INFO_MISMATCH_BIRTH_PLACE
-        - INFO_MISMATCH_BIRTH_DATE
-        - INFO_MISMATCH_ID
-        - OTHER_ABUSE
-        - OTHER_REGULATIONS
-      type: string
-    LarAddressStatus:
-      enum:
-        - NOT_VERIFIED
-        - REJECTED
-        - VERIFIED
-        - VERIFICATION_REQUESTED
-        - VERIFICATION_NOT_REQUIRED
-      type: string
     LegacyTerminationSettings:
       properties:
         BillingType:
@@ -5338,17 +5251,84 @@ components:
             previous page of 'size' results.
           type: string
       type: object
-    ListGlobalAddressResponse:
+    ListAddressResponse:
       properties:
-        addresses:
-          description: A list with addresses corresponding to the request filter (if any).
-          items:
-            $ref: '#/components/schemas/GlobalAddress'
-          type: array
-        resultCount:
+        addressCount:
           description: The total number of records corresponding to the request filter.
           format: int32
           type: integer
+        addresses:
+          description: A list with addresses corresponding to the request filter (if any).
+          items:
+            properties:
+              addressExtraFields:
+                $ref: '#/components/schemas/AddressExtraFields'
+              addressId:
+                description: >-
+                  This is the ID of the address which is returned during
+                  creation.
+                format: int32
+                type: integer
+              addressRejectionReasons:
+                $ref: '#/components/schemas/AddressRejectionReasons'
+                description: Reasons for the rejection of the address verification.
+              addressStatus:
+                $ref: '#/components/schemas/AddressStatus'
+                description: This is the current status of the address.
+              buildingLetter:
+                description: >-
+                  This is the building letter which can also be used for
+                  additional information on the street number.
+                type: string
+              buildingNumber:
+                description: The building number for the address.
+                type: string
+              city:
+                description: The city for the address.
+                type: string
+              companyDescription:
+                description: >-
+                  This is the company description for the end user of the listed
+                  address.
+                type: string
+              companyName:
+                description: Name of the company.
+                type: string
+              countryCode:
+                description: The three letter identifier for the address's country.
+                type: string
+              customerReference:
+                description: The reference for the customer.
+                type: string
+              firstName:
+                description: First name of the customer.
+                type: string
+              identityDocumentProof:
+                $ref: '#/components/schemas/IdentityDocumentProof'
+              lastName:
+                description: Last name of the customer.
+                type: string
+              phoneNumber:
+                description: The phone number for the customer.
+                type: string
+              salutation:
+                description: >-
+                  This is the salutation of the end user for the listed address:
+                  MR or MS if firstName and lastName are used or COMPANY if
+                  companyName is used.
+                enum:
+                  - MR
+                  - MS
+                  - COMPANY
+                type: string
+              streetName:
+                description: The street for the address.
+                type: string
+              zipCode:
+                description: The zip code for the address.
+                type: string
+            type: object
+          type: array
       type: object
     LnpCheckerTnList:
       properties:
@@ -8440,7 +8420,7 @@ components:
             $ref: '#/components/schemas/NotDetailedReport'
           type: array
       type: object
-    RequestGlobalAddressVerificationResponse:
+    RequestAddressVerificationResponse:
       properties:
         status:
           description: >-
@@ -11508,12 +11488,11 @@ paths:
     get:
       description: >-
         Allows you to view addresses already created and their current status.
-        You can use these addresses to link to DIDs to satisfy LAR requirements.
-      operationId: listGlobalAddress
+        You can use these addresses to link to phone numbers to satisfy LAR
+        requirements.
+      operationId: listAddress
       parameters:
-        - description: >-
-            This is the ID of the address which is returned by
-            createGlobalAddress.
+        - description: This is the ID of the address which is returned by createAddress.
           in: query
           name: addressId
           schema:
@@ -11536,7 +11515,7 @@ paths:
             type: string
         - description: The three letter identifier for the address's country.
           in: query
-          name: countryCodeA3
+          name: countryCode
           schema:
             type: string
         - description: The city for the address.
@@ -11564,41 +11543,28 @@ paths:
           name: customerReference
           schema:
             type: string
-        - $ref: '#/components/schemas/LarAddressStatus'
-        - description: >-
-            Flag that specifies if the address has been linked to a phone
-            number.
+        - description: The status of the address.
           in: query
-          name: linked
+          name: addressStatus
           schema:
-            type: boolean
-        - description: The page number, starting at 0.
-          example: 0
+            type: string
+        - description: >-
+            An ID of the first element in a page. This value will indicate the
+            first value, not the count, of the initial entry in the page being
+            requested.  If the page is the address that begins the page. The
+            initial page is tagged with the ID "1"
           in: query
-          name: pageNumber
+          name: page
           required: true
           schema:
-            format: int32
-            type: integer
-        - description: >-
-            The page size (max number of entities that are displayed in the
-            response).
-          example: 20
-          in: query
-          name: pageSize
-          required: true
-          schema:
-            format: int32
-            type: integer
+            default: '1'
+            type: string
       responses:
         '200':
           content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ListGlobalAddressResponse'
             text/xml:
               schema:
-                $ref: '#/components/schemas/ListGlobalAddressResponse'
+                $ref: '#/components/schemas/ListAddressResponse'
           description: successful operation
       summary: List already created addresses
       tags:
@@ -11606,227 +11572,30 @@ paths:
     post:
       description: >
         Allows you to create a new end user's address that can be linked to
-
-        DIDs where a local address requirement (LAR) applies. Note that
+        phone numbers where a local address requirement (LAR) applies. Note that
         addresses for local address requirement (LAR) may require the city and
         zip code match the phone numbers's area code. To know whether this is
         required, you should check the local address requirements. The method
-        allows the
+        allows the attachment of a proof of address.
 
-        attachment of a proof of address.
 
-        If a proof of address is attached, the system automatically
-
-        triggers a request for verification so that Bandwidth can manually
-        verify
-
-        the address elements. The media type to be used is multipart/form-data.
-
-
-        ### Request Body Examples
-
-        The request body examples below demonstrate how to create an address
-        with both proofs attached in a single request wherever required. You can
-        copy and paste this on the right column while testing in the
-        console/Postman.
-
-
-        #### Create a Business Address without any proof document
-
-        Below is an example of a business address where no proof of identity or
-        address is required.
-
-        ```javascript
-
-        --XXX
-
-        Content-ID: createGlobalAddressRequest
-
-        Content-Type: application/json
-
-
-        {
-           "customerReference":"Bandwidth - GBR",
-           "didType":"GEOGRAPHIC",
-           "salutation":"COMPANY",
-           "companyName":"Bandwidth",
-           "buildingNumber":"42",
-           "streetName":"Folgate Street",
-           "zipCode":"E1 6BT",
-           "city":"London",
-           "countryCodeA3":"GBR",
-           "destinationCountryCodeA3":"GBR"
-        }
-
-        --XXX--
-
-        ```
-
-        #### Create a Business Address with Additional Information
-
-        Below is an example of a business address where no proof of identity or
-        address is required but additional information must be supplied in extra
-        fields.
-
-        ```javascript
-
-        --XXX
-
-        Content-ID: createGlobalAddressRequest
-
-        Content-Type: application/json
-
-
-        {
-           "customerReference":"Bandwidth - DNK",
-           "didType":"GEOGRAPHIC",
-           "salutation":"COMPANY",
-           "companyName":"Bandwidth",
-           "buildingNumber":"24",
-           "streetName":"Toldbodgade",
-           "zipCode":"1253",
-           "city":"København",
-           "countryCodeA3":"DNK",
-           "destinationCountryCodeA3":"DNK",
-           "addressExtraFields":{
-              "Street Code":"2100",
-              "Municipality Code":"101"
-           }
-        }
-
-        --XXX--
-
-        ```
-
-        #### Create a Business Address with Address Proof Document
-
-        Below is an example where an address proof document is required but no
-        proof of identity.
-
-        ```javascript
-
-        --XXX
-
-        Content-ID: createGlobalAddressRequest
-
-        Content-Type: application/json
-
-
-        {
-           "customerReference":"Bandwidth - GBR",
-           "didType":"GEOGRAPHIC",
-           "salutation":"COMPANY",
-           "companyName":"Bandwidth",
-           "buildingNumber":"42",
-           "streetName":"Folgate Street",
-           "zipCode":"E1 6BT",
-           "city":"London",
-           "countryCodeA3":"GBR",
-           "destinationCountryCodeA3":"GBR"
-        }
-
-        --XXX
-
-        Content-ID: proofOfAddress
-
-        Content-Type: application/octet-stream
-
-        Content-Disposition: filename=Proof_of_address.txt
-
-
-        Proof document encoded content
-
-
-        --XXX--
-
-        ```
-
-        #### Create a Business Address with Proof of Address, Proof of Identity
-        and Identity Document Proof
-
-        Below is an example where a proof of address document, proof of identity
-        document and identity document proof is required.
-
-        ```javascript
-
-        --XXX
-
-        Content-ID: createGlobalAddressRequest
-
-        Content-Type: application/json
-
-
-        {
-           "customerReference":"Bandwidth - FRA",
-           "didType":"GEOGRAPHIC",
-           "salutation":"COMPANY",
-           "companyName":"Bandwidth",
-           "buildingNumber":"108",
-           "streetName":"Rue Saint-Lazare",
-           "zipCode":"75008",
-           "city":"Paris",
-           "countryCodeA3":"FRA",
-           "destinationCountryCodeA3":"FRA",
-           "identityDocumentProof":{
-              "nationality":"French",
-              "identityDocumentType":"PASSPORT",
-              "identityDocumentNumber":"3071931"
-           }
-        }
-
-        --XXX--
-
-
-        --XXX
-
-        Content-ID: proofOfIdentityDocument
-
-        Content-Type: application/octet-stream
-
-        Content-Transfer-Encoding: binary
-
-        Content-Disposition: file-data; name="proofOfIdentityDocument";
-        filename=passport_scan.pdf
-
-
-        Identity document proof encoded content
-
-
-        --XXX--
-
-
-        --XXX
-
-        Content-ID: proofOfAddress
-
-        Content-Type: application/octet-stream
-
-        Content-Disposition: filename=Proof_of_address.txt
-
-
-        Proof document encoded content
-
-
-        --XXX--
-
-        ```
-      operationId: createGlobalAddress
+        If a proof of address is attached, the system automatically triggers a
+        request for verification so that Bandwidth can manually verify the
+        address elements. The media type to be used is multipart/form-data.
+      operationId: createAddress
       requestBody:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/CreateGlobalAddressRequest'
+              $ref: '#/components/schemas/CreateAddressRequest'
         description: Request parameters
         required: false
       responses:
         '200':
           content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CreateGlobalAddressResponse'
             text/xml:
               schema:
-                $ref: '#/components/schemas/CreateGlobalAddressResponse'
+                $ref: '#/components/schemas/CreateAddressResponse'
           description: successful operation
       summary: Create a new address
       tags:
@@ -11834,7 +11603,7 @@ paths:
   /accounts/{accountId}/address/{addressId}:
     delete:
       description: Delete an address
-      operationId: deleteGlobalAddress
+      operationId: deleteAddress
       parameters:
         - description: >-
             The ID of the address that you want to delete. You can only delete
@@ -11848,19 +11617,16 @@ paths:
       responses:
         '200':
           content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DeleteGlobalAddressResponse'
             text/xml:
               schema:
-                $ref: '#/components/schemas/DeleteGlobalAddressResponse'
+                $ref: '#/components/schemas/DeleteAddressResponse'
           description: successful operation
       summary: Delete an address
       tags:
         - Address
     get:
       description: Get a specific address with id
-      operationId: getGlobalAddress
+      operationId: getAddress
       parameters:
         - description: The ID of the address.
           in: path
@@ -11872,12 +11638,9 @@ paths:
       responses:
         '200':
           content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ListGlobalAddressResponse'
             text/xml:
               schema:
-                $ref: '#/components/schemas/ListGlobalAddressResponse'
+                $ref: '#/components/schemas/ListAddressResponse'
           description: successful operation
       summary: Get a specific address with id
       tags:
@@ -11903,9 +11666,6 @@ paths:
       responses:
         '200':
           content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CreateProofOfIdResponse'
             text/xml:
               schema:
                 $ref: '#/components/schemas/CreateProofOfIdResponse'
@@ -11950,9 +11710,6 @@ paths:
       responses:
         '200':
           content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UploadProofOfAddressResponse'
             text/xml:
               schema:
                 $ref: '#/components/schemas/UploadProofOfAddressResponse'
@@ -11992,12 +11749,9 @@ paths:
       responses:
         '200':
           content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/IsGlobalAddressValidResponse'
             text/xml:
               schema:
-                $ref: '#/components/schemas/IsGlobalAddressValidResponse'
+                $ref: '#/components/schemas/IsAddressValidResponse'
           description: successful operation
       summary: Check if address is valid to activate numbers
       tags:
@@ -12017,12 +11771,9 @@ paths:
       responses:
         '200':
           content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RequestGlobalAddressVerificationResponse'
             text/xml:
               schema:
-                $ref: '#/components/schemas/RequestGlobalAddressVerificationResponse'
+                $ref: '#/components/schemas/RequestAddressVerificationResponse'
           description: successful operation
       summary: Request verification of changes to an address
       tags:
