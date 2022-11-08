@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import carouselStyles from '@site/src/components/css/Carousel.module.css';
 
 export default function Carousel({itemList, title}) {
@@ -90,8 +90,7 @@ export default function Carousel({itemList, title}) {
         }
     }, [currentIndex])  // update when currentIndex is changed (from button click)
 
-    function CarouselItem({image, category, categoryLink, postLink, postTitle}) {
-    
+    function CarouselItem({imageUrl, categories, categoryLinks, postLink, postTitle}) {   
         var itemContentWidth = itemWidth * .8;
 
         var slideStyle = {
@@ -105,10 +104,14 @@ export default function Carousel({itemList, title}) {
 
         var imageStyle = {
             width: `${itemContentWidth}px`,
-            height: `${itemContentWidth * .51}px`
+            height: `${itemContentWidth * .51}px`,
+            backgroundImage: `url(${imageUrl})`,
+            backgroundSize: `cover`,
+            borderRadius: `14px`,
+            boxShadow: `0px 0px 10px #00000029`
         }
 
-        var categoryStyle = {
+        var categoriesStyle = {
             width: `${itemContentWidth}px`,
         }
 
@@ -119,9 +122,11 @@ export default function Carousel({itemList, title}) {
         return (
             <div className={carouselStyles.slide} style={slideStyle}>
                 <div className={carouselStyles.item} style={itemStyle}>
-                    <div className={carouselStyles.image} style={imageStyle}><img src={image} style={imageStyle}></img></div>
-                    <div className={carouselStyles.category} style={categoryStyle}>
-                        <a href={categoryLink}>{category}</a>
+                    <div className={carouselStyles.image} style={imageStyle}></div>
+                    <div className={carouselStyles.categories} style={categoriesStyle}>
+                        {categories.map((category, idx) => (
+                            <a href={categoryLinks[idx]}>{category}</a>
+                        ))}
                     </div>
                     <div className={carouselStyles.post} style={postStyle}>
                         <a href={postLink}>{postTitle}</a>

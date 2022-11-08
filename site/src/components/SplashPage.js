@@ -1,9 +1,8 @@
 import React from 'react';
 import splashPageStyles from '@site/src/components/css/SplashPage.module.css';
 import Carousel from '@site/src/components/Carousel.js';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 
-import voiceQuality from '@site/static/img/Blog_Voice-Quality-CCaaS.png';
-import callFromUK from '@site/static/img/Blog_CallUKFromUS.png';
 
 const guides = {
     title: 'Check out our guides',
@@ -29,41 +28,7 @@ const sdks = {
 }
 const sdksImage = require('@site/static/img/sdks-splash.svg').default;
 
-const carousel = [
-    {
-        image: voiceQuality,
-        category: 'Voice',
-        categoryLink: 'https://www.bandwidth.com/blog/category/voice/',
-        postLink: 'https://www.bandwidth.com/blog/improving-the-agent-experience/',
-        postTitle: `Voice quality: The unsung hero of agent experience`,
-    },{
-        image: callFromUK,
-        category: 'Voice',
-        categoryLink: 'https://www.bandwidth.com/blog/category/voice/',
-        postLink: 'https://www.bandwidth.com/blog/how-to-dial-the-uk-from-the-us/',
-        postTitle: `How to Dial the U.K. from the U.S. - Bandwidth's Calling Guide`,
-    },
-    {
-        Svg: require('@site/static/img/product-icons/voice.svg').default,
-        link: '/docs/voice/',
-        linkText: 'Voice About Page'
-    },
-    {
-        Svg: require('@site/static/img/product-icons/numbers.svg').default,
-        link: '/docs/numbers/guides/manage-inventory/searchingNumbers/',
-        linkText: 'Searching Numbers'
-    },
-    {
-        Svg: require('@site/static/img/product-icons/numbers.svg').default,
-        link: '/docs/numbers/guides/manage-inventory/applyTnOptionsAndFeatures/',
-        linkText: 'Apply TN Options'
-    },
-    {
-        Svg: require('@site/static/img/product-icons/account.svg').default,
-        link: '/docs/account/credentials/',
-        linkText: 'Account Credentials'
-    }
-]
+
 
 function SplashRow({left, right}) {
     return (
@@ -93,6 +58,9 @@ function SplashPageTextBlock({title, text, linkText, link}) {
 }
 
 export default function SplashPage() {
+    const {siteConfig} = useDocusaurusContext();
+    const carousel = siteConfig.customFields.blogPosts;
+    
     return (
         <div className={splashPageStyles.splash}>
             <div className={splashPageStyles.header}>
