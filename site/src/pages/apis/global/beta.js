@@ -9,6 +9,7 @@ export default function ApiReferencePage() {
     const options = [
       {title: "V1", link: "/apis/global"},
       {title: "V2", link: "/apis/global/v2"},
+      {title: "V3", link: "/apis/global/v3"},
       {title: "Beta", link: "/apis/global/beta"}
     ];
     const version = "Beta"
