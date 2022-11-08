@@ -513,6 +513,102 @@ components:
         RecommendedAddress:
           $ref: '#/components/schemas/Address'
       type: object
+    AddressExtraFields:
+      description: >-
+        These are extra address parameters that are required in certain
+        countries and for certain DID types.
+      properties:
+        companyVatNumber:
+          description: >-
+            Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60.
+            Mandatory for Company end user only.
+          type: string
+        dateOfBirth:
+          description: >-
+            Italy / GEOGRAPHIC and TOLL_FREE / String (yyyy-mm-dd), maximum
+            length: 10. Validation made for age > 18 years.
+          type: string
+        firstName:
+          description: >-
+            Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60.
+            Mandatory for Company end user only.
+          type: string
+        fiscalIdentificationCode:
+          description: >-
+            Spain / Mobile / String, maximum length: 60. Only required for
+            professional addresses (salutation is COMPANY).
+          maxLength: 60
+          minLength: 0
+          type: string
+        idNumber:
+          description: >-
+            Spain / Mobile / String, maximum length: 60. Only required for
+            personal addresses (salutation is either MR or MS), additional
+            validation is performed depending on the type of ID. DNI: 8 digits
+            followed by 1 letter / NIE: 1 letter (X,Y or Z), followed by 7
+            digits, followed by 1 letter / NIF: 8 digits followed by 1 letter /
+            PASSPORT: no additional validation.
+          maxLength: 60
+          minLength: 0
+          type: string
+        idType:
+          description: >-
+            Spain / Mobile / DNI, NIE, NIF, PASSPORT. Only required for personal
+            addresses (salutation is either MR or MS).
+          enum:
+            - DNI
+            - NIF
+            - NIE
+            - PASSPORT
+          type: string
+        lastName:
+          description: >-
+            Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60.
+            Mandatory for Company end user only.
+          type: string
+        municipalityCode:
+          description: 'Denmark / ALL / String, maximum length: 4.'
+          maxLength: 4
+          minLength: 0
+          type: string
+        nationality:
+          description: >-
+            Spain / Mobile / String, maximum length: 60. The exact format can be
+            chosen freely as long as it allows a human to understand it. We
+            recommend using the full country name but the ISO-3166-1 alpha-3
+            code is acceptable if it is easier to process by your system.
+          maxLength: 60
+          minLength: 0
+          type: string
+        placeOfBirth:
+          description: >-
+            Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60. Both
+            City and country of birth is expected.
+          type: string
+        province:
+          description: >-
+            Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60.
+            Optional field.
+          type: string
+        state:
+          description: ' Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60. Optional field.'
+          type: string
+        streetCode:
+          description: 'Denmark / ALL / String, maximum length: 4.'
+          maxLength: 4
+          minLength: 0
+          type: string
+        taxCode:
+          description: >-
+            Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60.
+            Mandatory field.
+          type: string
+        title:
+          description: >-
+            Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60.
+            Mandatory for Company end user only.
+          type: string
+      type: object
     AddressPatch:
       properties:
         AddressLine2:
@@ -551,6 +647,11 @@ components:
         - DLDA
         - E911
       type: string
+    AddressTypes:
+      example: LAR
+      items:
+        type: string
+      type: array
     Addresses:
       properties:
         Address:
@@ -2202,8 +2303,12 @@ components:
           type: object
       type: object
     CreateGlobalAddressRequest:
-      description: Model for Create Regulation Address request
+      description: Model for Create Address request
       properties:
+        addressExtraFields:
+          $ref: '#/components/schemas/AddressExtraFields'
+        addressType:
+          $ref: '#/components/schemas/AddressTypes'
         buildingLetter:
           description: >-
             Maximum length: 10. This is the building letter which can also be
@@ -2215,15 +2320,7 @@ components:
             number of the address.
           type: string
         city:
-          description: >-
-            Maximum length: 60. This is the city of the end user's address. Note
-            that sometimes the city and zip code will have to match the DID's
-            area code for instance in Germany (DEU), Croatia (HRV), South Korea
-            (KOR), etc. To know whether this is required, you should check the
-            local address requirements indicated in the listDidGroup method
-            (regulationRequirement.addressType=LOCAL). In those cases the
-            listZipCodes method should be used to retrieve a proper city and zip
-            code for the DID's area code.
+          description: 'Maximum length: 60. This is the city of the address.'
           type: string
         companyDescription:
           description: >-
@@ -2236,7 +2333,7 @@ components:
             created address. It is a mandatory field if the salutation is
             COMPANY.
           type: string
-        countryCodeA3:
+        countryCode:
           description: >-
             The country code for the address in its ISO 3166-1 alpha-3 format
             (e.g. 'GBR' for United Kingdom, 'USA' for United States of America,
@@ -2247,32 +2344,6 @@ components:
             Maximum length: 60. This is a parameter that can be used for your
             own reference, e.g. to uniquely identify one of your customers.
           type: string
-        destinationCountryCodeA3:
-          description: >-
-            This is country code A3 of the DID's country (USA, BEL, GBR, DEU,
-            etc.). This information is required before the address is created
-            since the address requirements change based on this information. The
-            system will perform automatically a first address validation based
-            on the DID's country and type.
-          type: string
-        didType:
-          description: >-
-            This is the DID's type (GEOGRAPHIC, NATIONAL, etc.). This
-            information is required before the address is created since the
-            address requirements change based on this information. The system
-            will perform automatically a first address validation based on the
-            DID's country and type.
-          enum:
-            - GEOGRAPHIC
-            - TOLL_FREE
-            - NATIONAL
-            - MOBILE
-            - INUM
-            - SHARED_COST
-            - SPECIAL
-          type: string
-        extraFields:
-          $ref: '#/components/schemas/GlobalAddressExtraFields'
         firstName:
           description: >-
             Maximum length: 60. This is the first name for the end user of the
@@ -2281,6 +2352,22 @@ components:
           type: string
         identityDocumentProof:
           $ref: '#/components/schemas/IdentityDocumentProof'
+        larPhoneNumberCountryCode:
+          description: >-
+            This is country code of the phone numbers country you intend to link
+            to this address in ISO 3166-1 alpha-3 format (USA, BEL, GBR, DEU,
+            etc.) for local address requirement, which changes based on this
+            information. The system will perform automatically a first address
+            validation based on the phone numbers country and type.
+          type: string
+        larPhoneNumberType:
+          description: >-
+            This is the type of the phone number you intend to link to this
+            address (GEOGRAPHIC, NATIONAL, etc.) for local address requirement,
+            which changes based on this information. The system will perform
+            automatically a first address validation based on the phone numbers
+            country and type.
+          type: string
         lastName:
           description: >-
             Maximum length: 60. This is the company name for the end user of the
@@ -2289,8 +2376,8 @@ components:
           type: string
         phoneNumber:
           description: >-
-            This field is to be used to provide end-user telephone number (for
-            example, for China or Bahrain). Format is +xxnumber
+            This field is to be used to provide your contact telephone number.
+            Format is E.164
           type: string
         salutation:
           description: >-
@@ -2303,28 +2390,17 @@ components:
             - COMPANY
           type: string
         streetName:
-          description: 'Maximum length: 50. This is the name of the end user''s street.'
+          description: 'Maximum length: 50. This is the name of the street.'
           type: string
         zipCode:
-          description: >-
-            Maximum length: 10. This is the zip code of the end user's address.
-            Note that sometimes the city and zip code will have to match the
-            DID's area code for instance in Germany (DEU), Croatia (HRV), South
-            Korea (KOR), etc. To know whether this is required, you should check
-            the local address requirements indicated in the listDidGroup method
-            (regulationRequirement.addressType=LOCAL). In those cases the
-            listZipCodes method should be used to retrieve a proper city and zip
-            code for the DID's area code.
+          description: 'Maximum length: 10. This is the zip code of the address.'
           type: string
       required:
-        - buildingNumber
-        - city
-        - countryCodeA3
-        - destinationCountryCodeA3
-        - didType
-        - salutation
-        - streetName
+        - countryCode
         - zipCode
+        - city
+        - streetName
+        - buildingNumber
       type: object
     CreateGlobalAddressResponse:
       properties:
@@ -4203,10 +4279,10 @@ components:
       type: object
     GeocodeRequestConflictResponse:
       properties:
-        ErrorMessage:
-          type: string
         GeocodeRequestResponse:
           properties:
+            ErrorMessage:
+              type: string
             GeocodeAddress:
               $ref: '#/components/schemas/Address'
             RequestAddress:
@@ -4230,18 +4306,14 @@ components:
       type: object
     GlobalAddress:
       properties:
-        AddressRejectionReasons:
-          $ref: '#/components/schemas/GlobalAddressRejectionReasons'
-          description: Reasons for the rejection of the regulation address verification.
-        AddressStatus:
-          $ref: '#/components/schemas/GlobalAddressStatus'
-          description: This is the current status of the address.
-        AddressType:
-          $ref: '#/components/schemas/GlobalAddressType'
+        addressExtraFields:
+          $ref: '#/components/schemas/AddressExtraFields'
         addressId:
           description: This is the ID of the address which is returned during creation.
           format: int32
           type: integer
+        addressType:
+          $ref: '#/components/schemas/AddressTypes'
         buildingLetter:
           description: >-
             This is the building letter which can also be used for additional
@@ -4261,23 +4333,34 @@ components:
         companyName:
           description: Name of the company.
           type: string
-        countryCodeA3:
+        countryCode:
           description: The three letter identifier for the address's country.
           type: string
         customerReference:
           description: The reference for the customer.
           type: string
-        extraFields:
-          $ref: '#/components/schemas/GlobalAddressExtraFields'
         firstName:
           description: First name of the customer.
           type: string
+        identityDocumentProof:
+          $ref: '#/components/schemas/IdentityDocumentProof'
+        larAddressRejectionReasons:
+          $ref: '#/components/schemas/LarAddressRejectionReasons'
+          description: Reasons for the rejection of the address verification.
+        larAddressStatus:
+          $ref: '#/components/schemas/LarAddressStatus'
+          description: This is the current status of the address.
+        larIsLinkPhoneNumber:
+          description: >-
+            Flag that specifies if the addresses should be linked to a phone
+            number.
+          type: boolean
         lastName:
           description: Last name of the customer.
           type: string
-        linked:
-          description: Flag that specifies if the addresses should be linked to a DID.
-          type: boolean
+        phoneNumber:
+          description: The phone number for the customer.
+          type: string
         salutation:
           description: >-
             This is the salutation of the end user for the listed address: MR or
@@ -4295,160 +4378,6 @@ components:
           description: The zip code for the address.
           type: string
       type: object
-    GlobalAddressExtraFields:
-      description: >-
-        These are extra address parameters that are required in certain
-        countries and for certain DID types.
-      properties:
-        companyVatNumber:
-          description: >-
-            Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60.
-            Mandatory for Company end user only.
-          type: string
-        dateOfBirth:
-          description: >-
-            Italy / GEOGRAPHIC and TOLL_FREE / String (yyyy-mm-dd), maximum
-            length: 10. Validation made for age > 18 years.
-          type: string
-        firstName:
-          description: >-
-            Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60.
-            Mandatory for Company end user only.
-          type: string
-        fiscalIdentificationCode:
-          description: >-
-            Spain / Mobile / String, maximum length: 60. Only required for
-            professional addresses (salutation is COMPANY).
-          maxLength: 60
-          minLength: 0
-          type: string
-        idNumber:
-          description: >-
-            Spain / Mobile / String, maximum length: 60. Only required for
-            personal addresses (salutation is either MR or MS), additional
-            validation is performed depending on the type of ID. DNI: 8 digits
-            followed by 1 letter / NIE: 1 letter (X,Y or Z), followed by 7
-            digits, followed by 1 letter / NIF: 8 digits followed by 1 letter /
-            PASSPORT: no additional validation.
-          maxLength: 60
-          minLength: 0
-          type: string
-        idType:
-          description: >-
-            Spain / Mobile / DNI, NIE, NIF, PASSPORT. Only required for personal
-            addresses (salutation is either MR or MS).
-          enum:
-            - DNI
-            - NIF
-            - NIE
-            - PASSPORT
-          type: string
-        lastName:
-          description: >-
-            Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60.
-            Mandatory for Company end user only.
-          type: string
-        municipalityCode:
-          description: 'Denmark / ALL / String, maximum length: 4.'
-          maxLength: 4
-          minLength: 0
-          type: string
-        nationality:
-          description: >-
-            Spain / Mobile / String, maximum length: 60. The exact format can be
-            chosen freely as long as it allows a human to understand it. We
-            recommend using the full country name but the ISO-3166-1 alpha-3
-            code is acceptable if it is easier to process by your system.
-          maxLength: 60
-          minLength: 0
-          type: string
-        placeOfBirth:
-          description: >-
-            Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60. Both
-            City and country of birth is expected.
-          type: string
-        province:
-          description: >-
-            Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60.
-            Optional field.
-          type: string
-        state:
-          description: ' Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60. Optional field.'
-          type: string
-        streetCode:
-          description: 'Denmark / ALL / String, maximum length: 4.'
-          maxLength: 4
-          minLength: 0
-          type: string
-        taxCode:
-          description: >-
-            Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60.
-            Mandatory field.
-          type: string
-        title:
-          description: >-
-            Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60.
-            Mandatory for Company end user only.
-          type: string
-      type: object
-    GlobalAddressRejectionReasons:
-      enum:
-        - INVALID_DOC_NOT_RECENT_ENOUGH
-        - INVALID_DOC_CORRUPT
-        - INVALID_DOC_ILLEGIBLE
-        - INVALID_DOC_MISSING
-        - INVALID_DOC_WHOLE
-        - INVALID_DOCTYPE_INVOICES
-        - INVALID_DOCTYPE_GOVERNMENT_DOCS
-        - INVALID_DOCTYPE_VIRTUAL_ADDRESS
-        - INVALID_DOCTYPE_ATTESTATIONS
-        - INVALID_DOCTYPE_THIRD_PARTY
-        - INVALID_DOCTYPE_REQUIRED_ID
-        - INVALID_DOCTYPE_REQUIRED_ADDRESS
-        - INVALID_DOCTYPE_FIXED_LINE_PROOF
-        - INVALID_DOCTYPE_ID_TYPE
-        - INVALID_DOCTYPE_ID_TYPE_ADDRESS
-        - INVALID_DOCTYPE_PASSPORT
-        - INCOMPLETE_INFO_DATE
-        - INCOMPLETE_INFO_ADDRESS
-        - INCOMPLETE_INFO_PROOFS
-        - INCOMPLETE_INFO_BUSINESS_REG
-        - INCOMPLETE_INFO_LEGAL_REP
-        - INCOMPLETE_INFO_LEGAL_REP_ID
-        - INCOMPLETE_INFO_LEGAL_ZIP
-        - INCOMPLETE_INFO_PO_BOX
-        - INCOMPLETE_INFO_REP_PICTURE
-        - INCOMPLETE_INFO_CHINESE_RECEIPT
-        - INFO_MISMATCH_ADDRESS_PROOF
-        - INFO_MISMATCH_ID_PROOF
-        - INFO_MISMATCH_DETAILS
-        - INFO_MISMATCH_ADDRESS
-        - INFO_MISMATCH_LOCATION
-        - INFO_MISMATCH_RESIDE
-        - INFO_MISMATCH_FATHER
-        - INFO_MISMATCH_MOTHER
-        - INFO_MISMATCH_COMPANY_REG
-        - INFO_MISMATCH_ID_NUMBER
-        - INFO_MISMATCH_COMPANY_NUMBER
-        - INFO_MISMATCH_COMPANY_TAX_NUMBER
-        - INFO_MISMATCH_BIRTH_PLACE
-        - INFO_MISMATCH_BIRTH_DATE
-        - INFO_MISMATCH_ID
-        - OTHER_ABUSE
-        - OTHER_REGULATIONS
-      type: string
-    GlobalAddressStatus:
-      enum:
-        - NOT_VERIFIED
-        - VERIFIED
-        - VERIFICATION_REQUESTED
-        - REJECTED
-        - VERIFICATION_NOT_REQUIRED
-      type: string
-    GlobalAddressType:
-      enum:
-        - REGULATION
-      type: string
     Host:
       properties:
         HostName:
@@ -5145,6 +5074,60 @@ components:
               $ref: '#/components/schemas/lnpPortInfoForGivenStatus'
           type: object
       type: object
+    LarAddressRejectionReasons:
+      enum:
+        - INVALID_DOC_NOT_RECENT_ENOUGH
+        - INVALID_DOC_CORRUPT
+        - INVALID_DOC_ILLEGIBLE
+        - INVALID_DOC_MISSING
+        - INVALID_DOC_WHOLE
+        - INVALID_DOCTYPE_INVOICES
+        - INVALID_DOCTYPE_GOVERNMENT_DOCS
+        - INVALID_DOCTYPE_VIRTUAL_ADDRESS
+        - INVALID_DOCTYPE_ATTESTATIONS
+        - INVALID_DOCTYPE_THIRD_PARTY
+        - INVALID_DOCTYPE_REQUIRED_ID
+        - INVALID_DOCTYPE_REQUIRED_ADDRESS
+        - INVALID_DOCTYPE_FIXED_LINE_PROOF
+        - INVALID_DOCTYPE_ID_TYPE
+        - INVALID_DOCTYPE_ID_TYPE_ADDRESS
+        - INVALID_DOCTYPE_PASSPORT
+        - INCOMPLETE_INFO_DATE
+        - INCOMPLETE_INFO_ADDRESS
+        - INCOMPLETE_INFO_PROOFS
+        - INCOMPLETE_INFO_BUSINESS_REG
+        - INCOMPLETE_INFO_LEGAL_REP
+        - INCOMPLETE_INFO_LEGAL_REP_ID
+        - INCOMPLETE_INFO_LEGAL_ZIP
+        - INCOMPLETE_INFO_PO_BOX
+        - INCOMPLETE_INFO_REP_PICTURE
+        - INCOMPLETE_INFO_CHINESE_RECEIPT
+        - INFO_MISMATCH_ADDRESS_PROOF
+        - INFO_MISMATCH_ID_PROOF
+        - INFO_MISMATCH_DETAILS
+        - INFO_MISMATCH_ADDRESS
+        - INFO_MISMATCH_LOCATION
+        - INFO_MISMATCH_RESIDE
+        - INFO_MISMATCH_FATHER
+        - INFO_MISMATCH_MOTHER
+        - INFO_MISMATCH_COMPANY_REG
+        - INFO_MISMATCH_ID_NUMBER
+        - INFO_MISMATCH_COMPANY_NUMBER
+        - INFO_MISMATCH_COMPANY_TAX_NUMBER
+        - INFO_MISMATCH_BIRTH_PLACE
+        - INFO_MISMATCH_BIRTH_DATE
+        - INFO_MISMATCH_ID
+        - OTHER_ABUSE
+        - OTHER_REGULATIONS
+      type: string
+    LarAddressStatus:
+      enum:
+        - NOT_VERIFIED
+        - REJECTED
+        - VERIFIED
+        - VERIFICATION_REQUESTED
+        - VERIFICATION_NOT_REQUIRED
+      type: string
     LegacyTerminationSettings:
       properties:
         BillingType:
@@ -5357,10 +5340,8 @@ components:
       type: object
     ListGlobalAddressResponse:
       properties:
-        regulationAddresses:
-          description: >-
-            A list with regulation addresses corresponding to the request filter
-            (if any).
+        addresses:
+          description: A list with addresses corresponding to the request filter (if any).
           items:
             $ref: '#/components/schemas/GlobalAddress'
           type: array
@@ -11531,7 +11512,7 @@ paths:
       operationId: listGlobalAddress
       parameters:
         - description: >-
-            This is the ID of the regulation address which is returned by
+            This is the ID of the address which is returned by
             createGlobalAddress.
           in: query
           name: addressId
@@ -11583,18 +11564,10 @@ paths:
           name: customerReference
           schema:
             type: string
-        - description: The status of the regulation address.
-          in: query
-          name: status
-          schema:
-            enum:
-              - NOT_VERIFIED
-              - VERIFIED
-              - VERIFICATION_REQUESTED
-              - REJECTED
-              - VERIFICATION_NOT_REQUIRED
-            type: string
-        - description: Flag that specifies if the address has been linked to a DID.
+        - $ref: '#/components/schemas/LarAddressStatus'
+        - description: >-
+            Flag that specifies if the address has been linked to a phone
+            number.
           in: query
           name: linked
           schema:
@@ -11634,8 +11607,11 @@ paths:
       description: >
         Allows you to create a new end user's address that can be linked to
 
-        DIDs where a local address requirement (LAR) applies. The method allows
-        the
+        DIDs where a local address requirement (LAR) applies. Note that
+        addresses for local address requirement (LAR) may require the city and
+        zip code match the phone numbers's area code. To know whether this is
+        required, you should check the local address requirements. The method
+        allows the
 
         attachment of a proof of address.
 
@@ -11712,7 +11688,7 @@ paths:
            "city":"København",
            "countryCodeA3":"DNK",
            "destinationCountryCodeA3":"DNK",
-           "extraFields":{
+           "addressExtraFields":{
               "Street Code":"2100",
               "Municipality Code":"101"
            }
@@ -11834,9 +11810,6 @@ paths:
         --XXX--
 
         ```
-
-        More information is available in our __[Guide to using our LAR
-        API](https://support.voxbone.com/hc/en-us/articles/4402904174097)__.
       operationId: createGlobalAddress
       requestBody:
         content:
@@ -11864,8 +11837,8 @@ paths:
       operationId: deleteGlobalAddress
       parameters:
         - description: >-
-            The ID of the regulation address that you want to delete. You can
-            only delete one address per request.
+            The ID of the address that you want to delete. You can only delete
+            one address per request.
           in: path
           name: addressId
           required: true
@@ -11889,7 +11862,7 @@ paths:
       description: Get a specific address with id
       operationId: getGlobalAddress
       parameters:
-        - description: The ID of the regulation address.
+        - description: The ID of the address.
           in: path
           name: addressId
           required: true
@@ -11914,7 +11887,7 @@ paths:
       description: Update identity proof document
       operationId: createProofOfIdentityDocument
       parameters:
-        - description: The ID of the regulation address.
+        - description: The ID of the address.
           in: path
           name: addressId
           required: true
@@ -11944,12 +11917,12 @@ paths:
     put:
       description: >-
         This can be used if you want to use an existing address which didn't
-        require verification for the DIDs it is linked to, or for which the
-        proof of address was rejected. After an uploadProofOfAddress request the
-        requestAddressVerification method must be called.
+        require verification, or for which the proof of address was rejected.
+        After an uploadProofOfAddress request the requestAddressVerification
+        method must be called.
       operationId: uploadProofOfAddress
       parameters:
-        - description: The identifier of the regulation address.
+        - description: The identifier of the address.
           in: path
           name: addressId
           required: true
@@ -11992,30 +11965,27 @@ paths:
       description: Check if address is valid to activate numbers
       operationId: isAddressValid
       parameters:
-        - description: The ID of the regulation address.
+        - description: The ID of the address.
           in: path
           name: addressId
           required: true
           schema:
             format: int32
             type: integer
-        - description: The did type for the destination did.
+        - description: >-
+            This is the type of the phone number you intend to link to this
+            address (GEOGRAPHIC, NATIONAL, etc.) for local address requirement.
           in: query
-          name: didType
+          name: phoneNumberType
           required: true
           schema:
-            enum:
-              - GEOGRAPHIC
-              - TOLL_FREE
-              - NATIONAL
-              - MOBILE
-              - INUM
-              - SHARED_COST
-              - SPECIAL
             type: string
-        - description: The three letter identifier for country of the destination did.
+        - description: >-
+            This is country code of the phone numbers country you intend to link
+            to this address in ISO 3166-1 alpha-3 format (USA, BEL, GBR, DEU,
+            etc.) for local address requirement.
           in: query
-          name: destinationCountryCodeA3
+          name: phoneNumberCountryCode
           required: true
           schema:
             type: string
@@ -12037,7 +12007,7 @@ paths:
       description: Request verification of changes to an address
       operationId: requestAddressVerification
       parameters:
-        - description: The identifier of the regulation address.
+        - description: The identifier of the address.
           in: path
           name: addressId
           required: true
@@ -37519,7 +37489,7 @@ paths:
                         <TelephoneNumbers>
                           <TelephoneNumber>2223331000</TelephoneNumber>
                         </TelephoneNumbers>
-                        </AcceptableValues>
+                      </AcceptableValues>
                     </PortOutValidationResponse>
                 Validation Passed:
                   value: |-
