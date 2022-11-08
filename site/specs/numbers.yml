@@ -1286,6 +1286,116 @@ components:
               $ref: '#/components/schemas/Brand'
           type: object
       type: object
+    BrandVetting:
+      properties:
+        VettingClass:
+          description: Identifies the vetting classification.
+          enum:
+            - STANDARD
+            - ENHANCED
+            - POLITICAL
+          type: string
+        VettingId:
+          description: >-
+            Unique ID that identifies a vetting transaction performed by a
+            vetting provider. This ID is provided by the vetting provider at
+            time of vetting.
+          type: string
+      type: object
+    BrandVettingImportRequest:
+      properties:
+        BrandVetting:
+          properties:
+            EvpId:
+              description: >-
+                External vetting provider ID for the brand. AEGIS(Aegis Mobile),
+                CV(Campaign Verify), WMC(WMC Global)
+              enum:
+                - AEGIS
+                - CV
+                - WMC
+              type: string
+            VettingId:
+              description: >-
+                Unique ID that identifies a vetting transaction performed by a
+                vetting provider. This ID is provided by the vetting provider at
+                time of vetting.
+              type: string
+          type: object
+      type: object
+    BrandVettingImportResponse:
+      properties:
+        BrandVetting:
+          properties:
+            BrandId:
+              description: Unique ID that identifies a brand.
+              type: string
+            EvpId:
+              description: >-
+                External vetting provider ID for the brand. AEGIS(Aegis Mobile),
+                CV(Campaign Verify), WMC(WMC Global)
+              enum:
+                - AEGIS
+                - CV
+                - WMC
+              type: string
+            VettingId:
+              description: >-
+                Unique ID that identifies a vetting transaction performed by a
+                vetting provider. This ID is provided by the vetting provider at
+                time of vetting.
+              type: string
+            VettingStatus:
+              description: >-
+                Identifies the vetting request status.  PENDING, UNSCORE,
+                ACTIVE, FAILED, EXPIRED ]
+              enum:
+                - PENDING
+                - UNSCORE
+                - ACTIVE
+                - FAILED
+                - EXPIRED
+              type: string
+          type: object
+      type: object
+    BrandVettingRequest:
+      properties:
+        BrandVetting:
+          properties:
+            EvpId:
+              description: >-
+                External vetting provider ID for the brand. AEGIS(Aegis Mobile),
+                CV(Campaign Verify), WMC(WMC Global)
+              enum:
+                - AEGIS
+                - CV
+                - WMC
+              type: string
+            VettingClass:
+              description: Identifies the vetting classification.
+              enum:
+                - STANDARD
+                - ENHANCED
+                - POLITICAL
+              type: string
+          type: object
+      type: object
+    BrandVettingsErrorResponse:
+      properties:
+        BrandVettingsResponse:
+          properties:
+            BrandVetting:
+              $ref: '#/components/schemas/ResponseStatus'
+          type: object
+      type: object
+    BrandVettingsResponse:
+      properties:
+        BrandVettingsResponse:
+          properties:
+            BrandVetting:
+              $ref: '#/components/schemas/BrandVetting'
+          type: object
+      type: object
     BrandsErrorResponse:
       properties:
         BrandsResponse:
@@ -3904,10 +4014,10 @@ components:
       type: object
     GeocodeRequestConflictResponse:
       properties:
-        ErrorMessage:
-          type: string
         GeocodeRequestResponse:
           properties:
+            ErrorMessage:
+              type: string
             GeocodeAddress:
               $ref: '#/components/schemas/Address'
             RequestAddress:
@@ -9117,22 +9227,6 @@ components:
         delete:
           type: boolean
       type: object
-    Subscription:
-      properties:
-        Subscription:
-          properties:
-            CallbackSubscription:
-              $ref: '#/components/schemas/CallbackSubscription'
-            EmailSubscription:
-              $ref: '#/components/schemas/EmailSubscription'
-            EventType:
-              type: string
-            OrderId:
-              type: string
-            OrderType:
-              type: string
-          type: object
-      type: object
     SubscriptionOrderId:
       description: >-
         If provided order id notifications will only be sent for events
@@ -13855,14 +13949,17 @@ paths:
       tags:
         - 10DLC
     post:
-      description: >-
-        <p>Create campaign registry brand on the Account</p><p>My Brand Note:
-        Regardless of if you are a DirectCustomer or Reseller, you will need to
-        create a 'My Brand'. You can only create one of these. On the Request
-        Body you can indicate a 'My Brand' by setting the IsMain flag to
-        true.</p><p>Please visit <a
-        href='/docs/messaging/campaign-management/csp/reseller-brand-api/'>Brand
-        and Reseller Management.</a></p>
+      description: >
+        Create campaign registry brand on the Account.
+
+        My Brand Note Regardless of if you are a DirectCustomer or Reseller, you
+        will need to create a My Brand. 
+
+        You can only create one of these. On the Request Body you can indicate a
+        My Brand by setting the IsMain flag to true.
+
+        Please visit [Brand and Reseller
+        Management](/docs/messaging/campaign-management/csp/reseller-brand-api)
       operationId: Create brand
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
@@ -13973,6 +14070,190 @@ paths:
                      </BrandResponse>
               schema:
                 $ref: '#/components/schemas/BrandErrorResponse'
+          description: Error Response
+      tags:
+        - 10DLC
+  /accounts/{accountId}/campaignManagement/10dlc/brands/{brandId}/vetting:
+    get:
+      description: Retrieve brand external vetting records
+      operationId: Retrieve brand vettings
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: Brand id.
+          example: B5DG4HH
+          in: path
+          name: brandId
+          required: true
+          schema:
+            type: string
+        - description: Vetting provider ID.
+          example: AEGIS
+          in: query
+          name: evpId
+          schema:
+            type: string
+        - description: Vetting class.
+          example: STANDARD
+          in: query
+          name: vettingClass
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BrandVettingResponse>
+                      <BrandVetting>
+                        <VettingId>69823255-96b3-412f-9120-3e77f94c6be5</VettingId>
+                        <VettingStatus>PENDING</VettingStatus>
+                      </BrandVetting>
+                    </BrandVettingResponse>
+              schema:
+                $ref: '#/components/schemas/BrandVettingsResponse'
+          description: OK
+        '400':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BrandVettingResponse>
+                      <ResponseStatus>
+                        <ErrorCode>12055</ErrorCode>
+                        <Description>'LONG_CODE' feature is not enabled on account 900000</Description>
+                      </ResponseStatus>
+                    </BrandVettingResponse>
+              schema:
+                $ref: '#/components/schemas/BrandVettingsErrorResponse'
+          description: Error Response
+      tags:
+        - 10DLC
+    post:
+      description: Create brand an external vetting
+      operationId: Create brand vetting
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: Brand id.
+          example: B5DG4HH
+          in: path
+          name: brandId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/xml:
+            examples:
+              example:
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <Brand>
+                    <EvpId>AEGIS</EvpId>
+                    <VettingClass>STANDARD</VettingClass>
+                  </Brand>
+            schema:
+              $ref: '#/components/schemas/BrandVettingRequest'
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BrandVettingResponse>
+                      <BrandVetting>
+                        <EvpId>BJDHM3</EvpId>
+                        <VettingId>CMHSJ9</VettingId>
+                        <VettingStatus>ACTIVE</VettingStatus>
+                        <BrandId>111111111</BrandId>
+                      </BrandVetting>
+                    </BrandVettingResponse>
+              schema:
+                $ref: '#/components/schemas/BrandVettingsResponse'
+          description: OK
+        '400':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BrandVettingResponse>
+                      <ResponseStatus>
+                        <ErrorCode>12055</ErrorCode>
+                        <Description>'LONG_CODE' feature is not enabled on account 900000</Description>
+                       </ResponseStatus>
+                    </BrandVettingResponse>
+              schema:
+                $ref: '#/components/schemas/BrandVettingsErrorResponse'
+          description: Error Response
+      tags:
+        - 10DLC
+    put:
+      description: Import brand external vetting records
+      operationId: Import brand vetting
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: Brand id.
+          example: B5DG4HH
+          in: path
+          name: brandId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/xml:
+            examples:
+              example:
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <Brand>
+                    <EvpId>AEGIS</EvpId>
+                    <VettingId>b62ed6ba-20f7-4031-a5fa-68e96cd6c036</VettingId>
+                  </Brand>
+            schema:
+              $ref: '#/components/schemas/BrandVettingImportRequest'
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BrandVettingResponse>
+                      <BrandVetting>
+                        <EvpId>BJDHM3</EvpId>
+                        <VettingId>CMHSJ9</VettingId>
+                        <VettingStatus>PUBLIC_PROFIT</VettingStatus>
+                        <BrandId>111111111</BrandId>
+                      </BrandVetting>
+                    </BrandVettingResponse>
+              schema:
+                $ref: '#/components/schemas/BrandVettingImportResponse'
+          description: OK
+        '400':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BrandVettingResponse>
+                      <ResponseStatus>
+                        <ErrorCode>12055</ErrorCode>
+                        <Description>'LONG_CODE' feature is not enabled on account 900000</Description>
+                       </ResponseStatus>
+                    </BrandVettingResponse>
+              schema:
+                $ref: '#/components/schemas/BrandVettingsErrorResponse'
           description: Error Response
       tags:
         - 10DLC
@@ -14690,20 +14971,22 @@ paths:
           required: true
           schema:
             default: 300
+            max: 5000
+            min: 1
             type: integer
         - description: >-
-            <p>The starting date of a search. startdate and enddate
-            <strong>must</strong> be used as a pair.</p>
-          example: yy-mm-dd
+            The starting date of a search in yy-mm-dd format. startdate and
+            enddate <strong>must</strong> be used as a pair.
+          example: 22-10-31
           in: query
           name: startdate
           required: false
           schema:
             type: string
         - description: >-
-            <p>The ending date of a search. startdate and enddate
-            <strong>must</strong> be used as a pair.</p>
-          example: yy-mm-dd
+            The ending date of a search in yy-mm-dd format. startdate and
+            enddate <strong>must</strong> be used as a pair.
+          example: 22-11-31
           in: query
           name: enddate
           required: false
@@ -14727,7 +15010,7 @@ paths:
                     </TNs>
               schema:
                 $ref: '#/components/schemas/TNs'
-          description: <p>The disconnected numbers have been retrieved successfully.</p>
+          description: The disconnected numbers have been retrieved successfully.
       summary: Retrieve disconnected tns
       tags:
         - Disconnecting Numbers
@@ -14738,18 +15021,18 @@ paths:
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
         - description: >-
-            The starting date of a search. startdate and enddate
-            <strong>must</strong> be used as a pair.
-          example: yy-mm-dd
+            The starting date of a search in yy-mm-dd format. startdate and
+            enddate <strong>must</strong> be used as a pair.
+          example: 22-10-31
           in: query
           name: startdate
           required: false
           schema:
             type: string
         - description: >-
-            The end date of a search. startdate and enddate
+            The end date of a search in yy-mm-dd format. startdate and enddate
             <strong>must</strong> be used as a pair.
-          example: yy-mm-dd
+          example: 22-11-31
           in: query
           name: enddate
           required: false
@@ -14765,10 +15048,10 @@ paths:
                     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                     <Quantity>
                       <Count>4</Count>
-                      </Quantity>
+                    </Quantity>
               schema:
                 $ref: '#/components/schemas/Quantity'
-          description: ''
+          description: OK
       summary: Retrieve total number of disconnects
       tags:
         - Disconnecting Numbers
@@ -14800,6 +15083,8 @@ paths:
           required: false
           schema:
             default: 300
+            max: 5000
+            min: 1
             type: integer
         - description: The user ID associated with disconnected phone numbers
           example: jbm
@@ -14818,7 +15103,7 @@ paths:
         - description: >-
             Retrieves all phone numbers disconnected after this date. The start
             date also requires the end date to be specified.
-          example: yy-mm-dd
+          example: 22-10-31
           in: query
           name: startdate
           required: false
@@ -14827,7 +15112,7 @@ paths:
         - description: >-
             Retrieves all phone numbers disconnected before this date. The end
             date also requires the start date to be specified.
-          example: yy-mm-dd
+          example: 22-11-31
           in: query
           name: enddate
           required: false
@@ -14991,7 +15276,7 @@ paths:
       summary: Disconnect numbers from account
       tags:
         - Disconnecting Numbers
-  /accounts/{accountId}/disconnects/{disconnectid}:
+  /accounts/{accountId}/disconnects/{disconnectId}:
     get:
       description: >-
         Retrieves the information associated with the disconnect order
@@ -15006,14 +15291,14 @@ paths:
         - description: Disconnect Order ID
           example: 59e69657-44d2-4e7e-90f8-777988be4aef
           in: path
-          name: disconnectid
+          name: disconnectId
           required: true
           schema:
             type: string
         - description: >-
             If set to true, displays the disconnect order's telephone order
             information in greater detail
-          example: true/false
+          example: true
           in: query
           name: tndetail
           required: false
@@ -15053,7 +15338,7 @@ paths:
       summary: Fetching Disconnect Order Status
       tags:
         - Disconnecting Numbers
-  /accounts/{accountId}/disconnects/{disconnectid}/notes:
+  /accounts/{accountId}/disconnects/{disconnectId}/notes:
     get:
       description: >-
         Retrieve all notes associated with the disconnect order. Please visit <a
@@ -15064,7 +15349,7 @@ paths:
         - description: Disconnect Order ID
           example: 59e69657-44d2-4e7e-90f8-777988be4aef
           in: path
-          name: disconnectid
+          name: disconnectId
           required: true
           schema:
             type: string
@@ -15116,7 +15401,7 @@ paths:
         - description: Disconnect Order ID
           example: 59e69657-44d2-4e7e-90f8-777988be4aef
           in: path
-          name: disconnectid
+          name: disconnectId
           required: true
           schema:
             type: string
@@ -15164,7 +15449,7 @@ paths:
       summary: Add disconnect order note
       tags:
         - Disconnecting Numbers
-  /accounts/{accountId}/disconnects/{disconnectid}/notes/{noteId}:
+  /accounts/{accountId}/disconnects/{disconnectId}/notes/{noteId}:
     put:
       description: >
         Update a specified note.  Notes may only be updated, not deleted. Please
@@ -15176,7 +15461,7 @@ paths:
         - description: Disconnect Order ID
           example: 59e69657-44d2-4e7e-90f8-777988be4aef
           in: path
-          name: disconnectid
+          name: disconnectId
           required: true
           schema:
             type: string
@@ -33346,7 +33631,7 @@ paths:
         GET is used to retrieve all subscriptions for the account (including
         email and callback subscriptions). The returned information reflects the
         subscription as it has been defined, and for callback subscriptions will
-        reflect the status of the latest attempt to place the callback.  The
+        reflect the status of the latest attempt to place the callback. The
         `Status` element will indicate if an error is being encountered when the
         Bandwidth Dashboard API attempts to place the callback.
       operationId: GetSubscriptions
@@ -33494,7 +33779,7 @@ paths:
                   description: Receive callback.
               summary: The notification callback by order type.
       description: >-
-        <p>A POST on the /subscriptions resource is used to request a new
+        A POST on the /subscriptions resource is used to request a new
         subscriptions for an account. The POST creates a new e-mail or callback
         subscription. A well-formed POST will create a subscription resource,
         and return a subscription ID as part of the location header. The ID is
@@ -33504,22 +33789,15 @@ paths:
         after events). OrderId is optional. If OrderId is specified only
         notifications will be sent for events related to that order. If OrderId
         is omitted, notifications will be sent related to events of all orders
-        of the specified type.</p><p>The credentials used to impose security on
-        the callbacks are defined in the <CallbackCredentials> element.  The
-        Basic authentication is straightforward, but the <PublicKey> requires a
-        little more explanation.  Please see the document to the left on Mutual
+        of the specified type. The credentials used to impose security on the
+        callbacks are defined in the <CallbackCredentials> element. The Basic
+        authentication is straightforward, but the <PublicKey> requires a little
+        more explanation.  Please see the document to the left on Mutual
         Authentication for CallBacks.<CallbackCredentials> can be omitted if the
-        url is http, but using https is recommended for security.<p> When status
+        url is http, but using https is recommended for security. When status
         changes on an order that had been subscribed to with a callback
         subscription (order update, note added to order), the following payload
-        will be POSTed to the URL of the callback subscription. More detail can
-        be found in the API documentation for the fictitious endpoint <a
-        href='/apis/numbers#operation/OrderWebhook'>/callbacks</a><p>When a
-        event happens that had been subscribed to with a callback subscription
-        (messaging lost, messaging gained etc.), the following payload will be
-        POSTed to the URL of the callback subscription. More detail can be found
-        in the API documentation for the fictitious endpoint <a
-        href='/apis/numbers#operation/OrderWebhook'>/callbacks</a>
+        will be POSTed to the URL of the callback subscription.
       operationId: CreateSubscriptions
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
@@ -33779,27 +34057,71 @@ paths:
         content:
           application/xml:
             examples:
-              example:
+              eventCallbackSubscription:
+                summary: callback subscription on event type
                 value: |-
                   <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                   <Subscription>
-                    <OrderType>[portins | portouts | orders | disconnects | dldas | lsrorders | e911s | tnoptions | externalTns | importtnorders | removeImportedTnOrders| emergencyNotificationGroup | emergencyEndpointGroup]</OrderType>
-                    <OrderId>[UUID]</OrderId>
-                    <EventType>[MESSAGING_LOST]</EventType>
+                    <EventType>MESSAGING_LOST</EventType>
                     <CallbackSubscription>
-                      <URL>[valid publically addressable URL]</URL>
-                      <Expiry>[time in seconds]</Expiry>
+                      <URL>"http://yourhost:8080/path/to/resource"</URL>
+                      <Expiry>12000</Expiry>
                       <CallbackCredentials>
                         <BasicAuthentication>
-                          <Username>[username]</Username>
-                          <Password>[password]</Password>
+                          <Username>superuser</Username>
+                          <Password>s3cure</Password>
                         </BasicAuthentication>
-                        <PublicKey>[BASE64 encoded public key]</PublicKey>
+                        <PublicKey>LS0tLS1CRUdJTiBDRVJUSU [...] kQgQ0VSVElGSUNBVEUtLS0tLQ0K</PublicKey>
                       </CallbackCredentials>
                     </CallbackSubscription>
                   </Subscription>
+              eventEmailSubscription:
+                summary: email subscription on event type
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <Subscription>
+                    <EventType>MESSAGING_LOST</EventType>
+                    <EmailSubscription>
+                      <Email>newtest@gmail.com</Email>
+                      <DigestRequested>DAILY</DigestRequested>
+                    </EmailSubscription>
+                  </Subscription>
+              orderCallbackSubscription:
+                summary: callback subscription on order type
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <Subscription>
+                    <OrderType>orders</OrderType>
+                    <CallbackSubscription>
+                      <URL>"http://yourhost:8080/path/to/resource"</URL>
+                      <Expiry>12000</Expiry>
+                      <CallbackCredentials>
+                        <BasicAuthentication>
+                          <Username>superuser</Username>
+                          <Password>s3cure</Password>
+                        </BasicAuthentication>
+                        <PublicKey>LS0tLS1CRUdJTiBDRVJUSU [...] kQgQ0VSVElGSUNBVEUtLS0tLQ0K</PublicKey>
+                      </CallbackCredentials>
+                    </CallbackSubscription>
+                  </Subscription>
+              orderEmailSubscription:
+                summary: email subscription on order type
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <Subscription>
+                    <OrderType>portins</OrderType>
+                    <OrderId>e75dc861-95ed-427e-8688-976132a69549</OrderId>
+                    <EmailSubscription>
+                      <Email>newtest@gmail.com</Email>
+                      <DigestRequested>DAILY</DigestRequested>
+                    </EmailSubscription>
+                  </Subscription>
             schema:
-              $ref: '#/components/schemas/Subscription'
+              oneOf:
+                - $ref: '#/components/schemas/EmailSubscriptionByOrderTypeRequest'
+                - $ref: '#/components/schemas/EmailSubscriptionByEventTypeRequest'
+                - $ref: '#/components/schemas/CallBackSubscriptionByOrderTypeRequest'
+                - $ref: '#/components/schemas/CallBackSubscriptionByEventTypeRequest'
       responses:
         '200':
           content:
@@ -35854,7 +36176,7 @@ paths:
                         <TelephoneNumbers>
                           <TelephoneNumber>2223331000</TelephoneNumber>
                         </TelephoneNumbers>
-                        </AcceptableValues>
+                      </AcceptableValues>
                     </PortOutValidationResponse>
                 Validation Passed:
                   value: |-
