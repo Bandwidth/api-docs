@@ -125,7 +125,7 @@ export default function Carousel({itemList, title}) {
                     <div className={carouselStyles.image} style={imageStyle}></div>
                     <div className={carouselStyles.categories} style={categoriesStyle}>
                         {categories.map((category, idx) => (
-                            <a href={categoryLinks[idx]}>{category}</a>
+                            <a href={categoryLinks[idx]} key={idx}>{category}</a>
                         ))}
                     </div>
                     <div className={carouselStyles.post} style={postStyle}>

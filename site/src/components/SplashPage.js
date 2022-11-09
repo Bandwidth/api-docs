@@ -3,7 +3,6 @@ import splashPageStyles from '@site/src/components/css/SplashPage.module.css';
 import Carousel from '@site/src/components/Carousel.js';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 
-
 const guides = {
     title: 'Check out our guides',
     text: `Explore our API guides to learn more about Bandwidth's APIs and the things you can do with us.`,
@@ -27,8 +26,6 @@ const sdks = {
     link: '/sdks'
 }
 const sdksImage = require('@site/static/img/sdks-splash.svg').default;
-
-
 
 function SplashRow({left, right}) {
     return (
@@ -60,7 +57,7 @@ function SplashPageTextBlock({title, text, linkText, link}) {
 export default function SplashPage() {
     const {siteConfig} = useDocusaurusContext();
     const carousel = siteConfig.customFields.blogPosts;
-    
+
     return (
         <div className={splashPageStyles.splash}>
             <div className={splashPageStyles.header}>
