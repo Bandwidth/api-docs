@@ -2,7 +2,8 @@ const YAML = require('yaml');
 const fs = require('fs');
 const path = require('path');
 
-const numbersSpec = fs.readFileSync('./specs-temp/numbers.json', 'utf-8');
+const customConfig = require('./custom.config.json');
+const numbersSpec = fs.readFileSync('./specs/numbers.yml', 'utf-8');
 const phoneNumberLookupSpec = fs.readFileSync('./specs/phone-number-lookup.yml', 'utf-8');
 const voiceSpec = fs.readFileSync('./specs/voice.yml', 'utf-8');
 const messagingSpec = fs.readFileSync('./specs/messaging.yml', 'utf-8');
@@ -124,20 +125,30 @@ module.exports = {
         ],
     ],
     customFields: {
-        numbersSpec: JSON.parse(numbersSpec),
+        numbersSpec: YAML.parse(numbersSpec),
+        numbersSpecLink: `${customConfig.numbersSpecLink}`,
         phoneNumberLookupSpec: YAML.parse(phoneNumberLookupSpec),
+        phoneNumberLookupSpecLink: `${customConfig.phoneNumberLookupSpecLink}`,
         voiceSpec: YAML.parse(voiceSpec),
+        voiceSpecLink: `${customConfig.voiceSpecLink}`,
         messagingSpec: YAML.parse(messagingSpec),
+        messagingSpecLink: `${customConfig.messagingSpecLink}`,
         messagingInternationalSpec: JSON.parse(messagingInternationalSpec),
+        messagingInternationalSpecLink: `${customConfig.messagingInternationalSpecLink}`,
         webRTCSpec: YAML.parse(webRtcSpec),
+        webRtcSpecLink: `${customConfig.webRtcSpecLink}`,
         multiFactorAuthSpec: YAML.parse(multiFactorAuthSpec),
+        multiFactorAuthSpecLink: `${customConfig.multiFactorAuthSpecLink}`,
         dashSpec: JSON.parse(dashSpec),
+        dashSpecLink: `${customConfig.dashSpecLink}`,
         dashNotificationsSpec: JSON.parse(dashNotificationsSpec),
+        dashNotificationsSpecLink: `${customConfig.dashNotificationsSpecLink}`,
         globalSpec: YAML.parse(globalSpec),
         globalSpec_v2: YAML.parse(globalSpec_v2),
         globalSpec_v3: YAML.parse(globalSpec_v3),
         globalSpec_beta: YAML.parse(globalSpec_beta),
         insightsSpec: YAML.parse(insightsSpec),
+        insightsSpecLink: `${customConfig.insightsSpecLink}`,
 
         // CSS Colors
         bwBlue: '#079CEE',

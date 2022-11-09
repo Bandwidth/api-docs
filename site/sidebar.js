@@ -320,5 +320,10 @@ module.exports = {
                 "emergency/emergencyCallingApi",
             ],
         },
+        {
+            type: "doc",
+            id: "versions",
+            label: "Versions"
+        }
     ],
 };
