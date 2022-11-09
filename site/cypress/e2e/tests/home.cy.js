@@ -25,5 +25,5 @@ context('Build with Bandwidth link', () => {
 })
 
 context('Carousel Tests', () => {
-  testCarousel('/', 6, 'Recent Documentation Updates')
+  testCarousel('/', 10, 'Recent Blog Posts')
 })

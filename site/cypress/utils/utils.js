@@ -198,7 +198,7 @@ export const testCarousel = (path, length, title) => {
   it('validates the carousel content', () => {
     cy.get('.header_src-components-css-Carousel-module').should('have.text', `${title}`);
     cy.get('.carouselSlides_src-components-css-Carousel-module').children().should('have.length', length * 4);
-    cy.get(`:nth-child(${startIndex}) > .item_src-components-css-Carousel-module > .icon_src-components-css-Carousel-module > svg`).should('be.visible');
+    cy.get(`:nth-child(${startIndex}) > .item_src-components-css-Carousel-module > .image_src-components-css-Carousel-module`).should('be.visible');
     cy.get(`:nth-child(${startIndex}) > .item_src-components-css-Carousel-module > .product_src-components-css-Carousel-module`).should('not.be.empty');
     cy.get(`:nth-child(${startIndex}) > .item_src-components-css-Carousel-module > .link_src-components-css-Carousel-module > a`).should('not.be.empty');
   })
