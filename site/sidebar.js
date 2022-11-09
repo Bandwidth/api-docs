@@ -5,11 +5,6 @@ module.exports = {
             label: "Introduction",
         },
         {
-            type: "doc",
-            id: "versions",
-            label: "Versions"
-        },
-        {
             type: "category",
             label: "Account Management",
             items: [
@@ -325,5 +320,10 @@ module.exports = {
                 "emergency/emergencyCallingApi",
             ],
         },
+        {
+            type: "doc",
+            id: "versions",
+            label: "Versions"
+        }
     ],
 };

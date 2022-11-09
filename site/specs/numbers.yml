@@ -8,6 +8,14 @@ components:
       required: true
       schema:
         type: string
+    DomainNamePathParam:
+      description: Domain name
+      example: dashboard
+      in: path
+      name: domainName
+      required: true
+      schema:
+        type: string
     GatewayIdIdPathParam:
       in: path
       name: gatewayId
@@ -15,6 +23,14 @@ components:
       schema:
         format: int64
         type: integer
+    KeyPathParam:
+      description: Validation key
+      example: someSecretValue
+      in: path
+      name: key
+      required: true
+      schema:
+        type: string
     OrderIdPathParam:
       description: ID of order to retrieve
       example: bf1305b8-8998-1111-2222-51ba3ce52d4e
@@ -26,6 +42,22 @@ components:
     OrderTypePathParam:
       in: path
       name: orderType
+      required: true
+      schema:
+        type: string
+    PermissionIdPathParam:
+      description: Permission Id
+      example: testPermission
+      in: path
+      name: permissionId
+      required: true
+      schema:
+        type: string
+    RoleIdPathParam:
+      description: Role Id
+      example: testRole
+      in: path
+      name: roleId
       required: true
       schema:
         type: string
@@ -58,6 +90,14 @@ components:
             - FAILED
           type: string
         type: array
+    UserIdPathParam:
+      description: User Id
+      example: testUser
+      in: path
+      name: userId
+      required: true
+      schema:
+        type: string
   schemas:
     A2pSettings:
       properties:
@@ -1244,6 +1284,116 @@ components:
           properties:
             Brand:
               $ref: '#/components/schemas/Brand'
+          type: object
+      type: object
+    BrandVetting:
+      properties:
+        VettingClass:
+          description: Identifies the vetting classification.
+          enum:
+            - STANDARD
+            - ENHANCED
+            - POLITICAL
+          type: string
+        VettingId:
+          description: >-
+            Unique ID that identifies a vetting transaction performed by a
+            vetting provider. This ID is provided by the vetting provider at
+            time of vetting.
+          type: string
+      type: object
+    BrandVettingImportRequest:
+      properties:
+        BrandVetting:
+          properties:
+            EvpId:
+              description: >-
+                External vetting provider ID for the brand. AEGIS(Aegis Mobile),
+                CV(Campaign Verify), WMC(WMC Global)
+              enum:
+                - AEGIS
+                - CV
+                - WMC
+              type: string
+            VettingId:
+              description: >-
+                Unique ID that identifies a vetting transaction performed by a
+                vetting provider. This ID is provided by the vetting provider at
+                time of vetting.
+              type: string
+          type: object
+      type: object
+    BrandVettingImportResponse:
+      properties:
+        BrandVetting:
+          properties:
+            BrandId:
+              description: Unique ID that identifies a brand.
+              type: string
+            EvpId:
+              description: >-
+                External vetting provider ID for the brand. AEGIS(Aegis Mobile),
+                CV(Campaign Verify), WMC(WMC Global)
+              enum:
+                - AEGIS
+                - CV
+                - WMC
+              type: string
+            VettingId:
+              description: >-
+                Unique ID that identifies a vetting transaction performed by a
+                vetting provider. This ID is provided by the vetting provider at
+                time of vetting.
+              type: string
+            VettingStatus:
+              description: >-
+                Identifies the vetting request status.  PENDING, UNSCORE,
+                ACTIVE, FAILED, EXPIRED ]
+              enum:
+                - PENDING
+                - UNSCORE
+                - ACTIVE
+                - FAILED
+                - EXPIRED
+              type: string
+          type: object
+      type: object
+    BrandVettingRequest:
+      properties:
+        BrandVetting:
+          properties:
+            EvpId:
+              description: >-
+                External vetting provider ID for the brand. AEGIS(Aegis Mobile),
+                CV(Campaign Verify), WMC(WMC Global)
+              enum:
+                - AEGIS
+                - CV
+                - WMC
+              type: string
+            VettingClass:
+              description: Identifies the vetting classification.
+              enum:
+                - STANDARD
+                - ENHANCED
+                - POLITICAL
+              type: string
+          type: object
+      type: object
+    BrandVettingsErrorResponse:
+      properties:
+        BrandVettingsResponse:
+          properties:
+            BrandVetting:
+              $ref: '#/components/schemas/ResponseStatus'
+          type: object
+      type: object
+    BrandVettingsResponse:
+      properties:
+        BrandVettingsResponse:
+          properties:
+            BrandVetting:
+              $ref: '#/components/schemas/BrandVetting'
           type: object
       type: object
     BrandsErrorResponse:
@@ -13815,14 +13965,17 @@ paths:
       tags:
         - 10DLC
     post:
-      description: >-
-        <p>Create campaign registry brand on the Account</p><p>My Brand Note:
-        Regardless of if you are a DirectCustomer or Reseller, you will need to
-        create a 'My Brand'. You can only create one of these. On the Request
-        Body you can indicate a 'My Brand' by setting the IsMain flag to
-        true.</p><p>Please visit <a
-        href='/docs/messaging/campaign-management/csp/reseller-brand-api/'>Brand
-        and Reseller Management.</a></p>
+      description: >
+        Create campaign registry brand on the Account.
+
+        My Brand Note Regardless of if you are a DirectCustomer or Reseller, you
+        will need to create a My Brand. 
+
+        You can only create one of these. On the Request Body you can indicate a
+        My Brand by setting the IsMain flag to true.
+
+        Please visit [Brand and Reseller
+        Management](/docs/messaging/campaign-management/csp/reseller-brand-api)
       operationId: Create brand
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
@@ -13933,6 +14086,190 @@ paths:
                      </BrandResponse>
               schema:
                 $ref: '#/components/schemas/BrandErrorResponse'
+          description: Error Response
+      tags:
+        - 10DLC
+  /accounts/{accountId}/campaignManagement/10dlc/brands/{brandId}/vetting:
+    get:
+      description: Retrieve brand external vetting records
+      operationId: Retrieve brand vettings
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: Brand id.
+          example: B5DG4HH
+          in: path
+          name: brandId
+          required: true
+          schema:
+            type: string
+        - description: Vetting provider ID.
+          example: AEGIS
+          in: query
+          name: evpId
+          schema:
+            type: string
+        - description: Vetting class.
+          example: STANDARD
+          in: query
+          name: vettingClass
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BrandVettingResponse>
+                      <BrandVetting>
+                        <VettingId>69823255-96b3-412f-9120-3e77f94c6be5</VettingId>
+                        <VettingStatus>PENDING</VettingStatus>
+                      </BrandVetting>
+                    </BrandVettingResponse>
+              schema:
+                $ref: '#/components/schemas/BrandVettingsResponse'
+          description: OK
+        '400':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BrandVettingResponse>
+                      <ResponseStatus>
+                        <ErrorCode>12055</ErrorCode>
+                        <Description>'LONG_CODE' feature is not enabled on account 900000</Description>
+                      </ResponseStatus>
+                    </BrandVettingResponse>
+              schema:
+                $ref: '#/components/schemas/BrandVettingsErrorResponse'
+          description: Error Response
+      tags:
+        - 10DLC
+    post:
+      description: Create brand an external vetting
+      operationId: Create brand vetting
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: Brand id.
+          example: B5DG4HH
+          in: path
+          name: brandId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/xml:
+            examples:
+              example:
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <Brand>
+                    <EvpId>AEGIS</EvpId>
+                    <VettingClass>STANDARD</VettingClass>
+                  </Brand>
+            schema:
+              $ref: '#/components/schemas/BrandVettingRequest'
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BrandVettingResponse>
+                      <BrandVetting>
+                        <EvpId>BJDHM3</EvpId>
+                        <VettingId>CMHSJ9</VettingId>
+                        <VettingStatus>ACTIVE</VettingStatus>
+                        <BrandId>111111111</BrandId>
+                      </BrandVetting>
+                    </BrandVettingResponse>
+              schema:
+                $ref: '#/components/schemas/BrandVettingsResponse'
+          description: OK
+        '400':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BrandVettingResponse>
+                      <ResponseStatus>
+                        <ErrorCode>12055</ErrorCode>
+                        <Description>'LONG_CODE' feature is not enabled on account 900000</Description>
+                       </ResponseStatus>
+                    </BrandVettingResponse>
+              schema:
+                $ref: '#/components/schemas/BrandVettingsErrorResponse'
+          description: Error Response
+      tags:
+        - 10DLC
+    put:
+      description: Import brand external vetting records
+      operationId: Import brand vetting
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: Brand id.
+          example: B5DG4HH
+          in: path
+          name: brandId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/xml:
+            examples:
+              example:
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <Brand>
+                    <EvpId>AEGIS</EvpId>
+                    <VettingId>b62ed6ba-20f7-4031-a5fa-68e96cd6c036</VettingId>
+                  </Brand>
+            schema:
+              $ref: '#/components/schemas/BrandVettingImportRequest'
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BrandVettingResponse>
+                      <BrandVetting>
+                        <EvpId>BJDHM3</EvpId>
+                        <VettingId>CMHSJ9</VettingId>
+                        <VettingStatus>PUBLIC_PROFIT</VettingStatus>
+                        <BrandId>111111111</BrandId>
+                      </BrandVetting>
+                    </BrandVettingResponse>
+              schema:
+                $ref: '#/components/schemas/BrandVettingImportResponse'
+          description: OK
+        '400':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BrandVettingResponse>
+                      <ResponseStatus>
+                        <ErrorCode>12055</ErrorCode>
+                        <Description>'LONG_CODE' feature is not enabled on account 900000</Description>
+                       </ResponseStatus>
+                    </BrandVettingResponse>
+              schema:
+                $ref: '#/components/schemas/BrandVettingsErrorResponse'
           description: Error Response
       tags:
         - 10DLC
@@ -16977,7 +17314,26 @@ paths:
                   The payload for creating an order to remove emergency endpoint
                   associations from an emergency notification group looks like
                   the following
-                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<EmergencyNotificationEndpointAssociation>\n\t<CustomerOrderId>ALG-31233885</CustomerOrderId>\n\t<EmergencyNotificationGroup>\n\t\t<Identifier>3e9a852e-2d1d-4e2d-84c3-04595ba2eb93</Identifier>\n\t</EmergencyNotificationGroup>\n\t<DeletedAssociations> \n\t\t<EepToEngAssociations>\n\t\t\t<EepTns>\n\t\t\t\t<TelephoneNumber>2248838829</TelephoneNumber>\n\t\t\t\t<TelephoneNumber>4052397735</TelephoneNumber>\n\t\t\t</EepTns>\n\t\t\t<EepAeuiIds> \n\t\t\t\t<Identifier>Fred992834</Identifier> \n\t\t\t\t<Identifier>Bob00359</Identifier> \n\t\t\t</EepAeuiIds>\n\t\t</EepToEngAssociations>\n\t</DeletedAssociations>\n</EmergencyNotificationEndpointAssociation>"
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <EmergencyNotificationEndpointAssociation>
+                     <CustomerOrderId>ALG-31233885</CustomerOrderId>
+                     <EmergencyNotificationGroup>
+                        <Identifier>3e9a852e-2d1d-4e2d-84c3-04595ba2eb93</Identifier>
+                     </EmergencyNotificationGroup>
+                     <DeletedAssociations>
+                        <EepToEngAssociations>
+                           <EepTns>
+                              <TelephoneNumber>2248838829</TelephoneNumber>
+                              <TelephoneNumber>4052397735</TelephoneNumber>
+                           </EepTns>
+                           <EepAeuiIds>
+                              <Identifier>Fred992834</Identifier>
+                              <Identifier>Bob00359</Identifier>
+                           </EepAeuiIds>
+                        </EepToEngAssociations>
+                     </DeletedAssociations>
+                  </EmergencyNotificationEndpointAssociation>
               Simple response:
                 value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<EmergencyNotificationEndpointOrder>\n\t<CustomerOrderId>ALG-31233884</CustomerOrderId>\n\t<EmergencyNotificationEndpointAssociations>\n\t\t<EmergencyNotificationGroup>\n\t\t\t<Identifier>3e9a852e-2d1d-4e2d-84c3-04595ba2eb93</Identifier>\n\t\t</EmergencyNotificationGroup>\n\t\t<AddedAssociations>\n\t\t\t<EepToEngAssociations>\n\t\t\t\t<EepTns>\n\t\t\t\t\t<TelephoneNumber>2248838829</TelephoneNumber>\n\t\t\t\t\t<TelephoneNumber>4052397735</TelephoneNumber>\n\t\t\t\t</EepTns>\n\t\t\t\t<EepAeuiIds>\n\t\t\t\t\t<Identifier>Fred992834</Identifier>\n\t\t\t\t\t<Identifier>Bob00359</Identifier>\n\t\t\t\t</EepAeuiIds>\n\t\t\t</EepToEngAssociations>\n\t\t</AddedAssociations>\n\t</EmergencyNotificationEndpointAssociations>\n</EmergencyNotificationEndpointOrder>"
             schema:
@@ -16996,7 +17352,36 @@ paths:
                     The 201 response payload for creating an order to add
                     emergency endpoint associations to an emergency notification
                     group
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<EmergencyNotificationEndpointOrderResponse>\n\t<EmergencyNotificationEndpointOrder> \n\t\t<OrderId>3e9a852e-2d1d-4e2d-84c3-87223a78cb70</OrderId>\n\t\t<OrderCreatedDate>2020-01-23T18:34:17.284Z</OrderCreatedDate>\n\t\t<CreatedBy>testuser</CreatedBy> \n\t\t<ProcessingStatus>COMPLETED</ProcessingStatus> \n\t\t<CustomerOrderId>ALG-31233884</CustomerOrderId> \n\t\t<EmergencyNotificationEndpointAssociations> \n\t\t\t<EmergencyNotificationGroup> \n\t\t\t\t<Identifier>3e9a852e-2d1d-4e2d-84c3-04595ba2eb93</Identifier>\n\t\t\t</EmergencyNotificationGroup>\n\t\t\t<!-- If the order created emergency endpoint to emergency notification group associations -->\n\t\t\t<AddedAssociations>\n\t\t\t\t<EepToEngAssociations>\n\t\t\t\t\t<EepTns>\n\t\t\t\t\t\t<TelephoneNumber>2248838829</TelephoneNumber>\n\t\t\t\t\t\t<TelephoneNumber>4052397735</TelephoneNumber> \n\t\t\t\t\t</EepTns>\n\t\t\t\t\t<EepAeuiIds>\n\t\t\t\t\t\t<Identifier>Fred992834</Identifier>\n\t\t\t\t\t\t<Identifier>Bob00359</Identifier>\n\t\t\t\t\t</EepAeuiIds>\n\t\t\t\t</EepToEngAssociations>\n\t\t\t\t<ErrorList/>\n\t\t\t</AddedAssociations> \n\t\t</EmergencyNotificationEndpointAssociations>\n\t</EmergencyNotificationEndpointOrder>\n</EmergencyNotificationEndpointOrderResponse>"
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <EmergencyNotificationEndpointOrderResponse>
+                       <EmergencyNotificationEndpointOrder>
+                          <OrderId>3e9a852e-2d1d-4e2d-84c3-87223a78cb70</OrderId>
+                          <OrderCreatedDate>2020-01-23T18:34:17.284Z</OrderCreatedDate>
+                          <CreatedBy>testuser</CreatedBy>
+                          <ProcessingStatus>COMPLETED</ProcessingStatus>
+                          <CustomerOrderId>ALG-31233884</CustomerOrderId>
+                          <EmergencyNotificationEndpointAssociations>
+                             <EmergencyNotificationGroup>
+                                <Identifier>3e9a852e-2d1d-4e2d-84c3-04595ba2eb93</Identifier>
+                             </EmergencyNotificationGroup>
+                             <!-- If the order created emergency endpoint to emergency notification group associations -->
+                             <AddedAssociations>
+                                <EepToEngAssociations>
+                                   <EepTns>
+                                      <TelephoneNumber>2248838829</TelephoneNumber>
+                                      <TelephoneNumber>4052397735</TelephoneNumber>
+                                   </EepTns>
+                                   <EepAeuiIds>
+                                      <Identifier>Fred992834</Identifier>
+                                      <Identifier>Bob00359</Identifier>
+                                   </EepAeuiIds>
+                                </EepToEngAssociations>
+                                <ErrorList/>
+                             </AddedAssociations>
+                          </EmergencyNotificationEndpointAssociations>
+                       </EmergencyNotificationEndpointOrder>
+                    </EmergencyNotificationEndpointOrderResponse>
                 remove endpoint:
                   description: >-
                     The 201 response payload for creating an order to remove
@@ -17421,7 +17806,23 @@ paths:
                     A sample 201 response to an order payload for updating an
                     emergency notification group by adding emergency
                     notification recipients looks like the following
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<EmergencyNotificationGroupOrderResponse>\n\t<OrderId>31e4be80-e816-432e-a554-1219ed4fc5e9</OrderId>\n\t<OrderCreatedDate>2020-04-29T15:34:32.799</OrderCreatedDate>\n\t<CreatedBy>systemUser</CreatedBy>\n\t<ProcessingStatus>PROCESSING</ProcessingStatus>\n\t<ModifiedEmergencyNotificationGroup>\n\t\t<Identifier>5da0859b-2af8-42a3-85dd-dad4ba5f7503</Identifier>\n\t\t<Description>oXHGGVKwmd</Description>\n\t\t<AddedEmergencyNotificationRecipients>\n\t\t\t<EmergencyNotificationRecipient> \n\t\t\t\t<Identifier>f2eaa7be771241af9b031584875a60</Identifier>\n\t\t\t</EmergencyNotificationRecipient>\n\t\t</AddedEmergencyNotificationRecipients>\n\t</ModifiedEmergencyNotificationGroup>\n</EmergencyNotificationGroupOrderResponse>"
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <EmergencyNotificationGroupOrderResponse>
+                       <OrderId>31e4be80-e816-432e-a554-1219ed4fc5e9</OrderId>
+                       <OrderCreatedDate>2020-04-29T15:34:32.799</OrderCreatedDate>
+                       <CreatedBy>systemUser</CreatedBy>
+                       <ProcessingStatus>PROCESSING</ProcessingStatus>
+                       <ModifiedEmergencyNotificationGroup>
+                          <Identifier>5da0859b-2af8-42a3-85dd-dad4ba5f7503</Identifier>
+                          <Description>oXHGGVKwmd</Description>
+                          <AddedEmergencyNotificationRecipients>
+                             <EmergencyNotificationRecipient>
+                                <Identifier>f2eaa7be771241af9b031584875a60</Identifier>
+                             </EmergencyNotificationRecipient>
+                          </AddedEmergencyNotificationRecipients>
+                       </ModifiedEmergencyNotificationGroup>
+                    </EmergencyNotificationGroupOrderResponse>
                 201 for delete group:
                   description: >-
                     A sample 201 response to an order payload for deleting an
@@ -17438,7 +17839,19 @@ paths:
                     A sample 201 response to an order payload for updating an
                     emergency notification group description looks like the
                     following
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<EmergencyNotificationGroupOrderResponse>\n\t<OrderId>3e9a852e-2d1d-4e2d-84c3-87223a78cb70</OrderId>\n\t<OrderCreatedDate>2020-01-23T18:34:17.284Z</OrderCreatedDate>\n\t<CreatedBy>testuser</CreatedBy>\n\t<ProcessingStatus>PROCESSING</ProcessingStatus> \n\t<CustomerOrderId>ALG-31233884</CustomerOrderId>\n\t<UpdatedEmergencyNotificationGroup>\n\t\t<Identifier>63865500-0904-46b1-9b4f-7bd237a26363</Identifier>\n\t\t<Description> This is an updated description of the emergency notification Group. </Description>\n\t</UpdatedEmergencyNotificationGroup>\n</EmergencyNotificationGroupOrderResponse>"
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <EmergencyNotificationGroupOrderResponse>
+                       <OrderId>3e9a852e-2d1d-4e2d-84c3-87223a78cb70</OrderId>
+                       <OrderCreatedDate>2020-01-23T18:34:17.284Z</OrderCreatedDate>
+                       <CreatedBy>testuser</CreatedBy>
+                       <ProcessingStatus>PROCESSING</ProcessingStatus>
+                       <CustomerOrderId>ALG-31233884</CustomerOrderId>
+                       <UpdatedEmergencyNotificationGroup>
+                          <Identifier>63865500-0904-46b1-9b4f-7bd237a26363</Identifier>
+                          <Description>This is an updated description of the emergency notification Group.</Description>
+                       </UpdatedEmergencyNotificationGroup>
+                    </EmergencyNotificationGroupOrderResponse>
                 Simple response:
                   value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<EmergencyNotificationGroupOrderResponse>\n<OrderId>900b3646-18df-4626-b237-3a8de648ebf6</OrderId>\n\t<OrderCreatedDate>2020-04-29T15:27:16.151</OrderCreatedDate>\n\t<CreatedBy>systemUser</CreatedBy>\n\t<ProcessingStatus>PROCESSING</ProcessingStatus>\n\t<CustomerOrderId>UbOxhMnp</CustomerOrderId>\n\t<AddedEmergencyNotificationGroup>\n\t\t<Identifier>52897b97-3592-43fe-aa3f-857cf96671ee</Identifier>\n\t\t<Description>JgHzUzIchD</Description>\n\t\t<AddedEmergencyNotificationRecipients>\n\t\t\t<EmergencyNotificationRecipient>\n\t\t\t\t<Identifier>c7f74671edd8410d9a4c0f8e985e0a</Identifier>\n\t\t\t</EmergencyNotificationRecipient>\n\t\t\t<EmergencyNotificationRecipient>\n\t\t\t\t<Identifier>74ac30535b414d29bc36d50572f553</Identifier>\n\t\t\t</EmergencyNotificationRecipient>\n\t\t\t<EmergencyNotificationRecipient>\n\t\t\t\t<Identifier>b910df3245ce4192aee052f583259f</Identifier>\n\t\t\t</EmergencyNotificationRecipient>\n\t\t</AddedEmergencyNotificationRecipients>\n\t</AddedEmergencyNotificationGroup>\n</EmergencyNotificationGroupOrderResponse>"
               schema:
@@ -18100,7 +18513,15 @@ paths:
                 value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<EmergencyNotificationRecipient>\n\t<Description>Email to Bldg. 3 Front Desk</Description>\n\t<Type>EMAIL</Type>\n\t<EmailAddress>foo@bar.com</EmailAddress>\n</EmergencyNotificationRecipient>"
               sms:
                 description: Sample request payload for an SMS recipient
-                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<EmergencyNotificationRecipient>\n\t<Description>Text message to guard shack</Description>\n\t<Type>SMS</Type>\n\t<Sms> \n\t\t<TelephoneNumber>12015551212</TelephoneNumber>\n\t</Sms>\n</EmergencyNotificationRecipient>"
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <EmergencyNotificationRecipient>
+                    <Description>Text message to guard shack</Description>
+                    <Type>SMS</Type>
+                    <Sms>
+                      <TelephoneNumber>12015551212</TelephoneNumber>
+                    </Sms>
+                  </EmergencyNotificationRecipient>
               tts:
                 description: Sample request payload for an TTS recipient
                 value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<EmergencyNotificationRecipient>\n\t<Description>Voice call notification to Susan Jones</Description>\n\t<Type>TTS</Type>\n\t<Tts>\n\t\t<TelephoneNumber>12015551212</TelephoneNumber>\n\t</Tts>\n</EmergencyNotificationRecipient>"
@@ -18339,7 +18760,21 @@ paths:
                   value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<EmergencyNotificationRecipientsResponse>\n\t<EmergencyNotificationRecipient>\n\t\t<Identifier>63865500-0904-46b1-9b4f-7bd237a26363</Identifier>\n\t\t<CreatedDate>2020-03-28T15:45:01.371Z</CreatedDate>\n\t\t<LastModifiedDate>2020-03-29T18:59:42.220Z</LastModifiedDate>\n\t\t<ModifiedByUser>deisenhower</ModifiedByUser>\n\t\t<Description>This is a description of the emergency notification recipient.</Description>\n\t\t<Type>SMS</Type>\n\t\t<Sms>\n\t\t\t<TelephoneNumber>12015551212</TelephoneNumber>\n\t\t</Sms>\n\t</EmergencyNotificationRecipient>\n</EmergencyNotificationRecipientsResponse>"
                 tts:
                   description: For an TTS type emergency notification recipient
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<EmergencyNotificationRecipientsResponse>\n\t<EmergencyNotificationRecipient>\n\t\t<Identifier>63865500-0904-46b1-9b4f-7bd237a26363</Identifier>\n\t\t<CreatedDate>2020-03-30T22:14:30.443Z</CreatedDate> \n\t\t<LastModifiedDate>2020-03-30T22:14:30.443Z</LastModifiedDate>\n\t\t<ModifiedByUser>frooseveldt</ModifiedByUser>\n\t\t<Description>This is a description of the emergency notification recipient.</Description>\n\t\t<Type>TTS</Type>\n\t\t<Tts>\n\t\t\t<TelephoneNumber>12015551212</TelephoneNumber>\n\t\t</Tts>\n\t</EmergencyNotificationRecipient>\n</EmergencyNotificationRecipientsResponse>"
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <EmergencyNotificationRecipientsResponse>
+                       <EmergencyNotificationRecipient>
+                          <Identifier>63865500-0904-46b1-9b4f-7bd237a26363</Identifier>
+                          <CreatedDate>2020-03-30T22:14:30.443Z</CreatedDate>
+                          <LastModifiedDate>2020-03-30T22:14:30.443Z</LastModifiedDate>
+                          <ModifiedByUser>frooseveldt</ModifiedByUser>
+                          <Description>This is a description of the emergency notification recipient.</Description>
+                          <Type>TTS</Type>
+                          <Tts>
+                             <TelephoneNumber>12015551212</TelephoneNumber>
+                          </Tts>
+                       </EmergencyNotificationRecipient>
+                    </EmergencyNotificationRecipientsResponse>
               schema:
                 oneOf:
                   - $ref: >-
@@ -20702,7 +21137,33 @@ paths:
               examples:
                 example:
                   description: example
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<TNs>\n\t    <TotalCount>59</TotalCount>\n\t    <Links>\n\t\t        <first> ( a link goes here ) </first>\n\t    </Links>\n\t    <TelephoneNumbers>\n\t\t        <Count>59</Count>\n\t\t        <TelephoneNumber>8043024183</TelephoneNumber>\n\t\t        <TelephoneNumber>8042121778</TelephoneNumber>\n\t\t        <TelephoneNumber>8042146066</TelephoneNumber>\n\t\t        <TelephoneNumber>8043814903</TelephoneNumber>\n\t\t        <TelephoneNumber>8043814905</TelephoneNumber>\n\t\t        <TelephoneNumber>8043814864</TelephoneNumber>\n\t\t        <TelephoneNumber>8043326094</TelephoneNumber>\n\t\t        <TelephoneNumber>8042121771</TelephoneNumber>\n\t\t        <TelephoneNumber>8043024182</TelephoneNumber>\n\t\t        <!-- SNIP -->        \n\t\t        <TelephoneNumber>8043814900</TelephoneNumber>\n\t\t        <TelephoneNumber>8047672642</TelephoneNumber>\n\t\t        <TelephoneNumber>8043024368</TelephoneNumber>\n\t\t        <TelephoneNumber>8042147950</TelephoneNumber>\n\t\t        <TelephoneNumber>8043169931</TelephoneNumber>\n\t\t        <TelephoneNumber>8043325302</TelephoneNumber>\n\t    </TelephoneNumbers>\n</TNs>"
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <TNs>
+                       <TotalCount>59</TotalCount>
+                       <Links>
+                          <first>( a link goes here )</first>
+                       </Links>
+                       <TelephoneNumbers>
+                          <Count>59</Count>
+                          <TelephoneNumber>8043024183</TelephoneNumber>
+                          <TelephoneNumber>8042121778</TelephoneNumber>
+                          <TelephoneNumber>8042146066</TelephoneNumber>
+                          <TelephoneNumber>8043814903</TelephoneNumber>
+                          <TelephoneNumber>8043814905</TelephoneNumber>
+                          <TelephoneNumber>8043814864</TelephoneNumber>
+                          <TelephoneNumber>8043326094</TelephoneNumber>
+                          <TelephoneNumber>8042121771</TelephoneNumber>
+                          <TelephoneNumber>8043024182</TelephoneNumber>
+                          <!-- SNIP -->
+                          <TelephoneNumber>8043814900</TelephoneNumber>
+                          <TelephoneNumber>8047672642</TelephoneNumber>
+                          <TelephoneNumber>8043024368</TelephoneNumber>
+                          <TelephoneNumber>8042147950</TelephoneNumber>
+                          <TelephoneNumber>8043169931</TelephoneNumber>
+                          <TelephoneNumber>8043325302</TelephoneNumber>
+                       </TelephoneNumbers>
+                    </TNs>
               schema:
                 $ref: '#/components/schemas/AccountTelephoneNumbersHistoryResponse'
           description: A successful result that contains the response data.
