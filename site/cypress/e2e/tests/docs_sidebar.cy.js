@@ -3,13 +3,13 @@ import {testSidebar} from '../../utils/utils'
 
 context('Testing the Docs Sidebar Tabs', () => {
   beforeEach(() => {
-    cy.visit('/docs/account') // needs to be updated to point at /docs/versions
+    cy.visit('/docs/versions')
   })
 
-  // it('Should verify that the Account Management tab and sub-tabs opens and closes properly', () => { // Wait for versions page to exist and then uncomment
-  //   testSidebar('Account Management')
-  //   testSidebar('Setup')
-  // })
+  it('Should verify that the Account Management tab and sub-tabs opens and closes properly', () => {
+    testSidebar('Account Management')
+    testSidebar('Setup')
+  })
 
   it('Should verify that the Numbers tab and sub-tabs opens and closes properly', () => {
     testSidebar('Numbers')
@@ -47,4 +47,9 @@ context('Testing the Docs Sidebar Tabs', () => {
     testSidebar('Bandwidth Dashboard')
     testSidebar('911 Access Dashboard')
   })
+
+  // TODO ONEID-1304
+  // it('Should verify that the Identity Management tab and sub-tabs opens and closes properly', () => {
+  //   testSidebar('Identity Management')
+  // })
 })
