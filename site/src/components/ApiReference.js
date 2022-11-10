@@ -1,6 +1,6 @@
 import React from 'react';
 import { useColorMode } from '@docusaurus/theme-common';
-import { RedocStandalone } from 'redoc';
+import { RedocStandalone } from 'bandwidth-redoc';
 import { lightTheme, darkTheme } from '@site/src/css/redocTheme';
 
 const RedocConfig = (props) => {
