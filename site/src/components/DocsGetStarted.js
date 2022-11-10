@@ -1,6 +1,6 @@
 import React from 'react';
 import docsAboutStyles from '@site/src/components/css/DocsAbout.module.css';
-import blueButtonStyles from '@site/src/components/css/BlueButton.module.css';
+import blueButtonStyles from '@site/src/components/css/BlueButton.module.scss';
 
 export default function DocsGetStarted({getStartedText, Svg, getStartedButton}) {
     return (

@@ -1,5 +1,5 @@
 import React from 'react';
-import blueButtonStyles from '@site/src/components/css/BlueButton.module.css';
+import blueButtonStyles from '@site/src/components/css/BlueButton.module.scss';
 
 export default function BlueButton({link, text}) {
     return (

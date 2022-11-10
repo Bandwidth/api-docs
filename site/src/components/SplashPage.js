@@ -1,5 +1,5 @@
 import React from 'react';
-import splashPageStyles from '@site/src/components/css/SplashPage.module.css';
+import splashPageStyles from '@site/src/components/css/SplashPage.module.scss';
 import Carousel from '@site/src/components/Carousel.js';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 
