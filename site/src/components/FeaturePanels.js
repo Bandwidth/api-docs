@@ -1,5 +1,5 @@
 import React from 'react';
-import featurePanelStyles from '@site/src/components/css/FeaturePanel.module.css';
+import featurePanelStyles from '@site/src/components/css/FeaturePanel.module.scss';
 
 function FeaturePanel({Svg, title, text, link}) {
     return (
