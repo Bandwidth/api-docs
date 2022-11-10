@@ -6,6 +6,7 @@ export default function Carousel({itemList, title}) {
     var itemWidthVar = 380;
     var slidePaddingVar = 25;
     var navButtonSizeVar = 50;
+    const timeout = 250;
     const Svg = require('@site/static/img/amoeba.svg').default;
     const [currentIndex, setCurrentIndex] = useState(itemList.length * 2);
     const [hasTransitionClass, setHasTransitionClass] = useState(true);
@@ -72,7 +73,7 @@ export default function Carousel({itemList, title}) {
             setTimeout(() => {  // disable transition animation after card slides, then snap to same card prior in the list
                 setHasTransitionClass(false);
                 setCurrentIndex(currentIndex - itemList.length);
-            }, 250)
+            }, timeout)
             
         }
         if (currentIndex == itemList.length) {  // keep index near the middle of the list when moving right
@@ -80,13 +81,13 @@ export default function Carousel({itemList, title}) {
             setTimeout(() => {
                 setHasTransitionClass(false);
                 setCurrentIndex(currentIndex + itemList.length);
-            }, 250)
+            }, timeout)
         }
         if (hasTransitionClass === false) { // turn transition animation back on after 25ms
             setTimeout(() => {
                 setHasTransitionClass(true);
                 setNavDisabled(false);
-            }, 25)
+            }, timeout/10)
         }
     }, [currentIndex])  // update when currentIndex is changed (from button click)
 
@@ -105,10 +106,7 @@ export default function Carousel({itemList, title}) {
         var imageStyle = {
             width: `${itemContentWidth}px`,
             height: `${itemContentWidth * .51}px`,
-            backgroundImage: `url(${imageUrl})`,
-            backgroundSize: `cover`,
-            borderRadius: `14px`,
-            boxShadow: `0px 0px 10px #00000029`
+            backgroundImage: `url(${imageUrl})`
         }
 
         var categoriesStyle = {
