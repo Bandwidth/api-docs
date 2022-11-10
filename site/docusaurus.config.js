@@ -174,6 +174,7 @@ module.exports = {
         redocCodeBackground: '#263238',
     },
     plugins: [
-        path.resolve(__dirname, 'redoc-plugin')
+        path.resolve(__dirname, 'redoc-plugin'),
+        'docusaurus-plugin-sass',
     ],
 };
