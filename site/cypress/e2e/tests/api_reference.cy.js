@@ -68,7 +68,7 @@ context('Emergency Notifications API SVG Link on API Reference Page', () => {
   testSvgLink('/apis/','svg[alt="Emergency Notifications API"]', 'apis/dash-notifications')
 })
 
-context('Emergenc Notifications API Text Link on API Reference Page', () => {
+context('Emergency Notifications API Text Link on API Reference Page', () => {
   testTextLink('/apis/','Emergency Notifications API', 'apis/dash-notifications')
 })
 

@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const customConfig = require('./custom.config.json');
+const blogPosts = require('./blogposts.config.json');
 const numbersSpec = fs.readFileSync('./specs/numbers.yml', 'utf-8');
 const phoneNumberLookupSpec = fs.readFileSync('./specs/phone-number-lookup.yml', 'utf-8');
 const voiceSpec = fs.readFileSync('./specs/voice.yml', 'utf-8');
@@ -17,6 +18,9 @@ const globalSpec_v2 = fs.readFileSync('./specs/global-v2.yml', 'utf-8');
 const globalSpec_v3 = fs.readFileSync('./specs/global-v3.yml', 'utf-8');
 const globalSpec_beta = fs.readFileSync('./specs/global-beta.yml', 'utf-8');
 const insightsSpec = fs.readFileSync('./specs/insights.yml', 'utf-8');
+/* TODO ONEID-1304
+const identitySpec = fs.readFileSync('./specs/one-identity-management.yml', 'utf-8');
+*/
 
 module.exports = {
     title: 'Bandwidth API Docs',
@@ -27,8 +31,8 @@ module.exports = {
     onBrokenMarkdownLinks: 'warn',
     favicon: 'img/favicon.ico',
     trailingSlash: true,
-    organizationName: 'bandwidth', 
-    projectName: 'api-docs', 
+    organizationName: 'bandwidth',
+    projectName: 'api-docs',
     themeConfig: {
         image: 'img/bw-icon.svg', // used for meta tag
         colorMode: {
@@ -55,7 +59,7 @@ module.exports = {
                     {
                         to: 'docs',
                         activeBasePath: 'docs',
-                        label: 'Docs',
+                        label: 'Guides',
                     }, {
                         to: 'apis',
                         label: 'API Reference',
@@ -81,17 +85,17 @@ module.exports = {
                 ]
             }, {
                 href: 'https://github.com/Bandwidth',
-                position: 'right', 
+                position: 'right',
                 className: 'header-github-link bw-link',
                 title: 'Github Organization'
             }, {
                 href: 'https://www.postman.com/bandwidth',   // TODO: update with real postman url
-                position: 'right', 
+                position: 'right',
                 className: 'header-postman-link bw-link',
                 title: 'Postman Collection'
             }, {
                 href: 'https://www.bandwidth.com/login/',
-                position: 'right', 
+                position: 'right',
                 className: 'header-login-link',
                 title: 'Login'
             }]
@@ -149,6 +153,10 @@ module.exports = {
         globalSpec_beta: YAML.parse(globalSpec_beta),
         insightsSpec: YAML.parse(insightsSpec),
         insightsSpecLink: `${customConfig.insightsSpecLink}`,
+        // TODO ONEID-1304
+        // identitySpec: YAML.parse(identitySpec),
+
+        blogPosts: blogPosts,
 
         // CSS Colors
         bwBlue: '#079CEE',

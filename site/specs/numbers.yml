@@ -6682,6 +6682,11 @@ components:
             - SIP
             - FQDN
           type: string
+        Name:
+          description: >-
+            A friendly name for a route.  This is not used for any back-end call
+            routing.
+          type: string
         Priority:
           format: int32
           type: integer
@@ -10922,7 +10927,10 @@ components:
         id:
           type: string
       type: object
-  securitySchemes: {}
+  securitySchemes:
+    httpBasic:
+      type: http
+      scheme: basic
 info:
   description: >-
     Bandwidth's Account and Number Management API
@@ -31020,6 +31028,7 @@ paths:
                              <VoiceHosts/>
                              <VoiceHostGroups/>
                              <TerminationHosts/>
+                             <OriginationRoutePlan/>
                              <Address>
                                 <HouseNumber>1600</HouseNumber>
                                 <HouseSuffix/>
@@ -31065,6 +31074,54 @@ paths:
         content:
           application/xml:
             examples:
+              With OriginationRoutePlan:
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <SipPeer>
+                    <PeerName>name</PeerName>
+                    <Description>description</Description>
+                    <IsDefaultPeer>false</IsDefaultPeer>
+                    <OriginationRoutePlan>
+                        <Route>
+                            <Endpoint>6105552502</Endpoint>
+                            <Priority>1</Priority>
+                            <Weight>100</Weight>
+                        </Route>
+                        <Route>
+                            <Endpoint>sip:clarkkent@dailyplanet.com</Endpoint>
+                            <Priority>2</Priority>
+                            <Weight>100</Weight>
+                        </Route>
+                        <Route>
+                            <Endpoint>192.168.20.21</Endpoint>
+                            <Priority>3</Priority>
+                            <Weight>50</Weight>
+                        </Route>
+                        <Route>
+                            <Endpoint>7075552509</Endpoint>
+                            <Priority>3</Priority>
+                            <Weight>50</Weight>
+                        </Route>
+                        <Route>
+                            <Endpoint>myhost.bandwidth.example</Endpoint>
+                            <Priority>4</Priority>
+                            <Weight>100</Weight>
+                        </Route>
+                        <Action>asSpecified</Action>
+                    </OriginationRoutePlan>
+                    <TerminationHosts>
+                        <TerminationHost>
+                            <HostName>2.1.1.9</HostName>
+                            <Port>0</Port>
+                            <CustomerTrafficAllowed>DOMESTIC</CustomerTrafficAllowed>
+                        </TerminationHost>
+                        <TerminationHost>
+                            <HostName>2.1.1.96/30</HostName>
+                            <Port>0</Port>
+                            <CustomerTrafficAllowed>DOMESTIC</CustomerTrafficAllowed>
+                        </TerminationHost>
+                    </TerminationHosts>
+                  </SipPeer>
               With VoiceHostGroups:
                 value: |-
                   <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -31221,6 +31278,21 @@ paths:
                     only 1 default SIP Peer. You can configure multiple SIP
                     Peers on a Site
                   type: boolean
+                OriginationRoutePlan:
+                  $ref: '#/components/schemas/OriginationRoutePlan'
+                  description: >-
+                    The OriginationRoutePlan element consists of an action and a
+                    list of prioritized and weighted routes that tell Bandwidth
+                    where to send phone calls to phone numbers associated with a
+                    SIP peer.  Priority determines the order in which the
+                    specified routes are attempted, with lower priority
+                    endpoints being attempted first.  When there are multiple
+                    endpoints with the same priority, weight is used to
+                    determine the percentage of phone calls that appear first in
+                    the routing list for that priority.  This field is intended
+                    to replace the functionality of VoiceHosts, VoiceHostGroups,
+                    and FinalDestinationUri and should not be used in
+                    conjunction with these fields.
                 PeerName:
                   description: Mandatory name for the SIP Peer
                   maxLength: 10
@@ -31336,7 +31408,21 @@ paths:
             valid host</li><li>13595 - The IP address provided: %s contains a
             non zero subnet portion. An equivalent IP address such as %s with a
             zero subnet value must be provided.</li>
-
+              <li>13685 "Origination route plan action cannot be 'unchanged' when creating a new SIP peer"</li>
+              <li>13686 "Origination route plan action cannot be 'off' when creating a new SIP peer"</li>
+              <li>13687 "Voice hosts and host groups are not supported on this account, please add your hosts to the origination route plan for this SIP peer"</li>
+              <li>13688 "FinalDestinationUri is not supported on this account, to acheive the same thing, please add this URI to a fail-over group in the origination route plan for this SIP peer"</li>
+              <li>5200 "Origination route plan is not enabled for the account"</li>
+              <li>5207 "Specified Route Plan Action was invalid, must be one of 'asSpecified', 'unchanged' or 'off'"</li>
+              <li>5218 "Origination route cannot have private IP endpoint: %s"</li>
+              <li>5219 "Origination route sip endpoint %s cannot have invalid sip host %s"</li>
+              <li>5220 "Origination route sip endpoint %s cannot have private ipv4 %s as sip host"</li>
+              <li>5221 "Origination route priority %s cannot exceed maximum priority value %s"</li>
+              <li>5222 "Origination route weight %s cannot exceed maximum weight value %s"</li>
+              <li>5223 "Origination route priority should be a contiguous sequence of numbers starting with 1. Priority %d is missing."</li>
+              <li>5251 "One of the provided origination route plan route names is too long, please ensure all names are less than 256 characters."</li>
+              <li>5252 "The origination route name %s is invalid, please use only alphanumeric, whitespace, underscore, and/or dash characters"</li>
+              <li>5253 "Telephone number endpoints are not allowed on this account. Please contact Bandwidth support if you wish to add this feature to your account."</li>
             </ul>
         '409':
           content:
@@ -31464,6 +31550,7 @@ paths:
                           <VoiceHosts/>
                           <VoiceHostGroups/>
                           <TerminationHosts/>
+                          <OriginationRoutePlan/>
                           <Address>
                              <HouseNumber>1600</HouseNumber>
                              <HouseSuffix/>
@@ -31594,6 +31681,7 @@ paths:
                           <VoiceHosts/>
                           <VoiceHostGroups/>
                           <TerminationHosts/>
+                          <OriginationRoutePlan/>
                           <Address>
                              <HouseNumber>1600</HouseNumber>
                              <HouseSuffix/>
@@ -31660,7 +31748,25 @@ paths:
             invalid mask. Valid mask values: 24-32</li><li>13594 - %s is not
             valid host</li><li>13595 - The IP address provided: %s contains a
             non zero subnet portion. An equivalent IP address such as %s with a
-            zero subnet value must be provided.</li></ul>
+            zero subnet value must be provided.</li>
+
+            <li>13685 "Origination route plan action cannot be 'unchanged' when
+            creating a new SIP peer"</li>
+              <li>13686 "Origination route plan action cannot be 'off' when creating a new SIP peer"</li>
+              <li>13687 "Voice hosts and host groups are not supported on this account, please add your hosts to the origination route plan for this SIP peer"</li>
+              <li>13688 "FinalDestinationUri is not supported on this account, to acheive the same thing, please add this URI to a fail-over group in the origination route plan for this SIP peer"</li>
+              <li>5200 "Origination route plan is not enabled for the account"</li>
+              <li>5207 "Specified Route Plan Action was invalid, must be one of 'asSpecified', 'unchanged' or 'off'"</li>
+              <li>5218 "Origination route cannot have private IP endpoint: %s"</li>
+              <li>5219 "Origination route sip endpoint %s cannot have invalid sip host %s"</li>
+              <li>5220 "Origination route sip endpoint %s cannot have private ipv4 %s as sip host"</li>
+              <li>5221 "Origination route priority %s cannot exceed maximum priority value %s"</li>
+              <li>5222 "Origination route weight %s cannot exceed maximum weight value %s"</li>
+              <li>5223 "Origination route priority should be a contiguous sequence of numbers starting with 1. Priority %d is missing."</li>
+              <li>5251 "One of the provided origination route plan route names is too long, please ensure all names are less than 256 characters."</li>
+              <li>5252 "The origination route name %s is invalid, please use only alphanumeric, whitespace, underscore, and/or dash characters"</li>
+              <li>5253 "Telephone number endpoints are not allowed on this account. Please contact Bandwidth support if you wish to add this feature to your account."</li>
+            </ul>
         '409':
           content:
             application/xml:
