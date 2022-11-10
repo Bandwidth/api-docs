@@ -1,0 +1,233 @@
+---
+id: updatePortin
+title: Manage Port-in
+slug: /numbers/guides/porting/updatePortin
+description: How to update your port-in request
+keywords:
+  - bandwidth
+  - numbers
+  - porting
+  - portin
+  - port-in
+  - lnp
+  - port
+  - update
+  - supp
+image: '@site/static/img/bw-icon.svg'
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+export const accountId = "{accountId}";
+export const orderId = "{orderId}";
+
+export const Highlight = ({children, color}) => (
+    <span
+      style={{
+        backgroundColor: color,
+        borderRadius: '2px',
+        color: '#fff',
+        padding: '0.2rem',
+      }}>
+      {children}
+    </span>
+  );
+
+In this guide we will show you how to update your port-in order. We assume that you have [created port-in order](/docs/numbers/guides/porting/updatePortin).
+
+## Update Port-in Order
+
+The <code class="put">PUT</code> to [/portins/{orderId} API](/apis/numbers/#operation/UpdatePortin) API allows a user to modify an existing LNP order, by sending a SUPP request. Modifications are only allowed for orders that are not yet `complete` or `cancelled`. Since many of the entries in an LNP Order cannot be changed after the initial order is placed, the ```PUT``` on a porting order-id does not require that the full order payload is included.
+
+If the order ProcessingStatus is `DRAFT`, the rules about what can be changed are much more lenient. Validation is performed when the ProcessingStatus is changed from `DRAFT` to `SUBMITTED`. The AltSpid element can be modified if it is not configured at the system level.
+Regarding the fields which can be updated for different port types check the request schema section of [PUT /portins/{orderId}](/apis/numbers/#operation/UpdatePortin) specification.
+
+The general approach to handling this API call is to replace the elements included in the request body, and leave other preexisting elements in an unmodified condition. This is typical of a PATCH method, but because of our commitment to backwards compatibility we have elected not to "Fix" this behavior. As a result, there are some elements that cannot be modified using the <Highlight color="#9a59c5">PUT</Highlight> method. The elements affected vary by port-in Order type, which can be determined using a <Highlight color="#00bf8c">GET</Highlight> request to the `/portins/{orderId}` endpoint.
+
+### Examples
+To update port-in request, you must make a <Highlight color="#9a59c5">PUT</Highlight> request to our [API /portins/{orderId}](/apis/numbers/#operation/UpdatePortin) endpoint. This can be done using tools like Postman or cURL.
+<Highlight color="#9a59c5">PUT</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/portins/{orderId}</code>
+
+<Tabs
+    groupId="updatePortin"
+    defaultValue="payload"
+    values={[
+        { label: 'Request Payload', value: 'payload', },
+        { label: 'cURL', value: 'curl', },
+    ]
+    }>
+<TabItem value="payload">
+
+```xml
+PUT https://dashboard.bandwidth.com/api/accounts/{accountId}/portins/d28b36f7-fa96-49eb-9556-a40fca49f7c6 HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<?xml version="1.0" encoding="UTF-8"?>
+<LnpOrderSupp>
+    <CustomerOrderId>SJM00002</CustomerOrderId>
+    <RequestedFocDate>2014-12-04T13:00:00.000Z</RequestedFocDate>
+    <BillingTelephoneNumber>8045030092</BillingTelephoneNumber>
+    <NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>
+    <WirelessInfo>
+        <AccountNumber>23453245</AccountNumber>
+        <PinNumber>1111</PinNumber>
+    </WirelessInfo>
+    <Subscriber>
+        <SubscriberType>RESIDENTIAL</SubscriberType>
+        <FirstName>TestName</FirstName>
+        <LastName>TestLastName</LastName>
+        <ServiceAddress>
+            <!-- If true will overwrite all address fields,
+             those which should be required remain required.
+             Affect only supp. Default false. -->
+            <ResetAddressFields>true</ResetAddressFields>
+            <HouseNumber>123</HouseNumber>
+            <StreetName>Main Street</StreetName>
+            <City>Cary</City>
+            <StateCode>NC</StateCode>
+            <Zip>54321</Zip>
+        </ServiceAddress>
+    </Subscriber>
+    <SiteId>743</SiteId>
+    <PartialPort>true</PartialPort>
+    <ListOfPhoneNumbers>
+        <PhoneNumber>2019721004</PhoneNumber>
+        <PhoneNumber>2019721005</PhoneNumber>
+    </ListOfPhoneNumbers>
+    <LoaAuthorizingPerson>TestName TestLastName</LoaAuthorizingPerson>
+    <AlternateSpid>Foo</AlternateSpid>
+</LnpOrderSupp>
+```
+
+> Response
+
+```xml
+HTTP 200 OK
+Content-Type: application/xml; charset=utf-8
+
+<LnpOrderResponse>
+    <OrderId>d28b36f7-fa96-49eb-9556-a40fca49f7c6</OrderId>
+    <Status>
+        <Code>200</Code>
+        <Description>Supp request received. Please use the order id to check the status of your order later.</Description>
+    </Status>
+    <ProcessingStatus>REQUESTED_SUPP</ProcessingStatus>
+    <RequestedFocDate>2022-06-04T13:00:00Z</RequestedFocDate>
+    <BillingTelephoneNumber>8045030092</BillingTelephoneNumber>
+    <NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>
+    <Triggered>false</Triggered>
+</LnpOrderResponse>
+```
+
+</TabItem>
+<TabItem value="curl">
+
+```xml
+Note: Remember to add authentication for your application if needed!
+
+curl 'https://dashboard.bandwidth.com/api/accounts/{BW_ACCOUNT_ID}/portins/d28b36f7-fa96-49eb-9556-a40fca49f7c6' \
+-X PUT \
+-u '{BANDWIDTH_USERNAME}:{BANDWIDTH_PASSWORD}' \
+-H 'Content-Type: application/xml' \
+-d '<LnpOrderSupp>
+<CustomerOrderId>SJM00002</CustomerOrderId>
+<RequestedFocDate>2022-06-04T13:00:00.000Z</RequestedFocDate>
+<BillingTelephoneNumber>8045030092</BillingTelephoneNumber>
+<NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>
+<WirelessInfo>
+    <AccountNumber>23453245</AccountNumber>
+    <PinNumber>1111</PinNumber>
+</WirelessInfo>
+<Subscriber>
+    <SubscriberType>RESIDENTIAL</SubscriberType>
+    <FirstName>TestName</FirstName>
+    <LastName>TestLastName</LastName>
+    <ServiceAddress>
+        <!-- If true will overwrite all address fields,
+         those which should be required remain required.
+         Affect only supp. Default false. -->
+        <ResetAddressFields>true</ResetAddressFields>
+        <HouseNumber>123</HouseNumber>
+        <StreetName>Main Street</StreetName>
+        <City>Cary</City>
+        <StateCode>NC</StateCode>
+        <Zip>54321</Zip>
+    </ServiceAddress>
+</Subscriber>
+<SiteId>743</SiteId>
+<PartialPort>true</PartialPort>
+<ListOfPhoneNumbers>
+    <PhoneNumber>2019721004</PhoneNumber>
+    <PhoneNumber>2019721005</PhoneNumber>
+</ListOfPhoneNumbers>
+<LoaAuthorizingPerson>TestName TestLastName</LoaAuthorizingPerson>
+<AlternateSpid>Foo</AlternateSpid>
+</LnpOrderSupp>'
+```
+
+> Response
+
+```xml
+HTTP 200 OK
+Content-Type: application/xml; charset=utf-8
+
+<LnpOrderResponse>
+    <OrderId>d28b36f7-fa96-49eb-9556-a40fca49f7c6</OrderId>
+    <Status>
+        <Code>200</Code>
+        <Description>Supp request received. Please use the order id to check the status of your order later.</Description>
+    </Status>
+    <ProcessingStatus>REQUESTED_SUPP</ProcessingStatus>
+    <RequestedFocDate>2022-06-04T13:00:00Z</RequestedFocDate>
+    <BillingTelephoneNumber>8045030092</BillingTelephoneNumber>
+    <NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>
+    <Triggered>false</Triggered>
+</LnpOrderResponse>
+```
+
+</TabItem>
+</Tabs>
+
+## Cancel a Port-in Order
+
+The API allows a user to cancel an existing LNP order. The order number that was generated in the create request must be provided, and the status of the order should not be ```COMPLETE```. The <Highlight color="#ff6f47">DELETE</Highlight> method is used for this purpose.
+
+### Examples
+<Highlight color="#ff6f47">DELETE</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/portins/{orderId}</code>
+
+<Tabs
+    groupId="deletePortin"
+    defaultValue="cURL"
+    values={[
+        { label: 'cURL', value: 'cURL', },
+    ]
+    }>
+<TabItem value="cURL">
+
+```xml
+curl -X DELETE https://dashboard.bandwidth.com/api/accounts/{accountId}/portins/d28b36f7-fa96-49eb-9556-a40fca49f7c6 \
+    -u '{BANDWIDTH_USERNAME}:{BANDWIDTH_PASSWORD}' \
+    -H 'Content-Type: application/xml'
+```
+
+> Response
+
+```http
+HTTP 200 OK
+```
+
+</TabItem>
+</Tabs>
+
+## Port-in completion
+
+A port-in order may have one of 2 terminal processing statuses: ```COMPLETED``` (successful completion) or ```CANCELLED``` (cancelled by user or because of critical error). An order in a “terminal” state will never transition to any other processing status (terminal or not).
+
+## Where to next?
+
+- [How to Check Numbers Portability ←](/docs/numbers/guides/porting/lnpChecker)
+- [How to Upload LOA (Letter of authorization) ←](/docs/numbers/guides/porting/loaUpload)
+- [How to Create Port-in Request ←](/docs/numbers/guides/porting/portingNumbers)
+

@@ -1,0 +1,220 @@
+---
+id: billingReports
+title: How to request billing reports
+slug: /numbers/guides/setup-reports/billingReports
+description: How to request and download billing reports using the Bandwidth APIs
+keywords:
+  - bandwidth
+  - numbers
+  - reports
+image: '@site/static/img/bw-icon.svg'
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+export const accountId = "{accountId}";
+export const reportId = "{reportId}";
+export const instanceId = "{instanceId}";
+
+export const Highlight = ({children, color}) => (
+    <span
+      style={{
+        backgroundColor: color,
+        borderRadius: '2px',
+        color: '#fff',
+        padding: '0.2rem',
+      }}>
+      {children}
+    </span>
+  );
+
+The Bandwidth numbers API allows you to automate the creation and download of certain billing reports related to account usage.
+These reports contain information about billable events that occured on your Bandwidth account and associated telephone numbers.
+
+## Retrieve Billing Reports
+
+To retrieve all account billing reports and view possible billing report types, make a <Highlight color="#00bf8c">GET</Highlight> request to our [List Billing Reports API](../../../../../apis/numbers/#tag/Reports/operation/GetBillingReportByType) endpoint.
+This can be done through tools like [Postman](https://github.com/Bandwidth/postman) or cURL.
+
+#### Request URL:
+
+<p><Highlight color="#00bf8c">GET</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/billingreports</code></p>
+
+<Tabs
+groupId="list_account_reports"
+defaultValue="curl"
+values={[
+    { label: 'cURL', value: 'curl', }
+]
+}>
+
+<TabItem value="curl">
+
+```cURL
+curl 'https://dashboard.bandwidth.com/api/accounts/{accountId}/billingreports'
+-u '{userName}:{password}'
+```
+
+> Response
+
+```xml
+<BillingReportsRetrievalResponse>
+    <BillingReportList>
+        <BillingReport>
+            <BillingReportId>5f8734f0-d7c3-445c-b1e2-cdbb620e4ff7</BillingReportId>
+            <BillingReportKind>BDR</BillingReportKind>
+            <UserId>some_user</UserId>
+            <ReportStatus>PROCESSING</ReportStatus>
+            <Description>The requested report archive is still being constructed, please check back later.</Description>
+            <CreatedDate>2021-09-16 14:12:16</CreatedDate>
+            <DateRange>
+                <StartDate>2021-07-16</StartDate>
+                <EndDate>2021-09-16</EndDate>
+            </DateRange>
+        </BillingReport>
+    </BillingReportList>
+</BillingReportsRetrievalResponse>
+```
+
+</TabItem>
+</Tabs>
+
+## Request a Report {#request-billing-report}
+
+To generate a billing report with specific date range and type, you must make a <Highlight color="#079CEE">POST</Highlight> request to our [Create Billing Report in Range API](../../../../../apis/numbers/#tag/Reports/operation/CreateBillingReport) endpoint.
+A successful response will include a body and location header, which contains a URI with the report ID to be used in later requests.
+This can be done through tools like [Postman](https://github.com/Bandwidth/postman) or cURL.
+
+<Tabs
+groupId="generate_report"
+defaultValue="payload"
+values={[
+    { label: 'Payload', value: 'payload', },
+    { label: 'cURL', value: 'curl', }
+]
+}>
+
+<TabItem value="payload">
+
+<p><Highlight color="#079CEE">POST</Highlight><code>https://dashboard.bandwidth.com/api/accounts/{accountId}/billingreports</code></p>
+
+```xml
+<BillingReport>
+    <Type>BDR</Type>
+    <DateRange>
+        <StartDate>2021-07-16</StartDate>
+        <EndDate>2021-09-16</EndDate>
+    </DateRange>
+</BillingReport>
+```
+</TabItem>
+
+<TabItem value="curl">
+
+```cURL
+curl -X POST 'https://dashboard.bandwidth.com/api/accounts/{accountId}/billingreports'
+-u '{userName}:{password}'
+-H 'Content-Type: application/xml'
+-d '<BillingReport>
+        <Type>BDR</Type>
+        <DateRange>
+            <StartDate>2021-07-16</StartDate>
+            <EndDate>2021-09-16</EndDate>
+        </DateRange>
+    </BillingReport>'
+```
+
+</TabItem>
+</Tabs>
+
+> Response
+
+```xml
+HTTP/1.1 201 Created
+Content-Type: application/xml; charset=utf-8
+Location: https://dashboard.bandwidth.com/api/accounts/{accountId}/billingreports/a12b456c8-abcd-1a3b-a1b2-0a2b4c6d8e0f2
+
+<BillingReportCreationResponse>
+    <ReportStatus>RECEIVED</ReportStatus>
+    <Description>The report archive is currently being constructed.</Description>
+</BillingReportCreationResponse>
+```
+
+## Fetch Report Status
+
+Since the Billing Report request generation is asynchronous, make a <Highlight color="#00bf8c">GET</Highlight> request to our [Retrieve Report Instance API](../../../../../apis/numbers#tag/Reports/operation/GetBillingReportStatus) endpoint to determine the status.
+This can be done through tools like [Postman](https://github.com/Bandwidth/postman) or cURL.
+
+#### Request URL:
+
+<p><Highlight color="#00bf8c">GET</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/billingreports/{reportId}</code></p>
+
+<Tabs
+groupId="report_status"
+defaultValue="curl"
+values={[
+    { label: 'cURL', value: 'curl', }
+]
+}>
+
+<TabItem value="curl">
+
+```cURL
+curl 'https://dashboard.bandwidth.com/api/accounts/{accountId}/billingreports/{reportId}'
+-u '{userName}:{password}'
+```
+
+> Response
+
+```xml
+<BillingReportRetrievalResponse>
+    <ReportStatus>COMPLETED</ReportStatus>
+    <Description>The report archive is constructed.</Description>
+</BillingReportRetrievalResponse>
+```
+
+</TabItem>
+</Tabs>
+
+## Download the Report
+
+If the report status is `COMPLETED`, then you are ready to download the requested report.
+This can be done by making a <Highlight color="#00bf8c">GET</Highlight> request to our [Download Billing Report File API](../../../../../apis/numbers#tag/Reports/operation/DownloadBillingReport) endpoint.
+The 200 response will include a `Content-Disposition` header indicating the filename, and a download of the .zip file will begin.
+
+#### Request URL:
+
+<p><Highlight color="#00bf8c">GET</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/billingreports/{reportId}/file</code></p>
+
+
+<Tabs
+groupId="report_details"
+defaultValue="curl"
+values={[
+    { label: 'cURL', value: 'curl', }
+]
+}>
+
+<TabItem value="curl">
+
+```cURL
+curl 'https://dashboard.bandwidth.com/api/accounts/{accountId}/billingreports/{reportId}/file'
+-u '{userName}:{password}'
+```
+
+> Response
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/xml; charset=utf-8
+Content-Disposition: attachment; filename=bdrs_2021-07-16_2021-09-16.zip
+```
+
+</TabItem>
+</Tabs>
+
+
+## Where to next?
+Now that you have learned how to request account billing reports, check out some of the other available actions in our guides:
+- [How to port numbers](/docs/numbers/guides/porting/portingNumbers)
