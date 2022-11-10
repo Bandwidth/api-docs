@@ -38,6 +38,11 @@ const productList = [
         Svg: require('@site/static/img/product-icons/webrtc.svg').default,
         link: '/docs/webrtc',
     },
+    // { TODO ONEID-1304
+    //     title: 'Identity Management',
+    //     Svg: require('@site/static/img/product-icons/identity_management.svg').default,
+    //     link: '/docs/identity',
+    // },
 ];
 
 const props = {

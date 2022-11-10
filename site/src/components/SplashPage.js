@@ -1,6 +1,7 @@
 import React from 'react';
 import splashPageStyles from '@site/src/components/css/SplashPage.module.css';
 import Carousel from '@site/src/components/Carousel.js';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 
 const guides = {
     title: 'Check out our guides',
@@ -25,50 +26,6 @@ const sdks = {
     link: '/sdks'
 }
 const sdksImage = require('@site/static/img/sdks-splash.svg').default;
-
-const carousel = [
-    {
-        Svg: require('@site/static/img/product-icons/messaging.svg').default,
-        product: 'Messaging',
-        link: '/docs/messaging/errors/',
-        linkText: 'Messaging Errors'
-    },{
-        Svg: require('@site/static/img/product-icons/voice.svg').default,
-        product: 'Voice',
-        link: '/docs/voice/bxml/hangup/',
-        linkText: 'Hangup BXML Verb'
-    },
-    {
-        Svg: require('@site/static/img/product-icons/voice.svg').default,
-        product: 'Voice',
-        link: '/docs/voice/',
-        linkText: 'Voice About Page'
-    },
-    {
-        Svg: require('@site/static/img/product-icons/numbers.svg').default,
-        product: 'Numbers',
-        link: '/docs/numbers/guides/manage-inventory/searchingNumbers/',
-        linkText: 'Searching Numbers'
-    },
-    {
-        Svg: require('@site/static/img/product-icons/numbers.svg').default,
-        product: 'Numbers',
-        link: '/docs/numbers/guides/manage-inventory/applyTnOptionsAndFeatures/',
-        linkText: 'Apply TN Options'
-    },
-    {
-        Svg: require('@site/static/img/product-icons/account.svg').default,
-        product: 'Account',
-        link: '/docs/account/credentials/',
-        linkText: 'Account Credentials'
-    },
-    {
-        Svg: require('@site/static/img/product-icons/account.svg').default,
-        product: 'Account',
-        link: '/docs/account/sipRegistrar/',
-        linkText: 'Sip Registrar'
-    }
-]
 
 function SplashRow({left, right}) {
     return (
@@ -98,6 +55,9 @@ function SplashPageTextBlock({title, text, linkText, link}) {
 }
 
 export default function SplashPage() {
+    const {siteConfig} = useDocusaurusContext();
+    const carousel = siteConfig.customFields.blogPosts;
+
     return (
         <div className={splashPageStyles.splash}>
             <div className={splashPageStyles.header}>
@@ -106,7 +66,7 @@ export default function SplashPage() {
             </div>
             <SplashRow left={<SplashPageTextBlock {...guides}/>} right={<SplashPageImage Svg={guidesImage}/>}/>
             <SplashRow left={<SplashPageImage Svg={apisImage}/>} right={<SplashPageTextBlock {...apis}/>}/>
-            <Carousel itemList={carousel} title={'Recent Documentation Updates'}/>
+            <Carousel itemList={carousel} title={'Recent Blog Posts'}/>
             <SplashRow left={<SplashPageTextBlock {...sdks}/>} right={<SplashPageImage Svg={sdksImage}/>}/>
         </div>
     );

@@ -556,6 +556,10 @@ image: '@site/static/img/bw-icon.svg'
 | 7520 | The telephone number must be unlocked by the end user and current service provider |
 | 7521 | The TN you are requesting to port could require manual handling. An LNP agent will manually update your LSR order within 24 hours. If you have not received an updated response in your order, please email us at portouts@bandwidth.com for more information. |
 | 7522 | Customer does migration from one portout validation endpoint to another. |
+| 7523 | Retry Validation is only valid for orders that include toll free telephone numbers. |
+| 7524 | Retry Validation can only be performed on orders that are in an invalid telephone numbers state. |
+| 7525 | Retry Validation can only be performed if the prior attempt to validate telephone numbers resulted in a communication failure with our vendor. |
+| 7526 | Retry Validation is only valid for orders that have a non-empty list of TNs. |
 | 7598 | Invalid Request |
 | 7599 | Fatal Error in Processing |
 | 7600 | External telephone number(s) cannot be used: %s |
@@ -582,7 +586,7 @@ image: '@site/static/img/bw-icon.svg'
 | 7649 | The RestartAutomation query parameter is restricted to Bandwidth internal users only. |
 | 7650 | The RestartAutomation operation is not supported for this order type. |
 | 7651 | The RestartAutomation operation cannot be performed at this time. |
-| 7652 |A toll free port-in order may only include toll free telephone numbers from a single RespOrg. Please split the order into one port-in per RespOrg as specified in the Breakdown. |
+| 7652 | A toll free port-in order may only include toll free telephone numbers from a single RespOrg. Please split the order into one port-in per RespOrg as specified in the Breakdown. |
 | 7653 | This bulk port-in cannot transition to IN_PROGRESS because there are no portable TNs in the TN list. |
 | 7656 | TN list contains at least one toll free number that must be ported manually due to disconnected status. |
 | 7657 | TN list contains at least one toll free number that must be ported manually due to transitional status. |
@@ -1195,7 +1199,7 @@ image: '@site/static/img/bw-icon.svg'
 | 17000 | Lsr submission order payload required. |
 | 400 | Lsr order doesn't pass validation. Please check your input parameters. |
 | 17002 | Order contains invalid tns: %s. |
-| 17003 | Order contains empty TN list (or it's not present). |
+| 17003 | Order contains empty tn list or its not present. |
 | 17004 | Incorrect pon specified. It must be up to 25 character long and could not contain special characters other than -_# |
 | 17005 | Toll-free telephone numbers can not be present in the LSR order. |
 | 17006 | Account number is incorrect. It should be alphanumeric and no more than 32 characters long. |
@@ -1255,6 +1259,44 @@ The following errors are treated as expected valid error codes when returned as 
 | 7598 | Invalid Request |
 | 7599 | Fatal Error in Processing |
 | 7999 | An internal error has occurred. Please contact support if this issue is not resolved in 1 business day |
+
+### Additional errors
+The following errors are common for different types of orders and are treated as expected valid error codes for LSR flow as well:
+
+| Error code                | Error message                        |
+|:--------------------------|:-------------------------------------|
+| 5008	| All telephone numbers specified are invalid	|
+| 7104	| Subscriber information is required	|
+| 7105	| The subscriber name is required	|
+| 7107	| The service address is required	|
+| 7108	| The service address house number is required	|
+| 7109	| The service address street name is required	|
+| 7110	| The service address city is required	|
+| 7111	| The service address state code is required	|
+| 7112	| The service address zip code is required	|
+| 7120	| The PON is required	|
+| 7203	| The billing telephone number (BTN) is invalid	|
+| 7208	| The requested FOC date cannot be in the past	|
+| 7214	| ZIP code is invalid	|
+| 7318	| Customer order ID is invalid. Only alphanumeric values, dashes and spaces are allowed. Max length is 40 characters.	|
+| 7324	| The business name is too long. The business name should not be longer than 25 characters.	|
+| 7354	| Middle initial is too long. Middle initial should not be longer than 1 character.	|
+| 7355	| First name is too long. First name should not be longer than 25 characters.	|
+| 7356	| Last name is too long. Last name should not be longer than 25 characters.	|
+| 7395	| Unsupported state code: %s.	|
+| 5095	| The count of telephone numbers in order exceeds the maximum size of %d	|
+| 17025	| OrderStatus cannot be changed to %s. Only cancelled value allowed.	|
+
+### Appearance
+Below is a partial examples of the situations where some given errors can occur:
+
+| API Method                | Description                          | Error codes                 |
+|:--------------------------|:-------------------------------------|:----------------------------|
+| POST | Errors occur during LSR creation | 5008, 7104, 7105, 7107, 7108, 7109, 7110, 7111, 7112, 7120, 7203, 7208, 7214, 7318, 7324, 7354, 7355, 7356, 7395, 5095, 17000, 17002, 17003, 17004, 17005, 17006, 17007, 17009, 17010, 17011, 17012, 17013, 17019, 17020, 17021, 17022, 17023, 17024, 17027, 17028, 17032, 17033 |
+| PUT | Errors occur during LSR supp/cancel | 7104, 7105, 7107, 7108, 7109, 7110, 7111, 7112, 7203, 7208, 7214, 7318, 7324, 7354, 7355, 7356, 7395, 17000, 17006, 17007, 17010, 17011, 17012, 17013, 17017, 17018, 17019, 17020, 17021, 17022, 17023, 17024, 17025, 17025, 17027, 17028, 17034, 17035 |
+| PROCESSING | Errors occur while LSR processing. These errors are persistent and can be retrieved using GET requests (ex. by LSR ID) | 7510, 7511, 7512, 7513, 7514, 7515, 7516, 7517, 7518, 7519, 7598, 7599, 7999, 17008, 17017, 17018, 17029, 17030, 17031 |
+
+\* Error messages can differ from described depending on context of occurrence.
 
 ## Import Telephone Number
 

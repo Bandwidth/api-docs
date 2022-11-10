@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import carouselStyles from '@site/src/components/css/Carousel.module.css';
 
 export default function Carousel({itemList, title}) {
@@ -6,7 +6,7 @@ export default function Carousel({itemList, title}) {
     var itemWidthVar = 380;
     var slidePaddingVar = 25;
     var navButtonSizeVar = 50;
-    // var distance  = 0;
+    const timeout = 250;
     const Svg = require('@site/static/img/amoeba.svg').default;
     const [currentIndex, setCurrentIndex] = useState(itemList.length * 2);
     const [hasTransitionClass, setHasTransitionClass] = useState(true);
@@ -117,7 +117,7 @@ export default function Carousel({itemList, title}) {
             setTimeout(() => {  // disable transition animation after card slides, then snap to same card prior in the list
                 setHasTransitionClass(false);
                 setCurrentIndex(currentIndex - itemList.length);
-            }, 250)
+            }, timeout)
             
         }
         if (currentIndex == itemList.length) {  // keep index near the middle of the list when moving right
@@ -125,18 +125,19 @@ export default function Carousel({itemList, title}) {
             setTimeout(() => {
                 setHasTransitionClass(false);
                 setCurrentIndex(currentIndex + itemList.length);
-            }, 250)
+            }, timeout)
         }
         if (hasTransitionClass === false) { // turn transition animation back on after 25ms
             setTimeout(() => {
                 setHasTransitionClass(true);
                 setNavDisabled(false);
-            }, 25)
+            }, timeout/10)
         }
     }, [currentIndex])  // update when currentIndex is changed (from button click)
 
-    function CarouselItem({Svg, product, link, linkText}) {
-    
+    function CarouselItem({imageUrl, categories, categoryLinks, postLink, postTitle}) {   
+        var itemContentWidth = itemWidth * .8;
+
         var slideStyle = {
             margin: `0 ${slidePadding}px`
         }
@@ -145,13 +146,33 @@ export default function Carousel({itemList, title}) {
             width: `${itemWidth}px`,
             height: `${itemHeight}px`
         }
+
+        var imageStyle = {
+            width: `${itemContentWidth}px`,
+            height: `${itemContentWidth * .51}px`,
+            backgroundImage: `url(${imageUrl})`
+        }
+
+        var categoriesStyle = {
+            width: `${itemContentWidth}px`,
+        }
+
+        var postStyle = {
+            width: `${itemContentWidth}px`,
+        }
         
         return (
             <div className={carouselStyles.slide} style={slideStyle}>
                 <div className={carouselStyles.item} style={itemStyle}>
-                    <div className={carouselStyles.icon}><Svg/></div>
-                    <div className={carouselStyles.product}>{product}</div>
-                    <div className={carouselStyles.link}><a href={link}>{linkText}</a></div>
+                    <div className={carouselStyles.image} style={imageStyle}></div>
+                    <div className={carouselStyles.categories} style={categoriesStyle}>
+                        {categories.map((category, idx) => (
+                            <a href={categoryLinks[idx]} key={idx}>{category}</a>
+                        ))}
+                    </div>
+                    <div className={carouselStyles.post} style={postStyle}>
+                        <a href={postLink}>{postTitle}</a>
+                    </div>
                 </div>
             </div>
         )
