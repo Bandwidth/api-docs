@@ -119,7 +119,7 @@ module.exports = {
                     editUrl: 'https://github.com/Bandwidth/api-docs/edit/main/site/',
                 },
                 theme: {
-                    customCss: require.resolve('./src/css/custom.css'),
+                    customCss: require.resolve('./src/css/custom.scss'),
                 },
                 googleAnalytics: {
                     trackingID: 'UA-62651840-1',

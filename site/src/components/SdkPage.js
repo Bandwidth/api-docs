@@ -1,15 +1,14 @@
 import React from 'react';
-import sdkStyles from '@site/src/components/css/SdkPage.module.scss';
 import GitHubLink from '@site/src/components/GitHubLink';
 
 export default function SdkPage({Svg, title, repoLinks, samplesLink}) {
     return (
-        <div className={sdkStyles.sdkPage}>
-            <div className={sdkStyles.sdkImage}>
-                <Svg className={sdkStyles.sdkSvg} alt={title} />
+        <div className={'sdkPage'}>
+            <div className={'sdkImage'}>
+                <Svg className={'sdkSvg'} alt={title} />
             </div>
-            <div className={sdkStyles.sdkProductTable}>
-                <div className={sdkStyles.tableHolder}>
+            <div className={'sdkProductTable'}>
+                <div className={'tableHolder'}>
                     <table>
                         <thead>
                             <tr>

@@ -1,5 +1,4 @@
 import React from 'react'; 
-import specVersionDropdownStyles from '@site/src/components/css/SpecVersionDropdown.module.scss';
 
 export default function SpecVersionDropdown(props) {
   function versionChange(e){
@@ -7,12 +6,12 @@ export default function SpecVersionDropdown(props) {
   }
 
   return (
-      <div className={specVersionDropdownStyles.specVersionDropdown}>
-          <form className='DropDownContainer'>
+      <div className={'specVersionDropdown'}>
+          <form className={'dropDownContainer'}>
               <label for="VersionList">Version:</label>
               <select id='VersionList' onChange={(e) => versionChange(e)}>
                   {props.options.map(option => ( option.title == props.default ? 
-                      <option className='ListItem' value={option.link} selected>{option.title}</option> : <option className='ListItem' value={option.link}>{option.title}</option>
+                      <option value={option.link} selected>{option.title}</option> : <option value={option.link}>{option.title}</option>
                   ))}
               </select>
           </form>

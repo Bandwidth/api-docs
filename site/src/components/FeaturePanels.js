@@ -1,15 +1,14 @@
 import React from 'react';
-import featurePanelStyles from '@site/src/components/css/FeaturePanel.module.scss';
 
 function FeaturePanel({Svg, title, text, link}) {
     return (
-        <a className={featurePanelStyles.panel} href={link}>
-            <div className={featurePanelStyles.header}>
-                <Svg className={featurePanelStyles.icon}/>
-                <div className={featurePanelStyles.title}>{title}</div>
+        <a className={'panel'} href={link}>
+            <div className={'header'}>
+                <Svg className={'icon'}/>
+                <div className={'title'}>{title}</div>
             </div>
-            <div className={featurePanelStyles.content}>
-                <div className={featurePanelStyles.panelText}>{text}</div>
+            <div className={'content'}>
+                <div className={'panelText'}>{text}</div>
             </div>
         </a>
     );
@@ -17,7 +16,7 @@ function FeaturePanel({Svg, title, text, link}) {
 
 export default function FeaturePanels({panels}) {
     return (
-        <div className={featurePanelStyles.panelsContainer}>
+        <div className={'panelsContainer'}>
             {panels.map((props, idx) => (
                 <FeaturePanel key={idx} {...props}/>
             ))}

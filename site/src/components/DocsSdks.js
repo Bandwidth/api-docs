@@ -1,6 +1,4 @@
 import React from 'react';
-import docsAboutStyles from '@site/src/components/css/DocsAbout.module.scss';
-
 
 const sdks = [
     {
@@ -31,14 +29,14 @@ const sdks = [
 
 export default function DocsSdks({postmanLink}) {
     return (
-        <div className={docsAboutStyles.sdks}>
-            <div className={docsAboutStyles.sdksText}>
+        <div className={'docsSdks'}>
+            <div className={'sdksText'}>
                 With a few lines of code we will show you how to use our REST APIs and webhooks through our docs, 
                 code samples and SDKs to build your application.
-                Select the SDK of your choice or start testing with our <a className={docsAboutStyles.postmanLink} href={postmanLink} target="_blank" rel="noopener">Postman Collection</a> straight away.
+                Select the SDK of your choice or start testing with our <a className={'postmanLink'} href={postmanLink} target="_blank" rel="noopener">Postman Collection</a> straight away.
             </div>
-            <div className={docsAboutStyles.sdksImages}>
-                <div className={docsAboutStyles.sdkImageContainer}>
+            <div className={'sdksImages'}>
+                <div className={'sdkImageContainer'}>
                     {sdks.map(({link, Svg}, idx) => (
                         <a key={idx} href={link}><Svg/></a>
                     ))}
