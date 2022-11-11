@@ -1,7 +1,7 @@
 import {testTextLink, testSvgLink} from '../../utils/utils'
 
 context('Account Text Link', () => {
-  testTextLink('/docs', 'Account', 'docs/account', '.textLink_src-components-css-ItemGrid-module')
+  testTextLink('/docs', 'Account', 'docs/account', '[data-cy="textLink"]')
 })
 
 context('Account SVG Link', () => {
