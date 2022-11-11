@@ -119,7 +119,7 @@ function Footer() {
 
           <div className={footerStyles.socialRow}>
             <div className={footerStyles.logo}/>
-            <div className={footerStyles.socialLinks}>
+            <div className={footerStyles.socialLinks} data-cy="socialLinks">
               <a className={footerStyles.socialLink} href="https://www.linkedin.com/company/bandwidth-inc" target="_blank" rel="noopener"><LinkedIn/></a>
               <a className={footerStyles.socialLink} href="https://twitter.com/bandwidth" target="_blank" rel="noopener"><Twitter/></a>
               <a className={footerStyles.socialLink} href="https://www.youtube.com/user/bandwidth" target="_blank" rel="noopener"><YouTube/></a>
@@ -134,7 +134,7 @@ function Footer() {
             <div className={footerStyles.column}>
               <div className={footerStyles.menu}>
                 <div className={footerStyles.menuTitle}>Let's Chat</div>
-                <div className={footerStyles.callToAction}>
+                <div className={footerStyles.callToAction} data-cy="callToAction">
                   Have a support question? Want to add SMS to your app? Need to talk to legal? Have a great minestrone soup recipe?
                   Whatever the reason you need to chat, let us know and we'll give you a call.
                 </div>
