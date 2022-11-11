@@ -1,5 +1,5 @@
 import React from 'react';
-import landingStyles from '@site/src/components/css/LandingPage.module.css';
+import landingStyles from '@site/src/components/css/LandingPage.module.scss';
 import ItemGrid from '@site/src/components/ItemGrid.js';
 
 export default function LandingPage({itemList, Svg, h1Text, h2Text}) {
