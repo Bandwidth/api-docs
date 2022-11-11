@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import docsAboutStyles from '@site/src/components/css/DocsAbout.module.css';
+import docsAboutStyles from '@site/src/components/css/DocsAbout.module.scss';
 
 export default function DocsDiagram({description, Desktop, Mobile}) {
     

@@ -1,5 +1,5 @@
 import React from 'react';
-import docsAboutStyles from '@site/src/components/css/DocsAbout.module.css';
+import docsAboutStyles from '@site/src/components/css/DocsAbout.module.scss';
 import blueButtonStyles from '@site/src/components/css/BlueButton.module.scss';
 
 export default function DocsGetStarted({getStartedText, Svg, getStartedButton}) {

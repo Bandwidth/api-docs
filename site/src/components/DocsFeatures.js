@@ -1,5 +1,5 @@
 import React from 'react';
-import docsAboutStyles from '@site/src/components/css/DocsAbout.module.css';
+import docsAboutStyles from '@site/src/components/css/DocsAbout.module.scss';
 import FeaturePanels from '@site/src/components/FeaturePanels.js';
 
 export default function DocsFeatures({featuresText, panels}) {
