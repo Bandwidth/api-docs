@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import carouselStyles from '@site/src/components/css/Carousel.module.css';
+import carouselStyles from '@site/src/components/css/Carousel.module.scss';
 
 export default function Carousel({itemList, title}) {
     
