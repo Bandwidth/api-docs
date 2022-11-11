@@ -38,7 +38,7 @@ function SplashRow({left, right}) {
 
 function SplashPageImage({Svg}) {
     return (
-        <div className={splashPageStyles.image}>
+        <div className={splashPageStyles.image} data-cy="image">
             <Svg/>
         </div>
     )
@@ -47,9 +47,9 @@ function SplashPageImage({Svg}) {
 function SplashPageTextBlock({title, text, linkText, link}) {
     return (
         <div className={splashPageStyles.textBlock}>
-            <div className={splashPageStyles.title}>{title}</div>
-            <div className={splashPageStyles.text}>{text}</div>
-            <div className={splashPageStyles.link}><a href={link}>{linkText}</a></div>
+            <div className={splashPageStyles.title} data-cy="title">{title}</div>
+            <div className={splashPageStyles.text} data-cy="text">{text}</div>
+            <div className={splashPageStyles.link} data-cy="link"><a href={link}>{linkText}</a></div>
         </div>
     )
 }
@@ -59,7 +59,7 @@ export default function SplashPage() {
     const carousel = siteConfig.customFields.blogPosts;
 
     return (
-        <div className={splashPageStyles.splash}>
+        <div className={splashPageStyles.splash} data-cy="splash">
             <div className={splashPageStyles.header}>
                 <h1>Bandwidth Developer Documentation</h1>
                 <h2>Explore our guides, API reference, and SDKs to integrate with Bandwidth's APIs.</h2>
