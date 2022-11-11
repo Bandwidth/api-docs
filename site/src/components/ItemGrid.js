@@ -5,7 +5,7 @@ function Item({Svg, title, link}) {
     return (
         <div className={itemGridStyles.item}>
             <a href={link} className={itemGridStyles.itemImage}>
-                <Svg className={itemGridStyles.itemSvg} alt={title} />
+                <Svg className={itemGridStyles.itemSvg} alt={title}/>
             </a>
             <div className={itemGridStyles.itemText}>
                 <a href={link} className={itemGridStyles.textLink} data-cy="textLink"><h3>{title}</h3></a>
