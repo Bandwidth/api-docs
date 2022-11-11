@@ -1,5 +1,5 @@
 import React from 'react';
-import sdkStyles from '@site/src/components/css/SdkPage.module.css';
+import sdkStyles from '@site/src/components/css/SdkPage.module.scss';
 import GitHubLink from '@site/src/components/GitHubLink';
 
 export default function SdkPage({Svg, title, repoLinks, samplesLink}) {
