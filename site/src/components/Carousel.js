@@ -139,7 +139,7 @@ export default function Carousel({itemList, title}) {
                 <Svg/>
             </div>
             <div className={'content'}>
-                <div className={'header'} data-cy="header">{title}</div>
+                <div className={'carouselHeader'} data-cy="carouselHeader">{title}</div>
                 <div className={'carouselContent'} style={carouselContentStyle}>
                     <div className={'carousel'}>
                         <div className={`carouselSlides ${hasTransitionClass ? "transition" :""}`} style={carouselSlidesStyle} data-cy="carouselSlides">

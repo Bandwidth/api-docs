@@ -60,7 +60,7 @@ export default function SplashPage() {
 
     return (
         <div className={'splash'} data-cy="splash">
-            <div className={'header'}>
+            <div className={'splashHeader'}>
                 <h1>Bandwidth Developer Documentation</h1>
                 <h2>Explore our guides, API reference, and SDKs to integrate with Bandwidth's APIs.</h2>
             </div>
