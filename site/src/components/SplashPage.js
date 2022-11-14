@@ -29,16 +29,16 @@ const sdksImage = require('@site/static/img/sdks-splash.svg').default;
 
 function SplashRow({left, right}) {
     return (
-        <div className={'splashRow'}>
-            <div className={'splashRowLeft'}>{left}</div>
-            <div className={'splashRowRight'}>{right}</div>
+        <div className="splash-row">
+            <div className="splash-row-left">{left}</div>
+            <div className="splash-row-right">{right}</div>
         </div>
     )
 }
 
 function SplashPageImage({Svg}) {
     return (
-        <div className={'image'} data-cy="image">
+        <div className="image" data-cy="image">
             <Svg/>
         </div>
     )
@@ -46,10 +46,10 @@ function SplashPageImage({Svg}) {
 
 function SplashPageTextBlock({title, text, linkText, link}) {
     return (
-        <div className={'textBlock'}>
-            <div className={'title'} data-cy="title">{title}</div>
-            <div className={'text'} data-cy="text">{text}</div>
-            <div className={'link'} data-cy="link"><a href={link}>{linkText}</a></div>
+        <div className="text-block">
+            <div className="title" data-cy="title">{title}</div>
+            <div className="text" data-cy="text">{text}</div>
+            <div className="link" data-cy="link"><a href={link}>{linkText}</a></div>
         </div>
     )
 }
@@ -59,8 +59,8 @@ export default function SplashPage() {
     const carousel = siteConfig.customFields.blogPosts;
 
     return (
-        <div className={'splash'} data-cy="splash">
-            <div className={'splashHeader'}>
+        <div className="splash" data-cy="splash">
+            <div className="splash-header">
                 <h1>Bandwidth Developer Documentation</h1>
                 <h2>Explore our guides, API reference, and SDKs to integrate with Bandwidth's APIs.</h2>
             </div>

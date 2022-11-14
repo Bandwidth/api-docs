@@ -6,8 +6,8 @@ export default function SpecVersionDropdown(props) {
   }
 
   return (
-      <div className={'specVersionDropdown'}>
-          <form className={'dropDownContainer'}>
+      <div className="spec-version-dropdown">
+          <form className="dropdown-container">
               <label for="VersionList">Version:</label>
               <select id='VersionList' onChange={(e) => versionChange(e)}>
                   {props.options.map(option => ( option.title == props.default ? 

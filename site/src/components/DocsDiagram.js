@@ -20,8 +20,8 @@ export default function DocsDiagram({description, Desktop, Mobile}) {
     }, [])
 
     return (
-        <div className={'docsDiagram'}>
-            {description && <div className={'description'}>{description}</div>}
+        <div className="docs-diagram">
+            {description && <div className="description">{description}</div>}
             {isDesktop ? <Desktop/> : <Mobile/>}
         </div>
     )

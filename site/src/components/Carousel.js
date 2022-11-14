@@ -117,15 +117,15 @@ export default function Carousel({itemList, title}) {
         }
         
         return (
-            <div className={'slide'} style={slideStyle}>
-                <div className={'item'} style={itemStyle} data-cy="item">
-                    <div className={'image'} style={imageStyle} data-cy="image"></div>
-                    <div className={'categories'} style={categoriesStyle} data-cy="categories">
+            <div className="slide" style={slideStyle}>
+                <div className="item" style={itemStyle} data-cy="item">
+                    <div className="image" style={imageStyle} data-cy="image"></div>
+                    <div className="categories" style={categoriesStyle} data-cy="categories">
                         {categories.map((category, idx) => (
                             <a href={categoryLinks[idx]} key={idx}>{category}</a>
                         ))}
                     </div>
-                    <div className={'post'} style={postStyle} data-cy="post">
+                    <div className="post" style={postStyle} data-cy="post">
                         <a href={postLink}>{postTitle}</a>
                     </div>
                 </div>
@@ -134,27 +134,27 @@ export default function Carousel({itemList, title}) {
     }
 
     return (
-        <div className={'carouselContainer'}>
-            <div className={'decoration top'}>
+        <div className="carousel-container">
+            <div className="decoration top">
                 <Svg/>
             </div>
-            <div className={'content'}>
-                <div className={'carouselHeader'} data-cy="carouselHeader">{title}</div>
-                <div className={'carouselContent'} style={carouselContentStyle}>
-                    <div className={'carousel'}>
-                        <div className={`carouselSlides ${hasTransitionClass ? "transition" :""}`} style={carouselSlidesStyle} data-cy="carouselSlides">
+            <div className="content">
+                <div className="carousel-header" data-cy="carouselHeader">{title}</div>
+                <div className="carousel-content" style={carouselContentStyle}>
+                    <div className="carousel">
+                        <div className={`carousel-slides ${hasTransitionClass ? "transition" :""}`} style={carouselSlidesStyle} data-cy="carouselSlides">
                             {newItemList.map((props, idx) => (
                                 <CarouselItem key={idx} {...props} index={idx}/>
                             ))}
                         </div>
-                        <div className={`navButtons ${navDisabled ? "disabled" :""}`} style={navButtonsStyle}>
-                            <button className={'leftButton'} onClick={() => scrollCarousel(currentIndex - 1)} style={buttonStyle} data-cy="leftButton"></button>
-                            <button className={'rightButton'} onClick={() => scrollCarousel(currentIndex + 1)} style={buttonStyle} data-cy="rightButton"></button>
+                        <div className={`nav-buttons ${navDisabled ? "disabled" :""}`} style={navButtonsStyle}>
+                            <button className="left-button" onClick={() => scrollCarousel(currentIndex - 1)} style={buttonStyle} data-cy="leftButton"></button>
+                            <button className="right-button" onClick={() => scrollCarousel(currentIndex + 1)} style={buttonStyle} data-cy="rightButton"></button>
                         </div>
                     </div>
                 </div>
             </div>
-            <div className={'decoration bottom'}>
+            <div className="decoration bottom">
                 <Svg/>
             </div>
         </div>

@@ -29,14 +29,14 @@ const sdks = [
 
 export default function DocsSdks({postmanLink}) {
     return (
-        <div className={'docsSdks'}>
-            <div className={'sdksText'}>
+        <div className="docs-sdks">
+            <div className="sdks-text">
                 With a few lines of code we will show you how to use our REST APIs and webhooks through our docs, 
                 code samples and SDKs to build your application.
-                Select the SDK of your choice or start testing with our <a className={'postmanLink'} href={postmanLink} target="_blank" rel="noopener">Postman Collection</a> straight away.
+                Select the SDK of your choice or start testing with our <a className="postman-link" href={postmanLink} target="_blank" rel="noopener">Postman Collection</a> straight away.
             </div>
-            <div className={'sdksImages'}>
-                <div className={'sdkImageContainer'}>
+            <div className="sdks-images">
+                <div className="sdk-image-container">
                     {sdks.map(({link, Svg}, idx) => (
                         <a key={idx} href={link}><Svg/></a>
                     ))}

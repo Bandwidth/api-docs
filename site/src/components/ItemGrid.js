@@ -2,12 +2,12 @@ import React from 'react';
 
 function Item({Svg, title, link}) {
     return (
-        <div className={'item'}>
-            <a href={link} className={'itemImage'}>
-                <Svg className={'itemSvg'} alt={title}/>
+        <div className="item">
+            <a href={link} className="item-image">
+                <Svg className="item-svg" alt={title}/>
             </a>
-            <div className={'itemText'}>
-                <a href={link} className={'textLink'} data-cy="textLink"><h3>{title}</h3></a>
+            <div className="item-text">
+                <a href={link} className="text-link" data-cy="textLink"><h3>{title}</h3></a>
             </div>
         </div>
     );
@@ -15,7 +15,7 @@ function Item({Svg, title, link}) {
 
 export default function ItemGrid({itemList}) {
     return (
-        <div className={'itemGridItems'}>
+        <div className="item-grid-items">
             {itemList.map((props, idx) => (
                 <Item key={idx} {...props} />
             ))}

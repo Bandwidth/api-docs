@@ -3,12 +3,12 @@ import GitHubLink from '@site/src/components/GitHubLink';
 
 export default function SdkPage({Svg, title, repoLinks, samplesLink}) {
     return (
-        <div className={'sdkPage'}>
-            <div className={'sdkImage'}>
-                <Svg className={'sdkSvg'} alt={title} />
+        <div className="sdk-page">
+            <div className="sdk-image">
+                <Svg className="sdk-svg" alt={title} />
             </div>
-            <div className={'sdkProductTable'}>
-                <div className={'tableHolder'}>
+            <div className="sdk-product-table">
+                <div className="table-holder">
                     <table>
                         <thead>
                             <tr>
