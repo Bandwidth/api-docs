@@ -119,14 +119,14 @@ export default function Carousel({itemList, title}) {
         
         return (
             <div className={carouselStyles.slide} style={slideStyle}>
-                <div className={carouselStyles.item} style={itemStyle}>
-                    <div className={carouselStyles.image} style={imageStyle}></div>
-                    <div className={carouselStyles.categories} style={categoriesStyle}>
+                <div className={carouselStyles.item} style={itemStyle} data-cy="item">
+                    <div className={carouselStyles.image} style={imageStyle} data-cy="image"></div>
+                    <div className={carouselStyles.categories} style={categoriesStyle} data-cy="categories">
                         {categories.map((category, idx) => (
                             <a href={categoryLinks[idx]} key={idx}>{category}</a>
                         ))}
                     </div>
-                    <div className={carouselStyles.post} style={postStyle}>
+                    <div className={carouselStyles.post} style={postStyle} data-cy="post">
                         <a href={postLink}>{postTitle}</a>
                     </div>
                 </div>
@@ -140,17 +140,17 @@ export default function Carousel({itemList, title}) {
                 <Svg/>
             </div>
             <div className={carouselStyles.content}>
-                <div className={carouselStyles.header}>{title}</div>
+                <div className={carouselStyles.header} data-cy="header">{title}</div>
                 <div className={carouselStyles.carouselContent} style={carouselContentStyle}>
                     <div className={carouselStyles.carousel}>
-                        <div className={`${carouselStyles.carouselSlides} ${hasTransitionClass ? carouselStyles.transition :""}`} style={carouselSlidesStyle}>
+                        <div className={`${carouselStyles.carouselSlides} ${hasTransitionClass ? carouselStyles.transition :""}`} style={carouselSlidesStyle} data-cy="carouselSlides">
                             {newItemList.map((props, idx) => (
                                 <CarouselItem key={idx} {...props} index={idx}/>
                             ))}
                         </div>
                         <div className={`${carouselStyles.navButtons} ${navDisabled ? carouselStyles.disabled :""}`} style={navButtonsStyle}>
-                            <button className={carouselStyles.leftButton} onClick={() => scrollCarousel(currentIndex - 1)} style={buttonStyle}></button>
-                            <button className={carouselStyles.rightButton} onClick={() => scrollCarousel(currentIndex + 1)} style={buttonStyle}></button>
+                            <button className={carouselStyles.leftButton} onClick={() => scrollCarousel(currentIndex - 1)} style={buttonStyle} data-cy="leftButton"></button>
+                            <button className={carouselStyles.rightButton} onClick={() => scrollCarousel(currentIndex + 1)} style={buttonStyle} data-cy="rightButton"></button>
                         </div>
                     </div>
                 </div>
