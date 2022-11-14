@@ -107,23 +107,23 @@ function Footer() {
   const GitHub = require('@site/static/img/github-dark.svg').default;
 
   return (
-    <div className={'footer'}>
+    <div className={'footer-container'}>
 
       <div className={'graphics'}>
-        <Clouds className={'cloudsSvg'}/>
-        <Wave className={'waveSvg'}/>
+        <Clouds className={'clouds-svg'}/>
+        <Wave className={'wave-svg'}/>
       </div>
 
-      <div className={'contentContainer'}>
+      <div className={'content-container'}>
         <div className={'content'}>
 
-          <div className={'socialRow'}>
+          <div className={'social-row'}>
             <div className={'logo'}/>
-            <div className={'socialLinks'} data-cy="socialLinks">
-              <a className={'socialLink'} href="https://www.linkedin.com/company/bandwidth-inc" target="_blank" rel="noopener"><LinkedIn/></a>
-              <a className={'socialLink'} href="https://twitter.com/bandwidth" target="_blank" rel="noopener"><Twitter/></a>
-              <a className={'socialLink'} href="https://www.youtube.com/user/bandwidth" target="_blank" rel="noopener"><YouTube/></a>
-              <a className={'socialLink'} href="https://github.com/Bandwidth" target="_blank" rel="noopener"><GitHub/></a>
+            <div className={'social-links'} data-cy="socialLinks">
+              <a className={'social-link'} href="https://www.linkedin.com/company/bandwidth-inc" target="_blank" rel="noopener"><LinkedIn/></a>
+              <a className={'social-link'} href="https://twitter.com/bandwidth" target="_blank" rel="noopener"><Twitter/></a>
+              <a className={'social-link'} href="https://www.youtube.com/user/bandwidth" target="_blank" rel="noopener"><YouTube/></a>
+              <a className={'social-link'} href="https://github.com/Bandwidth" target="_blank" rel="noopener"><GitHub/></a>
             </div>
           </div>
 
@@ -133,8 +133,8 @@ function Footer() {
             ))}
             <div className={'column'}>
               <div className={'menu'}>
-                <div className={'menuTitle'}>Let's Chat</div>
-                <div className={'callToAction'} data-cy="callToAction">
+                <div className={'menu-title'}>Let's Chat</div>
+                <div className={'call-to-action'} data-cy="callToAction">
                   Have a support question? Want to add SMS to your app? Need to talk to legal? Have a great minestrone soup recipe?
                   Whatever the reason you need to chat, let us know and we'll give you a call.
                 </div>

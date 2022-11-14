@@ -6,9 +6,9 @@ export default function FooterColumn({menus}) {
         <div className={'column'}>
             {menus.map((props, idx) => (
                 <div key= {idx} className={'menu'}>
-                    <div className={'menuTitle'}>{props.title}</div>
+                    <div className={'menu-title'}>{props.title}</div>
                         {props.items.map((props, idx) => (
-                            <div key={idx} className={'menuLink'}><a href={props.to}>{props.label}</a></div>
+                            <div key={idx} className={'menu-link'}><a href={props.to}>{props.label}</a></div>
                         ))}
                 </div>
             ))}
