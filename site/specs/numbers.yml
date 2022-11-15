@@ -792,6 +792,19 @@ components:
         AssociatedSipPeersResponse:
           $ref: '#/components/schemas/AssociatedSipPeersResponse'
       type: object
+    AutomatedTollFreeLnpOrderRequest:
+      description: >-
+        Indicates that the port-in contains toll-free numbers and that Toll-Free
+        Automation is enabled. The numbers will be automatically validated and
+        submitted to our toll-free porting vendor, then the port will be
+        processed manually by Bandwidth’s Local Number Portability team.
+      properties:
+        LnpOrder:
+          allOf:
+            - $ref: '#/components/schemas/LnpOrderBasic'
+            - $ref: '#/components/schemas/LnpOrderAutomatedTollFreeFields'
+      title: Automated Toll-Free
+      type: object
     AvailableNpaNxx:
       properties:
         City:
@@ -2148,15 +2161,6 @@ components:
             type: string
             xml:
               name: Tier
-          type: array
-          uniqueItems: true
-          xml:
-            wrapped: true
-        Vendors:
-          items:
-            type: string
-            xml:
-              name: Vendor
           type: array
           uniqueItems: true
           xml:
@@ -4983,6 +4987,20 @@ components:
           description: May be included in the PUT payload as is, but cannot be changed.
           type: boolean
       type: object
+    LnpOrderAutomatedTollFreeFields:
+      properties:
+        TargetRespOrgId:
+          description: >-
+            This is the RespOrg ID that you want the toll free numbers ported
+            to. Normally it will specify a Bandwidth RespOrg ID like JYT01, but
+            it could be something else for RespOrg Exception customers. This
+            field is mandatory for non-draft toll free port-in orders.
+          maxLength: 5
+          minLength: 5
+          type: string
+      required:
+        - TargetRespOrgId
+      type: object
     LnpOrderBasic:
       properties:
         CustomerOrderId:
@@ -5102,20 +5120,6 @@ components:
         SiteId:
           format: int32
           type: integer
-      type: object
-    LnpOrderPhase1TollFreeFields:
-      properties:
-        TargetRespOrgId:
-          description: >-
-            This is the RespOrg ID that you want the toll free numbers ported
-            to. Normally it will specify a Bandwidth RespOrg ID like JYT01, but
-            it could be something else for RespOrg Exception customers. This
-            field is mandatory for non-draft toll free port-in orders.
-          maxLength: 5
-          minLength: 5
-          type: string
-      required:
-        - TargetRespOrgId
       type: object
     LnpOrderPortoutResponse:
       properties:
@@ -5325,7 +5329,7 @@ components:
           type: object
       title: LNP Order Response
       type: object
-    LnpOrderResponsePhase1TollFree:
+    LnpOrderResponseAutomatedTollFree:
       properties:
         LnpOrderResponse:
           properties:
@@ -5412,7 +5416,7 @@ components:
                 only applicable to automated toll free port-ins.
               type: string
           type: object
-      title: Phase 1 Toll-Free LNP Order Response
+      title: Automated Toll-Free LNP Order Response
       type: object
     LnpOrderSuppAutomatedOffNet:
       allOf:
@@ -5457,6 +5461,49 @@ components:
           type: array
         WirelessInfo:
           $ref: '#/components/schemas/WirelessInfoSupp'
+      title: LnpOrderSupp
+      type: object
+    LnpOrderSuppAutomatedTollFree:
+      allOf:
+        - $ref: '#/components/schemas/LnpOrderBasicModifiableFields'
+      properties:
+        ListOfPhoneNumbers:
+          description: >-
+            May be SUPPed only in draft states (i.e. DRAFT, VALIDATE_DRAFT_TFNS,
+            VALID_DRAFT_TFNS, or INVALID_DRAFT_TFNS)
+          items:
+            $ref: '#/components/schemas/PhoneNumber'
+          type: array
+        LoaAuthorizingPerson:
+          type: string
+        RetryValidation:
+          description: >-
+            If 'TOLL_FREE_PORT_INS_PHASE_1' feature is enabled for account,
+            Bandwidth accesses a vendor to determine if the numbers are
+            portable, and if so, from which RespOrg. In the event that we do not
+            receive a response from our vendor after a number of retries, we
+            give up and place the order in the INVALID_TFNS or
+            INVALID_DRAFT_TFNS state. This scenario can occur if our toll free
+            porting vendor is performing maintenance, for example. Including
+            RetryValidation with a value of true will cause the order to return
+            to VALIDATE_TFNS or VALIDATE_DRAFT_TFNS and we will repeat our
+            attempts to retrieve the portability data from the vendor. This
+            element is included in the synchronous response to the PUT, when
+            included in the request, but is not included in subsequent GET
+            requests for the order.
+          type: boolean
+        TargetRespOrgId:
+          description: >-
+            This is the RespOrg ID that you want the toll free numbers ported
+            to. Normally it will specify a Bandwidth RespOrg ID like JYT01, but
+            it could be something else for RespOrg Exception customers. Because
+            the TargetRespOrgId is mandatory for the toll free port-in order
+            (but not mandatory for the PUT operation), omitting it in the PUT
+            leaves the TargetRespOrgId unchanged. This field must be populated
+            when a draft toll free port-in is submitted.
+          maxLength: 5
+          minLength: 5
+          type: string
       title: LnpOrderSupp
       type: object
     LnpOrderSuppInternal:
@@ -5522,49 +5569,6 @@ components:
               type: string
           title: Subscriber
           type: object
-      title: LnpOrderSupp
-      type: object
-    LnpOrderSuppPhase1TollFree:
-      allOf:
-        - $ref: '#/components/schemas/LnpOrderBasicModifiableFields'
-      properties:
-        ListOfPhoneNumbers:
-          description: >-
-            May be SUPPed only in draft states (i.e. DRAFT, VALIDATE_DRAFT_TFNS,
-            VALID_DRAFT_TFNS, or INVALID_DRAFT_TFNS)
-          items:
-            $ref: '#/components/schemas/PhoneNumber'
-          type: array
-        LoaAuthorizingPerson:
-          type: string
-        RetryValidation:
-          description: >-
-            If 'TOLL_FREE_PORT_INS_PHASE_1' feature is enabled for account,
-            Bandwidth accesses a vendor to determine if the numbers are
-            portable, and if so, from which RespOrg. In the event that we do not
-            receive a response from our vendor after a number of retries, we
-            give up and place the order in the INVALID_TFNS or
-            INVALID_DRAFT_TFNS state. This scenario can occur if our toll free
-            porting vendor is performing maintenance, for example. Including
-            RetryValidation with a value of true will cause the order to return
-            to VALIDATE_TFNS or VALIDATE_DRAFT_TFNS and we will repeat our
-            attempts to retrieve the portability data from the vendor. This
-            element is included in the synchronous response to the PUT, when
-            included in the request, but is not included in subsequent GET
-            requests for the order.
-          type: boolean
-        TargetRespOrgId:
-          description: >-
-            This is the RespOrg ID that you want the toll free numbers ported
-            to. Normally it will specify a Bandwidth RespOrg ID like JYT01, but
-            it could be something else for RespOrg Exception customers. Because
-            the TargetRespOrgId is mandatory for the toll free port-in order
-            (but not mandatory for the PUT operation), omitting it in the PUT
-            leaves the TargetRespOrgId unchanged. This field must be populated
-            when a draft toll free port-in is submitted.
-          maxLength: 5
-          minLength: 5
-          type: string
       title: LnpOrderSupp
       type: object
     LongCodeImportCampaignErrorResponse:
@@ -6026,6 +6030,25 @@ components:
           type: string
         TelephoneNumberToPort:
           type: string
+      type: object
+    ManualTollFreeLnpOrderRequest:
+      description: >-
+        Manual indicates that the port-in will be processed manually by
+        Bandwidth’s Local Number Portability team. Currently all toll free
+        port-ins are handled manually by Bandwidth’s Local Number Portability
+        team. But Bandwidth is in the process of automating portions of toll
+        free porting, with a goal of eventually automating the entire process.
+      properties:
+        LnpOrder:
+          allOf:
+            - $ref: '#/components/schemas/LnpOrderBasic'
+          properties:
+            Subscriber:
+              allOf:
+                - $ref: '#/components/schemas/SubscriberBusiness'
+              type: object
+          type: object
+      title: Manual Toll-Free
       type: object
     ManuallyPortableTollFreeNumberList:
       properties:
@@ -6831,6 +6854,10 @@ components:
           type: integer
       type: object
     OriginationRoutePlan:
+      description: >-
+        The OriginationRoutePlan element consists of an action and a list of
+        prioritized and weighted routes that tell Bandwidth where to send phone
+        calls to phone numbers associated with the route plan.
       properties:
         Action:
           enum:
@@ -6864,19 +6891,6 @@ components:
         previous:
           type: string
       title: Links
-      type: object
-    Phase1TollFreeLnpOrderRequest:
-      description: >-
-        Indicates that the port-in contains toll-free numbers and that Toll-Free
-        Automation is enabled. The numbers will be automatically validated and
-        submitted to our toll-free porting vendor, then the port will be
-        processed manually by Bandwidth’s Local Number Portability team.
-      properties:
-        LnpOrder:
-          allOf:
-            - $ref: '#/components/schemas/LnpOrderBasic'
-            - $ref: '#/components/schemas/LnpOrderPhase1TollFreeFields'
-      title: Phase 1 Toll-Free
       type: object
     PhoneNumber:
       properties:
@@ -8508,6 +8522,8 @@ components:
           type: string
         IsDefaultPeer:
           type: boolean
+        OriginationRoutePlan:
+          $ref: '#/components/schemas/OriginationRoutePlan'
         PeerId:
           format: int32
           type: integer
@@ -8706,6 +8722,8 @@ components:
           type: string
         IsDefaultPeer:
           type: boolean
+        OriginationRoutePlan:
+          $ref: '#/components/schemas/OriginationRoutePlan'
         PeerName:
           type: string
         PremiseTrunks:
@@ -10648,25 +10666,6 @@ components:
             Name:
               type: string
           type: object
-      type: object
-    TollFreeLnpOrderRequest:
-      description: >-
-        Manual indicates that the port-in will be processed manually by
-        Bandwidth’s Local Number Portability team. Currently all toll free
-        port-ins are handled manually by Bandwidth’s Local Number Portability
-        team. But Bandwidth is in the process of automating portions of toll
-        free porting, with a goal of eventually automating the entire process.
-      properties:
-        LnpOrder:
-          allOf:
-            - $ref: '#/components/schemas/LnpOrderBasic'
-          properties:
-            Subscriber:
-              allOf:
-                - $ref: '#/components/schemas/SubscriberBusiness'
-              type: object
-          type: object
-      title: Manual Toll-Free
       type: object
     TollFreeNumber:
       properties:
@@ -15142,8 +15141,8 @@ paths:
           required: true
           schema:
             default: 300
-            max: 5000
-            min: 1
+            maximum: 5000
+            minimum: 1
             type: integer
         - description: >-
             The starting date of a search in yy-mm-dd format. startdate and
@@ -15254,8 +15253,8 @@ paths:
           required: false
           schema:
             default: 300
-            max: 5000
-            min: 1
+            maximum: 5000
+            minimum: 1
             type: integer
         - description: The user ID associated with disconnected phone numbers
           example: jbm
@@ -24733,15 +24732,15 @@ paths:
         content:
           application/xml:
             examples:
-              Phase 1 Toll-Free Port-in:
+              Automated Toll-Free Port-in:
                 value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrder>\n\t<CustomerOrderId>My order id</CustomerOrderId>\n\t<RequestedFocDate>2021-06-16Z</RequestedFocDate>\n\t<SiteId>2439</SiteId>\n\t<PeerId>23432</PeerId>\n\t<LoaAuthorizingPerson>The Authgal</LoaAuthorizingPerson>\n\t<TargetRespOrgId>JYT01</TargetRespOrgId>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>8774809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n</LnpOrder>"
               Regular Port-in:
                 value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrder>\n\t<RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>\n\t<AlternateSpid>X455</AlternateSpid>\n\t<BillingTelephoneNumber>9195551234</BillingTelephoneNumber>\n\t<NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>\n\t<SiteId>    SITE ID     </SiteId>\n\t<PeerId>  SIPPEER ID    </PeerId>\n\t<Subscriber>\n\t\t<SubscriberType>BUSINESS</SubscriberType>\n\t\t<FirstName>First</FirstName>\n\t\t<LastName>Last</LastName>\n\t\t<ServiceAddress>\n\t\t\t<HouseNumber>11235</HouseNumber>\n\t\t\t<StreetName>Back</StreetName>\n\t\t\t<City>Denver</City>\n\t\t\t<StateCode>CO</StateCode>\n\t\t\t<Zip>27541</Zip>\n\t\t\t<County>Canyon</County>\n\t\t</ServiceAddress>\n\t</Subscriber>\n\t<LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>\n\t<WirelessInfo>\n\t\t<AccountNumber>771297665AABC</AccountNumber>\n\t\t<PinNumber>1234</PinNumber>\n\t</WirelessInfo>\n\t<TnAttributes>\n\t\t<TnAttribute>Protected</TnAttribute>\n\t\t<TnAttribute>External</TnAttribute>\n\t\t<TnAttribute>Imported</TnAttribute>\n\t</TnAttributes>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>9194809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n\t<CustomerOrderId>myOrder</CustomerOrderId>\n\t<Triggered>true</Triggered>\n\t<PartialPort>true</PartialPort>\n\t<Immediately>false</Immediately>\n\t<ProcessingStatus>DRAFT</ProcessingStatus>\n</LnpOrder>"
             schema:
               oneOf:
                 - $ref: '#/components/schemas/OnNetLnpOrderRequest'
-                - $ref: '#/components/schemas/TollFreeLnpOrderRequest'
-                - $ref: '#/components/schemas/Phase1TollFreeLnpOrderRequest'
+                - $ref: '#/components/schemas/ManualTollFreeLnpOrderRequest'
+                - $ref: '#/components/schemas/AutomatedTollFreeLnpOrderRequest'
                 - $ref: '#/components/schemas/OffNetLnpOrderRequest'
                 - $ref: '#/components/schemas/InternalLnpOrderRequest'
       responses:
@@ -24749,8 +24748,8 @@ paths:
           content:
             application/xml:
               examples:
-                Phase 1 Toll-Free Order Response:
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrderResponse>\n\t<OrderId>03f194d5-3932-4e9f-8ba1-03ef767985e5</OrderId>\n\t<Status>\n\t\t<Code>201</Code>\n\t\t<Description>Order request received. Please use the order id to check the status of your order later.</Description>\n\t</Status>\n\t<ProcessingStatus>VALIDATE_TFNS</ProcessingStatus>\n\t<RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>\n\t<LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>8774809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n\t<TollFreeValidationStatus>PROCESSING</TollFreeValidationStatus>\n\t<TollFreePortType>Phase1TollFree</TollFreePortType>\n\t<TargetRespOrgId>JYT01</TargetRespOrgId>\n</LnpOrderResponse>"
+                Automated Toll-Free Order Response:
+                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrderResponse>\n\t<OrderId>03f194d5-3932-4e9f-8ba1-03ef767985e5</OrderId>\n\t<Status>\n\t\t<Code>201</Code>\n\t\t<Description>Order request received. Please use the order id to check the status of your order later.</Description>\n\t</Status>\n\t<ProcessingStatus>VALIDATE_TFNS</ProcessingStatus>\n\t<RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>\n\t<LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>8774809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n\t<TollFreeValidationStatus>PROCESSING</TollFreeValidationStatus>\n\t<TollFreePortType>PHASE_1_TOLLFREE</TollFreePortType>\n\t<TargetRespOrgId>JYT01</TargetRespOrgId>\n</LnpOrderResponse>"
                 Regular Order Response:
                   value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrderResponse>\n\t<OrderId>03f194d5-3932-4e9f-8ba1-03ef767985e5</OrderId>\n\t<Status>\n\t\t<Code>201</Code>\n\t\t<Description>Order request received. Please use the order id to check the status of your order later.</Description>\n\t</Status>\n\t<ProcessingStatus>PENDING_DOCUMENTS</ProcessingStatus>\n\t<RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>\n\t<LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>\n\t<Subscriber>\n\t\t<SubscriberType>BUSINESS</SubscriberType>\n\t\t<FirstName>First</FirstName>\n\t\t<LastName>Last</LastName>\n\t\t<ServiceAddress>\n\t\t\t<HouseNumber>11235</HouseNumber>\n\t\t\t<StreetName>Back</StreetName>\n\t\t\t<City>Denver</City>\n\t\t\t<StateCode>CO</StateCode>\n\t\t\t<Zip>27541</Zip>\n\t\t\t<County>Canyon</County>\n\t\t\t<Country>United States</Country>\n\t\t</ServiceAddress>\n\t</Subscriber>\n\t<WirelessInfo>\n\t\t<AccountNumber>771297665AABC</AccountNumber>\n\t\t<PinNumber>1234</PinNumber>\n\t</WirelessInfo>\n\t<TnAttributes>\n\t\t<TnAttribute>Protected</TnAttribute>\n\t\t<TnAttribute>External</TnAttribute>\n\t\t<TnAttribute>Imported</TnAttribute>\n\t</TnAttributes>\n\t<BillingTelephoneNumber>9195551234</BillingTelephoneNumber>\n\t<NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>\n\t<SiteId>    SITE ID     </SiteId>\n\t<PeerId>  SIPPEER ID    </PeerId>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>9194809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n\t<CustomerOrderId>myOrder</CustomerOrderId>\n\t<Triggered>true</Triggered>\n\t<PartialPort>true</PartialPort>\n\t<Immediately>true</Immediately>\n</LnpOrderResponse>"
               schema:
@@ -25032,7 +25031,7 @@ paths:
               schema:
                 oneOf:
                   - $ref: '#/components/schemas/LnpOrderResponse'
-                  - $ref: '#/components/schemas/LnpOrderResponsePhase1TollFree'
+                  - $ref: '#/components/schemas/LnpOrderResponseAutomatedTollFree'
           description: >-
             The information has been successfully retrieved and displayed in the
             payload.
@@ -25075,7 +25074,7 @@ paths:
         content:
           application/xml:
             examples:
-              Phase 1 Toll-Free Request:
+              Automated Toll-Free Request:
                 value: |-
                   <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                   <LnpOrderSupp>
@@ -25146,8 +25145,8 @@ paths:
                   type: object
                 - properties:
                     LnpOrderSupp:
-                      $ref: '#/components/schemas/LnpOrderSuppPhase1TollFree'
-                  title: Phase 1 Toll-Free
+                      $ref: '#/components/schemas/LnpOrderSuppAutomatedTollFree'
+                  title: Automated Toll-Free
                   type: object
                 - properties:
                     LnpOrderSupp:
@@ -25174,7 +25173,7 @@ paths:
           content:
             application/xml:
               examples:
-                Phase 1 Toll-Free Response:
+                Automated Toll-Free Response:
                   value: |-
                     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                     <LnpOrderResponse>
@@ -31495,19 +31494,6 @@ paths:
                   type: boolean
                 OriginationRoutePlan:
                   $ref: '#/components/schemas/OriginationRoutePlan'
-                  description: >-
-                    The OriginationRoutePlan element consists of an action and a
-                    list of prioritized and weighted routes that tell Bandwidth
-                    where to send phone calls to phone numbers associated with a
-                    SIP peer.  Priority determines the order in which the
-                    specified routes are attempted, with lower priority
-                    endpoints being attempted first.  When there are multiple
-                    endpoints with the same priority, weight is used to
-                    determine the percentage of phone calls that appear first in
-                    the routing list for that priority.  This field is intended
-                    to replace the functionality of VoiceHosts, VoiceHostGroups,
-                    and FinalDestinationUri and should not be used in
-                    conjunction with these fields.
                 PeerName:
                   description: Mandatory name for the SIP Peer
                   maxLength: 10
@@ -31597,47 +31583,41 @@ paths:
                     </SipPeerResponse>
               schema:
                 $ref: '#/components/schemas/SipPeerResponseBadRequest'
-          description: >-
+          description: |-
             Bad Request. Possible errors in response:
-
-            <ul><li>12113 - The provided street address could not be verified.
-            Please submit a valid street address.</li><li>13569 - A termination
-            host with HostName = 2.1.1.9 is already in use</li><li>13509 -
-            'wrong.ip' is not a valid host. Provide valid IP or domain
-            name</li><li>13553 - Duplicate host (and port) in
-            VoiceHosts</li><li>13510 - 'wrong.url' is not a valid Destination
-            URI</li><li>13522 - IsDefaultPeer cannot be false right now. The
-            account requires at least one Default Sip Peer</li><li>13552 - A
-            termination host with HostName = %s and Port = %s is already in
-            use</li><li>12024 - Region with state '%s' and country '%s' does not
-            exist</li><li>13576 - Account 9999999 has no CNAM product
-            feature</li><li>13581 - Display option is missing</li><li>13582 -
-            Enforce option is missing</li><li>13590 - The supplied
-            CustomerTrafficAllowed value on host %s:%s are not allowed for this
-            sippeer</li><li>13591 - Termination Settings at the SIP Peer level
-            are not allowed for accounts with the
-            'DedicatedPrivateNetworkTopology' product.</li><li>13592 - Calling
-            name 'Display' and 'Enforced' values can't be updated for
-            'DedicatedPrivateNetworkTopology' account.</li><li>13593 - %s has
-            invalid mask. Valid mask values: 20-32</li><li>13594 - %s is not
-            valid host</li><li>13595 - The IP address provided: %s contains a
-            non zero subnet portion. An equivalent IP address such as %s with a
-            zero subnet value must be provided.</li>
-              <li>13685 "Origination route plan action cannot be 'unchanged' when creating a new SIP peer"</li>
-              <li>13686 "Origination route plan action cannot be 'off' when creating a new SIP peer"</li>
-              <li>13687 "Voice hosts and host groups are not supported on this account, please add your hosts to the origination route plan for this SIP peer"</li>
-              <li>13688 "FinalDestinationUri is not supported on this account, to acheive the same thing, please add this URI to a fail-over group in the origination route plan for this SIP peer"</li>
-              <li>5200 "Origination route plan is not enabled for the account"</li>
-              <li>5207 "Specified Route Plan Action was invalid, must be one of 'asSpecified', 'unchanged' or 'off'"</li>
-              <li>5218 "Origination route cannot have private IP endpoint: %s"</li>
-              <li>5219 "Origination route sip endpoint %s cannot have invalid sip host %s"</li>
-              <li>5220 "Origination route sip endpoint %s cannot have private ipv4 %s as sip host"</li>
-              <li>5221 "Origination route priority %s cannot exceed maximum priority value %s"</li>
-              <li>5222 "Origination route weight %s cannot exceed maximum weight value %s"</li>
-              <li>5223 "Origination route priority should be a contiguous sequence of numbers starting with 1. Priority %d is missing."</li>
-              <li>5251 "One of the provided origination route plan route names is too long, please ensure all names are less than 256 characters."</li>
-              <li>5252 "The origination route name %s is invalid, please use only alphanumeric, whitespace, underscore, and/or dash characters"</li>
-              <li>5253 "Telephone number endpoints are not allowed on this account. Please contact Bandwidth support if you wish to add this feature to your account."</li>
+            <ul>
+              <li>12113 - The provided street address could not be verified. Please submit a valid street address.</li>
+              <li>13569 - A termination host with HostName = 2.1.1.9 is already in use</li>
+              <li>13509 - 'wrong.ip' is not a valid host. Provide valid IP or domain name</li>
+              <li>13553 - Duplicate host (and port) in VoiceHosts</li>
+              <li>13510 - 'wrong.url' is not a valid Destination URI</li>
+              <li>13522 - IsDefaultPeer cannot be false right now. The account requires at least one Default Sip Peer</li>
+              <li>13552 - A termination host with HostName = %s and Port = %s is already in use</li>
+              <li>12024 - Region with state '%s' and country '%s' does not exist</li>
+              <li>13576 - Account 9999999 has no CNAM product feature</li>
+              <li>13581 - Display option is missing</li>
+              <li>13582 - Enforce option is missing</li>
+              <li>13590 - The supplied CustomerTrafficAllowed value on host %s:%s are not allowed for this sippeer</li>
+              <li>13591 - Termination Settings at the SIP Peer level are not allowed for accounts with the 'DedicatedPrivateNetworkTopology' product.</li>
+              <li>13592 - Calling name 'Display' and 'Enforced' values can't be updated for 'DedicatedPrivateNetworkTopology' account.</li>
+              <li>13593 - %s has invalid mask. Valid mask values: 20-32</li>
+              <li>13594 - %s is not valid host</li>
+              <li>13595 - The IP address provided: %s contains a non zero subnet portion. An equivalent IP address such as %s with a zero subnet value must be provided.</li>
+              <li>13685 - Origination route plan action cannot be 'unchanged' when creating a new SIP peer</li>
+              <li>13686 - Origination route plan action cannot be 'off' when creating a new SIP peer</li>
+              <li>13687 - Voice hosts and host groups are not supported on this account, please add your hosts to the origination route plan for this SIP peer</li>
+              <li>13688 - FinalDestinationUri is not supported on this account, to acheive the same thing, please add this URI to a fail-over group in the origination route plan for this SIP peer</li>
+              <li>5200 - Origination route plan is not enabled for the account</li>
+              <li>5207 - Specified Route Plan Action was invalid, must be one of 'asSpecified', 'unchanged' or 'off'</li>
+              <li>5218 - Origination route cannot have private IP endpoint: %s</li>
+              <li>5219 - Origination route sip endpoint %s cannot have invalid sip host %s</li>
+              <li>5220 - Origination route sip endpoint %s cannot have private ipv4 %s as sip host</li>
+              <li>5221 - Origination route priority %s cannot exceed maximum priority value %s</li>
+              <li>5222 - Origination route weight %s cannot exceed maximum weight value %s</li>
+              <li>5223 - Origination route priority should be a contiguous sequence of numbers starting with 1. Priority %d is missing.</li>
+              <li>5251 - One of the provided origination route plan route names is too long, please ensure all names are less than 256 characters.</li>
+              <li>5252 - The origination route name %s is invalid, please use only alphanumeric, whitespace, underscore, and/or dash characters</li>
+              <li>5253 - Telephone number endpoints are not allowed on this account. Please contact Bandwidth support if you wish to add this feature to your account.</li>
             </ul>
         '409':
           content:
@@ -31937,50 +31917,42 @@ paths:
                     </SipPeerResponse>
               schema:
                 $ref: '#/components/schemas/SipPeerResponseBadRequest'
-          description: >-
+          description: |-
             Bad Request. Possible errors in response:
-
-            <ul><li>12113 - The provided street address could not be verified.
-            Please submit a valid street address.</li><li>13569 - A termination
-            host with HostName = 2.1.1.9 is already in use</li><li>13509 -
-            'wrong.ip' is not a valid host. Provide valid IP or domain
-            name</li><li>13553 - Duplicate host (and port) in
-            VoiceHosts</li><li>13510 - 'wrong.url' is not a valid Destination
-            URI</li><li>13522 - IsDefaultPeer cannot be false right now. The
-            account requires at least one Default Sip Peer</li><li>13552 - A
-            termination host with HostName = %s and Port = %s is already in
-            use</li><li>12024 - Region with state '%s' and country '%s' does not
-            exist</li><li>13576 - Account 9999999 has no CNAM product
-            feature</li><li>13581 - Display option is missing</li><li>13582 -
-            Enforce option is missing</li><li>13563 - Sip Peer '316167' account
-            '9999999' and site '45' does not exist</li><li>13590 - The supplied
-            CustomerTrafficAllowed value on host %s:%s are not allowed for this
-            sippeer</li><li>13591 - Termination Settings at the SIP Peer level
-            are not allowed for accounts with the
-            'DedicatedPrivateNetworkTopology' product.</li><li>13592 - Calling
-            name 'Display' and 'Enforced' values can't be updated for
-            'DedicatedPrivateNetworkTopology' account.</li><li>13593 - %s has
-            invalid mask. Valid mask values: 24-32</li><li>13594 - %s is not
-            valid host</li><li>13595 - The IP address provided: %s contains a
-            non zero subnet portion. An equivalent IP address such as %s with a
-            zero subnet value must be provided.</li>
-
-            <li>13685 "Origination route plan action cannot be 'unchanged' when
-            creating a new SIP peer"</li>
-              <li>13686 "Origination route plan action cannot be 'off' when creating a new SIP peer"</li>
-              <li>13687 "Voice hosts and host groups are not supported on this account, please add your hosts to the origination route plan for this SIP peer"</li>
-              <li>13688 "FinalDestinationUri is not supported on this account, to acheive the same thing, please add this URI to a fail-over group in the origination route plan for this SIP peer"</li>
-              <li>5200 "Origination route plan is not enabled for the account"</li>
-              <li>5207 "Specified Route Plan Action was invalid, must be one of 'asSpecified', 'unchanged' or 'off'"</li>
-              <li>5218 "Origination route cannot have private IP endpoint: %s"</li>
-              <li>5219 "Origination route sip endpoint %s cannot have invalid sip host %s"</li>
-              <li>5220 "Origination route sip endpoint %s cannot have private ipv4 %s as sip host"</li>
-              <li>5221 "Origination route priority %s cannot exceed maximum priority value %s"</li>
-              <li>5222 "Origination route weight %s cannot exceed maximum weight value %s"</li>
-              <li>5223 "Origination route priority should be a contiguous sequence of numbers starting with 1. Priority %d is missing."</li>
-              <li>5251 "One of the provided origination route plan route names is too long, please ensure all names are less than 256 characters."</li>
-              <li>5252 "The origination route name %s is invalid, please use only alphanumeric, whitespace, underscore, and/or dash characters"</li>
-              <li>5253 "Telephone number endpoints are not allowed on this account. Please contact Bandwidth support if you wish to add this feature to your account."</li>
+            <ul>
+              <li>12113 - The provided street address could not be verified. Please submit a valid street address.</li>
+              <li>13569 - A termination host with HostName = 2.1.1.9 is already in use</li>
+              <li>13509 - 'wrong.ip' is not a valid host. Provide valid IP or domain name</li>
+              <li>13553 - Duplicate host (and port) in VoiceHosts</li>
+              <li>13510 - 'wrong.url' is not a valid Destination URI</li>
+              <li>13522 - IsDefaultPeer cannot be false right now. The account requires at least one Default Sip Peer</li>
+              <li>13552 - A termination host with HostName = %s and Port = %s is already in use</li>
+              <li>12024 - Region with state '%s' and country '%s' does not exist</li>
+              <li>13576 - Account 9999999 has no CNAM product feature</li>
+              <li>13581 - Display option is missing</li>
+              <li>13582 - Enforce option is missing</li>
+              <li>13563 - Sip Peer '316167' account '9999999' and site '45' does not exist</li>
+              <li>13590 - The supplied CustomerTrafficAllowed value on host %s:%s are not allowed for this sippeer</li>
+              <li>13591 - Termination Settings at the SIP Peer level are not allowed for accounts with the 'DedicatedPrivateNetworkTopology' product.</li>
+              <li>13592 - Calling name 'Display' and 'Enforced' values can't be updated for 'DedicatedPrivateNetworkTopology' account.</li>
+              <li>13593 - %s has invalid mask. Valid mask values: 24-32</li>
+              <li>13594 - %s is not valid host</li>
+              <li>13595 - The IP address provided: %s contains a non zero subnet portion. An equivalent IP address such as %s with a zero subnet value must be provided.</li>
+              <li>13685 - Origination route plan action cannot be 'unchanged' when creating a new SIP peer</li>
+              <li>13686 - Origination route plan action cannot be 'off' when creating a new SIP peer</li>
+              <li>13687 - Voice hosts and host groups are not supported on this account, please add your hosts to the origination route plan for this SIP peer</li>
+              <li>13688 - FinalDestinationUri is not supported on this account, to acheive the same thing, please add this URI to a fail-over group in the origination route plan for this SIP peer</li>
+              <li>5200 - Origination route plan is not enabled for the account</li>
+              <li>5207 - Specified Route Plan Action was invalid, must be one of 'asSpecified', 'unchanged' or 'off'</li>
+              <li>5218 - Origination route cannot have private IP endpoint: %s</li>
+              <li>5219 - Origination route sip endpoint %s cannot have invalid sip host %s</li>
+              <li>5220 - Origination route sip endpoint %s cannot have private ipv4 %s as sip host</li>
+              <li>5221 - Origination route priority %s cannot exceed maximum priority value %s</li>
+              <li>5222 - Origination route weight %s cannot exceed maximum weight value %s</li>
+              <li>5223 - Origination route priority should be a contiguous sequence of numbers starting with 1. Priority %d is missing.</li>
+              <li>5251 - One of the provided origination route plan route names is too long, please ensure all names are less than 256 characters.</li>
+              <li>5252 - The origination route name %s is invalid, please use only alphanumeric, whitespace, underscore, and/or dash characters</li>
+              <li>5253 - Telephone number endpoints are not allowed on this account. Please contact Bandwidth support if you wish to add this feature to your account.</li>
             </ul>
         '409':
           content:
