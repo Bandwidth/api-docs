@@ -75,7 +75,7 @@ context('Community Section Postman Link', () => {
 context('Social Media Icon Links', () => {
   beforeEach(() => {
     cy.visit('/')
-    cy.get('[class*="socialLinks"]')
+    cy.get('[data-cy="socialLinks"]')
       .children('a')
       .as('socialMedia')
   })
@@ -95,7 +95,7 @@ context('Social Media Icon Links', () => {
 
 context('Call to Action', () => {
   it('Should verify that the call to action link exists', () => {
-    cy.get('[class*="callToAction"]')
+    cy.get('[data-cy="callToAction"]')
       .siblings('div')
       .children('a')
       .should('have.attr', 'href', 'https://www.bandwidth.com/contact/')
