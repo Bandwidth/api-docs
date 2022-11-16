@@ -1,5 +1,4 @@
 import React from 'react';
-// import footerStyles from '@site/src/css/footer.module.css';
 import FooterColumn from '@site/src/components/FooterColumn';
 import BlueButton from '@site/src/components/BlueButton.js';
 

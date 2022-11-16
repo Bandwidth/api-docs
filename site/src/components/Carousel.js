@@ -135,7 +135,7 @@ export default function Carousel({itemList, title}) {
 
     return (
         <div className="carousel-container">
-            <div className="decoration top">
+            <div className="top-amoeba">
                 <Svg/>
             </div>
             <div className="content">
@@ -154,7 +154,7 @@ export default function Carousel({itemList, title}) {
                     </div>
                 </div>
             </div>
-            <div className="decoration bottom">
+            <div className="bottom-amoeba">
                 <Svg/>
             </div>
         </div>
