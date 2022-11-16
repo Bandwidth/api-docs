@@ -1,13 +1,13 @@
 import {navTester, extLinkTester, navBarContext} from '../../utils/utils'
 
 context('The Home Page', () => {
-  it('Successfuly loads', () => {
+  it('Successfully loads', () => {
     cy.visit('/')
   })
 })
 
 context('Docs', () => {
-  navBarContext('Docs');
+  navBarContext('Guides');
   navTester('docs');
 })
 
@@ -48,13 +48,13 @@ context('Dev Docs Brand Logo/Link', () => {
 })
 
 context('Github Link', () => {
-  extLinkTester('/','a.navbar__item.navbar__link.header-github-link.bw-link', 'https://github.com/Bandwidth')
+  extLinkTester('/','a.navbar__item.navbar__link.github-link', 'https://github.com/Bandwidth')
   })
 
 context('Postman Link', () => {
-  extLinkTester('/','a.navbar__item.navbar__link.header-postman-link.bw-link', 'https://www.postman.com/bandwidth')
+  extLinkTester('/','a.navbar__item.navbar__link.postman-link', 'https://www.postman.com/bandwidth')
   })
 
 context('Login Link', () => {
-  extLinkTester('/','a.navbar__item.navbar__link.header-login-link', 'https://www.bandwidth.com/login/')
+  extLinkTester('/','a.navbar__item.navbar__link.login-link', 'https://www.bandwidth.com/login/')
   })

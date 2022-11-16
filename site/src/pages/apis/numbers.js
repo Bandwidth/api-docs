@@ -10,7 +10,7 @@ export default function ApiReferencePage() {
           title={`Numbers API Reference`}
           description="Everything you'll need to start working with our Numbers API."
           keywords="Bandwidth,API,Numbers">
-            <ApiReference spec={siteConfig.customFields.numbersSpec} color={siteConfig.customFields.numbersMaroon} downloadDefinitionUrl="https://github.com/Bandwidth/api-docs/blob/main/site/specs-temp/numbers.json"/>
+            <ApiReference spec={siteConfig.customFields.numbersSpec} color={siteConfig.customFields.numbersMaroon} hideDownloadButton={true} downloadDefinitionUrl={siteConfig.customFields.numbersSpecLink}/>
         </Layout>
     );
 }

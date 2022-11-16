@@ -1,14 +1,13 @@
 import React from 'react';
-import itemGridStyles from '@site/src/components/css/ItemGrid.module.css';
 
 function Item({Svg, title, link}) {
     return (
-        <div className={itemGridStyles.item}>
-            <a href={link} className={itemGridStyles.itemImage}>
-                <Svg className={itemGridStyles.itemSvg} alt={title} />
+        <div className="item">
+            <a href={link} className="item-image">
+                <Svg className="item-svg" alt={title}/>
             </a>
-            <div className={itemGridStyles.itemText}>
-                <a href={link} className={itemGridStyles.textLink}><h3>{title}</h3></a>
+            <div className="item-text">
+                <a href={link} className="text-link" data-cy="textLink"><h3>{title}</h3></a>
             </div>
         </div>
     );
@@ -16,7 +15,7 @@ function Item({Svg, title, link}) {
 
 export default function ItemGrid({itemList}) {
     return (
-        <div className={itemGridStyles.items}>
+        <div className="item-grid-items">
             {itemList.map((props, idx) => (
                 <Item key={idx} {...props} />
             ))}

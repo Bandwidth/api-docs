@@ -1,7 +1,7 @@
 module.exports = {
     mySidebar: [{
-            type: "doc",
-            id: "intro",
+            type: "link",
+            href: "/docs",
             label: "Introduction",
         },
         {
@@ -337,5 +337,20 @@ module.exports = {
                 "emergency/emergencyCallingApi",
             ],
         },
-    ],
+        /* TODO ONEID-1304
+        {
+          type: 'category',
+          label: 'Identity Management',
+          items: [
+              'identity/about',
+              'identity/identityProvidersOverview',
+          ],
+        },
+        */
+        {
+            type: "doc",
+            id: "versions",
+            label: "Versions"
+        }, 
+  ],
 };

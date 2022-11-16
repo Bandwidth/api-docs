@@ -2,7 +2,9 @@ const YAML = require('yaml');
 const fs = require('fs');
 const path = require('path');
 
-const numbersSpec = fs.readFileSync('./specs-temp/numbers.json', 'utf-8');
+const customConfig = require('./custom.config.json');
+const blogPosts = require('./blogposts.config.json');
+const numbersSpec = fs.readFileSync('./specs/numbers.yml', 'utf-8');
 const phoneNumberLookupSpec = fs.readFileSync('./specs/phone-number-lookup.yml', 'utf-8');
 const voiceSpec = fs.readFileSync('./specs/voice.yml', 'utf-8');
 const messagingSpec = fs.readFileSync('./specs/messaging.yml', 'utf-8');
@@ -17,6 +19,9 @@ const globalSpec_v3 = fs.readFileSync('./specs/global-v3.yml', 'utf-8');
 const globalSpec_beta = fs.readFileSync('./specs/global-beta.yml', 'utf-8');
 const insightsSpec = fs.readFileSync('./specs/insights.yml', 'utf-8');
 const tfVerifySpec = fs.readFileSync('./specs/messaging-tfverify-athena.yml', 'utf-8');
+/* TODO ONEID-1304
+const identitySpec = fs.readFileSync('./specs/one-identity-management.yml', 'utf-8');
+*/
 
 module.exports = {
     title: 'Bandwidth API Docs',
@@ -27,8 +32,8 @@ module.exports = {
     onBrokenMarkdownLinks: 'warn',
     favicon: 'img/favicon.ico',
     trailingSlash: true,
-    organizationName: 'bandwidth', 
-    projectName: 'api-docs', 
+    organizationName: 'bandwidth',
+    projectName: 'api-docs',
     themeConfig: {
         image: 'img/bw-icon.svg', // used for meta tag
         colorMode: {
@@ -55,7 +60,7 @@ module.exports = {
                     {
                         to: 'docs',
                         activeBasePath: 'docs',
-                        label: 'Docs',
+                        label: 'Guides',
                     }, {
                         to: 'apis',
                         label: 'API Reference',
@@ -81,18 +86,18 @@ module.exports = {
                 ]
             }, {
                 href: 'https://github.com/Bandwidth',
-                position: 'right', 
-                className: 'header-github-link bw-link',
+                position: 'right',
+                className: 'github-link',
                 title: 'Github Organization'
             }, {
                 href: 'https://www.postman.com/bandwidth',   // TODO: update with real postman url
-                position: 'right', 
-                className: 'header-postman-link bw-link',
+                position: 'right',
+                className: 'postman-link',
                 title: 'Postman Collection'
             }, {
                 href: 'https://www.bandwidth.com/login/',
-                position: 'right', 
-                className: 'header-login-link',
+                position: 'right',
+                className: 'login-link',
                 title: 'Login'
             }]
         },
@@ -115,7 +120,7 @@ module.exports = {
                     editUrl: 'https://github.com/Bandwidth/api-docs/edit/main/site/',
                 },
                 theme: {
-                    customCss: require.resolve('./src/css/custom.css'),
+                    customCss: require.resolve('./src/css/main.scss'),
                 },
                 googleAnalytics: {
                     trackingID: 'UA-62651840-1',
@@ -125,21 +130,35 @@ module.exports = {
         ],
     ],
     customFields: {
-        numbersSpec: JSON.parse(numbersSpec),
+        numbersSpec: YAML.parse(numbersSpec),
+        numbersSpecLink: `${customConfig.numbersSpecLink}`,
         phoneNumberLookupSpec: YAML.parse(phoneNumberLookupSpec),
+        phoneNumberLookupSpecLink: `${customConfig.phoneNumberLookupSpecLink}`,
         voiceSpec: YAML.parse(voiceSpec),
+        voiceSpecLink: `${customConfig.voiceSpecLink}`,
         messagingSpec: YAML.parse(messagingSpec),
+        messagingSpecLink: `${customConfig.messagingSpecLink}`,
         messagingInternationalSpec: JSON.parse(messagingInternationalSpec),
+        messagingInternationalSpecLink: `${customConfig.messagingInternationalSpecLink}`,
         webRTCSpec: YAML.parse(webRtcSpec),
+        webRtcSpecLink: `${customConfig.webRtcSpecLink}`,
         multiFactorAuthSpec: YAML.parse(multiFactorAuthSpec),
+        multiFactorAuthSpecLink: `${customConfig.multiFactorAuthSpecLink}`,
         dashSpec: JSON.parse(dashSpec),
+        dashSpecLink: `${customConfig.dashSpecLink}`,
         dashNotificationsSpec: JSON.parse(dashNotificationsSpec),
+        dashNotificationsSpecLink: `${customConfig.dashNotificationsSpecLink}`,
         globalSpec: YAML.parse(globalSpec),
         globalSpec_v2: YAML.parse(globalSpec_v2),
         globalSpec_v3: YAML.parse(globalSpec_v3),
         globalSpec_beta: YAML.parse(globalSpec_beta),
         insightsSpec: YAML.parse(insightsSpec),
         tfVerifySpec: YAML.parse(tfVerifySpec),
+        insightsSpecLink: `${customConfig.insightsSpecLink}`,
+        // TODO ONEID-1304
+        // identitySpec: YAML.parse(identitySpec),
+
+        blogPosts: blogPosts,
 
         // CSS Colors
         bwBlue: '#079CEE',
@@ -157,6 +176,7 @@ module.exports = {
         redocCodeBackground: '#263238',
     },
     plugins: [
-        path.resolve(__dirname, 'redoc-plugin')
+        path.resolve(__dirname, 'redoc-plugin'),
+        'docusaurus-plugin-sass',
     ],
 };

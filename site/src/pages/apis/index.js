@@ -59,6 +59,13 @@ const apiList = [
         Svg: require('@site/static/img/api-icons/international-messaging.svg').default,   
         link: '/apis/tfVerify'    
     }
+    /* TODO ONEID-1304
+    {
+        title: 'Identity Providers',
+        Svg: require('@site/static/img/api-icons/byoidp.svg').default,
+        link: '/apis/identity'
+    },
+    */
 ];
 
 const props = {
