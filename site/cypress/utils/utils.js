@@ -180,10 +180,10 @@ export const splashRowTester = (path, rowTitle, element, linkText) => {
     cy.visit(`${path}`);
   })
   it('validates Splash Page row content', () => {
-    cy.get(`${element} .title_src-components-css-SplashPage-module`).should('have.text', `${rowTitle}`);
-    cy.get(`${element} .text_src-components-css-SplashPage-module`).should('not.be.empty');
-    cy.get(`${element} .link_src-components-css-SplashPage-module > a`).should('have.text', `${linkText}`);
-    cy.get(`${element} .image_src-components-css-SplashPage-module > svg`).should('be.visible');
+    cy.get(`${element} [data-cy="title"]`).should('have.text', `${rowTitle}`);
+    cy.get(`${element} [data-cy="text"]`).should('not.be.empty');
+    cy.get(`${element} [data-cy="link"] > a`).should('have.text', `${linkText}`);
+    cy.get(`${element} [data-cy="image"] > svg`).should('be.visible');
   });
 }
 
@@ -196,22 +196,22 @@ export const testCarousel = (path, length, title) => {
   var initialOffset = length * 2 * slideWidth;
   var rollOverOffset = initialOffset - ((length - 1) * slideWidth);
   it('validates the carousel content', () => {
-    cy.get('.header_src-components-css-Carousel-module').should('have.text', `${title}`);
-    cy.get('.carouselSlides_src-components-css-Carousel-module').children().should('have.length', length * 4);
-    cy.get(`:nth-child(${startIndex}) > .item_src-components-css-Carousel-module > .image_src-components-css-Carousel-module`).should('be.visible');
-    cy.get(`:nth-child(${startIndex}) > .item_src-components-css-Carousel-module > .product_src-components-css-Carousel-module`).should('not.be.empty');
-    cy.get(`:nth-child(${startIndex}) > .item_src-components-css-Carousel-module > .link_src-components-css-Carousel-module > a`).should('not.be.empty');
+    cy.get('[data-cy="carouselHeader"]').should('have.text', `${title}`);
+    cy.get('[data-cy="carouselSlides"]').children().should('have.length', length * 4);
+    cy.get(`:nth-child(${startIndex}) > [data-cy="item"] > [data-cy="image"]`).should('be.visible');
+    cy.get(`:nth-child(${startIndex}) > [data-cy="item"] > [data-cy="categories"]`).should('not.be.empty');
+    cy.get(`:nth-child(${startIndex}) > [data-cy="item"] > [data-cy="post"] > a`).should('not.be.empty');
   })
 
   it('validates the carousel movement', () => {
-    cy.get('.carouselSlides_src-components-css-Carousel-module').should('have.css', 'transform', `matrix(1, 0, 0, 1, -${initialOffset}, 0)`);
-    cy.get('.leftButton_src-components-css-Carousel-module').click();
-    cy.get('.carouselSlides_src-components-css-Carousel-module').should('have.css', 'transform', `matrix(1, 0, 0, 1, -${initialOffset - slideWidth}, 0)`);
-    cy.get('.rightButton_src-components-css-Carousel-module').click();
-    cy.get('.carouselSlides_src-components-css-Carousel-module').should('have.css', 'transform', `matrix(1, 0, 0, 1, -${initialOffset}, 0)`);
-    cy.get('.rightButton_src-components-css-Carousel-module').click();
-    cy.get('.carouselSlides_src-components-css-Carousel-module').should('have.css', 'transform', `matrix(1, 0, 0, 1, -${rollOverOffset}, 0)`);
-    cy.get('.rightButton_src-components-css-Carousel-module').click();
-    cy.get('.carouselSlides_src-components-css-Carousel-module').should('have.css', 'transform', `matrix(1, 0, 0, 1, -${rollOverOffset + slideWidth}, 0)`);
+    cy.get('[data-cy="carouselSlides"]').should('have.css', 'transform', `matrix(1, 0, 0, 1, -${initialOffset}, 0)`);
+    cy.get('[data-cy="leftButton"]').click();
+    cy.get('[data-cy="carouselSlides"]').should('have.css', 'transform', `matrix(1, 0, 0, 1, -${initialOffset - slideWidth}, 0)`);
+    cy.get('[data-cy="rightButton"]').click();
+    cy.get('[data-cy="carouselSlides"]').should('have.css', 'transform', `matrix(1, 0, 0, 1, -${initialOffset}, 0)`);
+    cy.get('[data-cy="rightButton"]').click();
+    cy.get('[data-cy="carouselSlides"]').should('have.css', 'transform', `matrix(1, 0, 0, 1, -${rollOverOffset}, 0)`);
+    cy.get('[data-cy="rightButton"]').click();
+    cy.get('[data-cy="carouselSlides"]').should('have.css', 'transform', `matrix(1, 0, 0, 1, -${rollOverOffset + slideWidth}, 0)`);
   })
 }
