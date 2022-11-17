@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const customConfig = require('./custom.config.json');
+const blogPosts = require('./blogposts.config.json');
 const numbersSpec = fs.readFileSync('./specs/numbers.yml', 'utf-8');
 const phoneNumberLookupSpec = fs.readFileSync('./specs/phone-number-lookup.yml', 'utf-8');
 const voiceSpec = fs.readFileSync('./specs/voice.yml', 'utf-8');
@@ -58,7 +59,7 @@ module.exports = {
                     {
                         to: 'docs',
                         activeBasePath: 'docs',
-                        label: 'Docs',
+                        label: 'Guides',
                     }, {
                         to: 'apis',
                         label: 'API Reference',
@@ -85,17 +86,17 @@ module.exports = {
             }, {
                 href: 'https://github.com/Bandwidth',
                 position: 'right',
-                className: 'header-github-link bw-link',
+                className: 'github-link',
                 title: 'Github Organization'
             }, {
                 href: 'https://www.postman.com/bandwidth',   // TODO: update with real postman url
                 position: 'right',
-                className: 'header-postman-link bw-link',
+                className: 'postman-link',
                 title: 'Postman Collection'
             }, {
                 href: 'https://www.bandwidth.com/login/',
                 position: 'right',
-                className: 'header-login-link',
+                className: 'login-link',
                 title: 'Login'
             }]
         },
@@ -118,7 +119,7 @@ module.exports = {
                     editUrl: 'https://github.com/Bandwidth/api-docs/edit/main/site/',
                 },
                 theme: {
-                    customCss: require.resolve('./src/css/custom.css'),
+                    customCss: require.resolve('./src/css/main.scss'),
                 },
                 googleAnalytics: {
                     trackingID: 'UA-62651840-1',
@@ -155,6 +156,8 @@ module.exports = {
         // TODO ONEID-1304
         // identitySpec: YAML.parse(identitySpec),
 
+        blogPosts: blogPosts,
+
         // CSS Colors
         bwBlue: '#079CEE',
         voicePurple: '#9a59c5',
@@ -171,6 +174,7 @@ module.exports = {
         redocCodeBackground: '#263238',
     },
     plugins: [
-        path.resolve(__dirname, 'redoc-plugin')
+        path.resolve(__dirname, 'redoc-plugin'),
+        'docusaurus-plugin-sass',
     ],
 };

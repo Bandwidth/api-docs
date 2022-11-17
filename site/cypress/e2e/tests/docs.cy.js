@@ -1,37 +1,57 @@
-import {testTextLink, extLinkTester} from '../../utils/utils'
+import {testTextLink, testSvgLink} from '../../utils/utils'
 
-context('Account Management Link', () => {
-  testTextLink('/docs','Account Management','docs/account', '.docs-intro-grid-item')
+context('Account Text Link', () => {
+  testTextLink('/docs', 'Account', 'docs/account', '[data-cy="textLink"]')
 })
 
-context('Numbers Link', () => {
-  testTextLink('/docs','Numbers','docs/numbers', '.docs-intro-grid-item')
+context('Account SVG Link', () => {
+  testSvgLink('/docs/','svg[alt="Account"]', 'docs/account')
 })
 
-context('Voice Link', () => {
-  testTextLink('/docs','Voice', 'docs/voice', '.docs-intro-grid-item')
+context('Numbers Text Link', () => {
+  testTextLink('/docs','Numbers','docs/numbers', '[data-cy="textLink"]')
 })
 
-context('Messaging Link', () => {
-  testTextLink('/docs','Messaging','docs/messaging', '.docs-intro-grid-item')
+context('Numbers SVG Link', () => {
+  testSvgLink('/docs/','svg[alt="Numbers"]', 'docs/numbers')
 })
 
-context('WebRTC Link', () => {
-  testTextLink('/docs','WebRTC', 'docs/webrtc' ,'.docs-intro-grid-item')
+context('Voice Text Link', () => {
+  testTextLink('/docs','Voice', 'docs/voice', '[data-cy="textLink"]')
 })
 
-context('Multi-Factor Authentication Link', () => {
-  testTextLink('/docs','Multi-Factor Authentication', 'docs/mfa' ,'.docs-intro-grid-item')
+context('Voice SVG Link', () => {
+  testSvgLink('/docs/','svg[alt="Voice"]', 'docs/voice')
 })
 
-context('Emergency Services Link', () => {
-  testTextLink('/docs','Emergency Services', 'docs/emergency' ,'.docs-intro-grid-item')
+context('Messaging Text Link', () => {
+  testTextLink('/docs','Messaging','docs/messaging', '[data-cy="textLink"]')
 })
 
-context('Next - About Link', () => {
-  testTextLink('/docs','About', 'docs/account' ,'a.pagination-nav__link')
+context('Messaging SVG Link', () => {
+  testSvgLink('/docs/','svg[alt="Messaging"]', 'docs/messaging')
 })
 
-context('Edit This Page Link', () => {
-  extLinkTester('/docs', 'a.theme-edit-this-page', 'https://github.com/Bandwidth/api-docs/edit/main/site/docs/intro.mdx')
+context('WebRTC Text Link', () => {
+  testTextLink('/docs','WebRTC', 'docs/webrtc' ,'[data-cy="textLink"]')
+})
+
+context('WebRTC SVG Link', () => {
+  testSvgLink('/docs/','svg[alt="WebRTC"]', 'docs/webrtc')
+})
+
+context('Multi-Factor Authentication Text Link', () => {
+  testTextLink('/docs','Multi-Factor Authentication', 'docs/mfa' ,'[data-cy="textLink"]')
+})
+
+context('Multi-Factor Authentication SVG Link', () => {
+  testSvgLink('/docs/','svg[alt="Multi-Factor Authentication"]', 'docs/mfa')
+})
+
+context('Emergency Text Link', () => {
+  testTextLink('/docs','Emergency', 'docs/emergency' ,'[data-cy="textLink"]')
+})
+
+context('Emergency SVG Link', () => {
+  testSvgLink('/docs/','svg[alt="Emergency"]', 'docs/emergency')
 })
