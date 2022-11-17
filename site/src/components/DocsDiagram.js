@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import docsAboutStyles from '@site/src/components/css/DocsAbout.module.css';
 
 export default function DocsDiagram({description, Desktop, Mobile}) {
     
@@ -21,8 +20,8 @@ export default function DocsDiagram({description, Desktop, Mobile}) {
     }, [])
 
     return (
-        <div className={docsAboutStyles.diagram}>
-            {description && <div className={docsAboutStyles.description}>{description}</div>}
+        <div className="docs-diagram">
+            {description && <div className="description">{description}</div>}
             {isDesktop ? <Desktop/> : <Mobile/>}
         </div>
     )

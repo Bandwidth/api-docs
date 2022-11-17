@@ -86,17 +86,17 @@ module.exports = {
             }, {
                 href: 'https://github.com/Bandwidth',
                 position: 'right',
-                className: 'header-github-link bw-link',
+                className: 'github-link',
                 title: 'Github Organization'
             }, {
                 href: 'https://www.postman.com/bandwidth',   // TODO: update with real postman url
                 position: 'right',
-                className: 'header-postman-link bw-link',
+                className: 'postman-link',
                 title: 'Postman Collection'
             }, {
                 href: 'https://www.bandwidth.com/login/',
                 position: 'right',
-                className: 'header-login-link',
+                className: 'login-link',
                 title: 'Login'
             }]
         },
@@ -119,7 +119,7 @@ module.exports = {
                     editUrl: 'https://github.com/Bandwidth/api-docs/edit/main/site/',
                 },
                 theme: {
-                    customCss: require.resolve('./src/css/custom.css'),
+                    customCss: require.resolve('./src/css/main.scss'),
                 },
                 googleAnalytics: {
                     trackingID: 'UA-62651840-1',
@@ -174,6 +174,7 @@ module.exports = {
         redocCodeBackground: '#263238',
     },
     plugins: [
-        path.resolve(__dirname, 'redoc-plugin')
+        path.resolve(__dirname, 'redoc-plugin'),
+        'docusaurus-plugin-sass',
     ],
 };

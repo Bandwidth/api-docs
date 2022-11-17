@@ -196,7 +196,7 @@ export const testCarousel = (path, length, title) => {
   var initialOffset = length * 2 * slideWidth;
   var rollOverOffset = initialOffset - ((length - 1) * slideWidth);
   it('validates the carousel content', () => {
-    cy.get('[data-cy="header"]').should('have.text', `${title}`);
+    cy.get('[data-cy="carouselHeader"]').should('have.text', `${title}`);
     cy.get('[data-cy="carouselSlides"]').children().should('have.length', length * 4);
     cy.get(`:nth-child(${startIndex}) > [data-cy="item"] > [data-cy="image"]`).should('be.visible');
     cy.get(`:nth-child(${startIndex}) > [data-cy="item"] > [data-cy="categories"]`).should('not.be.empty');
