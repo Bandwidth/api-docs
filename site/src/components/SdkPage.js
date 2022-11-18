@@ -31,7 +31,7 @@ export default function SdkPage({Svg, title, repoLinks, samplesLink, migrationGu
                                 <td><GitHubLink GHLink={samplesLink}/></td>
                             </tr>
                             { migrationGuides == true &&
-                                <tr className={sdkStyles.sdkMigrationGuides}>
+                                <tr className='sdk-migration-guides'>
                                     <td />
                                     <td><a href={"/migration-guides/" + title.toLowerCase()}>Migration Guide</a></td>
                                     <td />

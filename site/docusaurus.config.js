@@ -183,7 +183,7 @@ module.exports = {
                 routeBasePath: 'migration-guides',
                 sidebarPath: require.resolve('./sidebarsMigrationGuides.js'),
             },
-        ]
+        ],
         'docusaurus-plugin-sass',
     ],
 };
