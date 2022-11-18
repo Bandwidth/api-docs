@@ -13,18 +13,20 @@ info:
 
     |:---:|:---:|:---|
 
+    |`WS`|Our Legacy API version (`WS`) has been in a sunset period for an
+    extended period of time. It has been deprecated and will be decommissioned
+    on 8 August 2022. We require you to switch to `v1` as soon as
+    possible.|[Click here](https://developers.voxbone.com/legacy/)|
+
     |`v1`|Our current API, which includes number ordering, compliance,
     configuration and inventory management to support your Voice and SMS
-    communications.| [Click here](https://dev.bandwidth.com/apis/global/)|
+    communications.|[Click here](https://dev.bandwidth.com/apis/global/)|
 
     |`v2`|Our CDRs (Call Detail Records) API.|[Click
     here](https://dev.bandwidth.com/apis/global/v2/)|
 
-    |`v3`|Our Porting API|[Click
-    here](https://dev.bandwidth.com/apis/global/v3/)|
-
-    |`beta`|Early access to APIs under development including Number
-    Whitelisting.|Currently viewing|
+    |`beta`|Early access to APIs under development including Number Whitelisting
+    and Number Porting.|Currently viewing|
 
 
     ## Access
@@ -74,11 +76,558 @@ info:
 servers:
   - url: https://api.voxbone.com/beta
 tags:
+  - name: Number Porting
+    description: >
+      Bandwidth understands that number porting is a powerful tool that enables
+      you to bring all your existing voice services under one umbrella. 
+
+
+      By bringing your existing phone numbers to Bandwidth, you can keep the
+      numbers you have and mitigate the disruption that comes from changing
+      number.
+
+
+      We already take care of this for you but with our new Number Porting API
+      we hope to make this process as smooth as possible! With our API you will
+      be able to check number portability, submit port requests and view the
+      status of an existing request.
+
+
+      #####Limitations:
+
+      Currently, Tollfree numbers from Germany and India are not supported for
+      porting via API; please contact the Bandwidth LNP team for handling these
+      requests.
   - name: Number Whitelisting
     description: >
       Number Whitelisting let's you take advantage of Bandwidth's network, but
       without necessarily buying Bandwidth numbers.
 paths:
+  /porting-api/eligibility/{number}:
+    get:
+      tags:
+        - Number Porting
+      summary: Check number portability
+      description: Allows you to check number portability.
+      operationId: checkNumberEligibilityUsingGET
+      parameters:
+        - name: number
+          in: path
+          description: Single number in E164 format.
+          required: true
+          schema:
+            type: string
+          example: '3228080000'
+        - name: ownership
+          in: query
+          description: Ownership type of the current number.
+          schema:
+            type: string
+            enum:
+              - BUSINESS
+              - PERSONAL
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/PortingResponse«NumberAdditionalInformationVO»
+        '400':
+          description: Bad Request
+          content: {}
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+      security:
+        - apiKey: []
+    x-summary: Check number portability
+    x-description: >
+      Check if a single number is portable to Bandwidth. Support for multiple
+      numbers and ranges will be coming in future iterations of the API and you
+      can use the portal to port these numbers if required.
+
+
+      Bandwidth internally detects the number type, area code and country code
+      and you can retrieve porting pricing fees and submission requirements.
+  /porting-api:
+    get:
+      tags:
+        - Number Porting
+      summary: Check all porting requests with filters
+      description: >-
+        Allows you to check all existing porting requests for your account using
+        available filters for example the number or current status.
+      operationId: getPortInRequestsUsingGET
+      parameters:
+        - name: status
+          in: query
+          description: The status of your existing port request.
+          schema:
+            type: string
+            enum:
+              - documentsNeeded
+              - pendingDocumentReview
+              - canceled
+              - rejected
+              - pendingCarrierApproval
+          example: documentsNeeded
+        - name: e164
+          in: query
+          description: The number you are porting.
+          schema:
+            type: string
+          example: '3228080000'
+        - name: type
+          in: query
+          description: The type of number you are porting.
+          schema:
+            type: string
+            enum:
+              - GEOGRAPHIC
+              - SHARED_COST
+              - TOLL_FREE
+              - NATIONAL
+              - SPECIAL
+              - MOBILE
+              - INUM
+          example: GEOGRAPHIC
+        - name: countryCodeA3
+          in: query
+          description: ISO 3166-1 standard 3-letter country code.
+          schema:
+            type: string
+          example: BEL
+        - name: expectedPortCompleteDate
+          in: query
+          description: >-
+            Estimated completion timestamp, calculated by adding lead time to
+            date of submission. Only present once a request has state
+            `SUBMITTED`
+          schema:
+            type: string
+            format: date
+          example: '2019-11-20'
+        - name: preferredPortingDate
+          in: query
+          description: >-
+            Date you requested for the porting to be completed in YYYY-MM-DD
+            format.
+          schema:
+            type: string
+          example: 2019-11-20T00:00:00.000Z
+        - name: dateCreated
+          in: query
+          description: >-
+            Timestamp representing when the initial porting request was created
+            with Bandwidth.
+          schema:
+            type: string
+            format: date-time
+          example: 2019-11-20T00:00:00.000Z
+        - name: dateSubmitted
+          in: query
+          description: >-
+            Timestamp representing when the request was submitted to Bandwidth.
+            Only present when relevant, while the request is being handled by
+            Bandwidth.
+          schema:
+            type: string
+            format: date-time
+          example: 2019-11-20T00:00:00.000Z
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortingResponse«Page«PortInRequestVO»»'
+        '400':
+          description: Bad Request
+          content: {}
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+      security:
+        - apiKey: []
+    post:
+      tags:
+        - Number Porting
+      summary: Create individual porting request
+      description: >-
+        Allows you to create a porting request in a pending state without
+        documents. These documents must be uploaded for this porting request to
+        be processed successfully.
+      operationId: createPortInRequestUsingPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PortInRequestCreationVO'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortingResponse«PortInRequestVO»'
+        '400':
+          description: Bad Request
+          content: {}
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+      security:
+        - apiKey: []
+      x-codegen-request-body-name: portRequest
+    x-summary: Create or list porting request
+    x-description: >
+      All porting requests are created in a pending state until all the required
+      information has been submitted. 
+
+
+      Once all required information along with supporting documents are updated,
+      the request will automatically be submitted to Bandwidth.
+
+
+      ### Port Request States
+       |Status|Description|
+       |:--:|:-----|
+       __MISSING_DOCUMENTS__ | Draft port request has been created and documents need to be uploaded.
+       __SUBMITTED__ |  LOA and last invoice scan were sent by customer and the request can be analyzed by our Carrier Dpt.
+       __CHANGES_REQUESTED__ | After analysis of LOA, invoice and address, some mandatory info is missing. This places the request in pending until the customer updates and re-submits their request.
+       __PENDING_CARRIER_APPROVAL__ | This is where the request is being investigated and we are waiting for a response from our carrier.
+       __ACCEPTED__ | We are able to port the number.
+       __READY_FOR_CONFIGURATION__ | Numbers related to the request have been created in the customer account for configuration purposes. This is an intermediary step before `COMPLETED`. At this point, you can [__configure Voice URIs__](https://docs.voxbone.com/#/reference/voice) on the ported numbers.
+       __COMPLETED__ | The number has been ported to the Bandwidth network.
+       __REJECTED__ | We are unable to port the number at the current time.
+       __PROCESSING_CANCELLATION__ | The customer wants to cancel the request, a cancellation invoice should be issued. If any number is already created, it should be flagged as cancelled.
+       __CANCELED__ | Where the customer has canceled the request for any reason.
+  /porting-api/{portingInRequestId}/documents:
+    post:
+      tags:
+        - Number Porting
+      summary: Upload multiple supporting documents
+      description: Upload multiple supporting documents.
+      operationId: uploadPortingInDocumentsUsingPOST
+      parameters:
+        - name: portingInRequestId
+          in: path
+          description: portingInRequestId
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                LOA:
+                  type: string
+                  description: Letter of authorization document.
+                  format: binary
+                COB:
+                  type: string
+                  description: Last invoice
+                  format: binary
+                EU_ID:
+                  type: string
+                  description: Copy of end user's photo ID
+                  format: binary
+                POA:
+                  type: string
+                  description: Company Registration Certificate / Copy of power of attorney
+                  format: binary
+                COURT:
+                  type: string
+                  description: Copy of Court Registration
+                  format: binary
+                LEG_ID:
+                  type: string
+                  description: Copy of legal representative's photo ID
+                  format: binary
+                SIG_ID:
+                  type: string
+                  description: Copy of LOA signatory´s photo ID
+                  format: binary
+                TRADE:
+                  type: string
+                  description: >-
+                    Copy of the company registration in the Trade Registry
+                    Gazette
+                  format: binary
+                TAX:
+                  type: string
+                  description: Copy of the registration at the tax office
+                  format: binary
+                OFF_SGN:
+                  type: string
+                  description: Official proof of signature
+                  format: binary
+                DIREC:
+                  type: string
+                  description: >-
+                    Copy of Certificate of Directors and Secretary of the
+                    company
+                  format: binary
+                INCORP:
+                  type: string
+                  description: Copy of Certificate of Incorporation
+                  format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            multipart/form-data:
+              schema:
+                $ref: >-
+                  #/components/schemas/PortingResponse«List«PortInRequestDocumentVO»»
+        '201':
+          description: Created
+          content: {}
+        '400':
+          description: Bad Request
+          content: {}
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+      security:
+        - apiKey: []
+    x-summary: Upload documents
+    x-description: >
+      You are required to upload all the relevant documents for your existing
+      porting request to be successful depending on the number you are trying to
+      port and which country the number belongs to. You can see the required
+      documents from checking a numbers portability requirements.
+
+
+      ### Required documents can include:
+       |Type|Description|
+       |:--:|:-----|
+       __LOA__ | A letter of authority.
+       __COB__ | Last invoice.
+       __POA__ | Company Registration Certificate / Copy of power of attorney.
+       __LEG_ID__ | Copy of legal representative's photo ID.
+       __COURT__ | Copy of Court Registration .
+       __SIG_ID__ | Copy of LOA signatory´s photo ID.
+       __TRADE__ | Copy of the company registration in the Trade Registry Gazette.
+       __TAX__ | Copy of the registration at the tax office.
+       __OFF_SGN__ | Official proof of signature.
+       __DIREC__ |  Copy of Certificate of Directors and Secretary of the company.
+       __OFF_SGN__ | Copy of Certificate of Incorporation.
+  /porting-api/{portingInRequestId}/documents/{documentId}:
+    get:
+      tags:
+        - Number Porting
+      summary: Download individual document
+      description: Download individual document
+      operationId: downloadDocumentUsingGET
+      parameters:
+        - name: Accept
+          in: header
+          description: Accept
+          required: true
+          schema:
+            type: string
+          example: application/octet-stream
+        - name: portingInRequestId
+          in: path
+          description: The ID generated when you submitted your porting request.
+          required: true
+          schema:
+            type: integer
+            format: int32
+          example: 12124
+        - name: documentId
+          in: path
+          description: The ID generated when you submitted your document.
+          required: true
+          schema:
+            type: integer
+            format: int32
+          example: 11234
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  #/components/schemas/PortingResponse«List«PortInRequestDocumentVO»»
+        '400':
+          description: Bad Request
+          content: {}
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+      security:
+        - apiKey: []
+    x-summary: Download documents
+    x-description: >
+      Allows you to download specific documents you have uploaded to review for
+      a specific porting request.
+  /porting-api/{portingInRequestId}:
+    get:
+      tags:
+        - Number Porting
+      summary: Check specific porting request by ID
+      description: Allows you to check the status of an existing porting request.
+      operationId: getPortInRequestUsingGET
+      parameters:
+        - name: portingInRequestId
+          in: path
+          description: The ID generated when you submitted your porting request.
+          required: true
+          schema:
+            type: integer
+            format: int32
+          example: 12124
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortingResponse«PortInRequestVO»'
+        '400':
+          description: Bad Request
+          content: {}
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+      security:
+        - apiKey: []
+    put:
+      tags:
+        - Number Porting
+      summary: Update specific porting request without documents
+      description: >-
+        Allows you to update any user information or the preferred porting date
+        if this is done before Bandwidth reviews the porting request.
+      operationId: editPortInRequestWithoutDocumentsUsingPUT
+      parameters:
+        - name: portingInRequestId
+          in: path
+          description: The ID generated when you submitted your porting request.
+          required: true
+          schema:
+            type: integer
+            format: int32
+          example: 12124
+      requestBody:
+        description: portInRequestEditVO
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PortInRequestEditVO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortingResponse«PortInRequestVO»'
+        '201':
+          description: Created
+          content: {}
+        '400':
+          description: Bad Request
+          content: {}
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+        '404':
+          description: Not Found
+          content: {}
+      security:
+        - apiKey: []
+      x-codegen-request-body-name: portInRequestEditVO
+    delete:
+      tags:
+        - Number Porting
+      summary: Cancel specific porting request
+      description: >-
+        Cancelling existing porting requests will incur a cancellation fee if
+        the number has not been ported.
+      operationId: cancelPortingInRequestUsingDELETE
+      parameters:
+        - name: portingInRequestId
+          in: path
+          description: The ID generated when you submitted your porting request.
+          required: true
+          schema:
+            type: integer
+            format: int32
+          example: 12124
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortingResponse«PortInRequestVO»'
+        '204':
+          description: No Content
+          content: {}
+        '401':
+          description: Unauthorized
+          content: {}
+        '403':
+          description: Forbidden
+          content: {}
+      security:
+        - apiKey: []
+    x-summary: Get, update or delete specific porting request
+    x-description: >
+      All porting requests are created in pending state until all required
+      information is submitted. 
+
+
+      Once all required information including documents are updated, the request
+      will automatically be submitted to Bandwidth for porting.
   /whitelist:
     get:
       tags:
@@ -218,6 +767,618 @@ paths:
       List or delete a specific whitelisted number
 components:
   schemas:
+    DocumentRequiredInformationVO:
+      type: object
+      properties:
+        type:
+          type: string
+          description: The type/name of the document.
+          example: LOA
+          enum:
+            - LOA
+            - COB
+            - EU_ID
+            - POA
+            - COURT
+            - LEG_ID
+            - SIG_ID
+            - TRADE
+            - TAX
+            - OFF_SGN
+            - DIREC
+            - INCORP
+        description:
+          type: string
+          description: Short description for the content and nature of required document.
+          example: Letter of authorization.
+        sourceDocument:
+          type: string
+          description: >-
+            URL to retrieve the source document. Only present for documents to
+            be signed, most commonly the LOA. If present, the source document
+            needs to be downloaded, signed and uploaded by the requestor.
+          example: https://beta.voxbone.com/ports/documents/loas/BEL/2/loa.pdf
+        supportedFileTypes:
+          type: array
+          description: List of accepted file formats for uploaded documents.
+          items:
+            type: string
+            enum:
+              - .jpg
+              - .png
+              - .pdf
+              - .xls
+              - .xlsx
+      description: >-
+        Data structure for the document object defining the required documents,
+        their types and source/sample document if applicable.
+      example:
+        type: LOA
+        description: Letter of authorization.
+        sourceDocument: https://beta.voxbone.com/ports/documents/loas/BEL/2/loa.pdf
+    EndUserRequiredInformationVO:
+      type: object
+      properties:
+        buildingNumber:
+          type: string
+          description: Building number for the end user address
+          example: '489'
+        city:
+          type: string
+          description: City name for the end user address
+          example: Brussels
+        countryCodeA3:
+          type: string
+          description: ISO 3166-1 standard 3-letter country code
+          example: BEL
+        postalCode:
+          type: string
+          description: Postal code for the end user address
+          example: '1050'
+        streetName:
+          type: string
+          description: Street name for the end user address
+          example: Rue Vanderkindere
+        title:
+          type: string
+          description: Title of the end user
+          enum:
+            - MR
+            - MS
+            - MRS
+    NumberAdditionalInformationVO:
+      type: object
+      properties:
+        e164:
+          type: string
+          description: >-
+            The number in E164 format the portability check response is executed
+            against
+          example: '3228080000'
+        areaCode:
+          type: string
+          description: >-
+            The area code of the phone number portability check response is
+            executed against
+          example: '2'
+        portable:
+          type: boolean
+          description: >-
+            Whether or not the number specified in the portability check request
+            can be ported in to Bandwidth network
+          example: true
+        portFees:
+          type: number
+          description: >-
+            Total cost of porting the specified number(s) into Bandwidth. Covers
+            port request fee and per number fee(s). In account currency.
+          example: 25
+        leadTime:
+          type: integer
+          description: >-
+            Estimated time required to complete the porting process, based on
+            our experience with the local provider, in working days.
+          format: int32
+          example: 10
+        cancellationFees:
+          type: number
+          description: >-
+            Cost of cancellation of a port request once it's submitted. Doesn't
+            apply to all countries and might be `0`. In account currency.
+          example: 10
+        carrierName:
+          type: string
+          description: The current carrier for the number to be ported.
+          example: TELIMIT, S.L.
+        countryCode:
+          type: integer
+          description: Unique identifier for a country.
+          format: int32
+          example: 34
+        countryCodeA3:
+          type: string
+          description: ISO 3166-1 standard 3-letter country code.
+          example: BEL
+        didMonthlyFees:
+          type: number
+          description: >-
+            Monthly price for the number(s) once they're ported in to Bandwidth.
+            If multiple numbers are provided, the value will show the total. In
+            account currency.
+          example: 4.95
+        eligibleProviders:
+          type: array
+          description: >-
+            For some countries and number types, we are able to only port out
+            from a specified list of losing carriers. For such countries, the
+            `currentProviderName` needs to be set and validated against the
+            returned list.
+          example:
+            - Orange Business Belgium
+            - BASE
+          items:
+            type: string
+        internalMigration:
+          type: boolean
+          description: >-
+            Whether or not the requested number already is operating within
+            Bandwidth network, i.e. belongs to a different Bandwidth account.
+          example: false
+        nonPortabilityReason:
+          type: string
+          description: The reason why we are not able to port this number to Bandwidth.
+        requirements:
+          $ref: '#/components/schemas/PortingRequiredInformationVO'
+        type:
+          type: string
+          description: >-
+            The type of phone number portability check response is executed
+            against
+          example: GEOGRAPHIC
+          enum:
+            - GEOGRAPHIC
+            - SHARED_COST
+            - TOLL_FREE
+            - NATIONAL
+            - SPECIAL
+            - MOBILE
+            - INUM
+    Page«PortInRequestVO»:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/PortInRequestVO'
+        first:
+          type: boolean
+          example: true
+        last:
+          type: boolean
+          example: true
+        number:
+          type: integer
+          format: int32
+          example: 1
+        numberOfElements:
+          type: integer
+          format: int32
+          example: 5
+        size:
+          type: integer
+          format: int32
+          example: 20
+        totalElements:
+          type: integer
+          format: int64
+          example: 5
+        totalPages:
+          type: integer
+          format: int32
+          example: 1
+    PortInRequestCreationVO:
+      type: object
+      properties:
+        currentProviderName:
+          type: string
+          description: >-
+            The losing carrier who's currently the operator on the number to be
+            ported in. In countries where there's a requirement of
+            `eligibleProviders` in the `/eligibility` response, this value has
+            to be one of the members of the `eligibleProviders` array and
+            validated against these values.
+          example: Orange Business Belgium
+        e164:
+          type: string
+          description: >-
+            The number in E164 format the portability check response is executed
+            against
+          example: '3228080000'
+        preferredPortingDate:
+          type: string
+          description: Specific date you would prefer the porting to be completed.
+          format: date
+          example: '2019-11-20'
+        endUser:
+          $ref: '#/components/schemas/PortInRequestEndUserVO'
+    PortInRequestDocumentVO:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Short description for the content and nature of required document.
+          example: Last invoice
+        documentId:
+          type: integer
+          description: Unique identifier for the uploaded document
+          format: int32
+        documentUrl:
+          type: string
+          description: Link to retrieve a previously uploaded document
+          example: >-
+            https://beta.voxbone.com/ports/577a876d-e084-4785-8ef8-13d3f6654f42/documents/1234-fadw5213-rgsmdf22-9999.pdf
+        status:
+          type: string
+          description: The current status of the document you have uploaded
+          example: VALID
+          enum:
+            - PENDING_VALIDATION
+            - VALID
+            - INVALID
+        type:
+          type: string
+          description: The type/name of the document.
+          example: LOA
+          enum:
+            - LOA
+            - COB
+            - EU_ID
+            - POA
+            - COURT
+            - LEG_ID
+            - SIG_ID
+            - TRADE
+            - TAX
+            - OFF_SGN
+            - DIREC
+            - INCORP
+    PortInRequestEditVO:
+      type: object
+      properties:
+        currentProviderName:
+          type: string
+          description: >-
+            The losing carrier who's currently the operator on the number to be
+            ported in. In countries where there's a requirement of
+            `eligibleProviders` in the `/eligibility` response, this value has
+            to be one of the members of the `eligibleProviders` array and
+            validated against these values.
+          example: Orange Business Belgium
+        endUser:
+          $ref: '#/components/schemas/PortInRequestEndUserVO'
+        preferredPortingDate:
+          type: string
+          description: Date you would like porting to be completed
+          format: date
+          example: '2019-11-20'
+    PortInRequestEndUserVO:
+      type: object
+      properties:
+        buildingNumber:
+          type: string
+          description: Building number for the end user address
+          example: '489'
+        city:
+          type: string
+          description: City name for the end user address
+          example: Brussels
+        company:
+          type: string
+          description: Registered company name. Only present for `business` ownership type.
+          example: Bandwidth
+        countryCodeA3:
+          type: string
+          description: ISO 3166-1 standard 3-letter country code.
+          example: BEL
+        firstName:
+          type: string
+          description: First name of the end user
+          example: Joe
+        lastName:
+          type: string
+          description: Surname of the end user
+          example: Bloggs
+        ownership:
+          type: string
+          description: Type of ownership of the number to be ported.
+          enum:
+            - BUSINESS
+            - PERSONAL
+        postalCode:
+          type: string
+          description: Postal code for the end user address
+          example: '1050'
+        streetName:
+          type: string
+          description: Street name for the end user address
+          example: Rue Vanderkindere
+        title:
+          type: string
+          description: Title of the end user
+          enum:
+            - MR
+            - MS
+            - COMPANY
+        vatNumber:
+          type: boolean
+          description: >-
+            Whether or not the registered VAT number for the business is
+            required
+          example: false
+    PortInRequestVO:
+      type: object
+      properties:
+        areaCode:
+          type: string
+          description: >-
+            The area code of the phone number portability check response is
+            executed against
+          example: '2'
+        cancellationFees:
+          type: number
+          description: >-
+            Cost of cancellation of a port request once it's submitted. Doesn't
+            apply to all countries and might be `0`. In account currency.
+          example: 10
+        countryCodeA3:
+          type: string
+          description: ISO 3166-1 standard 3-letter country code.
+          example: BEL
+        currentProviderName:
+          type: string
+          description: >-
+            The losing carrier who's currently the operator on the number to be
+            ported in. In countries where there's a requirement of
+            `eligibleProviders` in the `/eligibility` response, this value has
+            to be one of the members of the `eligibleProviders` array and
+            validated against these values.
+          example: Orange Business Belgium
+        dateCreated:
+          type: string
+          description: Timestamp representing when the document was uploaded
+          format: date-time
+          example: 2018-04-21T09:19:02.000Z
+        dateSubmitted:
+          type: string
+          description: >-
+            Timestamp representing when the request was submitted to Bandwidth.
+            Only present when relevant, while the request is being handled by
+            Bandwidth.
+          format: date-time
+          example: 2018-04-22T23:02:25.000Z
+        didMonthlyFees:
+          type: number
+          description: >-
+            Monthly price for the number(s) once they're ported in to Bandwidth.
+            If multiple numbers are provided, the value will show the total. In
+            account currency.
+          example: 4.95
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/PortInRequestDocumentVO'
+        e164:
+          type: string
+          description: >-
+            The number in E164 format the portability check response is executed
+            against
+          example: '3228080000'
+        endUser:
+          $ref: '#/components/schemas/PortInRequestEndUserVO'
+        expectedPortCompleteDate:
+          type: string
+          description: >-
+            Estimated completion timestamp, calculated by adding lead time to
+            date of submission. Only present once a request has state
+            `SUBMITTED`
+          format: date-time
+          example: 2018-04-23T12:45:12.000Z
+        internalMigration:
+          type: boolean
+          description: >-
+            Whether or not the requested number already is operating within
+            Bandwidth's network, i.e. belongs to a different Bandwidth account.
+          example: false
+        lastUpdate:
+          type: string
+          description: Timestamp representing when the request was updated.
+          format: date-time
+          example: 2018-04-23T12:45:12.000Z
+        leadTime:
+          type: integer
+          description: >-
+            Estimated time required to complete the porting process, based on
+            our experience with the local provider, in working days.
+          format: int32
+          example: 10
+        portFees:
+          type: number
+          description: >-
+            Total cost of porting the specified number(s) into Bandwidth. Covers
+            port request fee and per number fee(s). In account currency.
+          example: 25
+        preferredPortingDate:
+          type: string
+          description: Specific date you would prefer the porting to be completed.
+          format: date
+          example: '2019-11-20'
+        requestId:
+          type: integer
+          description: Unique identifier pointing to a specific port in request
+          format: int32
+        status:
+          type: string
+          example: MISSING_DOCUMENTS
+          enum:
+            - SUBMITTED
+            - MISSING_DOCUMENTS
+            - CHANGES_REQUESTED
+            - PENDING_CARRIER_APPROVAL
+            - PROCESSING_CANCELLATION
+            - CANCELED
+            - ACCEPTED
+            - REJECTED
+            - COMPLETED
+            - READY_FOR_CONFIGURATION
+        type:
+          type: string
+          description: >-
+            The type of phone number portability check response is executed
+            against
+          enum:
+            - GEOGRAPHIC
+            - SHARED_COST
+            - TOLL_FREE
+            - NATIONAL
+            - SPECIAL
+            - MOBILE
+            - INUM
+    PortingRequiredInformationVO:
+      type: object
+      properties:
+        business:
+          $ref: '#/components/schemas/UserRequiredInformationVO'
+        personal:
+          $ref: '#/components/schemas/UserRequiredInformationVO'
+    PortingResponseErrorMessage:
+      type: object
+      properties:
+        description:
+          type: string
+    PortingResponse«List«PortInRequestDocumentVO»»:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/PortInRequestDocumentVO'
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/PortingResponseErrorMessage'
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/Links'
+    PortingResponse«NumberAdditionalInformationVO»:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/NumberAdditionalInformationVO'
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/PortingResponseErrorMessage'
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/Links'
+        status:
+          type: string
+          description: |
+            Response status:
+             * success - Request was served as expected, successfully
+             * fail - Request was rejected due to a client error such as invalid format or schema
+             * error - Request wasn't served successfully due to a server error
+          example: success
+          enum:
+            - success
+            - fail
+            - error
+    PortingResponse«Page«PortInRequestVO»»:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Page«PortInRequestVO»'
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/PortingResponseErrorMessage'
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/Links'
+        status:
+          type: string
+          description: |
+            Response status:
+             * success - Request was served as expected, successfully
+             * fail - Request was rejected due to a client error such as invalid format or schema
+             * error - Request wasn't served successfully due to a server error
+          example: success
+          enum:
+            - success
+            - fail
+            - error
+    PortingResponse«PortInRequestVO»:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/PortInRequestVO'
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/PortingResponseErrorMessage'
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/Links'
+        status:
+          type: string
+          description: |
+            Response status:
+             * success - Request was served as expected, successfully
+             * fail - Request was rejected due to a client error such as invalid format or schema
+             * error - Request wasn't served successfully due to a server error
+          example: success
+          enum:
+            - success
+            - fail
+            - error
+    UserRequiredInformationVO:
+      type: object
+      properties:
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentRequiredInformationVO'
+        endUser:
+          $ref: '#/components/schemas/EndUserRequiredInformationVO'
+    Links:
+      type: array
+      description: List of links/URIs for related resources to the request.
+      items:
+        type: object
+        properties:
+          rel:
+            type: string
+            example: self
+          href:
+            type: string
+            example: http://beta.voxbone.com/porting-api/ports
+          type:
+            type: string
+            description: Allowed method type on the resource. Eg. GET,POST,PATCH
+            example: GET
+            enum:
+              - GET
+              - POST
+              - PUT
+              - PATCH
+              - DELETE
+        description: >-
+          Link to a related resource. `rel` defines the relevance and `href` has
+          the URI to access the resource.
     WhitelistApiResponse:
       type: object
       properties:
