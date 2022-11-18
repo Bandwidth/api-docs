@@ -10,7 +10,7 @@ export default function ApiReferencePage() {
           title={`DASH API Reference`}
           description="Authentication, URIs, and Location. Everything you'll need to start working with our DASH API."
           keywords="Bandwidth,API,DASH,URI,Location">
-            <ApiReference spec={siteConfig.customFields.dashSpec} color={siteConfig.customFields.emergencyOrange} downloadDefinitionUrl="https://github.com/Bandwidth/api-docs/blob/main/site/specs/dash.json"/>
+            <ApiReference spec={siteConfig.customFields.dashSpec} color={siteConfig.customFields.emergencyOrange} downloadDefinitionUrl={siteConfig.customFields.dashSpecLink}/>
         </Layout>
     );
 }
