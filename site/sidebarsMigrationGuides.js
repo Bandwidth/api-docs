@@ -10,7 +10,7 @@ module.exports = {
       label: "Python",
       items: [
         "python/python-migration-guides",
-        "python/v15"
+        "python/v15-beta"
       ]
     },
   ],
