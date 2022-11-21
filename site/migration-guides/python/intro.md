@@ -14,4 +14,4 @@ See our releases on [GitHub](https://github.com/Bandwidth/python-sdk/releases) f
 ### What's Changed
 
 * Generated an entirely new SDK using the open-source [OpenAPI Generator Library](https://openapi-generator.tech/)
-* Rewrote the [BXML library](/migration-guides/python/v14->v15#bxml)
+* Rewrote the [BXML library](/migration-guides/python/v14->v15-beta#bxml)
