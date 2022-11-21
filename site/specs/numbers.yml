@@ -513,6 +513,102 @@ components:
         RecommendedAddress:
           $ref: '#/components/schemas/Address'
       type: object
+    AddressExtraFields:
+      description: >-
+        These are extra address parameters that are required in certain
+        countries and for certain DID types.
+      properties:
+        companyVatNumber:
+          description: >-
+            Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60.
+            Mandatory for Company end user only.
+          type: string
+        dateOfBirth:
+          description: >-
+            Italy / GEOGRAPHIC and TOLL_FREE / String (yyyy-mm-dd), maximum
+            length: 10. Validation made for age > 18 years.
+          type: string
+        firstName:
+          description: >-
+            Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60.
+            Mandatory for Company end user only.
+          type: string
+        fiscalIdentificationCode:
+          description: >-
+            Spain / Mobile / String, maximum length: 60. Only required for
+            professional addresses (salutation is COMPANY).
+          maxLength: 60
+          minLength: 0
+          type: string
+        idNumber:
+          description: >-
+            Spain / Mobile / String, maximum length: 60. Only required for
+            personal addresses (salutation is either MR or MS), additional
+            validation is performed depending on the type of ID. DNI: 8 digits
+            followed by 1 letter / NIE: 1 letter (X,Y or Z), followed by 7
+            digits, followed by 1 letter / NIF: 8 digits followed by 1 letter /
+            PASSPORT: no additional validation.
+          maxLength: 60
+          minLength: 0
+          type: string
+        idType:
+          description: >-
+            Spain / Mobile / DNI, NIE, NIF, PASSPORT. Only required for personal
+            addresses (salutation is either MR or MS).
+          enum:
+            - DNI
+            - NIF
+            - NIE
+            - PASSPORT
+          type: string
+        lastName:
+          description: >-
+            Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60.
+            Mandatory for Company end user only.
+          type: string
+        municipalityCode:
+          description: 'Denmark / ALL / String, maximum length: 4.'
+          maxLength: 4
+          minLength: 0
+          type: string
+        nationality:
+          description: >-
+            Spain / Mobile / String, maximum length: 60. The exact format can be
+            chosen freely as long as it allows a human to understand it. We
+            recommend using the full country name but the ISO-3166-1 alpha-3
+            code is acceptable if it is easier to process by your system.
+          maxLength: 60
+          minLength: 0
+          type: string
+        placeOfBirth:
+          description: >-
+            Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60. Both
+            City and country of birth is expected.
+          type: string
+        province:
+          description: >-
+            Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60.
+            Optional field.
+          type: string
+        state:
+          description: ' Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60. Optional field.'
+          type: string
+        streetCode:
+          description: 'Denmark / ALL / String, maximum length: 4.'
+          maxLength: 4
+          minLength: 0
+          type: string
+        taxCode:
+          description: >-
+            Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60.
+            Mandatory field.
+          type: string
+        title:
+          description: >-
+            Italy / GEOGRAPHIC and TOLL_FREE / String, maximum length: 60.
+            Mandatory for Company end user only.
+          type: string
+      type: object
     AddressPatch:
       properties:
         AddressLine2:
@@ -544,6 +640,60 @@ components:
         delete:
           type: boolean
       type: object
+    AddressRejectionReasons:
+      enum:
+        - INVALID_DOC_NOT_RECENT_ENOUGH
+        - INVALID_DOC_CORRUPT
+        - INVALID_DOC_ILLEGIBLE
+        - INVALID_DOC_MISSING
+        - INVALID_DOC_WHOLE
+        - INVALID_DOCTYPE_INVOICES
+        - INVALID_DOCTYPE_GOVERNMENT_DOCS
+        - INVALID_DOCTYPE_VIRTUAL_ADDRESS
+        - INVALID_DOCTYPE_ATTESTATIONS
+        - INVALID_DOCTYPE_THIRD_PARTY
+        - INVALID_DOCTYPE_REQUIRED_ID
+        - INVALID_DOCTYPE_REQUIRED_ADDRESS
+        - INVALID_DOCTYPE_FIXED_LINE_PROOF
+        - INVALID_DOCTYPE_ID_TYPE
+        - INVALID_DOCTYPE_ID_TYPE_ADDRESS
+        - INVALID_DOCTYPE_PASSPORT
+        - INCOMPLETE_INFO_DATE
+        - INCOMPLETE_INFO_ADDRESS
+        - INCOMPLETE_INFO_PROOFS
+        - INCOMPLETE_INFO_BUSINESS_REG
+        - INCOMPLETE_INFO_LEGAL_REP
+        - INCOMPLETE_INFO_LEGAL_REP_ID
+        - INCOMPLETE_INFO_LEGAL_ZIP
+        - INCOMPLETE_INFO_PO_BOX
+        - INCOMPLETE_INFO_REP_PICTURE
+        - INCOMPLETE_INFO_CHINESE_RECEIPT
+        - INFO_MISMATCH_ADDRESS_PROOF
+        - INFO_MISMATCH_ID_PROOF
+        - INFO_MISMATCH_DETAILS
+        - INFO_MISMATCH_ADDRESS
+        - INFO_MISMATCH_LOCATION
+        - INFO_MISMATCH_RESIDE
+        - INFO_MISMATCH_FATHER
+        - INFO_MISMATCH_MOTHER
+        - INFO_MISMATCH_COMPANY_REG
+        - INFO_MISMATCH_ID_NUMBER
+        - INFO_MISMATCH_COMPANY_NUMBER
+        - INFO_MISMATCH_COMPANY_TAX_NUMBER
+        - INFO_MISMATCH_BIRTH_PLACE
+        - INFO_MISMATCH_BIRTH_DATE
+        - INFO_MISMATCH_ID
+        - OTHER_ABUSE
+        - OTHER_REGULATIONS
+      type: string
+    AddressStatus:
+      enum:
+        - NOT_VERIFIED
+        - REJECTED
+        - VERIFIED
+        - VERIFICATION_REQUESTED
+        - VERIFICATION_NOT_REQUIRED
+      type: string
     AddressType:
       enum:
         - SERVICE
@@ -2288,6 +2438,155 @@ components:
               type: integer
           type: object
       type: object
+    CreateAddressRequest:
+      description: Model for Create Address request
+      properties:
+        addressExtraFields:
+          $ref: '#/components/schemas/AddressExtraFields'
+        buildingLetter:
+          description: >-
+            Maximum length: 10. This is the building letter which can also be
+            used for additional information on the street number.
+          type: string
+        buildingNumber:
+          description: >-
+            Maximum length: 10. This is the number of the building or the street
+            number of the address.
+          type: string
+        city:
+          description: 'Maximum length: 60. This is the city of the address.'
+          type: string
+        companyDescription:
+          description: >-
+            Maximum length: 60. This is the company description for the end user
+            of the created address.
+          type: string
+        companyName:
+          description: >-
+            Maximum length: 60. This is the company name for the end user of the
+            created address. It is a mandatory field if the salutation is
+            COMPANY.
+          type: string
+        countryCode:
+          description: >-
+            The country code for the address in its ISO 3166-1 alpha-3 format
+            (e.g. 'GBR' for United Kingdom, 'USA' for United States of America,
+            'BEL' for Belgium, etc.).
+          type: string
+        customerReference:
+          description: >-
+            Maximum length: 60. This is a parameter that can be used for your
+            own reference, e.g. to uniquely identify one of your customers.
+          type: string
+        firstName:
+          description: >-
+            Maximum length: 60. This is the first name for the end user of the
+            created address. It is a mandatory field if the salutation is MR or
+            MS.
+          type: string
+        identityDocumentProof:
+          $ref: '#/components/schemas/IdentityDocumentProof'
+        larPhoneNumberCountryCode:
+          description: >-
+            This is country code of the phone numbers country you intend to link
+            to this address in ISO 3166-1 alpha-3 format (USA, BEL, GBR, DEU,
+            etc.) for local address requirement, which changes based on this
+            information. The system will perform automatically a first address
+            validation based on the phone numbers country and type.
+          type: string
+        larPhoneNumberType:
+          description: >-
+            This is the type of the phone number you intend to link to this
+            address (GEOGRAPHIC, NATIONAL, etc.) for local address requirement,
+            which changes based on this information. The system will perform
+            automatically a first address validation based on the phone numbers
+            country and type.
+          type: string
+        lastName:
+          description: >-
+            Maximum length: 60. This is the company name for the end user of the
+            created address. It is a mandatory field if the salutation is MR or
+            MS.
+          type: string
+        phoneNumber:
+          description: >-
+            This field is to be used to provide your contact telephone number.
+            Format is E.164
+          type: string
+        salutation:
+          description: >-
+            This is the salutation of the end user for the created address: MR
+            or MS if firstName and lastName are used or COMPANY if companyName
+            is used.
+          enum:
+            - MR
+            - MS
+            - COMPANY
+          type: string
+        streetName:
+          description: 'Maximum length: 50. This is the name of the street.'
+          type: string
+        zipCode:
+          description: 'Maximum length: 10. This is the zip code of the address.'
+          type: string
+      required:
+        - countryCode
+        - zipCode
+        - city
+        - streetName
+        - buildingNumber
+      type: object
+    CreateAddressResponse:
+      properties:
+        addressId:
+          description: >-
+            If the operation is successful, the operation will return an
+            addressId for the newly created address.
+          format: int32
+          type: integer
+      type: object
+    CreateProofOfIdRequest:
+      properties:
+        identityDocumentNumber:
+          description: >-
+            The document number as seen on the proof document attached.
+            Mandatory for South Africa and Italy.
+          type: string
+        identityDocumentType:
+          description: >-
+            Type of the ID proof document attached. Mandatory for South Africa
+            and Italy. Only BUSINESS_REGISTRATION is applicable for ZAF.
+          enum:
+            - PASSPORT
+            - NATIONAL_ID_CARD
+            - BUSINESS_REGISTRATION
+          type: string
+        issuingAuthority:
+          description: >-
+            The issuing authority as seen on the proof document attached.
+            Mandatory for Italy.
+          type: string
+        issuingDate:
+          description: >-
+            The issuing date as seen on the proof document attached. Mandatory
+            for Italy - Format is yyyy-mm-dd. Has to be a date in the past.
+          type: string
+        nationality:
+          description: >-
+            There is no specific format for this field. Either full country name
+            or the ISO-3166-1 alpha-3 code is acceptable.
+          type: string
+      type: object
+    CreateProofOfIdResponse:
+      properties:
+        status:
+          enum:
+            - SUCCESS
+            - PARTIAL
+            - WARNING
+            - ERROR
+          type: string
+      type: object
     CreatedBy:
       description: Order created by the user.
       type: string
@@ -2633,6 +2932,19 @@ components:
         StartDate:
           type: string
       type: object
+    DeleteAddressResponse:
+      properties:
+        status:
+          description: >-
+            SUCCESS message will indicate that the operation was performed
+            successfully.
+          enum:
+            - SUCCESS
+            - PARTIAL
+            - WARNING
+            - ERROR
+          type: string
+      type: object
     DeleteTNSpecificE911Address:
       description: DeleteTNSpecificE911Address is required and must be set to `true`.
       type: string
@@ -2699,6 +3011,8 @@ components:
             DisconnectedTelephoneNumberList:
               items:
                 properties:
+                  E164TelephoneNumber:
+                    $ref: '#/components/schemas/E164TelephoneNumber'
                   TelephoneNumber:
                     $ref: '#/components/schemas/TelephoneNumber'
               type: array
@@ -2725,6 +3039,11 @@ components:
             - NORMAL
             - PURGE
           type: string
+        E164TelephoneNumberList:
+          description: A list of telephone numbers to disconnect in E164 format.
+          items:
+            $ref: '#/components/schemas/E164TelephoneNumber'
+          type: array
         Protected:
           default: UNCHANGED
           description: Change protected status of telephones during disconnection.
@@ -2893,6 +3212,22 @@ components:
         - ListingType
         - ListAddress
       type: object
+    E164TelephoneNumber:
+      properties:
+        E164TelephoneNumber:
+          description: E164 Telephone Number.
+          type: string
+      type: object
+    E164TelephoneNumberList:
+      description: List of telephone numbers to be imported in E.164 format
+      items:
+        properties:
+          E164TelephoneNumber:
+            description: E.164 formatted phone number
+            type: string
+        type: object
+      minItems: 1
+      type: array
     E911:
       properties:
         Address:
@@ -3884,6 +4219,12 @@ components:
         name: OrderResponse
     ExistingTelephoneNumberOrderType:
       properties:
+        E164TelephoneNumberList:
+          items:
+            type: string
+            xml:
+              name: E164TelephoneNumber
+          type: array
         ReservationIdList:
           items:
             type: string
@@ -4213,6 +4554,43 @@ components:
       type: object
     Identifier:
       type: string
+    IdentityDocumentProof:
+      properties:
+        identityDocumentNumber:
+          description: >-
+            Document number as seen on the ID proof document attached. Maximum
+            length: 60. Mandatory for South Africa and Italy.
+          type: string
+        identityDocumentType:
+          description: >-
+            Mandatory for South Africa and Italy. Only BUSINESS_REGISTRATION is
+            applicable for ZAF
+          enum:
+            - PASSPORT
+            - NATIONAL_ID_CARD
+            - BUSINESS_REGISTRATION
+          type: string
+        issuingAuthority:
+          description: >-
+            Name of the issuing authority as seen on the ID proof document
+            attached. Maximum length: 60. Mandatory for Italy.
+          type: string
+        issuingDate:
+          description: >-
+            Issuing date as seen on the ID proof for certain countries and phone
+            number types for Local Address Requirement.
+          type: string
+        nationality:
+          description: >-
+            Maximum length: 60. There is no specific format for this field.
+            Either full country name or the ISO-3166-1 alpha-3 code is
+            acceptable.
+          type: string
+      required:
+        - identityDocumentNumber
+        - identityDocumentType
+        - nationality
+      type: object
     ImportTnCheckerErrorResponse:
       properties:
         ImportTnCheckerResponse:
@@ -4484,6 +4862,10 @@ components:
               items:
                 $ref: '#/components/schemas/Error'
               type: array
+            ImportedE164TelephoneNumberDetailList:
+              $ref: '#/components/schemas/ImportedE164TelephoneNumberDetailList'
+            ImportedE164TelephoneNumberList:
+              $ref: '#/components/schemas/ImportedE164TelephoneNumberList'
             ImportedTelephoneNumberDetailList:
               $ref: '#/components/schemas/ImportedTelephoneNumberDetailList'
             ImportedTelephoneNumberList:
@@ -4502,6 +4884,8 @@ components:
           $ref: '#/components/schemas/BatchSize'
         BillingType:
           $ref: '#/components/schemas/BillingType'
+        E164TelephoneNumberList:
+          $ref: '#/components/schemas/E164TelephoneNumberList'
         InitialStatus:
           $ref: '#/components/schemas/InitialStatus'
         TelephoneNumberList:
@@ -4695,6 +5079,29 @@ components:
             - CampaignId
           type: object
       type: object
+    ImportedE164TelephoneNumberDetailList:
+      description: List of telephone numbers details that were imported in E.164 format
+      items:
+        properties:
+          E164TelephoneNumberDetail:
+            properties:
+              E164FullNumber:
+                description: E.164 formatted phone number
+                type: string
+            type: object
+        type: object
+      minItems: 1
+      type: array
+    ImportedE164TelephoneNumberList:
+      description: List of telephone numbers that were imported in E.164 format
+      items:
+        properties:
+          E164TelephoneNumber:
+            description: E.164 formatted phone number
+            type: string
+        type: object
+      minItems: 1
+      type: array
     ImportedTelephoneNumberDetailList:
       description: List of telephone numbers details that were imported
       items:
@@ -4781,6 +5188,16 @@ components:
           type: integer
         Description:
           type: string
+      type: object
+    IsAddressValidResponse:
+      properties:
+        isValid:
+          description: Indicator if the address is valid or not.
+          type: boolean
+        reasons:
+          items:
+            $ref: '#/components/schemas/Reason'
+          type: array
       type: object
     LATASearchAndOrder:
       allOf:
@@ -5043,6 +5460,85 @@ components:
             If the results are more than one page, this link returns the
             previous page of 'size' results.
           type: string
+      type: object
+    ListAddressResponse:
+      properties:
+        addressCount:
+          description: The total number of records corresponding to the request filter.
+          format: int32
+          type: integer
+        addresses:
+          description: A list with addresses corresponding to the request filter (if any).
+          items:
+            properties:
+              addressExtraFields:
+                $ref: '#/components/schemas/AddressExtraFields'
+              addressId:
+                description: >-
+                  This is the ID of the address which is returned during
+                  creation.
+                format: int32
+                type: integer
+              addressRejectionReasons:
+                $ref: '#/components/schemas/AddressRejectionReasons'
+                description: Reasons for the rejection of the address verification.
+              addressStatus:
+                $ref: '#/components/schemas/AddressStatus'
+                description: This is the current status of the address.
+              buildingLetter:
+                description: >-
+                  This is the building letter which can also be used for
+                  additional information on the street number.
+                type: string
+              buildingNumber:
+                description: The building number for the address.
+                type: string
+              city:
+                description: The city for the address.
+                type: string
+              companyDescription:
+                description: >-
+                  This is the company description for the end user of the listed
+                  address.
+                type: string
+              companyName:
+                description: Name of the company.
+                type: string
+              countryCode:
+                description: The three letter identifier for the address's country.
+                type: string
+              customerReference:
+                description: The reference for the customer.
+                type: string
+              firstName:
+                description: First name of the customer.
+                type: string
+              identityDocumentProof:
+                $ref: '#/components/schemas/IdentityDocumentProof'
+              lastName:
+                description: Last name of the customer.
+                type: string
+              phoneNumber:
+                description: The phone number for the customer.
+                type: string
+              salutation:
+                description: >-
+                  This is the salutation of the end user for the listed address:
+                  MR or MS if firstName and lastName are used or COMPANY if
+                  companyName is used.
+                enum:
+                  - MR
+                  - MS
+                  - COMPANY
+                type: string
+              streetName:
+                description: The street for the address.
+                type: string
+              zipCode:
+                description: The zip code for the address.
+                type: string
+            type: object
+          type: array
       type: object
     LnpCheckerTnList:
       properties:
@@ -6251,6 +6747,19 @@ components:
             Internal customer order id for tracking the order. Only alphanumeric
             values, dashes and spaces are allowed. Max length is 40 characters
           type: string
+        E164TelephoneNumbers:
+          description: >-
+            List of telephone numbers to be moved in E.164 format. Maximum of
+            5,000 allowed per POST
+          items:
+            properties:
+              E164TelephoneNumber:
+                description: E.164 formatted phone number
+                type: string
+            type: object
+          maxItems: 5000
+          minItems: 1
+          type: array
         E911ServiceAction:
           default: move
           description: >-
@@ -6299,6 +6808,14 @@ components:
           type: string
         CustomerOrderId:
           type: string
+        E164TelephoneNumbers:
+          items:
+            type: string
+            xml:
+              name: E164TelephoneNumber
+          type: array
+          xml:
+            wrapped: true
         Errors:
           items:
             $ref: '#/components/schemas/TelephoneNumberGroupError'
@@ -6494,6 +7011,10 @@ components:
       properties:
         Notification:
           properties:
+            CompletedE164TelephoneNumbers:
+              items:
+                $ref: '#/components/schemas/E164TelephoneNumber'
+              type: array
             CompletedTelephoneNumbers:
               items:
                 $ref: '#/components/schemas/TelephoneNumber'
@@ -6502,6 +7023,10 @@ components:
               type: string
             EventType:
               type: string
+            ImpactedE164TelephoneNumbers:
+              items:
+                $ref: '#/components/schemas/E164TelephoneNumber'
+              type: array
             ImpactedTelephoneNumbers:
               items:
                 $ref: '#/components/schemas/TelephoneNumber'
@@ -6791,6 +7316,8 @@ components:
           properties:
             Count:
               type: integer
+            E164TelephoneNumber:
+              type: string
             TelephoneNumber:
               type: string
           type: object
@@ -7817,6 +8344,18 @@ components:
         Realms:
           $ref: '#/components/schemas/Realms'
       type: object
+    Reason:
+      description: >-
+        If the address is not valid for the requested country and DID type, a
+        reason is returned with a code and message.
+      properties:
+        code:
+          description: The reason code.
+          type: string
+        message:
+          description: The reason message.
+          type: string
+      type: object
     RecipientCallback:
       description: Callback url and credentials
       properties:
@@ -8152,6 +8691,19 @@ components:
             $ref: '#/components/schemas/NotDetailedReport'
           type: array
       type: object
+    RequestAddressVerificationResponse:
+      properties:
+        status:
+          description: >-
+            SUCCESS message will indicate that the operation was performed
+            successfully.
+          enum:
+            - SUCCESS
+            - PARTIAL
+            - WARNING
+            - ERROR
+          type: string
+      type: object
     RequestedCallbackTypes:
       enum:
         - MESSAGE_FAILED
@@ -8251,6 +8803,10 @@ components:
     SearchResult:
       oneOf:
         - properties:
+            E164TelephoneNumberList:
+              items:
+                $ref: '#/components/schemas/E164TelephoneNumber'
+              type: array
             ResultCount:
               format: int32
               type: integer
@@ -9751,6 +10307,14 @@ components:
           type: integer
         Description:
           type: string
+        E164TelephoneNumbers:
+          items:
+            type: string
+            xml:
+              name: E164TelephoneNumber
+          type: array
+          xml:
+            wrapped: true
         TelephoneNumbers:
           items:
             type: string
@@ -9843,6 +10407,13 @@ components:
                 Total count of telephone numbers associated with the specified
                 port-in number.
               type: integer
+            E164TelephoneNumber:
+              description: >-
+                ListOfPhoneNumbers is an array of PhoneNumber in E.164 format.
+                At least one PhoneNumber must be provided for all port-types.
+              items:
+                $ref: '#/components/schemas/E164TelephoneNumber'
+              type: array
             TelephoneNumber:
               description: >-
                 ListOfPhoneNumbers is an array of PhoneNumber. At least one
@@ -11071,6 +11642,19 @@ components:
         UcTrunkingSettings:
           $ref: '#/components/schemas/UcTrunkingSettings'
       type: object
+    UploadProofOfAddressResponse:
+      properties:
+        status:
+          description: >-
+            SUCCESS message will indicate that the operation was performed
+            successfully.
+          enum:
+            - SUCCESS
+            - PARTIAL
+            - WARNING
+            - ERROR
+          type: string
+      type: object
     VendorName:
       description: >-
         The vendor that owns the number that is being ported in.  If the number
@@ -11476,6 +12060,300 @@ paths:
       summary: Retrieve account
       tags:
         - Account
+  /accounts/{accountId}/address:
+    get:
+      description: >-
+        Allows you to view addresses already created and their current status.
+        You can use these addresses to link to phone numbers to satisfy LAR
+        requirements.
+      operationId: listAddress
+      parameters:
+        - description: This is the ID of the address which is returned by createAddress.
+          in: query
+          name: addressId
+          schema:
+            format: int32
+            type: integer
+        - description: Name of the company.
+          in: query
+          name: companyName
+          schema:
+            type: string
+        - description: First name of the customer.
+          in: query
+          name: firstName
+          schema:
+            type: string
+        - description: Last name of the customer.
+          in: query
+          name: lastName
+          schema:
+            type: string
+        - description: The three letter identifier for the address's country.
+          in: query
+          name: countryCode
+          schema:
+            type: string
+        - description: The city for the address.
+          in: query
+          name: city
+          schema:
+            type: string
+        - description: The zip code for the address.
+          in: query
+          name: zipCode
+          schema:
+            type: string
+        - description: The street for the address.
+          in: query
+          name: streetName
+          schema:
+            type: string
+        - description: The building number for the address.
+          in: query
+          name: buildingNumber
+          schema:
+            type: string
+        - description: The reference for the customer.
+          in: query
+          name: customerReference
+          schema:
+            type: string
+        - description: The status of the address.
+          in: query
+          name: addressStatus
+          schema:
+            type: string
+        - description: >-
+            An ID of the first element in a page. This value will indicate the
+            first value, not the count, of the initial entry in the page being
+            requested.  If the page is the address that begins the page. The
+            initial page is tagged with the ID "1"
+          in: query
+          name: page
+          required: true
+          schema:
+            default: '1'
+            type: string
+      responses:
+        '200':
+          content:
+            text/xml:
+              schema:
+                $ref: '#/components/schemas/ListAddressResponse'
+          description: successful operation
+      summary: List already created addresses
+      tags:
+        - Address (beta)
+    post:
+      description: >
+        Allows you to create a new end user's address that can be linked to
+        phone numbers where a local address requirement (LAR) applies. Note that
+        addresses for local address requirement (LAR) may require the city and
+        zip code match the phone numbers's area code. To know whether this is
+        required, you should check the local address requirements. The method
+        allows the attachment of a proof of address.
+
+
+        If a proof of address is attached, the system automatically triggers a
+        request for verification so that Bandwidth can manually verify the
+        address elements. The media type to be used is multipart/form-data.
+      operationId: createAddress
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateAddressRequest'
+        description: Request parameters
+        required: false
+      responses:
+        '200':
+          content:
+            text/xml:
+              schema:
+                $ref: '#/components/schemas/CreateAddressResponse'
+          description: successful operation
+      summary: Create a new address
+      tags:
+        - Address (beta)
+  /accounts/{accountId}/address/{addressId}:
+    delete:
+      description: Delete an address
+      operationId: deleteAddress
+      parameters:
+        - description: >-
+            The ID of the address that you want to delete. You can only delete
+            one address per request.
+          in: path
+          name: addressId
+          required: true
+          schema:
+            format: int32
+            type: integer
+      responses:
+        '200':
+          content:
+            text/xml:
+              schema:
+                $ref: '#/components/schemas/DeleteAddressResponse'
+          description: successful operation
+      summary: Delete an address
+      tags:
+        - Address (beta)
+    get:
+      description: Get a specific address with id
+      operationId: getAddress
+      parameters:
+        - description: The ID of the address.
+          in: path
+          name: addressId
+          required: true
+          schema:
+            format: int32
+            type: integer
+      responses:
+        '200':
+          content:
+            text/xml:
+              schema:
+                $ref: '#/components/schemas/ListAddressResponse'
+          description: successful operation
+      summary: Get a specific address with id
+      tags:
+        - Address (beta)
+  /accounts/{accountId}/address/{addressId}/identitydocument:
+    put:
+      description: Update identity proof document
+      operationId: createProofOfIdentityDocument
+      parameters:
+        - description: The ID of the address.
+          in: path
+          name: addressId
+          required: true
+          schema:
+            format: int32
+            type: integer
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateProofOfIdRequest'
+        required: false
+      responses:
+        '200':
+          content:
+            text/xml:
+              schema:
+                $ref: '#/components/schemas/CreateProofOfIdResponse'
+          description: successful operation
+      summary: Update identity proof document
+      tags:
+        - Address (beta)
+  /accounts/{accountId}/address/{addressId}/proof:
+    put:
+      description: >-
+        This can be used if you want to use an existing address which didn't
+        require verification, or for which the proof of address was rejected.
+        After an uploadProofOfAddress request the requestAddressVerification
+        method must be called.
+      operationId: uploadProofOfAddress
+      parameters:
+        - description: The identifier of the address.
+          in: path
+          name: addressId
+          required: true
+          schema:
+            format: int32
+            type: integer
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                proofOfAddress:
+                  description: >-
+                    List of documents - the first one will be set as proof of
+                    address.
+                  example:
+                    - 'Content-ID: proofOfAddress'
+                    - 'Content-Type: text/plain'
+                    - 'Content-Disposition: filename=Proof.txt'
+                    - This is a proof
+                  items:
+                    format: binary
+                    type: string
+                  type: array
+      responses:
+        '200':
+          content:
+            text/xml:
+              schema:
+                $ref: '#/components/schemas/UploadProofOfAddressResponse'
+          description: successful operation
+      summary: Update proof of address
+      tags:
+        - Address (beta)
+  /accounts/{accountId}/address/{addressId}/validation:
+    get:
+      description: Check if address is valid to activate numbers
+      operationId: isAddressValid
+      parameters:
+        - description: The ID of the address.
+          in: path
+          name: addressId
+          required: true
+          schema:
+            format: int32
+            type: integer
+        - description: >-
+            This is the type of the phone number you intend to link to this
+            address (GEOGRAPHIC, NATIONAL, etc.) for local address requirement.
+          in: query
+          name: phoneNumberType
+          required: true
+          schema:
+            type: string
+        - description: >-
+            This is country code of the phone numbers country you intend to link
+            to this address in ISO 3166-1 alpha-3 format (USA, BEL, GBR, DEU,
+            etc.) for local address requirement.
+          in: query
+          name: phoneNumberCountryCode
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            text/xml:
+              schema:
+                $ref: '#/components/schemas/IsAddressValidResponse'
+          description: successful operation
+      summary: Check if address is valid to activate numbers
+      tags:
+        - Address (beta)
+  /accounts/{accountId}/address/{addressId}/verification:
+    put:
+      description: Request verification of changes to an address
+      operationId: requestAddressVerification
+      parameters:
+        - description: The identifier of the address.
+          in: path
+          name: addressId
+          required: true
+          schema:
+            format: int32
+            type: integer
+      responses:
+        '200':
+          content:
+            text/xml:
+              schema:
+                $ref: '#/components/schemas/RequestAddressVerificationResponse'
+          description: successful operation
+      summary: Request verification of changes to an address
+      tags:
+        - Address (beta)
   /accounts/{accountId}/addresses:
     get:
       description: GET is used to retrieve all addresses.
@@ -11585,7 +12463,7 @@ paths:
             in a not found.
       summary: Retrieve all addresses
       tags:
-        - Addresses
+        - Addresses (US&C)
   /accounts/{accountId}/aeuis:
     get:
       description: GET is used to retrieve all Alternate end user identifiers.
@@ -11696,7 +12574,7 @@ paths:
             "NOT FOUND" response.
       summary: Retrieve all AEUIS
       tags:
-        - DLR
+        - DLR (US&C)
   /accounts/{accountId}/aeuis/{acid}:
     get:
       description: >-
@@ -11770,7 +12648,7 @@ paths:
             in a "NOT FOUND" response.
       summary: Retrieve AEUI
       tags:
-        - DLR
+        - DLR (US&C)
   /accounts/{accountId}/applications:
     get:
       description: >-
@@ -11819,7 +12697,7 @@ paths:
           description: Retrieve list applications
       summary: List applications
       tags:
-        - Applications
+        - Applications (US&C)
     post:
       description: >-
         <p>Create an Application.</p><p>CallbackUrl and MsgCallbackUrl fields
@@ -11948,7 +12826,7 @@ paths:
           description: ''
       summary: Create application
       tags:
-        - Applications
+        - Applications (US&C)
   /accounts/{accountId}/applications/{applicationId}:
     delete:
       description: >-
@@ -11973,7 +12851,7 @@ paths:
           description: ''
       summary: Delete application
       tags:
-        - Applications
+        - Applications (US&C)
     get:
       description: >-
         <p>Retrieve an Application</p><p>Please visit <a
@@ -12051,7 +12929,7 @@ paths:
           description: ''
       summary: Retrieve application
       tags:
-        - Applications
+        - Applications (US&C)
     patch:
       description: >-
         <p>Patch update an Application</p><ul><li>CallStatusCallbackUrl can be
@@ -12104,7 +12982,7 @@ paths:
           description: ''
       summary: Patch application
       tags:
-        - Applications
+        - Applications (US&C)
     put:
       description: >-
         <p>Update an Application.</p><p>Please visit <a
@@ -12208,7 +13086,7 @@ paths:
           description: ''
       summary: Update application
       tags:
-        - Applications
+        - Applications (US&C)
   /accounts/{accountId}/applications/{applicationId}/associatedsippeers:
     get:
       description: Retrieve a list of sippeers, associated with application
@@ -12286,10 +13164,10 @@ paths:
           description: ''
       summary: List associated sippeers
       tags:
-        - Applications
+        - Applications (US&C)
   /accounts/{accountId}/availableNpaNxx:
     get:
-      description: Retrieves a list of available Npa-Nxx telephone numbers.
+      description: Retrieves a list of available Npa-Nxx telephone numbers in USA & Canada.
       operationId: GetAvailableNpaNxx
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
@@ -12364,17 +13242,73 @@ paths:
                 $ref: >-
                   #/components/schemas/SearchResultForAvailableNpaNxxErrorWrapper
           description: There are no phone numbers within the specified scope.
-      summary: Retrieves available Npa-Nxx tns
+      summary: Retrieves available Npa-Nxx tns (US&C)
       tags:
         - Available Tns
   /accounts/{accountId}/availableNumbers:
     get:
-      description: |-
+      description: >-
         Retrieves the phone numbers according to the input parameters.
-         <p>In this table are presented combinations of path parameters for different type of search:</p> <table><thead><tr><th>Search Type</th><th>Required Parameters</th><th>Combinational Parameters</th><th>Optional Parameters</th></tr></thead><tbody><tr><td>Area Code</td><td>areaCode</td><td>rateCenter (state required), city (state required), state, lata, zip</td><td>quantity, enableTNDetail, protected</td></tr><tr><td>NPA-NXX</td><td>npaNxx</td><td>rateCenter (state required), city (state required), state, lata, zip, orderBy</td><td>quantity, enableTNDetail, protected</td></tr><tr><td>NPA-NXX with Local Calling Area</td><td>npaNxx</td><td></td><td>quantity, LCA, enableTNDetail, protected</td></tr><tr><td>NPA-NXX-X</td><td>npaNxxx</td><td>rateCenter (state required), city (state required), state, lata, zip, orderBy</td><td>quantity, enableTNDetail, protected</td></tr><tr><td>NPA-NXX-X with Local Calling Area</td><td>npaNxxx</td><td>rateCenter (state required), city (state required), state, lata, zip</td><td>quantity, LCA, enableTNDetail, protected</td></tr><tr><td>RateCenter</td><td>rateCenter, state</td><td>city, areaCode/npaNxx/npaNxxx, lata, zip, orderBy</td><td>quantity, enableTNDetail, protected</td></tr><tr><td>RateCenter with Local Calling Area</td><td>rateCenter, state</td><td></td><td>quantity, LCA, enableTNDetail, protected</td></tr><tr><td>State</td><td>state</td><td>rateCenter, city, areaCode/npaNxx/npaNxxx, lata, zip</td><td>quantity, enableTNDetail, protected</td></tr><tr><td>City</td><td>state, city</td><td>rateCenter, state, areaCode/npaNxx/npaNxxx, lata, zip, orderBy</td><td>quantity, enableTNDetail, protected</td></tr><tr><td>Zip Code</td><td>zip</td><td>rateCenter (state required), city (state required), state, areaCode/npaNxx/npaNxxx, lata, orderBy</td><td>quantity, enableTNDetail, protected</td></tr><tr><td>LATA</td><td>lata</td><td>rateCenter (state required), city (state required), state, areaCode/npaNxx/npaNxxx, zip</td><td>quantity, enableTNDetail, protected</td></tr><tr><td>Local Vanity</td><td>localVanity</td><td>state, areaCode</td><td>endsIn, quantity, protected, enableTNdetails</td></tr><tr><td>TollFree Vanity</td><td>tollFreeVanity</td><td>orderBy</td><td>quantity</td></tr><tr><td>TollFree WildCard</td><td>tollFreeWildCardPattern</td><td>orderBy</td><td>quantity</td></tr></tbody></table>
+
+
+        <p>In The following combinations of path parameters are allowed for
+        different type of search:</p>
+
+        <table>
+
+        <thead>
+          <tr><th>Supported Countries</th><th>Search Type</th><th>Required Parameters</th><th>Combinational Parameters</th><th>Optional Parameters</th></tr>
+        </thead>
+
+        <tbody>
+          <tr><td>All Countries</td><td>Number Type</td><td>countryCode, numberType</td><td>areaCode, city</td><td>quantity</td></tr>
+          <tr><td>All Countries</td><td>Area Code</td><td>areaCode</td><td>USA|CAN: rateCenter (state required), city (state required), state, lata, zip</td><td>quantity<br>USA|CAN: enableTNDetail, protected</td></tr>
+          <tr><td>All Countries</td><td>City</td><td>state (USA|CAN), city</td><td>USA|CAN: rateCenter, state, areaCode/npaNxx/npaNxxx, lata, zip, orderBy</td><td>quantity<br>USA|CAN: enableTNDetail, protected</td></tr>
+          <tr><td>USA|CAN</td><td>NPA-NXX</td><td>npaNxx</td><td>rateCenter (state required), city (state required), state, lata, zip, orderBy</td><td>quantity, enableTNDetail, protected</td></tr>
+          <tr><td>USA|CAN</td><td>NPA-NXX with Local Calling Area</td><td>npaNxx</td><td></td><td>quantity, LCA, enableTNDetail, protected</td></tr>
+          <tr><td>USA|CAN</td><td>NPA-NXX-X</td><td>npaNxxx</td><td>rateCenter (state required), city (state required), state, lata, zip, orderBy</td><td>quantity, enableTNDetail, protected</td></tr>
+          <tr><td>USA|CAN</td><td>NPA-NXX-X with Local Calling Area</td><td>npaNxxx</td><td>rateCenter (state required), city (state required), state, lata, zip</td><td>quantity, LCA, enableTNDetail, protected</td></tr>
+          <tr><td>USA|CAN</td><td>RateCenter</td><td>rateCenter, state</td><td>city, areaCode/npaNxx/npaNxxx, lata, zip, orderBy</td><td>quantity, enableTNDetail, protected</td></tr>
+          <tr><td>USA|CAN</td><td>RateCenter with Local Calling Area</td><td>rateCenter, state</td><td></td><td>quantity, LCA, enableTNDetail, protected</td></tr>
+          <tr><td>USA|CAN</td><td>State</td><td>state</td><td>rateCenter, city, areaCode/npaNxx/npaNxxx, lata, zip</td><td>quantity, enableTNDetail, protected</td></tr>
+          <tr><td>USA|CAN</td><td>Zip Code</td><td>zip</td><td>rateCenter (state required), city (state required), state, areaCode/npaNxx/npaNxxx, lata, orderBy</td><td>quantity, enableTNDetail, protected</td></tr>
+          <tr><td>USA|CAN</td><td>LATA</td><td>lata</td><td>rateCenter (state required), city (state required), state, areaCode/npaNxx/npaNxxx, zip</td><td>quantity, enableTNDetail, protected</td></tr>
+          <tr><td>USA|CAN</td><td>Local Vanity</td><td>localVanity</td><td>state, areaCode</td><td>endsIn, quantity, protected, enableTNdetails</td></tr>
+          <tr><td>USA|CAN</td><td>TollFree Vanity</td><td>tollFreeVanity</td><td>orderBy</td><td>quantity</td></tr>
+          <tr><td>USA|CAN</td><td>TollFree WildCard</td><td>tollFreeWildCardPattern</td><td>orderBy</td><td>quantity</td></tr>
+        </tbody>
+
+        </table>
       operationId: GetAvailableTns
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: >-
+            <p>Country code of the country in its ISO 3166-1 alpha-3 format.Note
+            that only one country code (i.e. USA, CAN, GBR etc.) is allowed when
+            configured by the user.</p><br>The system defaults country code to
+            search for numbers in both United States and Canada (i.e. USA&CAN).
+            The /v2 APIs enforce countryCode as required parameter.</br>
+          example: GBR
+          in: query
+          name: countryCode
+          required: false
+          schema:
+            default: USA&CAN
+            type: string
+        - description: <p>The 1 to 6 digit area code associated with the TN.</ul>
+          example: 435
+          in: query
+          name: areaCode
+          required: false
+          schema:
+            type: integer
+        - description: <p>The name of the city.</p>
+          example: RALEIGH
+          in: query
+          name: city
+          required: false
+          schema:
+            type: string
         - description: The desired quantity of requested numbers.
           example: 30
           in: query
@@ -12414,16 +13348,6 @@ paths:
             default: false
             type: boolean
         - description: >-
-            <p>The 3-digit area code associated with the TN.</p><ul><li>Allowed
-            number ranges are [2-9] for the first digit and [0-9] for both the
-            second and third digits.</li></ul>
-          example: 435
-          in: query
-          name: areaCode
-          required: false
-          schema:
-            type: integer
-        - description: >-
             <p>The 6-digit prefix associated with the TN.</p><ul><li>Allowed
             number ranges for NPA are [2-9] for the first digit and [0-9] for
             both the second and third digits.</li><li>Allowed number ranges for
@@ -12456,15 +13380,6 @@ paths:
           example: Cary
           in: query
           name: rateCenter
-          required: false
-          schema:
-            type: string
-        - description: >-
-            <p>The name of the city. <b>NOTE:</b> `State` becomes a required
-            parameter when searching by `city`.</p>
-          example: RALEIGH
-          in: query
-          name: city
           required: false
           schema:
             type: string
@@ -12530,13 +13445,22 @@ paths:
                         <!-- SNIP -->
                         <TelephoneNumber>4357095160</TelephoneNumber>
                       </TelephoneNumberList>
+                      <E164TelephoneNumberList>
+                        <E164TelephoneNumber>+14354776112</E164TelephoneNumber>
+                        <!-- SNIP -->
+                        <E164TelephoneNumber>+14357095160</E164TelephoneNumber>
+                      </E164TelephoneNumberList>
                     </SearchResult>
               schema:
                 $ref: '#/components/schemas/SearchResult'
           description: >-
             <p>A list of available numbers is provided.  Additional information
             is available if the queryParameter enableTNDetail is true. If no
-            numbers are available an empty SearchResult element is returned.</p>
+            numbers are available an empty SearchResult element is
+            returned.</p><br>If a country code was configured in search request,
+            all phone numbers in search response shall use an E.164 format. The
+            v2 version of this API shall enforce an E.164 formatted phone number
+            in all requests and responses.
         '400':
           content:
             application/xml:
@@ -13233,7 +14157,7 @@ paths:
           description: No results matching the specified query parameters were found.
       summary: List bulk port-in orders
       tags:
-        - Bulk Port-In
+        - Bulk Port-In (US&C)
     post:
       description: >-
         <p>Creates a bulk port-in order to be used as a template for a
@@ -13336,7 +14260,7 @@ paths:
             <p>Order could not be processed and no order ID was created.</p>
       summary: Create bulk port-in order
       tags:
-        - Bulk Port-In
+        - Bulk Port-In (US&C)
   /accounts/{accountId}/bulkPortins/{orderId}:
     delete:
       description: >-
@@ -13385,7 +14309,7 @@ paths:
           description: The indicated Bulk Port-in order could not be found.
       summary: Delete bulk port-in order
       tags:
-        - Bulk Port-In
+        - Bulk Port-In (US&C)
     get:
       description: >-
         Retrieves information associated with the bulk port-in order specified
@@ -13418,7 +14342,7 @@ paths:
           description: The indicated Bulk Port-in order could not be found.
       summary: Retrieve bulk port-in order
       tags:
-        - Bulk Port-In
+        - Bulk Port-In (US&C)
     patch:
       description: >-
         <p>It is possible to change ("SUPP" in LNP terms) an existing Bulk
@@ -13499,7 +14423,7 @@ paths:
           description: The indicated Bulk Port-in order could not be found.
       summary: Patch bulk port-in order
       tags:
-        - Bulk Port-In
+        - Bulk Port-In (US&C)
     put:
       description: >-
         The PUT operation is available only for bulk port-in orders that are not
@@ -13602,7 +14526,7 @@ paths:
           description: The indicated Bulk Port-in order could not be found.
       summary: Update bulk port-in order
       tags:
-        - Bulk Port-In
+        - Bulk Port-In (US&C)
   /accounts/{accountId}/bulkPortins/{orderId}/history:
     get:
       description: >-
@@ -13690,7 +14614,7 @@ paths:
           description: NOT FOUND - the order id does not exist in the system
       summary: Retrieve bulk port-in order history
       tags:
-        - Bulk Port-In
+        - Bulk Port-In (US&C)
   /accounts/{accountId}/bulkPortins/{orderId}/loas:
     get:
       description: >-
@@ -13742,7 +14666,7 @@ paths:
             case where the list is empty.
       summary: List bulk port-in order loa files
       tags:
-        - Bulk Port-In
+        - Bulk Port-In (US&C)
     post:
       description: >-
         <p>POSTing to the /loas resource will enable the upload of the file. 
@@ -13834,7 +14758,7 @@ paths:
           description: A 400 indicates that the requested upload failed.
       summary: Upload bulk port-in order loa file
       tags:
-        - Bulk Port-In
+        - Bulk Port-In (US&C)
   /accounts/{accountId}/bulkPortins/{orderId}/notes:
     get:
       description: >-
@@ -13886,7 +14810,7 @@ paths:
             be used if the resource was addressed with an identifier
       summary: List bulk port-in order notes
       tags:
-        - Bulk Port-In
+        - Bulk Port-In (US&C)
     post:
       description: >-
         Updates the Notes resource by adding a note. Adding a note to a port-in
@@ -13941,7 +14865,7 @@ paths:
             response.
       summary: Create bulk port-in order note
       tags:
-        - Bulk Port-In
+        - Bulk Port-In (US&C)
   /accounts/{accountId}/bulkPortins/{orderId}/notes/{noteId}:
     put:
       description: >-
@@ -13998,7 +14922,7 @@ paths:
             response.
       summary: Update bulk port-in order note
       tags:
-        - Bulk Port-In
+        - Bulk Port-In (US&C)
   /accounts/{accountId}/bulkPortins/{orderId}/portinList:
     get:
       description: >-
@@ -14054,7 +14978,7 @@ paths:
             no child port-in orders associated with the bulk port-in.
       summary: List bulk port-in child orders
       tags:
-        - Bulk Port-In
+        - Bulk Port-In (US&C)
     put:
       description: >-
         <p>A PUT on a PortinList resource will cause replacement of the list of
@@ -14123,7 +15047,7 @@ paths:
             with the bulk order.
       summary: Update list of bulk port-in child orders
       tags:
-        - Bulk Port-In
+        - Bulk Port-In (US&C)
   /accounts/{accountId}/bulkPortins/{orderId}/tnList:
     get:
       description: >-
@@ -14239,7 +15163,7 @@ paths:
             payload.
       summary: List bulk port-in order tns
       tags:
-        - Bulk Port-In
+        - Bulk Port-In (US&C)
     put:
       description: >-
         <p>This operation is used to add telephone numbers to a draft bulk
@@ -14340,7 +15264,7 @@ paths:
             telephone numbers.
       summary: Update bulk port-in order tn list
       tags:
-        - Bulk Port-In
+        - Bulk Port-In (US&C)
   /accounts/{accountId}/campaignManagement/10dlc/brands:
     get:
       description: Retrieve a list of campaign registry brands for the account
@@ -14417,7 +15341,7 @@ paths:
                 $ref: '#/components/schemas/BrandsErrorResponse'
           description: Error Response
       tags:
-        - 10DLC
+        - 10DLC (US&C)
     post:
       description: >
         Create campaign registry brand on the Account.
@@ -14542,7 +15466,7 @@ paths:
                 $ref: '#/components/schemas/BrandErrorResponse'
           description: Error Response
       tags:
-        - 10DLC
+        - 10DLC (US&C)
   /accounts/{accountId}/campaignManagement/10dlc/brands/{brandId}/vetting:
     get:
       description: Retrieve brand external vetting records
@@ -14602,7 +15526,7 @@ paths:
                 $ref: '#/components/schemas/BrandVettingsErrorResponse'
           description: Error Response
       tags:
-        - 10DLC
+        - 10DLC (US&C)
     post:
       description: Create brand an external vetting
       operationId: Create brand vetting
@@ -14664,7 +15588,7 @@ paths:
                 $ref: '#/components/schemas/BrandVettingsErrorResponse'
           description: Error Response
       tags:
-        - 10DLC
+        - 10DLC (US&C)
     put:
       description: Import brand external vetting records
       operationId: Import brand vetting
@@ -14726,7 +15650,7 @@ paths:
                 $ref: '#/components/schemas/BrandVettingsErrorResponse'
           description: Error Response
       tags:
-        - 10DLC
+        - 10DLC (US&C)
   /accounts/{accountId}/campaignManagement/10dlc/campaigns/imports:
     get:
       description: >-
@@ -14807,7 +15731,7 @@ paths:
             of the error.
       summary: Retrieve imported campaigns
       tags:
-        - 10DLC
+        - 10DLC (US&C)
     post:
       description: >-
         The POST method is used to import a previously shared Campaign into the
@@ -14886,7 +15810,7 @@ paths:
             the TCR database or if it has not been correctly shared.
       summary: Import campaign
       tags:
-        - 10DLC
+        - 10DLC (US&C)
   /accounts/{accountId}/campaignManagement/10dlc/campaigns/imports/{campaignId}:
     get:
       description: >-
@@ -14952,7 +15876,7 @@ paths:
           description: Bad request.
       summary: Retrieve imported campaign
       tags:
-        - 10DLC
+        - 10DLC (US&C)
   /accounts/{accountId}/csrs:
     get:
       description: >-
@@ -15066,7 +15990,7 @@ paths:
           description: The response will include all CSR related data.
       summary: List CSR orders
       tags:
-        - Porting
+        - Porting (US&C)
     post:
       description: Creates the csr order
       operationId: CreateCsrOrder
@@ -15121,7 +16045,7 @@ paths:
             request
       summary: Create CSR order
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/csrs/{orderId}:
     get:
       description: Retrieves the csr order for the given account ID by order id</a>
@@ -15177,7 +16101,7 @@ paths:
           description: The response will include all CSR related data.
       summary: Get CSR order
       tags:
-        - Porting
+        - Porting (US&C)
     put:
       description: Update csr order
       operationId: UpdateCsrOrder
@@ -15262,7 +16186,7 @@ paths:
             request
       summary: Update CSR order
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/csrs/{orderId}/notes:
     get:
       description: 'Retrieve all notes associated with the CSRs order. '
@@ -15304,7 +16228,7 @@ paths:
             be used if the resource was addressed with an identifier
       summary: List CSRs order notes
       tags:
-        - Porting
+        - Porting (US&C)
     post:
       description: |-
         Updates the Notes resource by adding a note. Adding a note to a CSRs 
@@ -15356,7 +16280,7 @@ paths:
             response.
       summary: Add CSRs order note
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/csrs/{orderId}/notes/{noteId}:
     put:
       description: Update a specified note.  Notes may only be updated, not deleted
@@ -15416,7 +16340,7 @@ paths:
             response.
       summary: Update CSRs order note
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/discnumbers:
     get:
       description: >-
@@ -15475,7 +16399,9 @@ paths:
                       <TelephoneNumbers>
                         <Count>2</Count>
                         <TelephoneNumber>4158714245</TelephoneNumber>
+                        <E164TelephoneNumber>+14158714245</E164TelephoneNumber>
                         <TelephoneNumber>4352154439</TelephoneNumber>
+                        <E164TelephoneNumber>+14352154439</E164TelephoneNumber>
                       </TelephoneNumbers>
                     </TNs>
               schema:
@@ -15671,6 +16597,11 @@ paths:
                               <TelephoneNumber>4352154439</TelephoneNumber>
                               <TelephoneNumber>4352154466</TelephoneNumber>
                           </TelephoneNumberList>
+                          <E164TelephoneNumberList>
+                              <E164TelephoneNumber>+14158714245</E164TelephoneNumber>
+                              <E164TelephoneNumber>+14352154439</E164TelephoneNumber>
+                              <E164TelephoneNumber>+14352154466</E164TelephoneNumber>
+                          </E164TelephoneNumberList>
                           <Protected>UNCHANGED</Protected>
                       </DisconnectTelephoneNumberOrderType>
                   </DisconnectTelephoneNumberOrder>
@@ -15698,6 +16629,11 @@ paths:
                                     <TelephoneNumber>4352154439</TelephoneNumber>
                                     <TelephoneNumber>4352154466</TelephoneNumber>
                                 </TelephoneNumberList>
+                                <E164TelephoneNumberList>
+                                    <E164TelephoneNumber>+14158714245</E164TelephoneNumber>
+                                    <E164TelephoneNumber>+14352154439</E164TelephoneNumber>
+                                    <E164TelephoneNumber>+14352154466</E164TelephoneNumber>
+                                </E164TelephoneNumberList>
                             </DisconnectTelephoneNumberOrderType>
                         </orderRequest>
                         <OrderStatus>RECEIVED</OrderStatus>
@@ -15730,6 +16666,9 @@ paths:
                                 <TelephoneNumberList>
                                     <TelephoneNumber>4158714245</TelephoneNumber>
                                 </TelephoneNumberList>
+                                <E164TelephoneNumberList>
+                                    <E164TelephoneNumber>+14158714245</E164TelephoneNumber>
+                                </E164TelephoneNumberList>
                             </DisconnectTelephoneNumberOrderType>
                         </orderRequest>
                     </DisconnectTelephoneNumberOrderResponse>
@@ -15787,6 +16726,7 @@ paths:
                     <DisconnectTelephoneNumberOrderResponse>
                       <DisconnectedTelephoneNumberList>
                         <TelephoneNumber>9194392566</TelephoneNumber>
+                        <E164TelephoneNumber>+19194392566</E164TelephoneNumber>
                       </DisconnectedTelephoneNumberList>
                       <orderRequest>
                         <id>4ffe9262-1965-4479-a1d5-b8584440667d</id>
@@ -15797,6 +16737,9 @@ paths:
                           <TelephoneNumberList>
                             <TelephoneNumber>9194392566</TelephoneNumber>
                           </TelephoneNumberList>
+                          <E164TelephoneNumberList>
+                            <E164TelephoneNumber>+19194392566</E164TelephoneNumber>
+                          </E164TelephoneNumberList>
                         </DisconnectTelephoneNumberOrderType>
                       </orderRequest>
                       <OrderStatus>COMPLETE</OrderStatus>
@@ -16088,7 +17031,7 @@ paths:
             recognized are not considered errors, and are just ignored.
       summary: List DLDA orders
       tags:
-        - DLDA
+        - DLDA (US&C)
     post:
       description: >-
         Create DLDA order to associate the street address with the telephone
@@ -16309,7 +17252,7 @@ paths:
         Create DLDA order - associate the street address with the telephone
         number.
       tags:
-        - DLDA
+        - DLDA (US&C)
   /accounts/{accountId}/dldas/{orderId}:
     get:
       description: Retrieve information about a DLDA Order with specified ID.
@@ -16415,7 +17358,7 @@ paths:
           description: NOT FOUND - the order id does not exist in the system
       summary: Fetching DLDA order status
       tags:
-        - DLDA
+        - DLDA (US&C)
     put:
       description: >-
         Update DLDA order to associate the street address with the telephone
@@ -16569,7 +17512,7 @@ paths:
         Update DLDA order - associate the street address with the telephone
         number
       tags:
-        - DLDA
+        - DLDA (US&C)
   /accounts/{accountId}/dldas/{orderId}/history:
     get:
       description: >-
@@ -16658,7 +17601,7 @@ paths:
           description: NOT FOUND - the order id does not exist in the system
       summary: Fetch DLDA order history
       tags:
-        - DLDA
+        - DLDA (US&C)
   /accounts/{accountId}/e911s:
     get:
       description: >-
@@ -16900,7 +17843,7 @@ paths:
             recognized are not considered errors, and are just ignored.
       summary: List E911 orders
       tags:
-        - DLR
+        - DLR (US&C)
     post:
       description: "<p>The E911Orders endpoint resource represents the requests made to the Bandwidth Dashboard API to add or otherwise manage a request to associate a postal address with an endpoint (a telephone number, ACID (alternate caller identifier), or some other unique identifier. This API allows the creation and observation of a \"E911\" work order that causes an update of a address information in a network database.</p><p>The E911 order processing model is consistent with the overall model of creating an order or request with the initial POST, and then checking on the status of that order using callbacks and / or GET while that order progresses through the various steps in the process.</p><h4>The E911 order supports several 911 use cases:</h4><ol><li>CONVENTIONAL E911: Telephone number/address combination. For UC Trunking and most applicable wholesale customers, this method associates a telephone number in the customer’s Bandwidth Dashboard API TN inventory to a postal address. Caller name can also be specified in the request. At 911 call time, the address that is associated with the telephone number in the SIP 'from' header will be seen by the Public Safety Answering Point (PSAP).</li><br><li>PIDF-LO (Presence Information Data Format-Location Object or Dynamic Location Routing) Endpoints and Addresses: For customers utilizing Bandwidth’s Dynamic Routing capability, addresses are first added to an \"address pool\", then endpoints are provisioned using one of the addresses as a default for taxation purposes. Each endpoint is represented by an Alternate End User Identifier consisting of a unique identifier (could be TN, ACID, or other identifier), callback number and caller name (if not being passed in at 911 call time), and preferred language (French or English, with English as the default). At 911 call time, the customer can pass any address in the SIP header of the call and the sip 'from' header will contain the identifier of the endpoint. If the address in the call matches an address in the address pool, then the call is routed to the PSAP. Otherwise, the call is routed to an Emergency Call Center.</li><br><li><p>SIMPLE AEUI: This is similar to telephone number/address combination in that there is a 1 to 1 mapping between endpoint and address. Each endpoint is represented by an Alternate End User Identifier(AEUI) consisting of a unique identifier and callback number. At 911 call time, the endpoint identifier is passed in the SIP from header and the address that is associated with that endpoint will be seen by the PSAP.</p><p>The states that the order may reside in are RECEIVED, PROCESSING, COMPLETE, PARTIAL, FAILED, ADJUSTED_COMPLETE, and ADJUSTED_PARTIAL. \"ADJUSTED\" indicates that the provisioning was successful, but that the street address was subtly changed to reflect a geocodable address. As with other order types, PARTIAL indicates that there were some errors detected, but that all elements of the order that could be processed were processed. In this case, the order record will need to be examined to determine the items that failed.</p></o></li></ol><h4>The key data elements in the submission are as follows.</h4><table><tr><th>Parameter</th><th>Description</th></tr><tr><td>TelephoneNumbers</td><td>A list of telephone numbers you need link to the street address</td></tr><tr><td>CallerName</td><td>\tCallerName that will be linked to TNs. This field is required in the case of a new address assignment</td></tr><tr><td>Address</td><td>This field is required in the case of a new address assignment. Inner fields: HousePrefix, HouseNumber, HouseSuffix, PreDirectional, StreetName, StreetSuffix, PostDirectional, AddressLine2, City, StateCode, Zip, PlusFour. Streetname, City, and State are required. House Number is currently required, although this enforcement may be relaxed in the future. Depending on the type of E911 service, the Location ID may be updated by the Bandwidth Dashboard API</td></tr><tr><td>DeleteTNSpecificE911Address</td><td>Can be true or false. If value is true then Address and CallerName should not be specified</td></tr><tr><td>AlternateEndUserIdentifiers</td><td>A list of AEUIs acts as a replacement for the list of telephone numbers. It replaces the TelephoneNumbers and AdditionalAddress payload element. If ACID exists in external system it will be updated with given values</td></tr><tr><td>AdditionalAddresses</td><td>A list of Address sections. This address information for all potential endpoints which will be provisioned to the Bandwidth 911 system. At call time, the customer will submit this address information within the SIP header and, if a match is determined, the call will be routed to the PSAP nearest to that address. Otherwise, the call will be routed to an ECC. These Address sections will be the same in format to the Address section in the top-level of the E911Order payload. It replaces the TelephoneNumbers and AlternateEndUserIdentifiers payload element</td></tr><tr><td>CustomerOrderId</td><td>The Customer Order ID is an ID assigned by the account owner to provide a reference number for the Order. The element is optional. Only alphanumeric values, dashes and spaces are allowed. Max length is 40 characters</td></tr></table>"
       operationId: CreateE911Order
@@ -17340,7 +18283,7 @@ paths:
             element.
       summary: Create E911 order - associate the address with the telephone number
       tags:
-        - DLR
+        - DLR (US&C)
   /accounts/{accountId}/e911s/{orderId}:
     get:
       description: >-
@@ -17495,7 +18438,7 @@ paths:
           description: NOT FOUND - the order id does not exist in the system
       summary: Fetch E911 order status
       tags:
-        - DLR
+        - DLR (US&C)
   /accounts/{accountId}/e911s/{orderId}/history:
     get:
       description: >-
@@ -17577,7 +18520,7 @@ paths:
           description: NOT FOUND - the order id does not exist in the system
       summary: Read E911 order history
       tags:
-        - DLR
+        - DLR (US&C)
   /accounts/{accountId}/emergencyNotificationEndpointOrders:
     get:
       description: >-
@@ -19585,7 +20528,7 @@ paths:
           description: No externalTns orders can be found that match the query parameters.
       summary: List external tns orders
       tags:
-        - External Tn
+        - External Tn (US&C)
     post:
       description: >-
         <p>Create a externalTns order to add or remove telephone numbers
@@ -19672,7 +20615,7 @@ paths:
             text and an error code will be provided in the ErrorList element.
       summary: Create external tns order
       tags:
-        - External Tn
+        - External Tn (US&C)
   /accounts/{accountId}/externalTns/{orderId}:
     get:
       description: <p>Retrieve information about a externalTns order with specified ID.</p>
@@ -19748,7 +20691,7 @@ paths:
           description: <p>NOT FOUND - the order id does not exist in the system</p>
       summary: Retrieve external tns order
       tags:
-        - External Tn
+        - External Tn (US&C)
   /accounts/{accountId}/geocodeRequest:
     post:
       description: >-
@@ -19914,7 +20857,7 @@ paths:
             unavailable.</p>
       summary: Validate address
       tags:
-        - Addresses
+        - Addresses (US&C)
   /accounts/{accountId}/hosts:
     get:
       description: >-
@@ -20058,7 +21001,7 @@ paths:
             are not actual TNs, and there are duplicates).</ul>
       summary: Check Tns portability
       tags:
-        - Import Hosted Tn
+        - Import Hosted Tn (US&C)
   /accounts/{accountId}/importTnOrders:
     get:
       description: >
@@ -20189,7 +21132,7 @@ paths:
             encountered errors.
       summary: List Import Tn orders
       tags:
-        - Import Hosted Tn
+        - Import Hosted Tn (US&C)
     post:
       description: >-
         Creates an importTnOrders request to add numbers under the given site ID
@@ -20308,7 +21251,7 @@ paths:
             element.</p>
       summary: Import Tn order
       tags:
-        - Import Hosted Tn
+        - Import Hosted Tn (US&C)
   /accounts/{accountId}/importTnOrders/voice:
     get:
       description: >
@@ -20426,7 +21369,7 @@ paths:
             encountered errors.
       summary: List Import Voice Tn orders
       tags:
-        - Import Hosted Tn
+        - Import Hosted Tn (US&C)
     post:
       description: >-
         Creates an ImportVoiceTnOrders request to add numbers under the given
@@ -20626,7 +21569,7 @@ paths:
                 </table>
       summary: Import Voice Tn order
       tags:
-        - Import Hosted Tn
+        - Import Hosted Tn (US&C)
   /accounts/{accountId}/importTnOrders/voice/{orderId}:
     get:
       description: Retrieve information about a importVoiceTnOrder with specified ID.
@@ -20725,7 +21668,7 @@ paths:
                 </table>
       summary: Fetch Import Voice Tn order status
       tags:
-        - Import Hosted Tn
+        - Import Hosted Tn (US&C)
   /accounts/{accountId}/importTnOrders/voice/{orderId}/history:
     get:
       description: Retrieves the history of the specified importVoiceTnOrder.
@@ -20768,7 +21711,7 @@ paths:
             payload.
       summary: Fetch Import Voice Tn order history
       tags:
-        - Import Hosted Tn
+        - Import Hosted Tn (US&C)
   /accounts/{accountId}/importTnOrders/{orderId}:
     get:
       description: Retrieve information about a importTnOrder with specified ID.
@@ -20836,7 +21779,7 @@ paths:
             payload.
       summary: Fetch Import Tn order status
       tags:
-        - Import Hosted Tn
+        - Import Hosted Tn (US&C)
   /accounts/{accountId}/importTnOrders/{orderId}/history:
     get:
       description: Retrieves the history of the specified importTnOrder.
@@ -20885,7 +21828,7 @@ paths:
             payload.
       summary: Fetch Import Tn order history
       tags:
-        - Import Hosted Tn
+        - Import Hosted Tn (US&C)
   /accounts/{accountId}/importTnOrders/{orderId}/loas:
     get:
       description: >-
@@ -20936,7 +21879,7 @@ paths:
             case where the list is empty.
       summary: Fetch Import Tn order loas
       tags:
-        - Import Hosted Tn
+        - Import Hosted Tn (US&C)
     post:
       description: >-
         POSTing to the /loas resource will enable the upload of the file.  The
@@ -21002,7 +21945,7 @@ paths:
           description: A 400 indicates that the requested upload failed.
       summary: Import Tn order loas
       tags:
-        - Import Hosted Tn
+        - Import Hosted Tn (US&C)
   /accounts/{accountId}/importTnOrders/{orderId}/loas/{fileId}:
     delete:
       description: Deletes the file associated with the order
@@ -21032,7 +21975,7 @@ paths:
             with the order id.
       summary: Removing Import Tn order loas file
       tags:
-        - Import Hosted Tn
+        - Import Hosted Tn (US&C)
     get:
       description: Retrieves the file associated with the order.
       operationId: ReadImportTnOrderLoasFile
@@ -21067,7 +22010,7 @@ paths:
             with the order id.
       summary: Fetch Import Tn order loas file
       tags:
-        - Import Hosted Tn
+        - Import Hosted Tn (US&C)
     put:
       description: >-
         A PUT on the filename will update / replace the identified file id.  The
@@ -21116,7 +22059,7 @@ paths:
           description: A 404 indicates that the file was not available for replacement.
       summary: Updating Import Tn order loas file
       tags:
-        - Import Hosted Tn
+        - Import Hosted Tn (US&C)
   /accounts/{accountId}/importTnOrders/{orderId}/loas/{fileId}/metadata:
     delete:
       description: Deletes the metadata previously associated with the identified file.
@@ -21148,7 +22091,7 @@ paths:
             with the order id.cd
       summary: Removing Import Tn order loas file metadata
       tags:
-        - Import Hosted Tn
+        - Import Hosted Tn (US&C)
     get:
       description: Retrieves the metadata associated with the file.
       operationId: ReadImportTnOrderLoasFileMetadata
@@ -21189,7 +22132,7 @@ paths:
             with the order id.
       summary: Fetch Import Tn order loas file metadata
       tags:
-        - Import Hosted Tn
+        - Import Hosted Tn (US&C)
     put:
       description: >-
         Associate metadata with the file named in the resource path.  This will
@@ -21238,7 +22181,7 @@ paths:
           description: Some error has occured as a result of the attempt.
       summary: Updating Import Tn order loas file metadata
       tags:
-        - Import Hosted Tn
+        - Import Hosted Tn (US&C)
   /accounts/{accountId}/importToAccount:
     get:
       description: >
@@ -21352,7 +22295,7 @@ paths:
           application/xml:
             examples:
               example:
-                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ImportToAccountNumberOrder>\n\t<ImportToAccountNumberOrderType>\n\t\t<NumberFormat>10D</NumberFormat>\n\t\t<TelephoneNumberList>\n\t\t\t<TelephoneNumber>4158714244</TelephoneNumber>\n\t\t\t<TelephoneNumber>6105330709</TelephoneNumber>\n\t\t</TelephoneNumberList>\n\t\t<BillingType>NOCHARGE</BillingType>\n\t\t<InitialStatus>Available</InitialStatus>\n\t\t<TnAttributes>\n\t\t\t<TnAttribute>Protected</TnAttribute>\n\t\t</TnAttributes>\n\t\t<VendorName>Level 3</VendorName>\n\t\t<BatchId>TestId1234</BatchId>\n\t\t<BatchSize>2</BatchSize>\n\t</ImportToAccountNumberOrderType>\n\t<SiteId>1</SiteId>\n\t<PeerId>12345</PeerId>\n\t</ImportToAccountNumberOrder>"
+                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ImportToAccountNumberOrder>\n\t<ImportToAccountNumberOrderType>\n\t\t<TelephoneNumberList>\n\t\t\t<TelephoneNumber>4158714244</TelephoneNumber>\n\t\t\t<TelephoneNumber>6105330709</TelephoneNumber>\n\t\t</TelephoneNumberList>\n\t\t<E164TelephoneNumberList>\n\t\t\t<E164TelephoneNumber>+14158714244</E164TelephoneNumber>\n\t\t\t<E164TelephoneNumber>+16105330709</E164TelephoneNumber>\n\t\t</E164TelephoneNumberList>\n\t\t<BillingType>NOCHARGE</BillingType>\n\t\t<InitialStatus>Available</InitialStatus>\n\t\t<TnAttributes>\n\t\t\t<TnAttribute>Protected</TnAttribute>\n\t\t</TnAttributes>\n\t\t<VendorName>Level 3</VendorName>\n\t\t<BatchId>TestId1234</BatchId>\n\t\t<BatchSize>2</BatchSize>\n\t</ImportToAccountNumberOrderType>\n\t<SiteId>1</SiteId>\n\t<PeerId>12345</PeerId>\n\t</ImportToAccountNumberOrder>"
             schema:
               $ref: '#/components/schemas/ImportToAccountOrderRequest'
       responses:
@@ -21361,7 +22304,7 @@ paths:
             application/xml:
               examples:
                 example:
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ImportToAccountNumberOrderResponse>\n\t<OrderRequest>\n\t\t<id>c5986599-3a7c-4eed-a5c4-9121c17d54ab</id>\n\t\t<OrderCreateDate>2014-04-01T21:54:18.796Z</OrderCreateDate>\n\t\t<ImportToAccountNumberOrderType>\n\t\t\t<BatchId>SJM00001</BatchId>\n\t\t\t<BatchSize>2</BatchSize>\n\t\t\t<BillingType>NOCHARGE</BillingType>\n\t\t\t<NumberFormat>10D</NumberFormat>\n\t\t\t<InitialStatus>Available</InitialStatus>\n\t\t\t<TnAttributes>\n\t\t\t\t<TnAttribute>Protected</TnAttribute>\n\t\t\t</TnAttributes>\n\t\t\t<TelephoneNumberList>\n\t\t\t\t<TelephoneNumber>4158714245</TelephoneNumber>\n\t\t\t\t<TelephoneNumber>6105330710</TelephoneNumber>\n\t\t\t</TelephoneNumberList>\n\t\t\t<VendorName>Level 3</VendorName>\n\t\t</ImportToAccountNumberOrderType>\n\t\t<SiteId>743</SiteId>\n\t\t<PeerId>12345</PeerId>\n\t</OrderRequest>\n\t</ImportToAccountNumberOrderResponse>"
+                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ImportToAccountNumberOrderResponse>\n\t<OrderRequest>\n\t\t<id>c5986599-3a7c-4eed-a5c4-9121c17d54ab</id>\n\t\t<OrderCreateDate>2014-04-01T21:54:18.796Z</OrderCreateDate>\n\t\t<ImportToAccountNumberOrderType>\n\t\t\t<BatchId>SJM00001</BatchId>\n\t\t\t<BatchSize>2</BatchSize>\n\t\t\t<BillingType>NOCHARGE</BillingType>\n\t\t\t<NumberFormat>10D</NumberFormat>\n\t\t\t<InitialStatus>Available</InitialStatus>\n\t\t\t<TnAttributes>\n\t\t\t\t<TnAttribute>Protected</TnAttribute>\n\t\t\t</TnAttributes>\n\t\t\t<TelephoneNumberList>\n\t\t\t\t<TelephoneNumber>4158714245</TelephoneNumber>\n\t\t\t\t<TelephoneNumber>6105330710</TelephoneNumber>\n\t\t\t</TelephoneNumberList>\n\t\t\t<E164TelephoneNumberList>\n\t\t\t\t<E164TelephoneNumber>+14158714245</E164TelephoneNumber>\n\t\t\t\t<E164TelephoneNumber>+16105330710</E164TelephoneNumber>\n\t\t\t</E164TelephoneNumberList>\n\t\t\t<VendorName>Level 3</VendorName>\n\t\t</ImportToAccountNumberOrderType>\n\t\t<SiteId>743</SiteId>\n\t\t<PeerId>12345</PeerId>\n\t</OrderRequest>\n\t</ImportToAccountNumberOrderResponse>"
               schema:
                 $ref: '#/components/schemas/ImportToAccountNumberOrderResponse'
           description: >-
@@ -21404,7 +22347,7 @@ paths:
           description: >
             The response provides a list of batches that have been processed in
             importing numbers into the account.
-      summary: List Import to Account orders batches
+      summary: List Import to Account orders batches (US&C)
       tags:
         - Import Tn
   /accounts/{accountId}/importToAccount/batches/{batchId}:
@@ -21437,7 +22380,7 @@ paths:
           description: >-
             The information has been successfully retrieved and displayed in the
             payload.
-      summary: Fetch Import To Account orders status by batch id
+      summary: Fetch Import To Account orders status by batch id (US&C)
       tags:
         - Import Tn
   /accounts/{accountId}/importToAccount/{orderId}:
@@ -21459,7 +22402,7 @@ paths:
             application/xml:
               examples:
                 example:
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ImportToAccountNumberOrderResponse>\n\t<ErrorList/>\n\t<ImportedTelephoneNumberList>\n\t\t<TelephoneNumber>9199918393</TelephoneNumber>\n\t\t<TelephoneNumber>9199918394</TelephoneNumber>\n\t</ImportedTelephoneNumberList>\n\t<orderRequest>\n\t\t<OrderCreateDate>2014-04-18T16:38:05.001Z</OrderCreateDate>\n\t\t<PeerId>303716</PeerId>\n\t\t<ImportToAccountNumberOrderType>\n\t\t\t<BatchId>TestId1234</BatchId>\n\t\t\t<BatchSize>2</BatchSize>\n\t\t\t<OverridePortFees>false</OverridePortFees>\n\t\t\t<PortedIn>false</PortedIn>\n\t\t\t<InitialStatus>Available</InitialStatus>\n\t\t\t<TnAttributes>\n\t\t\t\t<TnAttribute>Protected</TnAttribute>\n\t\t\t</TnAttributes>\n\t\t\t<TelephoneNumberList>\n\t\t\t\t<TelephoneNumber>9199918393</TelephoneNumber>\n\t\t\t\t<TelephoneNumber>9199918394</TelephoneNumber>\n\t\t\t</TelephoneNumberList>\n\t\t\t<VendorName>Bandwidth CLEC</VendorName>\n\t\t</ImportToAccountNumberOrderType>\n\t\t<SiteId>743</SiteId>\n\t</orderRequest>\n\t<OrderStatus>COMPLETE</OrderStatus>\n\t<ImportedTelephoneNumberDetailList>\n\t\t<TelephoneNumberDetail>\n\t\t\t<FullNumber>9199918393</FullNumber>\n\t\t</TelephoneNumberDetail>\n\t\t<TelephoneNumberDetail>\n\t\t\t<FullNumber>9199918394</FullNumber>\n\t\t</TelephoneNumberDetail>\n\t</ImportedTelephoneNumberDetailList>\n</ImportToAccountNumberOrderResponse>"
+                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ImportToAccountNumberOrderResponse>\n\t<ErrorList/>\n\t<ImportedTelephoneNumberList>\n\t\t<TelephoneNumber>9199918393</TelephoneNumber>\n\t\t<TelephoneNumber>9199918394</TelephoneNumber>\n\t</ImportedTelephoneNumberList>\n\t<ImportedE164TelephoneNumberList>\n\t\t<E164TelephoneNumber>+19199918393</E164TelephoneNumber>\n\t\t<E164TelephoneNumber>+19199918394</E164TelephoneNumber>\n\t</ImportedE164TelephoneNumberList>\n\t<orderRequest>\n\t\t<OrderCreateDate>2014-04-18T16:38:05.001Z</OrderCreateDate>\n\t\t<PeerId>303716</PeerId>\n\t\t<ImportToAccountNumberOrderType>\n\t\t\t<BatchId>TestId1234</BatchId>\n\t\t\t<BatchSize>2</BatchSize>\n\t\t\t<OverridePortFees>false</OverridePortFees>\n\t\t\t<PortedIn>false</PortedIn>\n\t\t\t<InitialStatus>Available</InitialStatus>\n\t\t\t<TnAttributes>\n\t\t\t\t<TnAttribute>Protected</TnAttribute>\n\t\t\t</TnAttributes>\n\t\t\t<TelephoneNumberList>\n\t\t\t\t<TelephoneNumber>9199918393</TelephoneNumber>\n\t\t\t\t<TelephoneNumber>9199918394</TelephoneNumber>\n\t\t\t</TelephoneNumberList>\n\t\t\t<E164TelephoneNumberList>\n\t\t\t\t<E164TelephoneNumber>+19199918393</E164TelephoneNumber>\n\t\t\t\t<E164TelephoneNumber>+19199918394</E164TelephoneNumber>\n\t\t\t</E164TelephoneNumberList>\n\t\t\t<VendorName>Bandwidth CLEC</VendorName>\n\t\t</ImportToAccountNumberOrderType>\n\t\t<SiteId>743</SiteId>\n\t</orderRequest>\n\t<OrderStatus>COMPLETE</OrderStatus>\n\t<ImportedTelephoneNumberDetailList>\n\t\t<TelephoneNumberDetail>\n\t\t\t<FullNumber>9199918393</FullNumber>\n\t\t</TelephoneNumberDetail>\n\t\t<TelephoneNumberDetail>\n\t\t\t<FullNumber>9199918394</FullNumber>\n\t\t</TelephoneNumberDetail>\n\t</ImportedTelephoneNumberDetailList>\n\t<ImportedE164TelephoneNumberDetailList>\n\t\t<E164TelephoneNumberDetail>\n\t\t\t<E164FullNumber>+19199918393</E164FullNumber>\n\t\t</E164TelephoneNumberDetail>\n\t\t<E164TelephoneNumberDetail>\n\t\t\t<E164FullNumber>+19199918394</E164FullNumber>\n\t\t</E164TelephoneNumberDetail>\n\t</ImportedE164TelephoneNumberDetailList>\n</ImportToAccountNumberOrderResponse>"
               schema:
                 $ref: '#/components/schemas/ImportToAccountNumberOrderResponseForGet'
           description: >-
@@ -21500,7 +22443,8 @@ paths:
     get:
       description: >-
         Retrieves a list of in-service phone numbers associated with the account
-        ID
+        ID<br><br> Only inservice US and Canada numbers are returned for these
+        query parameters- npanxx, lata, state, ratecenter.
       operationId: ReadInserviceTns
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
@@ -21602,21 +22546,36 @@ paths:
                        <TelephoneNumbers>
                           <Count>59</Count>
                           <TelephoneNumber>8043024183</TelephoneNumber>
+                          <E164TelephoneNumber>+18043024183</E164TelephoneNumber>
                           <TelephoneNumber>8042121778</TelephoneNumber>
+                          <E164TelephoneNumber>+18042121778</E164TelephoneNumber>
                           <TelephoneNumber>8042146066</TelephoneNumber>
+                          <E164TelephoneNumber>+18042146066</E164TelephoneNumber>
                           <TelephoneNumber>8043814903</TelephoneNumber>
+                          <E164TelephoneNumber>+18043814903</E164TelephoneNumber>
                           <TelephoneNumber>8043814905</TelephoneNumber>
+                          <E164TelephoneNumber>+18043814905</E164TelephoneNumber>
                           <TelephoneNumber>8043814864</TelephoneNumber>
+                          <E164TelephoneNumber>+18043814864</E164TelephoneNumber>
                           <TelephoneNumber>8043326094</TelephoneNumber>
+                          <E164TelephoneNumber>+18043326094</E164TelephoneNumber>
                           <TelephoneNumber>8042121771</TelephoneNumber>
+                          <E164TelephoneNumber>+18042121771</E164TelephoneNumber>
                           <TelephoneNumber>8043024182</TelephoneNumber>
+                          <E164TelephoneNumber>+18043024182</E164TelephoneNumber>
                           <!-- SNIP -->
                           <TelephoneNumber>8043814900</TelephoneNumber>
+                          <E164TelephoneNumber>+18043814900</E164TelephoneNumber>
                           <TelephoneNumber>8047672642</TelephoneNumber>
+                          <E164TelephoneNumber>+18047672642</E164TelephoneNumber>
                           <TelephoneNumber>8043024368</TelephoneNumber>
+                          <E164TelephoneNumber>+18043024368</E164TelephoneNumber>
                           <TelephoneNumber>8042147950</TelephoneNumber>
+                          <E164TelephoneNumber>+18042147950</E164TelephoneNumber>
                           <TelephoneNumber>8043169931</TelephoneNumber>
+                          <E164TelephoneNumber>+18043169931</E164TelephoneNumber>
                           <TelephoneNumber>8043325302</TelephoneNumber>
+                          <E164TelephoneNumber>+18043325302</E164TelephoneNumber>
                        </TelephoneNumbers>
                     </TNs>
               schema:
@@ -21665,8 +22624,10 @@ paths:
       operationId: ReadInserviceTn
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: The telephone number to check
-          example: '8043024183'
+        - description: >-
+            The telephone number to check. Assumes NANPA format if tn is not
+            E.164 formatted.
+          example: '+18043024183'
           in: path
           name: tn
           required: true
@@ -21794,7 +22755,7 @@ paths:
             recognized are not considered errors, and are just ignored.
       summary: List LIDB orders
       tags:
-        - LIDB
+        - LIDB (US&C)
     post:
       description: >-
         The LIDBs Resource represents the requests made to the Bandwidth
@@ -21950,7 +22911,7 @@ paths:
         Create LIDB order - associate Calling Name Information with a TN or list
         of TNs
       tags:
-        - LIDB
+        - LIDB (US&C)
   /accounts/{accountId}/lidbs/{lidbid}:
     get:
       description: >-
@@ -22072,7 +23033,7 @@ paths:
             <p>NOT FOUND - the order id does not exist in the system</p>
       summary: Fetch LIDB order status
       tags:
-        - LIDB
+        - LIDB (US&C)
   /accounts/{accountId}/lnpchecker:
     post:
       description: >-
@@ -22284,7 +23245,7 @@ paths:
             </ul>
       summary: Request portability information for a set of TNs
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/lsrorders:
     get:
       description: >-
@@ -22450,7 +23411,7 @@ paths:
             recognized are not considered errors, and are just ignored.
       summary: List LSR orders
       tags:
-        - Porting
+        - Porting (US&C)
     post:
       description: >-
         A POST creates a LSR order request to initiate a port-out action. 
@@ -22644,7 +23605,7 @@ paths:
             Fror more info see LsrOrderErrors section in response.
       summary: Create LSR order - initiate a port-out action
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/lsrorders/{orderId}:
     get:
       description: >-
@@ -22720,7 +23681,7 @@ paths:
             payload.
       summary: Fetch LSR order status
       tags:
-        - Porting
+        - Porting (US&C)
     put:
       description: >-
         Updates the information associated with the specified LSR. 
@@ -22907,7 +23868,7 @@ paths:
           description: Requested LSR not found.
       summary: Update LSR order
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/lsrorders/{orderId}/history:
     get:
       description: >-
@@ -22972,7 +23933,7 @@ paths:
             NOT FOUND - the order id does not exist in the system
       summary: Fetch LSR order history
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/lsrorders/{orderId}/notes:
     get:
       description: >-
@@ -23030,7 +23991,7 @@ paths:
             be used if the resource was addressed with an identifier
       summary: Fetch LSR order notes
       tags:
-        - Porting
+        - Porting (US&C)
     post:
       description: >-
         Updates the Notes resource by adding a note. Adding a note to a port-in
@@ -23095,7 +24056,7 @@ paths:
             response.
       summary: Create LSR order note
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/lsrorders/{orderId}/notes/{noteId}:
     put:
       description: >-
@@ -23162,7 +24123,7 @@ paths:
             response.
       summary: Update LSR order note
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/moveTns:
     get:
       description: >-
@@ -23180,8 +24141,10 @@ paths:
           required: false
           schema:
             type: string
-        - description: A Telephone Number (TN) that is referenced in the order
-          example: '9199918388'
+        - description: >-
+            A Telephone Number (TN) that is referenced in the order. Assumes
+            NANPA format if tn is not E.164 formatted.
+          example: '+19199918388'
           in: query
           name: tn
           required: true
@@ -23321,6 +24284,12 @@ paths:
                         <TelephoneNumber>4352154439</TelephoneNumber>
                         <TelephoneNumber>4352154466</TelephoneNumber>
                      </TelephoneNumbers>
+                     <E164TelephoneNumbers>
+                        <E164TelephoneNumber>+19199918388</E164TelephoneNumber>
+                        <E164TelephoneNumber>+14158714245</E164TelephoneNumber>
+                        <E164TelephoneNumber>+14352154439</E164TelephoneNumber>
+                        <E164TelephoneNumber>+14352154466</E164TelephoneNumber>
+                     </E164TelephoneNumbers>
                   </MoveTnsOrder>
             schema:
               $ref: '#/components/schemas/MoveTnsOrderRequest'
@@ -23345,6 +24314,10 @@ paths:
                              <TelephoneNumber>2032081004</TelephoneNumber>
                              <TelephoneNumber>2032081005</TelephoneNumber>
                           </TelephoneNumbers>
+                          <E164TelephoneNumbers>
+                             <E164TelephoneNumber>+12032081004</E164TelephoneNumber>
+                             <E164TelephoneNumber>+12032081005</E164TelephoneNumber>
+                          </E164TelephoneNumbers>
                           <ProcessingStatus>RECEIVED</ProcessingStatus>
                           <SipPeerId>500025</SipPeerId>
                        </MoveTnsOrder>
@@ -23416,6 +24389,13 @@ paths:
                           <TelephoneNumber>2109678337</TelephoneNumber>
                           <TelephoneNumber>2266401468</TelephoneNumber>
                        </TelephoneNumbers>
+                       <E164TelephoneNumbers>
+                          <E164TelephoneNumber>+12106078250</E164TelephoneNumber>
+                          <E164TelephoneNumber>+12109678273</E164TelephoneNumber>
+                          <E164TelephoneNumber>+12109678331</E164TelephoneNumber>
+                          <E164TelephoneNumber>+12109678337</E164TelephoneNumber>
+                          <E164TelephoneNumber>+12266401468</E164TelephoneNumber>
+                       </E164TelephoneNumbers>
                        <ProcessingStatus>PARTIAL</ProcessingStatus>
                        <Errors>
                           <Error>
@@ -23424,6 +24404,9 @@ paths:
                              <TelephoneNumbers>
                                 <TelephoneNumber>2262665583</TelephoneNumber>
                              </TelephoneNumbers>
+                             <E164TelephoneNumbers>
+                                <E164TelephoneNumber>+12262665583</E164TelephoneNumber>
+                             </E164TelephoneNumbers>
                           </Error>
                        </Errors>
                     </MoveTnsOrder>
@@ -23614,7 +24597,7 @@ paths:
             not recognized are not considered errors, and are just ignored.
       summary: List Telephone Numbers Assignment Orders
       tags:
-        - Numbers Assignment
+        - Numbers Assignment (US&C)
     post:
       description: >-
         Create a TelephoneNumbersAssignment order to register the assignment
@@ -23671,7 +24654,7 @@ paths:
             element.
       summary: Telephone Numbers Assignment Order
       tags:
-        - Numbers Assignment
+        - Numbers Assignment (US&C)
   /accounts/{accountId}/numbersAssignment/{orderId}:
     get:
       description: >-
@@ -23714,7 +24697,7 @@ paths:
           description: NOT FOUND - the order id does not exist in the system
       summary: Fetching Telephone Numbers Assignment Order status
       tags:
-        - Numbers Assignment
+        - Numbers Assignment (US&C)
   /accounts/{accountId}/orders:
     get:
       description: >-
@@ -23903,7 +24886,29 @@ paths:
         the Bandwidth Dashboard API to the request.  A well-formed POST on the
         /orders resource will create an order record, and return an order-id
         string that can be used to uniquely identify the new number order
-        request. <p>Please visit <a
+        request. 
+
+
+        The ExistingTelephoneNumberOrderType expects the TelephoneNumber string
+        in E.164 format.
+
+
+        Please note the following capabilities and request payload objects are
+        not supported outside of US & Canada at the moment:
+
+        1. Backorders:
+            - BackOrderRequested, CloseOrder, PartialAllowed
+
+        2. A combined search and order type.
+            - RateCenterSearchAndOrderType, AreaCodeSearchAndOrderType, NPANXXSearchAndOrderType, TollFreeWildCharSearchAndOrderType, TollFreeVanitySearchAndOrderType, LATASearchAndOrderType, ZIPSearchAndOrderType, CitySearchAndOrderType, StateSearchAndOrderType, CombinedSearchAndOrderType
+
+        3. Protected numbers:
+            - TnAttributes > TnAttribute > Protected
+
+        4. Reserved numbers:
+            - ExistingTelephoneNumberOrderType > ReservationIdList
+
+        <p>Please visit <a
         href='/docs/numbers/guides/searchingForNumbers/'>Guides and
         Tutorials</a> to learn more.</p>
       operationId: CreateOrder
@@ -24037,6 +25042,11 @@ paths:
                               <TelephoneNumber>9193752720</TelephoneNumber>
                               <TelephoneNumber>9193752648</TelephoneNumber>
                           </TelephoneNumberList>
+                          <E164TelephoneNumberList>
+                              <E164TelephoneNumber>+19193752369</E164TelephoneNumber>
+                              <E164TelephoneNumber>+19193752720</E164TelephoneNumber>
+                              <E164TelephoneNumber>+19193752648</E164TelephoneNumber>
+                          </E164TelephoneNumberList>
                           <ReservationIdList>
                               <ReservationId>[GUID]</ReservationId>
                               <ReservationId>[GUID]</ReservationId>
@@ -24374,7 +25384,7 @@ paths:
         - Orders
     put:
       description: >-
-        With the introduction of Backorder capabilities, new number orders may
+        For orders that support Backorder capabilities, new number orders may
         stay in backordered state while the order is filled. While in this state
         it is possible to update the modifiable fields in the record, as well as
         to request that backorder processing of the order be ended.
@@ -24451,8 +25461,8 @@ paths:
   /accounts/{accountId}/orders/{orderId}/areaCodes:
     get:
       description: >-
-        Retrieves the area codes of the phone numbers from the specified order.
-        <p>Please visit <a
+        <b>This endpoint shall be deprecated. </b><br><br>Retrieves the area
+        codes of the phone numbers from the specified order.<p>Please visit <a
         href='/docs/numbers/guides/searchingForNumbers/'>Guides and
         Tutorials</a> to learn more.</p>
       operationId: ListOrderAreaCodes
@@ -24483,7 +25493,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TelephoneDetailsAreaCodes'
           description: ''
-      summary: List Telephone Number order area codes
+      summary: List Telephone Number order area codes (US&C)
       tags:
         - Orders
   /accounts/{accountId}/orders/{orderId}/history:
@@ -24749,8 +25759,8 @@ paths:
   /accounts/{accountId}/orders/{orderId}/npaNxx:
     get:
       description: >-
-        Retrieves the Npa-Nxx of the phone numbers from the specified order.
-        <p>Please visit <a
+        <b>This endpoint shall be deprecated. </b><br><br>Retrieves the Npa-Nxx
+        of the phone numbers from the specified order.<p>Please visit <a
         href='/docs/numbers/guides/searchingForNumbers/'>Guides and
         Tutorials</a> to learn more.</p>
       operationId: ListOrderNpaNxx
@@ -24781,7 +25791,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TelephoneDetailsNpaNxx'
           description: ''
-      summary: List Telephone Number order Npa-Nxx
+      summary: List Telephone Number order Npa-Nxx (US&C)
       tags:
         - Orders
   /accounts/{accountId}/orders/{orderId}/tns:
@@ -24813,6 +25823,7 @@ paths:
                     <TelephoneNumbers>
                         <Count>1</Count>
                         <TelephoneNumber>8042105666</TelephoneNumber>
+                        <E164TelephoneNumber>+18042105666</E164TelephoneNumber>
                     </TelephoneNumbers>
               schema:
                 $ref: '#/components/schemas/OrderTelephoneNumbersResponse'
@@ -25023,7 +26034,7 @@ paths:
           description: The port-ins have been successfully retrieved.
       summary: List port-in orders
       tags:
-        - Porting
+        - Porting (US&C)
     post:
       description: >-
         Creates a port-in order for the specified telephone number(s) and
@@ -25129,7 +26140,7 @@ paths:
           description: The order failed; one of the input parameters is invalid.
       summary: Create port-in order
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/portins/status:
     get:
       description: Gets Port In orders which were last modified in the specified date range
@@ -25162,7 +26173,7 @@ paths:
           description: ''
       summary: Get Port In Range
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/portins/totals:
     get:
       description: Retrieves the total count of port-ins.
@@ -25201,7 +26212,7 @@ paths:
             payload.
       summary: Retrieve total count of port-in orders
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/portins/{orderId}:
     delete:
       description: >-
@@ -25257,7 +26268,7 @@ paths:
             already processed, and therefore cannot be deleted.
       summary: Delete port-in order
       tags:
-        - Porting
+        - Porting (US&C)
     get:
       description: >-
         Retrieves the information associated with the specified port-in ID
@@ -25293,7 +26304,7 @@ paths:
             payload.
       summary: Retrieve port-in order
       tags:
-        - Porting
+        - Porting (US&C)
     put:
       description: >
         <p>It is possible to change ("SUPP" in LNP terms) an existing LNP order.
@@ -25533,7 +26544,7 @@ paths:
             submit this port-in detach it from the parent bulk port-in.
       summary: Update port-in order
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/portins/{orderId}/activationStatus:
     get:
       description: >-
@@ -25609,7 +26620,7 @@ paths:
             been erased.</p>
       summary: Retrieve port-in order activation status
       tags:
-        - Porting
+        - Porting (US&C)
     put:
       description: >
         Sets the activation time for the port-in order.  <br> <br>
@@ -25701,7 +26712,7 @@ paths:
           description: Order id was not found.
       summary: Update port-in order activation status
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/portins/{orderId}/areaCodes:
     get:
       description: >-
@@ -25738,7 +26749,7 @@ paths:
             payload.
       summary: List port-in area codes
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/portins/{orderId}/history:
     get:
       description: >-
@@ -25816,7 +26827,7 @@ paths:
           description: NOT FOUND - the order id does not exist in the system
       summary: Retrieve port-in order history
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/portins/{orderId}/loas:
     get:
       description: >-
@@ -25868,7 +26879,7 @@ paths:
             case where the list is empty.
       summary: List port-in loa files
       tags:
-        - Porting
+        - Porting (US&C)
     post:
       description: >-
         POSTing to the /loas resource will enable the upload of the file.  The
@@ -25962,7 +26973,7 @@ paths:
           description: A 400 indicates that the requested upload failed.
       summary: Upload port-in loa file
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/portins/{orderId}/loas/{fileid}:
     delete:
       description: Deletes the file associated with the order
@@ -25990,7 +27001,7 @@ paths:
             with the order id.
       summary: Delete port-in loa file
       tags:
-        - Porting
+        - Porting (US&C)
     get:
       description: Retrieves the file associated with the order
       operationId: RetrievePortinLoaFile
@@ -26040,7 +27051,7 @@ paths:
             with the order id.
       summary: Retrieve port-in loa file
       tags:
-        - Porting
+        - Porting (US&C)
     put:
       description: >-
         A PUT on the filename will update / replace the identified file id.  The
@@ -26118,7 +27129,7 @@ paths:
           description: A 404 indicates that the file was not available for replacement.
       summary: Update port-in loa file
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/portins/{orderId}/loas/{fileid}/metadata:
     delete:
       description: Deletes the metadata previously associated with the identified file.
@@ -26148,7 +27159,7 @@ paths:
             with the order id.
       summary: Delete port-in loa file metadata
       tags:
-        - Porting
+        - Porting (US&C)
     get:
       description: Retrieves the metadata associated with the file.
       operationId: RetrievePortinLoaMetadata
@@ -26188,7 +27199,7 @@ paths:
             with the order id.
       summary: Retrieve port-in loa file metadata
       tags:
-        - Porting
+        - Porting (US&C)
     put:
       description: >-
         Associate metadata with the file named in the resource path.  This will
@@ -26232,7 +27243,7 @@ paths:
           description: Some error has occured as a result of the attempt.
       summary: Update port-in loa file metadata
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/portins/{orderId}/losingCarrier:
     get:
       description: >-
@@ -26253,7 +27264,7 @@ paths:
             payload
       summary: Get Port-in Losing Carrier Info
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/portins/{orderId}/notes:
     get:
       description: Retrieve all notes associated with the order. <br>
@@ -26304,7 +27315,7 @@ paths:
             be used if the resource was addressed with an identifier
       summary: List port-in order notes
       tags:
-        - Porting
+        - Porting (US&C)
     post:
       description: >-
         Updates the Notes resource by adding a note. Adding a note to a port-in
@@ -26360,7 +27371,7 @@ paths:
             response.
       summary: Create port-in order note
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/portins/{orderId}/notes/{noteId}:
     put:
       description: Update a specified note.  Notes may only be updated, not deleted.
@@ -26414,7 +27425,7 @@ paths:
             response.
       summary: Update port-in order note
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/portins/{orderId}/npaNxx:
     get:
       description: >-
@@ -26451,7 +27462,7 @@ paths:
             payload.
       summary: List port-in npaNxx
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/portins/{orderId}/tns:
     get:
       description: >-
@@ -26486,7 +27497,7 @@ paths:
             in the payload.
       summary: List port-in tns
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/portins/{orderId}/totals:
     get:
       description: >-
@@ -26520,7 +27531,7 @@ paths:
             retrieved and displayed in the payload.
       summary: Retrieve port-in total count of tns
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/portouts:
     get:
       description: >-
@@ -26615,7 +27626,7 @@ paths:
             is omitted from the success output.
       summary: List port-out requests
       tags:
-        - Porting
+        - Porting (US&C)
     post:
       description: >-
         Creates a port-out request.<br>In the payload, CallbackUrl and
@@ -26655,7 +27666,7 @@ paths:
           description: The port-out request has been successfully received.
       summary: Create port-out request
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/portouts/status:
     get:
       description: >-
@@ -26705,7 +27716,7 @@ paths:
           description: ''
       summary: Get Port Out Range
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/portouts/totals:
     get:
       description: Retrieves the total count of port-uts.
@@ -26744,7 +27755,7 @@ paths:
             payload.
       summary: Retrieve total count of port-in orders
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/portouts/{orderId}:
     delete:
       description: Cancel port-out request.
@@ -26767,7 +27778,7 @@ paths:
           description: ''
       summary: Cancel port-out request
       tags:
-        - Porting
+        - Porting (US&C)
     get:
       description: >-
         Retrieves the information associated with the specified port-out ID
@@ -26810,7 +27821,7 @@ paths:
             is omitted from the success output.
       summary: Fetch port-out request status
       tags:
-        - Porting
+        - Porting (US&C)
     put:
       description: >-
         Updates or cancels a port-out ID. The payload to this method is similar
@@ -26857,7 +27868,7 @@ paths:
           description: The update or cancellation was successful.
       summary: Update/cancel port-out request
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/products:
     get:
       description: |
@@ -28706,7 +29717,7 @@ paths:
             of any encountered errors
       summary: List Remove Imported Tn Orders
       tags:
-        - Import Hosted Tn
+        - Import Hosted Tn (US&C)
     post:
       description: >-
         Creates a Remove Imported Tn Orders request to remove imported telephone
@@ -28787,7 +29798,7 @@ paths:
             text and an error code will be provided in the ErrorList element
       summary: Create Remove Imported Tn Order
       tags:
-        - Import Hosted Tn
+        - Import Hosted Tn (US&C)
   /accounts/{accountId}/removeImportedTnOrders/voice:
     get:
       description: >-
@@ -28901,7 +29912,7 @@ paths:
             descriptions of any encountered errors
       summary: List Remove Imported Voice Tn Orders
       tags:
-        - Import Hosted Tn
+        - Import Hosted Tn (US&C)
     post:
       description: >-
         Creates a Remove Imported Voice Tn Orders request to remove imported
@@ -29080,7 +30091,7 @@ paths:
 
       summary: Create Remove Imported Voice Tn Order
       tags:
-        - Import Hosted Tn
+        - Import Hosted Tn (US&C)
   /accounts/{accountId}/removeImportedTnOrders/voice/{orderId}:
     get:
       description: >-
@@ -29156,7 +30167,7 @@ paths:
                 </table>
       summary: Retrieve Remove Imported Voice Tn Order
       tags:
-        - Import Hosted Tn
+        - Import Hosted Tn (US&C)
   /accounts/{accountId}/removeImportedTnOrders/voice/{orderId}/history:
     get:
       description: Retrieves the history of the specified Remove Imported Voice Tn Order
@@ -29199,7 +30210,7 @@ paths:
             payload
       summary: Retrieve Remove Imported Voice Tn Order history
       tags:
-        - Import Hosted Tn
+        - Import Hosted Tn (US&C)
   /accounts/{accountId}/removeImportedTnOrders/{orderId}:
     get:
       description: Retrieve information about a removeImportedTnOrder with specified ID
@@ -29268,7 +30279,7 @@ paths:
           description: Order id is not valid
       summary: Retrieve Remove Imported Tn Order
       tags:
-        - Import Hosted Tn
+        - Import Hosted Tn (US&C)
   /accounts/{accountId}/removeImportedTnOrders/{orderId}/history:
     get:
       description: Retrieves the history of the specified Remove Imported Tn Order
@@ -29333,7 +30344,7 @@ paths:
           description: Order id is not valid
       summary: Retrieve Remove Imported Tn Order history
       tags:
-        - Import Hosted Tn
+        - Import Hosted Tn (US&C)
   /accounts/{accountId}/reports:
     get:
       description: >-
@@ -31040,7 +32051,8 @@ paths:
     get:
       description: >-
         Retrieves all the telephone numbers currently in-service for the given
-        Site
+        Site<br><br> Only inservice US and Canada numbers are returned for these
+        query parameters- npaNxx, npaNxxx, lata, state, ratecenter.
       operationId: RetrieveSiteInserviceNumbers
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
@@ -31160,8 +32172,10 @@ paths:
                        <TelephoneNumbers>
                           <Count>3</Count>
                           <TelephoneNumber>4352154855</TelephoneNumber>
+                          <E164TelephoneNumber>+14352154855</E164TelephoneNumber>
                           <!-- SNIP -->
                           <TelephoneNumber>4352161523</TelephoneNumber>
+                          <E164TelephoneNumber>+14352161523</E164TelephoneNumber>
                        </TelephoneNumbers>
                     </TNs>
               schema:
@@ -31281,8 +32295,10 @@ paths:
         - Orders
   /accounts/{accountId}/sites/{siteId}/orders/{orderId}:
     get:
-      description: Retrieves order information associated with the given Site
-      operationId: RetrieveSiteOrder
+      description: >-
+        <b>This endpoint shall be deprecated. </b><br><br>Retrieves order
+        information associated with the given Site
+      operationId: RetrieveSiteOrder (US&C)
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
         - description: Site ID of the order
@@ -31455,7 +32471,7 @@ paths:
           description: The port-ins have been successfully retrieved.
       summary: Retrieve Site Port-In orders
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/sites/{siteId}/sippeers:
     get:
       description: Retrieve information about a Sip Peer or set of Sip Peers on Site
@@ -32271,7 +33287,7 @@ paths:
             messaging cannot be moved to a sippeer without the SMS feature
             enabled.</li>    <li>Shared TNs with voice cannot be moved to a
             sippeer with the SMS feature enabled.</li></ul>
-      summary: Move bulk tns to sipper
+      summary: Move bulk tns to sipper (US&C)
       tags:
         - Move Tns
   /accounts/{accountId}/sites/{siteId}/sippeers/{sipPeerId}/products:
@@ -34277,6 +35293,10 @@ paths:
                       properties:
                         CompletedTelephoneNumbers:
                           properties:
+                            E164TelephoneNumbers:
+                              items:
+                                type: string
+                              type: array
                             TelephoneNumbers:
                               items:
                                 type: string
@@ -34305,6 +35325,10 @@ paths:
                       properties:
                         CompletedTelephoneNumbers:
                           properties:
+                            E164TelephoneNumbers:
+                              items:
+                                type: string
+                              type: array
                             TelephoneNumbers:
                               items:
                                 type: string
@@ -34780,7 +35804,7 @@ paths:
             error code and text description.
       summary: Retrieve tn port-out passcode
       tags:
-        - Porting
+        - Porting (US&C)
     post:
       description: >-
         Retrieve information about one or more Telephone Numbers (TNs), where
@@ -34871,7 +35895,7 @@ paths:
             Bad Request - when in the POST body specified more then
             {pagination.maxsize} TNs.
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/tnoptions:
     get:
       description: >-
@@ -35528,7 +36552,7 @@ paths:
           description: The Telephone Number requested is not available.
       summary: Reserve tn
       tags:
-        - Tn Reservation
+        - Tn Reservation (US&C)
   /accounts/{accountId}/tnreservation/{reservationid}:
     delete:
       description: Deletes a TN reservation.
@@ -35562,7 +36586,7 @@ paths:
           description: A reservation has been successfully deleted.
       summary: Delete tn reservation
       tags:
-        - Tn Reservation
+        - Tn Reservation (US&C)
     get:
       description: Retrieves a TN reservation's information.
       operationId: GetTnReservation
@@ -35595,7 +36619,7 @@ paths:
           description: A reservation's information has been successfully retrieved.
       summary: Retrieve tn reservation's information
       tags:
-        - Tn Reservation
+        - Tn Reservation (US&C)
   /accounts/{accountId}/tollFreePortingValidations:
     get:
       description: >
@@ -35797,7 +36821,7 @@ paths:
           description: The accountId specified in the request URI is not found.
       summary: Retrieve toll-free porting validations
       tags:
-        - Porting
+        - Porting (US&C)
     post:
       description: >-
         A list of toll free telephone numbers submitted to this endpoint will
@@ -36140,7 +37164,7 @@ paths:
             Query received vendor http response: xxx
       summary: Create toll-free porting validation
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/tollFreePortingValidations/{orderId}:
     get:
       description: Fetch a specified toll free porting validation order.
@@ -36314,7 +37338,7 @@ paths:
             specified in the request URI is not found.
       summary: Retrieve toll-free porting validation
       tags:
-        - Porting
+        - Porting (US&C)
     patch:
       description: >-
         Cancel a toll free porting validation order in the PROCESSING state. 
@@ -36451,7 +37475,7 @@ paths:
             PROCESSING state.
       summary: Patch toll-free porting validation
       tags:
-        - Porting
+        - Porting (US&C)
   /accounts/{accountId}/totalSeats:
     get:
       description: Retrieves the total number of seats on account
@@ -36643,12 +37667,21 @@ paths:
                     <TelephoneNumber> ... </TelephoneNumber>
                     <!-- ... -->
                     </CompletedTelephoneNumbers>
+                    <CompletedE164TelephoneNumbers>
+                    <!-- for portins/portouts/orders/disconnects OrderTypes -->
+                    <E164TelephoneNumber> ... </E164TelephoneNumber>
+                    <!-- ... -->
+                    </CompletedE164TelephoneNumbers>
                     <!-- for event updates -->
                     <EventType> [MESSAGING_LOST] </EventType>
                     <ImpactedTelephoneNumbers>
                       <TelephoneNumber> ... </TelephoneNumber>
                       <!-- ... -->
                     </ImpactedTelephoneNumbers>
+                    <ImpactedE164TelephoneNumbers>
+                      <E164TelephoneNumber> ... </E164TelephoneNumber>
+                      <!-- ... -->
+                    </ImpactedE164TelephoneNumbers>
                   </Notification>
             schema:
               $ref: '#/components/schemas/NotificationCallbackRequest'
@@ -36792,7 +37825,7 @@ paths:
 
             Numbers <b>will be ported out</b> if a 5xx series response is
             received by Bandwidth</p>
-      summary: Port-out validation webhook
+      summary: Port-out validation webhook (US&C)
       tags:
         - Callbacks
   /cities:
@@ -36963,7 +37996,7 @@ paths:
             included.
       summary: List Cities
       tags:
-        - Cities
+        - Cities (US&C)
   /coveredRateCenters:
     get:
       description: >-
@@ -37227,7 +38260,7 @@ paths:
           description: Invalid query parameter value.
       summary: List Covered Rate Centers
       tags:
-        - Rate Centers
+        - Rate Centers (US&C)
   /coveredRateCenters/{rateCenterId}:
     get:
       description: >-
@@ -37300,7 +38333,7 @@ paths:
           description: NOT FOUND - the rate center id does not exist in the system.
       summary: Retrieve Covered Rate Centers
       tags:
-        - Rate Centers
+        - Rate Centers (US&C)
   /rateCenters:
     get:
       description: >-
@@ -37465,7 +38498,7 @@ paths:
             available in that Rate Center is also included.
       summary: List Rate Centers
       tags:
-        - Rate Centers
+        - Rate Centers (US&C)
   /tns:
     get:
       description: >-
@@ -38636,24 +39669,25 @@ servers:
     url: https://dashboard.bandwidth.com/api
     variables: {}
 tags:
-  - name: 10DLC
+  - name: 10DLC (US&C)
   - name: Account
-  - name: Addresses
+  - name: Address
+  - name: Addresses (US&C)
   - description: >-
       Bandwidth uses HTTP webhooks to send message & voice events to any
       publicly addressable url.
     externalDocs:
       description: Application guide
       url: /docs/account/applications/
-    name: Applications
+    name: Applications (US&C)
   - name: Available Tns
   - description: Manage bulk port-in orders
     externalDocs:
       description: Bulk port-in guide
       url: /docs/numbers/guides/porting/createBulkPortins
-    name: Bulk Port-In
+    name: Bulk Port-In (US&C)
   - name: Callbacks
-  - name: Cities
+  - name: Cities (US&C)
   - description: >-
       DLDA = Directory Listing and Directory Assistance. A DLDA resource
       associates a TN with a Street Address. This gets updated in a Network
@@ -38662,12 +39696,12 @@ tags:
       description: DLDA guide
       url: >-
         /docs/numbers/guides/manageNumberFeatures/#directory-listing-and-directory-assistance-dlda
-    name: DLDA
+    name: DLDA (US&C)
   - description: DLR - Dynamic location routing
     externalDocs:
       description: DLR guide
       url: /docs/emergency/dashboard/dlr/
-    name: DLR
+    name: DLR (US&C)
   - description: >-
       Disconnecting a phone number leaves it in all applicable inventories, but
       makes it available for activation with a new subscriber.
@@ -38683,25 +39717,25 @@ tags:
       description: Emergency notification guide
       url: /docs/emergency/dashboard/notifications/
     name: Emergency Notification
-  - name: External Tn
+  - name: External Tn (US&C)
   - name: Import Tn
-  - name: Import Hosted Tn
+  - name: Import Hosted Tn (US&C)
   - name: In-service Numbers
   - description: LIDB - Line Information DataBase
     externalDocs:
       description: LIDB guide
       url: >-
         /docs/numbers/guides/manageNumberFeatures/#calling-name-display-update-lidb
-    name: LIDB
+    name: LIDB (US&C)
   - name: Move Tns
-  - name: Numbers Assignment
+  - name: Numbers Assignment (US&C)
   - name: Orders
   - description: ''
     externalDocs:
       description: Porting guide
       url: /docs/numbers/guides/portingNumbers/
-    name: Porting
-  - name: Rate Centers
+    name: Porting (US&C)
+  - name: Rate Centers (US&C)
   - externalDocs:
       description: Reports guide
       url: /docs/numbers/guides/setup-reports/accountReports/
@@ -38717,5 +39751,5 @@ tags:
       url: /docs/account/subscriptions/
     name: Subscriptions
   - name: Tn Option
-  - name: Tn Reservation
+  - name: Tn Reservation (US&C)
   - name: Tns
