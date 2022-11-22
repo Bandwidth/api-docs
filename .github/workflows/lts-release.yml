@@ -56,3 +56,34 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           content-path: ./lts/build
+
+  update_lts_table:
+    name: Automatically update the LTS table
+    runs-on: ubuntu-latest
+    needs: [lts_needed, create_lts]
+    if: ${{!needs.lts_needed.outputs.no_release}}
+    steps:
+      - name: Get Latest LTS Releases and Update the LTS config file
+        run: |
+          cat > lts.config.json <<< $(jq -r '[nth(0,1,2,3,4,5,6,7,8,9,10,11;.[] | select(.name | match(".+LTS")) | .name | rtrimstr("-LTS"))] | unique | reverse' <<< $(curl -Ls -H "Accept: application/vnd.github+json" -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/Bandwidth/api-docs/releases))
+        env:
+          TOKEN: ${{ secrets.DX_GITHUB_TOKEN }}
+
+      - name: Create Pull Request
+        id: lts-pr
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.DX_GITHUB_TOKEN }}
+          commit-message: Updating LTS Versions
+          committer: GitHub <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          branch: Auto-Update-LTS
+          delete-branch: true
+          title: 'Updating LTS Versions'
+          body: |
+            - Auto-generated for LTS Version Update Workflow
+          labels: |
+            automated pr
+          draft: false
+        env: 
+          GITHUB_TOKEN: ${{ secrets.DX_GITHUB_TOKEN }}     

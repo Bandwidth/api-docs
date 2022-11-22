@@ -4,6 +4,7 @@ const path = require('path');
 
 const customConfig = require('./custom.config.json');
 const blogPosts = require('./blogposts.config.json');
+const ltsVersions = require('./lts.config.json');
 const numbersSpec = fs.readFileSync('./specs/numbers.yml', 'utf-8');
 const phoneNumberLookupSpec = fs.readFileSync('./specs/phone-number-lookup.yml', 'utf-8');
 const voiceSpec = fs.readFileSync('./specs/voice.yml', 'utf-8');
@@ -157,6 +158,8 @@ module.exports = {
         // identitySpec: YAML.parse(identitySpec),
 
         blogPosts: blogPosts,
+
+        ltsVersions: ltsVersions,
 
         // CSS Colors
         bwBlue: '#079CEE',
