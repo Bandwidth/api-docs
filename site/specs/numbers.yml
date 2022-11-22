@@ -4737,14 +4737,6 @@ components:
             - $ref: '#/components/schemas/LnpOrderBasic'
             - $ref: '#/components/schemas/LnpOrderAdditionalFields'
             - properties:
-                Immediately:
-                  description: >-
-                    Including `Immediately` with a value of `true` will cause an
-                    Internal port-in to complete as soon as possible, without
-                    requiring a scheduled activation
-                    time.<br/><br/>`Immediately` has no meaning for port types
-                    other than Internal.
-                  type: boolean
                 NewBillingTelephoneNumber:
                   description: >-
                     This field is used to specify a new billing telephone number
@@ -5235,7 +5227,7 @@ components:
           type: string
         ProcessingStatus:
           description: >-
-            May only be SUPPed for port-in orders in draft state. The only valid
+            May only be SUPPed for port-in orders in DRAFT state. The only valid
             value is “SUBMITTED” (not case sensitive).
           type: string
         RequestedFocDate:
@@ -5505,19 +5497,10 @@ components:
         - $ref: '#/components/schemas/LnpOrderBasicModifiableFields'
         - $ref: '#/components/schemas/LnpOrderAdditionalModifiableFields'
       properties:
-        Immediately:
-          description: May be included in the PUT payload as is, but cannot be changed.
-          type: boolean
         LoaAuthorizingPerson:
           type: string
         NewBillingTelephoneNumber:
           type: string
-        OverrideValidation:
-          description: >-
-            This Bandwidth internal flag forces port-out to bypass validity
-            checking (if there are no terminal errors). This flag can be SUPPed
-            only for orders in EXCEPTION status.
-          type: boolean
         PartialPort:
           type: string
         WirelessInfo:
@@ -5769,12 +5752,6 @@ components:
           items:
             $ref: '#/components/schemas/LsrOrderError'
           type: array
-        OverrideValidation:
-          description: >-
-            This Bandwidth internal field is applicable only to Internal orders
-            that are in Exception state. A value of true bypasses all port-out
-            validation checking.
-          type: boolean
         PartialPort:
           description: >-
             The PartialPort must be set to true if the intent is to NOT port all
@@ -6650,9 +6627,6 @@ components:
                 AutoActivation:
                   description: ''
                   type: string
-                BillingType:
-                  description: ''
-                  type: string
                 NewBillingTelephoneNumber:
                   description: >-
                     This field is used to specify a new billing telephone number
@@ -7429,6 +7403,13 @@ components:
               type: array
           type: object
       type: object
+    PortinLosingCarrierErrorResponse:
+      allOf:
+        - $ref: '#/components/schemas/ResponseStatus'
+      title: PortinLosingCarrierResponse
+      type: object
+      xml:
+        name: PortinLosingCarrierResponse
     PortinLosingCarrierInfo:
       properties:
         AccountNumberRequired:
@@ -22468,47 +22449,32 @@ paths:
                 description: example
                 value: |-
                   <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                  <LsrOrder>
-                    <!-- By customer. Alphanumeric and "#","-","_". Up to 25 character long. (required) -->
-                    <Pon>ATT-011515-324234</Pon>
-                    <!-- By customer. Alphanumeric and " ","-". Up to 40 character long. (optional) -->
-                    <CustomerOrderId>FineCustomerid</CustomerOrderId> 
-                    <!-- By customer. Alphanumeric. Up to 4 character long. (required if account value "mult") -->
-                    <SPID>123C</SPID> 
-                    <!-- Non-toll-free btn (optional) -->
-                    <BillingTelephoneNumber>9192381468</BillingTelephoneNumber>
-                    <!-- Requested date (not past, optional, default next day) -->  
-                    <RequestedFocDate>2015-11-15</RequestedFocDate>
-                    <AuthorizingPerson>Jim Hopkins</AuthorizingPerson>
-                    <Subscriber>
-                        <!--Type of the subscriber. BUSINESS | RESIDENTIAL (optional) (RESIDENTIAL if not specified)-->
-                        <SubscriberType>BUSINESS</SubscriberType> 
-                        <!-- Up to 25 character long (required) -->  
-                        <BusinessName>BusinessName</BusinessName>     
-                        <ServiceAddress>
-                            <!-- HouseNumber up to 45 characters (required) -->
-                            <HouseNumber>11</HouseNumber>
-                            <!-- StreetName up to 200 characters (required) -->
-                            <StreetName>Park</StreetName>
-                            <!-- StreetSuffix  up to 45 characters (optional) -->
-                            <StreetSuffix>Ave</StreetSuffix>
-                            <!-- City  up to 100 characters (required) -->
-                            <City>New York</City>
-                            <!-- StateCode 2 characters (required) -->
-                            <StateCode>NY</StateCode>
-                            <!-- ZipCode 5 num or 5+4 num (required) -->
-                            <Zip>90025</Zip>
-                        </ServiceAddress>
-                        <!-- Alphanumeric up to 32 character long (optional) -->
-                        <AccountNumber>123463</AccountNumber>
-                        <!-- Alphanumeric up to 10 character long (optional) --> 
-                        <PinNumber>1231</PinNumber> 
-                    </Subscriber>
-                    <!-- Toll-free number not allowed -->
-                    <ListOfTelephoneNumbers>  
-                        <TelephoneNumber>9192381468</TelephoneNumber> 
-                        <TelephoneNumber>9192381467</TelephoneNumber>
-                    </ListOfTelephoneNumbers>
+                  <LsrOrder>  
+                      <Pon>ATT-011515-324234</Pon>  
+                      <CustomerOrderId>FineCustomerid</CustomerOrderId>   
+                      <SPID>123C</SPID>   
+                      <BillingTelephoneNumber>9192381468</BillingTelephoneNumber>  
+                      <RequestedFocDate>2015-11-15</RequestedFocDate>
+                      <AuthorizingPerson>Jim Hopkins</AuthorizingPerson>
+                      <Subscriber>      
+                          <SubscriberType>BUSINESS</SubscriberType>       
+                          <BusinessName>BusinessName</BusinessName>
+                          <ServiceAddress>          
+                              <HouseNumber>11</HouseNumber>          
+                              <StreetName>Park</StreetName>          
+                              <StreetSuffix>Ave</StreetSuffix>          
+                              <City>New York</City>          
+                              <StateCode>NY</StateCode>          
+                              <Zip>90025</Zip>
+                          </ServiceAddress>      
+                          <AccountNumber>123463</AccountNumber>      
+                          <PinNumber>1231</PinNumber>
+                      </Subscriber>  
+
+                      <ListOfTelephoneNumbers>
+                          <TelephoneNumber>9192381468</TelephoneNumber>
+                          <TelephoneNumber>9192381467</TelephoneNumber>
+                      </ListOfTelephoneNumbers>
                   </LsrOrder>
             schema:
               $ref: '#/components/schemas/LsrOrder'
@@ -25040,8 +25006,8 @@ paths:
         content:
           application/xml:
             examples:
-              Simple response:
-                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrder>\n\t<RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>\n\t<AlternateSpid>X455</AlternateSpid>\n\t<BillingTelephoneNumber>9195551234</BillingTelephoneNumber>\n\t<NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>\n\t<SiteId>    SITE ID     </SiteId>\n\t<PeerId>  SIPPEER ID    </PeerId>\n\t<Subscriber>\n\t\t<SubscriberType>BUSINESS</SubscriberType>\n\t\t<FirstName>First</FirstName>\n\t\t<LastName>Last</LastName>\n\t\t<ServiceAddress>\n\t\t\t<HouseNumber>11235</HouseNumber>\n\t\t\t<StreetName>Back</StreetName>\n\t\t\t<City>Denver</City>\n\t\t\t<StateCode>CO</StateCode>\n\t\t\t<Zip>27541</Zip>\n\t\t\t<County>Canyon</County>\n\t\t</ServiceAddress>\n\t</Subscriber>\n\t<LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>\n\t<WirelessInfo>\n\t\t<AccountNumber>771297665AABC</AccountNumber>\n\t\t<PinNumber>1234</PinNumber>\n\t</WirelessInfo>\n\t<TnAttributes>\n\t\t<TnAttribute>Protected</TnAttribute>\n\t\t<TnAttribute>External</TnAttribute>\n\t\t<TnAttribute>Imported</TnAttribute>\n\t</TnAttributes>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>9194809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n\t<CustomerOrderId>myOrder</CustomerOrderId>\n\t<Triggered>true</Triggered>\n\t<PartialPort>true</PartialPort>\n\t<Immediately>false</Immediately>\n\t<ProcessingStatus>DRAFT</ProcessingStatus>\n</LnpOrder>"
+              Simple request:
+                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrder>\n\t<RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>\n\t<AlternateSpid>X455</AlternateSpid>\n\t<BillingTelephoneNumber>9195551234</BillingTelephoneNumber>\n\t<NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>\n\t<SiteId>    SITE ID     </SiteId>\n\t<PeerId>  SIPPEER ID    </PeerId>\n\t<Subscriber>\n\t\t<SubscriberType>BUSINESS</SubscriberType>\n\t\t<FirstName>First</FirstName>\n\t\t<LastName>Last</LastName>\n\t\t<ServiceAddress>\n\t\t\t<HouseNumber>11235</HouseNumber>\n\t\t\t<StreetName>Back</StreetName>\n\t\t\t<City>Denver</City>\n\t\t\t<StateCode>CO</StateCode>\n\t\t\t<Zip>27541</Zip>\n\t\t\t<County>Canyon</County>\n\t\t</ServiceAddress>\n\t</Subscriber>\n\t<LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>\n\t<WirelessInfo>\n\t\t<AccountNumber>771297665AABC</AccountNumber>\n\t\t<PinNumber>1234</PinNumber>\n\t</WirelessInfo>\n\t<TnAttributes>\n\t\t<TnAttribute>Protected</TnAttribute>\n\t\t<TnAttribute>External</TnAttribute>\n\t\t<TnAttribute>Imported</TnAttribute>\n\t</TnAttributes>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>9194809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n\t<CustomerOrderId>myOrder</CustomerOrderId>\n\t<Triggered>true</Triggered>\n\t<PartialPort>true</PartialPort>\n\t<ProcessingStatus>DRAFT</ProcessingStatus>\n</LnpOrder>"
               Toll Free port-in:
                 value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrder>\n\t<CustomerOrderId>My order id</CustomerOrderId>\n\t<RequestedFocDate>2021-06-16Z</RequestedFocDate>\n\t<SiteId>2439</SiteId>\n\t<PeerId>23432</PeerId>\n\t<LoaAuthorizingPerson>The Authgal</LoaAuthorizingPerson>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>8774809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n</LnpOrder>"
             schema:
@@ -25056,7 +25022,7 @@ paths:
             application/xml:
               examples:
                 Simple Order Response:
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrderResponse>\n\t<OrderId>03f194d5-3932-4e9f-8ba1-03ef767985e5</OrderId>\n\t<Status>\n\t\t<Code>201</Code>\n\t\t<Description>Order request received. Please use the order id to check the status of your order later.</Description>\n\t</Status>\n\t<ProcessingStatus>PENDING_DOCUMENTS</ProcessingStatus>\n\t<RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>\n\t<LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>\n\t<Subscriber>\n\t\t<SubscriberType>BUSINESS</SubscriberType>\n\t\t<FirstName>First</FirstName>\n\t\t<LastName>Last</LastName>\n\t\t<ServiceAddress>\n\t\t\t<HouseNumber>11235</HouseNumber>\n\t\t\t<StreetName>Back</StreetName>\n\t\t\t<City>Denver</City>\n\t\t\t<StateCode>CO</StateCode>\n\t\t\t<Zip>27541</Zip>\n\t\t\t<County>Canyon</County>\n\t\t\t<Country>United States</Country>\n\t\t</ServiceAddress>\n\t</Subscriber>\n\t<WirelessInfo>\n\t\t<AccountNumber>771297665AABC</AccountNumber>\n\t\t<PinNumber>1234</PinNumber>\n\t</WirelessInfo>\n\t<TnAttributes>\n\t\t<TnAttribute>Protected</TnAttribute>\n\t\t<TnAttribute>External</TnAttribute>\n\t\t<TnAttribute>Imported</TnAttribute>\n\t</TnAttributes>\n\t<BillingTelephoneNumber>9195551234</BillingTelephoneNumber>\n\t<NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>\n\t<SiteId>    SITE ID     </SiteId>\n\t<PeerId>  SIPPEER ID    </PeerId>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>9194809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n\t<CustomerOrderId>myOrder</CustomerOrderId>\n\t<Triggered>true</Triggered>\n\t<PartialPort>true</PartialPort>\n\t<Immediately>true</Immediately>\n</LnpOrderResponse>"
+                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrderResponse>\n\t<OrderId>03f194d5-3932-4e9f-8ba1-03ef767985e5</OrderId>\n\t<Status>\n\t\t<Code>201</Code>\n\t\t<Description>Order request received. Please use the order id to check the status of your order later.</Description>\n\t</Status>\n\t<ProcessingStatus>PENDING_DOCUMENTS</ProcessingStatus>\n\t<RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>\n\t<LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>\n\t<Subscriber>\n\t\t<SubscriberType>BUSINESS</SubscriberType>\n\t\t<FirstName>First</FirstName>\n\t\t<LastName>Last</LastName>\n\t\t<ServiceAddress>\n\t\t\t<HouseNumber>11235</HouseNumber>\n\t\t\t<StreetName>Back</StreetName>\n\t\t\t<City>Denver</City>\n\t\t\t<StateCode>CO</StateCode>\n\t\t\t<Zip>27541</Zip>\n\t\t\t<County>Canyon</County>\n\t\t\t<Country>United States</Country>\n\t\t</ServiceAddress>\n\t</Subscriber>\n\t<WirelessInfo>\n\t\t<AccountNumber>771297665AABC</AccountNumber>\n\t\t<PinNumber>1234</PinNumber>\n\t</WirelessInfo>\n\t<TnAttributes>\n\t\t<TnAttribute>Protected</TnAttribute>\n\t\t<TnAttribute>External</TnAttribute>\n\t\t<TnAttribute>Imported</TnAttribute>\n\t</TnAttributes>\n\t<BillingTelephoneNumber>9195551234</BillingTelephoneNumber>\n\t<NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>\n\t<SiteId>    SITE ID     </SiteId>\n\t<PeerId>  SIPPEER ID    </PeerId>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>9194809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n\t<CustomerOrderId>myOrder</CustomerOrderId>\n\t<Triggered>true</Triggered>\n\t<PartialPort>true</PartialPort>\n</LnpOrderResponse>"
                 Toll Free Order Response:
                   value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrderResponse>\n\t<OrderId>03f194d5-3932-4e9f-8ba1-03ef767985e5</OrderId>\n\t<Status>\n\t\t<Code>201</Code>\n\t\t<Description>Order request received. Please use the order id to check the status of your order later.</Description>\n\t</Status>\n\t<ProcessingStatus>VALIDATE_TFNS</ProcessingStatus>\n\t<RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>\n\t<LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>8774809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n\t<TollFreeValidationStatus>PROCESSING</TollFreeValidationStatus>\n\t<TollFreePortType>Phase1TollFree</TollFreePortType>\n</LnpOrderResponse>"
               schema:
@@ -25279,13 +25245,97 @@ paths:
             application/xml:
               examples:
                 Port-in in CANCELLED state:
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrderResponse>\n\t<Errors>\n\t\t<Code>7205</Code>\n\t\t<Description>Telephone number is already being processed on another order</Description>\n\t</Errors>\n\t<ProcessingStatus>CANCELLED</ProcessingStatus>\n\t<BulkPortinOrderId>b4e227b3-2caf-4546-9af7-849c60dce942</BulkPortinOrderId>\n\t<RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>\n\t<!-- Is set by system for draft portins only -->\n\t<EarliestEstimate>2016-03-25T21:15:00.000Z</EarliestEstimate>\n\t<CustomerOrderId>SJM00002</CustomerOrderId>\n\t<LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>\n\t<Subscriber>\n\t\t<SubscriberType>BUSINESS</SubscriberType>\n\t\t<FirstName>First</FirstName>\n\t\t<LastName>Last</LastName>\n\t\t<ServiceAddress>\n\t\t\t<HouseNumber>11235</HouseNumber>\n\t\t\t<StreetName>Back</StreetName>\n\t\t\t<City>Denver</City>\n\t\t\t<StateCode>CO</StateCode>\n\t\t\t<Zip>27541</Zip>\n\t\t\t<County>Canyon</County>\n\t\t\t<Country>United States</Country>\n\t\t\t<AddressType>Service</AddressType>\n\t\t</ServiceAddress>\n\t</Subscriber>\n\t<WirelessInfo>\n\t\t<AccountNumber>771297665AABC</AccountNumber>\n\t\t<PinNumber>1234</PinNumber>\n\t</WirelessInfo>\n\t<TnAttributes>\n\t\t<TnAttribute>Protected</TnAttribute>\n\t\t<TnAttribute>External</TnAttribute>\n\t\t<TnAttribute>Imported</TnAttribute>\n\t</TnAttributes>\n\t<BillingTelephoneNumber>9195551234</BillingTelephoneNumber>\n\t<NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>9194809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n\t<AlternateSpid>Foo</AlternateSpid>\n\t<AccountId>20</AccountId>\n\t<SiteId>2857</SiteId>\n\t<PeerId>317771</PeerId>\n\t<LosingCarrierSPID>9998</LosingCarrierSPID>\n\t<LosingCarrierName>Mock Carrier</LosingCarrierName>\n\t<LosingCarrierIsWireless>true</LosingCarrierIsWireless>\n\t<VendorName>Bandwidth CLEC</VendorName>\n\t<OrderCreateDate>2014-08-04T13:37:06.323Z</OrderCreateDate>\n\t<LastModifiedDate>2014-08-04T13:37:08.676Z</LastModifiedDate>\n\t<userId>jbm</userId>\n\t<LastModifiedBy>jbm</LastModifiedBy>\n\t<PartialPort>false</PartialPort>\n\t<Immediately>false</Immediately>\n\t<Triggered>false</Triggered>\n\t<PortType>AUTOMATED</PortType>\n</LnpOrderResponse>"
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <LnpOrderResponse>
+                        <Errors>
+                            <Code>7205</Code>
+                            <Description>Telephone number is already being processed on another order</Description>
+                        </Errors>
+                        <ProcessingStatus>CANCELLED</ProcessingStatus>
+                        <BulkPortinOrderId>b4e227b3-2caf-4546-9af7-849c60dce942</BulkPortinOrderId>
+                        <RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>
+                        <!-- Is set by system for draft portins only -->
+                        <EarliestEstimate>2016-03-25T21:15:00.000Z</EarliestEstimate>
+                        <CustomerOrderId>SJM00002</CustomerOrderId>
+                        <LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>
+                        <Subscriber>
+                            <SubscriberType>BUSINESS</SubscriberType>
+                            <FirstName>First</FirstName>
+                            <LastName>Last</LastName>
+                            <ServiceAddress>
+                                <HouseNumber>11235</HouseNumber>
+                                <StreetName>Back</StreetName>
+                                <City>Denver</City>
+                                <StateCode>CO</StateCode>
+                                <Zip>27541</Zip>
+                                <County>Canyon</County>
+                                <Country>United States</Country>
+                                <AddressType>Service</AddressType>
+                            </ServiceAddress>
+                        </Subscriber>
+                        <WirelessInfo>
+                            <AccountNumber>771297665AABC</AccountNumber>
+                            <PinNumber>1234</PinNumber>
+                        </WirelessInfo>
+                        <TnAttributes>
+                            <TnAttribute>Protected</TnAttribute>
+                            <TnAttribute>External</TnAttribute>
+                            <TnAttribute>Imported</TnAttribute>
+                        </TnAttributes>
+                        <BillingTelephoneNumber>9195551234</BillingTelephoneNumber>
+                        <NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>
+                        <ListOfPhoneNumbers>
+                            <PhoneNumber>9194809871</PhoneNumber>
+                        </ListOfPhoneNumbers>
+                        <AlternateSpid>Foo</AlternateSpid>
+                        <AccountId>20</AccountId>
+                        <SiteId>2857</SiteId>
+                        <PeerId>317771</PeerId>
+                        <LosingCarrierSPID>9998</LosingCarrierSPID>
+                        <LosingCarrierName>Mock Carrier</LosingCarrierName>
+                        <LosingCarrierIsWireless>true</LosingCarrierIsWireless>
+                        <VendorName>Bandwidth CLEC</VendorName>
+                        <OrderCreateDate>2014-08-04T13:37:06.323Z</OrderCreateDate>
+                        <LastModifiedDate>2014-08-04T13:37:08.676Z</LastModifiedDate>
+                        <userId>jbm</userId>
+                        <LastModifiedBy>jbm</LastModifiedBy>
+                        <PartialPort>false</PartialPort>
+                        <Triggered>false</Triggered>
+                        <PortType>AUTOMATED</PortType>
+                    </LnpOrderResponse>
                 Toll Free INVALID_DRAFT_TFNS state, non-portable TNs:
                   value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrderResponse>\n\t<ProcessingStatus>INVALID_DRAFT_TFNS</ProcessingStatus>\n\t<RequestedFocDate>2021-06-23T15:30:00Z</RequestedFocDate>\n\t<EarliestEstimate>2021-06-23T15:30:00Z</EarliestEstimate>\n\t<LoaAuthorizingPerson>Jane Doe</LoaAuthorizingPerson>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>8336521001</PhoneNumber>\n\t\t<PhoneNumber>8336522001</PhoneNumber>\n\t</ListOfPhoneNumbers>\n\t<AccountId>9900572</AccountId>\n\t<SiteId>14020</SiteId>\n\t<PeerId>521434</PeerId>\n\t<OrderCreateDate>2021-06-16T21:00:43.694Z</OrderCreateDate>\n\t<LastModifiedDate>2021-06-16T21:03:42.085Z</LastModifiedDate>\n\t<userId>testuser</userId>\n\t<LastModifiedBy>testuser</LastModifiedBy>\n\t<CustomerOrderId>MyTestOrder</CustomerOrderId>\n\t<Triggered>false</Triggered>\n\t<PortType>MANUAL_TOLLFREE</PortType>\n\t<TollFreeValidationStatus>FAILED</TollFreeValidationStatus>\n\t<TollFreeValidationErrors>\n\t\t<ErrorList>\n\t\t\t<Error>\n\t\t\t\t<Code>7642</Code>\n\t\t\t\t<Description>TN list contains at least one toll free number that cannot be ported due to spare status.</Description>\n\t\t\t\t<TelephoneNumbers>\n\t\t\t\t\t<Tn>8336521001</Tn>\n\t\t\t\t</TelephoneNumbers>\n\t\t\t</Error>\n\t\t\t<Error>\n\t\t\t\t<Code>7643</Code>\n\t\t\t\t<Description>TN list contains at least one toll free number that cannot be ported due to unavailable status.</Description>\n\t\t\t\t<TelephoneNumbers>\n\t\t\t\t\t<Tn>8336522001</Tn>\n\t\t\t\t</TelephoneNumbers>\n\t\t\t</Error>\n\t\t</ErrorList>\n\t</TollFreeValidationErrors>\n\t<TollFreePortType>PHASE_1_TOLLFREE</TollFreePortType>\n</LnpOrderResponse>"
                 Toll Free INVALID_DRAFT_TFNS state, vendor error:
                   value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrderResponse>\n\t<ProcessingStatus>INVALID_DRAFT_TFNS</ProcessingStatus>\n\t<RequestedFocDate>2021-06-23T15:30:00Z</RequestedFocDate>\n\t<EarliestEstimate>2021-06-23T15:30:00Z</EarliestEstimate>\n\t<LoaAuthorizingPerson>Jane Doe</LoaAuthorizingPerson>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>8336000001</PhoneNumber>\n\t</ListOfPhoneNumbers>\n\t<AccountId>9900572</AccountId>\n\t<SiteId>14020</SiteId>\n\t<PeerId>521434</PeerId>\n\t<OrderCreateDate>2021-06-16T21:00:43.694Z</OrderCreateDate>\n\t<LastModifiedDate>2021-06-16T21:03:42.085Z</LastModifiedDate>\n\t<userId>testuser</userId>\n\t<LastModifiedBy>testuser</LastModifiedBy>\n\t<CustomerOrderId>MyTestOrder</CustomerOrderId>\n\t<Triggered>false</Triggered>\n\t<PortType>MANUAL_TOLLFREE</PortType>\n\t<TollFreeValidationStatus>FAILED</TollFreeValidationStatus>\n\t<TollFreeValidationErrors>\n\t\t<ErrorList>\n\t\t\t<Error>\n\t\t\t\t<Code>7617</Code>\n\t\t\t\t<Description>Batch Number Query received vendor error: Service unavailable. If this condition persists, please contact Bandwidth for support.</Description>\n\t\t\t\t<TelephoneNumbers>\n\t\t\t\t\t<Tn>8336000001</Tn>\n\t\t\t\t</TelephoneNumbers>\n\t\t\t</Error>\n\t\t</ErrorList>\n\t</TollFreeValidationErrors>\n\t<TollFreePortType>PHASE_1_TOLLFREE</TollFreePortType>\n</LnpOrderResponse>"
                 Toll Free VALID_DRAFT_TFNS state:
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrderResponse>\n\t<ProcessingStatus>VALID_DRAFT_TFNS</ProcessingStatus>\n\t<RequestedFocDate>2021-06-23T15:30:00Z</RequestedFocDate>\n\t<EarliestEstimate>2021-06-23T15:30:00Z</EarliestEstimate>\n\t<LoaAuthorizingPerson>Jane Doe</LoaAuthorizingPerson>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>8336532112</PhoneNumber>\n\t\t<PhoneNumber>8336532113</PhoneNumber>\n\t\t<PhoneNumber>8336532114</PhoneNumber>\n\t</ListOfPhoneNumbers>\n\t<AccountId>9900572</AccountId>\n\t<SiteId>14020</SiteId>\n\t<PeerId>521434</PeerId>\n\t<OrderCreateDate>2021-06-16T18:51:42.161Z</OrderCreateDate>\n\t<LastModifiedDate>2021-06-16T19:51:06.244Z</LastModifiedDate>\n\t<userId>testuser</userId>\n\t<LastModifiedBy>testuser</LastModifiedBy>\n\t<CustomerOrderId>MyTestOrder</CustomerOrderId>\n\t<Triggered>false</Triggered>\n\t<PortType>MANUAL_TOLLFREE</PortType>\n\t<TollFreeValidationStatus>COMPLETE</TollFreeValidationStatus>\n\t<TollFreePortType>PHASE_1_TOLLFREE</TollFreePortType>\n                            !scope internal\n                            \n\t<ControllingRespOrgId>TST52</ControllingRespOrgId>\n                            !scope internal\n                            \n\t<TargetRespOrgId>JYT01</TargetRespOrgId>\n\t<RespOrgException>true</RespOrgException>\n\t<Internal>false</Internal>\n</LnpOrderResponse>"
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <LnpOrderResponse>
+                        <ProcessingStatus>VALID_DRAFT_TFNS</ProcessingStatus>
+                        <RequestedFocDate>2021-06-23T15:30:00Z</RequestedFocDate>
+                        <EarliestEstimate>2021-06-23T15:30:00Z</EarliestEstimate>
+                        <LoaAuthorizingPerson>Jane Doe</LoaAuthorizingPerson>
+                        <ListOfPhoneNumbers>
+                            <PhoneNumber>8336532112</PhoneNumber>
+                            <PhoneNumber>8336532113</PhoneNumber>
+                            <PhoneNumber>8336532114</PhoneNumber>
+                        </ListOfPhoneNumbers>
+                        <AccountId>9900572</AccountId>
+                        <SiteId>14020</SiteId>
+                        <PeerId>521434</PeerId>
+                        <OrderCreateDate>2021-06-16T18:51:42.161Z</OrderCreateDate>
+                        <LastModifiedDate>2021-06-16T19:51:06.244Z</LastModifiedDate>
+                        <userId>testuser</userId>
+                        <LastModifiedBy>testuser</LastModifiedBy>
+                        <CustomerOrderId>MyTestOrder</CustomerOrderId>
+                        <Triggered>false</Triggered>
+                        <PortType>MANUAL_TOLLFREE</PortType>
+                        <TollFreeValidationStatus>COMPLETE</TollFreeValidationStatus>
+                        <TollFreePortType>PHASE_1_TOLLFREE</TollFreePortType>
+                        <RespOrgException>true</RespOrgException>
+                        <Internal>false</Internal>
+                    </LnpOrderResponse>
               schema:
                 $ref: '#/components/schemas/LnpOrderResponse'
           description: >-
@@ -25353,10 +25403,10 @@ paths:
                           <FirstName>TestName</FirstName>
                           <LastName>TestLastName</LastName>
                           <ServiceAddress>
-                              <!-- If true will overwrite all address fields, 
-                               those which should be required remain required.
-                               Affect only supp. Default false. -->
-                              <ResetAddressFields>true</ResetAddressFields> 
+                              <!-- If true will overwrite all address fields,
+                                   those which should be required remain required.
+                                   Affect only supp. Default false. -->
+                              <ResetAddressFields>true</ResetAddressFields>
                               <HouseNumber>115</HouseNumber>
                               <StreetName>Monarch Way</StreetName>
                               <City>Cary</City>
@@ -25371,6 +25421,7 @@ paths:
                           <PhoneNumber>2019721005</PhoneNumber>
                       </ListOfPhoneNumbers>
                       <LoaAuthorizingPerson>TestName TestLastName</LoaAuthorizingPerson>
+                      <!-- Can only be modified if the port-in order is in DRAFT state -->
                       <AlternateSpid>Foo</AlternateSpid>
                   </LnpOrderSupp>
             schema:
@@ -25524,7 +25575,6 @@ paths:
                             <PhoneNumber>2019721103</PhoneNumber>
                         </ListOfPhoneNumbers>
                         <Triggered>false</Triggered>
-                        <BillingType>PORTIN</BillingType>
                     </LnpOrderResponse>
               schema:
                 $ref: '#/components/schemas/LnpOrderResponse'
@@ -26246,11 +26296,40 @@ paths:
         '200':
           content:
             application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <PortinLosingCarrierResponse>
+                        <LosingCarrier>
+                            <Spid>979E</Spid>
+                            <Name>Bandwidth</Name>
+                            <Wireless>false</Wireless>
+                            <AccountNumberRequired>false</AccountNumberRequired>
+                            <MinimumPortingInterval>1</MinimumPortingInterval>
+                        </LosingCarrier>
+                    </PortinLosingCarrierResponse>
               schema:
                 $ref: '#/components/schemas/PortinLosingCarrierResponse'
           description: >-
             The information has been successfully retrieved and displayed in the
             payload
+        '400':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <PortinLosingCarrierResponse>
+                        <ResponseStatus>
+                            <ErrorCode>5035</ErrorCode>
+                            <Description>port_in order 5d1086cf-f867-4811-a085-42ee966ef3a2 not found.</Description>
+                        </ResponseStatus>
+                    </PortinLosingCarrierResponse>
+              schema:
+                $ref: '#/components/schemas/PortinLosingCarrierErrorResponse'
+          description: Order is not found
       summary: Get Port-in Losing Carrier Info
       tags:
         - Porting
