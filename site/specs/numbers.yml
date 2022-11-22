@@ -3046,7 +3046,7 @@ components:
             - PURGE
           type: string
         E164TelephoneNumberList:
-          description: A list of telephone numbers to disconnect in E164 format.
+          description: A list of telephone numbers to disconnect in E.164 format.
           items:
             $ref: '#/components/schemas/E164TelephoneNumber'
           type: array
@@ -3221,7 +3221,7 @@ components:
     E164TelephoneNumber:
       properties:
         E164TelephoneNumber:
-          description: E164 Telephone Number.
+          description: E.164 Telephone Number.
           type: string
       type: object
     E164TelephoneNumberList:
@@ -10886,13 +10886,13 @@ components:
               type: string
           type: object
       type: object
-    TnOptionGroup:
+    TnOptionGroupRequest:
       properties:
         A2pSettings:
           $ref: '#/components/schemas/A2pSettings'
         CallForward:
           enum:
-            - 10digit
+            - '{custom value}'
             - unchanged
             - systemDefault
           type: string
@@ -10903,6 +10903,125 @@ components:
             - unchanged
             - systemDefault
           type: string
+        ESPID:
+          enum:
+            - '{custom value}'
+            - unchanged
+            - systemDefault
+          type: string
+        FinalDestinationURI:
+          enum:
+            - '{custom value}'
+            - unchanged
+            - systemDefault
+          format: >-
+            a 10 digit telephone number or a SIP URI ( without the sip: prefix )
+            in the form address-string@host IP:port, where the host IP is an
+            IPv4 address in the standard numerical n.n.n.n. form, and the port
+            is numeric, and optional
+
+            containing [a-z,A-Z,0-9], with ':', '.' and '@' to delimit the
+            components of the overall string, and less than 60 characters long
+          maxLength: 60
+          minLength: 10
+          type: string
+        NNID:
+          enum:
+            - '{custom value}'
+            - unchanged
+            - systemDefault
+          format: integer
+          type: string
+        NumberFormat:
+          enum:
+            - 10digit
+            - 11digit
+            - e164
+            - unchanged
+            - systemDefault
+          type: string
+        OriginationRoutePlan:
+          $ref: '#/components/schemas/OriginationRoutePlan'
+        PindropEnabled:
+          enum:
+            - '{custom value}'
+            - 'true'
+            - 'false'
+          type: string
+        PortOutPasscode:
+          enum:
+            - '{custom value}'
+            - unchanged
+            - systemDefault
+          format: alphanumeric
+          maxLength: 10
+          minLength: 4
+          type: string
+        Protected:
+          enum:
+            - 'true'
+            - 'false'
+            - unchanged
+            - systemDefault
+          type: string
+        RPIDFormat:
+          enum:
+            - 10digit
+            - 11digit
+            - e164
+            - unchanged
+            - systemDefault
+          type: string
+        RewriteUser:
+          enum:
+            - '{custom value}'
+            - unchanged
+            - systemDefault
+          type: string
+        Sms:
+          enum:
+            - 'on'
+            - 'off'
+            - unchanged
+          type: string
+        TelephoneNumbers:
+          items:
+            description: E.164 formatted phone number
+            type: string
+            xml:
+              name: TelephoneNumber
+          type: array
+      type: object
+    TnOptionGroupResponse:
+      properties:
+        A2pSettings:
+          $ref: '#/components/schemas/A2pSettings'
+        CallForward:
+          enum:
+            - '{custom value}'
+            - unchanged
+            - systemDefault
+          type: string
+        CallingNameDisplay:
+          enum:
+            - 'on'
+            - 'off'
+            - unchanged
+            - systemDefault
+          type: string
+        E164CallForward:
+          enum:
+            - '{custom value}'
+            - unchanged
+            - systemDefault
+          type: string
+        E164TelephoneNumbers:
+          items:
+            description: E.164 formatted phone number
+            type: string
+            xml:
+              name: E164TelephoneNumber
+          type: array
         ESPID:
           enum:
             - '{custom value}'
@@ -10999,6 +11118,12 @@ components:
           type: integer
         Description:
           type: string
+        E164TelephoneNumber:
+          type: string
+        E164TelephoneNumbers:
+          items:
+            type: string
+          type: array
         TelephoneNumber:
           type: string
         TelephoneNumbers:
@@ -11026,7 +11151,7 @@ components:
             Each group contains list of telephone numbers and set of TN options
             you want to assign to all TNs in the list
           items:
-            $ref: '#/components/schemas/TnOptionGroup'
+            $ref: '#/components/schemas/TnOptionGroupRequest'
           type: array
       title: TnOptionOrder
       type: object
@@ -11122,7 +11247,7 @@ components:
           type: integer
         TnOptionGroups:
           items:
-            $ref: '#/components/schemas/TnOptionGroup'
+            $ref: '#/components/schemas/TnOptionGroupResponse'
           type: array
         Warnings:
           items:
@@ -11133,6 +11258,8 @@ components:
     TnOptionOrderWarningPayload:
       properties:
         Description:
+          type: string
+        E164TelephoneNumber:
           type: string
         TelephoneNumber:
           type: string
@@ -13788,38 +13915,39 @@ paths:
         The payload for the POST declares the date range and type for the
         desired reports. The valid Billing Types are: 
 
-        <table>
-          <thead><tr><th>Report Type</th><th>Description</th><th>Is US&C Only?</th></tr></thead>
+        <table style="text-align: left; width: 80%;" border="1" cellpadding="2"
+        cellspacing="0">
+          <thead><tr><th>Report Type</th><th>Product</th><th>Description</th><th>Is US&C Only?</th></tr></thead>
           <tbody>
-            <tr><td>BDR</td><td>Billing Detail Records for Voice Services - per call information, available on day to day basis - may not reflect final invoice</td><td></td></tr>
-            <tr><td>MDR</td><td>Message Detail Records - per message information - may not reflect final invoice</td><td>Yes</td></tr>
-            <tr><td>INVOICE</td><td>A copy of the invoice file or files for the specified date range</td><td></td></tr>
-            <tr><td>STMTBDR</td><td>BDR records that are aligned with the invoice for Voice Services</td><td></td></tr>
-            <tr><td>DIDSNAP</td><td>A list of telephone numbers, aligned with invoice</td><td></td></tr>
-            <tr><td>DIDSNAP_MSG</td><td>A list of telephone numbers that are enabled for messaging, aligned with invoice</td><td>Yes</td></tr>
-            <tr><td>RECORDINGBDR</td><td>Billing Detail Records for Recording Services - per recording information, available on day to day basis</td><td>Yes</td></tr>
-            <tr><td>RECORDINGSTMTBDR</td><td>BDR records that are aligned with the invoice for Recording Services</td><td>Yes</td></tr>
-            <tr><td>TRANSCRIPTIONBDR</td><td>Billing Detail Records for Transcription Services - per call transcription information, available on day to day basis</td><td>Yes</td></tr>
-            <tr><td>TRANSCRIPTIONSTMTBDR</td><td>BDR records that are aligned with the invoice for Recording Services</td><td>Yes</td></tr>
-            <tr><td>CNAMBDR</td><td>Record of CNAM Subscribe and Notify queries/dips, available on day to day basis</td><td>Yes</td></tr>
-            <tr><td>CNAMSTMTBDR</td><td>Record of CNAM Subscribe and Notify queries/dips, aligns with invoices</td><td>Yes</td></tr>
-            <tr><td>CONFBDR</td><td>Billing Detail Records for Transcription Services - per conference information, available on day to day basis</td><td>Yes</td></tr>
-            <tr><td>CONFSTMTBDR</td><td>BDR records that are aligned with the invoice for Conferencing Services</td><td>Yes</td></tr>
-            <tr><td>TFPEERINGSTMTBDR</td><td>Toll Free Peering BDR</td><td>Yes</td></tr>
-            <tr><td>UNPROVISIONED_CALLS_BDR</td><td>BDR for unprovisioned 911 calls that were routed to the ECC</td><td>Yes</td></tr>
-            <tr><td>UNPROVISIONED_CALLS_STMT_BDR</td><td>Statement BDR for unprovisioned 911 calls that were routed to the ECC</td><td>Yes</td></tr>
-            <tr><td>TNLOOKUPBDR</td><td>Phone Number Lookup BDR</td><td>Yes</td></tr>
-            <tr><td>TNLOOKUPSTMTBDR</td><td>Phone Number Lookup Statement BDR</td><td>Yes</td></tr>
-            <tr><td>MSG_CAMPAIGN_REGISTRY_BDR</td><td>Message Campaign Registry BDR</td><td>Yes</td></tr>
-            <tr><td>MSG_CAMPAIGN_CARRIER_ACTIVATION_BDR</td><td>Message Campaign Carrier Activaton BDR</td><td>Yes</td></tr>
-            <tr><td>Answering Machine Detection</td><td>Answering Machine Detection BDR</td><td>Yes</td></tr>
-            <tr><td>Answering Machine Detection STMT</td><td>Answering Machine Detection Statement BDR</td><td>Yes</td></tr>
-            <tr><td>SIP_URI_CALLS_BDR</td><td>SIP URI Calls BDR</td><td>Yes</td></tr>
-            <tr><td>SIP_URI_CALLS_STMT_BDR</td><td>SIP URI Calls Statement BDR</td><td>Yes</td></tr>
-            <tr><td>Text to Speech</td><td>Text to Speed BDR</td><td>Yes</td></tr>
-            <tr><td>Text to Speech STMT</td><td>Text to Speed Statement BDR</td><td>Yes</td></tr>
-            <tr><td>SIP_REC_PINDROP_INTEGRATION_BDR</td><td>Pindrop BDR</td><td>Yes</td></tr>
-            <tr><td>SIP_REC_PINDROP_INTEGRATION_STMT_BDR</td><td>Pindrop Statement BDR</td><td>Yes</td></tr>
+            <tr><td>INVOICE</td><td></td><td>A copy of the invoice file or files for the specified date range</td><td></td></tr>
+            <tr><td>BDR</td><td>Voice</td><td>Billing Detail Records for Voice Services - per call information, available on day to day basis - may not reflect final invoice</td><td></td></tr>
+            <tr><td>STMTBDR</td><td>Voice</td><td>BDR records that are aligned with the invoice for Voice Services</td><td></td></tr>
+            <tr><td>RECORDINGBDR</td><td>Voice</td><td>Billing Detail Records for Recording Services - per recording information, available on day to day basis</td><td>Yes</td></tr>
+            <tr><td>RECORDINGSTMTBDR</td><td>Voice</td><td>BDR records that are aligned with the invoice for Recording Services</td><td>Yes</td></tr>
+            <tr><td>TRANSCRIPTIONBDR</td><td>Voice</td><td>Billing Detail Records for Transcription Services - per call transcription information, available on day to day basis</td><td>Yes</td></tr>
+            <tr><td>TRANSCRIPTIONSTMTBDR</td><td>Voice</td><td>BDR records that are aligned with the invoice for Recording Services</td><td>Yes</td></tr>
+            <tr><td>CNAMBDR</td><td>Voice</td><td>Record of CNAM Subscribe and Notify queries/dips, available on day to day basis</td><td>Yes</td></tr>
+            <tr><td>CNAMSTMTBDR</td><td>Voice</td><td>Record of CNAM Subscribe and Notify queries/dips, aligns with invoices</td><td>Yes</td></tr>
+            <tr><td>CONFBDR</td><td>Voice</td><td>Billing Detail Records for Transcription Services - per conference information, available on day to day basis</td><td>Yes</td></tr>
+            <tr><td>CONFSTMTBDR</td><td>Voice</td><td>BDR records that are aligned with the invoice for Conferencing Services</td><td>Yes</td></tr>
+            <tr><td>TFPEERINGSTMTBDR</td><td>Voice</td><td>Toll Free Peering BDR</td><td>Yes</td></tr>
+            <tr><td>Answering Machine Detection</td><td>Voice</td><td>Answering Machine Detection BDR</td><td>Yes</td></tr>
+            <tr><td>Answering Machine Detection STMT</td><td>Voice</td><td>Answering Machine Detection Statement BDR</td><td>Yes</td></tr>
+            <tr><td>SIP_URI_CALLS_BDR</td><td>Voice</td><td>SIP URI Calls BDR</td><td>Yes</td></tr>
+            <tr><td>SIP_URI_CALLS_STMT_BDR</td><td>Voice</td><td>SIP URI Calls Statement BDR</td><td>Yes</td></tr>
+            <tr><td>Text to Speech</td><td>Voice</td><td>Text to Speed BDR</td><td>Yes</td></tr>
+            <tr><td>Text to Speech STMT</td><td>Voice</td><td>Text to Speed Statement BDR</td><td>Yes</td></tr>
+            <tr><td>SIP_REC_PINDROP_INTEGRATION_BDR</td><td>Voice</td><td>Pindrop BDR</td><td>Yes</td></tr>
+            <tr><td>SIP_REC_PINDROP_INTEGRATION_STMT_BDR</td><td>Voice</td><td>Pindrop Statement BDR</td><td>Yes</td></tr>
+            <tr><td>UNPROVISIONED_CALLS_BDR</td><td>Emergency</td><td>BDR for unprovisioned 911 calls that were routed to the ECC</td><td>Yes</td></tr>
+            <tr><td>UNPROVISIONED_CALLS_STMT_BDR</td><td>Emergency</td><td>Statement BDR for unprovisioned 911 calls that were routed to the ECC</td><td>Yes</td></tr>
+            <tr><td>MDR</td><td>Messaging</td><td>Message Detail Records - per message information - may not reflect final invoice</td><td>Yes</td></tr>
+            <tr><td>MSG_CAMPAIGN_REGISTRY_BDR</td><td>Messaging</td><td>Message Campaign Registry BDR</td><td>Yes</td></tr>
+            <tr><td>MSG_CAMPAIGN_CARRIER_ACTIVATION_BDR</td><td>Messaging</td><td>Message Campaign Carrier Activaton BDR</td><td>Yes</td></tr>
+            <tr><td>TNLOOKUPBDR</td><td>Numbers</td><td>Phone Number Lookup BDR</td><td>Yes</td></tr>
+            <tr><td>TNLOOKUPSTMTBDR</td><td>Numbers</td><td>Phone Number Lookup Statement BDR</td><td>Yes</td></tr>
+            <tr><td>DIDSNAP</td><td>Numbers</td><td>A list of telephone numbers that are enabled for voice, aligned with invoice</td><td></td></tr>
+            <tr><td>DIDSNAP_MSG</td><td>Numbers</td><td>A list of telephone numbers that are enabled for messaging, aligned with invoice</td><td>Yes</td></tr>
           </tbody>
         </table>
       operationId: CreateBillingReport
@@ -30394,7 +30522,8 @@ paths:
         priority groups (display priority is displayed only for admin endpoint)
 
 
-        <table>
+        <table style="text-align: left; width: 80%;" border="1" cellpadding="2"
+        cellspacing="0">
           <thead>
             <tr><th>Report ID</th><th>Report Name</th><th>Description</th><th>Is US&C Only?</th></tr>
           </thead>
@@ -36124,6 +36253,7 @@ paths:
                                    <RPIDFormat>10digit</RPIDFormat>
                                    <RewriteUser>testUser1</RewriteUser>
                                    <CallForward>6042661720</CallForward>
+                                   <E164CallForward>+16042661720</E164CallForward>
                                    <CallingNameDisplay>on</CallingNameDisplay>
                                    <Protected>true</Protected>
                                    <Sms>on</Sms>
@@ -36131,6 +36261,9 @@ paths:
                                    <TelephoneNumbers>
                                       <TelephoneNumber>2018551020</TelephoneNumber>
                                    </TelephoneNumbers>
+                                   <E164TelephoneNumbers>
+                                      <E164TelephoneNumber>+12018551020</E164TelephoneNumber>
+                                   </E164TelephoneNumbers>
                                 </TnOptionGroup>
                                 <TnOptionGroup>
                                    <CallingNameDisplay>off</CallingNameDisplay>
@@ -36139,6 +36272,9 @@ paths:
                                    <TelephoneNumbers>
                                       <TelephoneNumber>2018551025</TelephoneNumber>
                                    </TelephoneNumbers>
+                                   <E164TelephoneNumbers>
+                                      <E164TelephoneNumber>+12018551025</E164TelephoneNumber>
+                                   </E164TelephoneNumbers>
                                 </TnOptionGroup>
                              </TnOptionGroups>
                              <ErrorList>
@@ -36146,11 +36282,13 @@ paths:
                                    <Code>5076</Code>
                                    <Description>Telephone number is not available.</Description>
                                    <TelephoneNumber>2018551025</TelephoneNumber>
+                                   <E164TelephoneNumber>+12018551025</E164TelephoneNumber>
                                 </Error>
                                 <Error>
                                    <Code>5076</Code>
                                    <Description>Telephone number is not available.</Description>
                                    <TelephoneNumber>2018551020</TelephoneNumber>
+                                   <E164TelephoneNumber>+12018551020</E164TelephoneNumber>
                                 </Error>
                              </ErrorList>
                           </TnOptionOrder>
@@ -36167,18 +36305,27 @@ paths:
                                    <TelephoneNumbers>
                                       <TelephoneNumber>2174101601</TelephoneNumber>
                                    </TelephoneNumbers>
+                                   <E164TelephoneNumbers>
+                                      <E164TelephoneNumber>+12174101601</E164TelephoneNumber>
+                                   </E164TelephoneNumbers>
                                 </TnOptionGroup>
                                 <TnOptionGroup>
                                    <CallingNameDisplay>off</CallingNameDisplay>
                                    <TelephoneNumbers>
                                       <TelephoneNumber>2174101602</TelephoneNumber>
                                    </TelephoneNumbers>
+                                   <E164TelephoneNumbers>
+                                      <E164TelephoneNumber>+12174101602</E164TelephoneNumber>
+                                   </E164TelephoneNumbers>
                                 </TnOptionGroup>
                                 <TnOptionGroup>
                                    <CallingNameDisplay>systemdefault</CallingNameDisplay>
                                    <TelephoneNumbers>
                                       <TelephoneNumber>2174101603</TelephoneNumber>
                                    </TelephoneNumbers>
+                                   <E164TelephoneNumbers>
+                                      <E164TelephoneNumber>+12174101603</E164TelephoneNumber>
+                                   </E164TelephoneNumbers>
                                 </TnOptionGroup>
                              </TnOptionGroups>
                              <ErrorList/>
@@ -36205,64 +36352,189 @@ paths:
       tags:
         - Tn Option
     post:
-      description: >-
-        Create TN Option order to assign line features to the telephone
-        number.<br><br>Attribute description:<ul><li>for A2pSettings
-        attribute</li><table style="text-align: left; width: 80%;" border="1"
-        cellpadding="2" cellspacing="0"><tbody><tr><th>Number
-        attribute</th><th>Action value</th><th>Description of
-        action</th></tr><tr><td>LongCode</td><td><i>systemDefault</i></td><td>Removes
-        the per-TN A2P attributes, and it reverts to the Location/SIP Peer
-        characteristics. Any values for Class or Campaign ID are not
-        valid</td></tr><tr><td>LongCode</td><td><i>asSpecified</i></td><td>Sets
-        the message class and campaign ID - this is the default if
-        unspecified</td></tr><tr><td>LongCode</td><td><i>off</i></td><td>Will
-        set the TN as a 'P' TN. Any values for Class or Campaign ID are not
-        valid</td></tr><tr><td>LongCode</td><td><i>delete</i></td><td>Will
-        delete the campaign ID from TN. Any values for Class or Campaign ID are
-        not valid</td></tr><tr><td>LongCode</td><td><i>unchanged</i></td><td>Do
-        nothing with respect to
-        A2P</td></tr><tr><td>TollFree</td><td><i>systemDefault</i></td><td>Removes
-        the per-TN A2P attributes, and it reverts to the Location/SIP Peer
-        characteristics. Any values for Class or Campaign ID are not
-        valid</td></tr><tr><td>TollFree</td><td><i>asSpecified</i></td><td>Sets
-        the message class and campaign ID - this is the default if
-        unspecified</td></tr><tr><td>TollFree</td><td><i>off</i></td><td>If the
-        Togglz value is set to 'on' this is invalid for Toll Free telephone
-        numbers. Any values for Class or Campaign ID in the payload are invalid.
-        If the Togglz value is set to off this behaves like and A2P TN, where
-        the characteristics of the TNs is set to
-        'P'</td></tr><tr><td>TollFree</td><td><i>unchanged</i></td><td>Do
-        nothing with respect to A2P</td></tr></tbody></table><li>for Origination
-        Route plan attribute</li><table style="text-align: left; width: 80%;"
-        border="1" cellpadding="2" cellspacing="0"><tbody><tr><th>Action
-        value</th><th>Description of
-        action</th></tr><tr><td>asSpecified</td><td>Creates/updates the
-        origination route plan for the TN with route plan details provided in
-        the request </td></tr><tr><td>off</td><td>Removes the origination route
-        plan for the TN. Route list is the request must be
-        empty</td></tr><tr><td>unchanged</td><td>Doesn't update/create the
-        origination route plan, even when route plan details exist in the
-        request</td></tr></tbody></table><ul><li> Origination route plan is
-        validated against CallForward and RewriteUser</li><ul><li
-        type="square">Route plan and CallForward cannot co-exist. Order is
-        accepted but will respond with error messages on GET.</li><li
-        type="square">Route plan and RewriteUser cannot co-exist. Order is
-        accepted but will respond with error messages on
-        GET.</li></ul></ul><li>for Pindrop Enabled attribute</li><table
-        style="text-align: left; width: 80%;" border="1" cellpadding="2"
-        cellspacing="0"><tbody><tr><th>Action value</th><th>Description of
-        action</th></tr><tr><td>true</td><td>Enables Pindrop integration on each
-        phone number in the option
-        group</td></tr><tr><td>false</td><td>Explicitly disables Pindrop
-        integration on each phone number in the option
-        group</td></tr></tbody></table><li>for other attribute</li><ul><li
-        type="square"> <i>systemDefault</i> - implies that the element profile
-        value should be removed so that the TN changes back to the default
-        system behavior;</li><li type="square"> <i>unchanged</i> - the value
-        should remain unchanged - implies a read before write model.</li><li
-        type="square"><u>Leaving the element out of the payload is equivalent to
-        <i>unchanged</i>.</u></li></ul></ul>
+      description: >
+        Create TN Option order to assign line features to the telephone number. 
+
+
+        The two data elements in the submission are -
+
+        <ul>
+          <li>TnOptionGroups - A list of TnOptionGroup objects, which contain list of telephone numbers and set of TN options you want to assign to all TNs in the list.</li>
+          <li>CustomerOrderId - Optional value for Id set by customer. Only alphanumeric values, dashes and spaces are allowed. Max length is 40 characters.</li>
+        </ul>
+
+
+        The valid attributes in TnOptionGroup object are:
+
+        <table style="text-align: left; width: 80%;" border="1" cellpadding="2"
+        cellspacing="0">
+          <thead>
+            <tr>
+              <th>Attribute</th>
+              <th>Product</th>
+              <th>Is US&C Only?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>TelephoneNumbers</td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>OriginationRoutePlan</td>
+              <td>Voice</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>RPIDFormat</td>
+              <td>Voice</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>RewriteUser</td>
+              <td>Voice</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>CallForward</td>
+              <td>Voice</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>FinalDestinationURI</td>
+              <td>Voice</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>PindropEnabled</td>
+              <td>Voice</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>ESPID</td>
+              <td>Voice</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>CallingNameDisplay</td>
+              <td>Voice</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>Sms</td>
+              <td>Messaging</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>A2pSettings</td>
+              <td>Messaging</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>NNID</td>
+              <td>Messaging</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>Protected</td>
+              <td>Numbers</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>PortOutPasscode</td>
+              <td>Numbers</td>
+              <td>Yes</td>
+            </tr>
+          </tbody>
+        </table>
+
+
+
+        The values for each TnOptionGroup object attribute are:
+
+        <ul>
+          <li>for TelephoneNumbers attribute</li>
+            <ul>
+              <li>A list of TelephoneNumber as Array of strings</li>
+                <ul>
+                  <li>An E.164 formatted telephone number string. Assumes NANPA 10 digit format number if string is not E.164 formatted.</li>
+                </ul>
+            </ul>
+          <li>for NumberFormat attribute</li>
+            <ul>
+              <li>[ 10digit | 11digit | e164 | unchanged | systemDefault ]</li>
+            </ul>
+          <li>for RPIDFormat attribute</li>
+            <ul>
+              <li>[ 10digit | 11digit | e164 | unchanged | systemDefault ]</li>
+            </ul>
+          <li>for RewriteUser attribute</li>
+            <ul>
+              <li>[ string | unchanged | systemDefault]</li>
+            </ul>
+          <li>for CallingNameDisplay attribute</li>
+            <ul>
+              <li>[ on | off | unchanged | systemDefault ]</li>
+            </ul>
+          <li>for Protected attribute</li>
+            <ul>
+              <li>[ true | false | unchanged | systemDefault]</li>
+            </ul>
+          <li>for Sms attribute</li>
+            <ul>
+              <li>[ on | off | unchanged]</li>
+            </ul>
+          <li>for NNID attribute</li>
+            <ul>
+              <li>[ integer | unchanged | systemDefault ]</li>
+            </ul>
+          <li>for ESPID attribute</li>
+            <ul>
+              <li>[ string | unchanged | systemDefault ]</li>
+            </ul>
+          <li>for CallForward attribute</li>
+            <ul>
+              <li>[ string | unchanged | systemDefault ]</li>
+                <ul>
+                  <li>An E.164 formatted telephone number string. Assumes NANPA 10 digit format number if string is not E.164 formatted.</li>
+                </ul>
+            </ul>
+          <li>for FinalDestinationURI attribute</li>
+            <ul>
+              <li> [ string | unchanged | systemDefault]</li>
+                <ul>
+                  <li>An E.164 formatted telephone number string. Assumes NANPA 10 digit format number if string is not E.164 formatted.</li>
+                  <li>a SIP URI ( without the sip: prefix )</li>
+                    <ul>
+                      <li>in the form address-string@host IP:port, where</li>
+                      <li>the host IP is an IPv4 address in the standard numerical n.n.n.n. form, and</li>
+                      <li>the port is numeric, and optional</li>
+                      <li>containing [a-z,A-Z,0-9], with ':', '.' and '@' to delimit the components of the overall string, and</li>
+                      <li>less than 60 characters long.</li>
+                    </ul>
+                </ul>
+            </ul>
+          <li>for all the above attribute</li>
+            <ul>
+              <li> <i>systemDefault</i> - implies that the element profile value should be removed so that the TN changes back to the default system behavior;</li>
+              <li> <i>unchanged</i> - the value should remain unchanged - implies a read before write model.</li>
+              <li><u>Leaving the element out of the payload is equivalent to <i>unchanged</i>.</u></li>
+            </ul>
+          <li>for A2pSettings attribute</li>
+            <table style="text-align: left; width: 80%;" border="1" cellpadding="2" cellspacing="0"><tbody><tr><th>Number attribute</th><th>Action value</th><th>Description of action</th></tr><tr><td>LongCode</td><td><i>systemDefault</i></td><td>Removes the per-TN A2P attributes, and it reverts to the Location/SIP Peer characteristics. Any values for Class or Campaign ID are not valid</td></tr><tr><td>LongCode</td><td><i>asSpecified</i></td><td>Sets the message class and campaign ID - this is the default if unspecified</td></tr><tr><td>LongCode</td><td><i>off</i></td><td>Will set the TN as a ''P'' TN. Any values for Class or Campaign ID are not valid</td></tr><tr><td>LongCode</td><td><i>delete</i></td><td>Will delete the campaign ID from TN. Any values for Class or Campaign ID are not valid</td></tr><tr><td>LongCode</td><td><i>unchanged</i></td><td>Do nothing with respect to A2P</td></tr><tr><td>TollFree</td><td><i>systemDefault</i></td><td>Removes the per-TN A2P attributes, and it reverts to the Location/SIP Peer characteristics. Any values for Class or Campaign ID are not valid</td></tr><tr><td>TollFree</td><td><i>asSpecified</i></td><td>Sets the message class and campaign ID - this is the default if unspecified</td></tr><tr><td>TollFree</td><td><i>off</i></td><td>If the Togglz value is set to ''on'' this is invalid for Toll Free telephone numbers. Any values for Class or Campaign ID in the payload are invalid. If the Togglz value is set to off this behaves like and A2P TN, where the characteristics of the TNs is set to ''P''</td></tr><tr><td>TollFree</td><td><i>unchanged</i></td><td>Do nothing with respect to A2P</td></tr></tbody></table>
+          <li>for Origination Route plan attribute</li>
+            <table style="text-align: left; width: 80%;" border="1" cellpadding="2" cellspacing="0"><tbody><tr><th>Action value</th><th>Description of action</th></tr><tr><td>asSpecified</td><td>Creates/updates the origination route plan for the TN with route plan details provided in the request </td></tr><tr><td>off</td><td>Removes the origination route plan for the TN. Route list is the request must be empty</td></tr><tr><td>unchanged</td><td>Doesn''t update/create the origination route plan, even when route plan details exist in the request</td></tr></tbody></table>
+            <ul>
+              <li> Origination route plan is validated against CallForward and RewriteUser</li>
+              <ul>
+                <li>Route plan and CallForward cannot co-exist. Order is accepted but will respond with error messages on GET.</li>
+                <li>Route plan and RewriteUser cannot co-exist. Order is accepted but will respond with error messages on GET.</li>
+              </ul>
+            </ul>
+          <li>for Pindrop Enabled attribute</li>
+            <table style="text-align: left; width: 80%;" border="1" cellpadding="2" cellspacing="0"><tbody><tr><th>Action value</th><th>Description of action</th></tr><tr><td>true</td><td>Enables Pindrop integration on each phone number in the option group</td></tr><tr><td>false</td><td>Explicitly disables Pindrop integration on each phone number in the option group</td></tr></tbody></table>
+        </ul>
       operationId: CreateTnOptionOrder
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
@@ -36280,7 +36552,7 @@ paths:
                         <NumberFormat>10digit</NumberFormat>
                         <RPIDFormat>10digit</RPIDFormat>
                         <RewriteUser>testUser1</RewriteUser>
-                        <CallForward>6042661720</CallForward>
+                        <CallForward>+16042661720</CallForward>
                         <CallingNameDisplay>on</CallingNameDisplay>
                         <PortOutPasscode>a1b2c3</PortOutPasscode>
                         <Protected>true</Protected>
@@ -36292,7 +36564,7 @@ paths:
                           <Action>asSpecified</Action>
                         </A2pSettings>
                         <TelephoneNumbers>
-                          <TelephoneNumber>2018551020</TelephoneNumber>
+                          <TelephoneNumber>+12018551020</TelephoneNumber>
                         </TelephoneNumbers>
                       </TnOptionGroup>
                       <TnOptionGroup>
@@ -36328,13 +36600,13 @@ paths:
                           <Action>asSpecified</Action>
                         </OriginationRoutePlan>
                         <TelephoneNumbers>
-                          <TelephoneNumber>2018551025</TelephoneNumber>
+                          <TelephoneNumber>+12018551025</TelephoneNumber>
                         </TelephoneNumbers>
                       </TnOptionGroup>
                       <TnOptionGroup>
                         <PindropEnabled>true</PindropEnabled>
                         <TelephoneNumbers>
-                          <TelephoneNumber>2018551026</TelephoneNumber>
+                          <TelephoneNumber>+12018551026</TelephoneNumber>
                         </TelephoneNumbers>
                       </TnOptionGroup>
                     </TnOptionGroups>
@@ -36363,12 +36635,16 @@ paths:
                             <RPIDFormat>10digit</RPIDFormat>
                             <RewriteUser>testUser1</RewriteUser>
                             <CallForward>6042661720</CallForward>
+                            <E164CallForward>+16042661720</E164CallForward>
                             <CallingNameDisplay>on</CallingNameDisplay>
                             <Protected>true</Protected>
                             <Sms>on</Sms>
                             <TelephoneNumbers>
                               <TelephoneNumber>2018551020</TelephoneNumber>
                             </TelephoneNumbers>
+                            <E164TelephoneNumbers>
+                              <E164TelephoneNumber>+12018551020</E164TelephoneNumber>
+                            </E164TelephoneNumbers>
                           </TnOptionGroup>
                           <TnOptionGroup>
                             <CallingNameDisplay>off</CallingNameDisplay>
@@ -36377,6 +36653,9 @@ paths:
                             <TelephoneNumbers>
                               <TelephoneNumber>2018551025</TelephoneNumber>
                             </TelephoneNumbers>
+                            <E164TelephoneNumbers>
+                              <E164TelephoneNumber>+12018551025</E164TelephoneNumber>
+                            </E164TelephoneNumbers>
                           </TnOptionGroup>
                         </TnOptionGroups>
                         <ErrorList/>
@@ -36459,12 +36738,18 @@ paths:
                           <TelephoneNumbers>
                             <TelephoneNumber>2174101601</TelephoneNumber>
                           </TelephoneNumbers>
+                          <E164TelephoneNumbers>
+                            <E164TelephoneNumber>+12174101601</E164TelephoneNumber>
+                          </E164TelephoneNumbers>
                         </TnOptionGroup>
                         <TnOptionGroup>
                           <CallingNameDisplay>off</CallingNameDisplay>
                           <TelephoneNumbers>
                             <TelephoneNumber>2174101602</TelephoneNumber>
                           </TelephoneNumbers>
+                          <E164TelephoneNumbers>
+                            <E164TelephoneNumber>+12174101602</E164TelephoneNumber>
+                          </E164TelephoneNumbers>
                           </TnOptionGroup>
                         <TnOptionGroup>
                           <CallingNameDisplay>systemdefault</CallingNameDisplay>
@@ -36472,12 +36757,16 @@ paths:
                           <TelephoneNumbers>
                             <TelephoneNumber>2174101603</TelephoneNumber>
                           </TelephoneNumbers>
+                          <E164TelephoneNumbers>
+                            <E164TelephoneNumber>+12174101603</E164TelephoneNumber>
+                          </E164TelephoneNumbers>
                         </TnOptionGroup>
                       </TnOptionGroups>
                       <ErrorList/>
                       <Warnings>
                         <Warning>
                           <TelephoneNumber>2174101601</TelephoneNumber>
+                          <E164TelephoneNumber>+12174101601</E164TelephoneNumber>
                           <Description>SMS is already Enabled or number is in processing.</Description>
                         </Warning>
                       </Warnings>
