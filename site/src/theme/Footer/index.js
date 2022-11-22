@@ -59,20 +59,26 @@ function Footer() {
                 {
                   title: 'More',
                     items: [
-                        {
-                          label: 'Release Notes',
-                            to: 'https://www.bandwidth.com/release-notes/'
-                        }, {
-                            label: 'Sandbox',
-                            to: 'https://sandbox.bandwidth.com'
-                          }, {
-                            label: 'Status',
-                            to: 'https://status.bandwidth.com/'
-                          }, {
-                            label: 'Support',
-                            to: 'https://support.bandwidth.com'
-                          }
-                        ]
+                      {
+                        label: 'Glossary',
+                        to: 'https://www.bandwidth.com/glossary/'
+                      }, {
+                        label: 'Release Notes',
+                        to: 'https://www.bandwidth.com/release-notes/'
+                      }, {
+                        label: 'Resources',
+                        to: 'https://www.bandwidth.com/resources/'
+                      }, {
+                        label: 'Sandbox',
+                        to: 'https://sandbox.bandwidth.com'
+                      }, {
+                        label: 'Service Status',
+                        to: 'https://status.bandwidth.com/'
+                      }, {
+                        label: 'Support',
+                        to: 'https://support.bandwidth.com'
+                      }
+                    ]
                 },
                 {
                     title: 'Community',
@@ -90,7 +96,7 @@ function Footer() {
               ]
         }
       ],
-    copyright: `Bandwidth.com CLEC, LLC is a wholly owned subsidiary of Bandwidth Inc. ©${new Date().getFullYear()}. Built with Docusaurus.`,
+    copyright: ` CLEC, LLC is a wholly owned subsidiary of Bandwidth Inc. ©${new Date().getFullYear()}. Built with Docusaurus.`,
   };
 
   const getInTouch = {
@@ -117,7 +123,7 @@ function Footer() {
         <div className="content">
 
           <div className="social-row">
-            <div className="logo"/>
+            <a href="https://www.bandwidth.com/" target="_blank" rel="external" className="logo"></a>
             <div className="social-links" data-cy="socialLinks">
               <a className="social-link" href="https://www.linkedin.com/company/bandwidth-inc" target="_blank" rel="noopener"><LinkedIn/></a>
               <a className="social-link" href="https://twitter.com/bandwidth" target="_blank" rel="noopener"><Twitter/></a>
@@ -143,7 +149,7 @@ function Footer() {
           </div>
           
         </div>
-        <div className="copyright">{footer.copyright}</div>
+        <div className="copyright"><a href="https://www.bandwidth.com/">Bandwidth.com</a>{footer.copyright}</div>
       </div>
 
     </div>
