@@ -178,6 +178,15 @@ module.exports = {
     },
     plugins: [
         path.resolve(__dirname, 'redoc-plugin'),
+        [
+            '@docusaurus/plugin-content-docs',
+            {
+                id: 'miration-guides',
+                path: 'migration-guides',
+                routeBasePath: 'migration-guides',
+                sidebarPath: require.resolve('./sidebarsMigrationGuides.js'),
+            },
+        ],
         'docusaurus-plugin-sass',
     ],
 };

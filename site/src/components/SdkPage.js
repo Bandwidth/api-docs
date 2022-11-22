@@ -1,7 +1,7 @@
 import React from 'react';
 import GitHubLink from '@site/src/components/GitHubLink';
 
-export default function SdkPage({Svg, title, repoLinks, samplesLink}) {
+export default function SdkPage({Svg, title, repoLinks, samplesLink, migrationGuides}) {
     return (
         <div className="sdk-page">
             <div className="sdk-image">
@@ -30,6 +30,13 @@ export default function SdkPage({Svg, title, repoLinks, samplesLink}) {
                                 <td>Code Samples showing how to utilize the Bandwidth {title} SDK</td>
                                 <td><GitHubLink GHLink={samplesLink}/></td>
                             </tr>
+                            { migrationGuides == true &&
+                                <tr className='sdk-migration-guides'>
+                                    <td />
+                                    <td><a href={"/migration-guides/" + title.toLowerCase()}>Migration Guide</a></td>
+                                    <td />
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
