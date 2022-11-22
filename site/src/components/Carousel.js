@@ -1,5 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import carouselStyles from '@site/src/components/css/Carousel.module.css';
+import React, { useEffect, useState } from 'react';
 
 export default function Carousel({itemList, title}) {
     
@@ -162,15 +161,15 @@ export default function Carousel({itemList, title}) {
         }
         
         return (
-            <div className={carouselStyles.slide} style={slideStyle}>
-                <div className={carouselStyles.item} style={itemStyle} data-cy="item">
-                    <div className={carouselStyles.image} style={imageStyle} data-cy="image"></div>
-                    <div className={carouselStyles.categories} style={categoriesStyle} data-cy="categories">
+            <div className="slide" style={slideStyle}>
+                <div className="item" style={itemStyle} data-cy="item">
+                    <div className="image" style={imageStyle} data-cy="image"></div>
+                    <div className="categories" style={categoriesStyle} data-cy="categories">
                         {categories.map((category, idx) => (
                             <a href={categoryLinks[idx]} key={idx}>{category}</a>
                         ))}
                     </div>
-                    <div className={carouselStyles.post} style={postStyle} data-cy="post">
+                    <div className="post" style={postStyle} data-cy="post">
                         <a href={postLink}>{postTitle}</a>
                     </div>
                 </div>
@@ -179,27 +178,27 @@ export default function Carousel({itemList, title}) {
     }
 
     return (
-        <div className={carouselStyles.carouselContainer}>
-            <div className={`${carouselStyles.decoration} ${carouselStyles.top}`}>
+        <div className="carousel-container">
+            <div className="top-amoeba">
                 <Svg/>
             </div>
-            <div className={carouselStyles.content}>
-                <div className={carouselStyles.header} data-cy="header">{title}</div>
-                <div className={carouselStyles.carouselContent} style={carouselContentStyle} onMouseDown={mouseDown} onMouseLeave={mouseLeave} onMouseMove={mouseMove} onMouseUp={mouseUp}>
-                    <div className={carouselStyles.carousel}>
-                        <div className={`${carouselStyles.carouselSlides} ${hasTransitionClass ? carouselStyles.transition :""}`} style={carouselSlidesStyle} data-cy="carouselSlides">
+            <div className="content">
+                <div className="carousel-header" data-cy="carouselHeader">{title}</div>
+                <div className="carousel-content" style={carouselContentStyle} onMouseDown={mouseDown} onMouseLeave={mouseLeave} onMouseMove={mouseMove} onMouseUp={mouseUp}>
+                    <div className="carousel">
+                        <div className={`carousel-slides ${hasTransitionClass ? "transition" :""}`} style={carouselSlidesStyle} data-cy="carouselSlides">
                             {newItemList.map((props, idx) => (
                                 <CarouselItem key={idx} {...props} index={idx}/>
                             ))}
                         </div>
-                        <div className={`${carouselStyles.navButtons} ${navDisabled ? carouselStyles.disabled :""}`} style={navButtonsStyle}>
-                            <button className={carouselStyles.leftButton} onClick={() => scrollCarousel(currentIndex - 1)} style={buttonStyle} data-cy="leftButton"></button>
-                            <button className={carouselStyles.rightButton} onClick={() => scrollCarousel(currentIndex + 1)} style={buttonStyle} data-cy="rightButton"></button>
+                        <div className={`nav-buttons ${navDisabled ? "disabled" :""}`} style={navButtonsStyle}>
+                            <button className="left-button" onClick={() => scrollCarousel(currentIndex - 1)} style={buttonStyle} data-cy="leftButton"></button>
+                            <button className="right-button" onClick={() => scrollCarousel(currentIndex + 1)} style={buttonStyle} data-cy="rightButton"></button>
                         </div>
                     </div>
                 </div>
             </div>
-            <div className={`${carouselStyles.decoration} ${carouselStyles.bottom}`}>
+            <div className="bottom-amoeba">
                 <Svg/>
             </div>
         </div>

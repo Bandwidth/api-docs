@@ -154,6 +154,19 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COMMIT_INFO_MESSAGE: ${{github.event.pull_request.title}}
           COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}
+          
+  notify_for_failures:
+    name: Notify for Failures
+    needs: [cypress_post_tests]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Slack of Failures
+        uses: Bandwidth/build-notify-slack-action@v1.0.0
+        with:
+          job-status: failure
+          slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
+          slack-channel: ${{ secrets.SLACK_CHANNEL }}             
 
   rollback_if_failed:
     needs: [cypress, publish, cypress_post_tests]
@@ -176,4 +189,4 @@ jobs:
       id: rollback
       uses: ./.github/actions/rollback_release
       with:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.DX_GITHUB_TOKEN }}
