@@ -1,0 +1,1979 @@
+---
+id: v15-beta
+title: v14 -> v15-beta
+slug: /python/v14->v15-beta
+description: Python v14 to v15 Migration Guide
+sidebar_label: v14 -> v15-beta
+hide_title: false
+image: '@site/static/img/bw-icon.svg'
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## Client Initialization
+
+<Tabs groupId="python_v14_v15-beta_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.bandwidth_client import BandwidthClient
+from bandwidth.exceptions.api_exception import APIException
+
+bandwidth_client = BandwidthClient(
+    voice_basic_auth_user_name='username',
+    voice_basic_auth_password='password',
+    messaging_basic_auth_user_name='username',
+    messaging_basic_auth_password='password',
+    multi_factor_auth_basic_auth_user_name='username',
+    multi_factor_auth_basic_auth_password='password',
+    phone_number_lookup_basic_auth_user_name='username',
+    phone_number_lookup_basic_auth_password='password'
+)
+
+account_id = "5500000"
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+import bandwidth
+
+configuration = bandwidth.Configuration(
+    username = 'API_USERNAME',
+    password = 'API_PASSWORD'
+)
+api_client = bandwidth.ApiClient(configuration)
+
+account_id = "5500000"
+```
+
+</TabItem>
+</Tabs>
+
+## Messaging
+
+### Create Message
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.messaging.models.message_request import MessageRequest
+
+messaging_client = bandwidth_client.messaging_client.client
+
+body = MessageRequest()
+body.application_id = "93de2206-9669-4e07-948d-329f4b722ee2"
+body.to = ["+17777777777"]
+body.mfrom = "+18888888888"
+body.text = "Greetings!"
+
+try:
+    response = messaging_client.create_message(account_id, body)
+    print(response.body.id)
+    print(response.status_code)
+except APIException as e:
+    print(e.description)
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.api import messages_api
+from bandwidth.model.messaging_request_error import MessagingRequestError
+from bandwidth.model.create_message_request_error import CreateMessageRequestError
+from bandwidth.model.message_request import MessageRequest
+from bandwidth.model.message import Message
+
+messaging_api_instance = messages_api.MessagesApi(api_client)
+
+message_request = MessageRequest(
+    application_id="93de2206-9669-4e07-948d-329f4b722ee2",
+    to=["+17777777777"],
+    _from="+18888888888",
+    text="Greetings!"
+)
+try:
+    api_response = messaging_api_instance.create_message(account_id, message_request)
+    print(api_response)
+except bandwidth.ApiException as e:
+    print("Exception when calling MessagesApi->create_message: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>
+
+### List Messages
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+messaging_client = bandwidth_client.messaging_client.client
+
+message_id = "9e0df4ca-b18d-40d7-a59f-82fcdf5ae8e6"
+
+try:
+    response = messaging_client.get_messages(account_id, message_id=message_id)
+    print(response.body.total_count)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.api import messages_api
+
+messaging_api_instance = messages_api.MessagesApi(api_client)
+
+message_id = "9e0df4ca-b18d-40d7-a59f-82fcdf5ae8e6"
+
+try:
+    api_response = messaging_api_instance.list_messages(account_id, message_id=message_id)
+    print(api_response)
+except bandwidth.ApiException as e:
+    print("Exception when calling MessagesApi->list_messages: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>
+
+## BXML
+
+### Imports
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.voice.bxml.response import Response    # <Response />
+from bandwidth.voice.bxml.bxml import Bxml    # <Bxml />
+from bandwidth.voice.bxml.verbs import *
+from bandwidth.voice.bxml.verbs import SpeakSentence
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.model.bxml.response import Response    # <Response />
+from bandwidth.model.bxml.bxml import Bxml    # <Bxml />
+from bandwidth.model.bxml.verbs import *
+from bandwidth.model.bxml.verbs import SpeakSentence
+```
+
+</TabItem>
+</Tabs>
+
+### Bridge
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.voice.bxml.verbs import Bridge
+
+bridge = Bridge(
+    call_id="c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d"
+)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.model.bxml.verbs import Bridge
+
+bridge = Bridge(
+    target_call="c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d"
+)
+```
+
+</TabItem>
+</Tabs>
+
+### Conference
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.voice.bxml.verbs import Conference
+
+conference = Conference(
+    conference_name="my-conference-name"
+)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.model.bxml.verbs import Conference, PlayAudio
+
+play_audio = PlayAudio(
+    url="https://audio.url/audio1.wav"
+)
+
+conference = Conference(
+    name="my-conference-name",
+    audio_and_recording_verbs=[play_audio]
+)
+```
+
+</TabItem>
+</Tabs>
+
+### Forward
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.voice.bxml.verbs import Forward
+
+forward = Forward(
+    to="+10987654321",
+    from_="+11234567890"
+)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.model.bxml.verbs import Forward
+
+forward = Forward(
+    to="+10987654321",
+    _from="+11234567890"
+)
+```
+
+</TabItem>
+</Tabs>
+
+### Gather
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.voice.bxml.verbs import Gather
+
+gather = Gather(
+    gather_url="https://gather.url/nextBXML"
+    nested_verbs=[other_verbs]    # For nested audio producers (speak sentence/play audio)
+)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.model.bxml.verbs import Gather
+
+gather = Gather(
+    audio_verbs=[other_verbs],    # For nested audio producers (speak sentence/play audio)
+    gather_url="https://gather.url/nextBXML"
+)
+
+# or
+gather.add_verb(other_verbs)    # For nested audio producers (speak sentence/play audio)
+```
+
+</TabItem>
+</Tabs>
+
+### Hangup
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.voice.bxml.verbs import Hangup
+
+hangup = Hangup()
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.model.bxml.verbs import Hangup
+
+hangup = Hangup()
+```
+
+</TabItem>
+</Tabs>
+
+### Pause
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.voice.bxml.verbs import Pause
+
+pause = Pause(duration=2)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.model.bxml.verbs import Pause
+
+pause = Pause(duration=2)
+```
+
+</TabItem>
+</Tabs>
+
+### Pause Recording
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.voice.bxml.verbs import PauseRecording
+
+pause_recording = PauseRecording()
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.model.bxml.verbs import PauseRecording
+
+pause_recording = PauseRecording()
+```
+
+</TabItem>
+</Tabs>
+
+### Play Audio
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.voice.bxml.verbs import PlayAudio
+
+play_audio = PlayAudio(
+    url="https://audio.url/audio1.wav"
+)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.model.bxml.verbs import Play Audio
+
+play_audio = PlayAudio(
+    audio_uri="https://audio.url/audio1.wav"
+)
+```
+
+</TabItem>
+</Tabs>
+
+### Record
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.voice.bxml.verbs import Record
+
+record = Record(
+    record_complete_url="https://myapp.com/nextBXML",
+    recording_available_url="https://myapp.com/recordingAvailable",
+    max_duration=10
+)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.model.bxml.verbs import Record
+
+record = Record(
+    record_complete_url="https://myapp.com/nextBXML",
+    recording_available_url="https://myapp.com/recordingAvailable",
+    max_duration=10
+)
+```
+
+</TabItem>
+</Tabs>
+
+### Redirect
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.voice.bxml.verbs import Redirect
+
+redirect = Redirect(
+    redirect_url="http://flow.url/newFlow"
+)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.model.bxml.verbs import Redirect
+
+redirect = Redirect(
+    redirect_url="http://flow.url/newFlow"
+)
+```
+
+</TabItem>
+</Tabs>
+
+### Resume Recording
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.voice.bxml.verbs import ResumeRecording
+
+resume_recording = ResumeRecording()
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.model.bxml.verbs import ResumeRecording
+
+resume_recording = ResumeRecording()
+```
+
+</TabItem>
+</Tabs>
+
+### Ring
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.voice.bxml.verbs import Ring
+
+ring = Ring(
+    duration=10,
+    answer_call=False
+)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.model.bxml.verbs import Ring
+
+ring = Ring(
+    duration=10,
+    answer_call=False
+)
+```
+
+</TabItem>
+</Tabs>
+
+### Send DTMF
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.voice.bxml.verbs import SendDtmf
+
+send_dtmf = SendDtmf(dtmf="12w34")
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.model.bxml.verbs import SendDtmf
+
+send_dtmf = SendDtmf(digits="12w34")
+```
+
+</TabItem>
+</Tabs>
+
+### Speak Sentence
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.voice.bxml.verbs import SpeakSentence
+
+speak_sentence = SpeakSentence(
+    sentence="This is a test.",
+    voice="julie"
+)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.model.bxml.verbs import SpeakSentence
+
+speak_sentence = SpeakSentence(
+    sentence="This is a test.",
+    voice="julie"
+)
+```
+
+</TabItem>
+</Tabs>
+
+### Start Gather
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.voice.bxml.verbs import StartGather
+
+start_gather = StartGather(
+    dtmfUrl="https://startgather.url/callback"
+)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.model.bxml.verbs import StartGather
+
+start_gather = StartGather(
+    dtmf_url="https://startgather.url/callback"
+)
+```
+
+</TabItem>
+</Tabs>
+
+### Start Recording
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.voice.bxml.verbs import StartRecording
+
+start_recording = StartRecording(
+    recording_available_url="https://myapp.com/noBXML"
+)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.model.bxml.verbs import StartRecording
+
+start_recording = StartRecording(
+    recording_available_url="https://myapp.com/noBXML"
+)
+```
+
+</TabItem>
+</Tabs>
+
+### Start Stream
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.voice.bxml.verbs import StartStream
+from bandwidth.voice.bxml.verbs import StreamParam
+
+
+stream_param = StreamParam(
+    name="internal_id",
+    value="call_ABC"
+)
+
+start_stream = StartStream(
+    name="live_audience",
+    tracks="both",
+    destination="wss://live-studio-audience.myapp.example.com",
+    stream_events_url="https://myapp.example.com/noBXML",
+    stream_params=[stream_param]
+)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.model.bxml.verbs import StartStream
+from bandwidth.model.bxml.verbs import StreamParam
+
+stream_param = StreamParam(
+    name="internal_id",
+    value="call_ABC"
+)
+
+start_stream = StartStream(
+    name="live_audience",
+    tracks="both",
+    destination="wss://live-studio-audience.myapp.example.com",
+    stream_events_url="https://myapp.example.com/noBXML",
+    stream_params=[stream_param]
+)
+```
+
+</TabItem>
+</Tabs>
+
+### Stop Gather
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.voice.bxml.verbs import StopGather
+
+stop_gather = StopGather()
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.model.bxml.verbs import StopGather
+
+stop_gather = StopGather()
+```
+
+</TabItem>
+</Tabs>
+
+### Stop Recording
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.voice.bxml.verbs import StopRecording
+
+stop_recording = StopRecording()
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.model.bxml.verbs import StopRecording
+
+stop_recording = StopRecording()
+```
+
+</TabItem>
+</Tabs>
+
+### Stop Stream
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.voice.bxml.verbs import StopStream
+
+stop_stream = StopStream(
+    name="live_audience",
+)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.model.bxml.verbs import StopStream
+
+stop_stream = StopStream(
+    name="live_audience",
+)
+```
+
+</TabItem>
+</Tabs>
+
+### Tag
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.voice.bxml.verbs import Tag
+
+tag = Tag(
+    tag="audio playing"
+)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.model.bxml.verbs import Tag
+
+tag = Tag(
+    tag="audio playing"
+)
+```
+
+</TabItem>
+</Tabs>
+
+### Transfer
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.voice.bxml.verbs import Transfer, PhoneNumber, SipUri
+
+phone_number = PhoneNumber(
+    number="+11234567892"
+)
+
+sip_uri = SipUri(
+    uri="sip:user@server.com"
+)
+
+transfer = Transfer(
+    transfer_caller_id="+11234567891",
+    phone_numbers=[phone_number]
+)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.voice.bxml.verbs import Transfer, PhoneNumber, SipUri
+
+phone_number = PhoneNumber(
+    number="+11234567892"
+)
+
+sip_uri = SipUri(
+    uri="sip:user@server.com"
+)
+
+transfer = Transfer(
+    transfer_caller_id="+11234567891",
+    transfer_to=[phone_number, sip_uri]
+)
+```
+
+</TabItem>
+</Tabs>
+
+## Calls
+
+### Create Call
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.voice.models.create_call_request import CreateCallRequest
+
+bandwidth_client = BandwidthClient(
+    voice_basic_auth_user_name=BW_USERNAME,
+    voice_basic_auth_password=BW_PASSWORD
+)
+voice_client = bandwidth_client.voice_client.client
+
+body = CreateCallRequest()
+body.application_id = BW_VOICE_APPLICATION_ID
+body.to = "+19195551234"
+body.mfrom = "+19195554321"
+body.answer_url = "https://www.myCallbackServer.com/webhooks/answer"
+try:
+    response = voice_client.create_call(account_id, body)
+    print(response.body.call_id)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.api import calls_api
+
+calls_api_instance = calls_api.CallsApi(api_client)
+
+create_call = CreateCall(
+    to="+19195551234",
+    _from="+19195554321",
+    application_id="1234-qwer-5679-tyui",
+    answer_url="https://www.myCallbackServer.com/webhooks/answer",
+)
+
+try:
+    api_response = calls_api_instance.create_call(account_id, create_call)
+    print(api_response)
+except bandwidth.ApiException as e:
+    print("Exception when calling CallsApi->create_call: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>
+
+### Get Call Information
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+voice_client = bandwidth_client.voice_client.client
+
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    result = voice_client.get_call(account_id, call_id)
+    print(result.body.state)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.api import calls_api
+
+calls_api_instance = calls_api.CallsApi(api_client)
+
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    api_response = calls_api_instance.get_call_state(account_id, call_id)
+    print(api_response)
+except bandwidth.ApiException as e:
+    print("Exception when calling CallsApi->get_call_state: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>
+
+### Update Call
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.voice.models.modify_call_request import ModifyCallRequest
+
+voice_client = bandwidth_client.voice_client.client
+
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+body = ModifyCallRequest()
+body.redirect_url = "https://myServer.com/bandwidth/webhooks/redirect"
+body.state = "active"
+
+try:
+    voice_client.modify_call(account_id, call_id, body)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.api import calls_api
+from bandwidth.model.update_call import UpdateCall
+from bandwidth.model.call_state_enum import CallStateEnum
+
+calls_api_instance = calls_api.CallsApi(api_client)
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+update_call = UpdateCall(
+    state=CallStateEnum("active"),
+    redirect_url="https://myServer.com/bandwidth/webhooks/redirect",
+)
+
+try:
+    calls_api_instance.update_call(account_id, call_id, update_call)
+except bandwidth.ApiException as e:
+    print("Exception when calling CallsApi->update_call: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>
+
+### Replace Call BXML
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.voice.bxml.bxml import Bxml
+from bandwidth.voice.bxml.verbs import *
+
+voice_client = bandwidth_client.voice_client.client
+
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+bxml = Bxml()
+speak_sentence = SpeakSentence(
+    sentence="This is a test.",
+    voice="julie"
+)
+
+bxml.add_verb(speak_sentence)
+
+try:
+    voice_client.modify_call_bxml(account_id, call_id, bxml.to_bxml())
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.api import calls_api
+from bandwidth.model.bxml.bxml import Bxml
+from bandwidth.model.bxml.verbs import SpeakSentence
+
+calls_api_instance = calls_api.CallsApi(api_client)
+
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+bxml = Bxml()
+speak_sentence = SpeakSentence(
+    text='This is a test.',
+    voice="julie"
+)
+
+bxml.add_verb(speak_sentence)
+
+try:
+    calls_api_instance.update_call_bxml(account_id, call_id, bxml.to_bxml())
+except bandwidth.ApiException as e:
+    print("Exception when calling CallsApi->update_call_bxml: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>
+
+## Conferences
+
+### List Conferences
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+voice_client = bandwidth_client.voice_client.client
+
+try:
+    response = voice_client.get_conferences(account_id)
+    if len(response.body) > 0:
+        print(response.body[0].id)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.api import conferences_api
+
+conferences_api_instance = conferences_api.ConferencesApi(api_client)
+
+try:
+    api_response = conferences_api_instance.list_conferences(account_id)
+    print(api_response)
+except bandwidth.ApiException as e:
+    print("Exception when calling ConferencesApi->list_conferences: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>
+
+### Get Conference Information
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+voice_client = bandwidth_client.voice_client.client
+
+conference_id = "conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9"
+
+try:
+    response = voice_client.get_conference(account_id, conference_id)
+    print(response.body.name)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.api import conferences_api
+
+conferences_api_instance = conferences_api.ConferencesApi(api_client)
+
+conference_id = "conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9"
+
+try:
+    api_response = conferences_api_instance.get_conference(account_id, conference_id)
+    print(api_response)
+except bandwidth.ApiException as e:
+    print("Exception when calling ConferencesApi->get_conference: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>
+
+### Update Conference
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.voice.models.modify_conference_request import ModifyConferenceRequest
+from bandwidth.voice.models.status_enum import StatusEnum
+
+voice_client = bandwidth_client.voice_client.client
+
+body = ModifyConferenceRequest()
+body.status = StatusEnum.ACTIVE
+body.redirect_url = "https://myServer.com/bandwidth/webhooks/conferenceRedirect"
+
+conference_id = "conf-1234"
+
+try:
+    voice_client.modify_conference(account_id, conference_id, body)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.api import conferences_api
+from bandwidth.model.update_conference import UpdateConference
+from bandwidth.model.conference_state_enum import ConferenceStateEnum
+
+conferences_api_instance = conferences_api.ConferencesApi(api_client)
+
+conference_id = "conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9"
+update_conference = UpdateConference(
+    status=ConferenceStateEnum("active"),
+    redirect_url="https://myServer.com/bandwidth/webhooks/conferenceRedirect"
+)
+
+try:
+    conferences_api_instance.update_conference(account_id, conference_id, update_conference)
+except bandwidth.ApiException as e:
+    print("Exception when calling ConferencesApi->update_conference: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>
+
+### Update Conference BXML
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```
+N/A - Not implemented
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.api import conferences_api
+
+conferences_api_instance = conferences_api.ConferencesApi(api_client)
+
+conference_id = "conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9"
+
+bxml = Bxml()
+speak_sentence = SpeakSentence(
+    text='This is a test.',
+    voice="julie"
+)
+
+bxml.add_verb(speak_sentence)
+
+try:
+    conferences_api_instance.update_conference_bxml(account_id, conference_id, bxml.to_bxml())
+except bandwidth.ApiException as e:
+    print("Exception when calling ConferencesApi->update_conference_bxml: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>
+
+### Get Conference Member
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+voice_client = bandwidth_client.voice_client.client
+
+conference_id = "conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9"
+member_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    response = voice_client.get_conference_member(account_id, conference_id, member_id)
+    print(response.body.member_url)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.api import conferences_api
+
+conferences_api_instance = conferences_api.ConferencesApi(api_client)
+
+conference_id = "conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9"
+member_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    api_response = conferences_api_instance.get_conference_member(account_id, conference_id, member_id)
+    print(api_response)
+except bandwidth.ApiException as e:
+    print("Exception when calling ConferencesApi->get_conference_member: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>
+
+### Update Conference Member
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+voice_client = bandwidth_client.voice_client.client
+
+conference_id = "conf-1234"
+call_id = "c-1234"
+
+body = ConferenceMemberState()
+body.mute = True
+
+try:
+    voice_client.modify_conference_member(account_id, conference_id, call_id, body)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.api import conferences_api
+from bandwidth.model.update_conference_member import UpdateConferenceMember
+
+conferences_api_instance = conferences_api.ConferencesApi(api_client)
+
+conference_id = "conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9"
+member_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+update_conference_member = UpdateConferenceMember(
+    mute=False,
+    hold=False,
+    call_ids_to_coach=["c-25ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"],
+)
+
+try:
+    conferences_api_instance.update_conference_member(account_id, conference_id, member_id, update_conference_member)
+except bandwidth.ApiException as e:
+    print("Exception when calling ConferencesApi->update_conference_member: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>
+
+### List Conference Recordings
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+voice_client = bandwidth_client.voice_client.client
+
+conference_id = "conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9"
+
+try:
+    response = voice_client.get_conference_recordings(account_id, conference_id)
+    if len(response.body) > 0:
+        print(response.body[0].name)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.api import conferences_api
+
+conferences_api_instance = conferences_api.ConferencesApi(api_client)
+
+conference_id = "conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9"
+
+try:
+    api_response = conferences_api_instance.list_conference_recordings(account_id, conference_id)
+    print(api_response)
+except bandwidth.ApiException as e:
+    print("Exception when calling ConferencesApi->list_conference_recordings: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>
+
+### Get Conference Recording Information
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+voice_client = bandwidth_client.voice_client.client
+
+conference_id = "conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9"
+recording_id = "r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    response = voice_client.get_conference_recording(account_id, conference_id, recording_id)
+    print(response.body.application_id)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.api import conferences_api
+
+conferences_api_instance = conferences_api.ConferencesApi(api_client)
+
+conference_id = "conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9"
+recording_id = "r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    api_response = conferences_api_instance.get_conference_recording(account_id, conference_id, recording_id)
+    print(api_response)
+except bandwidth.ApiException as e:
+    print("Exception when calling ConferencesApi->get_conference_recording: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>
+
+### Download Conference Recording
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+voice_client = bandwidth_client.voice_client.client
+
+conference_id = "conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9"
+recording_id = "r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    response = voice_client.get_download_conference_recording(account_id, conference_id, recording_id)
+    downloaded_recording = response.body
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.api import conferences_api
+
+conferences_api_instance = conferences_api.ConferencesApi(api_client)
+
+conference_id = "conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9"
+recording_id = "r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    api_response = conferences_api_instance.download_conference_recording(account_id, conference_id, recording_id)
+    print(api_response)
+except bandwidth.ApiException as e:
+    print("Exception when calling ConferencesApi->download_conference_recording: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>
+
+## Recordings
+
+### List Call Recordings
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+voice_client = bandwidth_client.voice_client.client
+
+try:
+    result = voice_client.get_query_call_recordings(account_id)
+    if len(result.body) > 0:
+        print(result.body[0].recording_id)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.api import recordings_api
+
+recordings_api_instance = recordings_api.RecordingsApi(api_client)
+
+try:
+    api_response = recordings_api_instance.list_account_call_recordings(account_id)
+    print(api_response)
+except bandwidth.ApiException as e:
+    print("Exception when calling RecordingsApi->list_account_call_recordings: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>
+
+### Update Recording
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.voice.models.modify_call_recording_request import ModifyCallRecordingRequest
+
+voice_client = bandwidth_client.voice_client.client
+
+body = ModifyCallRecordingRequest()
+body.state = "paused"
+
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    voice_client.modify_call_recording_state(account_id, call_id, body)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.api import recordings_api
+from bandwidth.model.update_call_recording import UpdateCallRecording
+from bandwidth.model.recording_state_enum import RecordingStateEnum
+
+recordings_api_instance = recordings_api.RecordingsApi(api_client)
+
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+update_call_recording = UpdateCallRecording(
+    state=RecordingStateEnum("paused"),
+)
+
+try:
+    recordings_api_instance.update_call_recording_state(account_id, call_id, update_call_recording)
+except bandwidth.ApiException as e:
+    print("Exception when calling RecordingsApi->update_call_recording_state: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>
+
+### List Call Recordings
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+voice_client = bandwidth_client.voice_client.client
+
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    response = voice_client.get_call_recordings(account_id, call_id)
+    if len(response.body) > 0:
+        print(response.body[0].recording_id)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.api import recordings_api
+
+recordings_api_instance = recordings_api.RecordingsApi(api_client)
+
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    api_response = recordings_api_instance.list_call_recordings(account_id, call_id)
+    print(api_response)
+except bandwidth.ApiException as e:
+    print("Exception when calling RecordingsApi->list_call_recordings: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>
+
+### Get Call Recording
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+voice_client = bandwidth_client.voice_client.client
+
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+recording_id = "r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    response = voice_client.get_call_recording(account_id, call_id, recording_id)
+    print(response.body.application_id)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.api import recordings_api
+
+recordings_api_instance = recordings_api.RecordingsApi(api_client)
+
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+recording_id = "r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    api_response = recordings_api_instance.get_call_recording(account_id, call_id, recording_id)
+    print(api_response)
+except bandwidth.ApiException as e:
+    print("Exception when calling RecordingsApi->get_call_recording: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>
+
+### Delete Recording
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+voice_client = bandwidth_client.voice_client.client
+
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+recording_id = "r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    voice_client.delete_recording(account_id, call_id, recording_id)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.api import recordings_api
+
+recordings_api_instance = recordings_api.RecordingsApi(api_client)
+
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+recording_id = "r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    recordings_api_instance.delete_recording(account_id, call_id, recording_id)
+except bandwidth.ApiException as e:
+    print("Exception when calling RecordingsApi->delete_recording: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>
+
+### Download Recording
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+voice_client = bandwidth_client.voice_client.client
+
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+recording_id = "r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    response = voice_client.get_download_call_recording(account_id, call_id, recording_id)
+    downloaded_recording = response.body
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.api import recordings_api
+
+recordings_api_instance = recordings_api.RecordingsApi(api_client)
+
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+recording_id = "r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    api_response = recordings_api_instance.download_call_recording(account_id, call_id, recording_id)
+    print(api_response)
+except bandwidth.ApiException as e:
+    print("Exception when calling RecordingsApi->download_call_recording: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>
+
+### Delete Recording Media
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+voice_client = bandwidth_client.voice_client.client
+
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+recording_id = "r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    voice_client.delete_recording_media(account_id, call_id, recording_id)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.api import recordings_api
+
+recordings_api_instance = recordings_api.RecordingsApi(api_client)
+
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+recording_id = "r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    recordings_api_instance.delete_recording_media(account_id, call_id, recording_id)
+except bandwidth.ApiException as e:
+    print("Exception when calling RecordingsApi->delete_recording_media: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>
+
+### Get Transcription
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+voice_client = bandwidth_client.voice_client.client
+
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+recording_id = "r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    response = voice_client.get_call_transcription(account_id, call_id, recording_id)
+    print(response.body.transcripts)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.api import recordings_api
+
+recordings_api_instance = recordings_api.RecordingsApi(api_client)
+
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+recording_id = "r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    api_response = recordings_api_instance.get_call_transcription(account_id, call_id, recording_id)
+    print(api_response)
+except bandwidth.ApiException as e:
+    print("Exception when calling RecordingsApi->get_call_transcription: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>
+
+### Create Transcription Request
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.voice.models.transcribe_recording_request import TranscribeRecordingRequest
+
+voice_client = bandwidth_client.voice_client.client
+
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+recording_id = "r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+body = TranscribeRecordingRequest()
+body.callback_url = "https://myServer.com/bandwidth/webhooks/transcriptionAvailable"
+
+try:
+    voice_client.create_transcribe_call_recording(account_id, call_id, recording_id, body)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.api import recordings_api
+from bandwidth.model.transcribe_recording import TranscribeRecording
+
+recordings_api_instance = recordings_api.RecordingsApi(api_client)
+
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+recording_id = "r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+transcribe_recording = TranscribeRecording(
+    callback_url="https://myServer.com/bandwidth/webhooks/transcriptionAvailable"
+)
+
+try:
+    recordings_api_instance.transcribe_call_recording(account_id, call_id, recording_id, transcribe_recording)
+except bandwidth.ApiException as e:
+    print("Exception when calling RecordingsApi->transcribe_call_recording: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>
+
+### Delete Transcription
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+voice_client = bandwidth_client.voice_client.client
+
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+recording_id = "r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    voice_client.delete_call_transcription(account_id, call_id, recording_id)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.api import recordings_api
+
+recordings_api_instance = recordings_api.RecordingsApi(api_client)
+
+call_id = "c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+recording_id = "r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85"
+
+try:
+    recordings_api_instance.delete_call_transcription(account_id, call_id, recording_id)
+except bandwidth.ApiException as e:
+    print("Exception when calling RecordingsApi->delete_call_transcription: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>
+
+## Telephone Number Lookup
+
+### Create Lookup
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.phonenumberlookup.models.order_request import OrderRequest
+
+phone_number_lookup_client = bandwidth_client.phone_number_lookup_client.client
+
+body = OrderRequest()
+body.tns = ["+15554443333"]
+
+try:
+    response = phone_number_lookup_client.create_lookup_request(account_id, body)
+    print(response.body.request_id)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.model.lookup_request import LookupRequest
+
+phone_number_lookup_api_instance = phone_number_lookup_api.PhoneNumberLookupApi(api_client)
+lookup_request = LookupRequest(
+    tns=["+15554443333"],
+)
+
+try:
+    api_response = phone_number_lookup_api_instance.create_lookup(account_id, lookup_request)
+    print(api_response)
+except bandwidth.ApiException as e:
+    print("Exception when calling PhoneNumberLookupApi->create_lookup: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>
+
+### Get Lookup Request Status
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+phone_number_lookup_client = bandwidth_client.phone_number_lookup_client.client
+
+request_id = "004223a0-8b17-41b1-bf81-20732adf5590"
+
+try:
+    response = phone_number_lookup_client.get_lookup_request_status(account_id, request_id)
+    print(response.body.status)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+phone_number_lookup_api_instance = phone_number_lookup_api.PhoneNumberLookupApi(api_client)
+
+request_id = "004223a0-8b17-41b1-bf81-20732adf5590"
+
+try:
+    api_response = phone_number_lookup_api_instance.get_lookup_status(account_id, request_id)
+    print(api_response)
+except bandwidth.ApiException as e:
+    print("Exception when calling PhoneNumberLookupApi->get_lookup_status: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>
+
+## Multi-Factor Authentication
+
+### Voice MFA Code
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.multifactorauth.models.two_factor_code_request_schema import TwoFactorCodeRequestSchema
+
+mfa_client = bandwidth_client.multi_factor_auth_client.mfa
+
+body = TwoFactorCodeRequestSchema(
+    mfrom = "+15554443333",
+    to = "+15553334444",
+    application_id = "66fd98ae-ac8d-a00f-7fcd-ba3280aeb9b1",
+    scope = "2FA",
+    digits = 6,
+    message = "Your temporary {NAME} {SCOPE} code is {CODE}"
+)
+
+try:
+    auth_client.create_voice_two_factor(account_id, body)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.api import mfa_api
+from bandwidth.model.code_request import CodeRequest
+
+mfa_api_instance = mfa_api.MFAApi(api_client)
+
+code_request = CodeRequest(
+    to="+15553334444",
+    _from="+15554443333",
+    application_id="66fd98ae-ac8d-a00f-7fcd-ba3280aeb9b1",
+    scope="2FA",
+    message="Your temporary {NAME} {SCOPE} code is {CODE}",
+    digits=6,
+)
+
+try:
+    api_response = mfa_api_instance.generate_voice_code(account_id, code_request)
+    print(api_response)
+except bandwidth.ApiException as e:
+    print("Exception when calling MFAApi->generate_messaging_code: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>
+
+### Messaging MFA Code
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.multifactorauth.models.two_factor_code_request_schema import TwoFactorCodeRequestSchema
+
+mfa_client = bandwidth_client.multi_factor_auth_client.mfa
+
+body = TwoFactorCodeRequestSchema(
+    mfrom = "+15554443333",
+    to = "+15553334444",
+    application_id = "66fd98ae-ac8d-a00f-7fcd-ba3280aeb9b1",
+    scope = "2FA",
+    digits = 6,
+    message = "Your temporary {NAME} {SCOPE} code is {CODE}"
+)
+
+try:
+    auth_client.create_messaging_two_factor(account_id, body)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.api import mfa_api
+from bandwidth.model.code_request import CodeRequest
+
+mfa_api_instance = mfa_api.MFAApi(api_client)
+
+code_request = CodeRequest(
+    to="+15553334444",
+    _from="+15554443333",
+    application_id="66fd98ae-ac8d-a00f-7fcd-ba3280aeb9b1",
+    scope="2FA",
+    message="Your temporary {NAME} {SCOPE} code is {CODE}",
+    digits=6,
+)
+
+try:
+    api_response = mfa_api_instance.generate_messaging_code(account_id, code_request)
+    print(api_response)
+except bandwidth.ApiException as e:
+    print("Exception when calling MFAApi->generate_messaging_code: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>
+
+### Verify MFA Code
+
+<Tabs groupId="python_v14_v15_migration" defaultValue="v15-beta" values={[ { label: 'v14', value: 'v14', }, { label: 'v15-beta', value: 'v15-beta', } ]}>
+<TabItem value="v14">
+
+```py
+from bandwidth.multifactorauth.models.two_factor_verify_request_schema import TwoFactorVerifyRequestSchema
+
+auth_client = bandwidth_client.multi_factor_auth_client.mfa
+
+body = TwoFactorVerifyRequestSchema(
+    to = USER_NUMBER,
+    application_id = "66fd98ae-ac8d-a00f-7fcd-ba3280aeb9b1",
+    scope = "2FA",
+    code = "123456", #This is the user's input to validate
+    expiration_time_in_minutes = 3
+)
+
+try:
+    response = auth_client.create_verify_two_factor(account_id, body)
+    print(response.body.valid)
+except APIException as e:
+    print(e.response_code)
+```
+
+</TabItem>
+<TabItem value="v15-beta">
+
+```py
+from bandwidth.api import mfa_api
+from bandwidth.model.code_request import CodeRequest
+
+mfa_api_instance = mfa_api.MFAApi(api_client)
+
+verify_code_request = VerifyCodeRequest(
+    to="+19195551234",
+    scope="2FA",
+    expiration_time_in_minutes=3,
+    code="123456",
+)
+
+try:
+    api_response = mfa_api_instance.verify_code(account_id, verify_code_request)
+    print(api_response)
+except bandwidth.ApiException as e:
+    print("Exception when calling MFAApi->verify_code: %s\n" % e)
+```
+
+</TabItem>
+</Tabs>

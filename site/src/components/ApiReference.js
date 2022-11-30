@@ -1,6 +1,6 @@
 import React from 'react';
 import { useColorMode } from '@docusaurus/theme-common';
-import { RedocStandalone } from 'redoc';
+import { RedocStandalone } from 'bandwidth-redoc';
 import { lightTheme, darkTheme } from '@site/src/css/redocTheme';
 
 const RedocConfig = (props) => {
@@ -12,6 +12,7 @@ const RedocConfig = (props) => {
                       expandResponses: "200,201,202,204",
                       menuToggle: true,
                       theme: colorMode === 'dark' ? darkTheme('#FFFFFF') : lightTheme(props.color),
+                      hideDownloadButton: props.hideDownloadButton ? true: false,
                       downloadDefinitionUrl: props.downloadDefinitionUrl
                   }}/>
 }
@@ -20,7 +21,7 @@ export default function ApiReference(props) {
     return (
         <main>
             <div className="RedocStandalone">
-              <RedocConfig spec={props.spec} color={props.color} downloadDefinitionUrl={props.downloadDefinitionUrl}/>
+              <RedocConfig spec={props.spec} color={props.color} hideDownloadButton={props.hideDownloadButton} downloadDefinitionUrl={props.downloadDefinitionUrl}/>
             </div>
         </main>
     );

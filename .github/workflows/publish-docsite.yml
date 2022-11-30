@@ -118,7 +118,7 @@ jobs:
              exit 1
           fi          
 
-  cypress_post_test:
+  cypress_post_tests:
     name: Cypress run on prod
     needs: [cypress, publish]
     runs-on: ${{ matrix.os }}
@@ -146,19 +146,47 @@ jobs:
           record: true
           browser: ${{ matrix.browser }}
           working-directory: ./site
-          config-file: cypress.config.js
+          config-file: prod-cypress.config.js
           tag: production
         env:
-          CYPRESS_host: https://dev.bandwidth.com/
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           CYPRESS_PROJECT_ID: ${{ secrets.PROJECT_ID }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COMMIT_INFO_MESSAGE: ${{github.event.pull_request.title}}
           COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}
-
-      - name: Rollback For Failed Cypress Tests
-        if: ${{ failure() && github.event_name != 'workflow_dispatch' }}
-        id: rollback
-        uses: ./.github/actions/rollback_release
+          
+  notify_for_failures:
+    name: Notify for Failures
+    needs: [cypress_post_tests]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Slack of Failures
+        uses: Bandwidth/build-notify-slack-action@v1.0.0
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          job-status: failure
+          slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
+          slack-channel: ${{ secrets.SLACK_CHANNEL }}             
+
+  rollback_if_failed:
+    needs: [cypress, publish, cypress_post_tests]
+    name: Rollback Release
+    if: ${{ failure() && github.event_name != 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup Node
+      uses: actions/setup-node@v2
+      with:
+        node-version: 16
+
+    - name: Install Dependencies
+      run: |
+          cd ./.github/actions/rollback_release
+          npm install
+    - name: Rollback For Failed Cypress Tests
+      id: rollback
+      uses: ./.github/actions/rollback_release
+      with:
+        GITHUB_TOKEN: ${{ secrets.DX_GITHUB_TOKEN }}
