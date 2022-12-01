@@ -1,0 +1,168 @@
+openapi: 3.0.3
+info:
+  title: Active Phone Call Info
+  description: >-
+    The Bandwidth active phone call info API can be used to retrieve information
+    about specific phone calls that are
+
+    currently active on the Bandwidth network.  
+
+
+    Currently this API only supports providing fraud and spoofing scores that
+    indicate how likely it is that a phone 
+
+    call is fraudulent or that an incoming phone call is coming from a spoofed
+    phone number.  This API may support 
+
+    other types of call information in the future.
+  contact:
+    name: Bandwidth
+    url: https://support.bandwidth.com
+    email: support@bandwidth.com
+  version: 1.0.0
+servers:
+  - url: <todo - production URL>
+paths:
+  /activePhoneCalls/{callId}/riskScore:
+    get:
+      tags:
+        - Scores
+      summary: Retrieve the risk scores for a specific phone call
+      description: >-
+        Retrieve the fraud score and spoofing score for a specific phone call.
+
+
+        **Note**: This information is generated after a call is answered and is
+        cached for only 30 minutes.  If you attempt
+
+        to query this information before the score has been generated or after
+        the 30 minute cache period expires, the API
+
+        will return an HTTP 404.
+      parameters:
+        - $ref: '#/components/parameters/callId'
+      responses:
+        '200':
+          $ref: '#/components/responses/scoresResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/forbiddenResponse'
+        '404':
+          $ref: '#/components/responses/notFoundResponse'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsResponse'
+        '500':
+          $ref: '#/components/responses/internalServerErrorResponse'
+components:
+  parameters:
+    callId:
+      name: callId
+      schema:
+        $ref: '#/components/schemas/CallId'
+      in: path
+      required: true
+  responses:
+    scoresResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RiskScore'
+    unauthorizedResponse:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          examples:
+            unauthorizedExample:
+              $ref: '#/components/examples/unauthorizedErrorExample'
+    forbiddenResponse:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          examples:
+            forbiddenExample:
+              $ref: '#/components/examples/forbiddenErrorExample'
+    notFoundResponse:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          examples:
+            notFoundExample:
+              $ref: '#/components/examples/notFoundErrorExample'
+    tooManyRequestsResponse:
+      description: Too Many Requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          examples:
+            tooManyRequestsExample:
+              $ref: '#/components/examples/tooManyRequestsErrorExample'
+    internalServerErrorResponse:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          examples:
+            internalServerErrorExample:
+              $ref: '#/components/examples/internalServerErrorErrorExample'
+  schemas:
+    CallId:
+      type: string
+      description: >-
+        The unique Bandwidth-generated identifier of a phone call provided by
+        bandwith in the SIP invite for that call.
+      example: MTU2MDI4ODE1XzgzMzQ4OTg4QDE5Mi4xNjguMTMyLjQx
+    RiskScore:
+      type: object
+      description: The fraud score for a specific phone call.
+      properties:
+        spoofingRisk:
+          type: number
+          description: >-
+            A number between 0 and 100 that indicates the liklihood that the
+            calling number on active phone call is 
+
+            being spoofed (with 0 being the lowest possible risk and 100 being
+            the highest possible risk).
+        fraudRisk:
+          type: number
+          description: >-
+            A number between 0 and 100 that indicates the level of risk that a
+            phone call is spam or is otherwise coming
+
+            from a fraudulent source.
+    ApiError:
+      type: object
+      properties:
+        error:
+          type: string
+  examples:
+    unauthorizedErrorExample:
+      summary: Unauthorized
+      value:
+        error: Unauthorized
+    forbiddenErrorExample:
+      summary: Forbidden
+      value:
+        error: Forbidden
+    notFoundErrorExample:
+      summary: Not Found
+      value:
+        error: Fraud score not found
+    tooManyRequestsErrorExample:
+      summary: Too Many Requests
+      value:
+        error: Too Many Requests
+    internalServerErrorErrorExample:
+      summary: Internal Server Error
+      value:
+        error: Internal Server Error
