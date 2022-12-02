@@ -1,0 +1,118 @@
+# Deletes the staging docsite folder in the staging bucket on a closed PR
+
+name: PR Closed Delete Bucket
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - 'main'
+    paths:
+      - 'site/**'
+
+jobs:
+  cypress_cloudfront:
+    name: Cypress Against Cloudfront Staged Site
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        browser: [chrome]
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Set Environment Variables
+        run: |
+          BRANCH_NAME=${GITHUB_HEAD_REF#refs/heads/}
+          BRANCH_NAME=$(echo "$BRANCH_NAME" | tr '[:upper:]' '[:lower:]')
+          BRANCH_NAME=$(echo "$BRANCH_NAME" | sed -e "s/[^a-z0-9]/-/g")
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV 
+
+      - name: Create Cypress Config
+        run: |
+          cd ./site
+          cat >staged-cypress.config.js <<EOL
+          const { defineConfig } = require("cypress");
+
+          module.exports = defineConfig({
+            e2e: {
+              setupNodeEvents(on, config) {
+                // implement node event listeners here
+              },
+            baseUrl: "https://$BRANCH_NAME.staging-dev.bandwidth.com/"
+            },
+            projectId: "oz7rpf",
+            pageLoadTimeout: 60000,
+            viewportWidth: 1440,
+            viewportHeight: 900,
+            video: false,
+            videoUploadOnPasses: false,
+            screenshotOnRunFailure: true,
+            retries: 3,
+          });
+          EOL
+
+      - name: Cypress Staged Cloudfront Deployment Test
+        uses: cypress-io/github-action@v4.2.0
+        timeout-minutes: 40
+        with:
+          record: true
+          browser: ${{ matrix.browser }}
+          working-directory: ./site
+          config-file: staged-cypress.config.js
+          tag: production
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_PROJECT_ID: ${{ secrets.PROJECT_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMIT_INFO_MESSAGE: ${{github.event.pull_request.title}}
+          COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}
+
+  delete_bucket_folder:
+    name: Delete Bucket
+    needs: [cypress_cloudfront]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set Environment Variables
+      run: |
+        BRANCH_NAME=${GITHUB_HEAD_REF#refs/heads/}
+        BRANCH_NAME=$(echo "$BRANCH_NAME" | tr '[:upper:]' '[:lower:]')
+        BRANCH_NAME=$(echo "$BRANCH_NAME" | sed -e "s/[^a-z0-9]/-/g")
+        echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Cleanup S3 Bucket
+      run: aws s3 rm s3://staging-dev-docsite/ --recursive --exclude "*" --include "$BRANCH_NAME/*"
+
+  notify_for_failures:
+    name: Notify for Failures
+    needs: [cypress_cloudfront, delete_bucket_folder]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Slack of Failures
+        uses: Bandwidth/build-notify-slack-action@v1.0.0
+        with:
+          job-status: failure
+          slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
+          slack-channel: ${{ secrets.SLACK_CHANNEL }}
