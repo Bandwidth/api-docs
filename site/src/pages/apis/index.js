@@ -9,6 +9,11 @@ const apiList = [
         link: '/apis/voice'
     },
     {
+        title: 'Active Call Info API',
+        Svg: require('@site/static/img/api-icons/voice.svg').default,
+        link: '/apis/active-call-info'
+    },
+    {
         title: 'Phone Number Lookup API',
         Svg: require('@site/static/img/api-icons/phone-number-lookup.svg').default,
         link: '/apis/number-lookup'
