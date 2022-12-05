@@ -31,7 +31,7 @@ module.exports = {
     onBrokenLinks: 'throw',
     onBrokenMarkdownLinks: 'warn',
     favicon: 'img/favicon.ico',
-    trailingSlash: undefined,
+    trailingSlash: true,
     organizationName: 'bandwidth',
     projectName: 'api-docs',
     themeConfig: {
