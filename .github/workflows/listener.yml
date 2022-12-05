@@ -66,13 +66,17 @@ jobs:
         env: 
           GITHUB_TOKEN: ${{ secrets.DX_GITHUB_TOKEN }}
       
-      - uses: ./.github/actions/add_pr_comment
-        with: 
-          username: ${{ secrets.DX_GITHUB_USERNAME }}
-          token: ${{ secrets.DX_GITHUB_TOKEN }}
-          repo-name: api-docs
-          pr-number: ${{ env.PR_NUMBER }}
-          message: 'Corresponding Pull Request on [${{ github.event.client_payload.originRepo }}](https://github.com/Bandwidth/${{ github.event.client_payload.originRepo }}/pull/${{ github.event.client_payload.prNumber }}) was merged.'
+      # Comment on PR
+      - name: Comment on Corresponding Repo
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: ${{ env.PR_NUMBER }},
+              owner: 'Bandwidth',
+              repo: 'api-docs',
+              body: 'Corresponding Pull Request on [${{ github.event.client_payload.originRepo }}](https://github.com/Bandwidth/${{ github.event.client_payload.originRepo }}/pull/${{ github.event.client_payload.prNumber }}) was merged.'
+            })
 
   close: 
     if: ${{ github.event.action == 'Close' }} 
@@ -91,14 +95,18 @@ jobs:
         env: 
           GITHUB_TOKEN: ${{ secrets.DX_GITHUB_TOKEN }}
       
-      - uses: ./.github/actions/add_pr_comment
-        with: 
-          username: ${{ secrets.DX_GITHUB_USERNAME }}
-          token: ${{ secrets.DX_GITHUB_TOKEN }}
-          repo-name: api-docs
-          pr-number: ${{ env.PR_NUMBER }}
-          message: 'Corresponding Pull Request on [${{ github.event.client_payload.originRepo }}](https://github.com/Bandwidth/${{ github.event.client_payload.originRepo }}/pull/${{ github.event.client_payload.prNumber }}) was closed.'
-  
+      # Comment on PR
+      - name: Comment on Corresponding Repo
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: ${{ env.PR_NUMBER }},
+              owner: 'Bandwidth',
+              repo: 'api-docs',
+              body: 'Corresponding Pull Request on [${{ github.event.client_payload.originRepo }}](https://github.com/Bandwidth/${{ github.event.client_payload.originRepo }}/pull/${{ github.event.client_payload.prNumber }}) was closed.'
+            })
+
   change_draft_status: 
     if: ${{ github.event.action == 'Draft' }} 
     runs-on: ubuntu-latest
