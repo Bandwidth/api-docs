@@ -55,13 +55,30 @@ jobs:
     if: ${{ github.event.action == 'Merge' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: '2'
 
       - name: Set PR number as env variable
         run: |
           echo "PR_NUMBER=$(hub pr list -h ${{ github.event.client_payload.branchName }} -f %I)" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ secrets.DX_GITHUB_TOKEN }}
+
+      - name: Check Diff
+        run: |
+          echo "========== modified files =========="
+          git diff --name-only HEAD^ HEAD
+
+          echo "========== check paths of modified files =========="
+          git diff --name-only HEAD^ HEAD > files.txt
+          while IFS= read -r file
+          do
+            if [[ $file != site/specs/* ]]; then
+              echo "$file is not an API spec file. Can't automerge this PR."
+              exit 1
+            fi
+          done < files.txt
 
       - uses: bandwidth/automerge-pr-action@v1.0.0
         with:
