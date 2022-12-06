@@ -154,10 +154,8 @@ paths:
         - Port-In Orders
         - Coming soon
     patch:
-      summary: Submit/Modify/Request Cancellation of a Port-In Order
-      description: >-
-        Allows you to submit or modify a draft port-in order, or to request the
-        cancellation of a submitted port-in order.
+      summary: Submit a Port-In Order
+      description: Allows you to submit a draft port-in order.
       operationId: modifyPortinOrder
       requestBody:
         $ref: '#/components/requestBodies/portInOrderRequest'
@@ -178,7 +176,6 @@ paths:
           $ref: '#/components/responses/5xxErrorResponse'
       tags:
         - Port-In Orders
-        - Coming soon
   /porting/validator:
     post:
       summary: Check number portability
@@ -234,7 +231,6 @@ paths:
       tags:
         - Port-In Orders
         - Port-In Order Document
-        - Coming soon
   /porting/{portInOrderId}/documents/{documentId}:
     parameters:
       - $ref: '#/components/parameters/portInOrderId'
@@ -310,6 +306,14 @@ components:
           description: >-
             Specific date you would prefer the port-into be completed, in RFC
             3339 format.
+          example: '2022-03-10T17:32:28Z'
+        plannedDate:
+          type: string
+          minLength: 1
+          format: date-time
+          description: >-
+            Date when the port is planned, in RFC 3339 format. This date is only
+            present when the port is confirmed.
           example: '2022-03-10T17:32:28Z'
         createdDate:
           type: string
@@ -1266,8 +1270,6 @@ components:
             requestCancellationSuccessResponse:
               $ref: >-
                 #/components/examples/requestCancellationPortInOrderSuccessResponse
-            modifyOrderSuccessResponse:
-              $ref: '#/components/examples/modifyPortInOrderSuccessResponse'
             submitOrderSuccessResponse:
               $ref: '#/components/examples/submitPortInOrderSucessResponse'
     portInOrderArraySuccessResponse:
@@ -1540,8 +1542,6 @@ components:
               $ref: '#/components/examples/requestCancellationPortInOrderRequest'
             submitOrderRequest:
               $ref: '#/components/examples/submitPortInOrderRequest'
-            modifyOrderRequest:
-              $ref: '#/components/examples/modifyPortInOrderRequest'
       description: General port-in order request.
     documentUploadRequest:
       content:
@@ -1609,7 +1609,7 @@ components:
                 items:
                   type: string
                   minLength: 1
-                  maxLength: 999
+                  maxLength: 500
                   example: '+33123456789'
             required:
               - phoneNumbers
@@ -1875,97 +1875,6 @@ components:
           - rel: support
             href: https://support.voxbone.com/hc/en-us/requests/295782
             type: GET
-    modifyPortInOrderRequest:
-      value:
-        numbersOwner:
-          numberUsageType: BUSINESS
-          complementaryAddressInformation: In attention to Mr. Smith
-          buildingNumber: '489'
-          streetName: Rue Vanderkindere
-          city: Brussels
-          countryCodeA3: BEL
-          postalCode: '1050'
-          companyName: Voxbone
-          companyVatNumber: BE0478928788
-          title: COMPANY
-        currentProviderName: string
-        preferredPortInDate: '2019-08-24T14:15:22Z'
-        phoneNumbers:
-          - '+32188243633'
-          - '+32188243635'
-          - '+32188243636'
-    modifyPortInOrderSuccessResponse:
-      value:
-        data:
-          portIn:
-            portInOrderId: 293895
-            currentProviderName: Verizon
-            numbersToPort:
-              - phoneNumber: '+32188243633'
-                phoneNumberType: GEOGRAPHIC
-                countryCodeA3: BEL
-                countryCallingCode: '32'
-                areaCode: '3'
-                leadTime: 10
-                internalMigration: true
-                portable: true
-              - phoneNumber: '+32188243635'
-                phoneNumberType: GEOGRAPHIC
-                countryCodeA3: BEL
-                countryCallingCode: '32'
-                areaCode: '3'
-                leadTime: 10
-                internalMigration: true
-                portable: true
-              - phoneNumber: '+32188243636'
-                phoneNumberType: GEOGRAPHIC
-                countryCodeA3: BEL
-                countryCallingCode: '32'
-                areaCode: '3'
-                leadTime: 10
-                internalMigration: true
-                portable: true
-            numbersOwner:
-              numberUsageType: BUSINESS
-              complementaryAddressInformation: In attention to Mr. Smith
-              buildingNumber: '489'
-              streetName: Rue Vanderkindere
-              city: Brussels
-              countryCodeA3: BEL
-              postalCode: '1050'
-              companyName: Voxbone
-              companyVatNumber: BE0478928788
-              title: COMPANY
-            supportRef: PRT293895686064690
-            supportTicket:
-              link:
-                rel: self
-                href: https://support.voxbone.com/hc/en-us/requests/295782
-                type: GET
-            status: DRAFT
-            currency: EUR
-            preferredPortInDate: '2019-08-24T14:15:22Z'
-            createdDate: '2022-01-10T17:32:28Z'
-            lastUpdate: '2022-01-15T17:32:28Z'
-            documents:
-              - type: LOA
-                description: Letter of authority
-                status: PENDING_VALIDATION
-                documentId: 255005
-            totalFees:
-              portFees: 1
-              cancellationFees: 2.3
-              phoneNumberMonthlyFees: 5.7
-        links:
-          - rel: self
-            href: https://api.preprod.voxbone.com/beta/porting-api/251593
-            type: GET
-          - rel: self
-            href: https://api.preprod.voxbone.com/beta/porting-api/251593
-            type: DELETE
-          - rel: support
-            href: https://support.voxbone.com/hc/en-us/requests/295782
-            type: GET
     submitPortInOrderRequest:
       value:
         status: SUBMITTED
@@ -2176,7 +2085,7 @@ security:
   - Token: []
   - ApiKey: []
 tags:
-  - name: Portability Checker
   - name: Port-In Orders
   - name: Port-In Order Document
+  - name: Portability Checker
   - name: Coming soon
