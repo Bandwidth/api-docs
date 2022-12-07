@@ -1,5 +1,4 @@
 import React from 'react';
-import splashPageStyles from '@site/src/components/css/SplashPage.module.css';
 import Carousel from '@site/src/components/Carousel.js';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 
@@ -29,16 +28,16 @@ const sdksImage = require('@site/static/img/sdks-splash.svg').default;
 
 function SplashRow({left, right}) {
     return (
-        <div className={splashPageStyles.splashRow}>
-            <div className={splashPageStyles.splashRowLeft}>{left}</div>
-            <div className={splashPageStyles.splashRowRight}>{right}</div>
+        <div className="splash-row">
+            <div className="splash-row-left">{left}</div>
+            <div className="splash-row-right">{right}</div>
         </div>
     )
 }
 
 function SplashPageImage({Svg}) {
     return (
-        <div className={splashPageStyles.image}>
+        <div className="image" data-cy="image">
             <Svg/>
         </div>
     )
@@ -46,10 +45,10 @@ function SplashPageImage({Svg}) {
 
 function SplashPageTextBlock({title, text, linkText, link}) {
     return (
-        <div className={splashPageStyles.textBlock}>
-            <div className={splashPageStyles.title}>{title}</div>
-            <div className={splashPageStyles.text}>{text}</div>
-            <div className={splashPageStyles.link}><a href={link}>{linkText}</a></div>
+        <div className="text-block">
+            <div className="title" data-cy="title">{title}</div>
+            <div className="text" data-cy="text">{text}</div>
+            <div className="link" data-cy="link"><a href={link}>{linkText}</a></div>
         </div>
     )
 }
@@ -59,8 +58,8 @@ export default function SplashPage() {
     const carousel = siteConfig.customFields.blogPosts;
 
     return (
-        <div className={splashPageStyles.splash}>
-            <div className={splashPageStyles.header}>
+        <div className="splash" data-cy="splash">
+            <div className="splash-header">
                 <h1>Bandwidth Developer Documentation</h1>
                 <h2>Explore our guides, API reference, and SDKs to integrate with Bandwidth's APIs.</h2>
             </div>

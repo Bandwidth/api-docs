@@ -1,15 +1,14 @@
 import React from 'react';
-import sdkStyles from '@site/src/components/css/SdkPage.module.css';
 import GitHubLink from '@site/src/components/GitHubLink';
 
-export default function SdkPage({Svg, title, repoLinks, samplesLink}) {
+export default function SdkPage({Svg, title, repoLinks, samplesLink, migrationGuides}) {
     return (
-        <div className={sdkStyles.sdkPage}>
-            <div className={sdkStyles.sdkImage}>
-                <Svg className={sdkStyles.sdkSvg} alt={title} />
+        <div className="sdk-page">
+            <div className="sdk-image">
+                <Svg className="sdk-svg" alt={title} />
             </div>
-            <div className={sdkStyles.sdkProductTable}>
-                <div className={sdkStyles.tableHolder}>
+            <div className="sdk-product-table">
+                <div className="table-holder">
                     <table>
                         <thead>
                             <tr>
@@ -31,6 +30,13 @@ export default function SdkPage({Svg, title, repoLinks, samplesLink}) {
                                 <td>Code Samples showing how to utilize the Bandwidth {title} SDK</td>
                                 <td><GitHubLink GHLink={samplesLink}/></td>
                             </tr>
+                            { migrationGuides == true &&
+                                <tr className='sdk-migration-guides'>
+                                    <td />
+                                    <td><a href={"/migration-guides/" + title.toLowerCase()}>Migration Guide</a></td>
+                                    <td />
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
