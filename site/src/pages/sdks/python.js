@@ -15,7 +15,8 @@ const props = {
       ghLink: 'https://github.com/Bandwidth/python-sdk'
     }
   ],
-  samplesLink: 'https://github.com/orgs/Bandwidth-Samples/repositories?language=python'
+  samplesLink: 'https://github.com/orgs/Bandwidth-Samples/repositories?language=python',
+  migrationGuides: true
 };
 
 export default function sdkPage() {
