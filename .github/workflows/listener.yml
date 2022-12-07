@@ -42,14 +42,17 @@ jobs:
         env: 
           GITHUB_TOKEN: ${{ secrets.DX_GITHUB_TOKEN }}
 
+      # Comment on PR
       - name: Comment on Corresponding Repo
-        uses: ./.github/actions/add_pr_comment
-        with: 
-          username: ${{ secrets.DX_GITHUB_USERNAME }}
-          token: ${{ secrets.DX_GITHUB_TOKEN }}
-          repo-name: ${{ github.event.client_payload.originRepo }}
-          pr-number: ${{ github.event.client_payload.prNumber }}
-          message: 'Preview site: http://bw-api-docs-${{ env.BRANCH_NAME }}.s3-website-us-east-1.amazonaws.com/\nPlease note that it may take a couple minutes for your preview site to become available.\n\nSee the corresponding PR opened on the docsite repository (no action required):\nhttps://github.com/Bandwidth/api-docs/pull/${{ env.PR_NUMBER }}'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: ${{ github.event.client_payload.prNumber }},
+              owner: 'Bandwidth',
+              repo: ${{ github.event.client_payload.originRepo }},
+              body: 'Preview site: http://bw-api-docs-${{ env.BRANCH_NAME }}.s3-website-us-east-1.amazonaws.com/\nPlease note that it may take a couple minutes for your preview site to become available.\n\nSee the corresponding PR opened on the docsite repository (no action required):\nhttps://github.com/Bandwidth/api-docs/pull/${{ env.PR_NUMBER }}'
+            })
 
   merge: 
     if: ${{ github.event.action == 'Merge' }} 
@@ -63,13 +66,17 @@ jobs:
         env: 
           GITHUB_TOKEN: ${{ secrets.DX_GITHUB_TOKEN }}
       
-      - uses: ./.github/actions/add_pr_comment
-        with: 
-          username: ${{ secrets.DX_GITHUB_USERNAME }}
-          token: ${{ secrets.DX_GITHUB_TOKEN }}
-          repo-name: api-docs
-          pr-number: ${{ env.PR_NUMBER }}
-          message: 'Corresponding Pull Request on [${{ github.event.client_payload.originRepo }}](https://github.com/Bandwidth/${{ github.event.client_payload.originRepo }}/pull/${{ github.event.client_payload.prNumber }}) was merged.'
+      # Comment on PR
+      - name: Comment on Corresponding Repo
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: ${{ env.PR_NUMBER }},
+              owner: 'Bandwidth',
+              repo: 'api-docs',
+              body: 'Corresponding Pull Request on [${{ github.event.client_payload.originRepo }}](https://github.com/Bandwidth/${{ github.event.client_payload.originRepo }}/pull/${{ github.event.client_payload.prNumber }}) was merged.'
+            })
 
   close: 
     if: ${{ github.event.action == 'Close' }} 
@@ -88,14 +95,18 @@ jobs:
         env: 
           GITHUB_TOKEN: ${{ secrets.DX_GITHUB_TOKEN }}
       
-      - uses: ./.github/actions/add_pr_comment
-        with: 
-          username: ${{ secrets.DX_GITHUB_USERNAME }}
-          token: ${{ secrets.DX_GITHUB_TOKEN }}
-          repo-name: api-docs
-          pr-number: ${{ env.PR_NUMBER }}
-          message: 'Corresponding Pull Request on [${{ github.event.client_payload.originRepo }}](https://github.com/Bandwidth/${{ github.event.client_payload.originRepo }}/pull/${{ github.event.client_payload.prNumber }}) was closed.'
-  
+      # Comment on PR
+      - name: Comment on Corresponding Repo
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: ${{ env.PR_NUMBER }},
+              owner: 'Bandwidth',
+              repo: 'api-docs',
+              body: 'Corresponding Pull Request on [${{ github.event.client_payload.originRepo }}](https://github.com/Bandwidth/${{ github.event.client_payload.originRepo }}/pull/${{ github.event.client_payload.prNumber }}) was closed.'
+            })
+
   change_draft_status: 
     if: ${{ github.event.action == 'Draft' }} 
     runs-on: ubuntu-latest
