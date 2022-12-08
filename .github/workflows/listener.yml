@@ -1,12 +1,12 @@
-# Ingest repository_dispatch events and trigger appropriate workflows 
+# Ingest repository_dispatch events and trigger appropriate workflows
 name: Listener
 
 on:
   repository_dispatch:
     types: [Open, Update, Merge, Close, Draft]
 
-jobs: 
-  open-update: 
+jobs:
+  open-update:
     if: ${{ github.event.action == 'Open' || github.event.action == 'Update' }}
     runs-on: ubuntu-latest
     steps:
@@ -18,28 +18,28 @@ jobs:
           BRANCH_NAME=$(echo "$BRANCH_NAME" | tr '[:upper:]' '[:lower:]')
           BRANCH_NAME=$(echo "$BRANCH_NAME" | sed -e "s/[^a-z0-9]/-/g")
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
-      
+
       - uses: ./.github/actions/replace_specs_snippets
         id: replace-specs-snippets
-        with: 
+        with:
           branch-name: ${{ github.event.client_payload.branchName }}
           username: ${{ secrets.DX_GITHUB_USERNAME }}
           token: ${{ secrets.DX_GITHUB_TOKEN }}
           origin-repo: ${{ github.event.client_payload.originRepo }}
           author: ${{ github.event.client_payload.author }}
-      
+
       - name: Open Pull Request
         if: steps.replace-specs-snippets.outputs.needs_pr
         run: |
           hub pull-request --base Bandwidth:main $(if ${{ github.event.client_payload.draftPr }} ; then echo "-d" ; fi) -m '${{ github.event.client_payload.branchName }}' -m 'Update API specs from upstream api-specs repository. Opened By: @${{ github.event.client_payload.author }}'
-        env: 
+        env:
           GITHUB_TOKEN: ${{ secrets.DX_GITHUB_TOKEN }}
-      
+
       - name: Output PR Number
         run: |
           PR_NUMBER=$(hub pr list -h ${{ github.event.client_payload.branchName }} -f %I)
           echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
-        env: 
+        env:
           GITHUB_TOKEN: ${{ secrets.DX_GITHUB_TOKEN }}
 
       # Comment on PR
@@ -54,45 +54,67 @@ jobs:
               body: 'Preview site: http://bw-api-docs-${{ env.BRANCH_NAME }}.s3-website-us-east-1.amazonaws.com/\nPlease note that it may take a couple minutes for your preview site to become available.\n\nSee the corresponding PR opened on the docsite repository (no action required):\nhttps://github.com/Bandwidth/api-docs/pull/${{ env.PR_NUMBER }}'
             })
 
-  merge: 
-    if: ${{ github.event.action == 'Merge' }} 
+  merge:
+    if: ${{ github.event.action == 'Merge' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: '2'
+
       - name: Set PR number as env variable
         run: |
           echo "PR_NUMBER=$(hub pr list -h ${{ github.event.client_payload.branchName }} -f %I)" >> $GITHUB_ENV
-        env: 
+        env:
           GITHUB_TOKEN: ${{ secrets.DX_GITHUB_TOKEN }}
-      
-      # Comment on PR
-      - name: Comment on Corresponding Repo
-        uses: actions/github-script@v6
+
+      - name: Check Diff
+        run: |
+          echo "========== modified files =========="
+          git diff --name-only HEAD^ HEAD
+
+          echo "========== check paths of modified files =========="
+          git diff --name-only HEAD^ HEAD > files.txt
+          while IFS= read -r file
+          do
+            if [[ $file != site/specs/* ]]; then
+              echo "$file is not an API spec file. Can't automerge this PR."
+              exit 1
+            fi
+          done < files.txt
+
+      - uses: bandwidth/automerge-pr-action@v1.0.0
+        with:
+          repoName: api-docs
+          prNumber: ${{ env.PR_NUMBER }}
+          token: ${{ secrets.DX_GITHUB_TOKEN }}
+
+      - uses: actions/github-script@v6
+        if: failure()
         with:
           script: |
             github.rest.issues.createComment({
               issue_number: ${{ env.PR_NUMBER }},
-              owner: 'Bandwidth',
-              repo: 'api-docs',
-              body: 'Corresponding Pull Request on [${{ github.event.client_payload.originRepo }}](https://github.com/Bandwidth/${{ github.event.client_payload.originRepo }}/pull/${{ github.event.client_payload.prNumber }}) was merged.'
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Failed to auto-merge this PR. Check workflow logs for more information'
             })
 
-  close: 
-    if: ${{ github.event.action == 'Close' }} 
+  close:
+    if: ${{ github.event.action == 'Close' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      
+
       # Close the cooresponding PR
-      # - run: | 
+      # - run: |
       #     PR_NUMBER=$(hub pr list -h ${{ github.event.client_payload.branchName }} -f %I)
       #     hub issue update $PR_NUMBER -s closed
-     
+
       - name: Set PR number as env variable
         run: |
           echo "PR_NUMBER=$(hub pr list -h ${{ github.event.client_payload.branchName }} -f %I)" >> $GITHUB_ENV
-        env: 
+        env:
           GITHUB_TOKEN: ${{ secrets.DX_GITHUB_TOKEN }}
       
       # Comment on PR
@@ -112,7 +134,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-    
+
       - name: Check and Update Draft Status
         run: |
           PR_STATE=$(hub pr list -h ${{ github.event.client_payload.branchName }}  -f %pS)
@@ -134,12 +156,12 @@ jobs:
                 }
               '
               gh api graphql -F id="${id}" -f query="${MUTATION}" >/dev/null
-            fi 
+            fi
           else
             if [ "$PR_STATE" == "draft" ]
             then
               gh pr ready ${{ github.event.client_payload.branchName }}
-            fi 
+            fi
           fi
-        env: 
+        env:
           GITHUB_TOKEN: ${{ secrets.DX_GITHUB_TOKEN }}
