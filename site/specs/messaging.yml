@@ -409,10 +409,6 @@ paths:
         some control to your media file.
 
 
-        If a file is uploaded with the same name as a file that already exists
-        under this account, the previous file will be overwritten.
-
-
         A list of supported media types can be found
         [here](https://support.bandwidth.com/hc/en-us/articles/360014128994-What-MMS-file-types-are-supported-).
       operationId: uploadMedia
@@ -1095,11 +1091,6 @@ paths:
           $ref: '#/components/responses/messagingTooManyRequestsError'
         '500':
           $ref: '#/components/responses/messagingInternalServerError'
-      callbacks:
-        inboundCallback:
-          $ref: '#/components/callbacks/inboundCallback'
-        statusCallback:
-          $ref: '#/components/callbacks/statusCallback'
       x-codeSamples:
         - lang: cURL
           source: |
@@ -1732,7 +1723,7 @@ components:
           type: object
         setOrExpired:
           type: boolean
-    message:
+    messageResponse:
       title: Message
       type: object
       properties:
@@ -1792,8 +1783,28 @@ components:
           type: string
           description: The custom string set by the user.
           example: custom tag
+        expiration:
+          type: string
+          description: >-
+            A string with the date/time value that the message will
+            automatically expire by. This must be a valid RFC-3339 value, e.g.,
+            2021-03-14T01:59:26Z or 2021-03-13T20:59:26-05:00.
+          example: '2021-02-01T11:29:18-05:00'
         priority:
           $ref: '#/components/schemas/priorityEnum'
+        queueInfo:
+          $ref: '#/components/schemas/queueInfo'
+    queueInfo:
+      title: QueueInfo
+      type: object
+      required: scheduledDequeueTime
+      properties:
+        scheduledDequeueTime:
+          type: string
+          description: >-
+            The time that the message is scheduled to leave the queue associated
+            the with sending account.
+          example: 2022-09-14T18:20:16.000Z
     messageRequest:
       title: MessageRequest
       type: object
@@ -1836,6 +1847,8 @@ components:
           description: >-
             A list of URLs to include as media attachments as part of the
             message.
+
+            The URL length must be less than 4096 characters.
           example:
             - https://dev.bandwidth.com/images/bandwidth-logo.png
             - https://dev.bandwidth.com/images/github_logo.png
@@ -1854,335 +1867,6 @@ components:
             automatically expire by. This must be a valid RFC-3339 value, e.g.,
             2021-03-14T01:59:26Z or 2021-03-13T20:59:26-05:00.
           example: '2021-02-01T11:29:18-05:00'
-    inboundMessageCallback:
-      description: Inbound Message Callback
-      type: object
-      properties:
-        time:
-          type: string
-          format: date-time
-          example: 2016-09-14T18:20:16.000Z
-        type:
-          type: string
-          example: message-received
-        to:
-          type: string
-          example: '+15552223333'
-        description:
-          type: string
-          example: Incoming message received
-        message:
-          type: object
-          properties:
-            id:
-              type: string
-              example: 1661365814859loidf7mcwd4qacn7
-            owner:
-              type: string
-              example: '+15553332222'
-            applicationId:
-              type: string
-              example: 93de2206-9669-4e07-948d-329f4b722ee2
-            time:
-              type: string
-              format: date-time
-              example: 2016-09-14T18:20:16.000Z
-            segmentCount:
-              type: integer
-              example: 1
-            direction:
-              $ref: '#/components/schemas/messageDirectionEnum'
-            to:
-              uniqueItems: true
-              type: array
-              items:
-                type: string
-              example:
-                - '+15552223333'
-            from:
-              type: string
-              example: '+15553332222'
-            text:
-              type: string
-              example: Hello world
-            tag:
-              type: string
-              example: custom string
-            media:
-              type: array
-              items:
-                type: string
-                format: uri
-              example:
-                - https://dev.bandwidth.com/images/bandwidth-logo.png
-                - https://dev.bandwidth.com/images/github_logo.png
-            priority:
-              $ref: '#/components/schemas/priorityEnum'
-          required:
-            - id
-            - owner
-            - applicationId
-            - time
-            - segmentCount
-            - direction
-            - to
-            - from
-            - text
-      required:
-        - time
-        - type
-        - to
-        - description
-        - message
-    messageSendingCallback:
-      type: object
-      description: Message Sending Callback
-      properties:
-        time:
-          type: string
-          format: date-time
-          example: 2016-09-14T18:20:16.000Z
-        type:
-          type: string
-          example: message-sending
-        to:
-          type: string
-          example: '+15552223333'
-        description:
-          type: string
-          example: Message is sending to carrier
-        message:
-          type: object
-          properties:
-            id:
-              type: string
-              example: 1661365814859loidf7mcwd4qacn7
-            owner:
-              type: string
-              example: '+15553332222'
-            applicationId:
-              type: string
-              example: 93de2206-9669-4e07-948d-329f4b722ee2
-            time:
-              type: string
-              format: date-time
-              example: 2016-09-14T18:20:16.000Z
-            segmentCount:
-              type: integer
-              example: 1
-            direction:
-              $ref: '#/components/schemas/messageDirectionEnum'
-            to:
-              uniqueItems: true
-              type: array
-              items:
-                type: string
-              example:
-                - '+15552223333'
-            from:
-              type: string
-              example: '+15553332222'
-            text:
-              type: string
-              example: ''
-            tag:
-              type: string
-              example: custom string
-            media:
-              type: array
-              items:
-                type: string
-                format: uri
-              example:
-                - https://dev.bandwidth.com/images/bandwidth-logo.png
-                - https://dev.bandwidth.com/images/github_logo.png
-            priority:
-              $ref: '#/components/schemas/priorityEnum'
-          required:
-            - id
-            - owner
-            - applicationId
-            - time
-            - segmentCount
-            - direction
-            - to
-            - from
-            - text
-            - media
-            - priority
-      required:
-        - time
-        - type
-        - to
-        - description
-        - message
-    messageDeliveredCallback:
-      description: Message Delivered Callback
-      type: object
-      properties:
-        time:
-          type: string
-          format: date-time
-          example: 2016-09-14T18:20:16.000Z
-        type:
-          type: string
-          example: message-delivered
-        to:
-          type: string
-          example: '+15552223333'
-        description:
-          type: string
-          example: Message delivered to carrier.
-        message:
-          type: object
-          properties:
-            id:
-              type: string
-              example: 1661365814859loidf7mcwd4qacn7
-            owner:
-              type: string
-              example: '+15553332222'
-            applicationId:
-              type: string
-              example: 93de2206-9669-4e07-948d-329f4b722ee2
-            time:
-              type: string
-              format: date-time
-              example: 2016-09-14T18:20:16.000Z
-            segmentCount:
-              type: integer
-              example: 1
-            direction:
-              $ref: '#/components/schemas/messageDirectionEnum'
-            to:
-              uniqueItems: true
-              type: array
-              items:
-                type: string
-              example:
-                - '+15552223333'
-            from:
-              type: string
-              example: '+15553332222'
-            text:
-              type: string
-              example: ''
-            tag:
-              type: string
-              example: custom string
-            media:
-              type: array
-              items:
-                type: string
-                format: uri
-              example:
-                - https://dev.bandwidth.com/images/bandwidth-logo.png
-                - https://dev.bandwidth.com/images/github_logo.png
-            priority:
-              $ref: '#/components/schemas/priorityEnum'
-          required:
-            - id
-            - owner
-            - applicationId
-            - time
-            - segmentCount
-            - direction
-            - to
-            - from
-            - text
-            - tag
-      required:
-        - time
-        - type
-        - to
-        - description
-        - message
-    messageFailedCallback:
-      description: Message Failed Callback
-      type: object
-      properties:
-        time:
-          type: string
-          format: date-time
-          example: 2016-09-14T18:20:16.000Z
-        type:
-          type: string
-          example: message-failed
-        to:
-          type: string
-          example: '+15552223333'
-        description:
-          type: string
-          example: rejected-unallocated-from-number
-        message:
-          type: object
-          properties:
-            id:
-              type: string
-              example: 1661365814859loidf7mcwd4qacn7
-            owner:
-              type: string
-              example: '+15553332222'
-            applicationId:
-              type: string
-              example: 93de2206-9669-4e07-948d-329f4b722ee2
-            time:
-              type: string
-              format: date-time
-              example: 2016-09-14T18:20:16.000Z
-            segmentCount:
-              type: integer
-              example: 1
-            direction:
-              $ref: '#/components/schemas/messageDirectionEnum'
-            to:
-              uniqueItems: true
-              type: array
-              items:
-                type: string
-              example:
-                - '+15552223333'
-            from:
-              type: string
-              example: '+15553332222'
-            text:
-              type: string
-              example: ''
-            tag:
-              type: string
-              example: custom string
-            media:
-              type: array
-              items:
-                type: string
-                format: uri
-              example:
-                - https://dev.bandwidth.com/images/bandwidth-logo.png
-                - https://dev.bandwidth.com/images/github_logo.png
-            priority:
-              $ref: '#/components/schemas/priorityEnum'
-          required:
-            - id
-            - owner
-            - applicationId
-            - time
-            - segmentCount
-            - direction
-            - to
-            - from
-            - text
-            - tag
-            - priority
-        errorCode:
-          type: integer
-          example: 9902
-      required:
-        - time
-        - type
-        - to
-        - description
-        - message
-        - errorCode
   requestBodies:
     createMessageRequest:
       content:
@@ -2375,7 +2059,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/message'
+            $ref: '#/components/schemas/messageResponse'
     listMessagesResponse:
       description: OK
       content:
@@ -2414,7 +2098,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/createMessageRequestError'
+            $ref: '#/components/schemas/questError'
     messagingUnauthorizedError:
       description: Unauthorized
       content:
@@ -2451,37 +2135,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/messagingRequestError'
-  callbacks:
-    inboundCallback:
-      '{inboundCallbackUrl}':
-        post:
-          requestBody:
-            required: true
-            description: Inbound Message Callback Payload
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/inboundMessageCallback'
-          responses:
-            '200':
-              description: OK
-    statusCallback:
-      '{statusCallbackUrl}':
-        post:
-          requestBody:
-            required: true
-            description: Status Callback Payload
-            content:
-              application/json:
-                schema:
-                  type: object
-                  oneOf:
-                    - $ref: '#/components/schemas/messageSendingCallback'
-                    - $ref: '#/components/schemas/messageDeliveredCallback'
-                    - $ref: '#/components/schemas/messageFailedCallback'
-          responses:
-            '200':
-              description: OK
   securitySchemes:
     Basic:
       type: http
