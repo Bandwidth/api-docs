@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Active Phone Call Info
+  title: Active Call Info
   description: >-
     The Bandwidth active phone call info API can be used to retrieve information
     about specific phone calls that are
@@ -23,13 +23,24 @@ info:
 servers:
   - url: <todo - production URL>
 paths:
-  /activePhoneCalls/{callId}/riskScore:
+  /activeCalls/{activeCallId}:
     get:
       tags:
-        - Scores
+        - Active Calls
       summary: Retrieve the risk scores for a specific phone call
       description: >-
-        Retrieve the fraud score and spoofing score for a specific phone call.
+        Retrieve all information about a specific phone call that is currently
+        active on the Bandwidth network.
+
+
+        Currently this API endpoint only supports inbound phone calls and can
+        only be used to retrieve fraud and spoofing
+
+        scores that indicate how likely it is that the given phone call is
+        fraudulent or that the given phone call is 
+
+        coming from a spoofed phone number.  This API endpoint may support other
+        types of call information in the future.
 
 
         **Note**: This information is generated after a call is answered and is
@@ -40,7 +51,7 @@ paths:
 
         will return an HTTP 404.
       parameters:
-        - $ref: '#/components/parameters/callId'
+        - $ref: '#/components/parameters/activeCallId'
       responses:
         '200':
           $ref: '#/components/responses/scoresResponse'
@@ -56,10 +67,10 @@ paths:
           $ref: '#/components/responses/internalServerErrorResponse'
 components:
   parameters:
-    callId:
-      name: callId
+    activeCallId:
+      name: activeCallId
       schema:
-        $ref: '#/components/schemas/CallId'
+        $ref: '#/components/schemas/ActiveCallId'
       in: path
       required: true
   responses:
@@ -68,7 +79,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/RiskScore'
+            $ref: '#/components/schemas/ActiveCallInfo'
     unauthorizedResponse:
       description: Unauthorized
       content:
@@ -115,15 +126,26 @@ components:
             internalServerErrorExample:
               $ref: '#/components/examples/internalServerErrorErrorExample'
   schemas:
-    CallId:
+    ActiveCallId:
       type: string
       description: >-
         The unique Bandwidth-generated identifier of a phone call provided by
         bandwith in the SIP invite for that call.
+
+        Typically this value is provided in an X header in the SIP invite such
+        as <todo - x header name>.
       example: MTU2MDI4ODE1XzgzMzQ4OTg4QDE5Mi4xNjguMTMyLjQx
+    ActiveCallInfo:
+      type: object
+      description: >-
+        All available information about a specific phone call that is currently
+        active on the bandwidth network.
+      properties:
+        riskScore:
+          $ref: '#/components/schemas/RiskScore'
     RiskScore:
       type: object
-      description: The fraud score for a specific phone call.
+      description: The risk score for a specific phone call.
       properties:
         spoofingRisk:
           type: number
