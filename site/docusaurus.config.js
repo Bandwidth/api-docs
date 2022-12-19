@@ -4,6 +4,7 @@ const path = require('path');
 
 const customConfig = require('./custom.config.json');
 const blogPosts = require('./blogposts.config.json');
+const ltsVersions = require('./lts.config.json');
 const numbersSpec = fs.readFileSync('./specs/numbers.yml', 'utf-8');
 const phoneNumberLookupSpec = fs.readFileSync('./specs/phone-number-lookup.yml', 'utf-8');
 const voiceSpec = fs.readFileSync('./specs/voice.yml', 'utf-8');
@@ -160,6 +161,8 @@ module.exports = {
 
         blogPosts: blogPosts,
 
+        ltsVersions: ltsVersions,
+
         // CSS Colors
         bwBlue: '#079CEE',
         voicePurple: '#9a59c5',
@@ -177,6 +180,15 @@ module.exports = {
     },
     plugins: [
         path.resolve(__dirname, 'redoc-plugin'),
+        [
+            '@docusaurus/plugin-content-docs',
+            {
+                id: 'miration-guides',
+                path: 'migration-guides',
+                routeBasePath: 'migration-guides',
+                sidebarPath: require.resolve('./sidebarsMigrationGuides.js'),
+            },
+        ],
         'docusaurus-plugin-sass',
     ],
 };

@@ -1,6 +1,9 @@
 import React from 'react';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 
-export default function VersionsTable({versions}) {
+export default function VersionsTable() {
+    const {siteConfig} = useDocusaurusContext();
+    const versions = siteConfig.customFields.ltsVersions
     return (
         <table>
             <thead>
