@@ -6,53 +6,53 @@ const apiList = [
     {
         title: 'Voice API',
         Svg: require('@site/static/img/api-icons/voice.svg').default,
-        link: '/apis/voice/'
+        link: '/apis/voice'
     },
     {
         title: 'Phone Number Lookup API',
         Svg: require('@site/static/img/api-icons/phone-number-lookup.svg').default,
-        link: '/apis/number-lookup/'
+        link: '/apis/number-lookup'
     },
     {
         title: 'Numbers API',
         Svg: require('@site/static/img/api-icons/numbers.svg').default,
-        link: '/apis/numbers/'
+        link: '/apis/numbers'
     },
     {
         title: 'Multi-Factor Authentication API',
         Svg: require('@site/static/img/api-icons/mfa.svg').default,
-        link: '/apis/multifactorauth/'
+        link: '/apis/multifactorauth'
     },
     {
         title: 'Messaging API',
         Svg: require('@site/static/img/api-icons/messaging.svg').default,
-        link: '/apis/messaging/'
+        link: '/apis/messaging'
     },
     {
         title: 'International Messaging API',
         Svg: require('@site/static/img/api-icons/international-messaging.svg').default,
-        link: '/apis/messaging-international/'
+        link: '/apis/messaging-international'
     },
     {
         title: 'Emergency API',
         Svg: require('@site/static/img/api-icons/emergency.svg').default,
-        link: '/apis/dash/'
+        link: '/apis/dash'
     },
     {
         title: 'Emergency Notifications API',
         Svg: require('@site/static/img/api-icons/emergency-notifications.svg').default,
-        link: '/apis/dash-notifications/'
+        link: '/apis/dash-notifications'
 
     },
     {
         title: 'WebRTC API',
         Svg: require('@site/static/img/api-icons/webrtc.svg').default,
-        link: '/apis/webrtc/'
+        link: '/apis/webrtc'
     },
     {
         title: 'Insights API',
         Svg: require('@site/static/img/api-icons/insights.svg').default,
-        link: '/apis/insights/'
+        link: '/apis/insights'
     },
     /* TODO ONEID-1304
     {

@@ -99,7 +99,7 @@ export const navTester = (path) => {
 
   export const downloadButtonTester = (path) => {
     it('checks the download button to verify it exists',() => {
-      cy.visit(`/apis/${path}/`)
+      cy.visit(`/apis/${path}`)
       cy.get('p')
         .contains("Download OpenAPI specification")
         .children('a')

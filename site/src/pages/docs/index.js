@@ -6,37 +6,37 @@ const productList = [
     {
         title: 'Account',
         Svg: require('@site/static/img/product-icons/account.svg').default,
-        link: '/docs/account/'
+        link: '/docs/account'
     },
     {
         title: 'Numbers',
         Svg: require('@site/static/img/product-icons/numbers.svg').default,
-        link: '/docs/numbers/',
+        link: '/docs/numbers',
     },
     {
         title: 'Emergency',
         Svg: require('@site/static/img/product-icons/emergency.svg').default,
-        link: '/docs/emergency/',
+        link: '/docs/emergency',
     },
     {
         title: 'Voice',
         Svg: require('@site/static/img/product-icons/voice.svg').default,
-        link: '/docs/voice/',
+        link: '/docs/voice',
     },
     {
         title: 'Multi-Factor Authentication',
         Svg: require('@site/static/img/product-icons/mfa.svg').default,
-        link: '/docs/mfa/',
+        link: '/docs/mfa',
     },
     {
         title: 'Messaging',
         Svg: require('@site/static/img/product-icons/messaging.svg').default,
-        link: '/docs/messaging/',
+        link: '/docs/messaging',
     },
     {
         title: 'WebRTC',
         Svg: require('@site/static/img/product-icons/webrtc.svg').default,
-        link: '/docs/webrtc/',
+        link: '/docs/webrtc',
     },
     // { TODO ONEID-1304
     //     title: 'Identity Management',

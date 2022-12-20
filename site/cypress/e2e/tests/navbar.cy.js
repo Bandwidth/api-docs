@@ -40,7 +40,7 @@ it('Should verify the external link worked', () => {
  
 context('Dev Docs Brand Logo/Link', () => {
   it('cy.go() - go back or forward in the browser\'s history', () => {
-    cy.visit('/docs/')
+    cy.visit('/docs')
     cy.get('.navbar__brand')
       .click()
     cy.location('pathname').should('include', '/')

@@ -6,32 +6,32 @@ const sdkList = [
     {
         title: 'Node',
         Svg: require('@site/static/img/sdk-icons/node.svg').default,
-        link: '/sdks/node/'
+        link: '/sdks/node'
     },
     {
         title: 'Python',
         Svg: require('@site/static/img/sdk-icons/python.svg').default,
-        link: '/sdks/python/'
+        link: '/sdks/python'
     },
     {
         title: 'Java',
         Svg: require('@site/static/img/sdk-icons/java.svg').default,
-        link: '/sdks/java/'
+        link: '/sdks/java'
     },
     {
         title: 'PHP',
         Svg: require('@site/static/img/sdk-icons/php.svg').default,
-        link: '/sdks/php/'
+        link: '/sdks/php'
     },
     {
         title: 'Ruby',
         Svg: require('@site/static/img/sdk-icons/ruby.svg').default,
-        link: '/sdks/ruby/'
+        link: '/sdks/ruby'
     },
     {
         title: 'C#',
         Svg: require('@site/static/img/sdk-icons/csharp.svg').default,
-        link: '/sdks/csharp/'
+        link: '/sdks/csharp'
     },
 ];
 

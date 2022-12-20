@@ -6,7 +6,7 @@ const guides = {
     title: 'Check out our guides',
     text: `Explore our API guides to learn more about Bandwidth's APIs and the things you can do with us.`,
     linkText: 'Read the guides →',
-    link: '/docs/'
+    link: '/docs'
 }
 const guidesImage = require('@site/static/img/guides-splash.svg').default;
 
@@ -14,7 +14,7 @@ const apis = {
     title: 'Dig into our API reference',
     text: `Use the API technical reference to get the detailed information developers need when coding. Get the nitty-gritty details about resources in our APIs.`,
     linkText: 'See our API reference →',
-    link: '/apis/'
+    link: '/apis'
 }
 const apisImage = require('@site/static/img/apis-splash.svg').default;
 
@@ -22,7 +22,7 @@ const sdks = {
     title: 'Looking for our SDKs?',
     text: `We offer SDKs for several popular languages. Build your apps using our official SDKs in the language of your choice.`,
     linkText: 'Build with Bandwidth →',
-    link: '/sdks/'
+    link: '/sdks'
 }
 const sdksImage = require('@site/static/img/sdks-splash.svg').default;
 

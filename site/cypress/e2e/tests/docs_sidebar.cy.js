@@ -3,7 +3,7 @@ import {testSidebar} from '../../utils/utils'
 
 context('Testing the Docs Sidebar Tabs', () => {
   beforeEach(() => {
-    cy.visit('/docs/versions/')
+    cy.visit('/docs/versions')
   })
 
   it('Should verify that the Account Management tab and sub-tabs opens and closes properly', () => {
