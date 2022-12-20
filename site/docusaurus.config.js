@@ -29,10 +29,10 @@ module.exports = {
     tagline: 'Learn About Bandwidth\'s Product APIs',
     url: 'https://dev.bandwidth.com',
     baseUrl: '/',
-    onBrokenLinks: 'throw',
+    onBrokenLinks: 'warn',
     onBrokenMarkdownLinks: 'warn',
     favicon: 'img/favicon.ico',
-    trailingSlash: true,
+    trailingSlash: false,
     organizationName: 'bandwidth',
     projectName: 'api-docs',
     themeConfig: {
