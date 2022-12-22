@@ -44,6 +44,16 @@ components:
       name: orderType
       required: true
       schema:
+        enum:
+          - orders
+          - disconnects
+          - portins
+          - portouts
+          - importtoaccount
+          - lidbs
+          - dldas
+          - bulkPortins
+          - csrs
         type: string
     PermissionIdPathParam:
       description: Permission Id
@@ -6621,20 +6631,6 @@ components:
       properties:
         NoteResponse:
           $ref: '#/components/schemas/ResponseStatus'
-      type: object
-    Notes:
-      properties:
-        Notes:
-          items:
-            $ref: '#/components/schemas/Note'
-          type: array
-      type: object
-    NotesResponse:
-      properties:
-        Notes:
-          items:
-            $ref: '#/components/schemas/Note'
-          type: array
       type: object
     NotificationCallbackRequest:
       properties:
@@ -13936,170 +13932,6 @@ paths:
       summary: Upload bulk port-in order loa file
       tags:
         - Bulk Port-In
-  /accounts/{accountId}/bulkPortins/{orderId}/notes:
-    get:
-      description: >-
-        Retrieve all notes associated with the order. Please visit <a
-        href='/docs/numbers/guides/porting/createBulkPortins'>Guides and
-        Tutorials</a>
-      operationId: ListBulkNotes
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: ''
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <Notes>
-                        <Note>
-                            <Id>87037</Id>
-                            <UserId>jbm</UserId>
-                            <Description>This is a test note</Description>
-                            <LastDateModifier>2014-11-16T04:01:10.000Z</LastDateModifier>
-                        </Note>
-                        <Note>
-                            <Id>87039</Id>
-                            <UserId>smckinnon</UserId>
-                            <Description>This is a second test note</Description>
-                            <LastDateModifier>2014-11-16T04:08:46.000Z</LastDateModifier>
-                        </Note>
-                    </Notes>
-              schema:
-                $ref: '#/components/schemas/Notes'
-          description: >-
-            OK - there are Notes associated with the order, and they have been
-            returned in the response.
-        '204':
-          description: >-
-            No Content - there are no Notes associated with the order.  Since
-            the notes resource is an aggregate rather than addressed resource
-            the generic no content response is used, rather than a 404 as would
-            be used if the resource was addressed with an identifier
-      summary: List bulk port-in order notes
-      tags:
-        - Bulk Port-In
-    post:
-      description: >-
-        Updates the Notes resource by adding a note. Adding a note to a port-in
-        order causes a notification to be sent to Bandwidth Operations, so that
-        they may assist as necessary. A note may be up to 500 characters in
-        length. Please visit <a
-        href='/docs/numbers/guides/porting/createBulkPortins'>Guides and
-        Tutorials</a>
-      operationId: CreateBulkNote
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: ''
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/xml:
-            examples:
-              example:
-                description: example
-                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<Note> \n\t<UserId>userId</UserId>      \n\t<!-- note the userId must match the logged-in user --> \n\t<Description>note text</Description> \n</Note>"
-            schema:
-              $ref: '#/components/schemas/Note'
-      responses:
-        '201':
-          description: >-
-            CREATED - the note has been created and added to the collection of
-            notes associated with the order.  A link to the note is included in
-            the Location header of the response.  No body is returned
-        '400':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <NoteResponse>
-                        <ResponseStatus>
-                            <ErrorCode>12501</ErrorCode>
-                            <Description>Username is required</Description>
-                        </ResponseStatus>
-                    </NoteResponse>
-              schema:
-                $ref: '#/components/schemas/NoteErrorResponse'
-          description: >-
-            Bad Request - the note has not been created because the payload is
-            incomplete or in error.  An error payload is provided in the
-            response.
-      summary: Create bulk port-in order note
-      tags:
-        - Bulk Port-In
-  /accounts/{accountId}/bulkPortins/{orderId}/notes/{noteId}:
-    put:
-      description: >-
-        Update a specified note.  Notes may only be updated, not deleted. Please
-        visit <a href='/docs/numbers/guides/porting/createBulkPortins'>Guides
-        and Tutorials</a>
-      operationId: UpdateBulkNote
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: ''
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-        - description: Note ID
-          example: '123'
-          in: path
-          name: noteId
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/xml:
-            examples:
-              example:
-                description: example
-                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<Note> \n\t<UserId>userId</UserId> \n\t<Description>note text</Description> \n</Note>"
-            schema:
-              $ref: '#/components/schemas/Note'
-      responses:
-        '200':
-          description: OK - note has been updated.  No body is returned
-        '400':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <NoteResponse>
-                        <ResponseStatus>
-                            <ErrorCode>12501</ErrorCode>
-                            <Description>Username is required</Description>
-                        </ResponseStatus>
-                    </NoteResponse>
-              schema:
-                $ref: '#/components/schemas/NoteErrorResponse'
-          description: >-
-            Bad Request - the note has not been updated because the payload is
-            incomplete or in error.  An error payload is provided in the
-            response.
-      summary: Update bulk port-in order note
-      tags:
-        - Bulk Port-In
   /accounts/{accountId}/bulkPortins/{orderId}/portinList:
     get:
       description: >-
@@ -15571,160 +15403,6 @@ paths:
       summary: Update CSR order
       tags:
         - Porting
-  /accounts/{accountId}/csrs/{orderId}/notes:
-    get:
-      description: 'Retrieve all notes associated with the CSRs order. '
-      operationId: ReadCsrsOrderNotes
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - $ref: '#/components/parameters/OrderIdPathParam'
-      responses:
-        '200':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <Notes>
-                        <Note>
-                            <Id>87037</Id>
-                            <UserId>jbm</UserId>
-                            <Description>This is a test note</Description>
-                            <LastDateModifier>2014-11-16T04:01:10.000Z</LastDateModifier>
-                        </Note>
-                        <Note>
-                            <Id>87039</Id>
-                            <UserId>smckinnon</UserId>
-                            <Description>This is a second test note</Description>
-                            <LastDateModifier>2014-11-16T04:08:46.000Z</LastDateModifier>
-                        </Note>
-                    </Notes>
-          description: >-
-            OK - there are Notes associated with the order, and they have been
-            returned in the response.
-        '204':
-          description: >-
-            No Content - there are no Notes associated with the order.  Since
-            the notes resource is an aggregate rather than addressed resource
-            the generic no content response is used, rather than a 404 as would
-            be used if the resource was addressed with an identifier
-      summary: List CSRs order notes
-      tags:
-        - Porting
-    post:
-      description: |-
-        Updates the Notes resource by adding a note. Adding a note to a CSRs 
-         order causes a notification to be sent to Bandwidth Operations, so that they may assist as necessary. A note may be up to 500 characters in length
-      operationId: CreateCsrsOrderNote
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - $ref: '#/components/parameters/OrderIdPathParam'
-      requestBody:
-        content:
-          application/xml:
-            examples:
-              example:
-                description: example
-                value: |-
-                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                  <Note>
-                   <UserId>userId</UserId>
-                        <!-- note the userId must match the logged-in user -->
-                   <Description>note text</Description>
-                   </Note>
-            schema:
-              $ref: '#/components/schemas/Note'
-      responses:
-        '201':
-          description: >-
-            CREATED - the note has been created and added to the collection of
-            notes associated with the order.  A link to the note is included in
-            the Location header of the response.  No body is returned
-        '400':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <NoteResponse>
-                        <ResponseStatus>
-                            <ErrorCode>12501</ErrorCode>
-                            <Description>Username is required</Description>
-                        </ResponseStatus>
-                    </NoteResponse>
-              schema:
-                $ref: '#/components/schemas/NoteErrorResponse'
-          description: >-
-            Bad Request - the note has not been created because the payload is
-            incomplete or in error.  An error payload is provided in the
-            response.
-      summary: Add CSRs order note
-      tags:
-        - Porting
-  /accounts/{accountId}/csrs/{orderId}/notes/{noteId}:
-    put:
-      description: Update a specified note.  Notes may only be updated, not deleted
-      operationId: UpdateCsrsOrderNote
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: CSR Order id
-          example: 34adcd9f-2c4a-4631-9dae-d1f318ed57bc
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-        - description: Note ID
-          example: '123'
-          in: path
-          name: noteId
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/xml:
-            examples:
-              example:
-                description: example
-                value: |-
-                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                  <Note>
-                   <UserId>userId</UserId>
-                   <Description>note text</Description>
-                   </Note>
-            schema:
-              $ref: '#/components/schemas/Note'
-      responses:
-        '200':
-          description: OK - note has been updated.  No body is returned
-        '400':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <NoteResponse>
-                        <ResponseStatus>
-                            <ErrorCode>12501</ErrorCode>
-                            <Description>Username is required</Description>
-                        </ResponseStatus>
-                    </NoteResponse>
-              schema:
-                $ref: '#/components/schemas/NoteErrorResponse'
-          description: >-
-            Bad Request - the note has not been updated because the payload is
-            incomplete or in error.  An error payload is provided in the
-            response.
-      summary: Update CSRs order note
-      tags:
-        - Porting
   /accounts/{accountId}/discnumbers:
     get:
       description: >-
@@ -16114,180 +15792,6 @@ paths:
                   #/components/schemas/DisconnectTelephoneNumberOrderFetchResponse
           description: The disconnect order's information has been successfully retrieved.
       summary: Fetching Disconnect Order Status
-      tags:
-        - Disconnecting Numbers
-  /accounts/{accountId}/disconnects/{disconnectId}/notes:
-    get:
-      description: >-
-        Retrieve all notes associated with the disconnect order. Please visit <a
-        href='/docs/numbers/guides/disconnectNumbers'>Guides and Tutorials</a>
-      operationId: ReadDisconnectOrderNotes
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: Disconnect Order ID
-          example: 59e69657-44d2-4e7e-90f8-777988be4aef
-          in: path
-          name: disconnectId
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <Notes>
-                        <Note>
-                            <Id>87037</Id>
-                            <UserId>jbm</UserId>
-                            <Description>This is a test note</Description>
-                            <LastDateModifier>2014-11-16T04:01:10.000Z</LastDateModifier>
-                        </Note>
-                        <Note>
-                            <Id>87039</Id>
-                            <UserId>smckinnon</UserId>
-                            <Description>This is a second test note</Description>
-                            <LastDateModifier>2014-11-16T04:08:46.000Z</LastDateModifier>
-                        </Note>
-                    </Notes>
-              schema:
-                $ref: '#/components/schemas/Notes'
-          description: >-
-            OK - there are Notes associated with the order, and they have been
-            returned in the response.
-        '204':
-          description: >-
-            No Content - there are no Notes associated with the order.  Since
-            the notes resource is an aggregate rather than addressed resource
-            the generic no content response is used, rather than a 404 as would
-            be used if the resource was addressed with an identifier
-      summary: List disconnect order notes
-      tags:
-        - Disconnecting Numbers
-    post:
-      description: >-
-        Updates the Notes resource by adding a note. Adding a note to a
-        disconnect 
-         order causes a notification to be sent to Bandwidth Operations, so that they may assist as necessary. A note may be up to 500 characters in length. Please visit <a href='/docs/numbers/guides/disconnectNumbers'>Guides and Tutorials</a>
-      operationId: CreateDisconnectOrderNote
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: Disconnect Order ID
-          example: 59e69657-44d2-4e7e-90f8-777988be4aef
-          in: path
-          name: disconnectId
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/xml:
-            examples:
-              example:
-                description: example
-                value: |-
-                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                  <Note>
-                   <UserId>userId</UserId>
-                        <!-- note the userId must match the logged-in user -->
-                   <Description>note text</Description>
-                   </Note>
-            schema:
-              $ref: '#/components/schemas/Note'
-      responses:
-        '201':
-          description: >-
-            CREATED - the note has been created and added to the collection of
-            notes associated with the order.  A link to the note is included in
-            the Location header of the response.  No body is returned
-        '400':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <NoteResponse>
-                        <ResponseStatus>
-                            <ErrorCode>12501</ErrorCode>
-                            <Description>Username is required</Description>
-                        </ResponseStatus>
-                    </NoteResponse>
-              schema:
-                $ref: '#/components/schemas/NoteErrorResponse'
-          description: >-
-            Bad Request - the note has not been created because the payload is
-            incomplete or in error.  An error payload is provided in the
-            response.
-      summary: Add disconnect order note
-      tags:
-        - Disconnecting Numbers
-  /accounts/{accountId}/disconnects/{disconnectId}/notes/{noteId}:
-    put:
-      description: >
-        Update a specified note.  Notes may only be updated, not deleted. Please
-        visit <a href='/docs/numbers/guides/disconnectNumbers'>Guides and
-        Tutorials</a>
-      operationId: UpdateDisconnectOrderNote
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: Disconnect Order ID
-          example: 59e69657-44d2-4e7e-90f8-777988be4aef
-          in: path
-          name: disconnectId
-          required: true
-          schema:
-            type: string
-        - description: Note ID
-          example: '123'
-          in: path
-          name: noteId
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/xml:
-            examples:
-              example:
-                description: example
-                value: |-
-                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                  <Note>
-                    <UserId>userId</UserId>
-                    <Description>note text</Description>
-                  </Note>
-            schema:
-              $ref: '#/components/schemas/Note'
-      responses:
-        '200':
-          description: OK - note has been updated.  No body is returned
-        '400':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <NoteResponse>
-                        <ResponseStatus>
-                            <ErrorCode>12501</ErrorCode>
-                            <Description>Username is required</Description>
-                        </ResponseStatus>
-                    </NoteResponse>
-              schema:
-                $ref: '#/components/schemas/NoteErrorResponse'
-          description: >-
-            Bad Request - the note has not been updated because the payload is
-            incomplete or in error.  An error payload is provided in the
-            response.
-      summary: Update disconnect order note
       tags:
         - Disconnecting Numbers
   /accounts/{accountId}/dldas:
@@ -23266,196 +22770,6 @@ paths:
       summary: Fetch LSR order history
       tags:
         - Porting
-  /accounts/{accountId}/lsrorders/{orderId}/notes:
-    get:
-      description: >-
-        Retrieve all notes associated with the order. 
-
-        Please visit <a href='/docs/numbers/guides/porting/lsrOrders'>Guides and
-        Tutorials</a>
-      operationId: ListLsrOrderNotes
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: LSR ID
-          example: 59e69657-44d2-4e7e-90f8-777988be4aef
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <Notes>
-                        <Note>
-                            <Id>87037</Id>
-                            <UserId>jbm</UserId>
-                            <Description>This is a test note</Description>
-                            <LastDateModifier>2014-11-16T04:01:10.000Z</LastDateModifier>
-                        </Note>
-                        <Note>
-                            <Id>87039</Id>
-                            <UserId>smckinnon</UserId>
-                            <Description>This is a second test note</Description>
-                            <LastDateModifier>2014-11-16T04:08:46.000Z</LastDateModifier>
-                        </Note>
-                    </Notes>
-              schema:
-                $ref: '#/components/schemas/NotesResponse'
-          description: >-
-            OK - there are Notes associated with the order, and they have been
-            returned in the response.
-        '204':
-          content:
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/NotesResponse'
-          description: >-
-            No Content - there are no Notes associated with the order.  Since
-            the notes resource is an aggregate rather than addressed resource
-            the generic no content response is used, rather than a 404 as would
-            be used if the resource was addressed with an identifier
-      summary: Fetch LSR order notes
-      tags:
-        - Porting
-    post:
-      description: >-
-        Updates the Notes resource by adding a note. Adding a note to a port-in
-        norder causes a notification to be sent to Bandwidth Operations, so that
-        they may nassist as necessary. A note may be up to 500 characters in
-        length. 
-
-        Please visit <a href='/docs/numbers/guides/porting/lsrOrders'>Guides and
-        Tutorials</a>
-      operationId: CreateLsrOrderNote
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: LSR ID
-          example: 59e69657-44d2-4e7e-90f8-777988be4aef
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/xml:
-            examples:
-              example:
-                description: example
-                value: |-
-                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                  <Note>
-                   <UserId>userId</UserId>
-                        <!-- note the userId must match the logged-in user -->
-                   <Description>note text</Description>
-                   </Note>
-            schema:
-              $ref: '#/components/schemas/Note'
-      responses:
-        '201':
-          content:
-            application/xml: {}
-          description: >
-            CREATED - the note has been created and added to the collection of
-            notes associated with the order.  A link to the note is included in
-            the Location header of the response.  No body is returned
-        '400':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <NoteResponse>
-                        <ResponseStatus>
-                            <ErrorCode>12501</ErrorCode>
-                            <Description>Username is required</Description>
-                        </ResponseStatus>
-                    </NoteResponse>
-              schema:
-                $ref: '#/components/schemas/NoteErrorResponse'
-          description: >-
-            Bad Request - the note has not been created because the payload is
-            incomplete or in error.  An error payload is provided in the
-            response.
-      summary: Create LSR order note
-      tags:
-        - Porting
-  /accounts/{accountId}/lsrorders/{orderId}/notes/{noteId}:
-    put:
-      description: >-
-        Update a specified note. Notes may only be updated, not deleted. 
-
-        Please visit <a href='/docs/numbers/guides/porting/lsrOrders'>Guides and
-        Tutorials</a>
-      operationId: UpdateLsrOrderNote
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: LSR ID
-          example: 59e69657-44d2-4e7e-90f8-777988be4aef
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-        - description: Note ID
-          example: '123'
-          in: path
-          name: noteId
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/xml:
-            examples:
-              example:
-                description: example
-                value: |-
-                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                  <Note>
-                     <UserId>userId</UserId>
-                     <Description>note text</Description>
-                  </Note>
-            schema:
-              $ref: '#/components/schemas/Note'
-      responses:
-        '200':
-          content:
-            application/xml: {}
-          description: |
-            OK - note has been updated. No body is returned
-        '400':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <NoteResponse>
-                        <ResponseStatus>
-                            <ErrorCode>12501</ErrorCode>
-                            <Description>Username is required</Description>
-                        </ResponseStatus>
-                    </NoteResponse>
-              schema:
-                $ref: '#/components/schemas/NoteErrorResponse'
-          description: >-
-            Bad Request - the note has not been updated because the payload is
-            incomplete or in error.  An error payload is provided in the
-            response.
-      summary: Update LSR order note
-      tags:
-        - Porting
   /accounts/{accountId}/moveTns:
     get:
       description: >-
@@ -24860,185 +24174,6 @@ paths:
       summary: Retrieve Telephone Number order history
       tags:
         - Orders
-  /accounts/{accountId}/orders/{orderId}/notes:
-    get:
-      description: >-
-        Retrieve all notes associated with the order. <p>Please visit <a
-        href='/docs/numbers/guides/searchingForNumbers/'>Guides and
-        Tutorials</a> to learn more.</p>
-      operationId: ListOrderNotes
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: Order id
-          example: 34adcd9f-2c4a-4631-9dae-d1f318ed57bc
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <Notes>
-                        <Note>
-                            <Id>87037</Id>
-                            <UserId>jbm</UserId>
-                            <Description>This is a test note</Description>
-                            <LastDateModifier>2014-11-16T04:01:10.000Z</LastDateModifier>
-                        </Note>
-                        <Note>
-                            <Id>87039</Id>
-                            <UserId>smckinnon</UserId>
-                            <Description>This is a second test note</Description>
-                            <LastDateModifier>2014-11-16T04:08:46.000Z</LastDateModifier>
-                        </Note>
-                    </Notes>
-              schema:
-                $ref: '#/components/schemas/OrderNotesResponse'
-          description: >-
-            OK - there are Notes associated with the order, and they have been
-            returned in the response
-        '204':
-          description: >-
-            No Content - there are no Notes associated with the order. Since the
-            notes resource is an aggregate rather than addressed resource the
-            generic no content response is used, rather than a 404 as would be
-            used if the resource was addressed with an identifier.
-      summary: List Telephone Number order notes
-      tags:
-        - Orders
-    post:
-      description: >-
-        Updates the Notes resource by adding a note. Adding a note to order
-        causes a notification to be sent to Bandwidth Operations, so that they
-        may assist as necessary. A note may be up to 500 characters in length.
-        <p>Please visit <a
-        href='/docs/numbers/guides/searchingForNumbers/'>Guides and
-        Tutorials</a> to learn more.</p>
-      operationId: CreateOrderNote
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: Order id
-          example: 34adcd9f-2c4a-4631-9dae-d1f318ed57bc
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/xml:
-            examples:
-              example:
-                description: example
-                value: |-
-                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                  <Note>
-                     <UserId>userId</UserId>
-                     <!-- note the userId must match the logged-in user -->
-                     <Description>note text</Description>
-                  </Note>
-            schema:
-              $ref: '#/components/schemas/Note'
-      responses:
-        '201':
-          description: >-
-            CREATED - the note has been created and added to the collection of
-            notes associated with the order. A link to the note is included in
-            the Location header of the response. No body is returned.
-        '400':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <NoteResponse>
-                        <ResponseStatus>
-                            <ErrorCode>12501</ErrorCode>
-                            <Description>Username is required</Description>
-                        </ResponseStatus>
-                    </NoteResponse>
-              schema:
-                $ref: '#/components/schemas/NoteErrorResponse'
-          description: >-
-            Bad Request - the note has not been created because the payload is
-            incomplete or in error.  An error payload is provided in the
-            response
-      summary: Create Telephone Number order note
-      tags:
-        - Orders
-  /accounts/{accountId}/orders/{orderId}/notes/{noteId}:
-    put:
-      description: >-
-        Update a specified note. Notes may only be updated, not deleted.
-        <p>Please visit <a
-        href='/docs/numbers/guides/searchingForNumbers/'>Guides and
-        Tutorials</a> to learn more.</p>
-      operationId: UpdateOrderNote
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: Order id
-          example: 34adcd9f-2c4a-4631-9dae-d1f318ed57bc
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-        - description: Note ID
-          example: '123'
-          in: path
-          name: noteId
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/xml:
-            examples:
-              example:
-                description: example
-                value: |-
-                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                  <Note>
-                     <UserId>userId</UserId>
-                     <Description>note text</Description>
-                  </Note>
-            schema:
-              $ref: '#/components/schemas/Note'
-      responses:
-        '200':
-          description: OK - note has been updated. No body is returned.
-        '400':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <NoteResponse>
-                        <ResponseStatus>
-                            <ErrorCode>12501</ErrorCode>
-                            <Description>Username is required</Description>
-                        </ResponseStatus>
-                    </NoteResponse>
-              schema:
-                $ref: '#/components/schemas/NoteErrorResponse'
-          description: >-
-            Bad Request - the note has not been updated because the payload is
-            incomplete or in error. An error payload is provided in the
-            response.
-      summary: Update Telephone Number order note
-      tags:
-        - Orders
   /accounts/{accountId}/orders/{orderId}/npaNxx:
     get:
       description: >-
@@ -25263,8 +24398,8 @@ paths:
           content:
             application/xml:
               examples:
-                example:
-                  description: example
+                Portins in FOC:
+                  description: List of portin orders with FOC processing status
                   value: |-
                     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                     <LNPResponseWrapper>
@@ -25309,6 +24444,36 @@ paths:
                             <VendorId>57</VendorId>
                             <VendorName>Level 3</VendorName>
                             <PON>979E019287CDF6A1</PON>
+                        </lnpPortInfoForGivenStatus>
+                    </LNPResponseWrapper>
+                RespOrg exception toll-free portin order:
+                  description: >-
+                    List containing a single RespOrg exception toll-free portin
+                    order
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <LNPResponseWrapper>
+                        <TotalCount>1</TotalCount>
+                        <Links>
+                            <first>Link=&lt;https://test.dashboard.bandwidth.com:443/v1.0/accounts/9900012/portins?page=1&amp;size=10&amp;date=2020-01-15&amp;&gt;;rel="first";</first>
+                        </Links>
+                        <lnpPortInfoForGivenStatus>
+                            <accountId>9900012</accountId>
+                            <CountOfTNs>5</CountOfTNs>
+                            <CustomerOrderId>RE Portin</CustomerOrderId>
+                            <userId>jg_eng_customer</userId>
+                            <lastModifiedDate>2022-11-15T18:39:12.948Z</lastModifiedDate>
+                            <OrderDate>2022-11-15T18:23:15.291Z</OrderDate>
+                            <OrderId>167aa53b-f715-459c-b740-70c3a32351cd</OrderId>
+                            <OrderType>port_in</OrderType>
+                            <CompanyName>JohnsAccount</CompanyName>
+                            <Internal>false</Internal>
+                            <ProcessingStatus>SUBMITTED</ProcessingStatus>
+                            <RequestedFOCDate>2022-11-18T16:30:00.000Z</RequestedFOCDate>
+                            <RespOrgException>true</RespOrgException>
+                            <!--ControllingRespOrgId is hidden if not owned by customer-->
+                            <ControllingRespOrgId>TST52</ControllingRespOrgId>
+                            <TargetRespOrgId>TST52</TargetRespOrgId>
                         </lnpPortInfoForGivenStatus>
                     </LNPResponseWrapper>
               schema:
@@ -26652,167 +25817,6 @@ paths:
         '400':
           description: Some error has occured as a result of the attempt.
       summary: Update port-in loa file metadata
-      tags:
-        - Porting
-  /accounts/{accountId}/portins/{orderId}/notes:
-    get:
-      description: Retrieve all notes associated with the order. <br>
-      operationId: GetPortinNotes
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: ''
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <Notes>
-                        <Note>
-                            <Id>87037</Id>
-                            <UserId>jbm</UserId>
-                            <Description>This is a test note</Description>
-                            <LastDateModifier>2014-11-16T04:01:10.000Z</LastDateModifier>
-                        </Note>
-                        <Note>
-                            <Id>87039</Id>
-                            <UserId>smckinnon</UserId>
-                            <Description>This is a second test note</Description>
-                            <LastDateModifier>2014-11-16T04:08:46.000Z</LastDateModifier>
-                        </Note>
-                    </Notes>
-              schema:
-                $ref: '#/components/schemas/Notes'
-          description: >-
-            OK - there are Notes associated with the order, and they have been
-            returned in the response.
-        '204':
-          content:
-            application/xml: {}
-          description: >-
-            No Content - there are no Notes associated with the order.  Since
-            the notes resource is an aggregate rather than addressed resource
-            the generic no content response is used, rather than a 404 as would
-            be used if the resource was addressed with an identifier
-      summary: List port-in order notes
-      tags:
-        - Porting
-    post:
-      description: >-
-        Updates the Notes resource by adding a note. Adding a note to a port-in
-
-        order causes a notification to be sent to Bandwidth Operations, so that
-        they may assist as necessary. A note may be up to 500 characters in
-        length.
-      operationId: CreatePortinNote
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: ''
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/xml:
-            examples:
-              example:
-                description: example
-                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<Note>\n\t<UserId>userId</UserId>\n\t<!-- note the userId must match the logged-in user -->\n\t<Description>note text</Description>\n</Note>"
-            schema:
-              $ref: '#/components/schemas/Note'
-      responses:
-        '201':
-          content:
-            application/xml: {}
-          description: >-
-            CREATED - the note has been created and added to the collection of
-            notes associated with the order.  A link to the note is included in
-            the Location header of the response.  No body is returned
-        '400':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <NoteResponse>
-                        <ResponseStatus>
-                            <ErrorCode>12501</ErrorCode>
-                            <Description>Username is required</Description>
-                        </ResponseStatus>
-                    </NoteResponse>
-              schema:
-                $ref: '#/components/schemas/NoteErrorResponse'
-          description: >-
-            Bad Request - the note has not been created because the payload is
-            incomplete or in error.  An error payload is provided in the
-            response.
-      summary: Create port-in order note
-      tags:
-        - Porting
-  /accounts/{accountId}/portins/{orderId}/notes/{noteId}:
-    put:
-      description: Update a specified note.  Notes may only be updated, not deleted.
-      operationId: UpdatePortinNote
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: ''
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-        - description: Note ID
-          example: '123'
-          in: path
-          name: noteId
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/xml:
-            examples:
-              example:
-                description: example
-                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<Note>\n\t<UserId>userId</UserId>\n\t<Description>note text</Description>\n</Note>"
-            schema:
-              $ref: '#/components/schemas/Note'
-      responses:
-        '200':
-          description: OK - note has been updated.  No body is returned
-        '400':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <NoteResponse>
-                        <ResponseStatus>
-                            <ErrorCode>12501</ErrorCode>
-                            <Description>Username is required</Description>
-                        </ResponseStatus>
-                    </NoteResponse>
-              schema:
-                $ref: '#/components/schemas/NoteErrorResponse'
-          description: >-
-            Bad Request - the note has not been updated because the payload is
-            incomplete or in error.  An error payload is provided in the
-            response.
-      summary: Update port-in order note
       tags:
         - Porting
   /accounts/{accountId}/portins/{orderId}/npaNxx:
@@ -36967,6 +35971,163 @@ paths:
       summary: Update Order Admin Parameters
       tags:
         - Orders
+  /accounts/{accountId}/{orderType}/{orderId}/notes:
+    get:
+      description: >-
+        Retrieve all notes associated with the order. <p>Please visit <a
+        href='/docs/numbers/guides/searchingForNumbers/'>Guides and
+        Tutorials</a> to learn more.</p>
+      operationId: ListOrderNotes
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/OrderTypePathParam'
+        - $ref: '#/components/parameters/OrderIdPathParam'
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  description: example
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <Notes>
+                        <Note>
+                            <Id>87037</Id>
+                            <UserId>jbm</UserId>
+                            <Description>This is a test note</Description>
+                            <LastDateModifier>2014-11-16T04:01:10.000Z</LastDateModifier>
+                        </Note>
+                        <Note>
+                            <Id>87039</Id>
+                            <UserId>smckinnon</UserId>
+                            <Description>This is a second test note</Description>
+                            <LastDateModifier>2014-11-16T04:08:46.000Z</LastDateModifier>
+                        </Note>
+                    </Notes>
+              schema:
+                $ref: '#/components/schemas/OrderNotesResponse'
+          description: >-
+            OK - there are Notes associated with the order, and they have been
+            returned in the response
+        '204':
+          description: >-
+            No Content - there are no Notes associated with the order. Since the
+            notes resource is an aggregate rather than addressed resource the
+            generic no content response is used, rather than a 404 as would be
+            used if the resource was addressed with an identifier.
+      summary: List order notes
+      tags:
+        - /accounts
+    post:
+      description: >-
+        Updates the Notes resource by adding a note. Adding a note to order
+        causes a notification to be sent to Bandwidth Operations, so that they
+        may assist as necessary. A note may be up to 500 characters in length.
+        <p>Please visit <a
+        href='/docs/numbers/guides/searchingForNumbers/'>Guides and
+        Tutorials</a> to learn more.</p>
+      operationId: CreateOrderNote
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/OrderTypePathParam'
+        - $ref: '#/components/parameters/OrderIdPathParam'
+      requestBody:
+        content:
+          application/xml:
+            examples:
+              example:
+                description: example
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <Note>
+                     <UserId>userId</UserId>
+                     <!-- note the userId must match the logged-in user -->
+                     <Description>note text</Description>
+                  </Note>
+            schema:
+              $ref: '#/components/schemas/Note'
+      responses:
+        '201':
+          description: >-
+            CREATED - the note has been created and added to the collection of
+            notes associated with the order. A link to the note is included in
+            the Location header of the response. No body is returned.
+        '400':
+          content:
+            application/xml:
+              examples:
+                example:
+                  description: example
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <NoteResponse>
+                        <ResponseStatus>
+                            <ErrorCode>12501</ErrorCode>
+                            <Description>Username is required</Description>
+                        </ResponseStatus>
+                    </NoteResponse>
+              schema:
+                $ref: '#/components/schemas/NoteErrorResponse'
+          description: >-
+            Bad Request - the note has not been created because the payload is
+            incomplete or in error.  An error payload is provided in the
+            response
+      summary: Create order note
+      tags:
+        - /accounts
+  /accounts/{accountId}/{orderType}/{orderId}/notes/{noteId}:
+    put:
+      description: >-
+        Update a specified note. Notes may only be updated, not deleted.
+        <p>Please visit <a
+        href='/docs/numbers/guides/searchingForNumbers/'>Guides and
+        Tutorials</a> to learn more.</p>
+      operationId: UpdateOrderNote
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/OrderTypePathParam'
+        - $ref: '#/components/parameters/OrderIdPathParam'
+      requestBody:
+        content:
+          application/xml:
+            examples:
+              example:
+                description: example
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <Note>
+                     <UserId>userId</UserId>
+                     <Description>note text</Description>
+                  </Note>
+            schema:
+              $ref: '#/components/schemas/Note'
+      responses:
+        '200':
+          description: OK - note has been updated. No body is returned.
+        '400':
+          content:
+            application/xml:
+              examples:
+                example:
+                  description: example
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <NoteResponse>
+                        <ResponseStatus>
+                            <ErrorCode>12501</ErrorCode>
+                            <Description>Username is required</Description>
+                        </ResponseStatus>
+                    </NoteResponse>
+              schema:
+                $ref: '#/components/schemas/NoteErrorResponse'
+          description: >-
+            Bad Request - the note has not been updated because the payload is
+            incomplete or in error. An error payload is provided in the
+            response.
+      summary: Update Telephone Number order note
+      tags:
+        - /accounts
   /callbacks/notificationCallbackApi:
     post:
       description: >
@@ -39119,4 +38280,3 @@ tags:
   - name: Tn Option
   - name: Tn Reservation
   - name: Tns
-  - name: Admin
