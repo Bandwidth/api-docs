@@ -25263,8 +25263,8 @@ paths:
           content:
             application/xml:
               examples:
-                example:
-                  description: example
+                Portins in FOC:
+                  description: List of portin orders with FOC processing status
                   value: |-
                     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                     <LNPResponseWrapper>
@@ -25309,6 +25309,36 @@ paths:
                             <VendorId>57</VendorId>
                             <VendorName>Level 3</VendorName>
                             <PON>979E019287CDF6A1</PON>
+                        </lnpPortInfoForGivenStatus>
+                    </LNPResponseWrapper>
+                RespOrg exception toll-free portin order:
+                  description: >-
+                    List containing a single RespOrg exception toll-free portin
+                    order
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <LNPResponseWrapper>
+                        <TotalCount>1</TotalCount>
+                        <Links>
+                            <first>Link=&lt;https://test.dashboard.bandwidth.com:443/v1.0/accounts/9900012/portins?page=1&amp;size=10&amp;date=2020-01-15&amp;&gt;;rel="first";</first>
+                        </Links>
+                        <lnpPortInfoForGivenStatus>
+                            <accountId>9900012</accountId>
+                            <CountOfTNs>5</CountOfTNs>
+                            <CustomerOrderId>RE Portin</CustomerOrderId>
+                            <userId>jg_eng_customer</userId>
+                            <lastModifiedDate>2022-11-15T18:39:12.948Z</lastModifiedDate>
+                            <OrderDate>2022-11-15T18:23:15.291Z</OrderDate>
+                            <OrderId>167aa53b-f715-459c-b740-70c3a32351cd</OrderId>
+                            <OrderType>port_in</OrderType>
+                            <CompanyName>JohnsAccount</CompanyName>
+                            <Internal>false</Internal>
+                            <ProcessingStatus>SUBMITTED</ProcessingStatus>
+                            <RequestedFOCDate>2022-11-18T16:30:00.000Z</RequestedFOCDate>
+                            <RespOrgException>true</RespOrgException>
+                            <!--ControllingRespOrgId is hidden if not owned by customer-->
+                            <ControllingRespOrgId>TST52</ControllingRespOrgId>
+                            <TargetRespOrgId>TST52</TargetRespOrgId>
                         </lnpPortInfoForGivenStatus>
                     </LNPResponseWrapper>
               schema:
@@ -27016,46 +27046,6 @@ paths:
       summary: List port-out requests
       tags:
         - Porting
-    post:
-      description: >-
-        Creates a port-out request.<br>In the payload, CallbackUrl and
-        InternalPort are optional.<br>There are also multiple options for the
-        following:<table>    <tr>        <th>Option</th>       
-        <th>Choices</th>    </tr>    <tr>       
-        <td>Supplemental</td><td>NONE<br>CANCEL<br>UPDATE<br>OTHER<br></td>   
-        </tr>    <tr>       
-        <td>PortOutAction</td><td>NEW<br>SUPP<br>MODIFY<br>CANCEL<br></td>   
-        </tr>    <tr>        <td>InternalPort</td><td>true or false<br></td>   
-        </tr></table>
-      operationId: CreatePortOut
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-      requestBody:
-        content:
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/PortOutRequest'
-      responses:
-        '200':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <PortOutResponse>
-                       <Status>
-                          <Code>200</Code>
-                          <Description>Request is complete and results returned.</Description>
-                       </Status>
-                    </PortOutResponse>
-              schema:
-                $ref: '#/components/schemas/PortOutResponse'
-          description: The port-out request has been successfully received.
-      summary: Create port-out request
-      tags:
-        - Porting
   /accounts/{accountId}/portouts/status:
     get:
       description: >-
@@ -27146,28 +27136,6 @@ paths:
       tags:
         - Porting
   /accounts/{accountId}/portouts/{orderId}:
-    delete:
-      description: Cancel port-out request.
-      operationId: CancelPortOut
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: Port-out order id
-          example: ca8065d1-ec1a-43da-af40-1dcee43becb5
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          content:
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/PortOutResponse'
-          description: ''
-      summary: Cancel port-out request
-      tags:
-        - Porting
     get:
       description: >-
         Retrieves the information associated with the specified port-out ID
@@ -27175,6 +27143,7 @@ paths:
       operationId: ReadPortOut
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/OrderIdPathParam'
         - description: Port-out order id
           example: ca8065d1-ec1a-43da-af40-1dcee43becb5
           in: path
@@ -27209,53 +27178,6 @@ paths:
             the payload. Note: For users of Enterprise Telephony accounts, SPID
             is omitted from the success output.
       summary: Fetch port-out request status
-      tags:
-        - Porting
-    put:
-      description: >-
-        Updates or cancels a port-out ID. The payload to this method is similar
-        to the GET on /accounts/{accountid}/portouts.<br>In the payload,
-        CallbackUrl and InternalPort are optional additives.<br>There are also
-        multiple options for the following:<table>    <tr>       
-        <th>Option</th>        <th>Choices</th>    </tr>    <tr>       
-        <td>Supplemental</td><td>NONE<br>CANCEL<br>UPDATE<br>OTHER<br></td>   
-        </tr>    <tr>       
-        <td>PortOutAction</td><td>NEW<br>SUPP<br>MODIFY<br>CANCEL<br></td>   
-        </tr></table>
-      operationId: UpdatePortOut
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: Port-out order id
-          example: ca8065d1-ec1a-43da-af40-1dcee43becb5
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/PortOutRequest'
-      responses:
-        '200':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <PortOutResponse>
-                       <Status>
-                          <Code>200</Code>
-                          <Description>Request is complete and results returned.</Description>
-                       </Status>
-                    </PortOutResponse>
-              schema:
-                $ref: '#/components/schemas/PortOutResponse'
-          description: The update or cancellation was successful.
-      summary: Update/cancel port-out request
       tags:
         - Porting
   /accounts/{accountId}/products:
@@ -39119,4 +39041,3 @@ tags:
   - name: Tn Option
   - name: Tn Reservation
   - name: Tns
-  - name: Admin
