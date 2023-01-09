@@ -3,6 +3,7 @@ name: Update Blog Posts
 on:
   schedule:
     - cron: '0 13 * * 1'
+  workflow_dispatch:
 
 jobs:
   get_blog_posts:
@@ -14,7 +15,8 @@ jobs:
       - name: Get Blog Posts from Wordpress API
         id: get_posts
         run: |
-          BLOG_POSTS=$(curl -Ls -H "Authorization: token $WORDPRESS_TOKEN" https://www.bandwidth.com/wp-json/wp/v2/posts?per_page=20 | jq 'del(.[] | select(.categories[] | contains(1680))) | .[] | {imageId: .featured_media, categories: .categories, postLink: .link, postTitle: .title.rendered}')
+          BLOG_POSTS=$(curl -Ls -H "Authorization: token $WORDPRESS_TOKEN" https://www.bandwidth.com/wp-json/wp/v2/posts?per_page=20 | jq '[del(.[] | select(.categories[] | contains(1680))) | .[] | {imageId: .featured_media, categories: .categories, postLink: .link, postTitle: .title.rendered}] | .[:10]')
+          
           echo $BLOG_POSTS
         env:
           WP_TOKEN: ${{ secrets.WORDPRESS_TOKEN }}
