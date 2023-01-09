@@ -1,0 +1,20 @@
+name: Update Blog Posts
+
+on:
+  schedule:
+    - cron: '0 13 * * 1'
+
+jobs:
+  get_blog_posts:
+    name: Get Most Recent Posts from Bandwidth Blog
+    runs-on: ubuntu-latest
+    # outputs:
+      # release_needed: ${{ steps.release_needed.outputs.release_needed }}
+    steps:
+      - name: Get Blog Posts from Wordpress API
+        id: get_posts
+        run: |
+          BLOG_POSTS=$(curl -Ls -H "Authorization: token $WORDPRESS_TOKEN" https://www.bandwidth.com/wp-json/wp/v2/posts?per_page=20 | jq 'del(.[] | select(.categories[] | contains(1680))) | .[] | {imageId: .featured_media, categories: .categories, postLink: .link, postTitle: .title.rendered}')
+          echo $BLOG_POSTS
+        env:
+          WP_TOKEN: ${{ secrets.WORDPRESS_TOKEN }}
