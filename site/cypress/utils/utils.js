@@ -215,3 +215,19 @@ export const testCarousel = (path, length, title) => {
     cy.get('[data-cy="carouselSlides"]').should('have.css', 'transform', `matrix(1, 0, 0, 1, -${rollOverOffset + slideWidth}, 0)`);
   })
 }
+
+export const testSubheadingLink = (path, text, href) => {
+  before(() => {
+    cy.visit(`${path}`);
+  })
+  it('tests the things', () => {
+    cy.get('a')
+      .contains(`${text}`)
+      .should('have.attr', 'href', `${href}`)
+
+    cy.get('h2')
+      .contains(`${text}`)
+      .children(0)
+      .should('have.attr', 'href', `${href}`)
+    });
+}
