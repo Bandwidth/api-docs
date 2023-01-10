@@ -2,7 +2,7 @@ import React from 'react';
 
 function Item({Svg, title, link}) {
     return (
-        <div className="item">
+        <div className="item-grid-item">
             <a href={link} className="item-image">
                 <Svg className="item-svg" alt={title}/>
             </a>
