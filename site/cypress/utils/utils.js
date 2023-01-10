@@ -220,7 +220,7 @@ export const testSubheadingLink = (path, text, href) => {
   before(() => {
     cy.visit(`${path}`);
   })
-  it('tests the things', () => {
+  it('tests the subheading links', () => {
     cy.get('a')
       .contains(`${text}`)
       .should('have.attr', 'href', `${href}`)
