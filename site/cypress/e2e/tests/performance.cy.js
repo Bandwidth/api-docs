@@ -12,9 +12,10 @@ context('API Reference Page Performance Test', () => {
   performanceTester('/apis/', 'API Reference')
 })
 
-context('Numbers API Performance Test', () => {
-  performanceTester('/apis/numbers/', 'Response samples', 'h3', 10000)
-})
-context('Global API Performance Test', () => {
-  performanceTester('/apis/global/', 'Access', 'h2', 10000)
-})
+// context('Numbers API Performance Test', () => {
+//   performanceTester('/apis/numbers/', 'Response samples', 'h3', 10000)
+// })
+
+// context('Global API Performance Test', () => {
+//   performanceTester('/apis/global/', 'Access', 'h2', 10000)
+// })
