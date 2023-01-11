@@ -1,0 +1,522 @@
+openapi: 3.0.3
+info:
+  title: Bandwidth Toll Free Verification API
+  version: 1.0.0
+  contact:
+    name: Bandwidth Support
+    email: support@bandwidth.com
+    url: https://support.bandwidth.com
+  description: >-
+    Submission, management, and querying of requests to verify toll-free phone
+    numbers for message campaigns
+
+
+    ### Base URL
+
+
+    `https://dashboard.bandwidth.com/api/v1/`
+servers:
+  - url: https://dashboard.bandwidth.com/api/v1
+tags:
+  - name: Verification Request
+    description: Submit a request for verification of a toll-free phone number.
+  - name: Verification Information
+    description: Get the verification status of an owned toll-free phone number
+  - name: Verification Use Cases
+    description: Get a list of valid toll-free use cases
+security:
+  - Basic: []
+paths:
+  /accounts/{accountId}/tollFreeVerification:
+    post:
+      tags:
+        - Verification Request
+      summary: Submit a toll-free verification request
+      description: Submit a request for verification of a toll-free phone number.
+      operationId: requestVerification
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+      requestBody:
+        $ref: '#/components/requestBodies/verificationRequest'
+      callbacks:
+        tfVerificationStatus:
+          $ref: '#/components/callbacks/tfVerificationStatus'
+      responses:
+        '202':
+          $ref: '#/components/responses/verifyPostResponse'
+        '400':
+          $ref: '#/components/responses/badRequestResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/forbiddenResponse'
+        '405':
+          $ref: '#/components/responses/notAllowedResponse'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsResponse'
+        '500':
+          $ref: '#/components/responses/serverErrorResponse'
+        '503':
+          $ref: '#/components/responses/serviceUnavailableResponse'
+  /accounts/{accountId}/phoneNumbers/{phoneNumber}/tollFreeVerification:
+    get:
+      tags:
+        - Verification Information
+      summary: Get the verification status of a toll-free phone number
+      description: >-
+        This endpoint will provide verification status for a phone number that
+        is provisioned to your account.
+      operationId: getVerificationStatus
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/phoneNumber'
+      responses:
+        '200':
+          $ref: '#/components/responses/verifyStatusResponse'
+        '400':
+          $ref: '#/components/responses/badRequestResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/forbiddenResponse'
+        '404':
+          $ref: '#/components/responses/notFoundResponse'
+        '405':
+          $ref: '#/components/responses/notAllowedResponse'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsResponse'
+        '500':
+          $ref: '#/components/responses/serverErrorResponse'
+        '503':
+          $ref: '#/components/responses/serviceUnavailableResponse'
+  /tollFreeVerification/useCases:
+    get:
+      tags:
+        - Verification Use Cases
+      summary: List valid use cases for toll-free traffic
+      description: Provides a list of valid toll-free use cases
+      operationId: listUseCases
+      responses:
+        '200':
+          $ref: '#/components/responses/useCasesResponse'
+        '400':
+          $ref: '#/components/responses/badRequestResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/forbiddenResponse'
+        '404':
+          $ref: '#/components/responses/notFoundResponse'
+        '405':
+          $ref: '#/components/responses/notAllowedResponse'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsResponse'
+        '500':
+          $ref: '#/components/responses/serverErrorResponse'
+        '503':
+          $ref: '#/components/responses/serviceUnavailableResponse'
+components:
+  parameters:
+    accountId:
+      name: accountId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Your Bandwidth Account ID
+      example: '9900000'
+    phoneNumber:
+      name: phoneNumber
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/phoneNumber'
+      description: Valid telephone number in E.164 format
+      example: '+19194445555'
+  requestBodies:
+    verificationRequest:
+      description: Submit a request for verification of a toll-free phone number.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/verificationRequest'
+    verificationWebhookRequest:
+      description: Verification callback status of a toll-free phone number.
+      required: true
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/verificationWebhookRequest'
+              - $ref: '#/components/schemas/verificationUnverifiedWebhookRequest'
+              - $ref: '#/components/schemas/failureWebhookRequest'
+  schemas:
+    phoneNumber:
+      description: Toll-free telephone number in E.164 format
+      type: string
+      minLength: 2
+      maxLength: 17
+      nullable: false
+      pattern: ^\+\d{1,16}$
+      example: '+18005555555'
+    email:
+      type: string
+      minLength: 3
+      maxLength: 500
+      nullable: false
+      pattern: >-
+        ^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$
+      example: foo@bar.com
+    url:
+      type: string
+      minLength: 3
+      maxLength: 500
+      nullable: false
+      example: https://www.example.com/path/to/resource
+      pattern: >-
+        ^$|(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,253}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#()?&//=]*)
+    webhookUrl:
+      description: webhook to listen to status updates from Bandwidth
+      type: string
+      minLength: 3
+      maxLength: 500
+      nullable: true
+      example: https://www.example.com/path/to/resource
+      pattern: >-
+        ^$|(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,253}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#()?&//=]*)
+    usState:
+      type: string
+      minLength: 2
+      maxLength: 500
+      nullable: false
+      example: NC
+    usZipCode:
+      type: string
+      minLength: 5
+      maxLength: 10
+      nullable: false
+      example: '27606'
+      pattern: ^\d{5}(-\d{4})?$
+    string:
+      type: string
+      minLength: 0
+      maxLength: 500
+      nullable: false
+    nullableString:
+      type: string
+      minLength: 0
+      maxLength: 500
+      nullable: true
+    address:
+      type: object
+      nullable: false
+      required:
+        - name
+        - addr1
+        - city
+        - state
+        - zip
+        - url
+      properties:
+        name:
+          $ref: '#/components/schemas/string'
+        addr1:
+          $ref: '#/components/schemas/string'
+        addr2:
+          $ref: '#/components/schemas/nullableString'
+        city:
+          $ref: '#/components/schemas/string'
+        state:
+          $ref: '#/components/schemas/usState'
+        zip:
+          $ref: '#/components/schemas/usZipCode'
+        url:
+          $ref: '#/components/schemas/url'
+    contact:
+      type: object
+      nullable: false
+      required:
+        - firstName
+        - lastName
+        - email
+        - phoneNumber
+      properties:
+        firstName:
+          $ref: '#/components/schemas/string'
+        lastName:
+          $ref: '#/components/schemas/string'
+        email:
+          $ref: '#/components/schemas/email'
+        phoneNumber:
+          $ref: '#/components/schemas/phoneNumber'
+    optInWorkflow:
+      type: object
+      nullable: false
+      required:
+        - description
+        - imageUrls
+      properties:
+        description:
+          $ref: '#/components/schemas/string'
+        imageUrls:
+          type: array
+          items:
+            $ref: '#/components/schemas/url'
+    verificationRequest:
+      type: object
+      required:
+        - businessAddress
+        - businessContact
+        - messageVolume
+        - phoneNumbers
+        - useCase
+        - useCaseSummary
+        - productionMessageContent
+        - optInWorkflow
+      properties:
+        businessAddress:
+          $ref: '#/components/schemas/address'
+        businessContact:
+          $ref: '#/components/schemas/contact'
+        messageVolume:
+          type: integer
+          example: 10000
+        phoneNumbers:
+          type: array
+          minItems: 1
+          maxItems: 10
+          items:
+            $ref: '#/components/schemas/phoneNumber'
+        useCase:
+          $ref: '#/components/schemas/useCase'
+        useCaseSummary:
+          $ref: '#/components/schemas/string'
+        productionMessageContent:
+          $ref: '#/components/schemas/string'
+        optInWorkflow:
+          $ref: '#/components/schemas/optInWorkflow'
+        additionalInformation:
+          $ref: '#/components/schemas/nullableString'
+        isvReseller:
+          $ref: '#/components/schemas/nullableString'
+        webhookUrl:
+          $ref: '#/components/schemas/webhookUrl'
+    tfvPostResponseBody:
+      type: object
+      properties:
+        accountId:
+          type: string
+          description: Bandwidth account ID
+          example: '9900910'
+        errors:
+          type: object
+          description: >-
+            Listing of errors from your request, relevant for a partial success
+            or complete failure
+          example:
+            type: bad request
+            description: cannot process request
+            errors:
+              useCase:
+                - useCase must not be blank
+                - useCase cannot be more than 500 characters
+    tfvStatus:
+      type: object
+      properties:
+        isVerified:
+          type: boolean
+          description: Telephone number in request is toll-free verified
+          example: true
+    tfvCallbackStatus:
+      type: string
+      enum:
+        - VERIFIED
+        - UNVERIFIED
+        - PENDING
+      example: VERIFIED
+    tfvCallbackIsBadRequest:
+      type: boolean
+      description: TRUE or FALSE
+      example: true
+    tfvUnverifiedStatus:
+      type: string
+      default: UNVERIFIED
+    useCases:
+      type: array
+      items:
+        type: string
+      example:
+        - 2FA
+        - App Notifications
+        - Appointments
+        - Auctions
+        - Auto Repair Services
+        - Bank Transfers
+        - Billing
+        - Booking Confirmations
+        - Business Updates
+        - COVID-19 Alerts
+    useCase:
+      type: string
+      example: 2FA
+    verificationRequestError:
+      title: VerificationRequestError
+      type: object
+      properties:
+        type:
+          type: string
+        description:
+          type: string
+      required:
+        - type
+        - description
+    accountId:
+      type: integer
+      description: Your Bandwidth Account ID
+      example: 9900000
+    verificationWebhookRequest:
+      type: object
+      properties:
+        phoneNumber:
+          $ref: '#/components/schemas/phoneNumber'
+        accountId:
+          $ref: '#/components/schemas/accountId'
+        status:
+          $ref: '#/components/schemas/tfvCallbackStatus'
+    denialStatusCode:
+      description: Reason code for denial
+      type: integer
+      example: 511
+    denialReasonDescription:
+      description: Denial reason explanation
+      type: string
+      example: Disallowed Content - Gambling
+    failureWebhookRequest:
+      type: object
+      properties:
+        phoneNumber:
+          $ref: '#/components/schemas/phoneNumber'
+        accountId:
+          $ref: '#/components/schemas/accountId'
+        isBadRequest:
+          $ref: '#/components/schemas/tfvCallbackIsBadRequest'
+    verificationUnverifiedWebhookRequest:
+      type: object
+      properties:
+        phoneNumber:
+          $ref: '#/components/schemas/phoneNumber'
+        accountId:
+          $ref: '#/components/schemas/accountId'
+        status:
+          $ref: '#/components/schemas/tfvUnverifiedStatus'
+        denialStatusCode:
+          $ref: '#/components/schemas/denialStatusCode'
+        denialReasonDescription:
+          $ref: '#/components/schemas/denialReasonDescription'
+  securitySchemes:
+    Basic:
+      type: http
+      scheme: basic
+      description: >-
+        Basic authentication is a simple authentication scheme built into the
+        HTTP protocol. To use it, send your HTTP requests with an Authorization
+        header that contains the word Basic followed by a space and a
+        base64-encoded string `username:password`.
+
+        Example: `Authorization: Basic ZGVtbZpwQDU1dzByZA==`
+  responses:
+    verifyPostResponse:
+      description: Accepted
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/tfvPostResponseBody'
+    verifyStatusResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/tfvStatus'
+    useCasesResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/useCases'
+    badRequestResponse:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/verificationRequestError'
+    unauthorizedResponse:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/verificationRequestError'
+    forbiddenResponse:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/verificationRequestError'
+    notFoundResponse:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/verificationRequestError'
+    notAllowedResponse:
+      description: Method Not Allowed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/verificationRequestError'
+    tooManyRequestsResponse:
+      description: Too Many Requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/verificationRequestError'
+    serverErrorResponse:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/verificationRequestError'
+    serviceUnavailableResponse:
+      description: Service Unavailable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/verificationRequestError'
+  callbacks:
+    tfVerificationStatus:
+      '{$request.body#/webhookUrl}':
+        post:
+          summary: Toll free verification callback
+          description: Toll free verification callbacks for the request.
+          operationId: tfvRequest
+          requestBody:
+            $ref: '#/components/requestBodies/verificationWebhookRequest'
+          responses:
+            '204':
+              description: No content
+            '400':
+              $ref: '#/components/responses/badRequestResponse'
+            '401':
+              $ref: '#/components/responses/unauthorizedResponse'
+            '403':
+              $ref: '#/components/responses/forbiddenResponse'
+            '404':
+              $ref: '#/components/responses/notFoundResponse'
+            '405':
+              $ref: '#/components/responses/notAllowedResponse'
+            '429':
+              $ref: '#/components/responses/tooManyRequestsResponse'
+            '500':
+              $ref: '#/components/responses/serverErrorResponse'
+            '503':
+              $ref: '#/components/responses/serviceUnavailableResponse'
