@@ -15,7 +15,20 @@ jobs:
       - name: Get Blog Posts from Wordpress API
         id: get_posts
         run: |
-          BLOG_POSTS=$(curl -Ls -H "Authorization: Bearer $WORDPRESS_TOKEN" https://www.bandwidth.com/wp-json/wp/v2/posts?per_page=20) # | jq '[del(.[] | select(.categories[] | contains(1680))) | .[] | {imageId: .featured_media, categories: .categories, postLink: .link, postTitle: .title.rendered}] | .[:10]')
-          echo $BLOG_POSTS
+          JSON_OUT='[]'  # Declare empty JSON array for writing to later
+          BLOG_POSTS=$(curl -Ls -H "Authorization: Bearer $WORDPRESS_TOKEN" https://www.bandwidth.com/wp-json/wp/v2/posts?per_page=20 | jq -c '[del(.[] | select(.categories[] | contains(1680))) | .[] | {imageUrl: .featured_media, categories: .categories, postLink: .link, postTitle: .title.rendered}] | .[:10]')  # Get 20 most recent blog posts, remove ones with the 'Culture' tag, filter only relevant fields, and limit results to 10
+          while read post; do  # While loop that iterates over each blog post (come from the done <<<)
+            IMAGE_URL=$(curl -Ls -H "Authorization: Bearer $WORDPRESS_TOKEN" https://www.bandwidth.com/wp-json/wp/v2/media/$(jq '.imageUrl' <<< $post) | jq -r '.guid.rendered')  # Grabs the url for the image associated with the post
+            CATEGORIES=(); CATEGORIES_LINKS=()  # Declare arrays for categories and their links
+            categories=($(jq -r '"\(.categories[]) "' <<< $post | tr -d '\n\r[],"'))  # Create array from category numbers to iterate over
+            for category in "${categories[@]}"; do  # Iterate over categories
+              IFS="|" read CATEGORY CATEGORY_LINK < <(echo $(curl -Ls -H "Authorization: Bearer $WORDPRESS_TOKEN" https://www.bandwidth.com/wp-json/wp/v2/categories/$category | jq -r '"\(.name|tojson)|\(.link|tojson)"'))  # Get category info and filter category name and link. The pipe character was chosen somewhat arbitrarily as a delimeter since it should never show up in the link or category name
+              if [[ $category != ${categories[-1]} ]]; then CATEGORIES+=($CATEGORY,); CATEGORIES_LINKS+=($CATEGORY_LINK,); else CATEGORIES+=($CATEGORY); CATEGORIES_LINKS+=($CATEGORY_LINK); fi  # Format categories and links as JSON array
+            done
+            UPDATED_POST=$(jq -c --arg url "$IMAGE_URL" --argjson cats "$(echo "[${CATEGORIES[@]}]")" --argjson links "$(echo "[${CATEGORIES_LINKS[@]}]")" '.imageUrl |= $url | .categories |= $cats | .categoryLinks |= $links' <<< $post)  # Update each posts json object with imageUrl, categories, and categoryLinks
+            JSON_OUT="$(jq --argjson post "$UPDATED_POST" '. += [$post]' <<< $JSON_OUT)"  # Add newly updated post object to JSON array
+          done <<< "$(jq -c '.[]' <<< $BLOG_POSTS)"  # Iterate over each blog post
+
+          echo ${JSON_OUT[@]} > ./site/blogposts.config.json  # Write JSON array of posts out to blogpost config file. TODO: Update filepath and move file to real location
         env:
           WORDPRESS_TOKEN: ${{ secrets.WORDPRESS_TOKEN }}
