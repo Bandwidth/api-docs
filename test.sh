@@ -2,34 +2,21 @@
 
 WORDPRESS_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE3OSwibmFtZSI6ImJ3X3dwX2FwaSIsImlhdCI6MTY2NzkzMjk0MywiZXhwIjoxODI1NjEyOTQzfQ.HU7C1eVR-WnKiuit-cnJpiP165PKYpQSMm_gNSt2Hx4
 
-json='[]'
-BLOG_POSTS=$(curl -Ls -H "Authorization: Bearer $WORDPRESS_TOKEN" https://www.bandwidth.com/wp-json/wp/v2/posts?per_page=3 | jq -c '[del(.[] | select(.categories[] | contains(1680))) | .[] | {imageUrl: .featured_media, categories: .categories, postLink: .link, postTitle: .title.rendered}] | .[:10]')
-while read post; do
-    IMAGE_URL=$(curl -Ls -H "Authorization: Bearer $WORDPRESS_TOKEN" https://www.bandwidth.com/wp-json/wp/v2/media/$(jq '.imageUrl' <<< $post) | jq -r '.guid.rendered')
-    CATEGORIES=()
-    CATEGORIES_LINKS=()
-    categories=($(jq -r '"\(.categories[]) "' <<< $post | tr -d '\n\r[],"'))
+JSON_OUT='[]'
+BLOG_POSTS=$(curl -Ls -H "Authorization: Bearer $WORDPRESS_TOKEN" https://www.bandwidth.com/wp-json/wp/v2/posts?per_page=20 | jq -c '[del(.[] | select(.categories[] | contains(1680))) | .[] | {imageUrl: .featured_media, categories: .categories, postLink: .link, postTitle: .title.rendered}] | .[:10]')  # Get 20 most recent blog posts, remove ones with the 'Culture' tag, filter only relevant fields, and limit results to 10
+while read post; do  # While loop that iterates over each blog post (come from the done <<<)
+    IMAGE_URL=$(curl -Ls -H "Authorization: Bearer $WORDPRESS_TOKEN" https://www.bandwidth.com/wp-json/wp/v2/media/$(jq '.imageUrl' <<< $post) | jq -r '.guid.rendered')  # Grabs the url for the image associated with the post
+    CATEGORIES=(); CATEGORIES_LINKS=()  # Declare arrays for categories and their links
+    categories=($(jq -r '"\(.categories[]) "' <<< $post | tr -d '\n\r[],"'))  # 
     for category in "${categories[@]}"; do
-        IFS="|" read CATEGORY CATEGORY_LINK < <(echo $(curl -Ls -H "Authorization: Bearer $WORDPRESS_TOKEN" https://www.bandwidth.com/wp-json/wp/v2/categories/$category | jq -r '"\(.name|tojson)|\(.link)"'))
-        CATEGORIES+=($CATEGORY)
-        CATEGORIES_LINKS+=($CATEGORY_LINK)
+        IFS="|" read CATEGORY CATEGORY_LINK < <(echo $(curl -Ls -H "Authorization: Bearer $WORDPRESS_TOKEN" https://www.bandwidth.com/wp-json/wp/v2/categories/$category | jq -r '"\(.name|tojson)|\(.link|tojson)"'))
+        if [[ $category != ${categories[-1]} ]]; then CATEGORIES+=($CATEGORY,); CATEGORIES_LINKS+=($CATEGORY_LINK,); else CATEGORIES+=($CATEGORY); CATEGORIES_LINKS+=($CATEGORY_LINK); fi
     done
-        # WITH_CATEGORIES=$(jq -c --arg cat $CATEGORY '.)
-    echo "all cats: ${CATEGORIES[@]}"
-    # cats=$(jq -c -n -s '$ARGS.positional' --args -- "${CATEGORIES[@]}")
-    cats=$(jq -ncR '[inputs]' <<< "$CATEGORIES")
-    echo $cats
-    # echo "[$(jq '"\(.)"' <<< ${CATEGORIES[@]})]"
-    # CATS=$(jq -c --argjson cats $CATEGORIES '.categories |= $cats' <<< $post)
-    echo $CATS > cats.json
-    echo "all links: ${CATEGORIES_LINKS[@]}" > link.txt
-    NEW=$(jq -c --arg url $IMAGE_URL '.imageUrl |= $url' <<< $post)
-    json="$(jq --argjson val "$NEW" '. += [$val]' <<< $json)"
-    # json="$(jq --argjson val "$(jq -c --arg url $IMAGE_URL '.imageUrl |= $url' <<< $post)" '. += [$val]' <<< $json)"
-done <<< "$(jq -c '.[]' <<< $BLOG_POSTS)"
+    UPDATED_POST=$(jq -c --arg url "$IMAGE_URL" --argjson cats "$(echo "[${CATEGORIES[@]}]")" --argjson links "$(echo "[${CATEGORIES_LINKS[@]}]")" '.imageUrl |= $url | .categories |= $cats | .categoryLinks |= $links' <<< $post)
+    JSON_OUT="$(jq --argjson post "$UPDATED_POST" '. += [$post]' <<< $JSON_OUT)"
+done <<< "$(jq -c '.[]' <<< $BLOG_POSTS)"  # Iterate over each blog post
 
-echo ${json[@]} > posts_1.json
-echo $BLOG_POSTS > posts.json
+echo ${JSON_OUT[@]} > ./site/blogposts.config.json
 
 
 # REL_TIME=$(curl -Ls -H "Accept: application/vnd.github+json" https://api.github.com/repos/Bandwidth/api-docs/releases/latest | jq -r '.published_at')  # Get latest release time
