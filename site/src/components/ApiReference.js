@@ -10,6 +10,7 @@ const RedocConfig = (props) => {
                       pathInMiddlePanel: true,
                       expandSingleSchemaField: true,
                       expandResponses: "200,201,202,204",
+                      showObjectSchemaExamples: true,
                       menuToggle: true,
                       theme: colorMode === 'dark' ? darkTheme('#FFFFFF') : lightTheme(props.color),
                       hideDownloadButton: props.hideDownloadButton ? true: false,
