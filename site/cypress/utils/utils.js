@@ -47,6 +47,25 @@ export const navTester = (path) => {
     })
   }
 
+  export const performanceTester = (path, text, element = 'h1', waitTime = 5000) => {
+    it('measures page load on the home page', () => {
+      cy.visit(`${path}`, {
+        onBeforeLoad: (win) => {
+          win.performance.mark('startMark');
+        }
+      })
+      .its('performance').then((performance) => {
+        cy.get(`${element}`).should('include.text', `${text}`)
+          .then(() => performance.mark('endMark'))
+          .then(() => {
+          performance.measure('pageLoad', 'startMark', 'endMark');
+          const measure = performance.getEntriesByName('pageLoad')[0]; 
+          assert.isAtMost(measure.duration, waitTime);
+        });
+      });
+  });
+  }
+
   export const testSvgLink = (path, svg, testPath) => {
     beforeEach(() => {
       cy.visit(`${path}`)
