@@ -3,7 +3,7 @@ id: python-migration-guides
 title: Python
 slug: /python
 description: Python SDK Migration Guides
-sidebar_label: About
+sidebar_label: Overview
 image: '@site/static/img/bw-icon.svg'
 ---
 
