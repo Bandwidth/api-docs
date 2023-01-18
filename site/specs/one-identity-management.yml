@@ -2,22 +2,13 @@ openapi: 3.0.3
 info:
   title: Identity Management
   description: Bandwidth Identity API
-  contact: {}
-  version: 2.0.0-alpha
-  x-server-configuration:
-    default-environment: Production
-    default-server: Production
-    environments:
-      - name: Production
-      - name: Custom
-        servers:
-          - name: default
-            url: '{base_url}'
-    parameters:
-      - name: base_url
-        description: ''
-        type: string
-        example: https://www.example.com
+  contact:
+    name: Bandwidth
+  version: 3.2.0-alpha
+servers:
+  - url: https://management.id.bandwidth.com
+tags:
+  - name: Identity Provider Management
 paths:
   /idps:
     get:
@@ -48,14 +39,12 @@ paths:
           $ref: '#/components/responses/tooManyRequestsResponse'
         '500':
           $ref: '#/components/responses/internalErrorResponse'
-      deprecated: false
     post:
       tags:
         - Identity Provider Management
       summary: postIdps
       description: Creates a new IdP.
       operationId: postIdps
-      parameters: []
       requestBody:
         $ref: '#/components/requestBodies/createIdpRequest'
       responses:
@@ -75,7 +64,6 @@ paths:
           $ref: '#/components/responses/tooManyRequestsResponse'
         '500':
           $ref: '#/components/responses/internalErrorResponse'
-      deprecated: false
   /idps/{idpId}:
     put:
       tags:
@@ -106,7 +94,6 @@ paths:
           $ref: '#/components/responses/tooManyRequestsResponse'
         '500':
           $ref: '#/components/responses/internalErrorResponse'
-      deprecated: false
     get:
       tags:
         - Identity Provider Management
@@ -132,7 +119,6 @@ paths:
           $ref: '#/components/responses/tooManyRequestsResponse'
         '500':
           $ref: '#/components/responses/internalErrorResponse'
-      deprecated: false
     delete:
       tags:
         - Identity Provider Management
@@ -144,8 +130,6 @@ paths:
       responses:
         '204':
           $ref: '#/components/responses/deleteResponse'
-        '400':
-          $ref: '#/components/responses/badRequestResponse'
         '401':
           $ref: '#/components/responses/unauthorizedResponse'
         '403':
@@ -160,44 +144,12 @@ paths:
           $ref: '#/components/responses/tooManyRequestsResponse'
         '500':
           $ref: '#/components/responses/internalErrorResponse'
-      deprecated: false
-  /.well-known/webfinger:
-    get:
-      tags:
-        - Webfinger
-      summary: Webfinger
-      description: Returns a Webfinger response for the provided resource.
-      operationId: webfinger
-      parameters:
-        - $ref: '#/components/parameters/webfingerResource'
-      responses:
-        '200':
-          $ref: '#/components/responses/webfingerResponse'
-        '400':
-          $ref: '#/components/responses/badRequestResponse'
-        '401':
-          $ref: '#/components/responses/unauthorizedResponse'
-        '403':
-          $ref: '#/components/responses/forbiddenResponse'
-        '404':
-          $ref: '#/components/responses/notFoundResponse'
-        '405':
-          $ref: '#/components/responses/methodNotAllowedResponse'
-        '429':
-          $ref: '#/components/responses/tooManyRequestsResponse'
-        '500':
-          $ref: '#/components/responses/internalErrorResponse'
-      deprecated: false
-      security: []
 components:
   parameters:
     limit:
       in: query
       name: limit
-      required: false
       description: The maximum records requested in search result.
-      style: form
-      explode: true
       schema:
         type: integer
         format: int32
@@ -207,38 +159,29 @@ components:
     offset:
       in: query
       name: offset
-      required: false
       description: >-
         The amount of records to skip in search result. Combine with limit to
         fetch results one page at a time.
-      style: form
-      explode: true
       schema:
         type: integer
       example: 50
     active:
       in: query
       name: active
-      required: false
       description: >-
         Set this to true to find only active IdPs. Or false to find only
         inactive ones.
-      style: form
-      explode: true
       schema:
         type: boolean
       example: true
     accountId:
       in: query
       name: accountId
-      required: false
       description: >-
         The accountId associated with a specific IdP. If you have access to
         multiple accounts with their own IdPs, use this filter to narrow the
         results down to just a particular account or accounts (can be specified
         multiple times).
-      style: form
-      explode: true
       schema:
         type: string
       example: '9999999'
@@ -247,19 +190,8 @@ components:
       in: path
       description: The IdP id.
       required: true
-      style: simple
       schema:
         type: string
-    webfingerResource:
-      name: resource
-      in: query
-      description: The resource to get information about
-      required: true
-      style: form
-      explode: true
-      schema:
-        type: string
-        example: okta:acct:user@company.com
   requestBodies:
     createIdpRequest:
       description: ''
@@ -289,7 +221,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/idP'
+            $ref: '#/components/schemas/successResponse'
     deleteResponse:
       description: Successful response. The IdP resource was deleted.
       headers: {}
@@ -300,7 +232,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/idP'
+            $ref: '#/components/schemas/successResponse'
     getIdpsResponse:
       description: >-
         Successful response. A list of IdPs is returned. If there are no IdPs to
@@ -309,38 +241,31 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              items:
-                type: array
-                items:
-                  $ref: '#/components/schemas/idP'
-              totalCount:
-                type: integer
-                description: The total number of IdPs found with the specified filters
-            description: ''
+            $ref: '#/components/schemas/successResponse'
     putIdpsResponse:
       description: Successful Response. Returns the modified IdP resource.
       headers: {}
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/idP'
-    webfingerResponse:
-      description: A webfinger standard response for the requested resource.
-      headers: {}
-      content:
-        application/json:
-          schema:
-            oneOf:
-              - $ref: '#/components/schemas/webfingerIdPEnabledResponse'
+            $ref: '#/components/schemas/successResponse'
     badRequestResponse:
       description: Bad Request
       headers: {}
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/badRequestResponse'
+            $ref: '#/components/schemas/errorResponse'
+          example:
+            links: []
+            data: null
+            errors:
+              - type: Validation
+                description: >-
+                  failed to validate input: provided SignatureCertificate has
+                  expired
+                code: E0001
+                source: {}
     conflictResponse:
       description: >-
         Conflict. You are attempting to modify an IdP in a way it cannot be
@@ -349,94 +274,157 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/conflictResponse'
+            $ref: '#/components/schemas/errorResponse'
+          example:
+            links: []
+            data: null
+            errors:
+              - type: Conflict
+                description: invalid account(s) provided
+                code: E0002
+                source: {}
     forbiddenResponse:
       description: Forbidden
       headers: {}
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/forbiddenResponse'
+            $ref: '#/components/schemas/errorResponse'
+          example:
+            links: []
+            data: null
+            errors: []
     internalErrorResponse:
       description: An internal error occurred attempting to process a request
       headers: {}
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/internalErrorResponse'
+            $ref: '#/components/schemas/errorResponse'
+          example:
+            links: []
+            data: null
+            errors:
+              - type: Internal Error
+                description: An error occurred. Please refresh and try again.
+                code: E0003
+                source: {}
     methodNotAllowedResponse:
       description: Method Not Allowed
       headers: {}
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/methodNotAllowedResponse'
+            $ref: '#/components/schemas/errorResponse'
+          example:
+            links: []
+            data: null
+            errors:
+              - type: Error
+                description: the HTTP method used is not supported by this resource
+                code: E0004
+                source: {}
     notFoundResponse:
       description: IdP not found.
       headers: {}
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/notFoundResponse'
+            $ref: '#/components/schemas/errorResponse'
+          example:
+            links: []
+            data: null
+            errors:
+              - type: Error
+                description: the specified resource could not be found.
+                code: E0005
+                source: {}
     tooManyRequestsResponse:
       description: Too Many Requests
       headers: {}
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/tooManyRequestsResponse'
+      content: {}
     unauthorizedResponse:
       description: Unauthorized
       headers: {}
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/unauthorizedResponse'
+            $ref: '#/components/schemas/errorResponse'
+          example:
+            links: []
+            data: null
+            errors:
+              - type: Authorization
+                description: Invalid credentials
+                code: E0006
+                source: {}
   schemas:
-    newSAMLIdP:
+    successResponse:
+      required:
+        - links
+        - data
+        - errors
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/link'
+          example: []
+        data:
+          $ref: '#/components/schemas/data'
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/error'
+          example: []
+    errorResponse:
+      required:
+        - links
+        - data
+        - errors
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/link'
+          example: []
+        data:
+          type: object
+          nullable: true
+          example: null
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/error'
+    newSamlIdp:
       title: NewSAMLIdP
       required:
         - accountIds
         - active
         - issuerUri
         - singleSignOnUrl
+        - name
       type: object
       properties:
         protocol:
-          enum:
-            - SAML2
-          type: string
-          description: >-
-            The protocol used by this Identity Provider. Only SAML2 is supported
-            for now.
-          example: SAML2
+          $ref: '#/components/schemas/protocol'
+        name:
+          $ref: '#/components/schemas/name'
         accountIds:
           $ref: '#/components/schemas/accountIds'
         active:
-          type: boolean
-          description: >-
-            Whether this IdP is active or not. Only one IdP can be active for a
-            given accountId.
-          example: false
+          $ref: '#/components/schemas/active'
         usernameField:
-          type: string
-          description: The field in the SAML assertion that contains the username
+          $ref: '#/components/schemas/usernameField'
         issuerUri:
-          type: string
-          description: >-
-            URI of the Identity Provider. This value is usually the SAML
-            Metadata EntityID of the IdP EntityDescriptor.
+          $ref: '#/components/schemas/issuerUri'
         singleSignOnUrl:
-          type: string
-          description: >-
-            The binding-specific IdP Authentication Request Protocol endpoint
-            that receives SAML AuthnRequest messages.
+          $ref: '#/components/schemas/singleSignOnUrl'
         signatureCertificate:
-          type: string
-          description: >-
-            The PEM or DER encoded public key certificate of the Identity
-            Provider used to verify SAML message and assertion signatures.
-    updateSAMLIdP:
+          $ref: '#/components/schemas/signatureCertificate'
+    updateSamlIdp:
       title: UpdateSAMLIdP
       required:
         - accountIds
@@ -444,43 +432,26 @@ components:
         - issuerUri
         - singleSignOnUrl
         - signatureCertificate
+        - name
       type: object
       properties:
         protocol:
-          enum:
-            - SAML2
-          type: string
-          description: >-
-            The protocol used by this Identity Provider. Only SAML2 is supported
-            for now.
-          example: SAML2
+          $ref: '#/components/schemas/protocol'
+        name:
+          $ref: '#/components/schemas/name'
         accountIds:
           $ref: '#/components/schemas/accountIds'
         active:
-          type: boolean
-          description: >-
-            Whether this IdP is active or not. Only one IdP can be active for a
-            given accountId.
-          example: false
+          $ref: '#/components/schemas/active'
         usernameField:
-          type: string
-          description: The field in the SAML assertion that contains the username
+          $ref: '#/components/schemas/usernameField'
         issuerUri:
-          type: string
-          description: >-
-            URI of the Identity Provider. This value is usually the SAML
-            Metadata EntityID of the IdP EntityDescriptor.
+          $ref: '#/components/schemas/issuerUri'
         singleSignOnUrl:
-          type: string
-          description: >-
-            The binding-specific IdP Authentication Request Protocol endpoint
-            that receives SAML AuthnRequest messages.
+          $ref: '#/components/schemas/singleSignOnUrl'
         signatureCertificate:
-          type: string
-          description: >-
-            The PEM or DER encoded public key certificate of the Identity
-            Provider used to verify SAML message and assertion signatures.
-    SAMLIdP:
+          $ref: '#/components/schemas/signatureCertificate'
+    samlIdp:
       title: SAMLIdP
       required:
         - accountIds
@@ -488,47 +459,74 @@ components:
         - id
         - entityId
         - acsUrl
+        - name
       type: object
       properties:
         accountIds:
           $ref: '#/components/schemas/accountIds'
         active:
-          type: boolean
-          description: >-
-            Whether this IdP is active or not. Only one IdP can be active for a
-            given accountId.
-          example: false
+          $ref: '#/components/schemas/active'
         id:
           type: string
           description: The identifier for this Identity Provider.
+          example: 12345678-abcd-efgh-hijk-87654321cbab
+        name:
+          $ref: '#/components/schemas/name'
         entityId:
           type: string
           description: >-
             The IdP entity id. This should be used as input to configure the
             source provider.
+          example: https://youridentityprovider.com/saml2/idp-provider/123456abcd
         acsUrl:
           type: string
           description: >-
             The SAML Assertion Consumer Service URL. This should be used as
             input to configure the source provider.
+          example: https://login.bandwidth.com/sso/saml2/12345678abcdef
         usernameField:
-          type: string
-          description: The field in the SAML assertion that contains the username
+          $ref: '#/components/schemas/usernameField'
         issuerUri:
-          type: string
-          description: >-
-            URI of the Identity Provider. This value is usually the SAML
-            Metadata EntityID of the IdP EntityDescriptor.
+          $ref: '#/components/schemas/issuerUri'
         singleSignOnUrl:
-          type: string
-          description: >-
-            The binding-specific IdP Authentication Request Protocol endpoint
-            that receives SAML AuthnRequest messages.
+          $ref: '#/components/schemas/singleSignOnUrl'
         signatureCertificate:
-          type: string
-          description: >-
-            The PEM or DER encoded public key certificate of the Identity
-            Provider used to verify SAML message and assertion signatures.
+          $ref: '#/components/schemas/signatureCertificate'
+    active:
+      title: active
+      type: boolean
+      description: >-
+        Whether this IdP is active or not. Only one IdP can be active for a
+        given accountId.
+      example: false
+    usernameField:
+      title: usernameField
+      type: string
+      description: The field in the SAML assertion that contains the username
+      example: user1
+    issuerUri:
+      title: issuerUri
+      type: string
+      description: >-
+        URI of the Identity Provider. This value is usually the SAML Metadata
+        EntityID of the IdP EntityDescriptor.
+      example: https://your.provider.com/
+    singleSignOnUrl:
+      title: singleSignOnUrl
+      type: string
+      description: >-
+        The binding-specific IdP Authentication Request Protocol endpoint that
+        receives SAML AuthnRequest messages. This must be a valid RFC 3986
+        value.
+      example: https://login.example.com/
+    signatureCertificate:
+      title: signatureCertificate
+      type: string
+      description: >-
+        The PEM or DER encoded public key certificate of the Identity Provider
+        used to verify SAML message and assertion signatures.
+      example: >-
+        MIIF1DCCA7wCCQDUe/gZ7Z9qrTANBgkqhkiG9w0BAQsFADCBqzELMAkGA1UEBhMCVVMxFzAVB......
     accountIds:
       title: accountIds
       type: array
@@ -536,266 +534,86 @@ components:
       example:
         - 123456
         - 654321
-    badRequestResponse:
-      title: badRequestResponse
+    protocol:
+      title: protocol
+      enum:
+        - SAML2
+      type: string
+      description: >-
+        The protocol used by this Identity Provider. Only SAML2 is supported for
+        now.
+      example: SAML2
+    name:
+      title: name
+      type: string
+      description: >-
+        A short description to uniquely identify an Identity Provider
+        configuration. Max 40 characters
+      example: IDP for Developers
+    data:
+      title: data
+      type: object
+      nullable: true
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/idP'
+        totalCount:
+          type: integer
+          description: The total number of IdPs found with the specified filters
+          format: int32
+          example: 1
+    link:
+      title: link
+      type: object
+    error:
+      title: error
       type: object
       properties:
-        statusCode:
-          type: integer
+        type:
+          type: string
+          description: A short human-readable summary of the problem encountered
+          example: Error
+        description:
+          type: string
           description: >-
-            The HTTP status code returned by the server for the error
-            encountered
-          format: int32
-          example: 400
-    conflictResponse:
-      title: conflictResponse
-      type: object
-      properties:
-        timestamp:
+            A human-readable detailed description that SHOULD be specific to the
+            problem encountered
+          example: There was a problem with your request. Please try again
+        code:
           type: string
-          description: The timestamp in ISO 8601 format of when the error was encountered
-          format: date-time
-        statusCode:
-          type: integer
-          description: >-
-            The HTTP status code returned by the server for the error
-            encountered
-          format: int32
-          example: 409
-        statusText:
-          type: string
-          description: A short description about the error encountered
-        traceId:
-          type: string
-          description: A unique trace ID used to identify the request and response.
-          example: b77a5ea79036d5b9
-    forbiddenResponse:
-      title: forbiddenResponse
-      type: object
-      properties:
-        statusCode:
-          type: integer
-          description: >-
-            The HTTP status code returned by the server for the error
-            encountered
-          format: int32
-          example: 403
-    methodNotAllowedResponse:
-      title: methodNotAllowedResponse
-      type: object
-      properties:
-        statusCode:
-          type: integer
-          description: >-
-            The HTTP status code returned by the server for the error
-            encountered
-          format: int32
-          example: 405
-    notFoundResponse:
-      title: notFoundResponse
-      type: object
-      properties:
-        statusCode:
-          type: integer
-          description: >-
-            The HTTP status code returned by the server for the error
-            encountered
-          format: int32
-          example: 404
-    tooManyRequestsResponse:
-      title: tooManyRequestsResponse
-      type: object
-      properties:
-        statusCode:
-          type: integer
-          description: >-
-            The HTTP status code returned by the server for the error
-            encountered
-          format: int32
-          example: 429
-    unauthorizedResponse:
-      title: unauthorizedResponse
-      type: object
-      properties:
-        timestamp:
-          type: string
-          description: The timestamp in ISO 8601 format of when the error was encountered
-          format: date-time
-        statusCode:
-          type: integer
-          description: >-
-            The HTTP status code returned by the server for the error
-            encountered
-          format: int32
-          example: 401
-        error:
-          type: string
-          description: A short description about the error encountered
-          example: Invalid credentials
-        traceId:
-          type: string
-          description: A unique trace ID used to identify the request and response.
-          example: b77a5ea79036d5b9
-        path:
-          type: string
-          description: the path that was requested
-          example: /api/v1/idps/1
-    internalErrorResponse:
-      title: internalErrorResponse
-      type: object
-      properties:
-        timestamp:
-          type: string
-          description: The timestamp in ISO 8601 format of when the error was encountered
-          format: date-time
-        statusCode:
-          type: integer
-          description: >-
-            The HTTP status code returned by the server for the error
-            encountered
-          format: int32
-          example: 500
-        statusText:
-          type: string
-          description: A short description about the error encountered
-        traceId:
-          type: string
-          description: A unique trace ID used to identify the request and response.
-          example: b77a5ea79036d5b9
+          description: An Identity Management API specific error code
+          example: E0001
+        source:
+          type: object
+          description: Information about the source of the error
+          example: {}
     idP:
       title: IdP
+      type: object
       oneOf:
-        - $ref: '#/components/schemas/SAMLIdP'
+        - $ref: '#/components/schemas/samlIdp'
       discriminator:
         propertyName: protocol
         mapping:
-          SAML2: '#/components/schemas/SAMLIdP'
+          SAML2: '#/components/schemas/samlIdp'
     newIdP:
       title: NewIdP
       oneOf:
-        - $ref: '#/components/schemas/newSAMLIdP'
+        - $ref: '#/components/schemas/newSamlIdp'
       discriminator:
         propertyName: protocol
         mapping:
-          SAML2: '#/components/schemas/newSAMLIdP'
+          SAML2: '#/components/schemas/newSamlIdp'
     updateIdP:
       title: UpdateIdP
       oneOf:
-        - $ref: '#/components/schemas/updateSAMLIdP'
+        - $ref: '#/components/schemas/updateSamlIdp'
       discriminator:
         propertyName: protocol
         mapping:
-          SAML2: '#/components/schemas/updateSAMLIdP'
-    webfingerIdPEnabledResponse:
-      title: webfingerIdPEnabledResponse
-      required:
-        - subject
-        - links
-      type: object
-      properties:
-        subject:
-          type: string
-          description: The resource
-          xml:
-            attribute: true
-            wrapped: false
-        links:
-          type: array
-          items:
-            $ref: '#/components/schemas/webfingerLinks'
-          description: ''
-          example:
-            - href: >-
-                https://login.bandwidth.com/sso/idps/0oahx4rqfARaXDIas4x6?login_hint=user%40company.com#
-              rel: okta:idp
-              properties:
-                okta:idp:id: 0obhx4rqfARaXDIas4x2
-                okta:idp:metadata: >-
-                  https://login.bandwidth.com/api/v1/idps/0obhx4rqfARaXDIas4x2/metadata.xml
-                okta:idp:type: SAML2
-              titles:
-                und: Company IdP
-      description: The response from the Webfinger for a resource with BYOIdP enabled
-      example:
-        subject: okta:acct:user@company;com
-        links:
-          - href: >-
-              https://login.bandwidth.com/sso/idps/0oahx4rqfARaXDIas4x6?login_hint=user%40company.com#
-            rel: okta:idp
-            properties:
-              okta:idp:id: 0obhx4rqfARaXDIas4x2
-              okta:idp:metadata: >-
-                https://login.bandwidth.com/api/v1/idps/0obhx4rqfARaXDIas4x2/metadata.xml
-              okta:idp:type: SAML2
-            titles:
-              und: Company IdP
-    webfingerLinksTitles:
-      title: webfinger_links_titles
-      required:
-        - und
-      type: object
-      properties:
-        und:
-          type: string
-          description: Title of the link of the resource
-          xml:
-            attribute: true
-            wrapped: false
-      description: ''
-    webfingerLinksProperties:
-      title: webfinger_links_properties
-      required:
-        - okta:idp:id
-        - okta:idp:metadata
-        - okta:idp:type
-      type: object
-      properties:
-        okta:idp:id:
-          type: string
-          description: The IdP ID
-          xml:
-            attribute: true
-            wrapped: false
-        okta:idp:metadata:
-          type: string
-          description: Link to the IdP metadata
-          xml:
-            attribute: true
-            wrapped: false
-        okta:idp:type:
-          type: string
-          description: The IdP type or protocol
-          xml:
-            attribute: true
-            wrapped: false
-          example: SAML2
-      description: ''
-    webfingerLinks:
-      title: webfinger_links
-      required:
-        - href
-        - rel
-        - properties
-        - titles
-      type: object
-      properties:
-        href:
-          type: string
-          description: Direct link to initiate resource login process
-          xml:
-            attribute: true
-            wrapped: false
-        rel:
-          type: string
-          xml:
-            attribute: true
-            wrapped: false
-          example: okta:idp
-        properties:
-          $ref: '#/components/schemas/webfingerLinksProperties'
-        titles:
-          $ref: '#/components/schemas/webfingerLinksTitles'
-      description: Links for the resource in the subject
+          SAML2: '#/components/schemas/updateSamlIdp'
   securitySchemes:
     bearerAuth:
       type: http
@@ -807,17 +625,3 @@ components:
 security:
   - basicAuth: []
   - bearerAuth: []
-tags:
-  - name: Identity Provider Management
-    description: ''
-  - name: Webfinger
-    description: ''
-servers:
-  - description: Production
-    url: https://management.id.bandwidth.com
-    variables: {}
-  - url: '{base_url}'
-    variables:
-      base_url:
-        default: https://www.example.com
-        description: ''
