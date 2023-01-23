@@ -1,0 +1,740 @@
+openapi: 3.0.3
+info:
+  title: Messaging
+  version: 1.0.0
+  contact:
+    name: Bandwidth
+    url: https://support.bandwidth.com
+    email: support@bandwidth.com
+  description: |-
+    The API Specification for Bandwidth's Global Messaging Platform
+
+    ## Base URL
+
+    `https://api.voxbone.com/v1/messaging`
+servers:
+  - url: https://api.voxbone.com/v1/messaging
+    description: Production
+paths:
+  /users/{accountId}/messages:
+    post:
+      summary: Create Message
+      description: Endpoint for sending text messages using V1 messaging.
+      operationId: createMessage
+      tags:
+        - Messages
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+      requestBody:
+        $ref: '#/components/requestBodies/createMessageRequest'
+      responses:
+        '202':
+          $ref: '#/components/responses/createMessageResponse'
+        '400':
+          $ref: '#/components/responses/createMessageBadRequestError'
+        '401':
+          $ref: '#/components/responses/messagingUnauthorizedError'
+        '403':
+          $ref: '#/components/responses/messagingForbiddenError'
+        '404':
+          $ref: '#/components/responses/messagingNotFoundError'
+        '429':
+          $ref: '#/components/responses/messagingTooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/messagingInternalServerError'
+      callbacks:
+        inboundCallback:
+          $ref: '#/components/callbacks/inboundCallback'
+components:
+  parameters:
+    accountId:
+      in: path
+      name: accountId
+      required: true
+      schema:
+        type: string
+      description: Your Bandwidth International Account ID.
+      example: '9900000'
+    cacheControl:
+      in: header
+      name: Cache-Control
+      style: simple
+      explode: false
+      description: >-
+        General-header field is used to specify directives that MUST be obeyed
+        by all caching mechanisms along the request/response chain.
+      example: no-cache
+      schema:
+        type: string
+    messageId:
+      in: query
+      name: messageId
+      required: false
+      description: >-
+        The ID of the message to search for. Special characters need to be
+        encoded using URL encoding. Message IDs could come in different formats,
+        e.g., 9e0df4ca-b18d-40d7-a59f-82fcdf5ae8e6 and
+        1589228074636lm4k2je7j7jklbn2 are valid message ID formats. Note that
+        you must include at least one query parameter.
+      example: 9e0df4ca-b18d-40d7-a59f-82fcdf5ae8e6
+      schema:
+        type: string
+    sourceTn:
+      in: query
+      name: sourceTn
+      required: false
+      description: >-
+        The phone number that sent the message. Accepted values are: a single
+        full phone number a comma separated list of full phone numbers (maximum
+        of 10) or a single partial phone number (minimum of 5 characters e.g.
+        '%2B1919').
+      example: '%2B447975777888'
+      schema:
+        type: string
+    destinationTn:
+      in: query
+      name: destinationTn
+      required: false
+      description: >-
+        The phone number that received the message. Accepted values are: a
+        single full phone number a comma separated list of full phone numbers
+        (maximum of 10) or a single partial phone number (minimum of 5
+        characters e.g. '%2B1919').
+      example: '%2B447975777666'
+      schema:
+        type: string
+    messageStatus:
+      in: query
+      name: messageStatus
+      required: false
+      description: >-
+        The status of the message. One of RECEIVED QUEUED SENDING SENT FAILED
+        DELIVERED ACCEPTED UNDELIVERED.
+      schema:
+        $ref: '#/components/schemas/messageStatusEnum'
+    messageDirection:
+      in: query
+      name: messageDirection
+      required: false
+      description: The direction of the message. One of INBOUND OUTBOUND.
+      schema:
+        $ref: '#/components/schemas/listMessageDirectionEnum'
+    carrierName:
+      in: query
+      name: carrierName
+      required: false
+      description: >-
+        The name of the carrier used for this message. Possible values include
+        but are not limited to Verizon and TMobile. Special characters need to
+        be encoded using URL encoding (i.e. AT&T should be passed as AT%26T).
+      example: Verizon
+      schema:
+        type: string
+    messageType:
+      in: query
+      name: messageType
+      required: false
+      description: The type of message. Either sms or mms.
+      schema:
+        $ref: '#/components/schemas/messageTypeEnum'
+    errorCode:
+      in: query
+      name: errorCode
+      required: false
+      description: The error code of the message.
+      example: 9902
+      schema:
+        type: integer
+    fromDateTime:
+      in: query
+      name: fromDateTime
+      required: false
+      description: >-
+        The start of the date range to search in ISO 8601 format. Uses the
+        message receive time. The date range to search in is currently 14 days.
+      example: 2022-09-14T18:20:16.000Z
+      schema:
+        type: string
+    toDateTime:
+      in: query
+      name: toDateTime
+      required: false
+      description: >-
+        The end of the date range to search in ISO 8601 format. Uses the message
+        receive time. The date range to search in is currently 14 days.
+      example: 2022-09-14T18:20:16.000Z
+      schema:
+        type: string
+  schemas:
+    priorityEnum:
+      type: string
+      description: The priority specified by the user.
+      enum:
+        - default
+        - high
+      example: default
+    messageStatusEnum:
+      type: string
+      description: >-
+        The status of the message. One of RECEIVED QUEUED SENDING SENT FAILED
+        DELIVERED ACCEPTED UNDELIVERED.
+      enum:
+        - RECEIVED
+        - QUEUED
+        - SENDING
+        - SENT
+        - FAILED
+        - DELIVERED
+        - ACCEPTED
+        - UNDELIVERED
+      example: RECEIVED
+    listMessageDirectionEnum:
+      type: string
+      description: The direction of the message. One of INBOUND OUTBOUND.
+      enum:
+        - INBOUND
+        - OUTBOUND
+    messageDirectionEnum:
+      type: string
+      description: The direction of the message. One of in out.
+      enum:
+        - in
+        - out
+    messageTypeEnum:
+      type: string
+      description: The type of message. Either SMS or MMS.
+      enum:
+        - sms
+        - mms
+      example: sms
+    fieldError:
+      type: object
+      properties:
+        fieldName:
+          type: string
+          description: The name of the field that contains the error
+          example: from
+        description:
+          type: string
+          description: The error associated with the field
+          example: >-
+            '+invalid' must be replaced with a valid E164 formatted telephone
+            number
+    messagingRequestError:
+      title: MessagingRequestError
+      type: object
+      properties:
+        type:
+          type: string
+        description:
+          type: string
+      required:
+        - type
+        - description
+    createMessageRequestError:
+      title: CreateMessageRequestError
+      type: object
+      properties:
+        type:
+          type: string
+        description:
+          type: string
+        fieldErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/fieldError'
+      required:
+        - type
+        - description
+    tag:
+      title: Tag
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+    deferredResult:
+      title: DeferredResult
+      type: object
+      properties:
+        result:
+          type: object
+        setOrExpired:
+          type: boolean
+    message:
+      title: Message
+      type: object
+      properties:
+        id:
+          type: string
+          description: The id of the message.
+          example: 1589228074636lm4k2je7j7jklbn2
+        owner:
+          type: string
+          description: The Bandwidth phone number associated with the message.
+          example: '+447975777888'
+        applicationId:
+          type: string
+          description: The application ID associated with the message.
+          example: 93de2206-9669-4e07-948d-329f4b722ee2
+        time:
+          type: string
+          description: The datetime stamp of the message in ISO 8601
+          example: 2022-09-14T18:20:16.000Z
+        segmentCount:
+          type: integer
+          description: >-
+            The number of segments the original message from the user is broken
+            into before sending over to carrier networks.
+          example: 2
+        direction:
+          $ref: '#/components/schemas/messageDirectionEnum'
+        to:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+          description: The phone number recipients of the message.
+          example:
+            - '+447975777666'
+        from:
+          type: string
+          description: The phone number the message was sent from.
+          example: '+447975777888'
+        text:
+          type: string
+          description: The contents of the message.
+          example: Hello world
+        tag:
+          type: string
+          description: The custom string set by the user.
+          example: custom tag
+        priority:
+          $ref: '#/components/schemas/priorityEnum'
+    messageRequest:
+      title: MessageRequest
+      type: object
+      required:
+        - applicationId
+        - to
+        - from
+      properties:
+        applicationId:
+          type: string
+          description: >-
+            The ID of the Application your from number is associated with in the
+            Bandwidth Phone Number Dashboard.
+          example: 93de2206-9669-4e07-948d-329f4b722ee2
+        to:
+          uniqueItems: true
+          type: array
+          description: The phone number the message should be sent to in E164 format.
+          example:
+            - '+447975777666'
+          items:
+            type: string
+        from:
+          type: string
+          description: >-
+            One of your telephone numbers the message should come from in E164
+            format.
+          example: '+447975777888'
+        text:
+          type: string
+          description: The contents of the text message. Must be 2048 characters or less.
+          maxLength: 2048
+          example: Hello world
+        tag:
+          type: string
+          description: >-
+            A custom string that will be included in callback events of the
+            message. Max 1024 characters.
+          example: custom string
+        priority:
+          $ref: '#/components/schemas/priorityEnum'
+        expiration:
+          type: string
+          description: >-
+            A string with the date/time value that the message will
+            automatically expire by. This must be a valid RFC-3339 value, e.g.,
+            2021-03-14T01:59:26Z or 2021-03-13T20:59:26-05:00.
+          example: '2021-02-01T11:29:18-05:00'
+    inboundMessageCallback:
+      description: Inbound Message Callback
+      type: object
+      properties:
+        time:
+          type: string
+          format: date-time
+          example: 2016-09-14T18:20:16.000Z
+        type:
+          type: string
+          example: message-received
+        to:
+          type: string
+          example: '+447975777666'
+        description:
+          type: string
+          example: Incoming message received
+        message:
+          type: object
+          properties:
+            id:
+              type: string
+              example: 1661365814859loidf7mcwd4qacn7
+            owner:
+              type: string
+              example: '+447975777888'
+            applicationId:
+              type: string
+              example: 93de2206-9669-4e07-948d-329f4b722ee2
+            time:
+              type: string
+              format: date-time
+              example: 2016-09-14T18:20:16.000Z
+            segmentCount:
+              type: integer
+              example: 1
+            direction:
+              $ref: '#/components/schemas/messageDirectionEnum'
+            to:
+              uniqueItems: true
+              type: array
+              items:
+                type: string
+              example:
+                - '+447975777666'
+            from:
+              type: string
+              example: '+447975777666'
+            text:
+              type: string
+              example: Hello world
+            tag:
+              type: string
+              example: custom string
+            priority:
+              $ref: '#/components/schemas/priorityEnum'
+          required:
+            - id
+            - owner
+            - applicationId
+            - time
+            - segmentCount
+            - direction
+            - to
+            - from
+            - text
+      required:
+        - time
+        - type
+        - to
+        - description
+        - message
+    messageSendingCallback:
+      type: object
+      description: Message Sending Callback
+      properties:
+        time:
+          type: string
+          format: date-time
+          example: 2016-09-14T18:20:16.000Z
+        type:
+          type: string
+          example: message-sending
+        to:
+          type: string
+          example: '+447975777666'
+        description:
+          type: string
+          example: Message is sending to carrier
+        message:
+          type: object
+          properties:
+            id:
+              type: string
+              example: 1661365814859loidf7mcwd4qacn7
+            owner:
+              type: string
+              example: '+447975777666'
+            applicationId:
+              type: string
+              example: 93de2206-9669-4e07-948d-329f4b722ee2
+            time:
+              type: string
+              format: date-time
+              example: 2016-09-14T18:20:16.000Z
+            segmentCount:
+              type: integer
+              example: 1
+            direction:
+              $ref: '#/components/schemas/messageDirectionEnum'
+            to:
+              uniqueItems: true
+              type: array
+              items:
+                type: string
+              example:
+                - '+447975777666'
+            from:
+              type: string
+              example: '+447975777666'
+            text:
+              type: string
+              example: ''
+            tag:
+              type: string
+              example: custom string
+            priority:
+              $ref: '#/components/schemas/priorityEnum'
+          required:
+            - id
+            - time
+            - segmentCount
+            - direction
+            - to
+            - from
+            - text
+      required:
+        - time
+        - type
+        - to
+        - description
+        - message
+    messageDeliveredCallback:
+      description: Message Delivered Callback
+      type: object
+      properties:
+        time:
+          type: string
+          format: date-time
+          example: 2016-09-14T18:20:16.000Z
+        type:
+          type: string
+          example: message-delivered
+        to:
+          type: string
+          example: '+447975777666'
+        description:
+          type: string
+          example: Message delivered to carrier.
+        message:
+          type: object
+          properties:
+            id:
+              type: string
+              example: 1661365814859loidf7mcwd4qacn7
+            owner:
+              type: string
+              example: '+447975777666'
+            applicationId:
+              type: string
+              example: 93de2206-9669-4e07-948d-329f4b722ee2
+            time:
+              type: string
+              format: date-time
+              example: 2016-09-14T18:20:16.000Z
+            segmentCount:
+              type: integer
+              example: 1
+            direction:
+              $ref: '#/components/schemas/messageDirectionEnum'
+            to:
+              uniqueItems: true
+              type: array
+              items:
+                type: string
+              example:
+                - '+447975777666'
+            from:
+              type: string
+              example: '+447975777666'
+            text:
+              type: string
+              example: ''
+            tag:
+              type: string
+              example: custom string
+            priority:
+              $ref: '#/components/schemas/priorityEnum'
+          required:
+            - id
+            - owner
+            - applicationId
+            - time
+            - segmentCount
+            - direction
+            - to
+            - from
+            - text
+            - tag
+      required:
+        - time
+        - type
+        - to
+        - description
+        - message
+    messageFailedCallback:
+      description: Message Failed Callback
+      type: object
+      properties:
+        time:
+          type: string
+          format: date-time
+          example: 2016-09-14T18:20:16.000Z
+        type:
+          type: string
+          example: message-failed
+        to:
+          type: string
+          example: '+447975777666'
+        description:
+          type: string
+          example: rejected-unallocated-from-number
+        message:
+          type: object
+          properties:
+            id:
+              type: string
+              example: 1661365814859loidf7mcwd4qacn7
+            owner:
+              type: string
+              example: '+447975777666'
+            applicationId:
+              type: string
+              example: 93de2206-9669-4e07-948d-329f4b722ee2
+            time:
+              type: string
+              format: date-time
+              example: 2016-09-14T18:20:16.000Z
+            segmentCount:
+              type: integer
+              example: 1
+            direction:
+              $ref: '#/components/schemas/messageDirectionEnum'
+            to:
+              uniqueItems: true
+              type: array
+              items:
+                type: string
+              example:
+                - '+447975777666'
+            from:
+              type: string
+              example: '+447975777666'
+            text:
+              type: string
+              example: ''
+            tag:
+              type: string
+              example: custom string
+            priority:
+              $ref: '#/components/schemas/priorityEnum'
+          required:
+            - id
+            - owner
+            - applicationId
+            - time
+            - segmentCount
+            - direction
+            - to
+            - from
+            - text
+            - tag
+            - priority
+        errorCode:
+          type: integer
+          example: 9902
+      required:
+        - time
+        - type
+        - to
+        - description
+        - message
+        - errorCode
+  requestBodies:
+    createMessageRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/messageRequest'
+      required: true
+  responses:
+    createMessageResponse:
+      description: Accepted
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/message'
+    messagingBadRequestError:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/messagingRequestError'
+    createMessageBadRequestError:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/createMessageRequestError'
+    messagingUnauthorizedError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/messagingRequestError'
+    messagingForbiddenError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/messagingRequestError'
+    messagingNotFoundError:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/messagingRequestError'
+    messagingTooManyRequestsError:
+      description: Too Many Requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/messagingRequestError'
+    messagingInternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/messagingRequestError'
+  callbacks:
+    inboundCallback:
+      '{inboundCallbackUrl}':
+        post:
+          requestBody:
+            required: true
+            description: Inbound Message Callback Payload
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/inboundMessageCallback'
+          responses:
+            '200':
+              description: OK
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: apikey
+      description: >-
+        Api key authentication is a simple authentication scheme built into the
+
+        HTTP protocol to verify that you are whom you are claiming to be. To use
+        it, send  your HTTP requests with an apikey header with apikey value
+        Example: `apikey: ZGVtbZpwQDU1dzByZA==`
+security:
+  - ApiKeyAuth: []
+tags:
+  - name: Messages
