@@ -1,0 +1,296 @@
+openapi: 3.0.1
+info:
+  description: Blue Sky Provisioning Application
+  title: blue-sky-ops
+  version: '0.10'
+servers:
+  - url: https://blue-sky-ops.{environment}.bluesky.bandwidth.com
+    variables:
+      environment:
+        default: lab
+        enum:
+          - lab
+          - stage
+          - prod
+paths:
+  /portal/report/blue-sky-ops/v2/customers/{sanId}/locations:
+    get:
+      description: Returns locations for a SanId from blue sky ops application
+      operationId: getLocationsBySanId
+      parameters:
+        - description: Customer SAN ID
+          in: path
+          name: sanId
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LocationV2Dto'
+          description: Successfully returning locations
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+          description: Unpredictable error while processing the request
+      summary: Retrieve Locations by SanId
+    post:
+      description: >-
+        Creates a new location to be created in the blue sky ops application.
+        This location must not previously exist.
+      operationId: createLocation_1
+      parameters:
+        - description: Customer SAN Id
+          in: path
+          name: sanId
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationV2Dto'
+        description: Location Create Request
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationV2Dto'
+          description: New Location Created
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+          description: Unpredictable application error while processing the request
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+          description: Unpredictable error while processing the request
+      summary: Create A Specific Location by Sip Peer Id and body
+  /portal/report/blue-sky-ops/v2/customers/{sanId}/locations/{sipPeerId}:
+    delete:
+      description: >-
+        Deletes a location from the blue sky ops application. This location must
+        previously exist.
+      operationId: deleteLocation_1
+      parameters:
+        - description: Customer SAN Id
+          in: path
+          name: sanId
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - description: Sip Peer Id
+          in: path
+          name: sipPeerId
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '204':
+          description: Location deleted successfully
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+          description: Location does not exist or other request validation error
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+          description: Unpredictable error while processing the request
+      summary: Delete a specific location based on Sip Peer Id
+    get:
+      description: Returns a location from the blue sky ops application
+      operationId: getLocationBySipPeerId
+      parameters:
+        - description: Customer SAN Id
+          in: path
+          name: sanId
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - description: Sip Peer Id
+          in: path
+          name: sipPeerId
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationV2Dto'
+          description: Successfully returning a location
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+          description: Location not found or other request validation error
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+          description: Unpredictable error while processing the request
+      summary: Retrieve A Specific Location based on Sip Peer Id
+    patch:
+      description: >-
+        Update a location from the blue sky ops application. This location must
+        previously exist.
+      operationId: updateLocationBySipPeerId
+      parameters:
+        - description: Customer SAN Id
+          in: path
+          name: sanId
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - description: Sip Peer Id
+          in: path
+          name: sipPeerId
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationUpdateDto'
+        description: Location Update Request
+        required: true
+      responses:
+        '204':
+          description: Location updated successfully
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+          description: Location does not exist or other request validation error
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+          description: Unpredictable error while processing the request
+      summary: Update a specific location based on Sip Peer Id
+  /portal/report/blue-sky-ops/v2/customers/{sanId}/trunkinfo:
+    get:
+      description: >-
+        Returns a list of ExternalTrunkInfo entries provisioned by the blue sky
+        ops application. This endpoint is accessible to customers.
+      operationId: getExternalTrunkInfoBySanId
+      parameters:
+        - description: Customer SAN ID
+          in: path
+          name: sanId
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExternalTrunkInfo'
+          description: >-
+            Successfully returning ExternalTrunkInfo entries information or
+            empty if no entries found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+          description: Unpredictable error while processing the request
+      summary: Retrieve A list of ExternalTrunkInfo entries by San Id
+components:
+  schemas:
+    ErrorDto:
+      type: object
+      properties:
+        errorCode:
+          type: integer
+          format: int32
+        message:
+          type: string
+    ExternalTrunkInfo:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - INITIAL
+            - PROVISIONING
+            - PROVISIONED
+            - DELETING
+            - DELETED
+            - ERROR
+        trunkInfoId:
+          type: integer
+          format: int32
+        trunkTypeName:
+          type: string
+    LocationUpdateDto:
+      type: object
+      properties:
+        externalIds:
+          type: array
+          items:
+            type: string
+    LocationV2Dto:
+      type: object
+      properties:
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        externalIds:
+          type: array
+          items:
+            type: string
+        primaryLoc:
+          type: boolean
+          readOnly: true
+        sanId:
+          type: integer
+          format: int32
+        sipPeerId:
+          type: integer
+          format: int32
+        siteId:
+          type: integer
+          format: int32
+        trunkInfoId:
+          type: integer
+          format: int32
+        username:
+          type: string
+          readOnly: true
