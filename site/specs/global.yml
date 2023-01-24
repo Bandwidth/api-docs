@@ -3828,6 +3828,8 @@ paths:
       callbacks:
         inboundCallback:
           $ref: '#/components/callbacks/inboundCallback'
+        statusCallback:
+          $ref: '#/components/callbacks/statusCallback'
 components:
   callbacks:
     inboundCallback:
@@ -3840,6 +3842,22 @@ components:
               application/json:
                 schema:
                   $ref: '#/components/schemas/inboundMessageCallback'
+          responses:
+            '200':
+              description: OK
+    statusCallback:
+      '{statusCallbackUrl}':
+        post:
+          requestBody:
+            required: true
+            description: Status Callback Payload
+            content:
+              application/json:
+                schema:
+                  type: object
+                  oneOf:
+                    - $ref: '#/components/schemas/messageDeliveredCallback'
+                    - $ref: '#/components/schemas/messageFailedCallback'
           responses:
             '200':
               description: OK
@@ -3998,7 +4016,6 @@ components:
           required:
             - id
             - owner
-            - applicationId
             - time
             - segmentCount
             - direction
@@ -4011,6 +4028,163 @@ components:
         - to
         - description
         - message
+    messageDeliveredCallback:
+      description: Message Delivered Callback
+      type: object
+      properties:
+        time:
+          type: string
+          format: date-time
+          example: 2016-09-14T18:20:16.000Z
+        type:
+          type: string
+          example: message-delivered
+        to:
+          type: string
+          example: '+447975777666'
+        description:
+          type: string
+          example: Message delivered to carrier.
+        message:
+          type: object
+          properties:
+            id:
+              type: string
+              example: 1661365814859loidf7mcwd4qacn7
+            owner:
+              type: string
+              example: '+447975777666'
+            applicationId:
+              type: string
+              example: 93de2206-9669-4e07-948d-329f4b722ee2
+            time:
+              type: string
+              format: date-time
+              example: 2016-09-14T18:20:16.000Z
+            segmentCount:
+              type: integer
+              example: 1
+            direction:
+              $ref: '#/components/schemas/messageDirectionEnum'
+            to:
+              uniqueItems: true
+              type: array
+              items:
+                type: string
+              example:
+                - '+447975777666'
+            from:
+              type: string
+              example: '+447975777888'
+            text:
+              type: string
+              example: ''
+            tag:
+              type: string
+              example: custom string
+            priority:
+              $ref: '#/components/schemas/priorityEnum'
+          required:
+            - id
+            - owner
+            - time
+            - segmentCount
+            - direction
+            - to
+            - from
+            - text
+            - tag
+      required:
+        - time
+        - type
+        - to
+        - description
+        - message
+    messageFailedCallback:
+      description: Message Failed Callback
+      type: object
+      properties:
+        time:
+          type: string
+          format: date-time
+          example: 2016-09-14T18:20:16.000Z
+        type:
+          type: string
+          example: message-failed
+        to:
+          type: string
+          example: '+447975777666'
+        description:
+          type: string
+          example: rejected-unallocated-from-number
+        message:
+          type: object
+          properties:
+            id:
+              type: string
+              example: 1661365814859loidf7mcwd4qacn7
+            owner:
+              type: string
+              example: '+447975777666'
+            applicationId:
+              type: string
+              example: 93de2206-9669-4e07-948d-329f4b722ee2
+            time:
+              type: string
+              format: date-time
+              example: 2016-09-14T18:20:16.000Z
+            segmentCount:
+              type: integer
+              example: 1
+            direction:
+              $ref: '#/components/schemas/messageDirectionEnum'
+            to:
+              uniqueItems: true
+              type: array
+              items:
+                type: string
+              example:
+                - '+447975777666'
+            from:
+              type: string
+              example: '+447975777888'
+            text:
+              type: string
+              example: ''
+            tag:
+              type: string
+              example: custom string
+            media:
+              type: array
+              items:
+                type: string
+                format: uri
+              example:
+                - https://dev.bandwidth.com/images/bandwidth-logo.png
+                - https://dev.bandwidth.com/images/github_logo.png
+            priority:
+              $ref: '#/components/schemas/priorityEnum'
+          required:
+            - id
+            - owner
+            - time
+            - segmentCount
+            - direction
+            - to
+            - from
+            - text
+            - tag
+            - priority
+        errorCode:
+          type: integer
+          example: 9902
+      required:
+        - time
+        - type
+        - to
+        - description
+        - message
+        - errorCode
     fieldError:
       type: object
       properties:
@@ -4057,11 +4231,6 @@ components:
         - in
         - out
     priorityEnum:
-      type: string
-      description: The priority specified by the user.
-      enum:
-        - default
-        - high
       example: default
     message:
       title: Message
@@ -4077,7 +4246,7 @@ components:
           example: '+447975777888'
         applicationId:
           type: string
-          description: The application ID associated with the message.
+          description: This parameter is for future use and currently optional and ignored.
           example: 93de2206-9669-4e07-948d-329f4b722ee2
         time:
           type: string
@@ -4096,7 +4265,9 @@ components:
           type: array
           items:
             type: string
-          description: The phone number recipient of the message.
+          description: >-
+            The phone number recipient of the message, strictly supports one
+            element.
           example:
             - '+447975777666'
         from:
@@ -4109,10 +4280,10 @@ components:
           example: Hello world
         tag:
           type: string
-          description: The custom string set by the user.
+          description: This parameter is for future use and currently optional and ignored.
           example: custom tag
         priority:
-          $ref: '#/components/schemas/priorityEnum'
+          description: This parameter is for future use and currently optional and ignored.
     messageRequest:
       title: MessageRequest
       type: object
@@ -4122,9 +4293,7 @@ components:
       properties:
         applicationId:
           type: string
-          description: >-
-            The ID of the Application your from number is associated with in the
-            Bandwidth International Phone Number Dashboard.
+          description: This parameter is for future use and currently optional and ignored.
           example: 93de2206-9669-4e07-948d-329f4b722ee2
         to:
           uniqueItems: true
@@ -4147,12 +4316,10 @@ components:
           example: Hello world
         tag:
           type: string
-          description: >-
-            A custom string that will be included in callback events of the
-            message. Max 1024 characters.
+          description: This parameter is for future use and currently optional and ignored.
           example: custom string
         priority:
-          $ref: '#/components/schemas/priorityEnum'
+          description: This parameter is for future use and currently optional and ignored.
         expiration:
           type: string
           description: >-
