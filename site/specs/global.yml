@@ -14,8 +14,8 @@ info:
     |:---:|:---:|:---|
 
     |`v1`|Our current API, which includes number ordering, compliance,
-    configuration and inventory management to support your Voice and SMS
-    communications.| Currently viewing |
+    configuration, global messaging and inventory management to support your
+    Voice and SMS communications.| Currently viewing |
 
     |`v2`|Our CDRs (Call Detail Records) API.|[Click
     here](https://dev.bandwidth.com/apis/global/v2/)|
@@ -919,6 +919,27 @@ tags:
 
       For inbound links you need to choose the protocol (SMPP, SIP and SMTP) and
       the traffic direction (i.e. From Bandwidth).
+  - name: Global Messaging
+    description: >
+      Using Bandwidth to build applications or deliver SMS for your VoxSMS
+      enabled numbers has never been easier. Once you have your VoxSMS enabled
+      numbers, you will need to create at least one SMS Link Group containing an
+      SMS Link.
+
+
+      An SMS Link is an entity that defines the direction of the SMS connection,
+      the protocol type, and the connection details. SMS Link Group is simply an
+      entity that contains one or several SMS Links.
+
+
+      You will also need to enable BIDIRECTIONAL SMS and link your DID to an SMS
+      Link Group from the Number Configuration section.
+
+
+      __IMPORTANT__:
+
+
+      For bi-directional links, the only supported protocols is REST JSON.
   - name: Fax
     description: Manage Fax configuration
   - name: Capacity
@@ -3776,8 +3797,390 @@ paths:
     x-description: >-
       Get the list of POPs (Points Of Presence) and their corresponding IP
       addresses.
+  /messaging/users/{accountId}/messages:
+    post:
+      summary: Create Message
+      description: Endpoint for sending text messages
+      operationId: createMessage
+      tags:
+        - Global Messaging
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+      requestBody:
+        $ref: '#/components/requestBodies/createMessageRequest'
+      responses:
+        '202':
+          $ref: '#/components/responses/createMessageResponse'
+        '400':
+          $ref: '#/components/responses/createMessageBadRequestError'
+        '401':
+          $ref: '#/components/responses/messagingUnauthorizedError'
+        '403':
+          $ref: '#/components/responses/messagingForbiddenError'
+        '404':
+          $ref: '#/components/responses/messagingNotFoundError'
+        '415':
+          $ref: '#/components/responses/messagingInvalidMediaTypeError'
+        '429':
+          $ref: '#/components/responses/messagingTooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/messagingInternalServerError'
+      callbacks:
+        inboundCallback:
+          $ref: '#/components/callbacks/inboundCallback'
 components:
+  callbacks:
+    inboundCallback:
+      '{inboundCallbackUrl}':
+        post:
+          requestBody:
+            required: true
+            description: Inbound Message Callback Payload
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/inboundMessageCallback'
+          responses:
+            '200':
+              description: OK
+  responses:
+    createMessageResponse:
+      description: Accepted
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/message'
+    messagingBadRequestError:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/messagingRequestError'
+    createMessageBadRequestError:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/createMessageRequestError'
+    messagingUnauthorizedError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/messagingRequestError'
+    messagingForbiddenError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/messagingRequestError'
+    messagingNotFoundError:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/messagingRequestError'
+    messagingInvalidMediaTypeError:
+      description: Unsupported Media Type
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/messagingRequestError'
+    messagingTooManyRequestsError:
+      description: Too Many Requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/messagingRequestError'
+    messagingInternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/messagingRequestError'
+  parameters:
+    accountId:
+      in: path
+      name: accountId
+      required: true
+      schema:
+        type: string
+      description: Your Bandwidth International Customer ID.
+      example: '9900000'
+    messageStatus:
+      in: query
+      name: messageStatus
+      required: false
+      description: >-
+        The status of the message. One of RECEIVED QUEUED SENDING SENT FAILED
+        DELIVERED ACCEPTED UNDELIVERED.
+      schema:
+        $ref: '#/components/schemas/messageStatusEnum'
+    messageDirection:
+      in: query
+      name: messageDirection
+      required: false
+      description: The direction of the message. One of INBOUND OUTBOUND.
+      schema:
+        $ref: '#/components/schemas/listMessageDirectionEnum'
+    errorCode:
+      in: query
+      name: errorCode
+      required: false
+      description: The error code of the message.
+      example: 9902
+      schema:
+        type: integer
+  requestBodies:
+    createMessageRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/messageRequest'
+      required: true
   schemas:
+    inboundMessageCallback:
+      description: Inbound Message Callback
+      type: object
+      properties:
+        time:
+          type: string
+          format: date-time
+          example: 2016-09-14T18:20:16.000Z
+        type:
+          type: string
+          example: message-received
+        to:
+          type: string
+          example: '+15552223333'
+        description:
+          type: string
+          example: Incoming message received
+        message:
+          type: object
+          properties:
+            id:
+              type: string
+              example: 1661365814859loidf7mcwd4qacn7
+            owner:
+              type: string
+              example: '+447975777666'
+            applicationId:
+              type: string
+              example: 93de2206-9669-4e07-948d-329f4b722ee2
+            time:
+              type: string
+              format: date-time
+              example: 2016-09-14T18:20:16.000Z
+            segmentCount:
+              type: integer
+              example: 1
+            direction:
+              $ref: '#/components/schemas/messageDirectionEnum'
+            to:
+              uniqueItems: true
+              type: array
+              items:
+                type: string
+              example:
+                - '+447975777666'
+            from:
+              type: string
+              example: '+447975777888'
+            text:
+              type: string
+              example: Hello world
+            tag:
+              type: string
+              example: custom string
+            priority:
+              $ref: '#/components/schemas/priorityEnum'
+          required:
+            - id
+            - owner
+            - applicationId
+            - time
+            - segmentCount
+            - direction
+            - to
+            - from
+            - text
+      required:
+        - time
+        - type
+        - to
+        - description
+        - message
+    fieldError:
+      type: object
+      properties:
+        fieldName:
+          type: string
+          description: The name of the field that contains the error
+          example: from
+        description:
+          type: string
+          description: The error associated with the field
+          example: >-
+            '+invalid' must be replaced with a valid E164 formatted telephone
+            number
+    createMessageRequestError:
+      title: CreateMessageRequestError
+      type: object
+      properties:
+        type:
+          type: string
+        description:
+          type: string
+        fieldErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/fieldError'
+      required:
+        - type
+        - description
+    messagingRequestError:
+      title: MessagingRequestError
+      type: object
+      properties:
+        type:
+          type: string
+        description:
+          type: string
+      required:
+        - type
+        - description
+    messageDirectionEnum:
+      type: string
+      description: The direction of the message. One of in out.
+      enum:
+        - in
+        - out
+    priorityEnum:
+      type: string
+      description: The priority specified by the user.
+      enum:
+        - default
+        - high
+      example: default
+    message:
+      title: Message
+      type: object
+      properties:
+        id:
+          type: string
+          description: The id of the message.
+          example: 1589228074636lm4k2je7j7jklbn2
+        owner:
+          type: string
+          description: The Bandwidth phone number associated with the message.
+          example: '+15554443333'
+        applicationId:
+          type: string
+          description: The application ID associated with the message.
+          example: 93de2206-9669-4e07-948d-329f4b722ee2
+        time:
+          type: string
+          description: The datetime stamp of the message in ISO 8601
+          example: 2022-09-14T18:20:16.000Z
+        segmentCount:
+          type: integer
+          description: >-
+            The number of segments the original message from the user is broken
+            into before sending over to carrier networks.
+          example: 2
+        direction:
+          $ref: '#/components/schemas/messageDirectionEnum'
+        to:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+          description: The phone number recipient of the message.
+          example:
+            - '+447975777666'
+        from:
+          type: string
+          description: The phone number the message was sent from.
+          example: '+447975777888'
+        text:
+          type: string
+          description: The contents of the message.
+          example: Hello world
+        tag:
+          type: string
+          description: The custom string set by the user.
+          example: custom tag
+        priority:
+          $ref: '#/components/schemas/priorityEnum'
+    messageRequest:
+      title: MessageRequest
+      type: object
+      required:
+        - to
+        - from
+      properties:
+        applicationId:
+          type: string
+          description: >-
+            The ID of the Application your from number is associated with in the
+            Bandwidth International Phone Number Dashboard.
+          example: 93de2206-9669-4e07-948d-329f4b722ee2
+        to:
+          uniqueItems: true
+          type: array
+          description: The phone number the message should be sent to in E164 format.
+          example:
+            - '+447975777666'
+          items:
+            type: string
+        from:
+          type: string
+          description: >-
+            One of your telephone numbers the message should come from in E164
+            format.
+          example: '+447975777888'
+        text:
+          type: string
+          description: The contents of the text message. Must be 2048 characters or less.
+          maxLength: 2048
+          example: Hello world
+        tag:
+          type: string
+          description: >-
+            A custom string that will be included in callback events of the
+            message. Max 1024 characters.
+          example: custom string
+        priority:
+          $ref: '#/components/schemas/priorityEnum'
+        expiration:
+          type: string
+          description: >-
+            A string with the date/time value that the message will
+            automatically expire by. This must be a valid RFC-3339 value, e.g.,
+            2021-03-14T01:59:26Z or 2021-03-13T20:59:26-05:00.
+          example: '2021-02-01T11:29:18-05:00'
+    listMessageDirectionEnum:
+      type: string
+      description: The direction of the message. One of INBOUND OUTBOUND.
+      enum:
+        - INBOUND
+        - OUTBOUND
+    messageStatusEnum:
+      type: string
+      description: >-
+        The status of the message. One of RECEIVED QUEUED SENDING SENT FAILED
+        DELIVERED ACCEPTED UNDELIVERED.
+      enum:
+        - RECEIVED
+        - QUEUED
+        - SENDING
+        - SENT
+        - FAILED
+        - DELIVERED
+        - ACCEPTED
+        - UNDELIVERED
+      example: RECEIVED
     CapacityGroupModel:
       type: object
       properties:
