@@ -42,47 +42,42 @@ info:
     ## Base URL 
 
 
-    `https://api.voxbone.com/v3`  
+    `https://api.voxbone.com/v3`
   contact:
     email: support@bandwidth.com
 servers:
   - url: https://api.voxbone.com/v3
 paths:
-  /porting/portInOrders:
-    get:
-      summary: List Port-In Orders
+  /porting/validator:
+    post:
+      summary: Check number portability.
       description: >-
-        Allows you to check all existing porting orders for your account using
-        available filters. For example, the number or current status.
-      operationId: listPortInOrders
-      parameters:
-        - $ref: '#/components/parameters/status'
-        - $ref: '#/components/parameters/phoneNumber'
-        - $ref: '#/components/parameters/phoneNumberType'
-        - $ref: '#/components/parameters/countryCodeA3'
-        - $ref: '#/components/parameters/currentProviderName'
-        - $ref: '#/components/parameters/customerReference'
-        - $ref: '#/components/parameters/supportRef'
-        - $ref: '#/components/parameters/createdDate'
-        - $ref: '#/components/parameters/expectedPortCompleteDate'
-        - $ref: '#/components/parameters/preferredPortInDate'
-        - $ref: '#/components/parameters/submittedDate'
-        - $ref: '#/components/parameters/offset'
-        - $ref: '#/components/parameters/limit'
+        Check if a set of numbers is portable to Bandwidth. Bandwidth internally
+        detects the number type, area code, and country code, and you can
+        retrieve porting pricing fees and submission requirements.
+      operationId: portabilityCheck
+      requestBody:
+        $ref: '#/components/requestBodies/portabilityCheckRequest'
       responses:
         '200':
-          $ref: '#/components/responses/portInOrderArraySuccessResponse'
+          $ref: '#/components/responses/portabilityCheckSuccessResponse'
+        '400':
+          $ref: '#/components/responses/badRequestErrorResponse'
         '401':
-          $ref: '#/components/responses/401ErrorResponse'
+          $ref: '#/components/responses/unauthorizedErrorResponse'
         '403':
-          $ref: '#/components/responses/403ErrorResponse'
+          $ref: '#/components/responses/forbiddenErrorResponse'
+        '405':
+          $ref: '#/components/responses/notAllowedErrorResponse'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsErrorResponse'
         '500':
-          $ref: '#/components/responses/5xxErrorResponse'
+          $ref: '#/components/responses/internalErrorResponse'
       tags:
-        - Port-In Orders
-        - Coming soon
+        - Portability Checker
+  /porting/portInOrders:
     post:
-      summary: Create a draft port-in order
+      summary: Create a draft port-in order.
       description: >-
         Allows you to create a porting order in a pending state without
         documents. These documents must be uploaded for this porting order to be
@@ -96,117 +91,53 @@ paths:
         $ref: '#/components/requestBodies/portInOrderCreationRequest'
       responses:
         '201':
-          $ref: '#/components/responses/portInOrderSuccessResponse'
+          $ref: '#/components/responses/createdPortInOrderSuccessResponse'
         '400':
-          $ref: '#/components/responses/400ErrorResponse'
+          $ref: '#/components/responses/badRequestErrorResponse'
         '401':
-          $ref: '#/components/responses/401ErrorResponse'
+          $ref: '#/components/responses/unauthorizedErrorResponse'
         '403':
-          $ref: '#/components/responses/403ErrorResponse'
+          $ref: '#/components/responses/forbiddenErrorResponse'
+        '405':
+          $ref: '#/components/responses/notAllowedErrorResponse'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsErrorResponse'
         '500':
-          $ref: '#/components/responses/5xxErrorResponse'
+          $ref: '#/components/responses/internalErrorResponse'
       tags:
         - Port-In Orders
-  /porting/portInOrders/{portInOrderId}:
-    parameters:
-      - schema:
-          type: integer
-        name: portInOrderId
-        in: path
-        required: true
-        description: Port-in order ID
-    get:
-      summary: Check a Port-In Order
-      description: Allows you to check the status of an existing port-in order.
-      operationId: getPortInOrder
-      responses:
-        '200':
-          $ref: '#/components/responses/portInOrderSuccessResponse'
-        '401':
-          $ref: '#/components/responses/401ErrorResponse'
-        '404':
-          $ref: '#/components/responses/404ErrorResponse'
-        '500':
-          $ref: '#/components/responses/5xxErrorResponse'
-      tags:
-        - Port-In Orders
-        - Coming soon
-    delete:
-      summary: Delete a Draft Port-In Order
-      description: >-
-        Allows you to delete a port-in order in draft. For a cancellation of an
-        order in processing, please use PATCH endpoint.
-      operationId: deletePortInOrder
-      responses:
-        '204':
-          description: No Content
-        '400':
-          $ref: '#/components/responses/400ErrorResponse'
-        '401':
-          $ref: '#/components/responses/401ErrorResponse'
-        '403':
-          $ref: '#/components/responses/403ErrorResponse'
-        '409':
-          $ref: '#/components/responses/409ErrorResponse'
-        '500':
-          $ref: '#/components/responses/5xxErrorResponse'
-      tags:
-        - Port-In Orders
-        - Coming soon
     patch:
-      summary: Submit/Modify/Request Cancellation of a Port-In Order
-      description: >-
-        Allows you to submit or modify a draft port-in order, or to request the
-        cancellation of a submitted port-in order.
-      operationId: modifyPortinOrder
+      summary: Update the status of a port-in order.
+      description: Allows you to update the status of a port-in order.
+      operationId: updateStatusPortInOrder
       requestBody:
         $ref: '#/components/requestBodies/portInOrderRequest'
       responses:
         '200':
-          $ref: '#/components/responses/portInOrderSuccessResponse'
+          $ref: '#/components/responses/returnPortInOrderSuccessResponse'
         '400':
-          $ref: '#/components/responses/400ErrorResponse'
+          $ref: '#/components/responses/badRequestErrorResponse'
         '401':
-          $ref: '#/components/responses/401ErrorResponse'
+          $ref: '#/components/responses/unauthorizedErrorResponse'
         '403':
-          $ref: '#/components/responses/403ErrorResponse'
+          $ref: '#/components/responses/forbiddenErrorResponse'
         '404':
-          $ref: '#/components/responses/404ErrorResponse'
+          $ref: '#/components/responses/notFoundErrorResponse'
+        '405':
+          $ref: '#/components/responses/notAllowedErrorResponse'
         '409':
-          $ref: '#/components/responses/409ErrorResponse'
+          $ref: '#/components/responses/conflictErrorResponse'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsErrorResponse'
         '500':
-          $ref: '#/components/responses/5xxErrorResponse'
+          $ref: '#/components/responses/internalErrorResponse'
       tags:
         - Port-In Orders
-        - Coming soon
-  /porting/validator:
-    post:
-      summary: Check number portability
-      description: >-
-        Check if a set of numbers is portable to Bandwidth. Bandwidth internally
-        detects the number type, area code, and country code, and you can
-        retrieve porting pricing fees and submission requirements.
-      operationId: portabilityCheck
-      requestBody:
-        $ref: '#/components/requestBodies/portabilityCheckRequest'
-      responses:
-        '200':
-          $ref: '#/components/responses/portabilityCheckSuccessResponse'
-        '400':
-          $ref: '#/components/responses/400ErrorResponse'
-        '401':
-          $ref: '#/components/responses/401ErrorResponse'
-        '403':
-          $ref: '#/components/responses/403ErrorResponse'
-        '500':
-          $ref: '#/components/responses/5xxErrorResponse'
-      tags:
-        - Portability Checker
   /porting/{portInOrderId}/documents:
     parameters:
       - $ref: '#/components/parameters/portInOrderId'
     post:
-      summary: Upload documents for a port-in order
+      summary: Upload a draft port-in order documents.
       description: >-
         You are required to upload all the relevant documents for your existing
         port-in order to be successful depending on the number you are trying to
@@ -222,50 +153,27 @@ paths:
         '201':
           $ref: '#/components/responses/documentUploadSuccessResponse'
         '400':
-          $ref: '#/components/responses/400ErrorResponse'
+          $ref: '#/components/responses/badRequestErrorResponse'
         '401':
-          $ref: '#/components/responses/401ErrorResponse'
+          $ref: '#/components/responses/unauthorizedErrorResponse'
         '403':
-          $ref: '#/components/responses/403ErrorResponse'
+          $ref: '#/components/responses/forbiddenErrorResponse'
         '404':
-          $ref: '#/components/responses/404ErrorResponse'
+          $ref: '#/components/responses/notFoundErrorResponse'
+        '405':
+          $ref: '#/components/responses/notAllowedErrorResponse'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsErrorResponse'
         '500':
-          $ref: '#/components/responses/5xxErrorResponse'
+          $ref: '#/components/responses/internalErrorResponse'
       tags:
         - Port-In Orders
         - Port-In Order Document
-        - Coming soon
-  /porting/{portInOrderId}/documents/{documentId}:
-    parameters:
-      - $ref: '#/components/parameters/portInOrderId'
-      - $ref: '#/components/parameters/documentId'
-    get:
-      summary: Retrieve an uploaded document
-      description: >-
-        Allows you to download specific documents you have uploaded to review
-        for a specific port-in order.
-      operationId: getPortInDocument
-      responses:
-        '200':
-          $ref: '#/components/responses/documentDownloadSuccessResponse'
-        '401':
-          $ref: '#/components/responses/401ErrorResponse'
-        '403':
-          $ref: '#/components/responses/403ErrorResponse'
-        '404':
-          $ref: '#/components/responses/404ErrorResponse'
-        '500':
-          $ref: '#/components/responses/5xxErrorResponse'
-      tags:
-        - Port-In Orders
-        - Port-In Order Document
-        - Coming soon
 components:
   schemas:
     portInOrder:
       description: Port-in order details for a number or a set of numbers.
       type: object
-      title: PortInOrder
       properties:
         portInOrderId:
           type: integer
@@ -289,10 +197,10 @@ components:
         customerReference:
           type: string
           minLength: 1
+          maxLength: 32
           description: >-
             Parameter that can be used for your own reference, e.g. to uniquely
             identify one of your customers.
-          maxLength: 60
           example: ABC-12345
         currentProviderName:
           type: string
@@ -306,22 +214,30 @@ components:
         preferredPortInDate:
           type: string
           minLength: 1
-          format: date-time
+          format: date
           description: >-
             Specific date you would prefer the port-into be completed, in RFC
             3339 format.
-          example: '2022-03-10T17:32:28Z'
-        createdDate:
+          example: '2022-03-10'
+        plannedDate:
+          type: string
+          minLength: 1
+          format: date
+          description: >-
+            Date when the port is planned, in RFC 3339 format. This date is only
+            present when the port is confirmed.
+          example: '2022-03-10'
+        createdTimestamp:
           type: string
           format: date-time
           description: Creation date of the port-in order, in RFC 3339 format.
           example: '2022-01-10T17:32:28Z'
-        lastUpdate:
+        lastUpdateTimestamp:
           type: string
           format: date-time
           description: Last update date of the port-in order, in RFC 3339 format.
           example: '2022-01-15T17:32:28Z'
-        submittedDate:
+        submittedTimestamp:
           type: string
           format: date-time
           description: >-
@@ -329,7 +245,7 @@ components:
             relevant, in RFC 3339 format.
           example: '2022-02-10T17:32:28Z'
         status:
-          $ref: '#/components/schemas/portInOrderStatusType'
+          $ref: '#/components/schemas/portInOrderStatusTypeEnum'
         documents:
           type: array
           description: >-
@@ -337,13 +253,7 @@ components:
             when you have just created a port-in order.
           items:
             $ref: '#/components/schemas/document'
-        currency:
-          type: string
-          minLength: 3
-          maxLength: 3
-          description: Currency of port-in fees.
-          example: EUR
-        totalFees:
+        fees:
           $ref: '#/components/schemas/fees'
       required:
         - numbersToPort
@@ -352,7 +262,6 @@ components:
     numbersOwner:
       description: Owner of the numbers.
       type: object
-      title: NumbersOwner
       examples:
         - numberUsageType: BUSINESS
           complementaryAddressInformation: In attention to Mr. Smith
@@ -365,21 +274,22 @@ components:
           companyVatNumber: BE0478928788
       properties:
         numberUsageType:
-          $ref: '#/components/schemas/phoneNumberUsageType'
+          $ref: '#/components/schemas/phoneNumberUsageTypeEnum'
         complementaryAddressInformation:
           type: string
           description: Is used to indicate "In attention to someone."
           example: Chez J. Jones
         floor:
           type: number
-          description: Building number for the end user's address.
+          description: Floor number of the end user's address.
           example: 35
         buildingIdentifier:
           type: string
           description: Building number for the end user's address. E.g. Can put 54 or 54A.
+          example: 54A
         buildingName:
           type: string
-          description: Building number for the end user's address.
+          description: Building name for the end user's address.
           example: Flora House
         streetName:
           type: string
@@ -407,14 +317,14 @@ components:
         state:
           type: string
           description: State of the end user's address.
+          example: Tuscany
         countryCodeA3:
           type: string
-          minLength: 3
-          maxLength: 3
+          pattern: ^[A-Z]{3}$
           description: ISO 3166-1 standard 3-letter country code.
           example: ITA
         title:
-          $ref: '#/components/schemas/salutationType'
+          $ref: '#/components/schemas/salutationTypeEnum'
         firstName:
           type: string
           minLength: 1
@@ -434,11 +344,12 @@ components:
           example: Jones
         dateOfBirth:
           type: string
+          formmat: date
           minLength: 1
           description: >-
             Date of birth of personal end user or company legal representative,
             in RFC 3339 format.
-          example: '1980-01-10T17:32:28Z'
+          example: '1980-01-10'
         companyName:
           type: string
           minLength: 1
@@ -464,7 +375,6 @@ components:
     mailBox:
       description: Virtual or physical mailbox of the owner of the number.
       type: object
-      title: MailBox
       properties:
         buildingIdentifier:
           type: string
@@ -510,20 +420,22 @@ components:
           description: ISO 3166-1 standard 3-letter country code.
           minLength: 3
           maxLength: 3
+          example: GBR
     phoneNumberDetails:
       description: Telephone numbers to port and related porting details.
       type: object
-      title: PhoneNumberDetails
       properties:
         phoneNumber:
           type: string
-          minLength: 1
+          minLenth: 1
+          maxLenth: 15
+          pattern: ^\+?[1-9]\d{1,14}$
           description: >-
             Phone number in E.164 format that the portability check response is
             executed against. E.g: +19995550123, +33123456789.
           example: '+3228090001'
         phoneNumberType:
-          $ref: '#/components/schemas/phoneNumberType'
+          $ref: '#/components/schemas/phoneNumberTypeEnum'
         countryCodeA3:
           $ref: '#/components/schemas/countryCodeA3'
         countryCallingCode:
@@ -559,7 +471,6 @@ components:
         - portFees: 1
           cancellationFees: 2.3
           phoneNumberMonthlyFees: 5.7
-      title: Fees
       properties:
         portFees:
           type: number
@@ -573,6 +484,11 @@ components:
           type: number
           description: Monthly recurring charge for owning a number or a set of numbers.
           example: 0.16
+        currency:
+          type: string
+          pattern: ^[A-Z]{3}$
+          description: Currency of port-in fees, in ISO-4217 format.
+          example: EUR
       required:
         - portFees
         - cancellationFees
@@ -583,24 +499,13 @@ components:
         ticket, or a comment in a support ticket.
       type: object
       examples:
-        - rel: cancel
+        - rel: CANCEL
           href: https://api.preprod.voxbone.com/beta/porting-api/251593
           type: DELETE
-      title: Link
       properties:
         rel:
-          type: string
+          $ref: '#/components/schemas/relTypeEnum'
           minLength: 1
-          description: Reference of the action.
-          example: self
-          enum:
-            - self
-            - last
-            - first
-            - prev
-            - next
-            - support
-            - cancel
         href:
           type: string
           minLength: 1
@@ -609,7 +514,7 @@ components:
           example: >-
             http://porting-api.integration06.dev.voxbone.com/external/beta/ports/292021/documents/560731
         type:
-          $ref: '#/components/schemas/linkType'
+          $ref: '#/components/schemas/linkTypeEnum'
       required:
         - rel
         - href
@@ -622,28 +527,25 @@ components:
           description: Letter of authority
           status: PENDING_VALIDATION
           documentId: 255005
-      title: Document
       properties:
         documentId:
           type: integer
           description: Generated ID for an uploaded document.
           example: 560731
         type:
-          $ref: '#/components/schemas/documentType'
+          $ref: '#/components/schemas/documentTypeEnum'
         description:
           type: string
           minLength: 1
-          format: binary
           description: Description of a document.
           example: Last invoice
         status:
-          $ref: '#/components/schemas/documentStatusType'
+          $ref: '#/components/schemas/documentStatusTypeEnum'
         link:
           $ref: '#/components/schemas/link'
       required:
         - type
     comment:
-      title: Comment
       type: object
       examples:
         - id: R6776898
@@ -673,11 +575,10 @@ components:
         - dateCreated
         - description
     supportTicket:
-      title: SupportTicket
       type: object
       examples:
         - link:
-            rel: self
+            rel: SELF
             href: https://support.voxbone.com/hc/en-us/requests/295782
             type: GET
           comments:
@@ -690,8 +591,9 @@ components:
       properties:
         link:
           $ref: '#/components/schemas/link'
+        comment:
+          $ref: '#/components/schemas/comment'
     requirement:
-      title: Requirement
       type: object
       description: >-
         Required information and documents that you have to provide in order to
@@ -700,7 +602,7 @@ components:
         countryCodeA3:
           $ref: '#/components/schemas/countryCodeA3'
         phoneNumberType:
-          $ref: '#/components/schemas/phoneNumberType'
+          $ref: '#/components/schemas/phoneNumberTypeEnum'
         business:
           $ref: '#/components/schemas/businessRequirement'
         personal:
@@ -710,111 +612,7 @@ components:
         All required documents and end user's information that you have to
         provide for porting-in a number.
       type: object
-      title: BusinessRequirement
       properties:
-        complementaryAddressInformation:
-          type: string
-          description: Is used to indicate "In attention to someone."
-          example: Is used to indicate "In attention to someone."
-        floor:
-          type: number
-          description: Floor number for the end user's address.
-          example: 34
-        buildingIdentifier:
-          type: string
-          description: Building number for the end user's address. E.g. Can put 54 or 54A.
-          example: Building number for the end user's address. E.g. Can put 54 or 54A.
-        buildingName:
-          type: string
-          description: Building name for the end user's address.
-          example: Building name for the end user's address.
-        streetName:
-          type: string
-          description: Street name for the end user's address.
-          example: Street name for the end user's address.
-        streetIdentifier:
-          type: string
-          description: Street code for the end user's address. E.g. addresses in Japan
-          example: Street code for the end user's address. E.g. addresses in Japan
-        postalCode:
-          type: string
-          description: Postal code for the end user's address.
-          example: Postal code for the end user's address.
-        municipalityIdentifier:
-          type: string
-          description: >-
-            Municipality code for the end user's address. E.g. 50026 for Pisa in
-            Italia.
-          example: >-
-            Municipality code for the end user's address. E.g. 50026 for Pisa in
-            Italia.
-        city:
-          type: string
-          minLength: 1
-          description: City name for the end user's address.
-          example: City name for the end user's address.
-        state:
-          type: string
-          description: State of the end user's address.
-          example: State of the end user's address.
-        countryCodeA3:
-          $ref: '#/components/schemas/countryCodeA3Requirement'
-        title:
-          type: array
-          description: COMPANY
-          example:
-            - COMPANY
-          items:
-            $ref: '#/components/schemas/salutationType'
-        firstName:
-          type: string
-          minLength: 1
-          description: First name of personal end user or company legal representative.
-          example: First name of personal end user or company legal representative.
-        middleName:
-          type: string
-          minLength: 1
-          description: >-
-            Middle name of the personal end user or company legal
-            representative.
-          example: >-
-            Middle name of the personal end user or company legal
-            representative.
-        lastName:
-          type: string
-          minLength: 1
-          description: Surname of personal end user or company legal representative.
-          example: Surname of personal end user or company legal representative.
-        dateOfBirth:
-          type: string
-          minLength: 1
-          description: Date of birth of personal end user or company legal representative.
-          example: Date of birth of personal end user or company legal representative.
-        companyName:
-          type: string
-          minLength: 1
-          description: Registered company name. Only present for business numberUsageType.
-          example: Registered company name. Only present for business numberUsageType.
-        companyVatNumber:
-          type: string
-          minLength: 1
-          description: >-
-            Company registered VAT number. Only present for business
-            numberUsageType.
-          example: >-
-            Company registered VAT number. Only present for business
-            numberUsageType.
-        companyRegistrationNumber:
-          type: string
-          minLength: 1
-          description: >-
-            Company registration number. Only present for business
-            numberUsageType.
-          example: >-
-            Company registration number. Only present for business
-            numberUsageType.
-        mailBox:
-          $ref: '#/components/schemas/mailBoxRequirement'
         documents:
           type: array
           uniqueItems: true
@@ -827,82 +625,7 @@ components:
         All requirements (documents and end user's information) customers have
         to provide for porting-in a number.
       type: object
-      title: PersonalRequirement
       properties:
-        complementaryAddressInformation:
-          type: string
-          description: Is used to indicate "In attention to someone."
-          example: Is used to indicate "In attention to someone."
-        floor:
-          description: Floor number for the end user's address.
-          type: number
-          example: 54
-        buildingIdentifier:
-          description: Building number for the end user's address. E.g. Can put 54 or 54A.
-          example: Building number for the end user's address. E.g. Can put 54 or 54A.
-          type: string
-        buildingName:
-          type: string
-          description: Building name for the end user's address.
-          example: Building name for the end user's address.
-        streetName:
-          type: string
-          description: Street name for the end user's address.
-          example: Street name for the end user's address.
-        streetIdentifier:
-          type: string
-          description: Street code for the end user's address. E.g. addresses in Japan
-          example: Street code for the end user's address. E.g. addresses in Japan
-        postalCode:
-          type: string
-          description: Postal code for the end user's address.
-          example: Postal code for the end user's address.
-        municipalityIdentifier:
-          type: string
-          description: >-
-            Municipality code for the end user's address. E.g. 50026 for Pisa in
-            Italia.
-          example: >-
-            Municipality code for the end user's address. E.g. 50026 for Pisa in
-            Italia.
-        city:
-          type: string
-          minLength: 1
-          description: City name for the end user's address.
-          example: City name for the end user's address.
-        state:
-          type: string
-          description: State of the end user's address.
-          example: State of the end user's address.
-        countryCodeA3:
-          $ref: '#/components/schemas/countryCodeA3Requirement'
-        title:
-          example:
-            - MR
-            - MS
-          type: array
-          items:
-            $ref: '#/components/schemas/salutationType'
-        firstName:
-          type: string
-          minLength: 1
-          description: First name of personal end user.
-          example: First name of personal end user.
-        middleName:
-          type: string
-          minLength: 1
-          description: Middle name of the personal end user .
-          example: Middle name of the personal end user .
-        lastName:
-          type: string
-          minLength: 1
-          description: Surname of personal end user.
-          example: Surname of personal end user.
-        dateOfBirth:
-          type: string
-          minLength: 1
-          description: Date of birth of personal end user.
-          example: Date of birth of personal end user.
         documents:
           type: array
           uniqueItems: true
@@ -913,10 +636,9 @@ components:
     documentRequirement:
       description: Documents that you have to provide for porting-in a number.
       type: object
-      title: DocumentRequirement
       properties:
         type:
-          $ref: '#/components/schemas/documentType'
+          $ref: '#/components/schemas/documentTypeEnum'
         description:
           type: string
           minLength: 1
@@ -933,59 +655,11 @@ components:
               - .xls
               - .xlsx
               - .jpg
-              - .jpeg.
+              - .jpeg
       required:
         - type
         - description
         - supportedFileTypes
-    mailBoxRequirement:
-      description: Virtual or physical mailbox of the owner of the number.
-      type: object
-      title: MailBox
-      properties:
-        buildingIdentifier:
-          type: string
-          description: Building number for the end user's mailbox. E.g. Can put 54 or 54A.
-          example: Building number for the end user's mailbox. E.g. Can put 54 or 54A.
-        buildingName:
-          type: string
-          description: Building name for the end user's mailbox.
-          example: Building name for the end user's mailbox.
-        complementaryAddressInformation:
-          type: string
-          description: Is used to indicate "In attention to someone."
-          example: Is used to indicate "In attention to someone."
-        streetName:
-          type: string
-          description: Street name for the end user's mailbox.
-          example: Street name for the end user's mailbox.
-        streetIdentifier:
-          type: string
-          description: Street code for the end user's mailbox. E.g. addresses in Japan
-          example: Street code for the end user's mailbox. E.g. addresses in Japan
-        postalCode:
-          type: string
-          description: Postal code for the end user's mailbox.
-          example: Postal code for the end user's mailbox.
-        municipalityIdentifier:
-          type: string
-          description: >-
-            Municipality code for the end user's mailbox. E.g. 50026 for Pisa in
-            Italia.
-          example: >-
-            Municipality code for the end user's mailbox. E.g. 50026 for Pisa in
-            Italia.
-        city:
-          type: string
-          description: City name for the end user's mailbox.
-          example: City name for the end user's mailbox.
-          minLength: 1
-        state:
-          type: string
-          description: State of the end user's mailbox.
-          example: State of the end user's mailbox.
-        countryCodeA3:
-          $ref: '#/components/schemas/countryCodeA3Requirement'
     error:
       description: Generic error.
       type: object
@@ -994,7 +668,6 @@ components:
             field: numberToPort
           description: 'Invalid phone number: jnk'
           code: XXX-XXXX
-      title: Error
       properties:
         description:
           type: string
@@ -1018,7 +691,6 @@ components:
       required:
         - description
     pagination:
-      title: Pagination
       type: object
       description: Pagination of port-in orders.
       properties:
@@ -1029,9 +701,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/link'
-    salutationType:
+    salutationTypeEnum:
       type: string
-      title: Salutations of the end user or company legal representative.
       enum:
         - MR
         - MS
@@ -1040,9 +711,8 @@ components:
         Salutation of the end user or company legal representative. Use
         "COMPANY" if the numbers that you want to port belong to a company.
       example: MR
-    documentType:
+    documentTypeEnum:
       type: string
-      title: Type of document
       enum:
         - ALLO
         - CAN
@@ -1096,9 +766,8 @@ components:
 
         | TAX         | Copy of the registration at the tax office. |
       example: LOA
-    phoneNumberType:
+    phoneNumberTypeEnum:
       type: string
-      title: Type of phone number
       enum:
         - NATIONAL
         - GEOGRAPHIC
@@ -1106,38 +775,64 @@ components:
         - SHARED_COST
         - TOLL_FREE
         - SPECIAL
-        - INUM
-      description: |
+      description: >
         This is the list of supported phone number types:
 
-        - NATIONAL
-        - GEOGRAPHIC
-        - MOBILE
-        - SHARED_COST
-        - TOLL_FREE
-        - SPECIAL
-        - INUM
+
+        - National numbers: is a phone number designated to be reachable from
+        the entire country at the same price anywhere in the country as a local
+        phone call.
+
+        - Geographic number: is a fixed-line telephone numbers beginning with a
+        geographically assigned area code.
+
+        - Mobile number: a telephone number which is registered to a mobile
+        phone/mobile network.
+
+        - Shared cost number: is a premium number in the UK, Australia, Germany,
+        Switzerland, France, Portugal and the Netherlands, often used by
+        businesses and other institutions.
+
+        - Toll-free number: is a telephone number that is billed for all
+        arriving calls. For the calling party, a call to a toll-free number from
+        a landline is free of charge.
+
+        - Special number: is a telephone number that can be used by a business
+        as contact numbers for a number of reasons, including improving the
+        callers experience through the use of network intelligent routing of
+        calls (call recording, calls being automatically delivered to the
+        nearest office, etc,), sharing the cost paid by the caller.
       example: GEOGRAPHIC
-    phoneNumberUsageType:
+    phoneNumberUsageTypeEnum:
       type: string
-      title: Type of usage of the number to be ported.
       description: List of supported usage types.
       example: BUSINESS
       enum:
         - PERSONAL
         - BUSINESS
-    linkType:
+    linkTypeEnum:
       type: string
-      title: Type of link.
       enum:
         - GET
         - DELETE
         - PATCH
       description: Type of link.
       example: GET
-    portInOrderStatusType:
+    relTypeEnum:
       type: string
-      title: Status of Port-in orders.
+      enum:
+        - SELF
+        - LAST
+        - FIRST
+        - PREV
+        - NEXT
+        - SUPPORT
+        - CANCEL
+        - DOWNLOAD
+      description: Reference of the action.
+      example: SELF
+    portInOrderStatusTypeEnum:
+      type: string
       enum:
         - DRAFT
         - SUBMITTED
@@ -1190,9 +885,8 @@ components:
 
         | CANCELED                  | Your port-in order has been canceled. |
       example: DRAFT
-    portInOrderRequestStatusType:
+    portInOrderRequestStatusTypeEnum:
       type: string
-      title: Status of Port-in orders.
       enum:
         - SUBMITTED
         - PROCESSING_CANCELLATION
@@ -1212,9 +906,8 @@ components:
         | PROCESSING_CANCELLATION   | You are requesting the cancellation of
         your order. Our LNP team will get back to you shortly|
       example: SUBMITTED
-    documentStatusType:
+    documentStatusTypeEnum:
       type: string
-      title: DocumentStatusType
       enum:
         - PENDING_VALIDATION
         - VALID
@@ -1225,23 +918,13 @@ components:
       example: PENDING_VALIDATION
     countryCodeA3:
       type: string
-      title: CountryCodeA3
       minLength: 3
       maxLength: 3
       description: ISO 3166-1 standard 3-letter country code.
       example: ITA
-    countryCodeA3Requirement:
-      type: string
-      title: Requirement for CountryCodeA3
-      example: ISO 3166-1 standard 3-letter country code.
-  securitySchemes:
-    ApiKeyAuth:
-      type: apiKey
-      in: header
-      name: X-API-Key
   responses:
-    portInOrderSuccessResponse:
-      description: General port-in order success response.
+    createdPortInOrderSuccessResponse:
+      description: Created.
       content:
         application/json:
           schema:
@@ -1266,12 +949,10 @@ components:
             requestCancellationSuccessResponse:
               $ref: >-
                 #/components/examples/requestCancellationPortInOrderSuccessResponse
-            modifyOrderSuccessResponse:
-              $ref: '#/components/examples/modifyPortInOrderSuccessResponse'
             submitOrderSuccessResponse:
               $ref: '#/components/examples/submitPortInOrderSucessResponse'
-    portInOrderArraySuccessResponse:
-      description: Get port-in orders success response.
+    returnPortInOrderSuccessResponse:
+      description: OK.
       content:
         application/json:
           schema:
@@ -1280,7 +961,37 @@ components:
               data:
                 type: object
                 properties:
-                  portInOrders:
+                  portIn:
+                    $ref: '#/components/schemas/portInOrder'
+              links:
+                type: array
+                items:
+                  $ref: '#/components/schemas/link'
+              errors:
+                type: array
+                items:
+                  $ref: '#/components/schemas/error'
+          examples:
+            createOrderSuccessResponse:
+              $ref: '#/components/examples/createOrderSuccessResponse'
+            requestCancellationSuccessResponse:
+              $ref: >-
+                #/components/examples/requestCancellationPortInOrderSuccessResponse
+            submitOrderSuccessResponse:
+              $ref: '#/components/examples/submitPortInOrderSucessResponse'
+    portInOrderArraySuccessResponse:
+      description: OK.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                pagination:
+                  $ref: '#/components/schemas/pagination'
+                properties:
+                  portIns:
                     type: array
                     description: All port-in orders.
                     items:
@@ -1291,8 +1002,6 @@ components:
                   totalPages:
                     type: integer
                     description: Number of pages in total.
-                pagination:
-                  $ref: '#/components/schemas/pagination'
               links:
                 type: array
                 items:
@@ -1302,7 +1011,7 @@ components:
                 items:
                   $ref: '#/components/schemas/error'
     documentUploadSuccessResponse:
-      description: Document upload success response.
+      description: Created.
       content:
         application/json:
           schema:
@@ -1328,7 +1037,7 @@ components:
             uploadDocumentSuccessResponse:
               $ref: '#/components/examples/uploadDocumentsSuccessResponse'
     documentDownloadSuccessResponse:
-      description: Document download success response.
+      description: OK.
       content:
         application/json:
           schema:
@@ -1348,7 +1057,7 @@ components:
                   $ref: '#/components/schemas/link'
           examples: {}
     portabilityCheckSuccessResponse:
-      description: Check portability success response.
+      description: OK.
       content:
         application/json:
           schema:
@@ -1374,7 +1083,7 @@ components:
           examples:
             checkPortabilitySuccessResponse:
               $ref: '#/components/examples/checkPortabilitySuccessResponse'
-    400ErrorResponse:
+    badRequestErrorResponse:
       description: General error response due to bad request.
       content:
         application/json:
@@ -1401,7 +1110,7 @@ components:
                     source:
                       field: numberToPort
                 links: []
-    401ErrorResponse:
+    unauthorizedErrorResponse:
       description: General error response due to unauthorized account.
       content:
         application/json:
@@ -1418,7 +1127,7 @@ components:
                   $ref: '#/components/schemas/link'
               status:
                 type: string
-    403ErrorResponse:
+    forbiddenErrorResponse:
       description: General error response for forbidden actions.
       content:
         application/json:
@@ -1445,7 +1154,7 @@ components:
                 error: Forbidden
                 message: Access Denied
                 path: /external/ports/validation
-    404ErrorResponse:
+    notFoundErrorResponse:
       description: General error response due to not-found requested object.
       content:
         application/json:
@@ -1462,7 +1171,7 @@ components:
                   $ref: '#/components/schemas/link'
               status:
                 type: string
-    409ErrorResponse:
+    conflictErrorResponse:
       description: >-
         General error response due to conflict between the object and requested
         action.
@@ -1492,7 +1201,59 @@ components:
                       support team if you need help.
                     code: PRT-7720
                 links: []
-    5xxErrorResponse:
+    notAllowedErrorResponse:
+      description: >-
+        General error response due to unsupported operation and requested
+        action.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+              errors:
+                type: array
+                items:
+                  $ref: '#/components/schemas/error'
+              links:
+                type: array
+                items:
+                  $ref: '#/components/schemas/link'
+          examples:
+            genericError405Example:
+              value:
+                data: {}
+                errors:
+                  - description: This operation is not allowed.
+                    code: NOT_ALLOWED
+                links: []
+    tooManyRequestsErrorResponse:
+      description: General error response due to too many requests.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+              errors:
+                type: array
+                items:
+                  $ref: '#/components/schemas/error'
+              links:
+                type: array
+                items:
+                  $ref: '#/components/schemas/link'
+          examples:
+            genericError429Example:
+              value:
+                data: {}
+                errors:
+                  - description: Too many requests.
+                    code: TOO_MANY_REQUEST
+                links: []
+    internalErrorResponse:
       description: General system error response.
       content:
         application/json:
@@ -1511,7 +1272,7 @@ components:
             type: object
             properties:
               status:
-                $ref: '#/components/schemas/portInOrderRequestStatusType'
+                $ref: '#/components/schemas/portInOrderRequestStatusTypeEnum'
               numbersOwner:
                 $ref: '#/components/schemas/numbersOwner'
               currentProviderName:
@@ -1524,34 +1285,34 @@ components:
               preferredPortInDate:
                 type: string
                 minLength: 1
-                format: date-time
+                format: date
                 description: >-
                   Date that you prefer to have numbers become available in
                   Bandwidth, must be in RFC 3339 format.
-                example: '2022-03-10T17:32:28Z'
+                example: '2022-03-10'
               phoneNumbers:
                 type: array
                 description: Array of telephone numbers in E.164 format.
                 items:
                   type: string
-                  example: '[     "+32498914698",     "+3228090001"   ]'
+                  example: '["+32498914698","+3228090001"]'
           examples:
             requestCancellationRequest:
               $ref: '#/components/examples/requestCancellationPortInOrderRequest'
             submitOrderRequest:
               $ref: '#/components/examples/submitPortInOrderRequest'
-            modifyOrderRequest:
-              $ref: '#/components/examples/modifyPortInOrderRequest'
       description: General port-in order request.
     documentUploadRequest:
       content:
         multipart/form-data:
           schema:
             type: object
-        application/json:
-          schema:
-            type: object
-            properties: {}
+            properties:
+              documentType:
+                $ref: '#/components/schemas/documentTypeEnum'
+              documentContent:
+                type: string
+                format: binary
     portInOrderCreationRequest:
       content:
         application/json:
@@ -1564,14 +1325,15 @@ components:
               preferredPortInDate:
                 type: string
                 minLength: 1
-                format: date-time
+                format: date
                 description: >-
                   Date that you prefer to have numbers become available in
                   Bandwidth, must be in RFC 3339 format.
-                example: '2022-03-10T17:32:28Z'
+                example: '2022-03-10'
               customerReference:
                 type: string
                 minLength: 1
+                maxLength: 32
                 description: >-
                   Parameter that can be used for your own reference, e.g. to
                   uniquely identify one of your customers.
@@ -1588,7 +1350,7 @@ components:
                 description: Array of telephone numbers in E.164 format.
                 items:
                   type: string
-                  example: '[     "+32498914698",     "+3228090001"   ]'
+                  example: '["+32498914698","+3228090001"]'
             required:
               - numbersOwner
               - currentProviderName
@@ -1596,7 +1358,6 @@ components:
           examples:
             createOrderRequest:
               $ref: '#/components/examples/createOrderRequest'
-      description: ''
     portabilityCheckRequest:
       content:
         application/json:
@@ -1609,14 +1370,13 @@ components:
                 items:
                   type: string
                   minLength: 1
-                  maxLength: 999
+                  maxLength: 500
                   example: '+33123456789'
             required:
               - phoneNumbers
           examples:
             checkPortabilityRequest:
               $ref: '#/components/examples/checkPortabilityRequest'
-      description: ''
   examples:
     checkPortabilityRequest:
       summary: Check portability request.
@@ -1632,91 +1392,12 @@ components:
             - countryCodeA3: FRA
               phoneNumberType: GEOGRAPHIC
               business:
-                complementaryAddressInformation: Is used to indicate "In attention to someone."
-                floor: 34
-                buildingIdentifier: >-
-                  Building number for the end user's address. E.g. Can put 54 or
-                  54A.
-                buildingName: Building name for the end user's address.
-                streetName: Street name for the end user's address.
-                streetIdentifier: >-
-                  Street code for the end user's address. E.g. addresses in
-                  Japan
-                postalCode: Postal code for the end user's address.
-                municipalityIdentifier: >-
-                  Municipality code for the end user's address. E.g. 50026 for
-                  Pisa in Italia.
-                city: City name for the end user's address.
-                state: State of the end user's address.
-                countryCodeA3: ISO 3166-1 standard 3-letter country code.
-                title:
-                  - COMPANY
-                firstName: >-
-                  First name of personal end user or company legal
-                  representative.
-                middleName: >-
-                  Middle name of the personal end user or company legal
-                  representative.
-                lastName: Surname of personal end user or company legal representative.
-                dateOfBirth: >-
-                  Date of birth of personal end user or company legal
-                  representative.
-                companyName: >-
-                  Registered company name. Only present for business
-                  numberUsageType.
-                companyVatNumber: >-
-                  Company registered VAT number. Only present for business
-                  numberUsageType.
-                companyRegistrationNumber: >-
-                  Company registration number. Only present for business
-                  numberUsageType.
-                mailBox:
-                  buildingIdentifier: >-
-                    Building number for the end user's mailbox. E.g. Can put 54
-                    or 54A.
-                  buildingName: Building name for the end user's mailbox.
-                  complementaryAddressInformation: Is used to indicate "In attention to someone."
-                  streetName: Street name for the end user's mailbox.
-                  streetIdentifier: >-
-                    Street code for the end user's mailbox. E.g. addresses in
-                    Japan
-                  postalCode: Postal code for the end user's mailbox.
-                  municipalityIdentifier: >-
-                    Municipality code for the end user's mailbox. E.g. 50026 for
-                    Pisa in Italia.
-                  city: City name for the end user's mailbox.
-                  state: State of the end user's mailbox.
-                  countryCodeA3: ISO 3166-1 standard 3-letter country code.
                 documents:
                   - type: COB
                     description: Last Invoice
                     supportedFileTypes:
                       - .pdf
               personal:
-                complementaryAddressInformation: Is used to indicate "In attention to someone."
-                floor: 54
-                buildingIdentifier: >-
-                  Building number for the end user's address. E.g. Can put 54 or
-                  54A.
-                buildingName: Building name for the end user's address.
-                streetName: Street name for the end user's address.
-                streetIdentifier: >-
-                  Street code for the end user's address. E.g. addresses in
-                  Japan
-                postalCode: Postal code for the end user's address.
-                municipalityIdentifier: >-
-                  Municipality code for the end user's address. E.g. 50026 for
-                  Pisa in Italia.
-                city: City name for the end user's address.
-                state: State of the end user's address.
-                countryCodeA3: ISO 3166-1 standard 3-letter country code.
-                title:
-                  - MR
-                  - MS
-                firstName: First name of personal end user.
-                middleName: Middle name of the personal end user .
-                lastName: Surname of personal end user.
-                dateOfBirth: Date of birth of personal end user.
                 documents:
                   - type: LOA
                     description: LOA
@@ -1751,7 +1432,7 @@ components:
         phoneNumbers:
           - '+3228090000'
           - '+3228090001'
-        preferredPortInDate: '2021-11-19T15:45:09.913+00:00'
+        preferredPortInDate: '2021-11-19'
         customerReference: P345679078
         numbersOwner:
           buildingNumber: 489
@@ -1771,7 +1452,7 @@ components:
             supportRef: PRT293895686064690
             supportTicket:
               link:
-                rel: self
+                rel: SELF
                 href: https://support.voxbone.com/hc/en-us/requests/295782
                 type: GET
             numbersToPort:
@@ -1796,24 +1477,78 @@ components:
               companyName: Voxbone
               companyVatNumber: BE0478928788
               title: COMPANY
-            preferredPortInDate: '2022-03-10T17:32:28Z'
-            createdDate: '2022-01-10T17:32:28Z'
-            lastUpdate: '2022-01-15T17:32:28Z'
-            submittedDate: '2022-02-10T17:32:28Z'
+            preferredPortInDate: '2022-03-10'
+            createdTimestamp: '2022-01-10T17:32:28Z'
+            lastUpdateTimestamp: '2022-01-15T17:32:28Z'
+            submittedTimestamp: '2022-02-10T17:32:28Z'
             status: DRAFT
-            currency: EUR
-            totalFees:
+            fees:
               portFees: 1
               cancellationFees: 2.3
               phoneNumberMonthlyFees: 5.7
+              currency: EUR
         links:
-          - rel: self
+          - rel: SELF
             href: https://api.preprod.voxbone.com/beta/porting-api/251593
             type: GET
-          - rel: cancel
+          - rel: CANCEL
             href: https://api.preprod.voxbone.com/beta/porting-api/251593
             type: DELETE
-          - rel: support
+          - rel: SUPPORT
+            href: https://support.voxbone.com/hc/en-us/requests/295782
+            type: GET
+        errors: []
+    returnOrderSuccessResponse:
+      value:
+        data:
+          portIn:
+            portInOrderId: 293895
+            supportRef: PRT293895686064690
+            supportTicket:
+              link:
+                rel: SELF
+                href: https://support.voxbone.com/hc/en-us/requests/295782
+                type: GET
+            numbersToPort:
+              - phoneNumber: '+3228090001'
+                phoneNumberType: GEOGRAPHIC
+                countryCodeA3: BEL
+                countryCallingCode: '32'
+                areaCode: '3'
+                leadTime: 10
+                internalMigration: true
+                portable: true
+            customerReference: ABC-12345
+            currentProviderName: Verizon
+            numbersOwner:
+              numberUsageType: BUSINESS
+              complementaryAddressInformation: In attention to Mr. Smith
+              buildingNumber: '489'
+              streetName: Rue Vanderkindere
+              city: Brussels
+              countryCodeA3: BEL
+              postalCode: '1050'
+              companyName: Voxbone
+              companyVatNumber: BE0478928788
+              title: COMPANY
+            preferredPortInDate: '2022-03-10'
+            createdTimestamp: '2022-01-10T17:32:28Z'
+            lastUpdateTimestamp: '2022-01-15T17:32:28Z'
+            submittedTimestamp: '2022-02-10T17:32:28Z'
+            status: DRAFT
+            fees:
+              portFees: 1
+              cancellationFees: 2.3
+              phoneNumberMonthlyFees: 5.7
+              currency: EUR
+        links:
+          - rel: SELF
+            href: https://api.preprod.voxbone.com/beta/porting-api/251593
+            type: GET
+          - rel: CANCEL
+            href: https://api.preprod.voxbone.com/beta/porting-api/251593
+            type: DELETE
+          - rel: SUPPORT
             href: https://support.voxbone.com/hc/en-us/requests/295782
             type: GET
         errors: []
@@ -1850,120 +1585,29 @@ components:
             supportRef: PRT293895686064690
             supportTicket:
               link:
-                rel: self
+                rel: SELF
                 href: https://support.voxbone.com/hc/en-us/requests/295782
                 type: GET
             status: PROCESSING_CANCELLATION
-            currency: EUR
-            preferredPortInDate: '2022-03-10T17:32:28Z'
-            createdDate: '2022-01-10T17:32:28Z'
-            lastUpdate: '2022-01-15T17:32:28Z'
-            submittedDate: '2022-02-10T17:32:28Z'
+            preferredPortInDate: '2022-03-10'
+            createdTimestamp: '2022-01-10T17:32:28Z'
+            lastUpdateTimestamp: '2022-01-15T17:32:28Z'
+            submittedTimestamp: '2022-02-10T17:32:28Z'
             documents:
               - type: LOA
                 description: Letter of authority
                 status: PENDING_VALIDATION
                 documentId: 255005
-            totalFees:
+            fees:
               portFees: 1
               cancellationFees: 2.3
               phoneNumberMonthlyFees: 5.7
+              currency: EUR
         links:
-          - rel: cancel
+          - rel: CANCEL
             href: https://api.preprod.voxbone.com/beta/porting-api/251593
             type: PATCH
-          - rel: support
-            href: https://support.voxbone.com/hc/en-us/requests/295782
-            type: GET
-    modifyPortInOrderRequest:
-      value:
-        numbersOwner:
-          numberUsageType: BUSINESS
-          complementaryAddressInformation: In attention to Mr. Smith
-          buildingNumber: '489'
-          streetName: Rue Vanderkindere
-          city: Brussels
-          countryCodeA3: BEL
-          postalCode: '1050'
-          companyName: Voxbone
-          companyVatNumber: BE0478928788
-          title: COMPANY
-        currentProviderName: string
-        preferredPortInDate: '2019-08-24T14:15:22Z'
-        phoneNumbers:
-          - '+32188243633'
-          - '+32188243635'
-          - '+32188243636'
-    modifyPortInOrderSuccessResponse:
-      value:
-        data:
-          portIn:
-            portInOrderId: 293895
-            currentProviderName: Verizon
-            numbersToPort:
-              - phoneNumber: '+32188243633'
-                phoneNumberType: GEOGRAPHIC
-                countryCodeA3: BEL
-                countryCallingCode: '32'
-                areaCode: '3'
-                leadTime: 10
-                internalMigration: true
-                portable: true
-              - phoneNumber: '+32188243635'
-                phoneNumberType: GEOGRAPHIC
-                countryCodeA3: BEL
-                countryCallingCode: '32'
-                areaCode: '3'
-                leadTime: 10
-                internalMigration: true
-                portable: true
-              - phoneNumber: '+32188243636'
-                phoneNumberType: GEOGRAPHIC
-                countryCodeA3: BEL
-                countryCallingCode: '32'
-                areaCode: '3'
-                leadTime: 10
-                internalMigration: true
-                portable: true
-            numbersOwner:
-              numberUsageType: BUSINESS
-              complementaryAddressInformation: In attention to Mr. Smith
-              buildingNumber: '489'
-              streetName: Rue Vanderkindere
-              city: Brussels
-              countryCodeA3: BEL
-              postalCode: '1050'
-              companyName: Voxbone
-              companyVatNumber: BE0478928788
-              title: COMPANY
-            supportRef: PRT293895686064690
-            supportTicket:
-              link:
-                rel: self
-                href: https://support.voxbone.com/hc/en-us/requests/295782
-                type: GET
-            status: DRAFT
-            currency: EUR
-            preferredPortInDate: '2019-08-24T14:15:22Z'
-            createdDate: '2022-01-10T17:32:28Z'
-            lastUpdate: '2022-01-15T17:32:28Z'
-            documents:
-              - type: LOA
-                description: Letter of authority
-                status: PENDING_VALIDATION
-                documentId: 255005
-            totalFees:
-              portFees: 1
-              cancellationFees: 2.3
-              phoneNumberMonthlyFees: 5.7
-        links:
-          - rel: self
-            href: https://api.preprod.voxbone.com/beta/porting-api/251593
-            type: GET
-          - rel: self
-            href: https://api.preprod.voxbone.com/beta/porting-api/251593
-            type: DELETE
-          - rel: support
+          - rel: SUPPORT
             href: https://support.voxbone.com/hc/en-us/requests/295782
             type: GET
     submitPortInOrderRequest:
@@ -2004,29 +1648,29 @@ components:
             supportRef: PRT293895686064690
             supportTicket:
               link:
-                rel: self
+                rel: SELF
                 href: https://support.voxbone.com/hc/en-us/requests/295782
                 type: GET
             status: SUBMITTED
-            currency: EUR
-            preferredPortInDate: '2022-03-10T17:32:28Z'
-            createdDate: '2022-01-10T17:32:28Z'
-            lastUpdate: '2022-01-15T17:32:28Z'
-            submittedDate: '2022-02-10T17:32:28Z'
+            preferredPortInDate: '2022-03-10'
+            createdTimestamp: '2022-01-10T17:32:28Z'
+            lastUpdateTimestamp: '2022-01-15T17:32:28Z'
+            submittedTimestamp: '2022-02-10T17:32:28Z'
             documents:
               - type: LOA
                 description: Letter of authority
                 status: PENDING_VALIDATION
                 documentId: 255005
-            totalFees:
+            fees:
               portFees: 1
               cancellationFees: 2.3
               phoneNumberMonthlyFees: 5.7
+              currency: EUR
         links:
-          - rel: cancel
+          - rel: CANCEL
             href: https://api.preprod.voxbone.com/beta/porting-api/251593
             type: PATCH
-          - rel: support
+          - rel: SUPPORT
             href: https://support.voxbone.com/hc/en-us/requests/295782
             type: GET
     uploadDocumentsSuccessResponse:
@@ -2038,20 +1682,20 @@ components:
               description: LOA
               status: PENDING_VALIDATION
               documentId: 552180
-              links:
-                - rel: self
-                  href: >-
-                    http://porting-api.integration06.dev.voxbone.com/external/beta/ports/287415/documents/552180
-                  type: GET
+              link:
+                rel: SELF
+                href: >-
+                  http://porting-api.integration06.dev.voxbone.com/external/beta/ports/287415/documents/552180
+                type: GET
             - type: COB
               description: Last Invoice
               status: PENDING_VALIDATION
               documentId: 552183
-              links:
-                - rel: self
-                  href: >-
-                    http://porting-api.integration06.dev.voxbone.com/external/beta/ports/287415/documents/552183
-                  type: GET
+              link:
+                rel: SELF
+                href: >-
+                  http://porting-api.integration06.dev.voxbone.com/external/beta/ports/287415/documents/552183
+                type: GET
   parameters:
     portInOrderId:
       name: portInOrderId
@@ -2075,7 +1719,7 @@ components:
       in: query
       required: false
       schema:
-        $ref: '#/components/schemas/portInOrderStatusType'
+        $ref: '#/components/schemas/portInOrderStatusTypeEnum'
     phoneNumber:
       name: phoneNumber
       description: The number you are porting.
@@ -2089,7 +1733,7 @@ components:
       in: query
       required: false
       schema:
-        $ref: '#/components/schemas/phoneNumberType'
+        $ref: '#/components/schemas/phoneNumberTypeEnum'
     countryCodeA3:
       name: countryCodeA3
       description: ISO 3166-1 standard 3-letter country code.
@@ -2122,8 +1766,8 @@ components:
       required: false
       schema:
         type: string
-    createdDate:
-      name: createdDate
+    createdTimestamp:
+      name: createdTimestamp
       description: >-
         Date in YYYY-MM-DD format representing when the initial port-in order
         was created.
@@ -2148,8 +1792,8 @@ components:
       required: false
       schema:
         type: string
-    submittedDate:
-      name: submittedDate
+    submittedTimestamp:
+      name: submittedTimestamp
       description: >-
         Date in YYYY-MM-DD format at the time when the order was submitted -
         only present when relevant.
@@ -2172,11 +1816,8 @@ components:
       schema:
         type: string
 security:
-  - Basic: []
-  - Token: []
-  - ApiKey: []
+  - KeyBasedAuthentication: []
 tags:
   - name: Portability Checker
   - name: Port-In Orders
   - name: Port-In Order Document
-  - name: Coming soon
