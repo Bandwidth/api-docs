@@ -144,6 +144,24 @@ components:
           minLength: 1
           type: string
       type: object
+    AbstractOriginationSmsTnHistory:
+      properties:
+        NPANXXDetailList:
+          items:
+            properties:
+              TerminationHost:
+                properties:
+                  Count:
+                    type: integer
+                  NPANXX:
+                    type: string
+                  Tier:
+                    type: integer
+                type: object
+            title: NPANXXDetail
+            type: object
+          type: array
+      type: object
     AccessRestriction:
       properties:
         RestrictedAccessTypes:
@@ -261,6 +279,11 @@ components:
           type: array
         Name:
           type: string
+      type: object
+    AccountProductResponse:
+      properties:
+        Product:
+          $ref: '#/components/schemas/AccountProduct'
       type: object
     AccountProducts:
       properties:
@@ -7283,6 +7306,12 @@ components:
             $ref: '#/components/schemas/OriginationRoutePayload'
           type: array
       type: object
+    OriginationTnHistory:
+      properties:
+        Origination:
+          allOf:
+            - $ref: '#/components/schemas/AbstractOriginationSmsTnHistory'
+      type: object
     PaginationLinks:
       properties:
         first:
@@ -8008,6 +8037,19 @@ components:
       properties:
         HttpVoiceV2AppId:
           type: string
+      type: object
+    ProductTnHistoryResponse:
+      properties:
+        ProductTNDetailsResponse:
+          $ref: '#/components/schemas/ProductTnReportWrapper'
+      type: object
+    ProductTnReportWrapper:
+      properties:
+        ProductTNDetails:
+          oneOf:
+            - $ref: '#/components/schemas/OriginationTnHistory'
+            - $ref: '#/components/schemas/SmsTnHistory'
+            - $ref: '#/components/schemas/TollfreeTnHistory'
       type: object
     ProductVoiceProtocol:
       enum:
@@ -9727,6 +9769,12 @@ components:
         ProxyPeerId:
           type: integer
       title: HttpSettings
+      type: object
+    SmsTnHistory:
+      properties:
+        Sms:
+          allOf:
+            - $ref: '#/components/schemas/AbstractOriginationSmsTnHistory'
       type: object
     StateSearchAndOrder:
       allOf:
@@ -11448,6 +11496,14 @@ components:
       type: object
       xml:
         name: TollFreeWildCharSearchAndOrderType
+    TollfreeTnHistory:
+      properties:
+        Tollfree:
+          properties:
+            Count:
+              type: integer
+          type: object
+      type: object
     Tpas:
       items:
         $ref: '#/components/schemas/Tpa'
@@ -14092,39 +14148,6 @@ paths:
         ----WebKitFormBoundaryE19zNvXGzXaLvS5C <br>
 
         </code></p>
-
-        <p><b>Information for toll free port-in customers:</b></p>
-
-        <p>If you are porting toll free numbers and either of the following are
-        true, the port-in order requires a LOA document.</p>
-
-        <ul>
-
-        <li>The controlling and target RespOrg IDs have different entity values
-        (i.e. the first two characters are different).</li>
-
-        <li>The toll free port-in will cause toll free telephone numbers to move
-        from one Bandwidth account to another Bandwidth account.</li>
-
-        </ul>
-
-        <p>If a LOA is required, the LOA document must adhere to these
-        rules:</p>
-
-        <ul>
-
-        <li>The LOA document must be uploaded using MIME type "application/pdf",
-        or "image/tiff", as these are the only formats supported by our toll
-        free porting vendor.</li>
-
-        <li>The LOA document must be annotated as a LOA document using the
-        documentType query parameter or header value.</li>
-
-        </ul>
-
-        <p>If a LOA is required but a compliant LOA document has not been
-        uploaded, the toll free port-in order will remain in the Pending
-        Documents state until a valid LOA is provided.</p>
       operationId: UploadBulkLoa
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
@@ -14173,11 +14196,7 @@ paths:
             The response header will include a link to the created file as a GET
             on the identified resource.
         '400':
-          description: 'Supported values for documentType are: LOA, INVOICE, CSR, or OTHER.'
-        '409':
-          description: >-
-            Conflicting values specified for documentType query parameter and
-            documentType header.
+          description: A 400 indicates that the requested upload failed.
       summary: Upload bulk port-in order loa file
       tags:
         - Bulk Port-In
@@ -20792,7 +20811,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/SiteHostsResponse'
           description: <p>A successful result that contains the response data</p>
-      summary: List hosts on account
+      summary: List hosts
       tags:
         - Account
   /accounts/{accountId}/importTnChecker:
@@ -26860,9 +26879,8 @@ paths:
         key attribute to the POST is ensuring that the headers are correctly set
         to support the file upload.<br>
 
-        You may use either the documentType query parameter or the documentType
-        header parameter to specify the type of document you are uploading.
-        Possible values for documentType are: LOA, INVOICE, CSR, OTHER.
+        Query parameter or header documentType can be used to specify type of
+        document on upload. Possible values are: LOA, INVOICE, CSR, OTHER.
             <br>
         Header settings typical of a valid upload are...<br>
             <br>
@@ -26895,39 +26913,6 @@ paths:
         ----WebKitFormBoundaryE19zNvXGzXaLvS5C <br>
 
         </code>
-
-        <p><b>Information for toll free port-in customers:</b></p>
-
-        <p>If you are porting toll free numbers and either of the following are
-        true, the port-in order requires a LOA document.</p>
-
-        <ul>
-
-        <li>The controlling and target RespOrg IDs have different entity values
-        (i.e. the first two characters are different).</li>
-
-        <li>The toll free port-in will cause toll free telephone numbers to move
-        from one Bandwidth account to another Bandwidth account.</li>
-
-        </ul>
-
-        <p>If a LOA is required, the LOA document must adhere to these
-        rules:</p>
-
-        <ul>
-
-        <li>The LOA document must be uploaded using MIME type "application/pdf",
-        or "image/tiff", as these are the only formats supported by our toll
-        free porting vendor.</li>
-
-        <li>The LOA document must be annotated as a LOA document using the
-        documentType query parameter or header value.</li>
-
-        </ul>
-
-        <p>If a LOA is required but a compliant LOA document has not been
-        uploaded, the toll free port-in order will remain in the Pending
-        Documents state until a valid LOA is provided.</p>
       operationId: UploadPortinLoaFile
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
@@ -26978,18 +26963,7 @@ paths:
             The response header will include a link to the created file as a GET
             on the identified resource.
         '400':
-          description: |
-            Supported values for documentType are: LOA, INVOICE, CSR, or OTHER.
-        '409':
-          description: >
-            <p>Conflicting values specified for documentType query parameter and
-            documentType header.</p>
-
-            <p>This order requires specification of the documentType using
-            either the query parameter or the header.</p>
-
-            <p>Document uploads for toll free port-ins must use the
-            application/pdf or image/tiff formats.</p>
+          description: A 400 indicates that the requested upload failed.
       summary: Upload port-in loa file
       tags:
         - Porting
@@ -27933,7 +27907,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AccountProductsResponse'
           description: ''
-      summary: List products on account
+      summary: List account products
       tags:
         - Account
   /accounts/{accountId}/products/e911/settings:
@@ -27977,7 +27951,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/E911SettingsResponse'
           description: ''
-      summary: Retrieve e911 product settings
+      summary: Retrieve e911 product settings on account
       tags:
         - Account
   /accounts/{accountId}/products/edgemanagement/settings:
@@ -28030,7 +28004,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/EdgeManagementSettingsResponse'
           description: ''
-      summary: Retrieve edgemanagement product settings
+      summary: Retrieve edgemanagement product settings on account
       tags:
         - Account
   /accounts/{accountId}/products/edgemanagement/settings/sipauthentication:
@@ -28096,7 +28070,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/SipAuthenticationResponse'
           description: ''
-      summary: Retrieve edgemanagement product sipauthentication feature settings of
+      summary: Retrieve sipauthentication settings on account
       tags:
         - Account
   /accounts/{accountId}/products/messaging/a2pCampaigns:
@@ -28129,7 +28103,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/MessagingA2pCampaignsResponse'
           description: ''
-      summary: Retrieve messaging a2pCampaigns settings
+      summary: Retrieve a2pCampaigns settings on account
       tags:
         - Account
   /accounts/{accountId}/products/messaging/features/http:
@@ -28154,7 +28128,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AccountHttpFeatureResponse'
           description: ''
-      summary: Retrieve messaging product http feature settings
+      summary: Retrieve messaging http feature settings on account
       tags:
         - Account
   /accounts/{accountId}/products/messaging/features/mms:
@@ -28199,7 +28173,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AccountMmsFeatureResponse'
           description: ''
-      summary: Retrieve messaging product mms feature settings
+      summary: Retrieve messaging mms feature settings on account
       tags:
         - Account
   /accounts/{accountId}/products/messaging/features/mms/mm4settings:
@@ -28237,7 +28211,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/MmsFeatureMm4AdminSettingsResponse'
           description: ''
-      summary: Retrieve messaging product mms feature mm4 settings
+      summary: Retrieve messaging mms feature mm4 settings on account
       tags:
         - Account
   /accounts/{accountId}/products/messaging/features/mms/settings:
@@ -28264,7 +28238,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AccountMmsFeatureSettingsResponse'
           description: ''
-      summary: Retrieve messaging product mms feature settings
+      summary: Retrieve messaging mms feature settings on account
       tags:
         - Account
   /accounts/{accountId}/products/messaging/features/sms:
@@ -28314,7 +28288,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AccountSmsFeatureResponse'
           description: ''
-      summary: Retrieve messaging product sms feature settings
+      summary: Retrieve messaging sms feature settings on account
       tags:
         - Account
   /accounts/{accountId}/products/messaging/routes:
@@ -28368,7 +28342,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AccountMessagingRoutesResponse'
           description: ''
-      summary: Retrieve messaging routes
+      summary: Retrieve messaging routes on account
       tags:
         - Account
   /accounts/{accountId}/products/messaging/settings:
@@ -28406,12 +28380,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/MessagingSettingsResponse'
           description: ''
-      summary: Retrieve messaging product settings
+      summary: Retrieve messaging settings on account
       tags:
         - Account
   /accounts/{accountId}/products/termination/settings:
     get:
-      description: Retrieve termination product settings on account.
+      description: Retrieve existing termination settings on account.
       operationId: GetAccountTerminationProductSettings
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
@@ -28450,7 +28424,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TerminationSettingsResponse'
           description: ''
-      summary: Retrieve termination settings
+      summary: Retrieve termination settings on account
       tags:
         - Account
   /accounts/{accountId}/products/tollfree/settings:
@@ -28483,7 +28457,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TollFreeSettingsResponse'
           description: ''
-      summary: Retrieve tollfree product settings
+      summary: Retrieve tollfree settings on account
       tags:
         - Account
   /accounts/{accountId}/products/uctrunking/features/hosted/settings:
@@ -28522,7 +28496,7 @@ paths:
                        </ResponseStatus>
                     </UcTrunkingCloudSettingsResponse>
           description: Not Found - if UcTrunking product has not been configured on account
-      summary: Retrieve uctrunking product hosted feature settings
+      summary: Retrieve uctrunking hosted feature settings on account
       tags:
         - Account
     post:
@@ -28587,7 +28561,7 @@ paths:
                        </ResponseStatus>
                     </UcTrunkingCloudSettingsResponse>
           description: Not Found - if UcTrunking product has not been configured on account
-      summary: Add uctrunking product hosted feature settings
+      summary: Create uctrunking hosted feature settings on account
       tags:
         - Account
     put:
@@ -28652,7 +28626,7 @@ paths:
                        </ResponseStatus>
                     </UcTrunkingCloudSettingsResponse>
           description: Not Found - if UcTrunking product has not been configured on account
-      summary: Update uctrunking product hosted feature settings
+      summary: Update uctrunking hosted feature settings on account
       tags:
         - Account
   /accounts/{accountId}/products/uctrunking/settings:
@@ -28695,7 +28669,53 @@ paths:
               schema:
                 $ref: '#/components/schemas/UcTrunkingSettingsResponse'
           description: ''
-      summary: Retrieve uctrunking product settings
+      summary: Retrieve uctrunking settings on account
+      tags:
+        - Account
+  /accounts/{accountId}/products/{productName}:
+    get:
+      description: Discover whether product is currently enabled on the account
+      operationId: GetAccountProduct
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - in: path
+          name: productName
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AccountProductResponse'
+          description: ''
+      summary: Check product on account
+      tags:
+        - Account
+  /accounts/{accountId}/products/{productName}/tntotals:
+    get:
+      description: Get Product Tn Totals
+      operationId: GetProductTnTotals
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - in: path
+          name: productName
+          required: true
+          schema:
+            enum:
+              - Origination
+              - Messaging
+              - TollFree
+            type: string
+      responses:
+        '200':
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ProductTnHistoryResponse'
+          description: Information was successfully retrieved
+      summary: Get Product Tn Totals
       tags:
         - Account
   /accounts/{accountId}/realms:
@@ -37066,14 +37086,6 @@ paths:
                         </TollFreePortingValidation>
                     </TollFreePortingValidationResponse>
           description: Request includes more than 500 toll free numbers.
-        '429':
-          description: >-
-            Too Many Requests, the maximum rate of API requests for this
-            operation, endpoint and account has been exceeded, causing your
-            request to be rejected.  Please send requests at a lower rate.  If
-            you are sure that your software is functioning properly and you are
-            still bumping into the rate limits, please contact Bandwidth to
-            discuss options.
         '502':
           content:
             application/xml:
@@ -37283,14 +37295,6 @@ paths:
           description: >-
             The accountId specified in the request URI is not foundThe orderId
             specified in the request URI is not found.
-        '429':
-          description: >-
-            Too Many Requests, the maximum rate of API requests for this
-            operation, endpoint and account has been exceeded, causing your
-            request to be rejected.  Please send requests at a lower rate.  If
-            you are sure that your software is functioning properly and you are
-            still bumping into the rate limits, please contact Bandwidth to
-            discuss options.
       summary: Retrieve toll-free porting validation
       tags:
         - Porting
@@ -37468,7 +37472,7 @@ paths:
                     $ref: '#/components/schemas/ResponseStatus'
                 type: object
           description: The account ID given does not have UC Trunking associated with it
-      summary: Retrieve the total number of seats on account
+      summary: Get Total Number of Seats for Account
       tags:
         - Account
   /accounts/{accountId}/{orderType}/{orderId}/adminparameters:

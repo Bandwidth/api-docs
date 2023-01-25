@@ -2,7 +2,9 @@ openapi: 3.0.1
 info:
   description: Blue Sky Provisioning Application
   title: blue-sky-ops
-  version: '0.10'
+  version: 0.10.0
+  contact:
+    name: Blue Sky team
 servers:
   - url: https://blue-sky-ops.{environment}.bluesky.bandwidth.com
     variables:
@@ -12,19 +14,23 @@ servers:
           - lab
           - stage
           - prod
+security:
+  - httpBasic: []
+tags:
+  - name: External
+  - name: Account
+  - name: Customer
+  - name: Location
+  - name: Trunk info
 paths:
   /portal/report/blue-sky-ops/v2/customers/{sanId}/locations:
     get:
+      tags:
+        - /locations
       description: Returns locations for a SanId from blue sky ops application
       operationId: getLocationsBySanId
       parameters:
-        - description: Customer SAN ID
-          in: path
-          name: sanId
-          required: true
-          schema:
-            type: integer
-            format: int32
+        - $ref: '#/components/parameters/SanIdPathParam'
       responses:
         '200':
           content:
@@ -42,18 +48,14 @@ paths:
           description: Unpredictable error while processing the request
       summary: Retrieve Locations by SanId
     post:
+      tags:
+        - /locations
       description: >-
         Creates a new location to be created in the blue sky ops application.
         This location must not previously exist.
-      operationId: createLocation_1
+      operationId: createLocation
       parameters:
-        - description: Customer SAN Id
-          in: path
-          name: sanId
-          required: true
-          schema:
-            type: integer
-            format: int32
+        - $ref: '#/components/parameters/SanIdPathParam'
       requestBody:
         content:
           application/json:
@@ -83,25 +85,15 @@ paths:
       summary: Create A Specific Location by Sip Peer Id and body
   /portal/report/blue-sky-ops/v2/customers/{sanId}/locations/{sipPeerId}:
     delete:
+      tags:
+        - /locations
       description: >-
         Deletes a location from the blue sky ops application. This location must
         previously exist.
-      operationId: deleteLocation_1
+      operationId: deleteLocation
       parameters:
-        - description: Customer SAN Id
-          in: path
-          name: sanId
-          required: true
-          schema:
-            type: integer
-            format: int32
-        - description: Sip Peer Id
-          in: path
-          name: sipPeerId
-          required: true
-          schema:
-            type: integer
-            format: int32
+        - $ref: '#/components/parameters/SanIdPathParam'
+        - $ref: '#/components/parameters/SipPeerIdPathParam'
       responses:
         '204':
           description: Location deleted successfully
@@ -119,23 +111,13 @@ paths:
           description: Unpredictable error while processing the request
       summary: Delete a specific location based on Sip Peer Id
     get:
+      tags:
+        - /locations
       description: Returns a location from the blue sky ops application
       operationId: getLocationBySipPeerId
       parameters:
-        - description: Customer SAN Id
-          in: path
-          name: sanId
-          required: true
-          schema:
-            type: integer
-            format: int32
-        - description: Sip Peer Id
-          in: path
-          name: sipPeerId
-          required: true
-          schema:
-            type: integer
-            format: int32
+        - $ref: '#/components/parameters/SanIdPathParam'
+        - $ref: '#/components/parameters/SipPeerIdPathParam'
       responses:
         '200':
           content:
@@ -157,25 +139,15 @@ paths:
           description: Unpredictable error while processing the request
       summary: Retrieve A Specific Location based on Sip Peer Id
     patch:
+      tags:
+        - /locations
       description: >-
         Update a location from the blue sky ops application. This location must
         previously exist.
       operationId: updateLocationBySipPeerId
       parameters:
-        - description: Customer SAN Id
-          in: path
-          name: sanId
-          required: true
-          schema:
-            type: integer
-            format: int32
-        - description: Sip Peer Id
-          in: path
-          name: sipPeerId
-          required: true
-          schema:
-            type: integer
-            format: int32
+        - $ref: '#/components/parameters/SanIdPathParam'
+        - $ref: '#/components/parameters/SipPeerIdPathParam'
       requestBody:
         content:
           application/json:
@@ -201,18 +173,14 @@ paths:
       summary: Update a specific location based on Sip Peer Id
   /portal/report/blue-sky-ops/v2/customers/{sanId}/trunkinfo:
     get:
+      tags:
+        - /trunkinfo
       description: >-
         Returns a list of ExternalTrunkInfo entries provisioned by the blue sky
         ops application. This endpoint is accessible to customers.
       operationId: getExternalTrunkInfoBySanId
       parameters:
-        - description: Customer SAN ID
-          in: path
-          name: sanId
-          required: true
-          schema:
-            type: integer
-            format: int32
+        - $ref: '#/components/parameters/SanIdPathParam'
       responses:
         '200':
           content:
@@ -232,6 +200,28 @@ paths:
           description: Unpredictable error while processing the request
       summary: Retrieve A list of ExternalTrunkInfo entries by San Id
 components:
+  responses: null
+  securitySchemes:
+    httpBasic:
+      type: http
+      scheme: basic
+  parameters:
+    SanIdPathParam:
+      description: Customer SAN ID
+      in: path
+      name: sanId
+      required: true
+      schema:
+        type: integer
+        format: int32
+    SipPeerIdPathParam:
+      description: Sip Peer Id
+      in: path
+      name: sipPeerId
+      required: true
+      schema:
+        type: integer
+        format: int32
   schemas:
     ErrorDto:
       type: object
