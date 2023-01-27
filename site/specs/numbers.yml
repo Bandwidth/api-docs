@@ -1,4 +1,90 @@
 components:
+  examples:
+    BulkTnVendorAssignmentPayload:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <BulkTnVendorAssignmentPayload>
+            <TnVendorAssignments>
+                <TnVendorAssignment>
+                    <Tn>9195551111</Tn>
+                    <Vendor>49</Vendor>
+                </TnVendorAssignment>
+                <TnVendorAssignment>
+                    <Tn>9195552222</Tn>
+                    <Vendor>49</Vendor>
+                </TnVendorAssignment>
+                <TnVendorAssignment>
+                    <Tn>9195553333</Tn>
+                    <Vendor>69</Vendor>
+                </TnVendorAssignment>
+            </TnVendorAssignments>
+        </BulkTnVendorAssignmentPayload>
+    BulkTnVendorAssignmentTaskErrorResponse:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <BulkTnVendorAssignmentTaskResponse>
+           <ResponseStatus>
+             <ErrorCode>18000</ErrorCode>
+             <Description>The vendor id is invalid.</Description>
+           </ResponseStatus>
+         </BulkTnVendorAssignmentTaskResponse>
+    BulkTnVendorAssignmentTaskResponseForGet:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <BulkTnVendorAssignmentTaskResponse>
+            <BulkTnVendorAssignmentPayload>
+                <StartTime>2022-09-08 06:45:13.0</StartTime>
+                <EndTime>2022-09-08 06:46:21.0</EndTime>
+                <Status>PARTIAL</Status>
+                <TaskId>8e4c0d41-3477-427c-bf2e-e06382d80f62</TaskId>
+                <TotalTnVendorCount>3</TotalTnVendorCount>
+                <SuccessTnVendorCount>2</SuccessTnVendorCount>
+                <FailedTnVendorCount>1</FailedTnVendorCount>
+                <TnVendorErrors>
+                    <TnVendorError>
+                        <Code>XXXX</Code>
+                        <Description>Telephone Number not found</Description>
+                        <TnVendorAssignment>
+                            <Tn>9195553333</Tn>
+                            <Vendor>69</Vendor>
+                        </TnVendorAssignment>
+                    </TnVendorError>
+                </TnVendorErrors>
+                <SuccessTnVendorAssignments>
+                    <TnVendorAssignment>
+                        <Tn>9195551111</Tn>
+                        <Vendor>49</Vendor>
+                    </TnVendorAssignment>
+                    <TnVendorAssignment>
+                        <Tn>9195552222</Tn>
+                        <Vendor>49</Vendor>
+                    </TnVendorAssignment>
+                </SuccessTnVendorAssignments>
+            </BulkTnVendorAssignmentPayload>
+        </BulkTnVendorAssignmentTaskResponse>
+    BulkTnVendorAssignmentTaskResponseForPost:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <BulkTnVendorAssignmentTaskResponse>
+           <BulkTnVendorAssignmentPayload>
+              <Status>PROCESSING</Status>
+              <TaskId>8e4c0d41-3477-427c-bf2e-e06382d80f62</TaskId>
+              <TnVendorAssignments>
+                 <TnVendorAssignment>
+                    <Tn>9195551111</Tn>
+                    <Vendor>49</Vendor>
+                 </TnVendorAssignment>
+                 <TnVendorAssignment>
+                    <Tn>9195552222</Tn>
+                    <Vendor>49</Vendor>
+                 </TnVendorAssignment>
+                 <TnVendorAssignment>
+                    <Tn>9195553333</Tn>
+                    <Vendor>69</Vendor>
+                 </TnVendorAssignment>
+              </TnVendorAssignments>
+           </BulkTnVendorAssignmentPayload>
+        </BulkTnVendorAssignmentTaskResponse>
   parameters:
     AccountIdPathParam:
       description: User's account ID
@@ -90,6 +176,14 @@ components:
             - FAILED
           type: string
         type: array
+    TaskIdPathParam:
+      description: Bulk tn vendor task's ID
+      example: 093a9f9b-1a78-4e47-b6e2-776a484596f4
+      in: path
+      name: taskId
+      required: true
+      schema:
+        type: string
     UserIdPathParam:
       description: User Id
       example: testUser
@@ -4173,6 +4267,12 @@ components:
         name: OrderResponse
     ExistingTelephoneNumberOrderType:
       properties:
+        E164TelephoneNumberList:
+          items:
+            type: string
+            xml:
+              name: E164TelephoneNumber
+          type: array
         ReservationIdList:
           items:
             type: string
@@ -4183,7 +4283,7 @@ components:
           items:
             type: string
             xml:
-              name: E164TelephoneNumber
+              name: TelephoneNumber
           type: array
       type: object
       xml:
@@ -7219,6 +7319,12 @@ components:
           properties:
             Count:
               type: integer
+            E164TelephoneNumberList:
+              items:
+                type: string
+                xml:
+                  name: E164TelephoneNumber
+              type: array
             TelephoneNumber:
               type: string
           type: object
@@ -10082,8 +10188,8 @@ components:
       type: object
     TelephoneNumber:
       properties:
-        E164TelephoneNumber:
-          description: E.164 Telephone Number.
+        TelephoneNumber:
+          description: Simple Telephone Number.
           type: string
       type: object
     TelephoneNumberAvailableNnRoutes:
@@ -11112,6 +11218,8 @@ components:
                 properties:
                   TelephoneNumber:
                     properties:
+                      E164FullNumber:
+                        type: string
                       FullNumber:
                         type: string
                     type: object
@@ -13669,7 +13777,7 @@ paths:
             modified on the specified date/time, only the latest update for that
             order is included in the results. Date format can be one of:
             `yyyy-mm-ddThh:mm:ss.sZ`, `yyyy-mm-ddZ`, `yyyy-mm-ddThh:mm:ssTZD`.
-          example: '2021-06-21T18:45:00.000Z'
+          example: '2021-06-21'
           in: query
           name: orderDate
           required: false
@@ -13691,7 +13799,7 @@ paths:
             update for that order is included in the results. Date format can be
             one of: `yyyy-mm-ddThh:mm:ss.sZ`, `yyyy-mm-ddZ`,
             `yyyy-mm-ddThh:mm:ssTZD`.
-          example: '2021-06-21T18:45:00.000Z'
+          example: '2021-06-21'
           in: query
           name: modifiedDateFrom
           required: false
@@ -13715,7 +13823,7 @@ paths:
             The modifiedDateTo value may be in the future. Date format can be
             one of: `yyyy-mm-ddThh:mm:ss.sZ`, `yyyy-mm-ddZ`,
             `yyyy-mm-ddThh:mm:ssTZD`.
-          example: '2021-06-21T18:45:00.000Z'
+          example: '2021-06-21'
           in: query
           name: modifiedDateTo
           required: false
@@ -24850,11 +24958,11 @@ paths:
                       <CustomerOrderId>123456789</CustomerOrderId>
                       <Name>Existing Number Order</Name>
                       <ExistingTelephoneNumberOrderType>
-                          <TelephoneNumberList>
+                          <E164TelephoneNumberList>
                               <E164TelephoneNumber>+19193752369</E164TelephoneNumber>
                               <E164TelephoneNumber>+19193752720</E164TelephoneNumber>
                               <E164TelephoneNumber>+19193752648</E164TelephoneNumber>
-                          </TelephoneNumberList>
+                          </E164TelephoneNumberList>
                           <ReservationIdList>
                               <ReservationId>[GUID]</ReservationId>
                               <ReservationId>[GUID]</ReservationId>
@@ -25180,6 +25288,7 @@ paths:
                         <CompletedNumbers>
                             <TelephoneNumber>
                                 <FullNumber>8042105666</FullNumber>
+                                <E164FullNumber>+18042105666</E164FullNumber>
                             </TelephoneNumber>
                         </CompletedNumbers>
                         <FailedQuantity>0</FailedQuantity>
@@ -25632,6 +25741,9 @@ paths:
                     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                     <TelephoneNumbers>
                         <Count>1</Count>
+                        <E164TelephoneNumberList>
+                          <E164TelephoneNumber>+18042105666</E164TelephoneNumber>
+                        </E164TelephoneNumberList>
                         <TelephoneNumber>8042105666</TelephoneNumber>
                     </TelephoneNumbers>
               schema:
@@ -25800,7 +25912,7 @@ paths:
 
             enddate=2020-01-16, you will only see the latest of the entries for
             the same order.
-          example: '`2020-01-15` or `2020-01-15T02:00:01.353Z`'
+          example: '2020-01-15'
           in: query
           name: date
           required: false
@@ -32309,6 +32421,7 @@ paths:
                        <CompletedNumbers>
                           <TelephoneNumber>
                              <FullNumber>8042105666</FullNumber>
+                             <E164FullNumber>+18042105666</E164FullNumber>
                           </TelephoneNumber>
                        </CompletedNumbers>
                        <FailedQuantity>0</FailedQuantity>
@@ -40243,3 +40356,4 @@ tags:
   - name: Tn Reservation
   - name: Tns
   - name: Admin Data
+  - name: Tn Vendor Assignment
