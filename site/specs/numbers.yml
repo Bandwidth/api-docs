@@ -3276,6 +3276,16 @@ components:
         - ListingType
         - ListAddress
       type: object
+    E164TelephoneNumberList:
+      description: List of telephone numbers to be imported
+      items:
+        properties:
+          E164TelephoneNumber:
+            description: E.164 phone number
+            type: string
+        type: object
+      minItems: 1
+      type: array
     E911:
       properties:
         Address:
@@ -4843,7 +4853,9 @@ components:
                 $ref: '#/components/schemas/Error'
               type: array
             ImportToAccountNumberOrderType:
-              $ref: '#/components/schemas/ImportToAccountNumberOrderType'
+              oneOf:
+                - $ref: '#/components/schemas/ImportToAccountNumberOrderTypeE164'
+                - $ref: '#/components/schemas/ImportToAccountNumberOrderTypeNANPA'
             OrderCreatedDate:
               $ref: '#/components/schemas/OrderCreatedDate'
             PeerId:
@@ -4859,7 +4871,25 @@ components:
               type: integer
           type: object
       title: ImportToAccountNumberOrderResponse
-    ImportToAccountNumberOrderResponseForGet:
+    ImportToAccountNumberOrderResponseForGetE164:
+      properties:
+        OrderRequest:
+          properties:
+            ErrorList:
+              items:
+                $ref: '#/components/schemas/Error'
+              type: array
+            ImportedE164TelephoneNumberList:
+              $ref: '#/components/schemas/ImportedE164TelephoneNumberList'
+            ImportedTelephoneNumberDetailList:
+              $ref: '#/components/schemas/ImportedTelephoneNumberDetailList'
+            OrderStatus:
+              type: string
+            orderRequest:
+              $ref: '#/components/schemas/ImportToAccountOrderResponseOrderRequest'
+          type: object
+      title: ImportToAccountNumberOrderResponse
+    ImportToAccountNumberOrderResponseForGetNANPA:
       properties:
         OrderRequest:
           properties:
@@ -4877,7 +4907,28 @@ components:
               $ref: '#/components/schemas/ImportToAccountOrderResponseOrderRequest'
           type: object
       title: ImportToAccountNumberOrderResponse
-    ImportToAccountNumberOrderType:
+    ImportToAccountNumberOrderTypeE164:
+      properties:
+        BatchId:
+          $ref: '#/components/schemas/BatchId'
+        BatchSize:
+          $ref: '#/components/schemas/BatchSize'
+        BillingType:
+          $ref: '#/components/schemas/BillingType'
+        E164TelephoneNumberList:
+          $ref: '#/components/schemas/E164TelephoneNumberList'
+        InitialStatus:
+          $ref: '#/components/schemas/InitialStatus'
+        TnAttributes:
+          $ref: '#/components/schemas/TnAttributes'
+        VendorName:
+          $ref: '#/components/schemas/VendorName'
+      required:
+        - TelephoneNumberList
+        - BillingType
+        - VendorName
+      type: object
+    ImportToAccountNumberOrderTypeNANPA:
       properties:
         BatchId:
           $ref: '#/components/schemas/BatchId'
@@ -4903,7 +4954,9 @@ components:
         ImportToAccountNumberOrder:
           properties:
             ImportToAccountNumberOrderType:
-              $ref: '#/components/schemas/ImportToAccountNumberOrderType'
+              oneOf:
+                - $ref: '#/components/schemas/ImportToAccountNumberOrderTypeE164'
+                - $ref: '#/components/schemas/ImportToAccountNumberOrderTypeNANPA'
             PeerId:
               description: >-
                 A sippeer id of provided site to which telephone number will be
@@ -4920,7 +4973,9 @@ components:
     ImportToAccountOrderResponseOrderRequest:
       properties:
         ImportToAccountNumberOrderType:
-          $ref: '#/components/schemas/ImportToAccountNumberOrderType'
+          oneOf:
+            - $ref: '#/components/schemas/ImportToAccountNumberOrderTypeE164'
+            - $ref: '#/components/schemas/ImportToAccountNumberOrderTypeNANPA'
         OrderCreatedDate:
           $ref: '#/components/schemas/OrderCreatedDate'
         PeerId:
@@ -5078,6 +5133,16 @@ components:
             - CampaignId
           type: object
       type: object
+    ImportedE164TelephoneNumberList:
+      description: List of telephone numbers that were imported
+      items:
+        properties:
+          TelephoneNumber:
+            description: E.164 phone number
+            type: string
+        type: object
+      minItems: 1
+      type: array
     ImportedTelephoneNumberDetailList:
       description: List of telephone numbers details that were imported
       items:
@@ -5095,9 +5160,9 @@ components:
       description: List of telephone numbers that were imported
       items:
         properties:
-          E164TelephoneNumber:
-            description: E.164 phone number
-            type: string
+          TelephoneNumber:
+            description: Ten digit phone number with no dots or dashes
+            type: integer
         type: object
       minItems: 1
       type: array
@@ -10334,9 +10399,9 @@ components:
       description: List of telephone numbers to be imported
       items:
         properties:
-          E164TelephoneNumber:
-            description: E.164 phone number
-            type: string
+          TelephoneNumber:
+            description: Ten digit phone number with no dots or dashes
+            type: integer
         type: object
       minItems: 1
       type: array
@@ -22375,9 +22440,13 @@ paths:
             application/xml:
               examples:
                 example:
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ImportToAccountNumberOrderResponse>\n\t<ErrorList/>\n\t<ImportedTelephoneNumberList>\n\t\t<TelephoneNumber>9199918393</TelephoneNumber>\n\t\t<E164TelephoneNumber>+19199918393</E164TelephoneNumber>\n\t\t<TelephoneNumber>9199918394</TelephoneNumber>\n\t\t<E164TelephoneNumber>+19199918394</E164TelephoneNumber>\n\t</ImportedTelephoneNumberList>\n\t<orderRequest>\n\t\t<OrderCreateDate>2014-04-18T16:38:05.001Z</OrderCreateDate>\n\t\t<PeerId>303716</PeerId>\n\t\t<ImportToAccountNumberOrderType>\n\t\t\t<BatchId>TestId1234</BatchId>\n\t\t\t<BatchSize>2</BatchSize>\n\t\t\t<OverridePortFees>false</OverridePortFees>\n\t\t\t<PortedIn>false</PortedIn>\n\t\t\t<InitialStatus>Available</InitialStatus>\n\t\t\t<TnAttributes>\n\t\t\t\t<TnAttribute>Protected</TnAttribute>\n\t\t\t</TnAttributes>\n\t\t\t<TelephoneNumberList>\n\t\t\t\t<TelephoneNumber>9199918393</TelephoneNumber>\n\t\t\t\t<E164TelephoneNumber>+19199918393</E164TelephoneNumber>\n\t\t\t\t<TelephoneNumber>9199918394</TelephoneNumber>\n\t\t\t\t<E164TelephoneNumber>+19199918394</E164TelephoneNumber>\n\t\t\t</TelephoneNumberList>\n\t\t\t<VendorName>Bandwidth CLEC</VendorName>\n\t\t</ImportToAccountNumberOrderType>\n\t\t<SiteId>743</SiteId>\n\t</orderRequest>\n\t<OrderStatus>COMPLETE</OrderStatus>\n\t<ImportedTelephoneNumberDetailList>\n\t\t<TelephoneNumberDetail>\n\t\t\t<FullNumber>9199918393</FullNumber>\n\t\t\t<E164FullNumber>+19199918393</E164FullNumber>\n\t\t</TelephoneNumberDetail>\n\t\t<TelephoneNumberDetail>\n\t\t\t<FullNumber>9199918394</FullNumber>\n\t\t\t<E164FullNumber>+19199918394</E164FullNumber>\n\t\t</TelephoneNumberDetail>\n\t</ImportedTelephoneNumberDetailList>\n</ImportToAccountNumberOrderResponse>"
+                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ImportToAccountNumberOrderResponse>\n\t<ErrorList/>\n\t<ImportedE164TelephoneNumberList>\n\t\t<E164TelephoneNumber>+19199918393</E164TelephoneNumber>\n\t\t<E164TelephoneNumber>+19199918394</E164TelephoneNumber>\n\t</ImportedE164TelephoneNumberList>\n\t<ImportedTelephoneNumberList>\n\t\t<TelephoneNumber>9199918393</TelephoneNumber>\n\t\t<TelephoneNumber>9199918394</TelephoneNumber>\n\t</ImportedTelephoneNumberList>\n\t<orderRequest>\n\t\t<OrderCreateDate>2014-04-18T16:38:05.001Z</OrderCreateDate>\n\t\t<PeerId>303716</PeerId>\n\t\t<ImportToAccountNumberOrderType>\n\t\t\t<BatchId>TestId1234</BatchId>\n\t\t\t<BatchSize>2</BatchSize>\n\t\t\t<OverridePortFees>false</OverridePortFees>\n\t\t\t<PortedIn>false</PortedIn>\n\t\t\t<InitialStatus>Available</InitialStatus>\n\t\t\t<TnAttributes>\n\t\t\t\t<TnAttribute>Protected</TnAttribute>\n\t\t\t</TnAttributes>\n\t\t\t<E164TelephoneNumberList>\n\t\t\t\t<E164TelephoneNumber>+19199918393</E164TelephoneNumber>\n\t\t\t\t<E164TelephoneNumber>+19199918394</E164TelephoneNumber>\n\t\t\t</E164TelephoneNumberList>\n\t\t\t<TelephoneNumberList>\n\t\t\t\t<TelephoneNumber>9199918393</TelephoneNumber>\n\t\t\t\t<TelephoneNumber>9199918394</TelephoneNumber>\n\t\t\t</TelephoneNumberList>\n\t\t\t<VendorName>Bandwidth CLEC</VendorName>\n\t\t</ImportToAccountNumberOrderType>\n\t\t<SiteId>743</SiteId>\n\t</orderRequest>\n\t<OrderStatus>COMPLETE</OrderStatus>\n\t<ImportedTelephoneNumberDetailList>\n\t\t<TelephoneNumberDetail>\n\t\t\t<FullNumber>9199918393</FullNumber>\n\t\t\t<E164FullNumber>+19199918393</E164FullNumber>\n\t\t</TelephoneNumberDetail>\n\t\t<TelephoneNumberDetail>\n\t\t\t<FullNumber>9199918394</FullNumber>\n\t\t\t<E164FullNumber>+19199918394</E164FullNumber>\n\t\t</TelephoneNumberDetail>\n\t</ImportedTelephoneNumberDetailList>\n</ImportToAccountNumberOrderResponse>"
               schema:
-                $ref: '#/components/schemas/ImportToAccountNumberOrderResponseForGet'
+                oneOf:
+                  - $ref: >-
+                      #/components/schemas/ImportToAccountNumberOrderResponseForGetE164
+                  - $ref: >-
+                      #/components/schemas/ImportToAccountNumberOrderResponseForGetNANPA
           description: >-
             The information has been successfully retrieved and displayed in the
             payload.
