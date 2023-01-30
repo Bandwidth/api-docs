@@ -47,6 +47,25 @@ export const navTester = (path) => {
     })
   }
 
+  export const performanceTester = (path, text, element = 'h1', waitTime = 5000) => {
+    it('measures page load on the home page', () => {
+      cy.visit(`${path}`, {
+        onBeforeLoad: (win) => {
+          win.performance.mark('startMark');
+        }
+      })
+      .its('performance').then((performance) => {
+        cy.get(`${element}`).should('include.text', `${text}`)
+          .then(() => performance.mark('endMark'))
+          .then(() => {
+          performance.measure('pageLoad', 'startMark', 'endMark');
+          const measure = performance.getEntriesByName('pageLoad')[0]; 
+          assert.isAtMost(measure.duration, waitTime);
+        });
+      });
+  });
+  }
+
   export const testSvgLink = (path, svg, testPath) => {
     beforeEach(() => {
       cy.visit(`${path}`)
@@ -214,4 +233,20 @@ export const testCarousel = (path, length, title) => {
     cy.get('[data-cy="rightButton"]').click();
     cy.get('[data-cy="carouselSlides"]').should('have.css', 'transform', `matrix(1, 0, 0, 1, -${rollOverOffset + slideWidth}, 0)`);
   })
+}
+
+export const testSubheadingLink = (path, text, href) => {
+  before(() => {
+    cy.visit(`${path}`);
+  })
+  it('tests the subheading links', () => {
+    cy.get('a')
+      .contains(`${text}`)
+      .should('have.attr', 'href', `${href}`)
+
+    cy.get('h2')
+      .contains(`${text}`)
+      .children(0)
+      .should('have.attr', 'href', `${href}`)
+    });
 }

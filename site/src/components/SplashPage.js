@@ -46,9 +46,9 @@ function SplashPageImage({Svg}) {
 function SplashPageTextBlock({title, text, linkText, link}) {
     return (
         <div className="text-block">
-            <div className="title" data-cy="title">{title}</div>
-            <div className="text" data-cy="text">{text}</div>
-            <div className="link" data-cy="link"><a href={link}>{linkText}</a></div>
+            <div className="text-block-title" data-cy="title">{title}</div>
+            <div className="text-block-text" data-cy="text">{text}</div>
+            <div className="text-block-link" data-cy="link"><a href={link}>{linkText}</a></div>
         </div>
     )
 }

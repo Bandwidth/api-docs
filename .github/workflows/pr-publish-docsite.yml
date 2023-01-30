@@ -5,9 +5,9 @@ name: PR Publish Docsite
 on:
   pull_request:
     branches:
-      - 'main'
+      - "main"
     paths:
-      - 'site/**'
+      - "site/**"
   workflow_dispatch:
 
 concurrency:
@@ -28,12 +28,12 @@ jobs:
         browser: [chrome]
     steps:
       - name: Setup Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 16
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cypress run
         uses: cypress-io/github-action@v4.2.0
@@ -64,10 +64,10 @@ jobs:
       id: ${{steps.distribution.outputs.distribution-id}}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 16
 
@@ -87,15 +87,15 @@ jobs:
 
       - name: Generate Static Site
         run: |
-            cd site
-            yarn install --pure-lockfile
-            npm run build
+          cd site
+          yarn install --pure-lockfile
+          npm run build
 
       - name: Sync Zip to Bucket
         run: |
-          aws s3 sync ./site/build s3://staging-dev-docsite/$BRANCH_NAME --acl public-read      
+          aws s3 sync ./site/build s3://staging-dev-docsite/$BRANCH_NAME --acl public-read
 
-      - name: Invalidate CF Cache 
+      - name: Invalidate CF Cache
         run: |
           aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID}} --paths "/" "/*"
 
@@ -111,7 +111,6 @@ jobs:
               body: 'http://${{ env.BRANCH_NAME }}.staging-dev.bandwidth.com/'
             })
 
-  
   alert_if_failure:
     name: Alert for failure
     needs: [cypress, publish]
@@ -119,7 +118,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Get Branch Name
         run: |
