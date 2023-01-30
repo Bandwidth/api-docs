@@ -3277,6 +3277,12 @@ components:
         - ListingType
         - ListAddress
       type: object
+    E164TelephoneNumber:
+      properties:
+        E164TelephoneNumber:
+          description: E.164 Telephone Number.
+          type: string
+      type: object
     E911:
       properties:
         Address:
@@ -4279,7 +4285,7 @@ components:
           items:
             type: string
             xml:
-              name: E164TelephoneNumber
+              name: TelephoneNumber
           type: array
       type: object
       xml:
@@ -5086,9 +5092,9 @@ components:
         properties:
           TelephoneNumberDetail:
             properties:
-              E164FullNumber:
-                description: E.164 phone number
-                type: string
+              FullNumber:
+                description: Ten digit phone number with no dots or dashes
+                type: integer
             type: object
         type: object
       minItems: 1
@@ -5097,9 +5103,9 @@ components:
       description: List of telephone numbers that were imported
       items:
         properties:
-          E164TelephoneNumber:
-            description: E.164 phone number
-            type: string
+          TelephoneNumber:
+            description: Ten digit phone number with no dots or dashes
+            type: integer
         type: object
       minItems: 1
       type: array
@@ -7012,6 +7018,10 @@ components:
       properties:
         Notification:
           properties:
+            CompletedE164TelephoneNumbers:
+              items:
+                $ref: '#/components/schemas/E164TelephoneNumber'
+              type: array
             CompletedTelephoneNumbers:
               items:
                 $ref: '#/components/schemas/TelephoneNumber'
@@ -7020,6 +7030,10 @@ components:
               type: string
             EventType:
               type: string
+            ImpactedE164TelephoneNumbers:
+              items:
+                $ref: '#/components/schemas/E164TelephoneNumber'
+              type: array
             ImpactedTelephoneNumbers:
               items:
                 $ref: '#/components/schemas/TelephoneNumber'
@@ -7846,6 +7860,10 @@ components:
           properties:
             AccountNumber:
               type: string
+            E164TelephoneNumbers:
+              items:
+                $ref: '#/components/schemas/E164TelephoneNumber'
+              type: array
             PON:
               type: string
             Pin:
@@ -7868,6 +7886,10 @@ components:
               properties:
                 AccountNumber:
                   type: string
+                E164TelephoneNumbers:
+                  items:
+                    $ref: '#/components/schemas/E164TelephoneNumber'
+                  type: array
                 Pin:
                   type: string
                 TelephoneNumbers:
@@ -10178,8 +10200,8 @@ components:
       type: object
     TelephoneNumber:
       properties:
-        E164TelephoneNumber:
-          description: E.164 Telephone Number.
+        TelephoneNumber:
+          description: Simple Telephone Number.
           type: string
       type: object
     TelephoneNumberAvailableNnRoutes:
@@ -10336,9 +10358,9 @@ components:
       description: List of telephone numbers to be imported
       items:
         properties:
-          E164TelephoneNumber:
-            description: E.164 phone number
-            type: string
+          TelephoneNumber:
+            description: Ten digit phone number with no dots or dashes
+            type: integer
         type: object
       minItems: 1
       type: array
@@ -35334,9 +35356,16 @@ paths:
                   application/xml:
                     schema:
                       properties:
-                        CompletedTelephoneNumbers:
+                        CompletedE164TelephoneNumbers:
                           properties:
                             E164TelephoneNumbers:
+                              items:
+                                type: string
+                              type: array
+                          type: object
+                        CompletedTelephoneNumbers:
+                          properties:
+                            TelephoneNumbers:
                               items:
                                 type: string
                               type: array
@@ -35363,9 +35392,16 @@ paths:
                   application/xml:
                     schema:
                       properties:
-                        CompletedTelephoneNumbers:
+                        CompletedE164TelephoneNumbers:
                           properties:
                             E164TelephoneNumbers:
+                              items:
+                                type: string
+                              type: array
+                          type: object
+                        CompletedTelephoneNumbers:
+                          properties:
+                            TelephoneNumbers:
                               items:
                                 type: string
                               type: array
@@ -38272,17 +38308,24 @@ paths:
                      <!-- for order state updates -->
                     <Note>...</Note>
                     <!-- for note events -->
+                    <CompletedE164TelephoneNumbers>
+                    <!-- for portins/portouts/orders/disconnects OrderTypes -->
+                    <E164TelephoneNumber> ... </E164TelephoneNumber>
+                    <!-- ... -->
+                    </CompletedE164TelephoneNumbers>
                     <CompletedTelephoneNumbers>
                     <!-- for portins/portouts/orders/disconnects OrderTypes -->
                     <TelephoneNumber> ... </TelephoneNumber>
-                    <E164TelephoneNumber> ... </E164TelephoneNumber>
                     <!-- ... -->
                     </CompletedTelephoneNumbers>
                     <!-- for event updates -->
                     <EventType> [MESSAGING_LOST] </EventType>
+                    <ImpactedE164TelephoneNumbers>
+                      <E164TelephoneNumber> ... </E164TelephoneNumber>
+                      <!-- ... -->
+                    </ImpactedE164TelephoneNumbers>
                     <ImpactedTelephoneNumbers>
                       <TelephoneNumber> ... </TelephoneNumber>
-                      <E164TelephoneNumber> ... </E164TelephoneNumber>
                       <!-- ... -->
                     </ImpactedTelephoneNumbers>
                   </Notification>
@@ -38333,9 +38376,13 @@ paths:
                     <AccountNumber>777</AccountNumber>
                     <ZipCode>62025</ZipCode>
                     <SubscriberName>Subscriber Name</SubscriberName>
-                    <TelephoneNumbers>
+                    <E164TelephoneNumbers>
                       <E164TelephoneNumber>+12223331000</E164TelephoneNumber>
                       <E164TelephoneNumber>+12223331001</E164TelephoneNumber>
+                    </E164TelephoneNumbers>
+                    <TelephoneNumbers>
+                      <TelephoneNumber>2223331000</TelephoneNumber>
+                      <TelephoneNumber>2223331001</TelephoneNumber>
                     </TelephoneNumbers>
                   </PortOutValidationRequest>
             schema:
@@ -38365,9 +38412,11 @@ paths:
                         <Pin>2222</Pin>
                         <AccountNumber>555</AccountNumber>
                         <ZipCode>02154</ZipCode>
+                        <E164TelephoneNumbers>
+                          <E164TelephoneNumber>+12223331000</E164TelephoneNumber>
+                        </E164TelephoneNumbers>
                         <TelephoneNumbers>
                           <TelephoneNumber>2223331000</TelephoneNumber>
-                          <E164TelephoneNumber>+12223331000</E164TelephoneNumber>
                         </TelephoneNumbers>
                       </AcceptableValues>
                     </PortOutValidationResponse>
