@@ -1,4 +1,90 @@
 components:
+  examples:
+    BulkTnVendorAssignmentPayload:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <BulkTnVendorAssignmentPayload>
+            <TnVendorAssignments>
+                <TnVendorAssignment>
+                    <Tn>9195551111</Tn>
+                    <Vendor>49</Vendor>
+                </TnVendorAssignment>
+                <TnVendorAssignment>
+                    <Tn>9195552222</Tn>
+                    <Vendor>49</Vendor>
+                </TnVendorAssignment>
+                <TnVendorAssignment>
+                    <Tn>9195553333</Tn>
+                    <Vendor>69</Vendor>
+                </TnVendorAssignment>
+            </TnVendorAssignments>
+        </BulkTnVendorAssignmentPayload>
+    BulkTnVendorAssignmentTaskErrorResponse:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <BulkTnVendorAssignmentTaskResponse>
+           <ResponseStatus>
+             <ErrorCode>18000</ErrorCode>
+             <Description>The vendor id is invalid.</Description>
+           </ResponseStatus>
+         </BulkTnVendorAssignmentTaskResponse>
+    BulkTnVendorAssignmentTaskResponseForGet:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <BulkTnVendorAssignmentTaskResponse>
+            <BulkTnVendorAssignmentPayload>
+                <StartTime>2022-09-08 06:45:13.0</StartTime>
+                <EndTime>2022-09-08 06:46:21.0</EndTime>
+                <Status>PARTIAL</Status>
+                <TaskId>8e4c0d41-3477-427c-bf2e-e06382d80f62</TaskId>
+                <TotalTnVendorCount>3</TotalTnVendorCount>
+                <SuccessTnVendorCount>2</SuccessTnVendorCount>
+                <FailedTnVendorCount>1</FailedTnVendorCount>
+                <TnVendorErrors>
+                    <TnVendorError>
+                        <Code>XXXX</Code>
+                        <Description>Telephone Number not found</Description>
+                        <TnVendorAssignment>
+                            <Tn>9195553333</Tn>
+                            <Vendor>69</Vendor>
+                        </TnVendorAssignment>
+                    </TnVendorError>
+                </TnVendorErrors>
+                <SuccessTnVendorAssignments>
+                    <TnVendorAssignment>
+                        <Tn>9195551111</Tn>
+                        <Vendor>49</Vendor>
+                    </TnVendorAssignment>
+                    <TnVendorAssignment>
+                        <Tn>9195552222</Tn>
+                        <Vendor>49</Vendor>
+                    </TnVendorAssignment>
+                </SuccessTnVendorAssignments>
+            </BulkTnVendorAssignmentPayload>
+        </BulkTnVendorAssignmentTaskResponse>
+    BulkTnVendorAssignmentTaskResponseForPost:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <BulkTnVendorAssignmentTaskResponse>
+           <BulkTnVendorAssignmentPayload>
+              <Status>PROCESSING</Status>
+              <TaskId>8e4c0d41-3477-427c-bf2e-e06382d80f62</TaskId>
+              <TnVendorAssignments>
+                 <TnVendorAssignment>
+                    <Tn>9195551111</Tn>
+                    <Vendor>49</Vendor>
+                 </TnVendorAssignment>
+                 <TnVendorAssignment>
+                    <Tn>9195552222</Tn>
+                    <Vendor>49</Vendor>
+                 </TnVendorAssignment>
+                 <TnVendorAssignment>
+                    <Tn>9195553333</Tn>
+                    <Vendor>69</Vendor>
+                 </TnVendorAssignment>
+              </TnVendorAssignments>
+           </BulkTnVendorAssignmentPayload>
+        </BulkTnVendorAssignmentTaskResponse>
   parameters:
     AccountIdPathParam:
       description: User's account ID
@@ -90,6 +176,14 @@ components:
             - FAILED
           type: string
         type: array
+    TaskIdPathParam:
+      description: Bulk tn vendor task's ID
+      example: 093a9f9b-1a78-4e47-b6e2-776a484596f4
+      in: path
+      name: taskId
+      required: true
+      schema:
+        type: string
     UserIdPathParam:
       description: User Id
       example: testUser
@@ -2118,7 +2212,6 @@ components:
         EventType:
           enum:
             - MESSAGING_LOST
-            - ADDRESS_STATUS_CHANGED
           type: string
       required:
         - EventType
@@ -3183,6 +3276,18 @@ components:
         - ListingType
         - ListAddress
       type: object
+    E164Tn:
+      properties:
+        E164Tn:
+          type: string
+      type: object
+    E164TnListRequest:
+      properties:
+        TnList:
+          items:
+            $ref: '#/components/schemas/E164Tn'
+          type: array
+      type: object
     E911:
       properties:
         Address:
@@ -3484,7 +3589,6 @@ components:
         EventType:
           enum:
             - MESSAGING_LOST
-            - ADDRESS_STATUS_CHANGED
           type: string
       required:
         - EventType
@@ -4185,7 +4289,7 @@ components:
           items:
             type: string
             xml:
-              name: E164TelephoneNumber
+              name: TelephoneNumber
           type: array
       type: object
       xml:
@@ -4992,9 +5096,9 @@ components:
         properties:
           TelephoneNumberDetail:
             properties:
-              E164FullNumber:
-                description: E.164 phone number
-                type: string
+              FullNumber:
+                description: Ten digit phone number with no dots or dashes
+                type: integer
             type: object
         type: object
       minItems: 1
@@ -5003,9 +5107,9 @@ components:
       description: List of telephone numbers that were imported
       items:
         properties:
-          E164TelephoneNumber:
-            description: E.164 phone number
-            type: string
+          TelephoneNumber:
+            description: Ten digit phone number with no dots or dashes
+            type: integer
         type: object
       minItems: 1
       type: array
@@ -7221,7 +7325,13 @@ components:
           properties:
             Count:
               type: integer
-            E164TelephoneNumber:
+            E164TelephoneNumberList:
+              items:
+                type: string
+                xml:
+                  name: E164TelephoneNumber
+              type: array
+            TelephoneNumber:
               type: string
           type: object
       type: object
@@ -8586,6 +8696,8 @@ components:
           type: integer
         ReservationId:
           type: string
+        ReservedTn:
+          type: string
       type: object
     ReservationErrorResponse:
       properties:
@@ -9335,6 +9447,9 @@ components:
       type: object
     SipPeerTelephoneNumber:
       properties:
+        CallForward:
+          description: Does this telephone number have call forwarding or not
+          type: string
         CallingNameDisplay:
           description: >-
             Calling Name of the caller is available to the user or not on
@@ -9344,6 +9459,9 @@ components:
           description: Does this telephone number have call forwarding or not
           type: string
         E164FullNumber:
+          description: A 10 Digit Telephone Number
+          type: string
+        FullNumber:
           description: A 10 Digit Telephone Number
           type: string
         MessagingSettings:
@@ -9387,6 +9505,76 @@ components:
       properties:
         SipPeerTelephoneNumberMoveResponse:
           $ref: '#/components/schemas/SipPeerTelephoneNumberBulk'
+      type: object
+    SipPeerTelephoneNumberRequestE164:
+      properties:
+        CallingNameDisplay:
+          description: >-
+            Calling Name of the caller is available to the user or not on
+            incoming calls
+          type: string
+        E164CallForward:
+          description: Does this telephone number have call forwarding or not
+          type: string
+        E164FullNumber:
+          description: A E.164 Telephone Number
+          type: string
+        MessagingSettings:
+          description: Does this telephone number have any messaging system configured
+          type: string
+        RPIDFormat:
+          description: Telephone number RPID format
+          enum:
+            - 10digit
+            - 11digit
+            - e164
+            - 'false'
+          type: string
+        RewriteUser:
+          maxLength: 25
+          type: string
+        TnAttributes:
+          description: Is this telephone number protected or not
+          items:
+            properties:
+              TnAttribute:
+                type: string
+          type: array
+      type: object
+    SipPeerTelephoneNumberRequestNANPA:
+      properties:
+        CallForward:
+          description: Does this telephone number have call forwarding or not
+          type: string
+        CallingNameDisplay:
+          description: >-
+            Calling Name of the caller is available to the user or not on
+            incoming calls
+          type: string
+        FullNumber:
+          description: A 10 Digit Telephone Number
+          type: string
+        MessagingSettings:
+          description: Does this telephone number have any messaging system configured
+          type: string
+        RPIDFormat:
+          description: Telephone number RPID format
+          enum:
+            - 10digit
+            - 11digit
+            - e164
+            - 'false'
+          type: string
+        RewriteUser:
+          maxLength: 25
+          type: string
+        TnAttributes:
+          description: Is this telephone number protected or not
+          items:
+            properties:
+              TnAttribute:
+                type: string
+          type: array
       type: object
     SipPeerTelephoneNumberResponse:
       properties:
@@ -10077,8 +10265,8 @@ components:
       type: object
     TelephoneNumber:
       properties:
-        E164TelephoneNumber:
-          description: E.164 Telephone Number.
+        TelephoneNumber:
+          description: Simple Telephone Number.
           type: string
       type: object
     TelephoneNumberAvailableNnRoutes:
@@ -10110,6 +10298,8 @@ components:
         Country:
           type: string
         E164FullNumber:
+          type: string
+        FullNumber:
           type: string
         HostedTelephoneNumberDetails:
           items:
@@ -10209,11 +10399,19 @@ components:
           type: integer
         Description:
           type: string
-        TelephoneNumbers:
+        E164TelephoneNumbers:
           items:
             type: string
             xml:
               name: E164TelephoneNumber
+          type: array
+          xml:
+            wrapped: true
+        TelephoneNumbers:
+          items:
+            type: string
+            xml:
+              name: TelephoneNumber
           type: array
           xml:
             wrapped: true
@@ -10235,9 +10433,9 @@ components:
       description: List of telephone numbers to be imported
       items:
         properties:
-          E164TelephoneNumber:
-            description: E.164 phone number
-            type: string
+          TelephoneNumber:
+            description: Ten digit phone number with no dots or dashes
+            type: integer
         type: object
       minItems: 1
       type: array
@@ -10279,6 +10477,8 @@ components:
               format: int32
               type: integer
             Status:
+              type: string
+            TelephoneNumber:
               type: string
           type: object
       type: object
@@ -10497,7 +10697,7 @@ components:
       type: object
     Tn:
       properties:
-        E164Tn:
+        Tn:
           type: string
       type: object
     TnAttribute:
@@ -13664,7 +13864,7 @@ paths:
             modified on the specified date/time, only the latest update for that
             order is included in the results. Date format can be one of:
             `yyyy-mm-ddThh:mm:ss.sZ`, `yyyy-mm-ddZ`, `yyyy-mm-ddThh:mm:ssTZD`.
-          example: '2021-06-21T18:45:00.000Z'
+          example: '2021-06-21'
           in: query
           name: orderDate
           required: false
@@ -13686,7 +13886,7 @@ paths:
             update for that order is included in the results. Date format can be
             one of: `yyyy-mm-ddThh:mm:ss.sZ`, `yyyy-mm-ddZ`,
             `yyyy-mm-ddThh:mm:ssTZD`.
-          example: '2021-06-21T18:45:00.000Z'
+          example: '2021-06-21'
           in: query
           name: modifiedDateFrom
           required: false
@@ -13710,7 +13910,7 @@ paths:
             The modifiedDateTo value may be in the future. Date format can be
             one of: `yyyy-mm-ddThh:mm:ss.sZ`, `yyyy-mm-ddZ`,
             `yyyy-mm-ddThh:mm:ssTZD`.
-          example: '2021-06-21T18:45:00.000Z'
+          example: '2021-06-21'
           in: query
           name: modifiedDateTo
           required: false
@@ -25780,7 +25980,7 @@ paths:
 
             enddate=2020-01-16, you will only see the latest of the entries for
             the same order.
-          example: '`2020-01-15` or `2020-01-15T02:00:01.353Z`'
+          example: '2020-01-15'
           in: query
           name: date
           required: false
@@ -32329,8 +32529,10 @@ paths:
                     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                     <TelephoneNumbers>
                        <Count>1</Count>
+                        <E164TelephoneNumberList>
+                          <E164TelephoneNumber>+18042105666</E164TelephoneNumber>
+                        </E164TelephoneNumberList>
                        <TelephoneNumber>8042105666</TelephoneNumber>
-                       <E164TelephoneNumber>+18042105666</E164TelephoneNumber>
                     </TelephoneNumbers>
               schema:
                 $ref: '#/components/schemas/OrderTelephoneNumbersResponse'
@@ -34819,8 +35021,8 @@ paths:
                     <SipPeerTelephoneNumbersResponse>
                        <SipPeerTelephoneNumbers>
                           <SipPeerTelephoneNumber>
-                             <FullNumber>2052160148</FullNumber>
                              <E164FullNumber>+12052160148</E164FullNumber>
+                             <FullNumber>2052160148</FullNumber>
                              <CallingNameDisplay>true</CallingNameDisplay>
                              <TnAttributes>
                                 <TnAttribute>Protected</TnAttribute>
@@ -34832,16 +35034,16 @@ paths:
                              </MessagingSettings>
                           </SipPeerTelephoneNumber>
                           <SipPeerTelephoneNumber>
-                             <FullNumber>2053161118</FullNumber>
                              <E164FullNumber>+12053161118</E164FullNumber>
+                             <FullNumber>2053161118</FullNumber>
                              <CallingNameDisplay>false</CallingNameDisplay>
                              <MessagingSettings>
                                 <SmsEnabled>true</SmsEnabled>
                              </MessagingSettings>
                           </SipPeerTelephoneNumber>
                           <SipPeerTelephoneNumber>
-                             <FullNumber>2053160118</FullNumber>
                              <E164FullNumber>+12053160118</E164FullNumber>
+                             <FullNumber>2053160118</FullNumber>
                              <CallForward>2014563025</CallForward>
                              <E164CallForward>+12014563025</E164CallForward>
                              <CallingNameDisplay>false</CallingNameDisplay>
@@ -34854,7 +35056,7 @@ paths:
       summary: Retrieve Sip Peer TNs
       tags:
         - Tns
-  /accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/tns/{E164tn}:
+  /accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/tns/{tn}:
     get:
       description: Retrieve information about telephone number on Sip Peer
       operationId: ReadSipPeerTn
@@ -34868,10 +35070,10 @@ paths:
           required: true
           schema:
             type: string
-        - description: A E.164 TN.
+        - description: Assumes 10 digit NANPA format if tn is not E.164 formatted.
           example: '+15209072451'
           in: path
-          name: E164tn
+          name: tn
           required: true
           schema:
             type: string
@@ -34885,10 +35087,10 @@ paths:
                     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                     <SipPeerTelephoneNumberResponse>
                         <SipPeerTelephoneNumber>
-                            <FullNumber>5209072451</FullNumber>
                             <E164FullNumber>+15209072451</E164FullNumber>
-                            <CallForward>7042661720</CallForward>
+                            <FullNumber>5209072451</FullNumber>
                             <E164CallForward>+17042661720</E164CallForward>
+                            <CallForward>7042661720</CallForward>
                             <CallingNameDisplay>true</CallingNameDisplay>
                             <TnAttributes>
                                 <TnAttribute>Protected</TnAttribute>
@@ -34919,10 +35121,10 @@ paths:
           required: true
           schema:
             type: string
-        - description: A E.164 TN.
+        - description: Assumes 10 digit NANPA format if tn is not E.164 formatted.
           example: '+15209072451'
           in: path
-          name: E164tn
+          name: tn
           required: true
           schema:
             type: string
@@ -34949,7 +35151,9 @@ paths:
                      </MessagingSettings>
                   </SipPeerTelephoneNumber>
             schema:
-              $ref: '#/components/schemas/SipPeerTelephoneNumber'
+              oneOf:
+                - $ref: '#/components/schemas/SipPeerTelephoneNumberRequestE164'
+                - $ref: '#/components/schemas/SipPeerTelephoneNumberRequestNANPA'
       responses:
         '200':
           content:
@@ -34962,8 +35166,8 @@ paths:
                        <SipPeerTelephoneNumber>
                           <Warnings>
                              <Warning>
-                                <TelephoneNumber>2174101601</TelephoneNumber>
                                 <E164TelephoneNumber>+12174101601</E164TelephoneNumber>
+                                <TelephoneNumber>2174101601</TelephoneNumber>
                                 <Description>SMS is already Enabled or number is in processing.</Description>
                              </Warning>
                           </Warnings>
@@ -39060,6 +39264,13 @@ paths:
           required: false
           schema:
             type: string
+        - description: A 10 Digit TN.
+          example: '9199918388'
+          in: query
+          name: fullNumber
+          required: false
+          schema:
+            type: string
         - description: >-
             An IP address or subnet (CIDR format) associated with the TN. Filter
             for subnet applies by exact match.
@@ -39157,8 +39368,8 @@ paths:
                                 <City>CARY</City>
                                 <Lata>426</Lata>
                                 <State>NC</State>
-                                <FullNumber>9192381138</FullNumber>
                                 <E164FullNumber>+19192381138</E164FullNumber>
+                                <FullNumber>9192381138</FullNumber>
                                 <Tier>0</Tier>
                                 <VendorId>49</VendorId>
                                 <VendorName>Bandwidth CLEC</VendorName>
@@ -39172,8 +39383,8 @@ paths:
                                 <City>CARY</City>
                                 <Lata>426</Lata>
                                 <State>NC</State>
-                                <FullNumber>9192381139</FullNumber>
                                 <E164FullNumber>+19192381139</E164FullNumber>
+                                <FullNumber>9192381139</FullNumber>
                                 <Tier>0</Tier>
                                 <VendorId>49</VendorId>
                                 <VendorName>Bandwidth CLEC</VendorName>
@@ -39187,8 +39398,8 @@ paths:
                                 <City>CARY</City>
                                 <Lata>426</Lata>
                                 <State>NC</State>
-                                <FullNumber>9192381141</FullNumber>
                                 <E164FullNumber>+19192381141</E164FullNumber>
+                                <FullNumber>9192381141</FullNumber>
                                 <Tier>0</Tier>
                                 <VendorId>49</VendorId>
                                 <VendorName>Bandwidth CLEC</VendorName>
@@ -39202,8 +39413,8 @@ paths:
                                 <City>CARY</City>
                                 <Lata>426</Lata>
                                 <State>NC</State>
-                                <FullNumber>9192381142</FullNumber>
                                 <E164FullNumber>+19192381142</E164FullNumber>
+                                <FullNumber>9192381142</FullNumber>
                                 <Tier>0</Tier>
                                 <VendorId>49</VendorId>
                                 <VendorName>Bandwidth CLEC</VendorName>
@@ -39217,8 +39428,8 @@ paths:
                                 <City>CARY</City>
                                 <Lata>426</Lata>
                                 <State>NC</State>
-                                <FullNumber>9192381144</FullNumber>
                                 <E164FullNumber>+19192381144</E164FullNumber>
+                                <FullNumber>9192381144</FullNumber>
                                 <Tier>0</Tier>
                                 <VendorId>49</VendorId>
                                 <VendorName>Bandwidth CLEC</VendorName>
@@ -39273,7 +39484,7 @@ paths:
               example:
                 value: |-
                   <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                  <TnList>
+                  <E164TnList>
                       <E164Tn>+13172000285</E164Tn>
                       <E164Tn>+13172000207</E164Tn>
                       <E164Tn>+13172000000</E164Tn>
@@ -39282,9 +39493,11 @@ paths:
                       <E164Tn>+13172100285</E164Tn>
                       <E164Tn>+199999999999</E164Tn>
                       <E164Tn>+1111111111111</E164Tn>
-                  </TnList>
+                  </E164TnList>
             schema:
-              $ref: '#/components/schemas/TnListRequest'
+              oneOf:
+                - $ref: '#/components/schemas/E164TnListRequest'
+                - $ref: '#/components/schemas/TnListRequest'
       responses:
         '200':
           content:
@@ -39303,8 +39516,8 @@ paths:
                                 <City>INDIANAPOLIS</City>
                                 <Lata>336</Lata>
                                 <State>IN</State>
-                                <FullNumber>3172000000</FullNumber>
                                 <E164FullNumber>3172000000</E164FullNumber>
+                                <FullNumber>3172000000</FullNumber>
                                 <Tier>0</Tier>
                                 <VendorId>49</VendorId>
                                 <VendorName>Bandwidth CLEC</VendorName>
@@ -39317,8 +39530,8 @@ paths:
                                 <City>INDIANAPOLIS</City>
                                 <Lata>336</Lata>
                                 <State>IN</State>
-                                <FullNumber>3172000500</FullNumber>
                                 <E164FullNumber>3172000500</E164FullNumber>
+                                <FullNumber>3172000500</FullNumber>
                                 <Tier>0</Tier>
                                 <VendorId>49</VendorId>
                                 <VendorName>Bandwidth CLEC</VendorName>
@@ -39331,8 +39544,8 @@ paths:
                                 <City>INDIANAPOLIS</City>
                                 <Lata>336</Lata>
                                 <State>IN</State>
-                                <FullNumber>3172000100</FullNumber>
                                 <E164FullNumber>3172000100</E164FullNumber>
+                                <FullNumber>3172000100</FullNumber>
                                 <Tier>0</Tier>
                                 <VendorId>49</VendorId>
                                 <VendorName>Bandwidth CLEC</VendorName>
@@ -39345,8 +39558,8 @@ paths:
                                 <City>INDIANAPOLIS</City>
                                 <Lata>336</Lata>
                                 <State>IN</State>
-                                <FullNumber>3172000207</FullNumber>
                                 <E164FullNumber>3172000207</E164FullNumber>
+                                <FullNumber>3172000207</FullNumber>
                                 <Tier>0</Tier>
                                 <VendorId>49</VendorId>
                                 <VendorName>Bandwidth CLEC</VendorName>
@@ -39359,8 +39572,8 @@ paths:
                                 <City>INDIANAPOLIS</City>
                                 <Lata>336</Lata>
                                 <State>IN</State>
-                                <FullNumber>3172000285</FullNumber>
                                 <E164FullNumber>3172000285</E164FullNumber>
+                                <FullNumber>3172000285</FullNumber>
                                 <Tier>0</Tier>
                                 <VendorId>49</VendorId>
                                 <VendorName>Bandwidth CLEC</VendorName>
@@ -39374,21 +39587,25 @@ paths:
                             <Error>
                                 <Code>15608</Code>
                                 <Description>Input contains invalid Telephone Numbers</Description>
+                                <E164TelephoneNumbers>
+                                    <E164TelephoneNumber>+1111111111111</E164TelephoneNumber>
+                                    <E164TelephoneNumber>+199999999999</E164TelephoneNumber>
+                                </E164TelephoneNumbers>
                                 <TelephoneNumbers>
                                     <TelephoneNumber>111111111111</TelephoneNumber>
-                                    <E164TelephoneNumber>+1111111111111</E164TelephoneNumber>
                                     <TelephoneNumber>99999999999</TelephoneNumber>
-                                    <E164TelephoneNumber>+199999999999</E164TelephoneNumber>
                                 </TelephoneNumbers>
                             </Error>
                             <Error>
                                 <Code>15610</Code>
                                 <Description>Telephone Numbers cannot be found on accounts</Description>
+                                <E164TelephoneNumbers>
+                                    <E164TelephoneNumber>+13172110285</E164TelephoneNumber>
+                                    <E164TelephoneNumber>+13172100285</E164TelephoneNumber>
+                                </E164TelephoneNumbers>
                                 <TelephoneNumbers>
                                     <TelephoneNumber>3172110285</TelephoneNumber>
-                                    <E164TelephoneNumber>+13172110285</E164TelephoneNumber>
                                     <TelephoneNumber>3172100285</TelephoneNumber>
-                                    <E164TelephoneNumber>+13172100285</E164TelephoneNumber>
                                 </TelephoneNumbers>
                             </Error>
                         </ErrorList>
@@ -39425,15 +39642,15 @@ paths:
       summary: List tns
       tags:
         - Tns
-  /tns/{E164tn}:
+  /tns/{tn}:
     get:
       description: Retrieves the telephone number's information.
       operationId: RetrieveTn
       parameters:
-        - description: A E.164 TN.
+        - description: Assumes 10 digit NANPA format if tn is not E.164 formatted.
           example: '+19199918388'
           in: path
-          name: E164tn
+          name: tn
           required: true
           schema:
             type: string
@@ -39446,8 +39663,8 @@ paths:
                   value: |-
                     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                     <TelephoneNumberResponse>
-                      <TelephoneNumber>2012035013</TelephoneNumber>
                       <E164TelephoneNumber>+12012035013</E164TelephoneNumber>
+                      <TelephoneNumber>2012035013</TelephoneNumber>
                       <Status>Inservice</Status>
                       <LastModifiedDate>2014-03-25 12:55:11.0</LastModifiedDate>
                       <OrderCreateDate>2014-03-25T12:55:11.810Z</OrderCreateDate>
@@ -39477,15 +39694,15 @@ paths:
       summary: Retrieve tn
       tags:
         - Tns
-  /tns/{E164tn}/availableNnRoutes:
+  /tns/{tn}/availableNnRoutes:
     get:
       description: Retrieves information about available NnRoutes for the phone number.
       operationId: RetrieveRouteForThatTn
       parameters:
-        - description: A E.164 TN.
+        - description: Assumes 10 digit NANPA format if tn is not E.164 formatted.
           example: '+19199918388'
           in: path
-          name: E164tn
+          name: tn
           required: true
           schema:
             type: string
@@ -39535,15 +39752,15 @@ paths:
       summary: Retrieve routes for that tn
       tags:
         - Tns
-  /tns/{E164tn}/e911:
+  /tns/{tn}/e911:
     get:
       description: Retrieves the e911 information associated with that telephone number
       operationId: RetrieveTnE911Info
       parameters:
-        - description: A E.164 TN.
+        - description: Assumes 10 digit NANPA format if tn is not E.164 formatted.
           example: '+19199918388'
           in: path
-          name: E164tn
+          name: tn
           required: true
           schema:
             type: string
@@ -39576,15 +39793,15 @@ paths:
       summary: Retrieve e911 for that tn
       tags:
         - Tns
-  /tns/{E164tn}/lata:
+  /tns/{tn}/lata:
     get:
       description: Retrieves the lata associated with that telephone number.
       operationId: RetrieveLataForThatTn
       parameters:
-        - description: A E.164 TN.
+        - description: Assumes 10 digit NANPA format if tn is not E.164 formatted.
           example: '+19199918388'
           in: path
-          name: E164tn
+          name: tn
           required: true
           schema:
             type: string
@@ -39607,15 +39824,15 @@ paths:
       summary: Retrieve lata for that tn (US&C)
       tags:
         - Tns
-  /tns/{E164tn}/lca:
+  /tns/{tn}/lca:
     get:
       description: Retrieves the LCAs associated with that telephone number.
       operationId: RetrieveLCAForThatTn
       parameters:
-        - description: A E.164 TN.
+        - description: Assumes 10 digit NANPA format if tn is not E.164 formatted.
           example: '+19199918388'
           in: path
-          name: E164tn
+          name: tn
           required: true
           schema:
             type: string
@@ -39656,15 +39873,15 @@ paths:
       summary: Retrieve LCA for that tn (US&C)
       tags:
         - Tns
-  /tns/{E164tn}/ratecenter:
+  /tns/{tn}/ratecenter:
     get:
       description: Retrieves the rate centers associated with that telephone number.
       operationId: RetrieveRateCenterForThatTn
       parameters:
-        - description: A E.164 TN.
+        - description: Assumes 10 digit NANPA format if tn is not E.164 formatted.
           example: '+19199918388'
           in: path
-          name: E164tn
+          name: tn
           required: true
           schema:
             type: string
@@ -39689,15 +39906,15 @@ paths:
       summary: Retrieve rate center for that tn (US&C)
       tags:
         - Tns
-  /tns/{E164tn}/sippeers:
+  /tns/{tn}/sippeers:
     get:
       description: Retrieves the sippeers associated with that telephone number.
       operationId: RetrieveSippeerForThatTn
       parameters:
-        - description: A E.164 TN.
+        - description: Assumes 10 digit NANPA format if tn is not E.164 formatted.
           example: '+19199918388'
           in: path
-          name: E164tn
+          name: tn
           required: true
           schema:
             type: string
@@ -39719,15 +39936,15 @@ paths:
       summary: Retrieve sippeer for that tn
       tags:
         - Tns
-  /tns/{E164tn}/sites:
+  /tns/{tn}/sites:
     get:
       description: Retrieves the sites associated with that telephone number
       operationId: RetrieveSiteForThatTn
       parameters:
-        - description: A E.164 TN.
+        - description: Assumes 10 digit NANPA format if tn is not E.164 formatted.
           example: '+19199918388'
           in: path
-          name: E164tn
+          name: tn
           required: true
           schema:
             type: string
@@ -39749,17 +39966,17 @@ paths:
       summary: Retrieve site for that tn
       tags:
         - Tns
-  /tns/{E164tn}/tndetails:
+  /tns/{tn}/tndetails:
     get:
       description: >-
         Retrieves detailed information about the phone number. TnAttributes -
         Does this telephone number is protected or not.
       operationId: RetrieveTnDetails
       parameters:
-        - description: A E.164 TN.
+        - description: Assumes 10 digit NANPA format if tn is not E.164 formatted.
           example: '+19199918388'
           in: path
-          name: E164tn
+          name: tn
           required: true
           schema:
             type: string
@@ -40220,3 +40437,4 @@ tags:
   - name: Tn Reservation
   - name: Tns
   - name: Admin Data
+  - name: Tn Vendor Assignment
