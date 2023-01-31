@@ -31,6 +31,7 @@ const globalSpec_v2 = fs.readFileSync('./specs/global-v2.yml', 'utf-8');
 const globalSpec_v3 = fs.readFileSync('./specs/global-v3.yml', 'utf-8');
 const globalSpec_beta = fs.readFileSync('./specs/global-beta.yml', 'utf-8');
 const insightsSpec = fs.readFileSync('./specs/insights.yml', 'utf-8');
+const blueSkyOpsSpec = fs.readFileSync('./specs/blue-sky-ops.yml', 'utf-8');
 /* TODO ONEID-1304
 const identitySpec = fs.readFileSync('./specs/one-identity-management.yml', 'utf-8');
 */
@@ -175,6 +176,8 @@ module.exports = {
     globalSpec_beta: YAML.parse(globalSpec_beta),
     insightsSpec: YAML.parse(insightsSpec),
     insightsSpecLink: `${customConfig.insightsSpecLink}`,
+    blueSkyOpsSpec: YAML.parse(blueSkyOpsSpec),
+    blueSkyOpsSpecLink: `${customConfig.blueSkyOpsSpecLink}`,
     // TODO ONEID-1304
     // identitySpec: YAML.parse(identitySpec),
 

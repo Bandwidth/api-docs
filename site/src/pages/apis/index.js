@@ -19,6 +19,11 @@ const apiList = [
         link: '/apis/numbers/'
     },
     {
+        title: 'Blue Sky Location Management API',
+        Svg: require('@site/static/img/api-icons/numbers.svg').default,
+        link: '/apis/blue-sky-ops/'
+    }
+    {
         title: 'Multi-Factor Authentication API',
         Svg: require('@site/static/img/api-icons/mfa.svg').default,
         link: '/apis/multifactorauth/'
