@@ -177,7 +177,8 @@ module.exports = {
                         "voice/callQueueingGuide",
                         "voice/migrationGuide",
                         "voice/cnamPerDipGuide",
-                        "voice/webCallingGuide"
+                        "voice/InAppCallingGuide", 
+                        "voice/InAppCallingMigrationGuide"
                     ],
                 },
                 "voice/rateLimits",

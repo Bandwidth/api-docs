@@ -1,24 +1,25 @@
 ---
-id: webCallingGuide
-title: Calling with WebRTC
+id: InAppCallingGuide
+title: In-App Calling
 slug: /voice/guides/webrtc
-description: Using the WebRTC Connect product to place web-browser based calls into the Bandwidth voice network.
+description: A guide on making calls from a browser or device using the Bandwidht In-App Calling capability
 keywords:
   - bandwidth
+  - In-App
   - voice
   - webrtc
 image: '@site/static/img/bw-icon.svg'
 ---
 
-# Bandwidth WebRTC-Connect calling
+# Bandwidth In-App Calling
 
-Bandwidth offers a *WebRTC Connect* calling capability that allows our customers to use WebRTC voice capabilities present in voice and mobile devices to place calls to critical destinations served by the Bandwidth voice network, allowing access to Bandwidth network services, quality and reach to advance any and all business needs surfaced by web browsers and mobile applications.
+Bandwidth offers a *In-App Calling* calling capability that allows our customers to use WebRTC voice capabilities present in web and mobile devices to place calls to critical destinations served by the Bandwidth voice network, allowing access to Bandwidth network services, quality and reach to advance any and all business needs surfaced by web browsers and mobile applications.
 
-The Bandwidth *WebRTC Connect* capability is designed for simplicity, reliability and voice quality; leveraging the Bandwidth Global voice network to deliver a voicepath that is managed from end to end.
+The Bandwidth *In-App Calling* capability is designed for simplicity, reliability and voice quality; leveraging the Bandwidth Global voice network to deliver a voicepath that is managed from end to end.
 
 ## Overall Solution Architecture
 
-Bandwidth WebRTC Connect is delivered by way of an SDK that is provided to the customer (that's you) to support development of your client experience.  Those Web and Mobile device SDKs enable the development of web and mobile applications that can negoitiate with our Bandwidth WebRTC Gateway to establish voice calls into our network.  The SDKs manage the initializtion, call creation, call management, and call state change events that are needed to provide a comprehensive calling user experience.
+Bandwidth In-App Calling is delivered by way of an SDK that is provided to the customer (that's you) to support development of your client experience.  These Web and Mobile device SDKs enable the development of web and mobile applications that can negoitiate with our Bandwidth WebRTC Gateway to establish voice calls into our network.  The SDKs manage the initializtion, call creation, call management, and call state change events that are needed to provide a comprehensive calling user experience.
 
 In additon to managing the relationship with the WebRTC Gateway, our Bandwidth capabilities are also used to secure the connection by granting single-use tokens that will ensure that calls via the Gateway will be limited to (and billed to) your account.
 
@@ -29,6 +30,32 @@ See below for a visual depiction of the network-level solution.
 The following segments of this document will describe...
 1. The important functions performed by the SDK,
 1. The processes used for authenticating access to the WebRTC gateway
+
+# Resources 
+
+The following resources are available to aid in the development of quality solitions using Bandwidth In-App calling.
+
+## SDKs
+
+SDKs exposing all key capabilities (dee documentation below) are available in raw and packaged form.
+
+| Environment | Repository | Package site |
+| --- | --- | --- |
+| javascript / Web | [webrtc-browser-sdk](https://github.com/Bandwidth/webrtc-browser-sdk) | **We need this** |
+| Kotlin (Android) | [kotlin-webrtc-mobile-sdk](https://github.com/Bandwidth/kotlin-webrtc-mobile-sdk) | **We need this** |
+| Swift (IOS) | [swift-webrtc-mobile-sdk](https://github.com/Bandwidth/swift-webrtc-mobile-sdk) | **We need this** |
+
+## Sample Applications
+
+What fun would life as a developer be if you couldn't occasionally "learn from " somebody else's implementation?  With that in mind we have provided some sample applications to assist in the learning process.
+
+| Use Case | Technology | Location |
+| --- | --- | --- |
+| A simple click to call | HTML + javascript | [webrtc-web-c2c-html](https://github.com/Bandwidth-Samples/webrtc-web-c2c-html) |
+| A React click to call - a little better presentation | React + Typescript | [webrtc-web-c2c-ts](https://github.com/Bandwidth-Samples/webrtc-web-c2c-ts) |
+| An in-browser dialer - the ability to place and manage calls from a browser, including DTMF and Hold-state management | React + Typescript | [webrtc-web-dialer-ts](https://github.com/Bandwidth-Samples/webrtc-web-dialer-ts) |
+| Programmable Voice enabling simulated bidirectional calling | React + Typescript | [webrtc-web-phone-ts](https://github.com/Bandwidth-Samples/webrtc-web-phone-ts) |
+| Mobile Sample Applications are on the way |
 
 # Key elements of the SDK
 
