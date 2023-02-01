@@ -49,7 +49,7 @@ paths:
         $ref: '#/components/requestBodies/createIdpRequest'
       responses:
         '201':
-          $ref: '#/components/responses/createdResponse'
+          $ref: '#/components/responses/createdIdpResponse'
         '400':
           $ref: '#/components/responses/badRequestResponse'
         '401':
@@ -129,7 +129,7 @@ paths:
         - $ref: '#/components/parameters/idpId'
       responses:
         '204':
-          $ref: '#/components/responses/deleteResponse'
+          $ref: '#/components/responses/deleteIdpResponse'
         '401':
           $ref: '#/components/responses/unauthorizedResponse'
         '403':
@@ -192,24 +192,27 @@ components:
       required: true
       schema:
         type: string
+        format: uuid
+        pattern: >-
+          ^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89AB][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$
   requestBodies:
     createIdpRequest:
-      description: ''
+      description: Create Idp request body.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/newIdP'
       required: true
     updateIdpRequest:
-      description: ''
+      description: Update Idp request body.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/updateIdP'
       required: true
   responses:
-    createdResponse:
-      description: Successful Response. Returns the newly created IdP resource.
+    createdIdpResponse:
+      description: Created.
       headers:
         Location:
           description: The URL of the created resource.
@@ -222,142 +225,91 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/successResponse'
-    deleteResponse:
-      description: Successful response. The IdP resource was deleted.
-      headers: {}
-      content: {}
+    deleteIdpResponse:
+      description: No Content
     getIdpResponse:
-      description: Successful response. The IdP resource, if it exists.
-      headers: {}
+      description: OK
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/successResponse'
     getIdpsResponse:
-      description: >-
-        Successful response. A list of IdPs is returned. If there are no IdPs to
-        return, an empty list is returned.
-      headers: {}
+      description: OK
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/successResponse'
     putIdpsResponse:
-      description: Successful Response. Returns the modified IdP resource.
-      headers: {}
+      description: OK
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/successResponse'
     badRequestResponse:
       description: Bad Request
-      headers: {}
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/errorResponse'
-          example:
-            links: []
-            data: null
-            errors:
-              - type: Validation
-                description: >-
-                  failed to validate input: provided SignatureCertificate has
-                  expired
-                code: E0001
-                source: {}
+          examples:
+            badRequestResponseExample:
+              $ref: '#/components/examples/badRequestResponse'
     conflictResponse:
-      description: >-
-        Conflict. You are attempting to modify an IdP in a way it cannot be
-        changed
-      headers: {}
+      description: Conflict
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/errorResponse'
-          example:
-            links: []
-            data: null
-            errors:
-              - type: Conflict
-                description: invalid account(s) provided
-                code: E0002
-                source: {}
+          examples:
+            conflictResponseExample:
+              $ref: '#/components/examples/conflictResponse'
     forbiddenResponse:
       description: Forbidden
-      headers: {}
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/errorResponse'
-          example:
-            links: []
-            data: null
-            errors: []
+          examples:
+            forbiddenResponseExample:
+              $ref: '#/components/examples/forbiddenResponse'
     internalErrorResponse:
-      description: An internal error occurred attempting to process a request
-      headers: {}
+      description: Internal Server Error
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/errorResponse'
-          example:
-            links: []
-            data: null
-            errors:
-              - type: Internal Error
-                description: An error occurred. Please refresh and try again.
-                code: E0003
-                source: {}
+          examples:
+            internalErrorResponseExample:
+              $ref: '#/components/examples/internalErrorResponse'
     methodNotAllowedResponse:
       description: Method Not Allowed
-      headers: {}
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/errorResponse'
-          example:
-            links: []
-            data: null
-            errors:
-              - type: Error
-                description: the HTTP method used is not supported by this resource
-                code: E0004
-                source: {}
+          examples:
+            methodNotAllowedResponseExample:
+              $ref: '#/components/examples/methodNotAllowedResponse'
     notFoundResponse:
-      description: IdP not found.
-      headers: {}
+      description: Not Found
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/errorResponse'
-          example:
-            links: []
-            data: null
-            errors:
-              - type: Error
-                description: the specified resource could not be found.
-                code: E0005
-                source: {}
+          examples:
+            notFoundResponseExample:
+              $ref: '#/components/examples/notFoundResponse'
     tooManyRequestsResponse:
       description: Too Many Requests
-      headers: {}
-      content: {}
     unauthorizedResponse:
       description: Unauthorized
-      headers: {}
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/errorResponse'
-          example:
-            links: []
-            data: null
-            errors:
-              - type: Authorization
-                description: Invalid credentials
-                code: E0006
-                source: {}
+          examples:
+            unauthorizedResponseExample:
+              $ref: '#/components/examples/unauthorizedResponse'
   schemas:
     successResponse:
       required:
@@ -470,6 +422,9 @@ components:
           type: string
           description: The identifier for this Identity Provider.
           example: 12345678-abcd-efgh-hijk-87654321cbab
+          format: uuid
+          pattern: >-
+            ^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89AB][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12}$
         name:
           $ref: '#/components/schemas/name'
         entityId:
@@ -507,6 +462,7 @@ components:
     issuerUri:
       title: issuerUri
       type: string
+      format: uri
       description: >-
         URI of the Identity Provider. This value is usually the SAML Metadata
         EntityID of the IdP EntityDescriptor.
@@ -514,6 +470,7 @@ components:
     singleSignOnUrl:
       title: singleSignOnUrl
       type: string
+      format: uri
       description: >-
         The binding-specific IdP Authentication Request Protocol endpoint that
         receives SAML AuthnRequest messages. This must be a valid RFC 3986
@@ -522,6 +479,8 @@ components:
     signatureCertificate:
       title: signatureCertificate
       type: string
+      minLength: 1
+      maxLength: 2147483647
       description: >-
         The PEM or DER encoded public key certificate of the Identity Provider
         used to verify SAML message and assertion signatures.
@@ -622,6 +581,75 @@ components:
     basicAuth:
       type: http
       scheme: basic
+  examples:
+    badRequestResponse:
+      value:
+        links: []
+        data:
+          totalCount: 0
+        errors:
+          - type: Validation
+            description: >-
+              failed to validate input: provided SignatureCertificate has
+              expired
+            code: E0001
+            source: {}
+    conflictResponse:
+      value:
+        links: []
+        data:
+          totalCount: 0
+        errors:
+          - type: Conflict
+            description: invalid account(s) provided
+            code: E0002
+            source: {}
+    forbiddenResponse:
+      value:
+        links: []
+        data:
+          totalCount: 0
+        errors:
+          - type: Error
+            description: ''
+            code: ''
+            source: {}
+    internalErrorResponse:
+      value:
+        links: []
+        data: null
+        errors:
+          - type: Internal Error
+            description: An error occurred. Please refresh and try again.
+            code: E0003
+            source: {}
+    methodNotAllowedResponse:
+      value:
+        links: []
+        data: null
+        errors:
+          - type: Error
+            description: the HTTP method used is not supported by this resource
+            code: E0004
+            source: {}
+    notFoundResponse:
+      value:
+        links: []
+        data: null
+        errors:
+          - type: Error
+            description: the specified resource could not be found.
+            code: E0005
+            source: {}
+    unauthorizedResponse:
+      value:
+        links: []
+        data: null
+        errors:
+          - type: Authorization
+            description: Invalid credentials
+            code: E0006
+            source: {}
 security:
   - basicAuth: []
   - bearerAuth: []
