@@ -1,19 +1,18 @@
 openapi: 3.0.1
 info:
-  description: Blue Sky Provisioning Application - External API
+  description: External API for the Blue Sky Provisioning Application.
   title: blue-sky-ops-external
   version: 0.10.0
+  termsOfService: https://www.bandwidth.com/legal/terms-of-use-bandwidthcom-web-sites/
   contact:
     name: Blue Sky team
 servers:
-  - url: https://blue-sky-ops.{environment}.bluesky.bandwidth.com
-    variables:
-      environment:
-        default: lab
-        enum:
-          - lab
-          - stage
-          - prod
+  - url: https://blue-sky-ops.lab.bluesky.bandwidth.com
+    description: Development server.
+  - url: https://blue-sky-ops.stage.bluesky.bandwidth.com
+    description: Staging server.
+  - url: https://blue-sky-ops.prod.bluesky.bandwidth.com
+    description: Production server.
 security:
   - httpBasic: []
 tags:
@@ -24,19 +23,13 @@ paths:
     get:
       tags:
         - Location
-      description: Returns locations for a SanId from blue sky ops application
+      description: Returns locations for a SanId from blue sky ops application.
       operationId: getLocationsBySanId
       parameters:
         - $ref: '#/components/parameters/sanIdPathParam'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/locationV2Dto'
-          description: Successfully returning locations
+          $ref: '#/components/responses/locationArray'
         '500':
           $ref: '#/components/responses/internalServerError'
       summary: Retrieve Locations by SanId
@@ -53,11 +46,7 @@ paths:
         $ref: '#/components/requestBodies/postLocation'
       responses:
         '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/locationV2Dto'
-          description: New Location Created
+          $ref: '#/components/responses/location'
         '400':
           $ref: '#/components/responses/badRequest'
         '500':
@@ -76,7 +65,7 @@ paths:
         - $ref: '#/components/parameters/sipPeerIdPathParam'
       responses:
         '204':
-          description: Location deleted successfully
+          description: Location deleted successfully.
         '404':
           $ref: '#/components/responses/notFound'
         '500':
@@ -85,18 +74,14 @@ paths:
     get:
       tags:
         - Location
-      description: Returns a location from the blue sky ops application
+      description: Returns a location from the blue sky ops application.
       operationId: getLocationBySipPeerId
       parameters:
         - $ref: '#/components/parameters/sanIdPathParam'
         - $ref: '#/components/parameters/sipPeerIdPathParam'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/locationV2Dto'
-          description: Successfully returning a location
+          $ref: '#/components/responses/location'
         '404':
           $ref: '#/components/responses/notFound'
         '500':
@@ -116,7 +101,7 @@ paths:
         $ref: '#/components/requestBodies/patchLocation'
       responses:
         '204':
-          description: Location updated successfully
+          description: Location updated successfully.
         '404':
           $ref: '#/components/responses/notFound'
         '500':
@@ -134,48 +119,64 @@ paths:
         - $ref: '#/components/parameters/sanIdPathParam'
       responses:
         '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/externalTrunkInfo'
-          description: >-
-            Successfully returning externalTrunkInfo entries information or
-            empty if no entries found
+          $ref: '#/components/responses/externalTrunkInfoArray'
         '500':
           $ref: '#/components/responses/internalServerError'
       summary: Retrieve A list of externalTrunkInfo entries by San Id
 components:
   responses:
+    externalTrunkInfoArray:
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/externalTrunkInfo'
+      description: >-
+        Successfully returning externalTrunkInfo entries information or empty if
+        no entries found.
+    location:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/locationV2Dto'
+      description: Successfully returning location.
+    locationArray:
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/locationV2Dto'
+      description: Successfully returning locations.
     badRequest:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/errorDto'
-      description: Unpredictable client error while processing the request
+      description: Unpredictable client error while processing the request.
     notFound:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/errorDto'
-      description: Specified resource does not exist or other request validation error
+      description: Specified resource does not exist or other request validation error.
     internalServerError:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/errorDto'
-      description: Unpredictable error while processing the request
+      description: Unpredictable error while processing the request.
   requestBodies:
     postLocation:
-      description: Location Create Request
+      description: Location Create Request.
       required: true
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/locationV2Dto'
     patchLocation:
-      description: Location Update Request
+      description: Location Update Request.
       required: true
       content:
         application/json:
@@ -187,7 +188,7 @@ components:
       scheme: basic
   parameters:
     sanIdPathParam:
-      description: Customer SAN ID
+      description: Customer SAN ID.
       in: path
       name: sanId
       required: true
@@ -195,7 +196,7 @@ components:
         type: integer
         format: int32
     sipPeerIdPathParam:
-      description: Sip Peer Id
+      description: Sip Peer Id.
       in: path
       name: sipPeerId
       required: true
@@ -211,6 +212,9 @@ components:
           format: int32
         message:
           type: string
+      example:
+        errorCode: 500
+        message: 'Unable to get customer with sanId: 123456'
     externalTrunkInfo:
       type: object
       properties:
@@ -228,6 +232,10 @@ components:
           format: int32
         trunkTypeName:
           type: string
+      example:
+        trunkInfoId: 123456
+        trunkTypeName: cisco_ccpp
+        status: PROVISIONED
     locationUpdateDto:
       type: object
       properties:
@@ -235,6 +243,10 @@ components:
           type: array
           items:
             type: string
+        example:
+          externalIds:
+            - 24a41437-5724-4a00-8b06-427f73ad8bbd
+            - 2e498f77-29f3-4205-9932-c4e1710d272f
     locationV2Dto:
       type: object
       properties:
@@ -264,3 +276,14 @@ components:
         username:
           type: string
           readOnly: true
+      example:
+        created: '2023-01-31T15:45:48.248Z'
+        externalIds:
+          - 24a41437-5724-4a00-8b06-427f73ad8bbd
+          - 2e498f77-29f3-4205-9932-c4e1710d272f
+        primaryLoc: true
+        sanId: 9900012
+        sipPeerId: 524928
+        siteId: 8640
+        trunkInfoId: 5166
+        username: fakeUser
