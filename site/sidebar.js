@@ -172,6 +172,8 @@ module.exports = {
                         "voice/callQueueingGuide",
                         "voice/migrationGuide",
                         "voice/cnamPerDipGuide",
+                        "voice/inAppCallingGuide",
+                        "voice/inAppCallingMigrationGuide",
                     ],
                 },
                 "voice/rateLimits",
@@ -240,31 +242,6 @@ module.exports = {
         },
         {
             type: "category",
-            label: "WebRTC",
-            items: [
-                "webrtc/about",
-                "webrtc/webhooks",
-                {
-                    type: "category",
-                    label: "Guides and Tutorials",
-                    items: [
-                        "webrtc/overview",
-                        "webrtc/quickstart",
-                        "webrtc/resources",
-                        "webrtc/voice-iw",
-                        "webrtc/callflow",
-                    ],
-                },
-                "webrtc/errors",
-                {
-                    type: "link",
-                    label: "API Reference",
-                    href: "https://dev.bandwidth.com/apis/webrtc"
-                },
-            ],
-        },
-        {
-            type: "category",
             label: "Multi-Factor Authentication",
             items: [
                 "mfa/about",
@@ -320,17 +297,42 @@ module.exports = {
                 "emergency/emergencyCallingApi",
             ],
         },
+        {
+            type: "category",
+            label: "(Deprecated) Legacy WebRTC",
+            items: [
+                "webrtc/about",
+                "webrtc/webhooks",
+                {
+                    type: "category",
+                    label: "Guides and Tutorials",
+                    items: [
+                        "webrtc/overview",
+                        "webrtc/quickstart",
+                        "webrtc/resources",
+                        "webrtc/voice-iw",
+                        "webrtc/callflow",
+                    ],
+                },
+                "webrtc/errors",
+                {
+                    type: "link",
+                    label: "API Reference",
+                    href: "https://dev.bandwidth.com/apis/webrtc"
+                },
+            ],
+        },
         /* TODO ONEID-1304
         {
-          type: 'category',
-          label: 'Identity Management',
-          items: [
-              'identity/about',
-              'identity/identityProvidersOverview',
-          ],
+            type: 'category',
+            label: 'Identity Management',
+            items: [
+                'identity/about',
+                'identity/identityProvidersOverview',
+            ],
         },
         */
-        {
+       {
             type: "doc",
             id: "versions",
             label: "Versions"

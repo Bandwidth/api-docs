@@ -44,11 +44,12 @@ const apiList = [
         link: '/apis/dash-notifications/'
 
     },
-    {
-        title: 'WebRTC API',
-        Svg: require('@site/static/img/api-icons/webrtc.svg').default,
-        link: '/apis/webrtc/'
-    },
+    // {
+    // Deprecated
+    //     title: 'WebRTC API',
+    //     Svg: require('@site/static/img/api-icons/webrtc.svg').default,
+    //     link: '/apis/webrtc/'
+    // },
     {
         title: 'Insights API',
         Svg: require('@site/static/img/api-icons/insights.svg').default,
