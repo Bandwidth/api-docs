@@ -40,10 +40,12 @@ export default function WasThisHelpful({pageId}) {
             <div className="feedback" style={feedbackStyle}>
                 <MultiLineInput label={'Feedback'} changeFunction={handleFeedback} placeholder={feedbackPlaceholder} value={userFeedback}/>
                 <SingleLineInput label={'Email'} changeFunction={handleEmail} placeholder={''} value={userEmail} note={'This will only be used to contact you regarding this feedback.'}/>
-                <button onClick={() => submitFeedback()} className="secondary-button">
-                    {awaitingResponse ? <Loader ringSize='18'/> : `Submit`}
-                </button>
-                
+                <div className="feedback-buttons">
+                    <button onClick={() => submitFeedback()} className="secondary-button">
+                        {awaitingResponse ? <Loader ringSize='18'/> : `Submit`}
+                    </button>
+                    <button onClick={() => cancelFeedback()} className="destructive-button">Cancel</button>
+                </div>
             </div>
         )
     };
@@ -69,6 +71,16 @@ export default function WasThisHelpful({pageId}) {
         
         setTimeout(() => {
             setIsHelpfulSubmitted(true);
+            setFeedbackOpacity(1);
+        }, transitionTime)
+    };
+
+    const cancelFeedback = () => {
+        setFeedbackOpacity(0);
+
+        setTimeout(() => {
+            setIsHelpfulSubmitted(false);
+            setQuestionOpacity(1);
         }, transitionTime)
     };
 
