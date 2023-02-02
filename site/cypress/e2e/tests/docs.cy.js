@@ -37,7 +37,7 @@ context('WebRTC Text Link', () => {
 })
 
 context('WebRTC SVG Link', () => {
-  testSvgLink('/docs/','svg[alt="WebRTC"]', 'docs/webrtc')
+  testSvgLink('/docs/','svg[alt="(Deprecated) WebRTC"]', 'docs/webrtc')
 })
 
 context('Multi-Factor Authentication Text Link', () => {

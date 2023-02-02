@@ -33,7 +33,7 @@ context('Emergency API Text Link on API Reference Page', () => {
 })
 
 context('WebRTC API SVG Link on API Reference Page', () => {
-  testSvgLink('/apis/','svg[alt="WebRTC API"]', 'apis/webrtc')
+  testSvgLink('/apis/','svg[alt="(Deprecated) WebRTC API"]', 'apis/webrtc')
 })
 
 context('WebRTC Product Text Link on API Reference Page', () => {
