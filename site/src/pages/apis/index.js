@@ -49,11 +49,11 @@ const apiList = [
         Svg: require('@site/static/img/api-icons/insights.svg').default,
         link: '/apis/insights/'
     },
-    {
-        title: '(Deprecated) WebRTC API',
-        Svg: require('@site/static/img/api-icons/webrtc.svg').default,
-        link: '/apis/webrtc/'
-    },
+    // {
+    //     title: '(Deprecated) WebRTC API',
+    //     Svg: require('@site/static/img/api-icons/webrtc.svg').default,
+    //     link: '/apis/webrtc/'
+    // },
     /* TODO ONEID-1304
     {
         title: 'Identity Providers',

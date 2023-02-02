@@ -32,13 +32,13 @@ context('Emergency API Text Link on API Reference Page', () => {
   testTextLink('/apis/','Emergency API', 'apis/dash')
 })
 
-context('WebRTC API SVG Link on API Reference Page', () => {
-  testSvgLink('/apis/','svg[alt="(Deprecated) WebRTC API"]', 'apis/webrtc')
-})
+// context('WebRTC API SVG Link on API Reference Page', () => {
+//   testSvgLink('/apis/','svg[alt="(Deprecated) WebRTC API"]', 'apis/webrtc')
+// })
 
-context('WebRTC Product Text Link on API Reference Page', () => {
-  testTextLink('/apis/','WebRTC API', 'apis/webrtc')
-})
+// context('WebRTC Product Text Link on API Reference Page', () => {
+//   testTextLink('/apis/','WebRTC API', 'apis/webrtc')
+// })
 
 context('Phone Number Lookup API SVG Link on API Reference Page', () => {
   testSvgLink('/apis/','svg[alt="Phone Number Lookup API"]', 'apis/number-lookup')

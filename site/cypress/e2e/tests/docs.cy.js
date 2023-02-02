@@ -32,13 +32,13 @@ context('Messaging SVG Link', () => {
   testSvgLink('/docs/','svg[alt="Messaging"]', 'docs/messaging')
 })
 
-context('WebRTC Text Link', () => {
-  testTextLink('/docs/','WebRTC', 'docs/webrtc' ,'[data-cy="textLink"]')
-})
+// context('WebRTC Text Link', () => {
+//   testTextLink('/docs/','WebRTC', 'docs/webrtc' ,'[data-cy="textLink"]')
+// })
 
-context('WebRTC SVG Link', () => {
-  testSvgLink('/docs/','svg[alt="(Deprecated) WebRTC"]', 'docs/webrtc')
-})
+// context('WebRTC SVG Link', () => {
+//   testSvgLink('/docs/','svg[alt="(Deprecated) WebRTC"]', 'docs/webrtc')
+// })
 
 context('Multi-Factor Authentication Text Link', () => {
   testTextLink('/docs/','Multi-Factor Authentication', 'docs/mfa' ,'[data-cy="textLink"]')
