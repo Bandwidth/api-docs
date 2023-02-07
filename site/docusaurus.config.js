@@ -181,10 +181,11 @@ module.exports = {
         [
             '@docusaurus/plugin-content-docs',
             {
-                id: 'miration-guides',
+                id: 'migration-guides',
                 path: 'migration-guides',
                 routeBasePath: 'migration-guides',
                 sidebarPath: require.resolve('./sidebarsMigrationGuides.js'),
+                editUrl: 'https://github.com/Bandwidth/api-docs/edit/main/site/',
             },
         ],
         'docusaurus-plugin-sass',
