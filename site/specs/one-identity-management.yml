@@ -14,7 +14,7 @@ paths:
     get:
       tags:
         - Identity Provider Management
-      summary: getIdps
+      summary: List IdPs
       description: Returns all the IdPs that the requesting user has access to.
       operationId: getIdps
       parameters:
@@ -42,7 +42,7 @@ paths:
     post:
       tags:
         - Identity Provider Management
-      summary: postIdps
+      summary: Create IdP
       description: Creates a new IdP.
       operationId: postIdps
       requestBody:
@@ -68,7 +68,7 @@ paths:
     put:
       tags:
         - Identity Provider Management
-      summary: putIdp
+      summary: Replace IdP
       description: Modifies an IdP.
       operationId: putIdp
       parameters:
@@ -97,7 +97,7 @@ paths:
     get:
       tags:
         - Identity Provider Management
-      summary: getIdp
+      summary: Get IdP
       description: Returns the IdP with the given id.
       operationId: getIdp
       parameters:
@@ -122,7 +122,7 @@ paths:
     delete:
       tags:
         - Identity Provider Management
-      summary: deleteIdp
+      summary: Delete IdP
       description: Deletes the IdP with the given id.
       operationId: deleteIdp
       parameters:
@@ -224,7 +224,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/successResponse'
+            $ref: '#/components/schemas/idpResponse'
     deleteIdpResponse:
       description: No Content
     getIdpResponse:
@@ -232,19 +232,19 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/successResponse'
+            $ref: '#/components/schemas/idpResponse'
     getIdpsResponse:
       description: OK
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/successResponse'
+            $ref: '#/components/schemas/listIdpResponse'
     putIdpsResponse:
       description: OK
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/successResponse'
+            $ref: '#/components/schemas/idpResponse'
     badRequestResponse:
       description: Bad Request
       content:
@@ -311,7 +311,7 @@ components:
             unauthorizedResponseExample:
               $ref: '#/components/examples/unauthorizedResponse'
   schemas:
-    successResponse:
+    idpResponse:
       required:
         - links
         - data
@@ -324,7 +324,36 @@ components:
             $ref: '#/components/schemas/link'
           example: []
         data:
-          $ref: '#/components/schemas/data'
+          $ref: '#/components/schemas/idP'
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/error'
+          example: []
+    listIdpResponse:
+      required:
+        - links
+        - data
+        - errors
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/link'
+          example: []
+        data:
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/idP'
+            totalCount:
+              type: integer
+              description: The total number of IdPs found with the specified filters
+              format: int32
+              example: 0
         errors:
           type: array
           items:
@@ -343,7 +372,8 @@ components:
             $ref: '#/components/schemas/link'
           example: []
         data:
-          $ref: '#/components/schemas/data'
+          type: object
+          nullable: true
         errors:
           type: array
           items:
@@ -508,22 +538,6 @@ components:
         A short description to uniquely identify an Identity Provider
         configuration. Max 40 characters
       example: IDP for Developers
-    data:
-      title: data
-      type: object
-      nullable: false
-      properties:
-        items:
-          type: array
-          minLength: 0
-          items:
-            $ref: '#/components/schemas/idP'
-          example: []
-        totalCount:
-          type: integer
-          description: The total number of IdPs found with the specified filters
-          format: int32
-          example: 0
     link:
       title: link
       type: object
@@ -586,8 +600,7 @@ components:
     badRequestResponse:
       value:
         links: []
-        data:
-          totalCount: 0
+        data: null
         errors:
           - type: Validation
             description: >-
@@ -598,8 +611,7 @@ components:
     conflictResponse:
       value:
         links: []
-        data:
-          totalCount: 0
+        data: null
         errors:
           - type: Conflict
             description: invalid account(s) provided
@@ -608,8 +620,7 @@ components:
     forbiddenResponse:
       value:
         links: []
-        data:
-          totalCount: 0
+        data: null
         errors:
           - type: Error
             description: ''
