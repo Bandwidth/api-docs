@@ -1,9 +1,8 @@
 const DOCUSAURUS = {
-  darkGray: '#303846',
+  backgroundColor: 'transparent',
   dark: {
     primaryText: '#FFFFFF',
     secondaryText: 'rgba(255, 255, 255, 1)',
-    backgroundColor: '#121212',
   },
 };
 
@@ -39,23 +38,23 @@ export function lightTheme(primaryColor) {
           100: '#F5F5F5',
         },
         border: {
-          dark: '#ffffff',
+          dark: '#FFFFFF',
           light: 'rgba(0,0,0, 0.1)',
         },
         http: {
-          get: '#00bf8c',
+          get: '#00BF8C',
           post: '#079CEE',
-          put: '#9a59c5',
+          put: '#9A59C5',
           patch: '#652B51',
-          delete: '#ff6f47',
+          delete: '#FF6F47',
         },
       },
       sidebar: {
         width: '300px',
-        backgroundColor: '#ffffff',
+        backgroundColor: DOCUSAURUS.backgroundColor,
       },
       rightPanel: {
-        backgroundColor: 'transparent',
+        backgroundColor: DOCUSAURUS.backgroundColor,
       }
     }
   )
@@ -80,7 +79,7 @@ export function darkTheme(primaryColor) {
           lineHeight: 'var(--ifm-pre-line-height)',
         },
         links: {
-          color: '#ffffff'
+          color: '#FFFFFF'
         }
       },
       colors: {
@@ -96,32 +95,32 @@ export function darkTheme(primaryColor) {
           100: '#F5F5F5',
         },
         border: {
-          dark: '#ffffff',
+          dark: '#FFFFFF',
           light: 'rgba(0,0,0, 0.1)',
         },
         http: {
-          get: '#00bf8c',
+          get: '#00BF8C',
           post: '#079CEE',
-          put: '#9a59c5',
+          put: '#9A59C5',
           patch: '#652B51',
-          delete: '#ff6f47',
+          delete: '#FF6F47',
         },
       },
       schema: {
-        nestedBackground: DOCUSAURUS.dark.backgroundColor,
+        nestedBackground: DOCUSAURUS.backgroundColor,
         typeNameColor: DOCUSAURUS.dark.secondaryText,
         typeTitleColor: DOCUSAURUS.dark.secondaryText,
       },
       sidebar: {
         width: '300px',
-        backgroundColor: DOCUSAURUS.dark.backgroundColor,
+        backgroundColor: DOCUSAURUS.backgroundColor,
         textColor: DOCUSAURUS.dark.primaryText,
         arrow: {
           color: DOCUSAURUS.dark.primaryText,
         },
       },
       rightPanel: {
-        backgroundColor: DOCUSAURUS.dark.backgroundColor,
+        backgroundColor: DOCUSAURUS.backgroundColor,
       },
     }
   )

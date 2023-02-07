@@ -1,0 +1,192 @@
+---
+id: lnpChecker
+title: Check number(s) portability
+slug: /numbers/guides/porting/lnpChecker
+description: How to check if a number is portable
+keywords:
+  - bandwidth
+  - numbers
+  - porting
+  - portin
+  - port-in
+  - port
+  - lnp
+  - portability
+  - checker
+  - check
+image: '@site/static/img/bw-icon.svg'
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+export const accountId = "{accountId}";
+export const orderId = "{orderId}";
+
+export const Highlight = ({children, color}) => (
+    <span
+      style={{
+        backgroundColor: color,
+        borderRadius: '2px',
+        color: '#fff',
+        padding: '0.2rem',
+      }}>
+      {children}
+    </span>
+  );
+
+For a smoother porting experience, you can check to see if your numbers are portable to the Bandwidth Network, before submitting a port order.
+:::info
+The `/bulkPortins` API eliminates the need for the `/lnpchecker` API by sorting the list of TNs automatically into a set of port-in requests by Port Type. For more details follow the [How to Bulk Port](/docs/numbers/guides/porting/createBulkPortins).
+:::
+
+For all TNs in a `/portins` request, all of the following must be true:
+
+1. They all have the same Port Type (see the `Port Types` section below)
+2. They all have the same losing carrier (toll free telephone numbers all have the same losing RespOrg)
+3. They are all associated with the same billing TN and Service Address
+
+### Port Types
+
+Port Type is a categorization of how the TNs submitted to the /lnpchecker API will be handled by Bandwidth.
+
+| Port Type       | Description                               |                                   |
+|:----------------------------------|:-------------------------------------------------------|
+| MANUAL | `MANUAL` (for all port types starting with `MANUAL`) indicates that if the TNs cannot be ported automatically, the Bandwidth LNP team will work with the appropriate porting vendor or losing carrier to ensure completion of the port-in. The /portins API can be used to submit manual port-ins, which will be identified as such, and a support ticket will be automatically created to notify the Bandwidth LNP team. |
+| MANUALOFFNET | `Off-net` means that the telephone numbers in the port-in exist in a rate center supported by one of Bandwidth’s partners. Off-net port-ins are processed manually when the Bandwidth partner does not have APIs by which the port-in can be automated, or Bandwidth has not implemented those APIs. Orders may also be processed manually if there are more numbers in the port-in than the partner’s interface supports, e.g. off-net ports with vendor Level 3 and with more than 49 TNs are automatically submitted as manual ports.|
+| MANUALONNET | `On-net` means that the telephone numbers in the port-in exist in a rate center supported by Bandwidth. On-net port-ins are processed manually only when there are more numbers in the port-in than the porting vendor’s interface supports (e.g more than 999 TNs). |
+| MANUALTOLLFREE | Currently all toll free port-ins are handled manually by Bandwidth’s LNP team. But Bandwidth is in the process of automating portions of toll free porting, with a goal of eventually automating the entire process. |
+| AUTOMATED | If the TNs are on-net, or off-net and covered by a Bandwidth partner that supports automated ports, then the port-in of these TNs will be handled with no human intervention using interfaces to our porting vendors. There are several sub-types of `AUTOMATED` as follows: <br/><ul><li>`AUTOMATED` - means that the telephone numbers in the port-in exist in a rate center supported by Bandwidth (On-net tns). There are differences in on-net port-in rules depending on whether the order is for wireless to wireless vs. one of the other 3 combinations.</li><li>`AUTOMATEDOFFNET` - Off-net means that the telephone numbers in the port-in exist in a rate center supported by one of Bandwidth’s partners. Currently, only numbers in the U.S. are automated. There are differences in port-in rules depending on whether the order has achieved FOC status.</li><li>`INTERNAL` - Internal means that the telephone number is being moved from one Bandwidth account to another Bandwidth account. Internal port-in may involve on-net, off-net, or toll free telephone numbers.</li></ul>|
+| MIXED | If the list of TNs supplied to /lnpchecker includes TNs that are categorized as more than one of the above Port Types, the resulting Port Type will be `MIXED`. If you plan to use /portins to port the TNs, you must break the TN list into separate /portins requests for each Port Type. |
+
+### Check number(s) portability
+
+A number or set of numbers can be checked to see if they can be ported into the Bandwidth Network using the <Highlight color="#079CEE">POST</Highlight> request to [`/accounts/{accountId}/lnpChecker`](/apis/numbers#operation/RequestPortabilityInfo) API endpoint. This can be done using tools like Postman or cURL.
+
+### Examples
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/lnpChecker</code>
+
+<Tabs
+    groupId="lnpCheck"
+    defaultValue="payload"
+    values={[
+        { label: 'Request Payload', value: 'payload', },
+        { label: 'cURL', value: 'curl', },
+    ]
+    }>
+<TabItem value="payload">
+
+>Request
+
+```xml
+POST https://dashboard.bandwidth.com/api/accounts/{accountId}/lnpChecker?fullcheck=true HTTP/1.1
+Content-Type: application/xml; charset=utf-8
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+
+<NumberPortabilityRequest>
+    <TnList>
+        <Tn>9195551234</Tn>
+        <Tn>9198675309</Tn>
+    </TnList>
+</NumberPortabilityRequest>
+```
+
+> Response
+
+```xml
+HTTP 200 OK
+Content-Type: application/xml; charset=utf-8
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<NumberPortabilityResponse>
+    <PortType>MIXED</PortType>
+    <PortableNumbers>
+        <Tn>9198675309</Tn>
+    </PortableNumbers>
+    <SupportedRateCenters>
+        <RateCenterGroup>
+            <RateCenter>RALEIGH</RateCenter>
+            <City>RALEIGH</City>
+            <State>NC</State>
+            <LATA>426</LATA>
+            <Tiers>
+                <Tier>0</Tier>
+            </Tiers>
+            <TnList>
+                <Tn>9198675309</Tn>
+            </TnList>
+        </RateCenterGroup>
+    </SupportedRateCenters>
+    <UnsupportedRateCenters>
+        <RateCenterGroup>
+            <RateCenter>DIR ASST</RateCenter>
+            <City>CUSTOMER DIRECTORY ASSISTANCE </City>
+            <State>NC</State>
+            <LATA>99999</LATA>
+            <TnList>
+                <Tn>9195551234</Tn>
+            </TnList>
+        </RateCenterGroup>
+    </UnsupportedRateCenters>
+    <SupportedLosingCarriers>
+        <LosingCarrierTnList>
+            <LosingCarrierSPID>979E</LosingCarrierSPID>
+            <LosingCarrierName>BANDWIDTH.COM:979E -NSR/1</LosingCarrierName>
+            <LosingCarrierIsWireless>false</LosingCarrierIsWireless>
+            <LosingCarrierAccountNumberRequired>false</LosingCarrierAccountNumberRequired>
+            <LosingCarrierMinimumPortingInterval>3</LosingCarrierMinimumPortingInterval>
+            <TnList>
+                <Tn>9198675309</Tn>
+            </TnList>
+        </LosingCarrierTnList>
+        <LosingCarrierTnList>
+            <LosingCarrierSPID></LosingCarrierSPID>
+            <LosingCarrierName>Unknown</LosingCarrierName>
+            <LosingCarrierIsWireless>false</LosingCarrierIsWireless>
+            <LosingCarrierAccountNumberRequired>false</LosingCarrierAccountNumberRequired>
+            <LosingCarrierMinimumPortingInterval>10</LosingCarrierMinimumPortingInterval>
+            <TnList>
+                <Tn>9195551234</Tn>
+            </TnList>
+        </LosingCarrierTnList>
+    </SupportedLosingCarriers>
+</NumberPortabilityResponse>
+```
+
+</TabItem>
+<TabItem value="curl">
+
+```xml
+Note: Remember to add authentication for your application if needed!
+
+curl 'https://dashboard.bandwidth.com/api/accounts/{accountId}/lnpChecker?fullcheck=true' \
+-X POST \
+-u '{BANDWIDTH_USERNAME}:{BANDWIDTH_PASSWORD}' \
+-H 'Content-Type: application/xml' \
+-d '<NumberPortabilityRequest>
+    <TnList>
+        <Tn>9195551234</Tn>
+        <Tn>9198675309</Tn>
+    </TnList>
+</NumberPortabilityRequest>'
+```
+
+</TabItem>
+</Tabs>
+
+:::caution
+There are some cases that you won't be able to port-in a TN:
+
+* The TN is in a rate center that is not supported by Bandwidth or any of Bandwidth's partners.
+* The TN is an off-net TN, and the account is configured to support tier zero (on-net) only.
+* The TN belongs to a losing carrier with whom Bandwidth does not have a Trading Partner Agreement.
+* The TN is already being processed in another active port-in order.
+* The Bandwidth account has not been enabled for porting.
+Otherwise, the user must separate the TNs into individual `/portins` requests.
+:::
+
+## Where to next?
+
+Now that you have learned how to check the portability of a number, check out some of the other available actions in the following guides:
+- [How to Create a Port-In Request →](/docs/numbers/guides/porting/portingNumbers)
+

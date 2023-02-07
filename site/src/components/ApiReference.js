@@ -1,18 +1,20 @@
 import React from 'react';
-import Layout from '@theme/Layout';
 import { useColorMode } from '@docusaurus/theme-common';
-import { RedocStandalone } from 'redoc';
-import { lightTheme, darkTheme } from '../css/redocTheme';
+import { RedocStandalone } from 'bandwidth-redoc';
+import { lightTheme, darkTheme } from '@site/src/css/redocTheme';
 
 const RedocConfig = (props) => {
-  const {colorMode, setColorMode} = useColorMode();
+  const {colorMode} = useColorMode();
   return <RedocStandalone spec={props.spec} options={{
-                      scrollYOffset: '.navbar', // makes the fixed sidebar and scrolling play nicey with docusaurus navbar
+                      scrollYOffset: '.navbar', // makes the fixed sidebar and scrolling play nicely with docusaurus navbar
                       pathInMiddlePanel: true,
                       expandSingleSchemaField: true,
                       expandResponses: "200,201,202,204",
+                      showObjectSchemaExamples: true,
                       menuToggle: true,
-                      theme: colorMode === 'dark' ? darkTheme(props.color) : lightTheme(props.color)
+                      theme: colorMode === 'dark' ? darkTheme('#FFFFFF') : lightTheme(props.color),
+                      hideDownloadButton: props.hideDownloadButton ? true: false,
+                      downloadDefinitionUrl: props.downloadDefinitionUrl
                   }}/>
 }
 
@@ -20,7 +22,7 @@ export default function ApiReference(props) {
     return (
         <main>
             <div className="RedocStandalone">
-              <RedocConfig spec={props.spec} color={props.color}/>
+              <RedocConfig spec={props.spec} color={props.color} hideDownloadButton={props.hideDownloadButton} downloadDefinitionUrl={props.downloadDefinitionUrl}/>
             </div>
         </main>
     );

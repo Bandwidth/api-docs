@@ -1,7 +1,7 @@
 module.exports = {
     mySidebar: [{
-            type: "doc",
-            id: "intro",
+            type: "link",
+            href: "/docs",
             label: "Introduction",
         },
         {
@@ -44,18 +44,42 @@ module.exports = {
                     type: "category",
                     label: "Guides and Tutorials",
                     items: [
-                        "numbers/searchingNumbers",
-                        "numbers/orderingNumbers",
-                        "numbers/portingNumbers",
-                        "numbers/csrLookupTool",
+                        "numbers/searchingAndOrderingNumbers",
+                        {
+                            type: "category",
+                            label: "Porting numbers",
+                            items: [
+                                "numbers/porting/csrLookup",
+                                "numbers/porting/lnpChecker",
+                                "numbers/porting/portingNumbers",
+                                "numbers/porting/loaUpload",
+                                "numbers/porting/updatePortin",
+                                "numbers/porting/createBulkPortins",
+                                "numbers/porting/updateBulkPortins",
+                                "numbers/porting/submitBulkPortins",
+                                "numbers/porting/lsrOrders",
+                            ],
+                        },
                         "numbers/hostingNumbers",
-                        "numbers/manageNumberFeatures",
-                        "numbers/searchNumbers",
+                        {
+                            type: "category",
+                            label: "How to manage your inventory",
+                            items: [
+                                "numbers/manage-inventory/searchYourNumbers",
+                                "numbers/manage-inventory/applyTnOptionsAndFeatures",
+                                "numbers/manage-inventory/setFailoverUri"
+                            ]
+                        },
                         "numbers/disconnectNumbers",
-                        "numbers/bulkportins",
                         "numbers/lookupNumbers",
-                        "numbers/downloadingReports",
-                        "numbers/lsrOrders",
+                        {
+                            type: "category",
+                            label: "How to request Numbers reports",
+                            items: [
+                                "numbers/setup-reports/accountReports",
+                                "numbers/setup-reports/billingReports",
+                            ]
+                        },
                     ],
                 },
                 "numbers/errors",
@@ -91,6 +115,9 @@ module.exports = {
                         "voice/webhooks/gather",
                         "voice/webhooks/initiate",
                         "voice/webhooks/machineDetectionComplete",
+                        "voice/webhooks/mediaStreamStarted",
+                        "voice/webhooks/mediaStreamRejected",
+                        "voice/webhooks/mediaStreamStopped",
                         "voice/webhooks/recordComplete",
                         "voice/webhooks/recordingAvailable",
                         "voice/webhooks/redirect",
@@ -124,6 +151,8 @@ module.exports = {
                         "voice/bxml/startGather",
                         "voice/bxml/stopGather",
                         "voice/bxml/sendDtmf",
+                        "voice/bxml/startStream",
+                        "voice/bxml/stopStream",
                         "voice/bxml/tag",
                     ],
                 },
@@ -131,7 +160,6 @@ module.exports = {
                     type: "category",
                     label: "Guides and Tutorials",
                     items: [
-                        "voice/quickStart",
                         "voice/outboundCallGuide",
                         "voice/mediaAndTTSGuide",
                         "voice/recordingGuide",
@@ -292,5 +320,20 @@ module.exports = {
                 "emergency/emergencyCallingApi",
             ],
         },
-    ],
+        /* TODO ONEID-1304
+        {
+          type: 'category',
+          label: 'Identity Management',
+          items: [
+              'identity/about',
+              'identity/identityProvidersOverview',
+          ],
+        },
+        */
+        {
+            type: "doc",
+            id: "versions",
+            label: "Versions"
+        }, 
+  ],
 };

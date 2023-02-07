@@ -1,10 +1,5 @@
 # API-Docs
 
-| ⚠️ Please do not modify API Specs in this repository ⚠️ | 
-|:---:|
-
-API specs now reside in the [api-specs](https://github.com/Bandwidth/api-specs) repository and code snippets in the [api-docs-code-snippets](https://github.com/Bandwidth/api-docs-code-snippets) repository.
-
 ## Table of Contents
 
   1. [API Docs Strategy Overview](#api-docs-strategy-overview)
@@ -26,6 +21,10 @@ API references are the "facts" about the APIs, and will typically be defined by 
 
 Guides cover a wide range of possibilities, but typically any step by step process required to use a feature should be a guide. These guides should be written as markdown files, and should link out to any API reference as needed. An example of a guide would be a description of how to respond to an inbound SMS.
 
+## API Specs
+
+The source of truth for all OpenAPI definitions are kept in a private repository - but the spec files in `./site/specs` mirror the source of truth. PRs against those files wont be accepted - but can be migrated to the private repo.
+
 ## SDK Docs Strategy Overview
 
 Bandwidth's SDKs will contain thin READMEs that show the basics of getting started with the SDK, and link out to the full API reference. These READMEs will not contain all of the functions within the SDK; that should be defined with the API references.
@@ -42,22 +41,27 @@ The `./site/package.json` file contains node scripts that let you run dynamic do
 cd site
 yarn install
 
-npm run start   # run a dynamic site locally
+yarn start   # run a dynamic site locally
 
 # or
-npm run build    # build a static site to the /site/build folder
-nmp run serve    # host the static site in the /site/build folder
+yarn run build    # build a static site to the /site/build folder
+yarn run serve    # host the static site in the /site/build folder
 ```
+
+## Cypress Testing
+
+After building and serving the site locally using one of the methods above, from within the `/site` directory, you may run `yarn test` to run all cypress tests in the command line,
+or `yarn run cy:open` to open the cypress client and runs tests from the cypress GUI.
 
 ## Adding a New Spec
 
-To add a new spec (or update an existing spec), please head over to our [api-specs](https://github.com/Bandwidth/api-specs) repository, as this is the source of truth for all of Bandwidth's internal and external API Specs. You may also follow the guide [here](https://bandwidth-jira.atlassian.net/wiki/spaces/DX/pages/4098359409/How+to+Update+API+Specifications+and+Contribute+to+Developer+Documentation) that exaplains in detail how to add new spec files to the `api-specs` repo.
+To add a new spec (or update an existing spec), please head over to our [api-specs](https://github.com/Bandwidth/api-specs) repository, as this is the source of truth for all of Bandwidth's internal and external API Specs. You may also follow the guide [here](https://bandwidth-jira.atlassian.net/wiki/spaces/DX/pages/4098359409/How+to+Update+API+Specifications+and+Contribute+to+Developer+Documentation) that explains in detail how to add new spec files to the `api-specs` repo.
 
-### Versioned Specs 
+### Versioned Specs
 
 To account for versioned API Documentation we have a [Spec Version Dropdown](./site/src/components/SpecVersionDropdown.js) component that allows you to add a dropdown menu to the api reference page with links to the other versions of your API Specification. In order to implement this feature your spec `.tsx` pages need their own directory within the `./site/src/pages/apis` directory. This will be done for you by the DevX team after you update your changes on the `api-specs` repo.
 
-Sample Directory: 
+Sample Directory:
 
 ```sh
 # ./site/src/pages
@@ -94,7 +98,7 @@ export default function ApiReferencePage() {
           description=""
           keywords="Bandwidth,API,International,Voxbone">
             <SpecVersionDropdown options={options} default={version} />
-            <ApiReference spec={siteConfig.customFields.bwiSpec} color={siteConfig.customFields.voxbonePurple} />
+            <ApiReference spec={siteConfig.customFields.bwiSpec} color={siteConfig.customFields.bwBlue} />
         </Layout>
     );
 }
@@ -210,12 +214,12 @@ The `./postman` directory contains code and templates to generate our public fac
 
 ## Markdown
 
-Docusaurus supports the use of .MDX files - making the use of markdown even more powerful than the previous docsite repositor. This allows us to generate JSX directly in the markdown files that will be rendered nicely in docusaurus. A good resource on the capabilities of MDX in docusaurus can be found [here](https://docusaurus.io/docs/markdown-features).
+Docusaurus supports the use of .MDX files - making the use of markdown even more powerful than the previous docsite repository. This allows us to generate JSX directly in the markdown files that will be rendered nicely in docusaurus. A good resource on the capabilities of MDX in docusaurus can be found [here](https://docusaurus.io/docs/markdown-features).
 
 The Docusaurus flavored markdown also supports setting markdown attributes in the guide - it is recommended to start each `.md` or `.mdx` file with the following:
 
     ---
-    id: docId    <!--the document id - used as a referece in the sidebar.js folder-->
+    id: docId    <!--the document id - used as a reference in the sidebar.js folder-->
     title: Document Title    <!--Used by Docusaurus to generate the title properly (for SEO)-->
     slug: /{product}/docName    <!--generates the path after the base URL to provide a neat link for sharing-->
     description: description of your document <!--becomes the <meta name="description" content="..."/> and <meta property="og:description" content="..."/> in <head>, used by search engines. If this field is not present, it will default to the first line of the contents.-->
@@ -227,14 +231,14 @@ The Docusaurus flavored markdown also supports setting markdown attributes in th
     hide_title: false    <!--Whether to hide the title at the top of the doc. By default it is false.-->
     sidebar_label: Document Title    <!--The text shown in the document sidebar and in the next/previous button for this document. If this field is not present, the document's sidebar_label will default to its title.-->
     custom_edit_url: github.com/repo/thisFile.mdx   <!--The URL for editing this document. If this field is not present, the document's edit URL will fall back to editUrl from options fields passed to docusaurus-plugin-content-docs-->
-    image: ../../static/img/myImg.png    <!--Cover or thumbnail image that will be used when displaying the link to your post.-->
+    image: '@site/static/img/myImg.png'    <!--Cover or thumbnail image that will be used when displaying the link to your post.-->
     ---
 
 The above example is YAML, so it is suggested to remove comments as well as wrap strings with special characters like `:` in quotes.
 
 ### Embedding React Components
 
-MDX supports JSX within the markdown and generates it as React componetns - making possibilites endless.
+MDX supports JSX within the markdown and generates it as React components - making possibilities endless.
 
 The below adds a language switcher in line with text in an MDX file:
 
@@ -284,22 +288,3 @@ The below adds a language switcher in line with text in an MDX file:
     </Tabs>
 
     And this text will be rendered after the language switcher
-
-
-## PR Requirements
-
-## SDK Generation
-
-The `./sdk-generation` directory contains code and config for our SDK generation that supports our public SDKs. Much like the docsite generation, typically you'll interface with this through NPM commands.
-
-`npm run generate -- -l <LANGUAGE> -s <SPEC>` is the command to generate an SDK. The `-s` flag is optional; not including it will default to the SDK with all APIs. The file `./sdk-generation/bandwidth.zip` will contain the generated code.
-
-| Language | Notes |
-|--|--|
-| python | |
-| ruby | |
-| csharp | |
-| java | |
-| php | PHP >= 7.2
-| phpold | Does not have XML support |
-| node | Highly recommended to generate with a specified spec |

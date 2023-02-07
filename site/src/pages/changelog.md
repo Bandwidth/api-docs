@@ -7,6 +7,7 @@ slug: /changelog
 
 | Date | Notes |
 |--|--|
+| TBD, 2022 | Added initial identity management API |
 | March 18, 2022 | Added new guides to Voice API section and updated old ones |
 | February 16, 2022 | Added details of new http voice statistics endpoint |
 | February 16, 2022 | Added new call modify endpoint with BXML to Voice API spec |

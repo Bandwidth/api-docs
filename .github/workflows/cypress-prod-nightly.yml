@@ -1,0 +1,54 @@
+name: Cypress Nightly on Prod
+
+on:
+  schedule:
+    - cron: "0 4 * * *"
+
+jobs:
+  cypress_nightly:
+    name: Cypress Nightly Tests
+    runs-on: ${{ matrix.os }}
+    container:
+      image: cypress/browsers:node16.13.2-chrome97-ff96
+      options: --user 1001 --shm-size=2g
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        browser: [chrome]
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v4.2.0
+        timeout-minutes: 40
+        with:
+          record: true
+          browser: ${{ matrix.browser }}
+          working-directory: ./site
+          config-file: prod-cypress.config.js
+          tag: production
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_PROJECT_ID: ${{ secrets.PROJECT_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMIT_INFO_MESSAGE: ${{github.event.pull_request.title}}
+          COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}
+  notify_for_failures:
+    name: Notify for Failures
+    needs: [cypress_nightly]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Slack of Failures
+        uses: Bandwidth/build-notify-slack-action@v1.0.0
+        with:
+          job-status: failure
+          slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
+          slack-channel: ${{ secrets.SLACK_CHANNEL }}

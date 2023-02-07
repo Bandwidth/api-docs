@@ -7,7 +7,7 @@ keywords:
   - bandwidth
   - webrtc
   - video
-image: ../../static/img/bandwidth-logo.png
+image: '@site/static/img/bw-icon.svg'
 ---
 
 ## How it works

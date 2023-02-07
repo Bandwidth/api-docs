@@ -1,13 +1,13 @@
 name: Replace Specs and Snippets
 description: Replaces specs with specs from api-specs repository and code-snippets from api-docs-code-snippets repository
-inputs: 
-  branch-name: 
+inputs:
+  branch-name:
     required: true
     description: Desired Branch Name
-  username: 
+  username:
     required: true
     description: Github Username
-  token: 
+  token:
     required: true
     description: Github Token
   origin-repo:
@@ -17,71 +17,70 @@ inputs:
     required: true
     description: Origin PR Author
 
-outputs: 
-  needs_pr: 
+outputs:
+  needs_pr:
     description: "Whether or not a PR needs to be opened for the corresponding branch"
-    value: ${{ steps.branch_create.outputs.needs_pr }}
+    value: ${{ steps.branch_create.outputs.NEEDS_PR }}
 
- 
 runs:
-    using: "composite"
-    steps:
-      - uses: actions/checkout@v2
-        with: 
-          token: ${{ inputs.token }}
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v2
+      with:
+        token: ${{ inputs.token }}
 
-      - name: Create or Checkout Branch
-        id: branch_create
-        run: |
-          git config user.email "dx@bandwidth.com"
-          git config user.name ${{ inputs.username }}
-          if [ "$(git ls-remote --heads https://${{ inputs.username }}:${{ inputs.token }}@github.com/Bandwidth/api-docs.git ${{ inputs.branch-name }} | wc -l)" -eq 1 ]
-          then
-            git fetch
-            git checkout ${{ inputs.branch-name }}
-          else
-            git checkout -b ${{ inputs.branch-name }}
-            echo "::set-output name=needs_pr::true"
-          fi
-        shell: bash
+    - name: Create or Checkout Branch
+      id: branch_create
+      run: |
+        git config user.email "dx@bandwidth.com"
+        git config user.name ${{ inputs.username }}
+        if [ "$(git ls-remote --heads https://${{ inputs.username }}:${{ inputs.token }}@github.com/Bandwidth/api-docs.git ${{ inputs.branch-name }} | wc -l)" -eq 1 ]
+        then
+          git fetch
+          git checkout ${{ inputs.branch-name }}
+        else
+          git checkout -b ${{ inputs.branch-name }}
+          echo "NEEDS_PR=true" >> $GITHUB_OUTPUT
+        fi
+      shell: bash
 
-      - name: Copy Api Specs
-        run: |
-          mkdir api-specs
-          if [ ${{ inputs.origin-repo }} = api-specs ]
-          then
-            git clone --branch ${{ inputs.branch-name }} https://${{ inputs.username }}:${{ inputs.token }}@github.com/Bandwidth/api-specs api-specs
-          else
-            git clone https://${{ inputs.username }}:${{ inputs.token }}@github.com/Bandwidth/api-specs api-specs
-          fi
-          rm -r api-specs/.git
-          cp -TRv api-specs/external site/specs
-          rm -r api-specs
-        shell: bash
+    - name: Copy Api Specs
+      run: |
+        mkdir api-specs
+        if [ ${{ inputs.origin-repo }} = api-specs ]
+        then
+          git clone --branch ${{ inputs.branch-name }} https://${{ inputs.username }}:${{ inputs.token }}@github.com/Bandwidth/api-specs api-specs
+        else
+          git clone https://${{ inputs.username }}:${{ inputs.token }}@github.com/Bandwidth/api-specs api-specs
+        fi
+        rm -r api-specs/.git
+        cp -TRv api-specs/external site/specs
+        rm -r api-specs
+      shell: bash
 
-      - name: Copy Code Snippets
-        run: |
-          mkdir code-snippets
-          if [ ${{ inputs.origin-repo }} = api-docs-code-snippets ]
-          then
-            git clone --branch ${{ inputs.branch-name }} https://${{ inputs.username }}:${{ inputs.token }}@github.com/Bandwidth/api-docs-code-snippets code-snippets
-          else
-            git clone https://${{ inputs.username }}:${{ inputs.token }}@github.com/Bandwidth/api-docs-code-snippets code-snippets
-          fi
-          rm -r code-snippets/.git
-          mkdir site/code-snippets
-          cp -TR code-snippets/external site/code-snippets
-          mv -v code-snippets/add-code-snippets-oas.js code-snippets/package.json code-snippets/env-replace site/code-snippets
-          rm -r code-snippets
-        shell: bash
+    - name: Copy Code Snippets
+      run: |
+        mkdir code-snippets
+        if [ ${{ inputs.origin-repo }} = api-docs-code-snippets ]
+        then
+          git clone --branch ${{ inputs.branch-name }} https://${{ inputs.username }}:${{ inputs.token }}@github.com/Bandwidth/api-docs-code-snippets code-snippets
+        else
+          git clone https://${{ inputs.username }}:${{ inputs.token }}@github.com/Bandwidth/api-docs-code-snippets code-snippets
+        fi
+        rm -r code-snippets/.git
+        mkdir site/code-snippets
+        cp -TR code-snippets/external site/code-snippets
+        mv -v code-snippets/add-code-snippets-oas.js code-snippets/package.json code-snippets/env-replace site/code-snippets
+        rm -r code-snippets
+      shell: bash
 
-      - name: Generate Code Snippets
-        run: |
-          cd site/code-snippets
-          npm install
-          node add-code-snippets-oas.js
-          cd ..
-          git add ./specs/*
-          git commit -m "Add Code Snippets to Spec Files"
-          git push origin ${{ inputs.branch-name }}
-        shell: bash
+    - name: Generate Code Snippets
+      run: |
+        cd site/code-snippets
+        npm install
+        node add-code-snippets-oas.js
+        cd ..
+        git add ./specs/*
+        git commit -m "Add Code Snippets to Spec Files"
+        git push origin ${{ inputs.branch-name }}
+      shell: bash
