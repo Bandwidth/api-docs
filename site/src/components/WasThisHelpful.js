@@ -19,6 +19,7 @@ export default function WasThisHelpful({pageId}) {
     const [requestError, setRequestError] = useState(false);
     const [requestErrorMessage, setRequestErrorMessage] = useState('');
     const transitionTime = 500;
+    const errorMessageString = 'There was an error submitting your feedback, please try again.';
 
     var questionStyle = {
         opacity: `${questionOpacity}`,
@@ -131,11 +132,11 @@ export default function WasThisHelpful({pageId}) {
                         break;
                     case 400:
                         setRequestError(true);
-                        setRequestErrorMessage('There was an error submitting your feedback, please try again.');
+                        setRequestErrorMessage(errorMessageString);
                         break;
                     default:
                         setRequestError(true);
-                        setRequestErrorMessage('There was an error submitting your feedback, please try again.');
+                        setRequestErrorMessage(errorMessageString);
                         break;
                 }
                 console.log(response);
@@ -147,7 +148,7 @@ export default function WasThisHelpful({pageId}) {
                 setRequestErrorMessage('Your feedback request has timed out, please wait a few seconds and try again.');
             } else {
                 setRequestError(true);
-                setRequestErrorMessage('There was an error submitting your feedback, please try again.');
+                setRequestErrorMessage(errorMessageString);
             }
         })
     };
