@@ -5,6 +5,7 @@ import SingleLineInput from './SingleLineInput';
 import InteractiveButton from './InteractiveButton';
 
 export default function WasThisHelpful({pageId}) {
+    const controller = new AbortController();
     const [isHelpfulSubmitted, setIsHelpfulSubmitted] = useState(false);
     const [isFeedbackSubmitted, setIsFeedbackSubmitted] = useState(false);
     const [questionOpacity, setQuestionOpacity] = useState(1);
@@ -116,32 +117,27 @@ export default function WasThisHelpful({pageId}) {
         };
         setAwaitingResponse(true);
 
-        fetch('https://eowxoldwz4d7syt.m.pipedream.net', {
-            method: 'POST',
-            body: JSON.stringify(feedbackBody),
-            signal: AbortSignal.timeout(20000)
-        }).then(
-            (response) => {
-                setAwaitingResponse(false);
-                switch(response.status) {
-                    case 204:
-                        setFeedbackOpacity(0);
-                        setTimeout(() => {
-                            setIsFeedbackSubmitted(true);
-                        }, transitionTime)
-                        break;
-                    case 400:
-                        setRequestError(true);
-                        setRequestErrorMessage(errorMessageString);
-                        break;
-                    default:
-                        setRequestError(true);
-                        setRequestErrorMessage(errorMessageString);
-                        break;
-                }
-                console.log(response);
+        try {
+            setTimeout(() => controller.abort(), 20000);
+            const response = await fetch('https://eowxoldwz4d7syt.m.pipedream.net', {method: 'POST', body: JSON.stringify(feedbackBody), signal: controller.signal});
+            setAwaitingResponse(false);
+            switch(response.status) {
+                case 204:
+                    setFeedbackOpacity(0);
+                    setTimeout(() => {
+                        setIsFeedbackSubmitted(true);
+                    }, transitionTime)
+                    break;
+                case 400:
+                    setRequestError(true);
+                    setRequestErrorMessage(errorMessageString);
+                    break;
+                default:
+                    setRequestError(true);
+                    setRequestErrorMessage(errorMessageString);
+                    break;
             }
-        ).catch((error) => {
+        } catch(error) {
             setAwaitingResponse(false);
             if(error.name == 'AbortError') {
                 setRequestError(true);
@@ -150,7 +146,8 @@ export default function WasThisHelpful({pageId}) {
                 setRequestError(true);
                 setRequestErrorMessage(errorMessageString);
             }
-        })
+        }
+        
     };
 
     return (
