@@ -7,7 +7,6 @@ on:
     types:
       - published
   workflow_dispatch:
-    
 
 jobs:
   cypress:
@@ -23,12 +22,12 @@ jobs:
         browser: [chrome]
     steps:
       - name: Setup Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 16
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cypress run
         uses: cypress-io/github-action@v4.2.0
@@ -55,10 +54,10 @@ jobs:
     if: ${{ !github.event.release.prerelease && github.event.release.target_commitish == 'main' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 16
 
@@ -84,22 +83,19 @@ jobs:
       - name: Invalidate Cloudfront Cache
         id: invalidate1
         continue-on-error: true
-        run:
-          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID}} --paths "/" "/*"
+        run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID}} --paths "/" "/*"
 
       - name: Invalidate Cloudfront Cache Attempt 2
         id: invalidate2
         if: steps.invalidate1.outcome=='failure'
         continue-on-error: true
-        run:
-          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID}} --paths "/" "/*"
+        run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID}} --paths "/" "/*"
 
       - name: Invalidate Cloudfront Cache Attempt 3
         continue-on-error: true
         id: invalidate3
         if: steps.invalidate2.outcome=='failure'
-        run:
-          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID}} --paths "/" "/*"
+        run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID}} --paths "/" "/*"
 
       - name: Cloudfront Cache Invalidation Status
         if: always()
@@ -108,7 +104,7 @@ jobs:
              echo invalidation successful
           else
              exit 1
-          fi          
+          fi
 
   cypress_post_tests:
     name: Cypress run on prod
@@ -129,7 +125,7 @@ jobs:
           node-version: 16
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cypress Post Deployment Test
         uses: cypress-io/github-action@v4.2.0
@@ -146,7 +142,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COMMIT_INFO_MESSAGE: ${{github.event.pull_request.title}}
           COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}
-          
+
   notify_for_failures:
     name: Notify for Failures
     needs: [cypress_post_tests]
@@ -158,7 +154,7 @@ jobs:
         with:
           job-status: failure
           slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
-          slack-channel: ${{ secrets.SLACK_CHANNEL }}             
+          slack-channel: ${{ secrets.SLACK_CHANNEL }}
 
   rollback_if_failed:
     needs: [cypress, publish, cypress_post_tests]
@@ -166,19 +162,19 @@ jobs:
     if: ${{ failure() && github.event_name != 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-    - name: Setup Node
-      uses: actions/setup-node@v2
-      with:
-        node-version: 16
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
 
-    - name: Install Dependencies
-      run: |
+      - name: Install Dependencies
+        run: |
           cd ./.github/actions/rollback_release
           npm install
-    - name: Rollback For Failed Cypress Tests
-      id: rollback
-      uses: ./.github/actions/rollback_release
-      env:
-        GITHUB_TOKEN: ${{ secrets.DX_GITHUB_TOKEN }}
+      - name: Rollback For Failed Cypress Tests
+        id: rollback
+        uses: ./.github/actions/rollback_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.DX_GITHUB_TOKEN }}
