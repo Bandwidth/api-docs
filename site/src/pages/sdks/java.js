@@ -21,7 +21,8 @@ const props = {
       ghLink: 'https://github.com/Bandwidth/java-bandwidth-iris'
     }
   ],
-  samplesLink: 'https://github.com/orgs/Bandwidth-Samples/repositories?language=java'
+  samplesLink: 'https://github.com/orgs/Bandwidth-Samples/repositories?language=java',
+  migrationGuides: true
 };
 
 export default function sdkPage() {
