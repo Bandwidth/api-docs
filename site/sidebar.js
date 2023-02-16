@@ -173,7 +173,6 @@ module.exports = {
                         "voice/migrationGuide",
                         "voice/cnamPerDipGuide",
                         "voice/inAppCallingGuide",
-                        "voice/inAppCallingMigrationGuide",
                     ],
                 },
                 "voice/rateLimits",
