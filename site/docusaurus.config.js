@@ -102,9 +102,9 @@ module.exports = {
                 title: 'Login'
             }]
         },
-        prism: {
-            additionalLanguages: ['java'],  // Breaks if you try to add more than 1 language
-        },
+        // prism: {
+        //     additionalLanguages: ['java'],  // Breaks if you try to add more than 1 language. And still breaks redoc :(((((
+        // },
     },
     presets: [
         [
