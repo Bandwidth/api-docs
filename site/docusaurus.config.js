@@ -19,6 +19,7 @@ const globalSpec_v2 = fs.readFileSync('./specs/global-v2.yml', 'utf-8');
 const globalSpec_v3 = fs.readFileSync('./specs/global-v3.yml', 'utf-8');
 const globalSpec_beta = fs.readFileSync('./specs/global-beta.yml', 'utf-8');
 const insightsSpec = fs.readFileSync('./specs/insights.yml', 'utf-8');
+const pipedream = 'https://eowxoldwz4d7syt.m.pipedream.net';
 /* TODO ONEID-1304
 const identitySpec = fs.readFileSync('./specs/one-identity-management.yml', 'utf-8');
 */
@@ -160,6 +161,8 @@ module.exports = {
         blogPosts: blogPosts,
 
         ltsVersions: ltsVersions,
+
+        pipedream: pipedream,
 
         // CSS Colors
         bwBlue: '#079CEE',

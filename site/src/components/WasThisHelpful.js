@@ -3,8 +3,10 @@ import Alert from './Alert';
 import MultiLineInput from './MultiLineInput';
 import SingleLineInput from './SingleLineInput';
 import InteractiveButton from './InteractiveButton';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 
 export default function WasThisHelpful({pageId}) {
+    const {siteConfig} = useDocusaurusContext();
     const controller = new AbortController();
     const [isHelpfulSubmitted, setIsHelpfulSubmitted] = useState(false);
     const [isFeedbackSubmitted, setIsFeedbackSubmitted] = useState(false);
@@ -19,17 +21,18 @@ export default function WasThisHelpful({pageId}) {
     const [awaitingResponse, setAwaitingResponse] = useState(false);
     const [requestError, setRequestError] = useState(false);
     const [requestErrorMessage, setRequestErrorMessage] = useState('');
-    const transitionTime = 500;
+    const transitionTimeMs = 500;
+    const pipedreamUrl = siteConfig.customFields.pipedream;
     const errorMessageString = 'There was an error submitting your feedback, please try again.';
 
     var questionStyle = {
         opacity: `${questionOpacity}`,
-        transition: `${transitionTime}ms`
+        transition: `${transitionTimeMs}ms`
     };
 
     var feedbackStyle = {
         opacity: `${feedbackOpacity}`,
-        transition: `${transitionTime}ms`
+        transition: `${transitionTimeMs}ms`
     };
 
     const helpfulQuestion = () => {
@@ -82,7 +85,7 @@ export default function WasThisHelpful({pageId}) {
         setTimeout(() => {
             setIsHelpfulSubmitted(true);
             setFeedbackOpacity(1);
-        }, transitionTime)
+        }, transitionTimeMs)
     };
 
     const cancelFeedback = () => {
@@ -95,7 +98,7 @@ export default function WasThisHelpful({pageId}) {
             setEmailNote('');
             setUserFeedback('');
             setUserEmail('');
-        }, transitionTime)
+        }, transitionTimeMs)
     };
 
     const submitFeedback = async () => {
@@ -119,14 +122,14 @@ export default function WasThisHelpful({pageId}) {
 
         try {
             setTimeout(() => controller.abort(), 20000);
-            const response = await fetch('https://eowxoldwz4d7syt.m.pipedream.net', {method: 'POST', body: JSON.stringify(feedbackBody), signal: controller.signal});
+            const response = await fetch(pipedreamUrl, {method: 'POST', body: JSON.stringify(feedbackBody), signal: controller.signal});
             setAwaitingResponse(false);
             switch(response.status) {
                 case 204:
                     setFeedbackOpacity(0);
                     setTimeout(() => {
                         setIsFeedbackSubmitted(true);
-                    }, transitionTime)
+                    }, transitionTimeMs)
                     break;
                 case 400:
                     setRequestError(true);
