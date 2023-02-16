@@ -124,7 +124,7 @@ components:
       required: false
       schema:
         default: 0
-        type: number
+        type: integer
     shortCodePageSizeQueryParam:
       description: The number of entities to return per page.
       in: query
@@ -133,7 +133,7 @@ components:
       schema:
         default: 50
         maximum: 250
-        type: number
+        type: integer
   schemas:
     A2pClass:
       properties:
@@ -11936,55 +11936,101 @@ components:
       properties:
         page:
           example: 1
-          type: number
+          type: integer
         pageSize:
           example: 50
-          type: number
+          type: integer
+      type: object
+    shortCodeCarrierInfo:
+      description: The registration status for each carrier.
+      properties:
+        carrierId:
+          example: att
+          type: string
+        status:
+          example: ACTIVE
+          type: string
+          enum:
+            - ACTIVE
+            - INACTIVE
+            - PENDING
+        activatedOn:
+          description: The date the short code was activated for this carrier.
+          example: '2023-01-28'
+          format: date
+          type: string
       type: object
     shortCode:
-      description: Short code details representation.
+      description: Short code registration.
       properties:
         shortCode:
+          description: The short code.
           example: '12345'
           type: string
         country:
+          description: The country the short code is registered in.
           example: USA
           type: string
           enum:
             - USA
             - CAN
         accountId:
+          description: Account ID.
           example: '123123'
           type: string
         siteId:
+          description: Sub-account ID.
           example: '321321'
           type: string
         sipPeerId:
+          description: SIP Peer ID from Iris.
           example: '123321'
           type: string
         moapId:
+          description: Mobile application profile ID in the mCore database.
           example: '123'
           type: string
         type:
+          description: The lease type.
           example: RANDOM
           type: string
           enum:
             - RANDOM
             - VANITY
         customerManagedLease:
+          description: >-
+            Flag indicating whether the customer is managing the short code
+            lease.
           type: boolean
         applySetupFee:
+          description: Internal flag indicating whether a setup charge should be billed.
           type: boolean
         orderedOn:
+          description: Date the short code was registered.
           example: '2023-01-30'
+          format: date
           type: string
         leaseStartsOn:
+          description: >-
+            Date the short code lease starts. Customer managed leases may not
+            have lease start and end dates. Date is inclusive as it relates to
+            expiration.
           example: '2023-01-28'
+          format: date
           type: string
         leaseEndsOn:
+          description: >-
+            Date the short code lease ends. Customer managed leases may not have
+            lease start and end dates. Date is inclusive as it relates to
+            expiration.
           example: '2024-01-29'
+          format: date
           type: string
         status:
+          description: >-
+            If at least one carrier status is ACTIVE or PENDING, the status will
+            be ACTIVE. If all carrier statues are INACTIVE, the status will be
+            INACTIVE.
           example: ACTIVE
           type: string
           enum:
@@ -11997,29 +12043,19 @@ components:
           type: string
         createdOn:
           example: '2022-11-14T18:39:04.505Z'
+          format: date-time
           type: string
         modifiedOn:
           example: '2022-11-15T18:39:04.505Z'
+          format: date-time
           type: string
         carrierStatuses:
-          properties:
-            carrierId:
-              example: att
-              type: string
-            status:
-              example: ACTIVE
-              type: string
-              enum:
-                - ACTIVE
-                - INACTIVE
-                - PENDING
-            activatedOn:
-              example: '2023-01-28'
-              type: string
+          items:
+            $ref: '#/components/schemas/shortCodeCarrierInfo'
           type: array
         version:
           example: 100
-          type: number
+          type: long
     shortCodeApiPage:
       description: >-
         Pagination object that represents the current page of short code
@@ -12029,7 +12065,7 @@ components:
           $ref: '#/components/schemas/shortCodePagination'
         totalCount:
           example: 100
-          type: number
+          type: integer
         data:
           items:
             $ref: '#/components/schemas/shortCode'
@@ -12085,12 +12121,15 @@ components:
           type: boolean
         orderedOn:
           example: '2023-01-30'
+          format: date
           type: string
         leaseStartsOn:
           example: '2023-01-28'
+          format: date
           type: string
         leaseEndsOn:
           example: '2024-01-29'
+          format: date
           type: string
         status:
           example: ACTIVE
@@ -12105,29 +12144,19 @@ components:
           type: string
         createdOn:
           example: '2022-11-14T18:39:04.505Z'
+          format: date-time
           type: string
         modifiedOn:
           example: '2022-11-15T18:39:04.505Z'
+          format: date-time
           type: string
         carrierStatuses:
-          properties:
-            carrierId:
-              example: att
-              type: string
-            status:
-              example: ACTIVE
-              type: string
-              enum:
-                - ACTIVE
-                - INACTIVE
-                - PENDING
-            activatedOn:
-              example: '2023-01-28'
-              type: string
+          items:
+            $ref: '#/components/schemas/shortCodeCarrierInfo'
           type: array
         version:
           example: 100
-          type: number
+          type: long
     shortCodeHistoryApiPage:
       description: >-
         Pagination object that represents the current page of short code number
@@ -12137,7 +12166,7 @@ components:
           $ref: '#/components/schemas/shortCodePagination'
         totalCount:
           example: 100
-          type: number
+          type: integer
         data:
           items:
             $ref: '#/components/schemas/shortCodeHistory'
