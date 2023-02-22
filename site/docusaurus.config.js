@@ -102,10 +102,9 @@ module.exports = {
                 title: 'Login'
             }]
         },
-        // Now this breaks redoc :sad: (Now missing prism dependency as well)
         // prism: {
-        //     additionalLanguages: ['csharp', 'java', 'ruby', 'php'],
-        //   },
+        //     additionalLanguages: ['java'],  // Breaks if you try to add more than 1 language. And still breaks redoc :(((((
+        // },
     },
     presets: [
         [

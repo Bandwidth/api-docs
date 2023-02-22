@@ -1,6 +1,6 @@
 context(`Test the 'Was This Helpful' Feedback process`, () => {
     before(() => {
-        cy.visit('/docs/account');
+        cy.visit('/docs/account/');
     })
 
     it('Verifies that the feedback buttons are rendered', () => {
@@ -42,7 +42,7 @@ context(`Test the 'Was This Helpful' Feedback process`, () => {
     });
 
     it('Verifies Feedback submit error path', () => {
-        cy.visit('/apis/messaging');
+        cy.visit('/apis/messaging/');
         cy.get('.question-container > :nth-child(2)').click();
         cy.get('.multi-line-input').type('error path');
         cy.get('.single-line-input').type('error@path.com');
