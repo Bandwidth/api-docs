@@ -19,6 +19,8 @@ const globalSpec_v2 = fs.readFileSync('./specs/global-v2.yml', 'utf-8');
 const globalSpec_v3 = fs.readFileSync('./specs/global-v3.yml', 'utf-8');
 const globalSpec_beta = fs.readFileSync('./specs/global-beta.yml', 'utf-8');
 const insightsSpec = fs.readFileSync('./specs/insights.yml', 'utf-8');
+const pipedream = 'https://eowxoldwz4d7syt.m.pipedream.net';
+/* TODO ONEID-1304
 const identitySpec = fs.readFileSync('./specs/one-identity-management.yml', 'utf-8');
 
 module.exports = {
@@ -99,10 +101,9 @@ module.exports = {
                 title: 'Login'
             }]
         },
-        // Now this breaks redoc :sad: (Now missing prism dependency as well)
         // prism: {
-        //     additionalLanguages: ['csharp', 'java', 'ruby', 'php'],
-        //   },
+        //     additionalLanguages: ['java'],  // Breaks if you try to add more than 1 language. And still breaks redoc :(((((
+        // },
     },
     presets: [
         [
@@ -158,6 +159,8 @@ module.exports = {
 
         ltsVersions: ltsVersions,
 
+        pipedream: pipedream,
+
         // CSS Colors
         bwBlue: '#079CEE',
         voicePurple: '#9a59c5',
@@ -178,10 +181,11 @@ module.exports = {
         [
             '@docusaurus/plugin-content-docs',
             {
-                id: 'miration-guides',
+                id: 'migration-guides',
                 path: 'migration-guides',
                 routeBasePath: 'migration-guides',
                 sidebarPath: require.resolve('./sidebarsMigrationGuides.js'),
+                editUrl: 'https://github.com/Bandwidth/api-docs/edit/main/site/',
             },
         ],
         'docusaurus-plugin-sass',

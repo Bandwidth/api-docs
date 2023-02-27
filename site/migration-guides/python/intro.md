@@ -5,6 +5,8 @@ slug: /python
 description: Python SDK Migration Guides
 sidebar_label: Overview
 image: '@site/static/img/bw-icon.svg'
+pagination_next: null
+pagination_prev: null
 ---
 
 See our releases on [GitHub](https://github.com/Bandwidth/python-sdk/releases) for more detailed changelogs

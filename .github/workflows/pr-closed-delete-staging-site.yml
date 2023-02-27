@@ -6,9 +6,9 @@ on:
   pull_request:
     types: [closed]
     branches:
-      - 'main'
+      - "main"
     paths:
-      - 'site/**'
+      - "site/**"
 
 jobs:
   cypress_cloudfront:
@@ -22,12 +22,12 @@ jobs:
         browser: [chrome]
     steps:
       - name: Setup Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 16
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -41,7 +41,7 @@ jobs:
           BRANCH_NAME=${GITHUB_HEAD_REF#refs/heads/}
           BRANCH_NAME=$(echo "$BRANCH_NAME" | tr '[:upper:]' '[:lower:]')
           BRANCH_NAME=$(echo "$BRANCH_NAME" | sed -e "s/[^a-z0-9]/-/g")
-          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV 
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
       - name: Create Cypress Config
         run: |
@@ -89,22 +89,22 @@ jobs:
     needs: [cypress_cloudfront]
     runs-on: ubuntu-latest
     steps:
-    - name: Set Environment Variables
-      run: |
-        BRANCH_NAME=${GITHUB_HEAD_REF#refs/heads/}
-        BRANCH_NAME=$(echo "$BRANCH_NAME" | tr '[:upper:]' '[:lower:]')
-        BRANCH_NAME=$(echo "$BRANCH_NAME" | sed -e "s/[^a-z0-9]/-/g")
-        echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+      - name: Set Environment Variables
+        run: |
+          BRANCH_NAME=${GITHUB_HEAD_REF#refs/heads/}
+          BRANCH_NAME=$(echo "$BRANCH_NAME" | tr '[:upper:]' '[:lower:]')
+          BRANCH_NAME=$(echo "$BRANCH_NAME" | sed -e "s/[^a-z0-9]/-/g")
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
 
-    - name: Cleanup S3 Bucket
-      run: aws s3 rm s3://staging-dev-docsite/ --recursive --exclude "*" --include "${{ env.BRANCH_NAME }}/*"
+      - name: Cleanup S3 Bucket
+        run: aws s3 rm s3://staging-dev-docsite/ --recursive --exclude "*" --include "${{ env.BRANCH_NAME }}/*"
 
   notify_for_failures:
     name: Notify for Failures
