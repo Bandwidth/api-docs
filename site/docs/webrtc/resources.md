@@ -27,9 +27,9 @@ If you are an SDK user, there are a pair of them that you will want: a client SD
   | Language                                                                   | Notes                                  |
   | -------------------------------------------------------------------------- | -------------------------------------- |
   | [Node](https://www.npmjs.com/package/@bandwidth/webrtc)                    | WebRTC Only                            |
-  | [C#](https://www.nuget.org/packages/Bandwidth.Sdk/)                        | Bandwidth's C# SDK includes WebRTC     |
+  | [C#](/https://www.nuget.org/packages/Bandwidth.Sdk//)                        | Bandwidth's C# SDK includes WebRTC     |
   | [Ruby](https://rubygems.org/gems/bandwidth-sdk)                            | Bandwidth's Ruby SDK includes WebRTC   |
-  | [Python](https://pypi.org/project/bandwidth-sdk/)                          | Bandwidth's Python SDK includes WebRTC |
+  | [Python](/https://pypi.org/project/bandwidth-sdk//)                          | Bandwidth's Python SDK includes WebRTC |
   | [PHP](https://packagist.org/packages/bandwidth/sdk)                        | Bandwidth's PHP SDK includes WebRTC    |
   | [Java](https://mvnrepository.com/artifact/com.bandwidth.sdk/bandwidth-sdk) | Bandwidth's Java SDK includes WebRTC   |
 
@@ -67,7 +67,7 @@ Some things you just gotta have - this is that list.
 
 ### Your Bandwidth account
 
-⚠️ Your account must be activated to use WebRTC. Please contact [sales support](https://www.bandwidth.com/talk-to-an-expert/) to learn how to get access!
+⚠️ Your account must be activated to use WebRTC. Please contact [sales support](/https://www.bandwidth.com/talk-to-an-expert//) to learn how to get access!
 
 Our Video API and WebRTC Calling API are both powered by Bandwidth's WebRTC Platform.
 

@@ -47,7 +47,7 @@ var participantBody = new BandwidthWebRTC.Participant(
 
 You can have people in your WebRTC session (audio or video) who are dialed in on a phone using our SIP Interconnection feature. These participants will need to call a number that is served by a Bandwidth Voice API application, in that application you will `<transfer>` the call to a special SIP URI with an authentication token to allow them to join the session.
 
-More can be found on this in our [quickstart guide](docs/webrtc/quickstart/).
+More can be found on this in our [quickstart guide](/docs/webrtc/quickstart//).
 
 ## Sessions
 
