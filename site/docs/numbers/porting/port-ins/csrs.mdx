@@ -13,3 +13,43 @@ description: A general overview of Bandwidth's Porting CSRs
 hide_title: false
 image: "@site/static/img/bw-icon.svg"
 ---
+
+# CSR Requests
+
+Approximately 60% of port-in rejections are caused by mismatches between the service address in the port-in and the service address on file with the losing service provider.
+
+Bandwidth provides an API that allows you to request the Customer Service Record (CSR) associated with a telephone number. The CSR includes the service address that the losing service provider has on file. If the CSR request is successful, you can eliminate address mismatches as a source of rejections for that telephone number.
+
+Before you get too excited, however, there are some limitations you should be aware of. Of all CSR requests made to TRAM (Bandwidth’s CSR vendor),
+
+- 40% successfully receive an automated CSR response
+  - Automated, or real-time, responses are generally very fast because these service providers support an API mechanism to fetch the CSR data.
+- 30% require a manual CSR request/response
+  - Manual requests can take a couple of days.
+  - Of the manual requests, sent only to service providers known to support manual CSRs, approximately 75% are successful.
+- 30% fail outright because they are for service providers known to not supply CSR data
+  - Service providers are not required to provide CSR data.
+
+![CSR Results](@site/static/img/docs-diagrams/numbers/porting/CSRBreakdown.png)
+
+The Bandwidth [/accounts/{accountId}/csrs](/apis/numbers/#operation/CreateCsrOrder) API only supports automated, or real-time, CSR requests. This means that you can expect around a 40% success rate for all of your CSR requests.
+
+Bandwidth has an arrangement with our CSR vendor to allow you to access their CSR portal (graphical user interface) to fetch manual CSRs. But because it can take a long time to get the response, manual CSR retrieval is generally not suitable for port-in automation.
+
+Still, there is value in preventing some percentage of the 60% of port-in rejections caused by address mismatch. This guide describes how to use the Bandwidth /csrs API endpoint to access real-time CSR retrieval.
+
+# Creating a CSR Order
+
+Before creating the order, collect any information from the end user as described in the request body schema for the [POST /accounts/{accountId}/csrs](/apis/numbers/#operation/CreateCsrOrder) endpoint.
+
+# Fetch the CSRs Order Status
+
+CSR orders are processed and updated asynchronously. Processing times can vary. You may poll the status of the CSRs order using [GET /accounts/{accountId}/csrs/{orderId}](/apis/numbers/#operation/ReadCsrOrder). Or, you can subscribe to order status changes for the CSRs order (or all CSRs orders) as described in the [/subscriptions](/apis/numbers/#operation/CreateSubscriptions) endpoint.
+
+# Update a CSRs Order
+
+A [PUT /csrs/{orderId}](/apis/numbers/#operation/UpdateCsrOrder) request provides the ability to update a CSR order with additional information requested by the carrier. CSR orders will be in either a PROCESSING or ACTION_REQUIRED status in this scenario.
+
+# Canceling a CSRs Order
+
+[PUT /csrs/{orderId}](/apis/numbers/#operation/UpdateCsrOrder) can also be used to cancel a CSR order. You must submit a request body with a Status element set to REQUESTED_CANCEL in order for the cancellation process to begin.
