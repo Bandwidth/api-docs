@@ -1,0 +1,166 @@
+---
+id: loaUpload
+title: LOA Upload
+slug: /numbers/guides/porting/loaUpload
+description: How to upload Letter of Authorization (LOA) for port-in request
+keywords:
+  - bandwidth
+  - numbers
+  - porting
+  - portin
+  - port-in
+  - lnp
+  - port
+  - loa
+  - file
+  - upload
+  - letter
+  - authorization
+image: '@site/static/img/bw-icon.svg'
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+export const accountId = "{accountId}";
+export const orderId = "{orderId}";
+export const fileId = "{fileId}";
+
+export const Highlight = ({children, color}) => (
+    <span
+      style={{
+        backgroundColor: color,
+        borderRadius: '2px',
+        color: '#fff',
+        padding: '0.2rem',
+      }}>
+      {children}
+    </span>
+  );
+
+
+After successfully submitting the [Create LNP Order request](/docs/numbers/guides/porting/portingNumbers), a Letter of Authorization (LOA) may be uploaded using our LOA API.
+
+:::caution
+If your port-on order has a ```PENDING_DOCUMENTS``` status then LOA upload is a required action.
+:::
+
+The following MIME types are supported for the LOA upload file:
+
+* PDF (“application/pdf”)
+* PLAIN (“text/plain”)
+* JPG (“image/jpeg”)
+* TIFF (“image/tiff”)
+* CSV (“text/csv”)
+* XML (“application/xml”)
+* WAV (“audio/x-wav”)
+* ZIP (“application/zip”)
+
+
+To upload and manage the LOA you can use different requests to [/portins/{orderId}/loas API](/apis/numbers/#operation/UploadPortinLoaFile). This can be done using tools like Postman or cURL.
+
+### Examples
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/portins/{orderId}/loas</code>
+
+<Tabs
+    groupId="uploadLoa"
+    defaultValue="payload"
+    values={[
+        { label: 'payload', value: 'payload', },
+        { label: 'cURL', value: 'curl', },
+    ]
+    }>
+<TabItem value="payload">
+
+> Upload LOA
+
+```http
+POST /api/accounts/9900778/portins/{orderId}/loas HTTP/1.1
+Host: dashboard.bandwidth.com
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+Content-Type: application/pdf
+documentType: LOA
+Accept: /
+Accept-Encoding: gzip, deflate
+Accept-Language: en-US,en;q=0.8
+Cache-Control: no-cache
+
+----WebKitFormBoundaryE19zNvXGzXaLvS5C
+Content-Disposition: form-data; name="george"; filename="Bandwidth Dashboard.pdf"
+Content-Type: application/pdf
+----WebKitFormBoundaryE19zNvXGzXaLvS5C
+```
+
+> Response
+
+```xml
+HTTP 201 Created
+Content-Type: application/xml; charset=utf-8
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<fileUploadResponse>
+    <filename>63097af1-37ae-432f-8a0d-9b0e6517a35b-1429550165581.pdf</filename>
+    <resultCode>0</resultCode>
+    <resultMessage>LOA file uploaded successfully for order 63097af1-37ae-432f-8a0d-9b0e6517a35b</resultMessage>
+</fileUploadResponse>
+```
+
+</TabItem>
+<TabItem value="curl">
+
+```cURL
+# UPLOAD LOA
+
+curl \
+    -H 'Content-Type: application/pdf' \
+    --data-binary "@Test_LOA.pdf" \
+    -iv https://dashboard.bandwidth.com/api/accounts/{accountId}/portins/{orderId}/loas
+```
+
+</TabItem>
+</Tabs>
+
+To manage your LOA files use our APIs like [/portins/{orderid}/loas/{fileId}](/apis/numbers/#operation/UpdatePortinLoaFile) and [/portins/{orderid}/loas/{fileId}/metadata](/apis/numbers/#operation/UpdatePortinLoadMetadata).
+
+<Highlight color="#9a59c5">PUT</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/portins/{orderId}/loas/{fileId}/metadata</code>
+
+<Tabs
+    groupId="manageLoa"
+    defaultValue="payload"
+    values={[
+        { label: 'payload', value: 'payload', },
+        { label: 'cURL', value: 'curl', },
+    ]
+    }>
+<TabItem value="payload">
+
+```xml
+<FileMetaData>
+    <DocumentName> [string] </DocumentName>
+    <DocumentType> [LOA | INVOICE | CSR | OTHER] </DocumentType>
+</FileMetaData>
+```
+
+</TabItem>
+<TabItem value="curl">
+
+> Request
+
+```xml
+curl 'https://dashboard.bandwidth.com/api/accounts/{accountId}/portins/{orderId}/loas/{fileId}/metadata' \
+-X PUT \
+-u '{BANDWIDTH_USERNAME}:{BANDWIDTH_PASSWORD}' \
+-H 'Content-Type: application/xml' \
+-d '<FileMetaData>
+<DocumentName> [string] </DocumentName>
+<DocumentType> [LOA | INVOICE | CSR | OTHER] </DocumentType>
+</FileMetaData>'
+```
+
+</TabItem>
+</Tabs>
+
+## Where to next?
+
+Now that you have learned how to upload a LOA file, check out some of the other available actions in the following guides:
+- [How to Manage Port-in →](/docs/numbers/guides/porting/updatePortin)

@@ -1,0 +1,172 @@
+---
+id: csrLookup
+title: CSR Lookup
+slug: /numbers/guides/porting/csrLookup
+description: How to lookup CSR records using the Bandwidth API
+keywords:
+  - bandwidth
+  - numbers
+  - csr
+image: '@site/static/img/bw-icon.svg'
+---
+
+export const accountId = "{accountId}";
+export const orderId = "{orderId}";
+
+export const Highlight = ({children, color}) => (
+    <span
+      style={{
+        backgroundColor: color,
+        borderRadius: '2px',
+        color: '#fff',
+        padding: '0.2rem',
+      }}>
+      {children}
+    </span>
+  );
+
+This guide will walk you through how to programmatically lookup Customer Service Records (CSRs) for phone numbers before porting into your Bandwidth account.
+
+## Create a CSR Order
+
+Before creating the order, collect any information from the end user as described in the request body schema for the POST method [/csrs API](/apis/numbers/#operation/CreateCsrOrder).
+
+### Examples
+<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/csrs</code>
+
+```xml
+<Csr>
+  <CustomerOrderId>CustomerOrderId</CustomerOrderId>
+  <WorkingOrBillingTelephoneNumber>9198675309</WorkingOrBillingTelephoneNumber>
+  <EndUserPIN>1234</EndUserPIN>
+</Csr>
+```
+
+> Response
+
+```xml
+HTTP/1.1 200 OK
+Content-Type: application/xml
+Location: https://dashboard.bandwidth.com/api/accounts/{{accountId}}/csrs/{{orderId}}
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<CsrResponse>
+    <OrderId>18cee9d0-a5c5-4322-9a47-d04176bc924c</OrderId>
+    <Status>RECEIVED</Status>
+</CsrResponse>
+```
+
+## Fetch Order Status
+
+CSR orders are processed and updated asynchronously. Processing times can vary. For status updates, it is recommended to use subscriptions versus polling the order resource for `<OrderStatus>`.
+Please follow the [How to setup Notification Webhook](/docs/numbers/webhooks/orderWebhook) guide.
+If you want to poll, you can still use a [GET /csrs/{orderId} request](/apis/numbers/#operation/ReadCsrOrder).
+
+<Highlight color="#00bf8c">GET</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/csrs/{orderId}</code>
+
+```xml
+HTTP 200 OK
+Content-Type: application/xml; charset=utf-8
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<CsrResponse>
+  <LastModifiedBy>{api-userName}</LastModifiedBy>
+  <OrderCreateDate>2020-02-25T15:39:22.079Z</OrderCreateDate>
+  <AccountId>{accountId}</AccountId>
+  <OrderId>20ba7d26-7fa0-4716-ab45-6c8e07d37862</OrderId>
+  <LastModifiedDate>2020-02-25T15:39:41.166Z</LastModifiedDate>
+  <Status>COMPLETE</Status>
+  <CsrData>
+    <CustomerName>House of Mouse</CustomerName>
+    <ServiceAddress>
+      <UnparsedAddress>1234 Main ST Durham NC 27707</UnparsedAddress>
+      <HouseNumber>1234</HouseNumber>
+      <StreetName>Main</StreetName>
+      <StreetSuffix>ST</StreetSuffix>
+      <City>Durham</City>
+      <State>NC</State>
+      <Zip>27707</Zip>
+    </ServiceAddress>
+    <WorkingTelephoneNumber>9198675309</WorkingTelephoneNumber>
+    <WorkingTelephoneNumbersOnAccount>
+      <TelephoneNumber>9198675309</TelephoneNumber>
+    </WorkingTelephoneNumbersOnAccount>
+  </CsrData>
+</CsrResponse>
+```
+
+## Update an Order
+
+A <Highlight color="#9a59c5">PUT</Highlight> [/csrs/{orderId} request](/apis/numbers/#operation/UpdateCsrOrder) method provides the ability to update a CSR order with additional information requested by the carrier. CSR orders will be in either a `PROCESSING` or `ACTION_REQUIRED` status in this scenario.
+The <Highlight color="#9a59c5">PUT</Highlight> method can also be used to cancel a CSR order. You must submit a request body with a `Status` element set to `REQUESTED_CANCEL` in order for the cancellation process to begin.
+
+### Examples
+<Highlight color="#9a59c5">PUT</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/csrs/{orderId}</code>
+
+```xml
+<Csr>
+    <AccountNumber>987654321</AccountNumber>
+    <AccountTelephoneNumber>9196194444</AccountTelephoneNumber>
+    <EndUserName>bandwidthGuy</EndUserName>
+    <AuthorizingUserName>importantAuthGuy</AuthorizingUserName>
+    <CustomerCode>123</CustomerCode>
+    <EndUserPIN>12345</EndUserPIN>
+    <EndUserPassword>enduserpassword123</EndUserPassword>
+    <AddressLine1>900 Main Campus Dr</AddressLine1>
+    <City>Raleigh</City>
+    <State>NC</State>
+    <ZIPCode>27612</ZIPCode>
+    <TypeOfService>residential</TypeOfService>
+    <!-- cancel csr order -->
+    <Status>REQUESTED_CANCEL</Status>
+</Csr>
+```
+
+> Response
+
+```xml 
+HTTP 200 OK
+Content-Type: application/xml; charset=utf-8
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<CsrResponse>
+    <CustomerOrderId>TEST BWDB-6506</CustomerOrderId>
+    <LastModifiedBy>systemUser</LastModifiedBy>
+    <OrderCreateDate>2020-01-13T21:14:35Z</OrderCreateDate>
+    <AccountId>14</AccountId>
+    <OrderId>5c3b8240-52b5-45a5-8d7d-42a71ebcd1ba</OrderId>
+    <LastModifiedDate>2020-01-13T16:51:21.920Z</LastModifiedDate>
+    <Status>COMPLETE</Status>
+    <AccountNumber>987654321</AccountNumber>
+    <AccountTelephoneNumber>9196194444</AccountTelephoneNumber>
+    <EndUserName>bandwidthGuy</EndUserName>
+    <AuthorizingUserName>importantAuthGuy</AuthorizingUserName>
+    <CustomerCode>123</CustomerCode>
+    <EndUserPIN>12345</EndUserPIN>
+    <EndUserPassword>enduserpassword123</EndUserPassword>
+    <AddressLine1>900 Main Campus Dr</AddressLine1>
+    <City>Raleigh</City>
+    <State>NC</State>
+    <ZIPCode>27612</ZIPCode>
+    <TypeOfService>residential</TypeOfService>
+    <CsrData>
+        <AccountNumber>123456789</AccountNumber>
+        <CustomerName>JOHN SMITH</CustomerName>
+        <ServiceAddress>
+            <UnparsedAddress>900 MAIN CAMPUS DR</UnparsedAddress>
+            <City>RALEIGH</City>
+            <State>NC</State>
+            <Zip>27616</Zip>
+        </ServiceAddress>
+        <WorkingTelephoneNumber>9196191156</WorkingTelephoneNumber>
+        <WorkingTelephoneNumbersOnAccount>
+            <TelephoneNumber>9196191156</TelephoneNumber>
+        </WorkingTelephoneNumbersOnAccount>
+    </CsrData>
+</CsrResponse>
+```
+
+## Where to next?
+
+Now that you have learned how to lookup CSR records, check out some of the other available actions in the following guides:
+- [How to create a Port-in Request →](/docs/numbers/guides/porting/portingNumbers)
