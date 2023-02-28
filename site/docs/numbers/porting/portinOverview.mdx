@@ -1,0 +1,152 @@
+---
+id: portinOverview
+title: Port-in Overview
+slug: /api-docs/site/docs/numbers/porting/portinOverview.mdx
+description: An overview of porting numbers into Bandwidth.
+keywords:
+  - Porting
+  - Port-in
+  - Bulk Port-in
+  - Stand-Alone Port-in
+  - Draft Port-in
+
+# Port-ins
+
+This section describes how to use Bandwidth’s port-in APIs to port telephone numbers from another provider to your Bandwidth account.  The telephone numbers may be either regular or toll free.
+
+The high-level steps for porting numbers into Bandwidth are:
+
+1. Determine if the telephone numbers are portable [LNP Checker](/docs/numbers/guides/porting/lnpChecker.mdx) for regular numbers [Toll Free Porting Validations](/docs/numbers/guides/porting/tollFreePortingValidations.mdx) for toll free numbers.
+2. Create a port-in request [Stand Alone Port-ins Overview](/docs/numbers/guides/porting/standAlonePortinsOverview.mdx), [Bulk Port-ins](/docs/numbers/guides/porting/bulkPortins.mdx).
+3. Upload necessary documents &lt;</loas HL>>
+4. Submit the port-in request (see Draft Port-ins section below)
+5. Receive FOC &lt;<Stand Alone Port-ins: Fetching Port-in Status HL>> [Subscriptions](/apis/numbers/#operation/CreateSubscriptions)
+6. Activate the port-in on FOC day &lt;<Stand Alone Port-ins: Port-in Activation HL>>
+
+There are two main APIs used to port numbers into Bandwidth.
+
+* [/accounts/{accountId}/portins](/apis/numbers/#operation/CreatePortin)
+    * Referred to as stand-alone port-ins, to distinguish them from bulk port-ins.
+    * For non toll free numbers, this is a port-in where all of the TNs belong to a single losing carrier and are billed to a single entity.
+    * For toll free numbers, this is a port-in where all of the TNs belong to a single RespOrg and are billed to a single entity.
+* [/accounts/{accountId}/bulkPortins](/apis/numbers/#operation/CreateBulkPortin)
+    * A bulk port-in can be for a mix of toll free and non toll free TNs belonging to a number of different RespOrgs or carriers.
+    * The bulk port-in creates subtending, or child, port-in orders, broken down by losing carrier or RespOrg.
+    * The bulk port-in will attempt to choose a requested FOC date that can be met for all of the child orders, with a goal of having them all complete on the same day.
+    * The child orders can be detached, if desired, from the bulk port-in and treated just as if they’d been created using the /portins API.  Doing so allows you to take advantage of the automated breakdown by carrier/RespOrg, without attempting to have them achieve FOC for the same day.
+
+Both of the above can be used to port-in regular and toll free telephone numbers.
+
+
+# Stand-Alone Port-ins
+
+A stand-alone port-in is a single port-in request for one or more telephone numbers that can be authorized for porting by one person, and can be ported together.  The rules for which telephone numbers can be ported together differ between regular numbers and toll free numbers.
+
+For a stand-alone port-in, the API user is responsible for determining which TNs can be ported together.  Bandwidth supplies tools to assist with this function that differ between regular numbers and toll free numbers.  (See [Checking Portability for Regular Numbers](/apis/numbers/#operation/CreateSubscriptions) and [Checking Portability for Toll Free Numbers](/docs/numbers/guides/porting/tollFreePortingValidations.mdx)).  For more detailed information on stand-alone port-ins, please refer to [Stand-Alone Port-ins](/docs/numbers/guides/porting/standAlonePortinsOverview.mdx).
+
+
+## For Regular Numbers
+
+The [/accounts/{accountId}/portins](/apis/numbers/#operation/CreatePortin) API is used to create a stand-alone port-in order.  Stand-alone port-ins require the user to provide telephone numbers that can be ported together.
+
+
+### Rules For TNs That Can Be Ported Together
+
+
+* All telephone numbers must belong to the same losing carrier
+* All telephone numbers must be associated with the same service address
+* All telephone numbers must be associated with one billing telephone number
+* One person must be authorized to approve the port
+* The telephone numbers must have the same port type
+
+The [/accounts/{accountId}/lnpchecker](/apis/numbers/#operation/RequestPortabilityInfo) API may be used to query portability information for one or more regular telephone numbers.
+
+[LNP Checker](/docs/numbers/guides/porting/lnpChecker.mdx)
+
+
+## For Toll Free Numbers
+
+The [/accounts/{accountId}/portins](/apis/numbers/#operation/CreatePortin) API is used to create a stand-alone port-in order.  Stand-alone port-ins require the user to provide telephone numbers that can be ported together.
+
+
+### Rules For TNs That Can Be Ported Together
+
+
+
+* All telephone numbers must belong to the same controlling RespOrg
+* One person must be authorized to approve the port
+* The telephone numbers must be portable
+
+The [/accounts/{accountId}/tollFreePortingValidations](/apis/numbers/#operation/CreateTollFreePortingValidation) API may be used to query portability information for one or more toll free numbers.
+
+[Toll Free Porting Validations](/docs/numbers/guides/porting/tollFreePortingValidations.mdx)
+
+
+# Bulk Port-ins
+
+A bulk port-in is intended to handle porting of telephone numbers that cannot be ported together, but which should be coordinated to port on the same date.  A bulk port-in is really just a container for stand-alone port-ins that are automatically created and associated with the bulk port-in.
+
+For a bulk port-in, Bandwidth software determines if the telephone numbers are portable, which telephone numbers can be ported together and creates a bulk port-in with some number of subtending, or child, port-ins to handle each set of telephone numbers that can be ported together.  A bulk port-in can even have a mix of regular and toll free numbers.
+
+The high level steps for bulk port-in are:
+
+
+
+* Create the draft bulk port-in using [POST /accounts/{accountId}/bulkPortins](/apis/numbers/#operation/CreateBulkPortin)
+    * Include only data that should be shared across all subtending ports (e.g. ServiceAddress)
+* Add telephone numbers to the draft using [PUT /accounts/{accountId}/bulkPortins/{orderId}/tnList](/apis/numbers/#operation/UpdateBulkTnList)
+    * You may mix regular and toll free numbers if desired
+* Fetch the status of the TN list to ensure your telephone numbers are portable using [GET /accounts/{accountId}/bulkPortins/{orderId}/tnList](/apis/numbers/#operation/ListBulkTns)
+    * Look for ProcessingStatus value VALID_DRAFT_TNS
+* Add any additional port-specific data to child port-ins using [PUT /accounts/{accountId}/portins/{orderId}](/apis/numbers/#operation/PutBulkOrder)
+    * You could add or override a service address, for example
+* Add LOA documents to the child orders using [POST /accounts/{accountId}/portins/{orderId}/loas](/apis/numbers/#operation/UploadPortinLoaFile)
+    * Each child order typically requires a separate LOA document
+* When you are ready, submit the bulk port-in using [PATCH /accounts/{accountId}/bulkPortins/{orderId}](/apis/numbers/#operation/PatchBulkOrder)
+    * Set ProcessingStatus to IN_PROGRESS
+* Fetch the list of child orders using [GET /accounts/{accountId}/bulkPortins/{orderId}/portinList](/apis/numbers/#operation/ListBulkChildOrders)
+    * Ensure there are no Errors listed for any of the child port-ins
+* Monitor the status of the bulk port-in using [GET /accounts/{accountId}/bulkPortins/{orderId}](/apis/numbers/#operation/RetrieveBulkOrder)
+* Monitor the status of child port-ins using [GET /accounts/{accountId}/portins/{orderId}](/apis/numbers/#operation/RetrievePortin)
+
+For more information on bulk port-ins, please refer to [Bulk Port-ins](/docs/numbers/guides/porting/bulkPortins.mdx).
+
+
+# Draft Port-ins
+
+Bandwidth provides the ability to create “draft” port-in and bulk port-in orders.  A draft order can be updated as many times as you wish, without submitting the port-in.  This can be handy if you wish to store data in the draft as it becomes available, and submit the order when you are ready.
+
+Validation rules are relaxed when you update a draft order, since the order may not yet contain all of the data that would be needed to successfully submit it to the losing carrier.  But when you do change the order from draft to submitted, all validations are performed.
+
+**Important**:  In order to prevent draft orders from piling up, draft orders that have not been updated within 48 hours are automatically removed each day at 09:00 UTC (4:00 AM or 5:00 AM ET, depending on daylight saving time).  You may also remove draft orders using the DELETE operation.  Unlike for submitted orders, the DELETE operation on draft orders removes them from the system entirely.
+
+
+## Bulk port-ins
+
+
+
+* All bulk port-ins start in draft state upon creation
+* A bulk port-in with no TNs added will have ProcessingStatus of DRAFT
+* A bulk port-in with TNs added may be in one of the following states
+    * VALIDATE_DRAFT_TNS - while validation is still in progress
+    * INVALID_DRAFT_TNS - if the bulk port-in TN list contains non-portable TNs
+    * VALID_DRAFT_TNS - if TN validation is complete and all TNs are portable.  In this state, the bulk port-in will have one or more child port-in orders for the portable TNs.
+* A bulk port-in is submitted by PATCHing the ProcessingStatus to IN_PROGRESS
+    * This can only be done when the bulk port-in is in the VALID_DRAFT_TNS state
+
+
+## Stand-alone port-ins
+
+
+
+* Stand-alone port-ins DO NOT start in draft state by default
+* To create a stand-alone port-in in draft state, the ProcessingStatus element must be included in the POST to /accounts/{accountId}/portins with a value of DRAFT
+* If the port-in is for regular telephone numbers, that order will stay in DRAFT state until you submit the order
+* If the port-in is for toll free telephone numbers, the order may be in one of the following states
+    * VALIDATE_DRAFT_TFNS - while toll free number validation is still in progress
+    * INVALID_DRAFT_TFNS - if the port-in includes non-portable toll free numbers or toll free numbers that cannot be ported together
+    * VALID_DRAFT_TNS - if the port-in includes only portable toll free numbers that can be ported together
+* A stand-alone port-in is submitted by PUTting the ProcessingStatus to SUBMITTED
+    * For toll free port-ins, this can only be done when the port-in is in VALID_DRAFT_TFNS state
+    * Once an order has been submitted, it is no longer a draft and cannot return to being a draft.
+
