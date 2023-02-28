@@ -1,10 +1,10 @@
 ---
 id: lsrOrders
-title: How to remove telephone numbers from the Bandwidth network
+title: How to port telephone numbers away from the Bandwidth network
 slug: /numbers/guides/porting/lsrOrders
-description: How to remove telephone numbers from the Bandwidth network using the LSR orders Bandwidth API
+description: How to port telephone numbers away from the Bandwidth network using the LSR orders Bandwidth API
 keywords:
-  - bandwidth
+  - Port-out
   - LSR
   - lsrOrders
   - orders
@@ -29,421 +29,127 @@ export const Highlight = ({children, color}) => (
     </span>
   );
 
-[The /lsrorders endpoint](/apis/numbers#operation/CreateLsrOrder) is used to create, modify, and monitor API requests to remove telephone numbers from the Bandwidth network. This API call is intended for use by carriers that want to automate the "port-out" process with Bandwidth.
+The /accounts/{accountId}/lsrorders endpoint is used to [create](/apis/numbers#operation/CreateLsrOrder), [modify](/apis/numbers#operation/UpdateLsrOrder), and [monitor](/apis/numbers#operation/ReadLsrOrder) API requests to port local telephone numbers away from the Bandwidth network.  (Note: This API cannot be used to port out toll free telephone numbers, which still require a Ticket.)  This API call is intended for use by carriers that want to automate the "Port-out" process with Bandwidth, rather than manually request the "port-out" of telephone numbers via the Bandwidth Dashboard or a Ticket.
 
-## Create LSR Order
+Because the [/accounts/{accountId}/lsrorders](/apis/numbers#operation/CreateLsrOrder) API is asynchronous, it uses the [Bandwidth order model](/docs/numbers/guides/porting/orderModel.mdx).
 
-To create an LSR order you must make a <Highlight color="#079CEE">POST</Highlight> request to our [/lsrorders API](/apis/numbers#operation/CreateLsrOrder) endpoint. This can be done using tools like Postman or cURL. An `order id` will be auto-generated and provided back.
+In this case a POST is made to the [/accounts/{accountId}/lsrorders](/apis/numbers#operation/CreateLsrOrder) resource that describes the request to port out the numbers.  If the POST has no syntactic errors, such as a telephone number with less than 10 digits, an order-id will be returned that is used to monitor and manage the port-out request.  The POST returns a payload that reflects the request, and includes the order-id, as well as a Location header that contains a valid GET API call that can be used to retrieve the current state of the LSR / Port-out request.
 
-The LSR request includes:
-- a list of telephone numbers
-- information about the subscriber
-- tracking information such as a `PON` and a `Customer Order ID`
-- winning carrier information such as the `SPID`
-- date information
+A complete list of payload elements for the POST request can be found in the API reference, but in summary the LSR request includes:
 
-### Examples
-<Highlight color="#079CEE">POST</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/lsrorders</code>
-<Tabs
-    groupId="createLsr"
-    defaultValue="payload"
-    values={[
-        { label: 'Request Payload', value: 'payload', },
-        { label: 'cURL', value: 'curl', },
-    ]
-    }>
-<TabItem value="payload">
 
->Request
 
-```xml
-Note: Remember to add authentication for your application if needed!
+* a list of non toll free telephone numbers to be ported out of Bandwidth
+* information about the subscriber
+* tracking information such as a PON and a Customer Order ID
+* winning carrier information such as the SPID
+* requested FOC date
 
-https://dashboard.bandwidth.com/api/accounts/{accountId}/lsrorders
-//Make sure an authentication header is added with your BANDWIDTH_USERNAME and BANDWIDTH_PASSWORD
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<LsrOrder>
-    <Pon>ATT-011515-324234</Pon>
-    <CustomerOrderId>TestCustomerId</CustomerOrderId>
-    <SPID>123C</SPID>
-    <BillingTelephoneNumber>9192381468</BillingTelephoneNumber>
-    <RequestedFocDate>2022-09-19</RequestedFocDate>
-    <AuthorizingPerson>Test user</AuthorizingPerson>
-    <Subscriber>
-        <SubscriberType>BUSINESS</SubscriberType>
-        <BusinessName>BusinessName</BusinessName>
-        <ServiceAddress>
-            <HouseNumber>11</HouseNumber>
-            <StreetName>Street</StreetName>
-            <StreetSuffix>Ave</StreetSuffix>
-            <City>New York</City>
-            <StateCode>NY</StateCode>
-            <Zip>90011</Zip>
-        </ServiceAddress>
-        <AccountNumber>123463</AccountNumber>
-        <PinNumber>1231</PinNumber>
-    </Subscriber>
-    <ListOfTelephoneNumbers>
-        <TelephoneNumber>9192381467</TelephoneNumber>
-        <TelephoneNumber>9192381468</TelephoneNumber>
-        <TelephoneNumber>9192381469</TelephoneNumber>
-    </ListOfTelephoneNumbers>
-</LsrOrder>
-```
+This API supports the [GET](/apis/numbers#operation/ReadLsrOrder) operation for retrieving order detail and status information, [POST](/apis/numbers#operation/CreateLsrOrder) for creating a new LSR Order, and [PUT](/apis/numbers#operation/UpdateLsrOrder) for changing the details of an LSR that is in progress.
 
-</TabItem>
-<TabItem value="curl">
+An LSR order may be in one of the following states:
 
-```xml
-Note: Remember to add authentication for your application if needed!
 
-curl 'https://dashboard.bandwidth.com/api/accounts/{BW_ACCOUNT_ID}/lsrorders' \
--X POST \
--u '{BANDWIDTH_USERNAME}:{BANDWIDTH_PASSWORD}' \
--H 'Content-Type: application/xml' \
--d '<LsrOrder>
-    <Pon>ATT-011515-324234</Pon>
-    <CustomerOrderId>TestCustomerId</CustomerOrderId>
-    <SPID>123C</SPID>
-    <BillingTelephoneNumber>9192381468</BillingTelephoneNumber>
-    <RequestedFocDate>2022-09-19</RequestedFocDate>
-    <AuthorizingPerson>Test user</AuthorizingPerson>
-    <Subscriber>
-        <SubscriberType>BUSINESS</SubscriberType>
-        <BusinessName>BusinessName</BusinessName>
-        <ServiceAddress>
-            <HouseNumber>11</HouseNumber>
-            <StreetName>Street</StreetName>
-            <StreetSuffix>Ave</StreetSuffix>
-            <City>New York</City>
-            <StateCode>NY</StateCode>
-            <Zip>90011</Zip>
-        </ServiceAddress>
-        <AccountNumber>123463</AccountNumber>
-        <PinNumber>1231</PinNumber>
-    </Subscriber>
-    <ListOfTelephoneNumbers>
-        <TelephoneNumber>9192381467</TelephoneNumber>
-        <TelephoneNumber>9192381468</TelephoneNumber>
-        <TelephoneNumber>9192381469</TelephoneNumber>
-    </ListOfTelephoneNumbers>
-</LsrOrder>'
-```
 
-</TabItem>
-</Tabs>
+* PENDING - you may see this state briefly if the account from which the telephone number is being ported out is still validating the port-out
+* FOC - a date by which the port-out can complete has been agreed upon
+* EXCEPTION - the port-out has a problem or has been disputed by the losing provider.  The order can be updated using the PUT operation to supply or correct the information being requested by the losing provider.
+* COMPLETE - the port-out is complete and the telephone numbers have been removed from the losing Bandwidth account
+* CANCELLED - the LSR order has been cancelled.  This is a terminal state for the order, meaning the order would have to be resubmitted.
+* PARTIAL - some, but not all of the telephone numbers in the LSR order have been ported out.
+* FAILED - the LSR order has failed and none of the telephone numbers have been ported out.  This is a terminal state for the order, meaning the order would have to be resubmitted.
 
->Response
+The losing provider is restricted to a very specific number of reasons to dispute a port-out.  The following errors will place the LSR order into the EXCEPTION state:
 
-```xml
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<LsrOrderResponse>
-    <LsrOrder>
-        <OrderId>afce454a-4e89-4753-9f58-a442ebc7b142</OrderId>
-        <LastModifiedBy>test user</LastModifiedBy>
-        <OrderCreateDate>2022-09-19T12:57:45.607Z</OrderCreateDate>
-        <PeerId>1234567</PeerId>
-        <AccountId>9999999</AccountId>
-        <LastModifiedDate>2022-09-19T12:57:45.607Z</LastModifiedDate>
-        <SiteId>123</SiteId>
-        <CreatedByUser>test user</CreatedByUser>
-        <OrderStatus>PENDING</OrderStatus>
-        <BillingTelephoneNumber>9192381468</BillingTelephoneNumber>
-        <Pon>ATT-011515-324234</Pon>
-        <CustomerOrderId>TestCustomerId</CustomerOrderId>
-        <SPID>123C</SPID>
-        <PonVersion>1</PonVersion>
-        <RequestedFocDate>2022-09-19 00:00:00</RequestedFocDate>
-        <AuthorizingPerson>Test user</AuthorizingPerson>
-        <Subscriber>
-            <SubscriberType>BUSINESS</SubscriberType>
-            <BusinessName>BusinessName</BusinessName>
-            <ServiceAddress>
-                <HouseNumber>11</HouseNumber>
-                <StreetName>Street</StreetName>
-                <StreetSuffix>Ave</StreetSuffix>
-                <City>New York</City>
-                <StateCode>NY</StateCode>
-                <Zip>90011</Zip>
-            </ServiceAddress>
-            <AccountNumber>123463</AccountNumber>
-            <PinNumber>1231</PinNumber>
-        </Subscriber>
-        <ListOfTelephoneNumbers>
-            <TelephoneNumber>9192381467</TelephoneNumber>
-            <TelephoneNumber>9192381468</TelephoneNumber>
-            <TelephoneNumber>9192381469</TelephoneNumber>
-        </ListOfTelephoneNumbers>
-    </LsrOrder>
-</LsrOrderResponse>
-```
 
-## Fetch LSR Order Status
+<table>
+  <tr>
+   <td><strong>Code</strong>
+   </td>
+   <td><strong>Description</strong>
+   </td>
+  </tr>
+  <tr>
+   <td>7510
+   </td>
+   <td>Required Account Code missing
+   </td>
+  </tr>
+  <tr>
+   <td>7511
+   </td>
+   <td>Invalid Account Code
+   </td>
+  </tr>
+  <tr>
+   <td>7512
+   </td>
+   <td>Required PIN missing
+   </td>
+  </tr>
+  <tr>
+   <td>7513
+   </td>
+   <td>PIN Invalid
+   </td>
+  </tr>
+  <tr>
+   <td>7514
+   </td>
+   <td>Required ZIP Code missing
+   </td>
+  </tr>
+  <tr>
+   <td>7515
+   </td>
+   <td>Invalid ZIP Code
+   </td>
+  </tr>
+  <tr>
+   <td>7519
+   </td>
+   <td>Customer info does not match
+   </td>
+  </tr>
+  <tr>
+   <td>7598
+   </td>
+   <td>Invalid Request
+   </td>
+  </tr>
+</table>
 
-This API call uses an asynchronous model that is common in the Bandwidth Dashboard API, where an "order" is created that is then subsequently used to track the progress of the request to completion.
 
-As times can vary and are not guaranteed Bandwidth recommends configuring your account with a subscription instead of polling the order resource for `<OrderStatus>`. Please follow the [How to setup Notification Webhook](/docs/numbers/webhooks/orderWebhook) guide to learn more about subscriptions.
+The following errors will cancel the LSR order.  Bandwidth does not support updating of the telephone number list after an order has been submitted.  So if there are problems with the telephone numbers, the order is automatically cancelled and must be resubmitted with updated telephone numbers.
 
-To poll for information about your LSR order you can still use a <Highlight color="#00bf8c">GET</Highlight> request to [/lsrorders/{orderId} API](/apis/numbers/#operation/ReadLsrOrder). This can be done using tools like Postman or cURL.
 
-<Highlight color="#00bf8c">GET</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/lsrorders/{orderId}</code>
-<Tabs
-    groupId="getLsr"
-    defaultValue="curl"
-    values={[
-        { label: 'cURL', value: 'curl', },
-    ]
-    }>
-<TabItem value="curl">
+<table>
+  <tr>
+   <td><strong>Code</strong>
+   </td>
+   <td><strong>Description</strong>
+   </td>
+  </tr>
+  <tr>
+   <td>7516
+   </td>
+   <td>Telephone Number not recognized or invalid for this account
+   </td>
+  </tr>
+  <tr>
+   <td>7517
+   </td>
+   <td>Too many Telephone numbers in this request
+   </td>
+  </tr>
+  <tr>
+   <td>7518
+   </td>
+   <td>Telephone Number Not Active
+   </td>
+  </tr>
+</table>
 
-    ```cURL
-    curl 'https://dashboard.bandwidth.com/api/accounts/{BW_ACCOUNT_ID}/lsrorders/{orderId}' \
-    -X GET \
-    -u '{BANDWIDTH_USERNAME}:{BANDWIDTH_PASSWORD}' \
-    -H 'Content-Type: application/xml' \
-    -H 'Accept: application/xml'
-    ```
 
-</TabItem>
-</Tabs>
+Otherwise, the LSR order should succeed.  The losing provider is prohibited by the FCC from preventing the port-out except for one of the reasons above.
 
-### Errors
-There are a number of errors that can happen at various stages of the process. Check [error reference documentation](/docs/numbers/errors/#porting-numbers-out) to learn more.
-
-## Update a LSR Order
-
-To update a LSR order, you must make a <Highlight color="#9a59c5">PUT</Highlight> request to our [/lsrorders/{orderId} API](/apis/numbers/#operation/UpdateLsrOrder) endpoint. This can be done using tools like Postman or cURL.
-Modifications are only allowed for orders that have not completed yet (successfully or not).
-
-### Examples
-
-<Highlight color="#9a59c5">PUT</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/lsrorders/{orderId}</code>
-
-<Tabs
-    groupId="updateLsr"
-    defaultValue="payload"
-    values={[
-        { label: 'Request Payload', value: 'payload', },
-        { label: 'cURL', value: 'curl', },
-    ]
-    }>
-<TabItem value="payload">
-
-```xml
-PUT https://dashboard.bandwidth.com/api/accounts/{accountId}/lsrorders/afce454a-4e89-4753-9f58-a442ebc7b142 HTTP/1.1
-Content-Type: application/xml; charset=utf-8
-Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
-
-<?xml version="1.0" encoding="UTF-8"?>
-<LsrOrder>
-    <Pon>ATT-011515-324234</Pon>
-    <CustomerOrderId>TestCustomerId</CustomerOrderId>
-    <SPID>123C</SPID>
-    <BillingTelephoneNumber>9192381468</BillingTelephoneNumber>
-    <RequestedFocDate>2022-09-20</RequestedFocDate>
-    <AuthorizingPerson>Test user</AuthorizingPerson>
-    <Subscriber>
-        <SubscriberType>BUSINESS</SubscriberType>
-        <BusinessName>BusinessName</BusinessName>
-        <ServiceAddress>
-            <HouseNumber>11</HouseNumber>
-            <StreetName>Street</StreetName>
-            <StreetSuffix>Ave</StreetSuffix>
-            <City>New York</City>
-            <StateCode>NY</StateCode>
-            <Zip>90011</Zip>
-        </ServiceAddress>
-        <AccountNumber>123463</AccountNumber>
-        <PinNumber>1231</PinNumber>
-    </Subscriber>
-    <ListOfTelephoneNumbers>
-        <TelephoneNumber>9192381467</TelephoneNumber>
-        <TelephoneNumber>9192381468</TelephoneNumber>
-        <TelephoneNumber>9192381469</TelephoneNumber>
-    </ListOfTelephoneNumbers>
-</LsrOrder>
-```
-
-</TabItem>
-<TabItem value="curl">
-
-```xml
-Note: Remember to add authentication for your application if needed!
-
-curl 'https://dashboard.bandwidth.com/api/accounts/{BW_ACCOUNT_ID}/portins/afce454a-4e89-4753-9f58-a442ebc7b142' \
--X PUT \
--u '{BANDWIDTH_USERNAME}:{BANDWIDTH_PASSWORD}' \
--H 'Content-Type: application/xml' \
--d '<LsrOrder>
-    <Pon>ATT-011515-324234</Pon>
-    <CustomerOrderId>TestCustomerId</CustomerOrderId>
-    <SPID>123C</SPID>
-    <BillingTelephoneNumber>9192381468</BillingTelephoneNumber>
-    <RequestedFocDate>2022-09-20</RequestedFocDate>
-    <AuthorizingPerson>Test user</AuthorizingPerson>
-    <Subscriber>
-        <SubscriberType>BUSINESS</SubscriberType>
-        <BusinessName>BusinessName</BusinessName>
-        <ServiceAddress>
-            <HouseNumber>11</HouseNumber>
-            <StreetName>Street</StreetName>
-            <StreetSuffix>Ave</StreetSuffix>
-            <City>New York</City>
-            <StateCode>NY</StateCode>
-            <Zip>90011</Zip>
-        </ServiceAddress>
-        <AccountNumber>123463</AccountNumber>
-        <PinNumber>1231</PinNumber>
-    </Subscriber>
-    <ListOfTelephoneNumbers>
-        <TelephoneNumber>9192381467</TelephoneNumber>
-        <TelephoneNumber>9192381468</TelephoneNumber>
-        <TelephoneNumber>9192381469</TelephoneNumber>
-    </ListOfTelephoneNumbers>
-</LsrOrder>'
-```
-
-</TabItem>
-</Tabs>
-
-> Response
-
-```xml
-HTTP 200 OK
-Content-Type: application/xml; charset=utf-8
-
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<LsrOrderResponse>
-    <LsrOrder>
-        <CustomerOrderId>TestCustomerId</CustomerOrderId>
-        <LastModifiedBy>team_ua</LastModifiedBy>
-        <OrderCreateDate>2022-09-19T12:57:45.607Z</OrderCreateDate>
-        <AccountId>9999999</AccountId>
-        <OrderId>afce454a-4e89-4753-9f58-a442ebc7b142</OrderId>
-        <LastModifiedDate>2022-09-19T21:00:40.607Z</LastModifiedDate>
-        <OrderStatus>PENDING</OrderStatus>
-        <SPID>123C</SPID>
-        <BillingTelephoneNumber>9192381468</BillingTelephoneNumber>
-        <Pon>ATT-011515-324234</Pon>
-        <PonVersion>8</PonVersion>
-        <RequestedFocDate>2022-09-20</RequestedFocDate>
-        <AuthorizingPerson>Jim Hopkins</AuthorizingPerson>
-        <Subscriber>
-            <SubscriberType>BUSINESS</SubscriberType>
-            <BusinessName>BusinessName</BusinessName>
-            <ServiceAddress>
-                <HouseNumber>11</HouseNumber>
-                <StreetName>Street</StreetName>
-                <StreetSuffix>Ave</StreetSuffix>
-                <City>New York</City>
-                <StateCode>NY</StateCode>
-                <Zip>90011</Zip>
-            </ServiceAddress>
-            <AccountNumber>123463</AccountNumber>
-            <PinNumber>1231</PinNumber>
-        </Subscriber>
-        <ListOfTelephoneNumbers>
-            <TelephoneNumber>9192381468</TelephoneNumber>
-        </ListOfTelephoneNumbers>
-        <LsrOrderErrors/>
-        <CountOfTNs>1</CountOfTNs>
-    </LsrOrder>
-</LsrOrderResponse>
-```
-
-## Cancel a LSR Order
-
-PUT is also used to cancel a LSR order, by changing the order status field to `CANCELLED`.  This is the only case where the status can be changed, and when this is done, all other fields are left as they were prior to the cancellation.
-
-### Examples
-
-<Highlight color="#9a59c5">PUT</Highlight> <code>https://dashboard.bandwidth.com/api/accounts/{accountId}/lsrorders/{orderId}</code>
-
-<Tabs
-    groupId="cancelLsr"
-    defaultValue="payload"
-    values={[
-        { label: 'Request Payload', value: 'payload', },
-        { label: 'cURL', value: 'curl', },
-    ]
-    }>
-<TabItem value="payload">
-
-```xml
-PUT https://dashboard.bandwidth.com/api/accounts/{accountId}/lsrorders/afce454a-4e89-4753-9f58-a442ebc7b142 HTTP/1.1
-Content-Type: application/xml; charset=utf-8
-Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
-
-<?xml version="1.0" encoding="UTF-8"?>
-<LsrOrder>
-    <OrderStatus>CANCELLED</OrderStatus>
-</LsrOrder>
-```
-
-</TabItem>
-<TabItem value="curl">
-
-```xml
-Note: Remember to add authentication for your application if needed!
-
-curl 'https://dashboard.bandwidth.com/api/accounts/{BW_ACCOUNT_ID}/lsrorders/afce454a-4e89-4753-9f58-a442ebc7b142' \
--X PUT \
--u '{BANDWIDTH_USERNAME}:{BANDWIDTH_PASSWORD}' \
--H 'Content-Type: application/xml' \
--d '<LsrOrder>
-    <OrderStatus>CANCELLED</OrderStatus>
-</LsrOrder>'
-```
-
-</TabItem>
-</Tabs>
-
-> Response
-
-```xml
-HTTP 200 OK
-Content-Type: application/xml; charset=utf-8
-
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<LsrOrderResponse>
-    <LsrOrder>
-        <CustomerOrderId>TestCustomerId</CustomerOrderId>
-        <LastModifiedBy>team_ua</LastModifiedBy>
-        <OrderCreateDate>2022-09-19T12:57:45.607Z</OrderCreateDate>
-        <AccountId>9999999</AccountId>
-        <OrderId>afce454a-4e89-4753-9f58-a442ebc7b142</OrderId>
-        <LastModifiedDate>2022-09-19T21:00:40.607Z</LastModifiedDate>
-        <OrderStatus>CANCELLED</OrderStatus>
-        <SPID>123C</SPID>
-        <BillingTelephoneNumber>9192381468</BillingTelephoneNumber>
-        <Pon>ATT-011515-324234</Pon>
-        <PonVersion>8</PonVersion>
-        <RequestedFocDate>2022-09-20</RequestedFocDate>
-        <AuthorizingPerson>Jim Hopkins</AuthorizingPerson>
-        <Subscriber>
-            <SubscriberType>BUSINESS</SubscriberType>
-            <BusinessName>BusinessName</BusinessName>
-            <AccountNumber>123463</AccountNumber>
-            <PinNumber>1231</PinNumber>
-            <ServiceAddress>
-                <HouseNumber>11</HouseNumber>
-                <StreetName>Park</StreetName>
-                <StreetSuffix>Ave</StreetSuffix>
-                <City>New York</City>
-                <StateCode>NY</StateCode>
-                <Zip>90025</Zip>
-            </ServiceAddress>
-        </Subscriber>
-        <ListOfTelephoneNumbers>
-            <TelephoneNumber>9192381468</TelephoneNumber>
-        </ListOfTelephoneNumbers>
-        <LsrOrderErrors/>
-        <CountOfTNs>1</CountOfTNs>
-    </LsrOrder>
-</LsrOrderResponse>
-```
-
-## Where to next?
-Now that you have learned how to remove telephone numbers from the Bandwidth network, check out some of the other available actions in our guides:
-- [How to Search and Order a Number](/docs/numbers/guides/searchingForNumbers)
-- [How to Create a Port-In Request](/docs/numbers/guides/porting/portingNumbers)
