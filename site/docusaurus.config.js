@@ -30,12 +30,13 @@ const globalSpec = fs.readFileSync("./specs/global.yml", "utf-8");
 const globalSpec_v2 = fs.readFileSync("./specs/global-v2.yml", "utf-8");
 const globalSpec_v3 = fs.readFileSync("./specs/global-v3.yml", "utf-8");
 const globalSpec_beta = fs.readFileSync("./specs/global-beta.yml", "utf-8");
+const identitySpec = fs.readFileSync(
+  "./specs/one-identity-management.yml",
+  "utf-8"
+);
+const identityspecLink = "";
 const insightsSpec = fs.readFileSync("./specs/insights.yml", "utf-8");
 const pipedream = "https://eowxoldwz4d7syt.m.pipedream.net";
-/**
- * TODO ONEID-1304
- * const identitySpec = fs.readFileSync('./specs/one-identity-management.yml', 'utf-8');
- */
 
 module.exports = {
   title: "Bandwidth API Docs",
@@ -174,11 +175,10 @@ module.exports = {
     globalSpec_v2: YAML.parse(globalSpec_v2),
     globalSpec_v3: YAML.parse(globalSpec_v3),
     globalSpec_beta: YAML.parse(globalSpec_beta),
+    identitySpec: YAML.parse(identitySpec),
+    identitySpecLink: `${customConfig.dashNotificationsSpecLink}`,
     insightsSpec: YAML.parse(insightsSpec),
     insightsSpecLink: `${customConfig.insightsSpecLink}`,
-    /**
-     * identitySpec: YAML.parse(identitySpec),
-     */
 
     blogPosts: blogPosts,
 
