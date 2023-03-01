@@ -176,7 +176,9 @@ module.exports = {
     globalSpec_beta: YAML.parse(globalSpec_beta),
     insightsSpec: YAML.parse(insightsSpec),
     insightsSpecLink: `${customConfig.insightsSpecLink}`,
-    identitySpec: YAML.parse(identitySpec),
+    /**
+     * identitySpec: YAML.parse(identitySpec),
+     */
 
     blogPosts: blogPosts,
 
