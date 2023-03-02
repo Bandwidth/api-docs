@@ -21,7 +21,8 @@ const props = {
       ghLink: 'https://github.com/Bandwidth/ruby-bandwidth-iris'
     }
   ],
-  samplesLink: 'https://github.com/orgs/Bandwidth-Samples/repositories?language=ruby'
+  samplesLink: 'https://github.com/orgs/Bandwidth-Samples/repositories?language=ruby',
+  migrationGuides: true
 };
 
 export default function sdkPage() {
