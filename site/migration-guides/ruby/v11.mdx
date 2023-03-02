@@ -1,0 +1,2491 @@
+---
+id: v11-beta
+title: v10 -> v11-beta
+slug: /ruby/v10->v11-beta
+description: Ruby v10 to v15 Migration Guide
+sidebar_label: v10 -> v11-beta
+hide_title: false
+image: '@site/static/img/bw-icon.svg'
+pagination_next: null
+pagination_prev: null
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+## Client Initialization
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+include Bandwidth::Messaging
+include Bandwidth::WebRtc
+include Bandwidth::TwoFactorAuth
+
+bandwidth_client = Bandwidth::Client.new(
+  voice_basic_auth_user_name: 'username',
+  voice_basic_auth_password: 'password',
+  messaging_basic_auth_user_name: 'username',
+  messaging_basic_auth_password: 'username',
+  two_factor_auth_basic_auth_user_name: 'username',
+  two_factor_auth_basic_auth_password: 'password',
+  web_rtc_basic_auth_user_name: 'username',
+  web_rtc_basic_auth_password: 'password'
+)
+account_id = '9900000'
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+require 'bandwidth-sdk'
+
+Bandwidth.configure do |config|
+  config.username = 'YOUR_USERNAME'
+  config.password = 'YOUR_PASSWORD'
+end
+account_id = '9900000'
+```
+
+</TabItem>
+</Tabs>
+
+### Custom URLs
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+
+bandwidth_client = Bandwidth::Client.new(
+  environment: Environment::CUSTOM,
+  base_url: "https://custom-url.com"
+)
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+# Currently Unsupported
+```
+
+</TabItem>
+</Tabs>
+
+## Messaging
+
+### Create Message
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Messaging
+
+bandwidth_client = Bandwidth::Client.new(
+    messaging_basic_auth_user_name: "api-username",
+    messaging_basic_auth_password: "api-password"
+)
+messaging_client = bandwidth_client.messaging_client.client
+
+body = MessageRequest.new
+body.application_id = "1234-asdf"
+body.to = ["+15553334444"]
+body.from = "+15554443333"
+body.text = 'Hey, check this out!'
+body.tag = '{"test": "message"}'
+begin
+    result = messaging_client.create_message("12345", body)
+    puts 'messageId: ' + result.data.id
+rescue APIException => e
+    puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::MessagesApi.new
+account_id = '9900000'
+message_request = Bandwidth::MessageRequest.new({application_id: '93de2206-9669-4e07-948d-329f4b722ee2', to: ["+15554443333", "+15552223333"], from: '+15551113333'})
+
+begin
+  result = api_instance.create_message(account_id, message_request)
+  p result
+rescue Bandwidth::ApiError => e
+  puts "Error when calling MessagesApi->create_message: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+### List Messages
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Messaging
+
+bandwidth_client = Bandwidth::Client.new(
+    messaging_basic_auth_user_name: "api-username",
+    messaging_basic_auth_password: "api-password"
+)
+messaging_client = bandwidth_client.messaging_client.client
+
+begin
+  result = messaging_client.get_messages("12345", :source_tn => "+15554443333")
+  puts result.data.total_count
+rescue APIException => e
+  puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::MessagesApi.new
+account_id = '9900000'
+opts = {
+  message_id: '9e0df4ca-b18d-40d7-a59f-82fcdf5ae8e6',
+  source_tn: '+15554443333',
+  destination_tn: '+15554443333',
+  message_status: Bandwidth::MessageStatusEnum::RECEIVED,
+  message_direction: Bandwidth::ListMessageDirectionEnum::INBOUND,
+  carrier_name: 'Verizon',
+  message_type: Bandwidth::MessageTypeEnum::SMS,
+  error_code: 9902,
+  from_date_time: '2022-09-14T18:20:16.000Z',
+  to_date_time: '2022-09-14T18:20:16.000Z',
+  sort: 'sourceTn:desc',
+  page_token: 'gdEewhcJLQRB5',
+  limit: 50
+}
+
+begin
+  result = api_instance.list_messages(account_id, opts)
+  p result
+rescue Bandwidth::ApiError => e
+  puts "Error when calling MessagesApi->list_messages: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+## Media
+
+### List Media
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Messaging
+
+bandwidth_client = Bandwidth::Client.new(
+  messaging_basic_auth_user_name: "api-username",
+  messaging_basic_auth_password: "api-password"
+)
+messaging_client = bandwidth_client.messaging_client.client
+
+begin
+  media = messaging_client.list_media("12345")
+  media.data.each { |item|
+    puts item.media_name
+  }
+rescue APIException => e
+  puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::MediaApi.new
+account_id = '9900000'
+opts = {
+  continuation_token: '1XEi2tsFtLo1JbtLwETnM1ZJ+PqAa8w6ENvC5QKvwyrCDYII663Gy5M4s40owR1tjkuWUif6qbWvFtQJR5/ipqbUnfAqL254LKNlPy6tATCzioKSuHuOqgzloDkSwRtX0LtcL2otHS69hK343m+SjdL+vlj71tT39'
+}
+
+begin
+  result = api_instance.list_media(account_id, opts)
+  p result
+rescue Bandwidth::ApiError => e
+  puts "Error when calling MediaApi->list_media: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+### Get Media
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Messaging
+
+bandwidth_client = Bandwidth::Client.new(
+  messaging_basic_auth_user_name: "api-username",
+  messaging_basic_auth_password: "api-password"
+)
+messaging_client = bandwidth_client.messaging_client.client
+
+begin
+  downloaded_media = messaging_client.get_media("12345", ENV['MEDIA_ID'])
+  f = File.open("file_to_write", "wb")
+  f.puts(downloaded_media.data)
+  f.close()
+rescue APIException => e
+  puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::MediaApi.new
+account_id = '9900000'
+media_id = '14762070468292kw2fuqty55yp2b2/0/bw.png'
+
+begin
+  result = api_instance.get_media(account_id, media_id)
+  p result
+rescue Bandwidth::ApiError => e
+  puts "Error when calling MediaApi->get_media: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+### Upload Media
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Messaging
+
+bandwidth_client = Bandwidth::Client.new(
+    messaging_basic_auth_user_name: "api-username",
+    messaging_basic_auth_password: "api-password"
+)
+messaging_client = bandwidth_client.messaging_client.client
+
+begin
+  #f = File.open("some_file", "rb")
+  #file_content = f.read
+  file_content = "12345"
+  messaging_client.upload_media(
+    "12345",
+    ENV['MEDIA_ID'],
+    file_content,
+    :content_type => "application/octet-stream",
+    :cache_control => "no-cache"
+  )
+  f.close()
+rescue APIException => e
+  puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::MediaApi.new
+account_id = '9900000'
+media_id = '14762070468292kw2fuqty55yp2b2/0/bw.png'
+body = File.new('/path/to/some/file')
+opts = {
+  content_type: 'audio/wav',
+  cache_control: 'no-cache'
+}
+
+begin
+  api_instance.upload_media(account_id, media_id, body, opts)
+rescue Bandwidth::ApiError => e
+  puts "Error when calling MediaApi->upload_media: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+### Delete Media
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Messaging
+
+bandwidth_client = Bandwidth::Client.new(
+  messaging_basic_auth_user_name: "api-username",
+  messaging_basic_auth_password: "api-password"
+)
+messaging_client = bandwidth_client.messaging_client.client
+
+begin
+  messaging_client.delete_media("12345", ENV['MEDIA_ID'])
+rescue APIException => e
+  puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::MediaApi.new
+account_id = '9900000'
+media_id = '14762070468292kw2fuqty55yp2b2/0/bw.png'
+
+begin
+  api_instance.delete_media(account_id, media_id)
+rescue Bandwidth::ApiError => e
+  puts "Error when calling MediaApi->delete_media: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+## BXML
+
+### Imports
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth-sdk'
+
+include Bandwidth::Voice
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+require 'bandwidth-sdk'
+
+include Bandwidth::Bxml # This include allows for Bandwidth::Bxml to be excluded from verb initialization
+
+Bandwidth::Bxml::Hangup.new
+# OR
+Hangup.new  # Only works if the include statement above is present
+```
+
+</TabItem>
+</Tabs>
+
+### Response
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+hangup = Bandwidth::Voice::Hangup.new()
+
+response = Bandwidth::Voice::Response.new()
+response.push(hangup)
+
+puts response.to_bxml()
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+hangup = Bandwidth::Bxml::Hangup.new
+response = Bandwidth::Bxml::Response.new(hangup)
+
+puts response.to_bxml()
+```
+
+</TabItem>
+</Tabs>
+
+### Bridge
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+bridge = Bandwidth::Voice::Bridge.new({
+  :call_id => "c-c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d",
+  :bridge_complete_url => "https://bridge.url/nextBXMLForSecondCall",
+  :bridge_target_complete_url => "https://bridge.url/nextBXMLForFirstCall"
+})
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+bridge_attributes = {
+  bridge_complete_url: 'https://bridge.com',
+  bridge_complete_method: 'POST',
+  bridge_complete_fallback_url: 'https://bridge.com',
+  bridge_complete_fallback_method: 'POST',
+  bridge_target_complete_url: 'https://bridge.com',
+  bridge_target_complete_method: 'POST',
+  bridge_target_complete_fallback_url: 'https://bridge.com',
+  bridge_target_complete_fallback_method: 'POST',
+  username: 'bridge_username',
+  password: 'bridge_password',
+  fallback_username: 'bridge_fallback_username',
+  fallback_password: 'bridge_fallback_password',
+  tag: 'bridge_tag'
+}
+
+bridge = Bandwidth::Bxml::Bridge.new('bridge_call_id', bridge_attributes)
+```
+
+</TabItem>
+</Tabs>
+
+### Conference
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+conference = Bandwidth::Voice::Conference.new({
+  :conference_name => 'my-conference-name'
+})
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+conference_attributes = {
+  mute: true,
+  hold: true,
+  call_ids_to_coach: 'conference',
+  conference_event_url: 'https://conference.com',
+  conference_event_method: 'POST',
+  conference_event_fallback_url: 'https://conference.com',
+  conference_event_fallback_method: 'POST',
+  username: 'conference_username',
+  password: 'conference_password',
+  fallback_username: 'conference_fallback_username',
+  fallback_password: 'conference_fallback_password',
+  tag: 'conference_tag',
+  callback_timeout: 5.0
+}
+
+conference = Bandwidth::Bxml::Conference.new('conference_name', conference_attributes)
+```
+
+</TabItem>
+</Tabs>
+
+### Forward
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+forward = Bandwidth::Voice::Forward.new({
+  :to => "+10987654321",
+  :from => "+11234567890"
+})
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+forward_attributes = {
+  to: '+19195551234',
+  from: '+19195554321',
+  call_timeout: 5,
+  diversion_treatment: 'propogate',
+  diversion_reason: 'user-busy',
+  uui: '93d6f3c0be5845960b744fa28015d8ede84bd1a4;encoding=base64,asdf;encoding=jwt'
+}
+
+forward = Bandwidth::Bxml::Forward.new(forward_attributes)
+```
+
+</TabItem>
+</Tabs>
+
+### Gather
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+speak_sentence = Bandwidth::Voice::SpeakSentence.new({
+  :sentence => "Please press a digit.",
+  :voice => "kate"
+})
+
+gather = Bandwidth::Voice::Gather.new({
+  :gather_url => "https://gather.url/nextBXML",
+  :terminating_digits => "#",
+  :first_digit_timeout => "10",
+  :speak_sentence => speak_sentence
+})
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+gather_attributes = {
+  gather_url: 'https://gather.com',
+  gather_method: 'POST',
+  gather_fallback_url: 'https://gather.com',
+  gather_fallback_method: 'POST',
+  username: 'gather_username',
+  password: 'gather_password',
+  fallback_username: 'gather_fallback_username',
+  fallback_password: 'gather_fallback_password',
+  tag: 'gather_tag',
+  terminating_digits: '5',
+  max_digits: 5,
+  inter_digit_timeout: 5,
+  first_digit_timeout: 5,
+  repeat_count: 5
+}
+
+play_audio = Bandwidth::Bxml::PlayAudio.new('https://audio.url/audio1.wav')
+speak_sentence = Bandwidth::Bxml::SpeakSentence.new('speak this sentence')
+
+gather = Bandwidth::Bxml::Gather.new([play_audio, speak_sentence], gather_attributes)
+```
+
+</TabItem>
+</Tabs>
+
+### Hangup
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+hangup = Bandwidth::Voice::Hangup.new()
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+hangup = Bandwidth::Bxml::Hangup.new
+```
+
+</TabItem>
+</Tabs>
+
+### Pause
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+pause = Bandwidth::Voice::Pause.new({
+  :duration => 2
+})
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+pause = Bandwidth::Bxml::Pause.new({duration: 5})
+```
+
+</TabItem>
+</Tabs>
+
+### Pause Recording
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+pause_recording = Bandwidth::Voice::PauseRecording.new()
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+pause_recording = Bandwidth::Bxml::PauseRecording.new
+```
+
+</TabItem>
+</Tabs>
+
+### Play Audio
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+play_audio_ = Bandwidth::Voice::PlayAudio.new({
+  :url => "https://audio.url/audio.wav"
+})
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+play_audio_attributes = {
+  username: 'play_audio_username',
+  password: 'play_audio_password'
+}
+
+play_audio = Bandwidth::Bxml::PlayAudio.new('https://audio.url/audio1.wav', play_audio_attributes)
+```
+
+</TabItem>
+</Tabs>
+
+### Record
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+record = Bandwidth::Voice::Record.new({
+  :record_complete_url => "https://myapp.com/nextBXML",
+  :recording_available_url => "https://myapp.com/recordingAvailable",
+  :max_duration => "10"
+})
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+record_attributes = {
+  record_complete_url: 'https://record.com',
+  record_complete_method: 'POST',
+  record_complete_fallback_url: 'https://record.com',
+  record_complete_fallback_method: 'POST',
+  recording_available_url: 'https://record.com',
+  recording_available_method: 'POST',
+  transcribe: true,
+  transcription_available_url: 'https://record.com',
+  transcription_available_method: 'POST',
+  username: 'record_username',
+  password: 'record_password',
+  fallback_username: 'record_fallback_username',
+  fallback_password: 'record_fallback_password',
+  tag: 'record_tag',
+  terminating_digits: '5',
+  max_duration: 5,
+  silence_timeout: 5,
+  file_format: 'wav'
+}
+
+record = Bandwidth::Bxml::Record.new(record_attributes)
+```
+
+</TabItem>
+</Tabs>
+
+### Redirect
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+redirect = Bandwidth::Voice::Redirect.new({
+  :redirect_url => "http://flow.url/newFlow"
+})
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+redirect_attributes = {
+  redirect_url: 'https://redirect.com',
+  redirect_method: 'POST',
+  redirect_fallback_url: 'https://redirect.com',
+  redirect_fallback_method: 'POST',
+  username: 'redirect_username',
+  password: 'redirect_password',
+  fallback_username: 'redirect_fallback_username',
+  fallback_password: 'redirect_fallback_password',
+  tag: 'redirect_tag'
+}
+
+redirect = Bandwidth::Bxml::Redirect.new(redirect_attributes)
+```
+
+</TabItem>
+</Tabs>
+
+### Resume Recording
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+resume_recording = Bandwidth::Voice::ResumeRecording.new()
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+resume_recording = Bandwidth::Bxml::ResumeRecording.new
+```
+
+</TabItem>
+</Tabs>
+
+### Ring
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+ring = Bandwidth::Voice::Ring.new({
+  :duration => 10,
+  :answer_call => false
+})
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+ring_attributes = {
+  duration: 5.0,
+  answer_call: true
+}
+
+ring = Bandwidth::Bxml::Ring.new(ring_attributes)
+```
+
+</TabItem>
+</Tabs>
+
+### Send DTMF
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+send_dtmf = Bandwidth::Voice::SendDtmf.new({
+  :dtmf => "12w34"
+})
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+send_dtmf_attributes = {
+  tone_duration: 5,
+  tone_interval: 5
+}
+
+send_dtmf = Bandwidth::Bxml::SendDtmf.new('1234', send_dtmf_attributes)
+```
+
+</TabItem>
+</Tabs>
+
+### Speak Sentence
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+speak_sentence = Bandwidth::Voice::SpeakSentence.new({
+  :sentence => "This is a test.",
+  :voice => "julie"
+})
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+speak_sentence_attributes = {
+  voice: 'julie',
+  gender: 'female',
+  locale: 'en_US'
+}
+
+speak_sentence = Bandwidth::Bxml::SpeakSentence.new('speak this sentence', speak_sentence_attributes)
+```
+
+</TabItem>
+</Tabs>
+
+### Start Gather
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+start_gather = Bandwidth::Voice::StartGather.new({
+  :dtmf_url => "https://startgather.url/callback"
+})
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+start_gather_attributes = {
+  dtmf_url: 'https://start_gather.com',
+  dtmf_method: 'POST',
+  username: 'start_gather_username',
+  password: 'start_gather_password',
+  tag: 'start_gather_tag'
+}
+
+start_gather = Bandwidth::Bxml::StartGather.new(start_gather_attributes)
+```
+
+</TabItem>
+</Tabs>
+
+### Start Recording
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+start_recording = Bandwidth::Voice::StartRecording.new({
+  :recording_available_url => "https://myapp.com/noBXML"
+})
+
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+start_recording_attributes = {
+  recording_available_url: 'https://start_recording.com',
+  recording_available_method: 'POST',
+  transcribe: true,
+  transcription_available_url: 'https://start_recording.com',
+  transcription_available_method: 'POST',
+  username: 'start_recording_username',
+  password: 'start_recording_password',
+  tag: 'start_recording_tag',
+  file_format: 'wav',
+  multi_channel: true
+}
+
+start_recording = Bandwidth::Bxml::StartRecording.new(start_recording_attributes)
+```
+
+</TabItem>
+</Tabs>
+
+### Start Stream
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+stream_param = Bandwidth::Voice::StreamParam.new({
+  :name => "internal_id",
+  :value => "call_ABC"
+})
+
+start_stream = Bandwidth::Voice::StartStream.new({
+  :name => "live_audience",
+  :tracks => "both",
+  :destination => "wss://live-studio-audience.myapp.example.com",
+  :stream_events_url = "https://myapp.example.com/noBXML"
+  :stream_params => [stream_param]
+})
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+start_stream_attributes = {
+  name: 'start_stream_name',
+  tracks: 'inbound',
+  destination: 'https://start_stream.com',
+  stream_event_url: 'https://start_stream.com',
+  stream_event_method: 'POST',
+  username: 'start_stream_username',
+  password: 'start_stream_password'
+}
+
+stream_param = Bandwidth::Bxml::StreamParam.new({name: 'stream_param_name', value: 'stream_param_value'})
+
+start_stream = Bandwidth::Bxml::StartStream.new([stream_param], start_stream_attributes)
+```
+
+</TabItem>
+</Tabs>
+
+### Stop Gather
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+stop_gather = Bandwidth::Voice::StopGather.new()
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+stop_gather = Bandwidth::Bxml::StopGather.new
+```
+
+</TabItem>
+</Tabs>
+
+### Stop Recording
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+stop_recording = Bandwidth::Voice::StopRecording.new()
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+stop_recording = Bandwidth::Bxml::StopRecording.new
+```
+
+</TabItem>
+</Tabs>
+
+### Stop Stream
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+stop_stream = Bandwidth::Voice::StopStream.new({
+  :name => "live_audience",
+})
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+stop_stream = Bandwidth::Bxml::StopStream.new({name: 'stop_stream_name'})
+```
+
+</TabItem>
+</Tabs>
+
+### Tag
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+tag = Bandwidth::Voice::Tag.new({
+  :tag => "tag_value"
+})
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+tag = Bandwidth::Bxml::Tag.new('tag_value')
+```
+
+</TabItem>
+</Tabs>
+
+### Transfer
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+phone_number = Bandwidth::Voice::PhoneNumber.new({
+  :number => "+11234567892"
+})
+
+transfer = Bandwidth::Voice::Transfer.new({
+  :transfer_caller_id => "+11234567891",
+  :phone_numbers => [phone_number]
+})
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+transfer_attributes = {
+  transfer_caller_id: '+19195551234',
+  call_timeout: 5,
+  transfer_complete_url: 'https://transfer.com',
+  transfer_complete_method: 'POST',
+  transfer_complete_fallback_url: 'https://transfer.com',
+  transfer_complete_fallback_method: 'POST',
+  username: 'transfer_username',
+  password: 'transfer_password',
+  fallback_username: 'transfer_fallback_username',
+  fallback_password: 'transfer_fallback_password',
+  tag: 'transfer_tag',
+  diversion_treatment: 'propogate',
+  diversion_reason: 'user-busy'
+}
+
+phone_number = Bandwidth::Bxml::PhoneNumber.new('+19195551234')
+sip_uri = Bandwidth::Bxml::SipUri.new('sip:1-999-123-4567@voip-provider.example.net')
+
+transfer = Bandwidth::Bxml::Transfer.new([phone_number, sip_uri], transfer_attributes)
+```
+
+</TabItem>
+</Tabs>
+
+## Calls
+
+### Create Call
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
+bandwidth_client = Bandwidth::Client.new(
+  voice_basic_auth_user_name: "api-username",
+  voice_basic_auth_password: "api-password"
+)
+
+voice_client = bandwidth_client.voice_client.client
+
+body = CreateCallRequest.new
+body.from = "+15554443333"
+body.to = "+15553334444"
+body.answer_url = "http://www.myapp.com/hello"
+body.application_id = "7fc9698a-b04a-468b-9e8f-91238c0d0086"
+
+begin
+  result = voice_client.create_call("12345", body)
+  puts result.data.call_id
+rescue APIException => e
+  puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::CallsApi.new
+account_id = '9900000'
+create_call = Bandwidth::CreateCall.new({to: '+19195551234', from: '+19195554321', application_id: '1234-qwer-5679-tyui', answer_url: 'https://www.myCallbackServer.com/webhooks/answer'})
+
+begin
+  result = api_instance.create_call(account_id, create_call)
+  p result
+rescue Bandwidth::ApiError => e
+  puts "Error when calling CallsApi->create_call: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+### Get Call Information
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
+bandwidth_client = Bandwidth::Client.new(
+  voice_basic_auth_user_name: "api-username",
+  voice_basic_auth_password: "api-password"
+)
+
+voice_client = bandwidth_client.voice_client.client
+
+call_id = "c-1234"
+
+begin
+  #result = voice_client.get_call("12345", call_id)
+  #puts result.data.state
+  puts "Method broke"
+rescue APIException => e
+  puts e.response_code
+end
+
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::CallsApi.new
+account_id = '9900000'
+call_id = 'c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85'
+
+begin
+  result = api_instance.get_call_state(account_id, call_id)
+  p result
+rescue Bandwidth::ApiError => e
+  puts "Error when calling CallsApi->get_call_state: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+### Update Call
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
+bandwidth_client = Bandwidth::Client.new(
+  voice_basic_auth_user_name: "api-username",
+  voice_basic_auth_password: "api-password"
+)
+
+voice_client = bandwidth_client.voice_client.client
+
+body = ModifyCallRequest.new
+body.redirect_url = "http://www.myapp.com/new"
+body.state = "active"
+
+call_id = "c-1234"
+
+begin
+  voice_client.modify_call("12345", call_id, body)
+rescue APIException => e
+  puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::CallsApi.new
+account_id = '9900000'
+call_id = 'c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85'
+update_call = Bandwidth::UpdateCall.new
+
+begin
+  api_instance.update_call(account_id, call_id, update_call)
+rescue Bandwidth::ApiError => e
+  puts "Error when calling CallsApi->update_call: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+### Replace Call BXML
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+# Not Possible with V10.
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::CallsApi.new
+account_id = '9900000'
+call_id = 'c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85'
+body = '<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<Bxml>
+  <SpeakSentence>This is a test sentence.</SpeakSentence>
+</Bxml>'
+
+begin
+  api_instance.update_call_bxml(account_id, call_id, body)
+rescue Bandwidth::ApiError => e
+  puts "Error when calling CallsApi->update_call_bxml: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+## Conferences
+
+### List Conferences
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
+bandwidth_client = Bandwidth::Client.new(
+  voice_basic_auth_user_name: "api-username",
+  voice_basic_auth_password: "api-password"
+)
+
+voice_client = bandwidth_client.voice_client.client
+
+begin
+  response = voice_client.get_conferences("12345")
+  if response.data.length > 0
+      puts response.data[0].id
+  end
+rescue APIException => e
+  puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::ConferencesApi.new
+account_id = '9900000'
+opts = {
+  name: 'my-custom-name',
+  min_created_time: '2022-06-21T19:13:21Z',
+  max_created_time: '2022-06-21T19:13:21Z',
+  page_size: 500,
+  page_token: 'page_token_example'
+}
+
+begin
+  result = api_instance.list_conferences(account_id, opts)
+  p result
+rescue Bandwidth::ApiError => e
+  puts "Error when calling ConferencesApi->list_conferences: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+### Get Conference Information
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+  
+include Bandwidth
+include Bandwidth::Voice
+
+bandwidth_client = Bandwidth::Client.new(
+  voice_basic_auth_user_name: "api-username",
+  voice_basic_auth_password: "api-password"
+)
+
+voice_client = bandwidth_client.voice_client.client
+
+conference_id = "conf-1234"
+
+begin
+  response = voice_client.get_conference("12345", conference_id)
+  print(response.data.name)
+rescue APIException => e
+  puts e.response_code
+end
+
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::ConferencesApi.new
+account_id = '9900000'
+conference_id = 'conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9'
+
+begin
+  result = api_instance.get_conference(account_id, conference_id)
+  p result
+rescue Bandwidth::ApiError => e
+  puts "Error when calling ConferencesApi->get_conference: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+### Update Conference
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
+bandwidth_client = Bandwidth::Client.new(
+  voice_basic_auth_user_name: "api-username",
+  voice_basic_auth_password: "api-password"
+)
+
+voice_client = bandwidth_client.voice_client.client
+
+body = ModifyConferenceRequest.new
+body.status = StatusEnum::ACTIVE
+
+conference_id = "conf-1234"
+
+begin
+  voice_client.modify_conference("12345", conference_id, body)
+rescue APIException => e
+  puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::ConferencesApi.new
+account_id = '9900000'
+conference_id = 'conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9'
+update_conference = Bandwidth::UpdateConference.new
+
+begin
+  api_instance.update_conference(account_id, conference_id, update_conference)
+rescue Bandwidth::ApiError => e
+  puts "Error when calling ConferencesApi->update_conference: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+### Update Conference BXML
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+# Not Possible with V10.
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::ConferencesApi.new
+account_id = '9900000'
+conference_id = 'conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9'
+body = '<?xml version="1.0" encoding="UTF-8"?>
+<Bxml>
+    <StopRecording/>
+</Bxml>'
+
+begin
+  api_instance.update_conference_bxml(account_id, conference_id, body)
+rescue Bandwidth::ApiError => e
+  puts "Error when calling ConferencesApi->update_conference_bxml: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+### Get Conference Member
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+  
+include Bandwidth
+include Bandwidth::Voice
+
+bandwidth_client = Bandwidth::Client.new(
+  voice_basic_auth_user_name: "api-username",
+  voice_basic_auth_password: "api-password"
+)
+
+voice_client = bandwidth_client.voice_client.client
+
+conference_id = "conf-1234"
+member_id = "m-1234"
+
+begin
+  response = voice_client.get_conference_member("12345", conference_id, member_id)
+  puts response.data.member_url
+rescue APIException => e
+  puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::ConferencesApi.new
+account_id = '9900000'
+conference_id = 'conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9'
+member_id = 'c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85'
+
+begin
+  result = api_instance.get_conference_member(account_id, conference_id, member_id)
+  p result
+rescue Bandwidth::ApiError => e
+  puts "Error when calling ConferencesApi->get_conference_member: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+### Update Conference Member
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
+bandwidth_client = Bandwidth::Client.new(
+  voice_basic_auth_user_name: "api-username",
+  voice_basic_auth_password: "api-password"
+)
+
+voice_client = bandwidth_client.voice_client.client
+
+body = ConferenceMemberState.new
+body.mute = true
+
+conference_id = "conf-1234"
+call_id = "c-1234"
+
+begin
+  voice_client.modify_conference_member("12345", conference_id, call_id, body)
+rescue APIException => e
+  puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::ConferencesApi.new
+account_id = '9900000'
+conference_id = 'conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9'
+member_id = 'c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85'
+update_conference_member = Bandwidth::UpdateConferenceMember.new
+
+begin
+  api_instance.update_conference_member(account_id, conference_id, member_id, update_conference_member)
+rescue Bandwidth::ApiError => e
+  puts "Error when calling ConferencesApi->update_conference_member: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+### List Conference Recordings
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
+bandwidth_client = Bandwidth::Client.new(
+  voice_basic_auth_user_name: "api-username",
+  voice_basic_auth_password: "api-password"
+)
+
+voice_client = bandwidth_client.voice_client.client
+
+conference_id = "conf-1234"
+
+begin
+  response = voice_client.get_conference_recordings("12345", conference_id)
+  if response.data.length > 0
+    puts response.body[0].name
+  end
+rescue APIException => e
+  puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::ConferencesApi.new
+account_id = '9900000'
+conference_id = 'conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9'
+
+begin
+  result = api_instance.list_conference_recordings(account_id, conference_id)
+  p result
+rescue Bandwidth::ApiError => e
+  puts "Error when calling ConferencesApi->list_conference_recordings: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+### Get Conference Recording Information
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
+bandwidth_client = Bandwidth::Client.new(
+  voice_basic_auth_user_name: "api-username",
+  voice_basic_auth_password: "api-password"
+)
+
+voice_client = bandwidth_client.voice_client.client
+
+conference_id = "conf-1234"
+recording_id = "r-1234"
+
+begin
+  response = voice_client.get_conference_recording("12345", conference_id, recording_id)
+  puts response.body.application_id
+rescue APIException => e
+  puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::ConferencesApi.new
+account_id = '9900000'
+conference_id = 'conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9'
+recording_id = 'r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85'
+
+begin
+  result = api_instance.get_conference_recording(account_id, conference_id, recording_id)
+  p result
+rescue Bandwidth::ApiError => e
+  puts "Error when calling ConferencesApi->get_conference_recording: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+### Download Conference Recording
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
+BW_USERNAME = "api-username"
+BW_PASSWORD = "api-password"
+BW_ACCOUNT_ID = "12345"
+
+bandwidth_client = Bandwidth::Client.new(
+  voice_basic_auth_user_name: BW_USERNAME,
+  voice_basic_auth_password: BW_PASSWORD
+)
+
+voice_client = bandwidth_client.voice_client.client
+
+conference_id = "conf-1234"
+recording_id = "r-1234"
+
+begin
+  result = voice_client.get_download_conference_recording(BW_ACCOUNT_ID, conference_id, recording_id)
+  downloaded_recording = result.data
+rescue APIException => e
+  puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::ConferencesApi.new
+account_id = '9900000'
+conference_id = 'conf-fe23a767-a75a5b77-20c5-4cca-b581-cbbf0776eca9'
+recording_id = 'r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85'
+
+begin
+  result = api_instance.download_conference_recording(account_id, conference_id, recording_id)
+  p result
+rescue Bandwidth::ApiError => e
+  puts "Error when calling ConferencesApi->download_conference_recording: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+## Recordings
+
+### List Account Call Recordings
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
+bandwidth_client = Bandwidth::Client.new(
+  voice_basic_auth_user_name: "api-username",
+  voice_basic_auth_password: "api-password"
+)
+
+voice_client = bandwidth_client.voice_client.client
+
+begin
+  result = voice_client.get_query_call_recordings("12345")
+  if result.data.length > 0
+    puts result.data[0].recording_id
+  end
+rescue APIException => e
+  puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::RecordingsApi.new
+account_id = '9900000'
+opts = {
+  to: '+19195551234',
+  from: '+19195554321',
+  min_start_time: '2022-06-21T19:13:21Z',
+  max_start_time: '2022-06-21T19:13:21Z'
+}
+
+begin
+  result = api_instance.list_account_call_recordings(account_id, opts)
+  p result
+rescue Bandwidth::ApiError => e
+  puts "Error when calling RecordingsApi->list_account_call_recordings: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+### Update Recording
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
+bandwidth_client = Bandwidth::Client.new(
+  voice_basic_auth_user_name: "api-username",
+  voice_basic_auth_password: "api-password"
+)
+
+voice_client = bandwidth_client.voice_client.client
+
+body = ModifyCallRecordingRequest.new
+body.state = "paused"
+
+call_id = "c-1234"
+
+begin
+  voice_client.modify_call_recording_state("12345", call_id, body)
+rescue APIException => e
+  puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::RecordingsApi.new
+account_id = '9900000'
+call_id = 'c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85'
+update_call_recording = Bandwidth::UpdateCallRecording.new({state: Bandwidth::RecordingStateEnum::PAUSED})
+
+begin
+  api_instance.update_call_recording_state(account_id, call_id, update_call_recording)
+rescue Bandwidth::ApiError => e
+  puts "Error when calling RecordingsApi->update_call_recording_state: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+### List Call Recordings
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::Voice
+
+bandwidth_client = Bandwidth::Client.new(
+  voice_basic_auth_user_name: "api-username",
+  voice_basic_auth_password: "api-password"
+)
+
+voice_client = bandwidth_client.voice_client.client
+
+call_id = "c-1234"
+
+begin
+  response = voice_client.get_call_recordings("12345", call_id)
+  if response.data.length > 0
+    puts response.data[0].media_url
+  end
+rescue APIException => e
+  puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::RecordingsApi.new
+account_id = '9900000'
+call_id = 'c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85'
+
+begin
+  result = api_instance.list_call_recordings(account_id, call_id)
+  p result
+rescue Bandwidth::ApiError => e
+  puts "Error when calling RecordingsApi->list_call_recordings: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+### Get Call Recording
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+  
+include Bandwidth
+include Bandwidth::Voice
+
+bandwidth_client = Bandwidth::Client.new(
+  voice_basic_auth_user_name: "api-username",
+  voice_basic_auth_password: "api-password"
+)
+
+voice_client = bandwidth_client.voice_client.client
+
+call_id = "c-1234"
+recording_id = "r-1234"
+
+begin
+  response = voice_client.get_call_recording("12345", call_id, recording_id)
+  puts response.data.application_id
+rescue APIException => e
+  puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::RecordingsApi.new
+account_id = '9900000'
+call_id = 'c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85'
+recording_id = 'r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85'
+
+begin
+  result = api_instance.get_call_recording(account_id, call_id, recording_id)
+  p result
+rescue Bandwidth::ApiError => e
+  puts "Error when calling RecordingsApi->get_call_recording: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+### Delete Recording
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+  
+include Bandwidth
+include Bandwidth::Voice
+
+bandwidth_client = Bandwidth::Client.new(
+  voice_basic_auth_user_name: "api-username",
+  voice_basic_auth_password: "api-password"
+)
+
+voice_client = bandwidth_client.voice_client.client
+
+call_id = "c-1234"
+recording_id = "r-1234"
+
+begin
+  voice_client.delete_recording("12345", call_id, recording_id)
+rescue APIException => e
+  puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::RecordingsApi.new
+account_id = '9900000'
+call_id = 'c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85'
+recording_id = 'r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85'
+
+begin
+  api_instance.delete_recording(account_id, call_id, recording_id)
+rescue Bandwidth::ApiError => e
+  puts "Error when calling RecordingsApi->delete_recording: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+### Download Recording
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+  
+include Bandwidth
+include Bandwidth::Voice
+
+BW_USERNAME = "api-username"
+BW_PASSWORD = "api-password"
+BW_ACCOUNT_ID = "12345"
+
+bandwidth_client = Bandwidth::Client.new(
+  voice_basic_auth_user_name: BW_USERNAME,
+  voice_basic_auth_password: BW_PASSWORD
+)
+
+voice_client = bandwidth_client.voice_client.client
+
+call_id = "c-1234"
+recording_id = "r-1234"
+
+begin
+  result = voice_client.get_download_call_recording(BW_ACCOUNT_ID, call_id, recording_id)
+  downloaded_recording = result.data
+rescue APIException => e
+  puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::RecordingsApi.new
+account_id = '9900000'
+call_id = 'c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85'
+recording_id = 'r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85'
+
+begin
+  result = api_instance.download_call_recording(account_id, call_id, recording_id)
+  p result
+rescue Bandwidth::ApiError => e
+  puts "Error when calling RecordingsApi->download_call_recording: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+### Delete Recording Media
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+  
+include Bandwidth
+include Bandwidth::Voice
+
+bandwidth_client = Bandwidth::Client.new(
+  voice_basic_auth_user_name: "api-username",
+  voice_basic_auth_password: "api-password"
+)
+
+voice_client = bandwidth_client.voice_client.client
+
+call_id = "c-1234"
+recording_id = "r-1234"
+
+begin
+  voice_client.delete_recording_media("12345", call_id, recording_id)
+rescue APIException => e
+  print(e.response_code)
+end
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::RecordingsApi.new
+account_id = '9900000'
+call_id = 'c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85'
+recording_id = 'r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85'
+
+begin
+  api_instance.delete_recording_media(account_id, call_id, recording_id)
+rescue Bandwidth::ApiError => e
+  puts "Error when calling RecordingsApi->delete_recording_media: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+### Get Transcription
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+  
+include Bandwidth
+include Bandwidth::Voice
+
+bandwidth_client = Bandwidth::Client.new(
+  voice_basic_auth_user_name: "api-username",
+  voice_basic_auth_password: "api-password"
+)
+
+voice_client = bandwidth_client.voice_client.client
+
+call_id = "c-1234"
+recording_id = "r-1234"
+
+begin
+  response = voice_client.get_call_transcription("12345", call_id, recording_id)
+  puts response.data.transcripts
+rescue APIException => e
+  puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::RecordingsApi.new
+account_id = '9900000'
+call_id = 'c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85'
+recording_id = 'r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85'
+
+begin
+  result = api_instance.get_call_transcription(account_id, call_id, recording_id)
+  p result
+rescue Bandwidth::ApiError => e
+  puts "Error when calling RecordingsApi->get_call_transcription: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+### Create Transcription Request
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+  
+include Bandwidth
+include Bandwidth::Voice
+
+bandwidth_client = Bandwidth::Client.new(
+  voice_basic_auth_user_name: "api-username",
+  voice_basic_auth_password: "api-password"
+)
+
+voice_client = bandwidth_client.voice_client.client
+
+call_id = "c-1234"
+recording_id = "r-1234"
+
+body = TranscribeRecordingRequest.new
+body.callback_url = "https://callback-url.com"
+
+begin
+  voice_client.create_transcribe_call_recording("12345", call_id, recording_id, body)
+rescue APIException => e
+  puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::RecordingsApi.new
+account_id = '9900000'
+call_id = 'c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85'
+recording_id = 'r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85'
+transcribe_recording = Bandwidth::TranscribeRecording.new
+
+begin
+  api_instance.transcribe_call_recording(account_id, call_id, recording_id, transcribe_recording)
+rescue Bandwidth::ApiError => e
+  puts "Error when calling RecordingsApi->transcribe_call_recording: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+### Delete Transcription
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+  
+include Bandwidth
+include Bandwidth::Voice
+
+bandwidth_client = Bandwidth::Client.new(
+  voice_basic_auth_user_name: "api-username",
+  voice_basic_auth_password: "api-password"
+)
+
+voice_client = bandwidth_client.voice_client.client
+
+call_id = "c-1234"
+recording_id = "r-1234"
+
+begin
+  voice_client.delete_call_transcription("12345", call_id, recording_id)
+rescue APIException => e
+  puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::RecordingsApi.new
+account_id = '9900000'
+call_id = 'c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85'
+recording_id = 'r-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85'
+
+begin
+  api_instance.delete_call_transcription(account_id, call_id, recording_id)
+rescue Bandwidth::ApiError => e
+  puts "Error when calling RecordingsApi->delete_call_transcription: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+## Statistics
+
+### Get Account Statistics
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+# Not Possible with V10.
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::StatisticsApi.new
+account_id = '9900000'
+
+begin
+  result = api_instance.get_statistics(account_id)
+  p result
+rescue Bandwidth::ApiError => e
+  puts "Error when calling StatisticsApi->get_statistics: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+## Telephone Number Lookup
+
+### Create Lookup
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+  
+include Bandwidth
+include Bandwidth::Voice
+
+BW_USERNAME = "api-username"
+BW_PASSWORD = "api-password"
+BW_ACCOUNT_ID = "12345"
+
+bandwidth_client = Bandwidth::Client.new(
+  phone_number_lookup_basic_auth_user_name: BW_USERNAME,
+  phone_number_lookup_basic_auth_password: BW_PASSWORD
+)
+
+phone_number_lookup_client = bandwidth_client.phone_number_lookup_client.client
+
+body = OrderRequest.new
+body.tns = ["+15554443333"]
+
+begin
+  result = phone_number_lookup_client.create_lookup_request(BW_ACCOUNT_ID, body)
+  puts result.data.request_id
+rescue APIException => e
+  puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::PhoneNumberLookupApi.new
+account_id = '9900000'
+lookup_request = Bandwidth::LookupRequest.new({tns: ['+15554443333']})
+
+begin
+  result = api_instance.create_lookup(account_id, lookup_request)
+  p result
+rescue Bandwidth::ApiError => e
+  puts "Error when calling PhoneNumberLookupApi->create_lookup: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+### Get Lookup Request Status
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+  
+include Bandwidth
+include Bandwidth::Voice
+
+BW_USERNAME = "api-username"
+BW_PASSWORD = "api-password"
+BW_ACCOUNT_ID = "12345"
+
+bandwidth_client = Bandwidth::Client.new(
+  phone_number_lookup_basic_auth_user_name: BW_USERNAME,
+  phone_number_lookup_basic_auth_password: BW_PASSWORD
+)
+
+phone_number_lookup_client = bandwidth_client.phone_number_lookup_client.client
+
+request_id = "1234-abcd"
+
+begin
+  result = phone_number_lookup_client.get_lookup_request_status(BW_ACCOUNT_ID, request_id)
+  puts result.data.status
+rescue APIException => e
+  puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::PhoneNumberLookupApi.new
+account_id = '9900000'
+request_id = '004223a0-8b17-41b1-bf81-20732adf5590'
+
+begin
+  result = api_instance.get_lookup_status(account_id, request_id)
+  p result
+rescue Bandwidth::ApiError => e
+  puts "Error when calling PhoneNumberLookupApi->get_lookup_status: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+## Multi-Factor Authentication
+
+### Voice MFA Code
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::MultiFactorAuth
+
+bandwidth_client = Bandwidth::Client.new(
+  multi_factor_auth_basic_auth_user_name: "api-username",
+  multi_factor_auth_basic_auth_password: "api-password"
+)
+auth_client = bandwidth_client.multi_factor_auth_client.mfa
+
+body = TwoFactorCodeRequestSchema.new
+body.application_id = "1234-qwer"
+body.to = "+15553334444"
+body.from = "+15554443333"
+body.digits = 6
+body.scope = "scope"
+body.message = "Your temporary {NAME} {SCOPE} code is {CODE}"
+begin
+  result = auth_client.create_voice_two_factor("12345", body)
+  puts 'callId: ' + result.data.call_id
+rescue APIException => e
+  puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::MFAApi.new
+account_id = '9900000'
+code_request = Bandwidth::CodeRequest.new({to: '+19195551234', from: '+19195554321', application_id: '66fd98ae-ac8d-a00f-7fcd-ba3280aeb9b1', message: 'Your temporary {NAME} {SCOPE} code is {CODE}', digits: 6})
+
+begin
+  result = api_instance.generate_voice_code(account_id, code_request)
+  p result
+rescue Bandwidth::ApiError => e
+  puts "Error when calling MFAApi->generate_voice_code: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+### Messaging MFA Code
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::MultiFactorAuth
+
+bandwidth_client = Bandwidth::Client.new(
+  multi_factor_auth_basic_auth_user_name: "api-username",
+  multi_factor_auth_basic_auth_password: "api-password"
+)
+auth_client = bandwidth_client.multi_factor_auth_client.mfa
+
+body = TwoFactorCodeRequestSchema.new
+body.application_id = "1234-asdf"
+body.to = "+15553334444"
+body.from = "+15554443333"
+body.digits = 6
+body.scope = "scope"
+body.message = "Your temporary {NAME} {SCOPE} code is {CODE}"
+begin
+  result = auth_client.create_messaging_two_factor("12345", body)
+  puts 'messageId: ' + result.data.message_id
+rescue APIException => e
+  puts e.response_code
+end
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::MFAApi.new
+account_id = '9900000'
+code_request = Bandwidth::CodeRequest.new({to: '+19195551234', from: '+19195554321', application_id: '66fd98ae-ac8d-a00f-7fcd-ba3280aeb9b1', message: 'Your temporary {NAME} {SCOPE} code is {CODE}', digits: 6})
+
+begin
+  result = api_instance.generate_messaging_code(account_id, code_request)
+  p result
+rescue Bandwidth::ApiError => e
+  puts "Error when calling MFAApi->generate_messaging_code: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
+
+### Verify MFA Code
+
+<Tabs groupId="ruby_v10_v11_migration" defaultValue="v11-beta" values={[ { label: 'v10', value: 'v10', }, { label: 'v11-beta', value: 'v11-beta', } ]}>
+<TabItem value="v10">
+
+```ruby
+require 'bandwidth'
+
+include Bandwidth
+include Bandwidth::MultiFactorAuth
+
+bandwidth_client = Bandwidth::Client.new(
+  multi_factor_auth_basic_auth_user_name: "api-username",
+  multi_factor_auth_basic_auth_password: "api-password"
+)
+auth_client = bandwidth_client.multi_factor_auth_client.mfa
+
+body = TwoFactorVerifyRequestSchema.new
+body.application_id = "1234-qwer"
+body.to = "+15553334444"
+body.scope = "scope"
+body.code = "123456"
+body.expiration_time_in_minutes = 3
+begin
+  result = auth_client.create_verify_two_factor("12345", body)
+  puts 'valid?: ' + result.data.valid
+rescue APIException => e
+  puts e.response_code
+end
+
+```
+
+</TabItem>
+<TabItem value="v11-beta">
+
+```ruby
+api_instance = Bandwidth::MFAApi.new
+account_id = '9900000'
+verify_code_request = Bandwidth::VerifyCodeRequest.new({to: '+19195551234', expiration_time_in_minutes: 3, code: '123456'})
+
+begin
+  result = api_instance.verify_code(account_id, verify_code_request)
+  p result
+rescue Bandwidth::ApiError => e
+  puts "Error when calling MFAApi->verify_code: #{e}"
+end
+```
+
+</TabItem>
+</Tabs>
