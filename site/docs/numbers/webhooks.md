@@ -23,8 +23,8 @@ If the customer's endpoint is unavailable, the Bandwidth Dashboard API callback 
 
 | Event | Description |
 |:------|:------------|
-| [Order Notification Webhooks](./orderWebhook) | Bandwidth sends this event for each **order status** update as defined by the subscription |
-| [Event Notification Webhooks](./eventWebhook) | Bandwidth sends this event for each **event** update as defined by the subscription |
+| [Order Notification Webhooks](/docs/numbers/webhooks/orderWebhook/) | Bandwidth sends this event for each **order status** update as defined by the subscription |
+| [Event Notification Webhooks](/docs/numbers/webhooks/eventWebhook/) | Bandwidth sends this event for each **event** update as defined by the subscription |
 
 ## Portout Validation Webhooks
 
@@ -36,11 +36,11 @@ If the customer's endpoint is unavailable, the Bandwidth Dashboard API webhook s
 
 | Event | Description |
 |:------|:------------|
-| [Portout Validation Webhooks](./portoutValidationWebhook) | Bandwidth sends this event when a Portout request is initiated on a number in your account. Please contact [support](https://support.bandwidth.com) to enable Portout Validation. |
+| [Portout Validation Webhooks](/docs/numbers/webhooks/portoutValidationWebhook/) | Bandwidth sends this event when a Portout request is initiated on a number in your account. Please contact [support](https://support.bandwidth.com) to enable Portout Validation. |
 
 ## Authentication
 
-Bandwidth allows you to enable basic authentication on the webhooks received from the different services. For messaging and voice, credentials would be set on the messaging or voice application created in the Bandwidth Dashboard. In a subscription, the basic authentication credentials would be set in the POST request to [create a subscription](./../account/subscriptions.mdx). To authenticate, Bandwidth follows the basic HTTP authentication framework outlined in RFC 7235.
+Bandwidth allows you to enable basic authentication on the webhooks received from the different services. For messaging and voice, credentials would be set on the messaging or voice application created in the Bandwidth Dashboard. In a subscription, the basic authentication credentials would be set in the POST request to [create a subscription](/docs/account/subscriptions/). To authenticate, Bandwidth follows the basic HTTP authentication framework outlined in RFC 7235.
 
 Essentially, if you have basic authentication enabled for a webhook, Bandwidth will send a request with no authorization header attached and expect a 401 response that includes a WWW-AUTHENTICATE header containing a challenge. An example of that header could look like WWW-AUTHENTICATE: Basic realm="".
 
