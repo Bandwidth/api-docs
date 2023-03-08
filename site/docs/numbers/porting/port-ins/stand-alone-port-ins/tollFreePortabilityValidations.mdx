@@ -22,128 +22,31 @@ image: "@site/static/img/bw-icon.svg"
 
 In the past, Bandwidth did not provide a means to determine toll free number status and provider information. We are happy to say that that is no longer the case.
 
-Bandwidth provides the [/accounts/{accountId}/tollFreePortingValidations](/apis/numbers/#operation/CreateTollFreePortingValidation) endpoint to allow you to retrieve official toll free number status and provider information for up to 5000 toll free numbers per invocation. The input is simply a list of toll free numbers, and the output describes which numbers are portable, manually portable, and non-portable.
+Bandwidth provides the [/accounts/{accountId}/tollFreePortingValidations](/apis/numbers/#operation/CreateTollFreePortingValidation/) endpoint to allow you to retrieve official toll free number status and provider information for up to 5000 toll free numbers per invocation. The input is simply a list of toll free numbers, and the output describes which numbers are portable, manually portable, and non-portable.
 
 This endpoint is available to help you submit toll free port-in requests to Bandwidth that are more likely to succeed. It will help you avoid submitting non-portable numbers, or numbers that must be ported in separate port requests because they are hosted by different providers.
 
-Because it can take several minutes to retrieve toll free number information from SOMOS (the North American toll free number administrator), the /tollFreePortingValidations API is asynchronous. This means that your request will create an order that you can either poll for results, or you may subscribe to notifications about state changes. Please refer to [Order Model](/docs/numbers/porting/orderModel.mdx) for details.
+Because it can take several minutes to retrieve toll free number information from SOMOS (the North American toll free number administrator), the `/tollFreePortingValidations` API is asynchronous. This means that your request will create an order that you can either poll for results, or you may subscribe to notifications about state changes. Please refer to [Order Model](/docs/numbers/porting/orderModel) for details.
 
-Note: You may skip this request and proceed directly to submission of a port-in request, using POST /accounts/{accountId}/portins](/apis/numbers/#operation/CreatePortin). This will cause Bandwidth to perform the same validation. If the request contains non-portable toll free numbers, or numbers that cannot be ported together, the port-in will transition to an INVALID_TFNS state.
+Note: You may skip this request and proceed directly to submission of a port-in request, using [POST /accounts/{accountId}/portins](/apis/numbers/#operation/CreatePortin/). This will cause Bandwidth to perform the same validation. If the request contains non-portable toll free numbers, or numbers that cannot be ported together, the port-in will transition to an INVALID_TFNS state.
 
-# Interpreting Results
+## Interpreting Results
 
-The /tollFreePortingValidations API includes the following information in the response payloads.
+The `/tollFreePortingValidations` API includes the following information in the response payloads.
 
-<table>
-  <tr>
-    <td>
-      <strong>Element</strong>
-    </td>
-    <td>
-      <strong>Description</strong>
-    </td>
-  </tr>
-  <tr>
-    <td>AccountId</td>
-    <td>
-      The Bandwidth account for which the toll free porting validations order
-      has been submitted.
-    </td>
-  </tr>
-  <tr>
-    <td>Breakdown</td>
-    <td>
-      A structure that separates the toll free numbers into portable, manually
-      portable, and non-portable. This element may not be available yet, if the
-      ProcessingStatus is Submitted or Processing, or if the order was
-      cancelled. The breakdown categories are:
-      <ul>
-        <li>
-          Portable - Toll free numbers that have status WORKING, RESERVED,
-          ASSIGNED or SUSPENDED are portable.
-        </li>
-        <li>
-          Manually Portable - toll free numbers that have status DISCONNECTED or
-          TRANSITIONAL may be ported, but you will have to contact Bandwidth to
-          create a manual toll free port.
-        </li>
-        <li>
-          Non-Portable - toll free numbers that have status SPARE or UNAVAILABLE
-          may not be ported.
-        </li>
-      </ul>
-    </td>
-  </tr>
-  <tr>
-    <td>CreatedByUser</td>
-    <td>
-      The user name of the user that created the free porting validations order.
-    </td>
-  </tr>
-  <tr>
-    <td>CustomerOrderId</td>
-    <td>
-      The optional customer-provided order-id. This value allows you to provide
-      your own order-id for correlation purposes, should you choose.
-    </td>
-  </tr>
-  <tr>
-    <td>ErrorList</td>
-    <td>An optional list of errors.</td>
-  </tr>
-  <tr>
-    <td>OrderCreateDate</td>
-    <td>
-      The date and time when the toll free porting validations order was
-      created.
-    </td>
-  </tr>
-  <tr>
-    <td>OrderId</td>
-    <td>
-      The unique order-id assigned by Bandwidth to refer to this order in
-      subsequent GET or PATCH operations.
-    </td>
-  </tr>
-  <tr>
-    <td>ProcessingStatus</td>
-    <td>
-      The status of the order. It may be one of the following:
-      <ul>
-        <li>
-          SUBMITTED - The order has been submitted to SOMOS, but we have not yet
-          received an acknowledgement.
-        </li>
-        <li>
-          PROCESSING - The order is being processed by SOMOS. The breakdown is
-          not yet available.
-        </li>
-        <li>
-          FAILED - The order has failed, meaning that either we could not
-          retrieve the toll free number status from SOMOS, or some of the toll
-          free numbers are not portable.
-        </li>
-        <li>
-          COMPLETE - The order has completed. All of the toll free numbers are
-          portable, although possibly not in one port-in request.
-        </li>
-        <li>
-          CANCELLED - The order has been successfully cancelled. This will only
-          occur if you use the PATCH operation to cancel the order.
-        </li>
-      </ul>
-    </td>
-  </tr>
-  <tr>
-    <td>TollFreeNumberList</td>
-    <td>
-      The list of toll free numbers that were submitted to the toll free porting
-      validations order
-    </td>
-  </tr>
-</table>
+| **Element** | **Description** |
+|:--|:--|
+| AccountId | The Bandwidth account for which the toll free porting validations order has been submitted. |
+| Breakdown | A structure that separates the toll free numbers into portable, manually portable, and non-portable. This element may not be available yet, if the ProcessingStatus is Submitted or Processing, or if the order was cancelled. The breakdown categories are:<ul><li>Portable - Toll free numbers that have status WORKING, RESERVED, ASSIGNED or SUSPENDED are portable.</li><li>Manually Portable - toll free numbers that have status DISCONNECTED or TRANSITIONAL may be ported, but you will have to contact Bandwidth to create a manual toll free port.</li><li>Non-Portable - toll free numbers that have status SPARE or UNAVAILABLE may not be ported.</li></ul> |
+| CreatedByUser | The user name of the user that created the free porting validations order. |
+| CustomerOrderId | The optional customer-provided order-id. This value allows you to provide your own order-id for correlation purposes, should you choose.|
+| ErrorList | An optional list of errors. |
+| OrderCreateDate | The date and time when the toll free porting validations order was created. |
+| OrderId | The unique order-id assigned by Bandwidth to refer to this order in subsequent `GET` or `PATCH` operations. |
+| ProcessingStatus | The status of the order. It may be one of the following:<ul><li>SUBMITTED - The order has been submitted to SOMOS, but we have not yet received an acknowledgement.</li><li>PROCESSING - The order is being processed by SOMOS. The breakdown is not yet available.</li><li>FAILED - The order has failed, meaning that either we could not retrieve the toll free number status from SOMOS, or some of the toll free numbers are not portable.</li><li>COMPLETE - The order has completed. All of the toll free numbers are portable, although possibly not in one port-in request.</li><li>CANCELLED - The order has been successfully cancelled. This will only occur if you use the `PATCH` operation to cancel the order.</li></ul> |
+| TollFreeNumberList | The list of toll free numbers that were submitted to the toll free porting validations order. |
 
-# Port-in Request Rules
+## Port-in Request Rules
 
 Toll free numbers may be ported in one port-in request, provided that they meet the following criteria:
 
@@ -151,11 +54,11 @@ Toll free numbers may be ported in one port-in request, provided that they meet 
 - The toll free numbers all have the same controlling RespOrg (i.e. same provider).
 - The toll free numbers may be authorized to port by the same person.
 
-The first two bullets may be determined using the /tollFreePortingValidations response when the ProcessingStatus is either COMPLETE or FAILED.
+The first two bullets may be determined using the `/tollFreePortingValidations` response when the ProcessingStatus is either COMPLETE or FAILED.
 
 Note: The actual RespOrg ID is hidden because we are not allowed to show it unless it is a RespOrg ID that you own and is configured on your account. But you can see which TNs belong to the same RespOrg IDs, enabling you to properly break down the toll free numbers into separate port-in requests if needed.
 
-# Sample Responses
+## Sample Responses
 
 In this section, we’ll show sample order response payloads for each ProcessingStatus value.
 
@@ -175,7 +78,7 @@ Here is a sample request payload:
 </TollFreePortingValidation>
 ```
 
-## ProcessingStatus SUBMITTED or PROCESSING
+### ProcessingStatus SUBMITTED or PROCESSING
 
 ```xml
 <TollFreePortingValidationResponse>
@@ -196,7 +99,7 @@ Here is a sample request payload:
 
 The Breakdown element is not present, because SOMOS is still processing the request.
 
-## ProcessingStatus COMPLETE
+### ProcessingStatus COMPLETE
 
 ```xml
 <TollFreePortingValidationResponse>
@@ -231,7 +134,7 @@ The Breakdown element is not present, because SOMOS is still processing the requ
 
 Here, the Breakdown is present, but only includes PortableTollFreeNumberList because there were no Manually Portable or Non-Portable numbers in the request. In this example, both toll free numbers were associated with the same RespOrg.
 
-## ProcessingStatus FAILED
+### ProcessingStatus FAILED
 
 ```xml
 <TollFreePortingValidationResponse>
@@ -302,7 +205,7 @@ Here, the Breakdown is present, but only includes PortableTollFreeNumberList bec
 
 For this order the ProcessingStatus is FAILED because the request included manually portable or non-portable toll free numbers. The Breakdown is included with one portable number, two manually portable numbers, and three non-portable numbers. For manually portable and non-portable, the reasons are included. If a toll free number is “denied”, it generally means something is wrong with the number. The denial reason from SOMOS is included.
 
-## ProcessingStatus CANCELLED
+### ProcessingStatus CANCELLED
 
 ```xml
 <TollFreePortingValidationResponse>

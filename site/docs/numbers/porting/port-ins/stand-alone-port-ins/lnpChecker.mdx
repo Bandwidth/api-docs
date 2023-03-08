@@ -21,185 +21,39 @@ image: "@site/static/img/bw-icon.svg"
 
 # Checking Portability for Regular Numbers
 
-Bandwidth provides the [/accounts/{accountId}/lnpchecker](/apis/numbers/#operation/RequestPortabilityInfo) API to allow customers to access portability information about regular (non-toll free) telephone numbers.
+Bandwidth provides the [/accounts/{accountId}/lnpchecker](/apis/numbers/#operation/RequestPortabilityInfo/) API to allow customers to access portability information about regular (non-toll free) telephone numbers.
 
-This information is necessary to identify which telephone numbers can be ported together when the customer plans to use the [/accounts/{accountId}/portins](/apis/numbers/#operation/CreatePortin) API to create stand-alone port-ins. If the customer prefers to use [/account/{accountId}/bulkPortins](/apis/numbers/#operation/CreateBulkPortin), the bulk port-in software will take care of creating the stand-alone child port-ins for any telephone numbers that can be ported together.
+This information is necessary to identify which telephone numbers can be ported together when the customer plans to use the [/accounts/{accountId}/portins](/apis/numbers/#operation/CreatePortin/) API to create stand-alone port-ins. If the customer prefers to use [/account/{accountId}/bulkPortins](/apis/numbers/#operation/CreateBulkPortin/), the bulk port-in software will take care of creating the stand-alone child port-ins for any telephone numbers that can be ported together.
 
-# Query Parameters
+## Query Parameters
 
-When using the /lnpchecker API there is an important query parameter called “fullcheck” that affects what information is returned.
+When using the `/lnpchecker` API there is an important query parameter called “fullcheck” that affects what information is returned.
 
-<table>
-  <tr>
-    <td>
-      <strong>fullcheck value</strong>
-    </td>
-    <td>
-      <strong>Description</strong>
-    </td>
-    <td>
-      <strong>Comment</strong>
-    </td>
-  </tr>
-  <tr>
-    <td>false (default)</td>
-    <td>
-      Omits carrier information and partner supported rate center information
-    </td>
-    <td>
-      Use this, or omit the query parameter entirely if
-      <ul>
-        <li>You only want to port on-net (tier 0) numbers</li>
-        <li>
-          You only want to know if the numbers are portable, not if they can be
-          ported together
-        </li>
-      </ul>
-    </td>
-  </tr>
-  <tr>
-    <td>true</td>
-    <td>
-      Includes carrier information, but omits partner supported rate center
-      information
-    </td>
-    <td>
-      Use this value if:
-      <ul>
-        <li>You only want to port on-net (tier 0) numbers</li>
-        <li>You want to see the losing carrier information</li>
-      </ul>
-    </td>
-  </tr>
-  <tr>
-    <td>onnetportability</td>
-    <td>Identical to “true” value</td>
-    <td>See “true” value.</td>
-  </tr>
-  <tr>
-    <td>offnetportability</td>
-    <td>Includes all rate center and losing carrier information</td>
-    <td>
-      Use this value if:
-      <ul>
-        <li>You want to port both on-net and off-net numbers</li>
-        <li>You want to see the losing carrier information</li>
-        <li>You want to see partner supported rate center information</li>
-      </ul>
-    </td>
-  </tr>
-</table>
+| **fullcheck value** | **Description** | **Comment** |
+|:--|:--|:--|
+| false (default) | Omits carrier information and partner supported rate center information | Use this, or omit the query parameter entirely if: <ul><li>You only want to port on-net (tier 0) numbers</li><li>You only want to know if the numbers are portable, not if they can be ported together</li></ul> |
+| true | Includes carrier information, but omits partner supported rate center information | Use this value if: <ul><li>You only want to port on-net (tier 0) numbers</li><li>You want to see the losing carrier information</li></ul> |
+| onnetportability | Identical to “true” value | See “true” value. |
+| offnetportability | Includes all rate center and losing carrier information | Use this value if: <ul><li>You want to port both on-net and off-net numbers</li><li>You want to see the losing carrier information</li><li>You want to see partner supported rate center information</li></ul> |
 
-# Interpreting Results
 
-The /lnpchecker API can return the following elements in its 200 response payload. Here is what they mean:
+## Interpreting Results
 
-<table>
-  <tr>
-    <td>
-      <strong>Element</strong>
-    </td>
-    <td>
-      <strong>Description</strong>
-    </td>
-  </tr>
-  <tr>
-    <td>PortType</td>
-    <td>
-      When a port-in is created, it is assigned a port type by Bandwidth that
-      indicates how the port-in will be processed. Possible port types are:
-      MIXED, Automated (on-net and off-net), Internal, Manual off-net, and
-      Manual on-net.
-      <ul>
-        <li>
-          MIXED: You have a mix of portable and non-portable numbers, or your
-          portable numbers fall into more than one port type.
-        </li>
-        <li>
-          AUTOMATED: Bandwidth has an automated interface to our on-net or
-          off-net porting vendor to process this port-in.
-        </li>
-        <li>
-          INTERNAL: The numbers are already on Bandwidth’s network, so the port
-          will move the number from a losing account to the account that
-          submitted the port.
-        </li>
-        <li>
-          MANUALOFFNET: The numbers are in a rate center where Bandwidth
-          provides support through a partner for which we do not have an
-          automated porting interface.
-        </li>
-        <li>
-          MANUALONNET: (Rare) There are too many on-net numbers to be ported in
-          an automated port. This port will be handled as a project port.
-        </li>
-      </ul>
-    </td>
-  </tr>
-  <tr>
-    <td>PortableNumbers</td>
-    <td>
-      This is a list of all of the numbers that are portable. It does not
-      indicate that the numbers can be ported together in a single port-in
-      request. Any numbers that were provided in the request payload that are
-      not included in the PortableNumbers list are not portable to Bandwidth.
-    </td>
-  </tr>
-  <tr>
-    <td>SupportedRateCenters</td>
-    <td>
-      This section lists rate centers where Bandwidth has on-net coverage for
-      one or more of the numbers in the request payload.
-    </td>
-  </tr>
-  <tr>
-    <td>UnsupportedRateCenters</td>
-    <td>
-      If the fullcheck query parameter was omitted, set to false, true, or
-      onnetportability, UnsupportedRateCenters indicates rate centers where
-      Bandwidth does not have on-net coverage.
-      <p>
-        If the fullcheck query parameter was set to offnetportability,
-        UnsupportedRateCenters indicates rate centers where Bandwidth has
-        neither on-net nor off-net coverage.
-      </p>
-      <p>Telephone numbers in unsupported rate centers are not portable.</p>
-    </td>
-  </tr>
-  <tr>
-    <td>PartnerSupportedRateCenters</td>
-    <td>
-      This element is only present only if the fullcheck query parameter is set
-      to offnetportability. Bandwidth supports these rate centers by using an
-      off-net partner.
-    </td>
-  </tr>
-  <tr>
-    <td>SupportedLosingCarrier.</td>
-    <td>
-      This element is only present only if the fullcheck query parameter is
-      present and not set to false. This section maps numbers to the carrier
-      that hosts the numbers prior to being ported to Bandwidth. Numbers from
-      different losing carriers must be ported in separate ports.
-    </td>
-  </tr>
-  <tr>
-    <td>UnsupportedLosingCarriers</td>
-    <td>
-      (Rare) This element is only present only if the fullcheck query parameter
-      is present and not set to false. This section maps numbers to carriers
-      from which Bandwidth cannot support porting numbers.
-      <p>
-        Telephone numbers hosted by unsupported losing carriers are not
-        portable.
-      </p>
-    </td>
-  </tr>
-</table>
+The `/lnpchecker` API can return the following elements in its 200 response payload. Here is what they mean:
 
-# Port-in Request Rules
+| **Element** | **Description** |
+|:--|:--|
+| PortType | When a port-in is created, it is assigned a port type by Bandwidth that indicates how the port-in will be processed. Possible port types are: MIXED, Automated (on-net and off-net), Internal, Manual off-net, and Manual on-net.<ul><li>MIXED: You have a mix of portable and non-portable numbers, or yourportable numbers fall into more than one port type.</li><li>AUTOMATED: Bandwidth has an automated interface to our on-net oroff-net porting vendor to process this port-in.</li><li>INTERNAL: The numbers are already on Bandwidth’s network, so the portwill move the number from a losing account to the account thatsubmitted the port.</li><li>MANUALOFFNET: The numbers are in a rate center where Bandwidthprovides support through a partner for which we do not have anautomated porting interface.</li><li>MANUALONNET: (Rare) There are too many on-net numbers to be ported inan automated port. This port will be handled as a project port.</li></ul> |
+| PortableNumbers | This is a list of all of the numbers that are portable. It does not indicate that the numbers can be ported together in a single port-in request. Any numbers that were provided in the request payload that are not included in the PortableNumbers list are not portable to Bandwidth. |
+| SupportedRateCenters | This section lists rate centers where Bandwidth has on-net coverage for one or more of the numbers in the request payload. |
+| UnsupportedRateCenters | If the fullcheck query parameter was omitted, set to false, true, or onnetportability, UnsupportedRateCenters indicates rate centers where Bandwidth does not have on-net coverage.<br/><br/>If the fullcheck query parameter was set to offnetportability, UnsupportedRateCenters indicates rate centers where Bandwidth has neither on-net nor off-net coverage.<br/><br/>Telephone numbers in unsupported rate centers are not portable. |
+| PartnerSupportedRateCenters | This element is only present only if the fullcheck query parameter is set to offnetportability. Bandwidth supports these rate centers by using an off-net partner. |
+| SupportedLosingCarrier. | This element is only present only if the fullcheck query parameter is present and not set to false. This section maps numbers to the carrier that hosts the numbers prior to being ported to Bandwidth. Numbers from different losing carriers must be ported in separate ports. |
+| UnsupportedLosingCarriers | (Rare) This element is only present only if the fullcheck query parameter is present and not set to false. This section maps numbers to carriers from which Bandwidth cannot support porting numbers.<br/>Telephone numbers hosted by unsupported losing carriers are not portable. |
 
-If you submit a port-in using [/accounts/{accountId}/portins](/apis/numbers/#operation/CreatePortin), all of the telephone numbers in the port-in request must:
+## Port-in Request Rules
+
+If you submit a port-in using [/accounts/{accountId}/portins](/apis/numbers/#operation/CreatePortin/), all of the telephone numbers in the port-in request must:
 
 - Belong to the same losing carrier
 - Have the same port type
@@ -209,11 +63,11 @@ If you submit a port-in using [/accounts/{accountId}/portins](/apis/numbers/#ope
 - Be associated with the same billing telephone number
 - Be authorized to port by the same person
 
-The first four bullets above may be determined using /lnpchecker results.
+The first four bullets above may be determined using `/lnpchecker` results.
 
-# Sample Responses
+## Sample Responses
 
-In this section, we’ll compare and contrast the results for the same /lnpchecker request payload with the different combinations of query parameters.
+In this section, we’ll compare and contrast the results for the same `/lnpchecker` request payload with the different combinations of query parameters.
 
 Our sample request payload looks like the following:
 
