@@ -1,0 +1,83 @@
+---
+id: lsrs
+title: LSRs
+sidebar_label: LSRs
+slug: /numbers/porting/port-outs/lsrs
+description: A general overview of Bandwidth's Port-Out LSRs
+keywords:
+  - bandwidth
+  - numbers
+  - porting
+  - port out
+  - lsr
+hide_title: false
+image: "@site/static/img/bw-icon.svg"
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+export const accountId = "{accountId}";
+export const orderId = "{orderId}";
+
+export const Highlight = ({ children, color }) => (
+  <span
+    style={{
+      backgroundColor: color,
+      borderRadius: "2px",
+      color: "#fff",
+      padding: "0.2rem",
+    }}
+  >
+    {children}
+  </span>
+);
+
+The `/accounts/{accountId}/lsrorders` endpoint is used to [create](/apis/numbers#operation/CreateLsrOrder/), [modify](/apis/numbers#operation/UpdateLsrOrder/), and [monitor](/apis/numbers#operation/ReadLsrOrder/) API requests to port local telephone numbers away from the Bandwidth network. (Note: This API cannot be used to port out toll free telephone numbers, which still require a Ticket.) This API call is intended for use by carriers that want to automate the "Port-out" process with Bandwidth, rather than manually request the "port-out" of telephone numbers via the Bandwidth Dashboard or a Ticket.
+
+Because the [/accounts/{accountId}/lsrorders](/apis/numbers#operation/CreateLsrOrder/) API is asynchronous, it uses the [Bandwidth order model](/docs/numbers/porting/orderModel/).
+
+In this case a `POST` is made to the [/accounts/{accountId}/lsrorders](/apis/numbers#operation/CreateLsrOrder/) resource that describes the request to port out the numbers. If the `POST` has no syntactic errors, such as a telephone number with less than 10 digits, an order-id will be returned that is used to monitor and manage the port-out request. The `POST` returns a payload that reflects the request, and includes the order-id, as well as a Location header that contains a valid `GET` API call that can be used to retrieve the current state of the LSR / Port-out request.
+
+A complete list of payload elements for the `POST` request can be found in the API reference, but in summary the LSR request includes:
+
+- a list of non toll free telephone numbers to be ported out of Bandwidth
+- information about the subscriber
+- tracking information such as a PON and a Customer Order ID
+- winning carrier information such as the SPID
+- requested FOC date
+
+This API supports the [GET](/apis/numbers#operation/ReadLsrOrder/) operation for retrieving order detail and status information, [POST](/apis/numbers#operation/CreateLsrOrder/) for creating a new LSR Order, and [PUT](/apis/numbers#operation/UpdateLsrOrder/) for changing the details of an LSR that is in progress.
+
+An LSR order may be in one of the following states:
+
+- PENDING - you may see this state briefly if the account from which the telephone number is being ported out is still validating the port-out
+- FOC - a date by which the port-out can complete has been agreed upon
+- EXCEPTION - the port-out has a problem or has been disputed by the losing provider. The order can be updated using the `PUT` operation to supply or correct the information being requested by the losing provider.
+- COMPLETE - the port-out is complete and the telephone numbers have been removed from the losing Bandwidth account
+- CANCELLED - the LSR order has been cancelled. This is a terminal state for the order, meaning the order would have to be resubmitted.
+- PARTIAL - some, but not all of the telephone numbers in the LSR order have been ported out.
+- FAILED - the LSR order has failed and none of the telephone numbers have been ported out. This is a terminal state for the order, meaning the order would have to be resubmitted.
+
+The losing provider is restricted to a very specific number of reasons to dispute a port-out. The following errors will place the LSR order into the EXCEPTION state:
+
+| **Code** | **Description** |
+|:--|:--|
+| 7510 | Required Account Code missing |
+| 7511 | Invalid Account Code |
+| 7512 | Required PIN missing |
+| 7513 | PIN Invalid |
+| 7514 | Required ZIP Code missing |
+| 7515 | Invalid ZIP Code |
+| 7519 | Customer info does not match |
+| 7598 | Invalid Request |
+
+The following errors will cancel the LSR order. Bandwidth does not support updating of the telephone number list after an order has been submitted. So if there are problems with the telephone numbers, the order is automatically cancelled and must be resubmitted with updated telephone numbers.
+
+| **Code** | **Description** |
+|:--|:--|
+| 7516 | Telephone Number not recognized or invalid for this account |
+| 7517 | Too many Telephone numbers in this request |
+| 7518 | Telephone Number Not Active |
+
+Otherwise, the LSR order should succeed. The losing provider is prohibited by the FCC from preventing the port-out except for one of the reasons above.
