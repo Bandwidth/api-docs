@@ -1,0 +1,43 @@
+---
+id: orderModel
+title: Order Model
+sidebar_label: Order Model
+slug: /numbers/porting/orderModel
+hide_title: false
+description: Information about Bandwidth's Order Model.
+keywords:
+  - Porting
+  - Order Model
+  - Asynchronous
+  - Subscribe
+  - Subscription
+  - Notify
+  - Notification
+  - Callback
+  - Webhook
+image: "@site/static/img/bw-icon.svg"
+---
+
+# Order Model
+
+For requests that cannot be fulfilled within 30 seconds, Bandwidth supports asynchronous APIs.  These APIs are used for many different purposes, but all follow a pattern that we refer to as the “order model”.
+
+In the order model, you submit a request which creates an order.  You receive a 201 response with an order-id.  The 201 response does not mean that the order has been fulfilled, but rather that the order has been successfully created and will be processed as quickly as possible.  You can use the order-id to ask for the current status of the order.
+
+For all types of orders, you can either poll for order status, or you can subscribe to notifications about order state changes.  If you choose to subscribe, the subscriptions may be for email notifications or webhook notifications.  You may subscribe to a specific order-id, or you may subscribe to all orders of a specified order type.
+
+For each order received by Bandwidth, a history of state changes to the order is maintained by the system, including the new state, the time of the state change and who caused the state change.
+
+Use of the order model looks something like this, using `/portins` as an example order:
+
+* `POST` `/accounts/{accountId}/portins` to create a port-in order
+* Receive a 201 response that includes an OrderId payload element
+* `GET`/`PUT`/`DELETE` `/accounts/{accountId}/portins/{orderId}` to fetch, update, or cancel the order.
+* If subscribed, receive order state change notifications for all state changes and order notes.
+* `GET` `/accounts/{accountId}/portins/{orderId}/history` to fetch the order history.
+* `POST` `/accounts/{accountId}/portins/{orderId}/notes` to communicate with Bandwidth’s LNP team about this order.
+* `POST` `/accounts/{accountId}/portins/{orderId}/loas` to upload documents related to this port-in order.
+
+Please refer to the [/accounts/{accountId}/subscriptions API](/apis/numbers/#tag/Subscriptions/operation/CreateSubscriptions/) for detailed information on how to create different types of subscriptions.
+
+Please refer to the [Guide for Webhooks](/docs/numbers/webhooks/orderWebhook/) to see the format of a webhook notification for an Order Webhook.
