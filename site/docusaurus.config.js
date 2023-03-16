@@ -30,6 +30,10 @@ const globalSpec = fs.readFileSync("./specs/global.yml", "utf-8");
 const globalSpec_v2 = fs.readFileSync("./specs/global-v2.yml", "utf-8");
 const globalSpec_v3 = fs.readFileSync("./specs/global-v3.yml", "utf-8");
 const globalSpec_beta = fs.readFileSync("./specs/global-beta.yml", "utf-8");
+const globalMessagingSpec = fs.readFileSync(
+  "./specs/global-messaging-api.yml",
+  "utf-8"
+);
 const identitySpec = fs.readFileSync(
   "./specs/one-identity-management.yml",
   "utf-8"
@@ -103,6 +107,10 @@ module.exports = {
               to: "apis/global",
               label: "Docs & API Reference",
             },
+            {
+              to: "apis/global-messaging",
+              label: "Messaging Docs & API Reference",
+            },
           ],
         },
         {
@@ -175,6 +183,7 @@ module.exports = {
     globalSpec_v2: YAML.parse(globalSpec_v2),
     globalSpec_v3: YAML.parse(globalSpec_v3),
     globalSpec_beta: YAML.parse(globalSpec_beta),
+    globalMessagingSpec: YAML.parse(globalMessagingSpec),
     identitySpec: YAML.parse(identitySpec),
     identitySpecLink: `${customConfig.dashNotificationsSpecLink}`,
     insightsSpec: YAML.parse(insightsSpec),
