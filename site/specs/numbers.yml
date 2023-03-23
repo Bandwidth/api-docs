@@ -242,7 +242,7 @@ components:
               </TnVendorAssignments>
            </BulkTnVendorAssignmentPayload>
         </BulkTnVendorAssignmentTaskResponse>
-    Campaign404Error:
+    Campaign403Error:
       value: |-
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
         <CampaignsResponse>
@@ -284,6 +284,7 @@ components:
             <Description>Test 1</Description>
             <MessageClass>Campaign-E</MessageClass>
             <CreateDate>2021-03-18T12:50:45Z</CreateDate>
+            <SecondaryDcaSharingStatus>ACCEPTED</SecondaryDcaSharingStatus>
             <Status>ACTIVE</Status>
             <MnoStatusList>
               <MnoStatus>
@@ -495,6 +496,31 @@ components:
             </Error>
           </Errors>
         </CampaignResponse>
+    CreateCampaignImportResponse:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <LongCodeImportCampaignResponse>
+          <ImportedCampaign>
+            <CampaignId>CA114BN</CampaignId>
+            <Description>Test 1</Description>
+            <MessageClass>Campaign-E</MessageClass>
+            <CreateDate>2021-03-18T12:50:45Z</CreateDate>
+            <SecondaryDcaSharingStatus>PENDING</SecondaryDcaSharingStatus>
+            <Status>ACTIVE</Status>
+            <MnoStatusList>
+              <MnoStatus>
+                <MnoName>ATT</MnoName>
+                <MnoId>10017</MnoId>
+                <Status>APPROVED</Status>
+              </MnoStatus>
+              <MnoStatus>
+                <MnoName>TMO</MnoName>
+                <MnoId>10035</MnoId>
+                <Status>APPROVED</Status>
+              </MnoStatus>
+            </MnoStatusList>
+          </ImportedCampaign>
+        </LongCodeImportCampaignResponse>
     CreateCampaignRequest:
       value: |-
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -617,6 +643,14 @@ components:
       example: '1234567'
       in: path
       name: accountId
+      required: true
+      schema:
+        type: string
+    CampaignIdPathParam:
+      description: User's campaign ID
+      example: CBA001
+      in: path
+      name: campaignId
       required: true
       schema:
         type: string
@@ -2819,6 +2853,11 @@ components:
       maxLength: 50
       title: CallerName
       type: string
+    CampaignErrorResponse:
+      properties:
+        CampaignErrorResponse:
+          $ref: '#/components/schemas/ResponseStatus'
+      type: object
     CampaignRequest:
       properties:
         Campaign:
@@ -14991,6 +15030,39 @@ paths:
 
         </code></p>
 
+        <p>When uploading documents using the /loas resource, you must specify
+        the MIME type of the document being upload using the Content-Type HTTP
+        header.</p>
+
+        <p><b>Information for non-toll free port-in customers:</b></p>
+
+        <p>The LOA document must be uploaded using one of the following MIME
+        types:</p>
+
+        <ul>
+
+        <li>application/pdf</li>
+
+        <li>text/plain</li>
+
+        <li>image/jpeg</li>
+
+        <li>image/png</li>
+
+        <li>image/tiff</li>
+
+        <li>text/csv</li>
+
+        <li>application/vnd.ms-excel</li>
+
+        <li>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</li>
+
+        <li>application/msword</li>
+
+        <li>application/vnd.openxmlformats-officedocument.wordprocessingml.document</li>
+
+        </ul>
+
         <p><b>Information for toll free port-in customers:</b></p>
 
         <p>If you are porting toll free numbers and either of the following are
@@ -16435,8 +16507,10 @@ paths:
             application/xml:
               examples:
                 example:
-                  $ref: '#/components/examples/Campaign404Error'
+                  $ref: '#/components/examples/CampaignNotFound404Error'
                   description: example
+              schema:
+                $ref: '#/components/schemas/CampaignErrorResponse'
           description: Not Found
       summary: Fetch Campaign List
       tags:
@@ -16471,6 +16545,8 @@ paths:
                 example:
                   $ref: '#/components/examples/CreateCampaign400Error'
                   description: example
+              schema:
+                $ref: '#/components/schemas/CampaignErrorResponse'
           description: Bad Request
       summary: Create Campaign
       tags:
@@ -16542,7 +16618,7 @@ paths:
             application/xml:
               examples:
                 example:
-                  $ref: '#/components/examples/CampaignImportResponse'
+                  $ref: '#/components/examples/CreateCampaignImportResponse'
               schema:
                 $ref: '#/components/schemas/LongCodeImportCampaignResponse'
           description: Created
@@ -16568,13 +16644,7 @@ paths:
       operationId: GetImportedCampaign
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: The campaign id.
-          example: CA114BN
-          in: path
-          name: campaignId
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/CampaignIdPathParam'
       responses:
         '200':
           content:
@@ -16605,14 +16675,7 @@ paths:
       operationId: deleteCampaign
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: campaign ID
-          example: null
-          in: path
-          name: campaignId
-          required: true
-          schema:
-            default: null
-            type: string
+        - $ref: '#/components/parameters/CampaignIdPathParam'
       responses:
         '204':
           description: No Content
@@ -16621,8 +16684,10 @@ paths:
             application/xml:
               examples:
                 example:
-                  $ref: '#/components/examples/Campaign404Error'
+                  $ref: '#/components/examples/Campaign403Error'
                   description: example
+              schema:
+                $ref: '#/components/schemas/CampaignErrorResponse'
           description: Forbidden
         '404':
           content:
@@ -16631,6 +16696,8 @@ paths:
                 example:
                   $ref: '#/components/examples/CampaignNotFound404Error'
                   description: example
+              schema:
+                $ref: '#/components/schemas/CampaignErrorResponse'
           description: Not Found
       summary: Delete Campaign
       tags:
@@ -16640,14 +16707,7 @@ paths:
       operationId: fetchCampaign
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: ''
-          example: null
-          in: path
-          name: campaignId
-          required: true
-          schema:
-            default: null
-            type: string
+        - $ref: '#/components/parameters/CampaignIdPathParam'
       responses:
         '200':
           content:
@@ -16664,6 +16724,8 @@ paths:
                 example:
                   $ref: '#/components/examples/CampaignNotFound404Error'
                   description: example
+              schema:
+                $ref: '#/components/schemas/CampaignErrorResponse'
           description: Not Found
       summary: Fetch Campaign
       tags:
@@ -16698,8 +16760,45 @@ paths:
                 example:
                   $ref: '#/components/examples/CreateCampaign400Error'
                   description: example
+              schema:
+                $ref: '#/components/schemas/CampaignErrorResponse'
           description: Bad Request
       summary: Update Campaign
+      tags:
+        - 10DLC
+  /accounts/{accountId}/campaignManagement/10dlc/campaigns/{campaignId}/revet:
+    put:
+      description: >-
+        The PUT method is used to send a request to TCR for reverification of
+        DCA2 declined campaign
+      operationId: revetCampaign
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/CampaignIdPathParam'
+      responses:
+        '204':
+          description: No Content
+        '403':
+          content:
+            application/xml:
+              examples:
+                example:
+                  $ref: '#/components/examples/Campaign403Error'
+                  description: example
+              schema:
+                $ref: '#/components/schemas/CampaignErrorResponse'
+          description: Forbidden
+        '404':
+          content:
+            application/xml:
+              examples:
+                example:
+                  $ref: '#/components/examples/CampaignNotFound404Error'
+                  description: example
+              schema:
+                $ref: '#/components/schemas/CampaignErrorResponse'
+          description: Not Found
+      summary: Revet Campaign
       tags:
         - 10DLC
   /accounts/{accountId}/csrs:
@@ -22696,6 +22795,37 @@ paths:
 
         Query parameter or header documentType can be used to specify type of
         document on upload.
+
+        <p>When uploading documents using the /loas resource, you must specify
+        the MIME type of the document being upload using the Content-Type HTTP
+        header.</p>
+
+        <p>The LOA document must be uploaded using one of the following MIME
+        types:</p>
+
+        <ul>
+
+        <li>application/pdf</li>
+
+        <li>text/plain</li>
+
+        <li>image/jpeg</li>
+
+        <li>image/png</li>
+
+        <li>image/tiff</li>
+
+        <li>text/csv</li>
+
+        <li>application/vnd.ms-excel</li>
+
+        <li>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</li>
+
+        <li>application/msword</li>
+
+        <li>application/vnd.openxmlformats-officedocument.wordprocessingml.document</li>
+
+        </ul>
       operationId: CreateImportTnOrderLoas
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
@@ -27826,6 +27956,39 @@ paths:
         ----WebKitFormBoundaryE19zNvXGzXaLvS5C <br>
 
         </code>
+
+        <p>When uploading documents using the /loas resource, you must specify
+        the MIME type of the document being upload using the Content-Type HTTP
+        header.</p>
+
+        <p><b>Information for non-toll free port-in customers:</b></p>
+
+        <p>The LOA document must be uploaded using one of the following MIME
+        types:</p>
+
+        <ul>
+
+        <li>application/pdf</li>
+
+        <li>text/plain</li>
+
+        <li>image/jpeg</li>
+
+        <li>image/png</li>
+
+        <li>image/tiff</li>
+
+        <li>text/csv</li>
+
+        <li>application/vnd.ms-excel</li>
+
+        <li>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</li>
+
+        <li>application/msword</li>
+
+        <li>application/vnd.openxmlformats-officedocument.wordprocessingml.document</li>
+
+        </ul>
 
         <p><b>Information for toll free port-in customers:</b></p>
 
