@@ -242,7 +242,7 @@ components:
               </TnVendorAssignments>
            </BulkTnVendorAssignmentPayload>
         </BulkTnVendorAssignmentTaskResponse>
-    Campaign404Error:
+    Campaign403Error:
       value: |-
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
         <CampaignsResponse>
@@ -284,6 +284,7 @@ components:
             <Description>Test 1</Description>
             <MessageClass>Campaign-E</MessageClass>
             <CreateDate>2021-03-18T12:50:45Z</CreateDate>
+            <SecondaryDcaSharingStatus>ACCEPTED</SecondaryDcaSharingStatus>
             <Status>ACTIVE</Status>
             <MnoStatusList>
               <MnoStatus>
@@ -495,6 +496,31 @@ components:
             </Error>
           </Errors>
         </CampaignResponse>
+    CreateCampaignImportResponse:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <LongCodeImportCampaignResponse>
+          <ImportedCampaign>
+            <CampaignId>CA114BN</CampaignId>
+            <Description>Test 1</Description>
+            <MessageClass>Campaign-E</MessageClass>
+            <CreateDate>2021-03-18T12:50:45Z</CreateDate>
+            <SecondaryDcaSharingStatus>PENDING</SecondaryDcaSharingStatus>
+            <Status>ACTIVE</Status>
+            <MnoStatusList>
+              <MnoStatus>
+                <MnoName>ATT</MnoName>
+                <MnoId>10017</MnoId>
+                <Status>APPROVED</Status>
+              </MnoStatus>
+              <MnoStatus>
+                <MnoName>TMO</MnoName>
+                <MnoId>10035</MnoId>
+                <Status>APPROVED</Status>
+              </MnoStatus>
+            </MnoStatusList>
+          </ImportedCampaign>
+        </LongCodeImportCampaignResponse>
     CreateCampaignRequest:
       value: |-
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -620,6 +646,14 @@ components:
       required: true
       schema:
         type: string
+    CampaignIdPathParam:
+      description: User's campaign ID
+      example: CBA001
+      in: path
+      name: campaignId
+      required: true
+      schema:
+        type: string
     DomainNamePathParam:
       description: Domain name
       example: dashboard
@@ -729,25 +763,55 @@ components:
             - USA
             - CAN
         type: string
-    shortCodePageQueryParam:
-      description: The page number of the results to return.
+    shortCodeHistoryShortCodeSortParam:
+      description: Sorting parameters for `shortCode`
+      example:
+        sort: asc
+      explode: true
       in: query
-      name: page
+      name: shortCode
+      properties:
+        sort:
+          enum:
+            - asc
+            - desc
+          type: string
       required: false
-      schema:
-        default: 0
-        type: integer
-    shortCodePageSizeQueryParam:
-      description: The number of entities to return per page.
+      style: deepObject
+    shortCodeHistoryVersionSortParam:
+      description: Sorting parameters for `version`
+      example:
+        sort: asc
+      explode: true
       in: query
-      name: pageSize
+      name: version
+      properties:
+        sort:
+          enum:
+            - asc
+            - desc
+          type: string
+      required: false
+      style: deepObject
+    shortCodeLimitQueryParam:
+      description: The number of entities to return based in the offset.
+      in: query
+      name: limit
       required: false
       schema:
         default: 50
         maximum: 250
         type: integer
+    shortCodeOffsetQueryParam:
+      description: The offset number of the results to return.
+      in: query
+      name: offset
+      required: false
+      schema:
+        default: 0
+        type: integer
     shortCodePathParam:
-      description: The short code number used.
+      description: The short code number used in the request.
       example: '123321'
       in: path
       name: shortCode
@@ -784,8 +848,8 @@ components:
           examples:
             example:
               value:
-                description: Client is providing incorrect or invalid credentials.
-                type: unauthorized
+                description: Client does not have access rights to the content.
+                type: forbidden
           schema:
             $ref: '#/components/schemas/shortCodeError'
       description: Client is providing incorrect or invalid credentials.
@@ -852,6 +916,7 @@ components:
               value:
                 data:
                   - accountId: '9903137'
+                    applyMigrationFee: true
                     applySetupFee: true
                     carrierStatuses:
                       - carrierId: att
@@ -861,12 +926,12 @@ components:
                       - carrierId: verizon
                         status: INACTIVE
                     country: USA
-                    createdOn: '2023-02-01T19:22:48.268Z'
+                    createdDateTime: '2023-02-01T19:22:48.268Z'
                     customerManagedLease: false
                     moapId: '681500'
-                    modifiedOn: '2023-02-01T19:22:48.268Z'
+                    modifiedDateTime: '2023-02-01T19:22:48.268Z'
                     notes: Some comments here Could be a lot
-                    orderedOn: '2021-06-27'
+                    orderedDate: '2021-06-27'
                     shortCode: '12345'
                     sipPeerId: '537793'
                     siteId: '13524'
@@ -874,6 +939,7 @@ components:
                     type: RANDOM
                     version: 0
                   - accountId: '9903137'
+                    applyMigrationFee: true
                     applySetupFee: true
                     carrierStatuses:
                       - carrierId: att
@@ -883,12 +949,12 @@ components:
                       - carrierId: verizon
                         status: INACTIVE
                     country: USA
-                    createdOn: '2023-02-01T19:23:34.655Z'
+                    createdDateTime: '2023-02-01T19:23:34.655Z'
                     customerManagedLease: false
                     moapId: '681500'
-                    modifiedOn: '2023-02-01T19:23:34.655Z'
+                    modifiedDateTime: '2023-02-01T19:23:34.655Z'
                     notes: Some comments here Could be a lot
-                    orderedOn: '2021-06-27'
+                    orderedDate: '2021-06-27'
                     shortCode: '321123'
                     sipPeerId: '537793'
                     siteId: '13524'
@@ -896,6 +962,7 @@ components:
                     type: RANDOM
                     version: 0
                   - accountId: '9903137'
+                    applyMigrationFee: true
                     applySetupFee: true
                     carrierStatuses:
                       - carrierId: att
@@ -905,24 +972,25 @@ components:
                       - carrierId: verizon
                         status: INACTIVE
                     country: USA
-                    createdOn: '2023-02-01T20:50:34.552Z'
+                    createdDateTime: '2023-02-01T20:50:34.552Z'
                     customerManagedLease: false
-                    leaseEndsOn: '2024-06-27'
-                    leaseStartsOn: '2021-06-27'
+                    leaseEndsDate: '2024-06-27'
+                    leaseStartsDate: '2021-06-27'
                     moapId: '681500'
-                    modifiedOn: '2023-02-01T20:50:34.552Z'
+                    modifiedDateTime: '2023-02-01T20:50:34.552Z'
                     notes: Some comments here Could be a lot
-                    orderedOn: '2021-06-27'
+                    orderedDate: '2021-06-27'
                     shortCode: '45312'
                     sipPeerId: '537793'
                     siteId: '13524'
                     status: INACTIVE
                     type: RANDOM
                     version: 0
-                pagination:
-                  page: 0
+                page:
+                  pageNumber: 0
                   pageSize: 3
-                totalCount: 31
+                  totalElements: 31
+                  totalPages: 11
           schema:
             $ref: '#/components/schemas/shortCodeApiPage'
       description: Successful response with a paginated list of short codes.
@@ -933,6 +1001,7 @@ components:
             example:
               value:
                 accountId: '1003520'
+                applyMigrationFee: true
                 applySetupFee: true
                 carrierStatuses:
                   - carrierId: att
@@ -942,12 +1011,12 @@ components:
                   - carrierId: verizon
                     status: INACTIVE
                 country: USA
-                createdOn: '2023-01-31T20:05:16.261Z'
+                createdDateTime: '2023-01-31T20:05:16.261Z'
                 customerManagedLease: false
                 moapId: '681500'
-                modifiedOn: '2023-02-09T19:53:18.824Z'
+                modifiedDateTime: '2023-02-09T19:53:18.824Z'
                 notes: update checl
-                orderedOn: '2021-06-27'
+                orderedDate: '2021-06-27'
                 shortCode: '12113'
                 sipPeerId: '537793'
                 siteId: '13524'
@@ -965,10 +1034,11 @@ components:
               value:
                 data:
                   - accountId: '1003520'
+                    applyMigrationFee: true
                     applySetupFee: true
                     billed: false
                     carrierStatuses:
-                      - activatedOn: '2021-10-15'
+                      - activatedDate: '2021-10-15'
                         carrierId: att
                         status: ACTIVE
                       - carrierId: tmobile
@@ -976,15 +1046,15 @@ components:
                       - carrierId: verizon
                         status: INACTIVE
                     country: USA
-                    createdOn: '2023-01-31T20:05:16.261Z'
+                    createdDateTime: '2023-01-31T20:05:16.261Z'
                     customerManagedLease: false
-                    leaseEndsOn: '2022-12-28'
-                    leaseStartsOn: '2022-06-27'
+                    leaseEndsDate: '2022-12-28'
+                    leaseStartsDate: '2022-06-27'
                     moapId: '657096'
-                    modifiedOn: '2023-01-31T20:05:16.261Z'
+                    modifiedDateTime: '2023-01-31T20:05:16.261Z'
                     notes: Some comments here Could be a lot
                     operation: CREATED
-                    orderedOn: '2021-06-27'
+                    orderedDate: '2021-06-27'
                     published: false
                     shortCode: '12113'
                     sipPeerId: '526744'
@@ -994,6 +1064,7 @@ components:
                     user: systemUser
                     version: 3
                   - accountId: '1003520'
+                    applyMigrationFee: true
                     applySetupFee: true
                     billed: false
                     carrierStatuses:
@@ -1004,13 +1075,13 @@ components:
                       - carrierId: verizon
                         status: INACTIVE
                     country: USA
-                    createdOn: '2023-01-31T20:05:16.261Z'
+                    createdDateTime: '2023-01-31T20:05:16.261Z'
                     customerManagedLease: false
                     moapId: '681500'
-                    modifiedOn: '2023-02-09T19:16:21.801Z'
+                    modifiedDateTime: '2023-02-09T19:16:21.801Z'
                     notes: Some comments here Could be a lot
                     operation: UPDATED
-                    orderedOn: '2021-06-27'
+                    orderedDate: '2021-06-27'
                     published: false
                     shortCode: '12113'
                     sipPeerId: '537793'
@@ -1019,10 +1090,11 @@ components:
                     type: RANDOM
                     user: systemUser
                     version: 4
-                pagination:
-                  page: 1
+                page:
+                  pageNumber: 1
                   pageSize: 2
-                totalCount: 9
+                  totalElements: 9
+                  totalPages: 5
           schema:
             $ref: '#/components/schemas/shortCodeHistoryApiPage'
       description: >-
@@ -3129,6 +3201,11 @@ components:
       maxLength: 50
       title: CallerName
       type: string
+    CampaignErrorResponse:
+      properties:
+        CampaignErrorResponse:
+          $ref: '#/components/schemas/ResponseStatus'
+      type: object
     CampaignRequest:
       properties:
         Campaign:
@@ -13064,13 +13141,12 @@ components:
           description: Account ID.
           example: '123123'
           type: string
-        applySetupFee:
-          description: Internal flag indicating whether a setup charge should be billed.
-          example: true
-          type: boolean
         carrierStatuses:
+          description: >-
+            List of objects each providing the registration status for an
+            individual carrier.
           example:
-            - activatedOn: '2021-10-15'
+            - activatedDate: '2021-10-15'
               carrierId: att
               status: ACTIVE
             - carrierId: tmobile
@@ -13087,7 +13163,7 @@ components:
             - CAN
           example: USA
           type: string
-        createdOn:
+        createdDateTime:
           example: '2022-11-14T18:39:04.505Z'
           format: date-time
           type: string
@@ -13097,7 +13173,7 @@ components:
             lease.
           example: true
           type: boolean
-        leaseEndsOn:
+        leaseEndsDate:
           description: >-
             Date the short code lease ends. Customer managed leases may not have
             lease start and end dates. Date is inclusive as it relates to
@@ -13105,7 +13181,7 @@ components:
           example: '2024-01-29'
           format: date
           type: string
-        leaseStartsOn:
+        leaseStartsDate:
           description: >-
             Date the short code lease starts. Customer managed leases may not
             have lease start and end dates. Date is inclusive as it relates to
@@ -13113,19 +13189,11 @@ components:
           example: '2023-01-28'
           format: date
           type: string
-        moapId:
-          description: Mobile application profile ID.
-          example: '123'
-          type: string
-        modifiedOn:
+        modifiedDateTime:
           example: '2022-11-15T18:39:04.505Z'
           format: date-time
           type: string
-        notes:
-          description: Internal notes.
-          example: Notes example
-          type: string
-        orderedOn:
+        orderedDate:
           description: Date the short code was registered.
           example: '2023-01-30'
           format: date
@@ -13162,6 +13230,9 @@ components:
           example: RANDOM
           type: string
         version:
+          description: >-
+            A internal field that represents the current version of the short
+            code data.
           example: 100
           type: integer
     shortCodeApiPage:
@@ -13172,6 +13243,7 @@ components:
         data:
           example:
             - accountId: '9903137'
+              applyMigrationFee: true
               applySetupFee: true
               carrierStatuses:
                 - carrierId: att
@@ -13181,12 +13253,12 @@ components:
                 - carrierId: verizon
                   status: INACTIVE
               country: USA
-              createdOn: '2023-02-01T19:22:48.268Z'
+              createdDateTime: '2023-02-01T19:22:48.268Z'
               customerManagedLease: false
               moapId: '681500'
-              modifiedOn: '2023-02-01T19:22:48.268Z'
+              modifiedDateTime: '2023-02-01T19:22:48.268Z'
               notes: Some comments here Could be a lot
-              orderedOn: '2021-06-27'
+              orderedDate: '2021-06-27'
               shortCode: '12345'
               sipPeerId: '537793'
               siteId: '13524'
@@ -13194,6 +13266,7 @@ components:
               type: RANDOM
               version: 0
             - accountId: '9903137'
+              applyMigrationFee: true
               applySetupFee: true
               carrierStatuses:
                 - carrierId: att
@@ -13203,12 +13276,12 @@ components:
                 - carrierId: verizon
                   status: INACTIVE
               country: USA
-              createdOn: '2023-02-01T19:23:34.655Z'
+              createdDateTime: '2023-02-01T19:23:34.655Z'
               customerManagedLease: false
               moapId: '681500'
-              modifiedOn: '2023-02-01T19:23:34.655Z'
+              modifiedDateTime: '2023-02-01T19:23:34.655Z'
               notes: Some comments here Could be a lot
-              orderedOn: '2021-06-27'
+              orderedDate: '2021-06-27'
               shortCode: '321123'
               sipPeerId: '537793'
               siteId: '13524'
@@ -13216,6 +13289,7 @@ components:
               type: RANDOM
               version: 0
             - accountId: '9903137'
+              applyMigrationFee: true
               applySetupFee: true
               carrierStatuses:
                 - carrierId: att
@@ -13225,14 +13299,14 @@ components:
                 - carrierId: verizon
                   status: INACTIVE
               country: USA
-              createdOn: '2023-02-01T20:50:34.552Z'
+              createdDateTime: '2023-02-01T20:50:34.552Z'
               customerManagedLease: false
-              leaseEndsOn: '2024-06-27'
-              leaseStartsOn: '2021-06-27'
+              leaseEndsDate: '2024-06-27'
+              leaseStartsDate: '2021-06-27'
               moapId: '681500'
-              modifiedOn: '2023-02-01T20:50:34.552Z'
+              modifiedDateTime: '2023-02-01T20:50:34.552Z'
               notes: Some comments here Could be a lot
-              orderedOn: '2021-06-27'
+              orderedDate: '2021-06-27'
               shortCode: '45312'
               sipPeerId: '537793'
               siteId: '13524'
@@ -13242,17 +13316,23 @@ components:
           items:
             $ref: '#/components/schemas/shortCode'
           type: array
-        pagination:
-          $ref: '#/components/schemas/shortCodePagination'
-        totalCount:
-          example: 100
-          type: integer
+        errors:
+          example:
+            description: Client is providing incorrect or invalid credentials.
+            type: unauthorized
+          items:
+            $ref: '#/components/schemas/shortCodeError'
+          type: array
+        page:
+          $ref: '#/components/schemas/shortCodePage'
       type: object
     shortCodeCarrierInfo:
       description: The registration status for each carrier.
       properties:
-        activatedOn:
-          description: The date the short code was activated for this carrier.
+        activatedDate:
+          description: >-
+            The date the short code was activated for this carrier, this date
+            only will be defined when the status of the carrier becomes ACTIVE.
           example: '2023-01-28'
           format: date
           type: string
@@ -13275,13 +13355,12 @@ components:
           description: Account ID.
           example: '123123'
           type: string
-        applySetupFee:
-          description: Internal flag indicating whether a setup charge should be billed.
-          example: true
-          type: boolean
         carrierStatuses:
+          description: >-
+            List of objects each providing the registration status for an
+            individual carrier.
           example:
-            - activatedOn: '2021-10-15'
+            - activatedDate: '2021-10-15'
               carrierId: att
               status: ACTIVE
             - carrierId: tmobile
@@ -13304,7 +13383,7 @@ components:
             lease.
           example: true
           type: boolean
-        leaseEndsOn:
+        leaseEndsDate:
           description: >-
             Date the short code lease ends. Customer managed leases may not have
             lease start and end dates. Date is inclusive as it relates to
@@ -13312,7 +13391,7 @@ components:
           example: '2024-01-29'
           format: date
           type: string
-        leaseStartsOn:
+        leaseStartsDate:
           description: >-
             Date the short code lease starts. Customer managed leases may not
             have lease start and end dates. Date is inclusive as it relates to
@@ -13320,15 +13399,7 @@ components:
           example: '2023-01-28'
           format: date
           type: string
-        moapId:
-          description: Mobile application profile ID in the mCore database.
-          example: '123'
-          type: string
-        notes:
-          description: Internal notes.
-          example: Notes example
-          type: string
-        orderedOn:
+        orderedDate:
           description: Date the short code was registered.
           example: '2023-01-30'
           format: date
@@ -13365,6 +13436,10 @@ components:
           example: RANDOM
           type: string
         version:
+          description: >-
+            A field that represents the version of the short code data, when
+            updating a short code is necessary to supply the last version value
+            added by 1.
           example: 100
           type: integer
       type: object
@@ -13401,22 +13476,21 @@ components:
           type: string
       type: object
     shortCodeHistory:
-      description: Short code history details representation.
+      description: >-
+        Short code history details representation, each history element
+        represents an operation or an event that changed the state of the short
+        code.
       properties:
         accountId:
           description: Account ID.
           example: '123123'
           type: string
-        applySetupFee:
-          description: Internal flag indicating whether a setup charge should be billed.
-          example: true
-          type: boolean
-        billed:
-          example: true
-          type: boolean
         carrierStatuses:
+          description: >-
+            List of objects each providing the registration status for each
+            carrier at the time the event occurred.
           example:
-            - activatedOn: '2021-10-15'
+            - activatedDate: '2021-10-15'
               carrierId: att
               status: ACTIVE
             - carrierId: tmobile
@@ -13427,13 +13501,13 @@ components:
             $ref: '#/components/schemas/shortCodeCarrierInfo'
           type: array
         country:
-          description: The country the short code is registered in.
+          description: The country the short code was registered in.
           enum:
             - USA
             - CAN
           example: USA
           type: string
-        createdOn:
+        createdDateTime:
           example: '2022-11-14T18:39:04.505Z'
           format: date-time
           type: string
@@ -13443,7 +13517,7 @@ components:
             lease.
           example: true
           type: boolean
-        leaseEndsOn:
+        leaseEndsDate:
           description: >-
             Date the short code lease ends. Customer managed leases may not have
             lease start and end dates. Date is inclusive as it relates to
@@ -13451,7 +13525,7 @@ components:
           example: '2024-01-29'
           format: date
           type: string
-        leaseStartsOn:
+        leaseStartsDate:
           description: >-
             Date the short code lease starts. Customer managed leases may not
             have lease start and end dates. Date is inclusive as it relates to
@@ -13459,33 +13533,23 @@ components:
           example: '2023-01-28'
           format: date
           type: string
-        moapId:
-          description: Mobile application profile ID.
-          example: '123'
-          type: string
-        modifiedOn:
+        modifiedDateTime:
           example: '2022-11-15T18:39:04.505Z'
           format: date-time
           type: string
-        notes:
-          description: Internal notes.
-          example: Notes example
-          type: string
         operation:
+          description: Operation executed over the short code.
           enum:
             - CREATED
             - UPDATED
             - DELETED
           example: UPDATED
           type: string
-        orderedOn:
+        orderedDate:
           description: Date the short code was registered.
           example: '2023-01-30'
           format: date
           type: string
-        published:
-          example: true
-          type: boolean
         shortCode:
           description: The short code.
           example: '12345'
@@ -13518,9 +13582,11 @@ components:
           example: RANDOM
           type: string
         user:
+          description: The customer user ID that initiated the operation.
           example: systemUser
           type: string
         version:
+          description: A internal field that represents the version of the short code data.
           example: 100
           type: integer
     shortCodeHistoryApiPage:
@@ -13531,10 +13597,11 @@ components:
         data:
           example:
             - accountId: '1003520'
+              applyMigrationFee: true
               applySetupFee: true
               billed: false
               carrierStatuses:
-                - activatedOn: '2021-10-15'
+                - activatedDate: '2021-10-15'
                   carrierId: att
                   status: ACTIVE
                 - carrierId: tmobile
@@ -13542,15 +13609,15 @@ components:
                 - carrierId: verizon
                   status: INACTIVE
               country: USA
-              createdOn: '2023-01-31T20:05:16.261Z'
+              createdDateTime: '2023-01-31T20:05:16.261Z'
               customerManagedLease: false
-              leaseEndsOn: '2022-12-28'
-              leaseStartsOn: '2022-06-27'
+              leaseEndsDate: '2022-12-28'
+              leaseStartsDate: '2022-06-27'
               moapId: '657096'
-              modifiedOn: '2023-01-31T20:05:16.261Z'
+              modifiedDateTime: '2023-01-31T20:05:16.261Z'
               notes: Some comments here Could be a lot
               operation: CREATED
-              orderedOn: '2021-06-27'
+              orderedDate: '2021-06-27'
               published: false
               shortCode: '12113'
               sipPeerId: '526744'
@@ -13560,6 +13627,7 @@ components:
               user: systemUser
               version: 3
             - accountId: '1003520'
+              applyMigrationFee: true
               applySetupFee: true
               billed: false
               carrierStatuses:
@@ -13570,13 +13638,13 @@ components:
                 - carrierId: verizon
                   status: INACTIVE
               country: USA
-              createdOn: '2023-01-31T20:05:16.261Z'
+              createdDateTime: '2023-01-31T20:05:16.261Z'
               customerManagedLease: false
               moapId: '681500'
-              modifiedOn: '2023-02-09T19:16:21.801Z'
+              modifiedDateTime: '2023-02-09T19:16:21.801Z'
               notes: Some comments here Could be a lot
               operation: UPDATED
-              orderedOn: '2021-06-27'
+              orderedDate: '2021-06-27'
               published: false
               shortCode: '12113'
               sipPeerId: '537793'
@@ -13588,20 +13656,114 @@ components:
           items:
             $ref: '#/components/schemas/shortCodeHistory'
           type: array
-        pagination:
-          $ref: '#/components/schemas/shortCodePagination'
-        totalCount:
-          example: 100
-          type: integer
+        errors:
+          example:
+            description: Client is providing incorrect or invalid credentials.
+            type: unauthorized
+          items:
+            $ref: '#/components/schemas/shortCodeError'
+          type: array
+        page:
+          $ref: '#/components/schemas/shortCodePage'
       type: object
-    shortCodePagination:
+    shortCodePage:
       description: Pagination object that represents the current page.
       properties:
-        page:
+        pageNumber:
+          description: The current page used in the request.
           example: 1
           type: integer
         pageSize:
+          description: The current page size used in the request.
           example: 50
+          type: integer
+        totalElements:
+          description: The total of objects that could be paginated.
+          example: 100
+          type: integer
+        totalPages:
+          description: The total of pages that could be paginated.
+          example: 100
+          type: integer
+      type: object
+    shortCodeUpdateData:
+      description: Short code update details representation.
+      properties:
+        carrierStatuses:
+          description: >-
+            List of objects each providing the registration status for an
+            individual carrier.
+          example:
+            - activatedDate: '2021-10-15'
+              carrierId: att
+              status: ACTIVE
+            - carrierId: tmobile
+              status: PENDING
+            - carrierId: verizon
+              status: INACTIVE
+          items:
+            $ref: '#/components/schemas/shortCodeCarrierInfo'
+          type: array
+        customerManagedLease:
+          description: >-
+            Flag indicating whether the customer is managing the short code
+            lease.
+          example: true
+          type: boolean
+        leaseEndsDate:
+          description: >-
+            Date the short code lease ends. Customer managed leases may not have
+            lease start and end dates. Date is inclusive as it relates to
+            expiration.
+          example: '2024-01-29'
+          format: date
+          type: string
+        leaseStartsDate:
+          description: >-
+            Date the short code lease starts. Customer managed leases may not
+            have lease start and end dates. Date is inclusive as it relates to
+            expiration.
+          example: '2023-01-28'
+          format: date
+          type: string
+        orderedDate:
+          description: Date the short code was registered.
+          example: '2023-01-30'
+          format: date
+          type: string
+        sipPeerId:
+          description: SIP Peer ID from Iris.
+          example: '123321'
+          type: string
+        siteId:
+          description: Sub-account ID.
+          example: '321321'
+          type: string
+        status:
+          description: >-
+            If at least one carrier status is ACTIVE or PENDING, the status will
+            be ACTIVE. If all carrier statues are INACTIVE, the status will be
+            INACTIVE.
+          enum:
+            - ACTIVE
+            - EXPIRED
+            - SUSPENDED
+            - INACTIVE
+          example: ACTIVE
+          type: string
+        type:
+          description: The lease type.
+          enum:
+            - RANDOM
+            - VANITY
+          example: RANDOM
+          type: string
+        version:
+          description: >-
+            A field that represents the version of the short code data, when
+            updating a short code is necessary to supply the last version value
+            added by 1.
+          example: 100
           type: integer
       type: object
     stringObjectMap:
@@ -15865,6 +16027,39 @@ paths:
 
         </code></p>
 
+        <p>When uploading documents using the /loas resource, you must specify
+        the MIME type of the document being upload using the Content-Type HTTP
+        header.</p>
+
+        <p><b>Information for non-toll free port-in customers:</b></p>
+
+        <p>The LOA document must be uploaded using one of the following MIME
+        types:</p>
+
+        <ul>
+
+        <li>application/pdf</li>
+
+        <li>text/plain</li>
+
+        <li>image/jpeg</li>
+
+        <li>image/png</li>
+
+        <li>image/tiff</li>
+
+        <li>text/csv</li>
+
+        <li>application/vnd.ms-excel</li>
+
+        <li>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</li>
+
+        <li>application/msword</li>
+
+        <li>application/vnd.openxmlformats-officedocument.wordprocessingml.document</li>
+
+        </ul>
+
         <p><b>Information for toll free port-in customers:</b></p>
 
         <p>If you are porting toll free numbers and either of the following are
@@ -17309,8 +17504,10 @@ paths:
             application/xml:
               examples:
                 example:
-                  $ref: '#/components/examples/Campaign404Error'
+                  $ref: '#/components/examples/CampaignNotFound404Error'
                   description: example
+              schema:
+                $ref: '#/components/schemas/CampaignErrorResponse'
           description: Not Found
       summary: Fetch Campaign List
       tags:
@@ -17345,6 +17542,8 @@ paths:
                 example:
                   $ref: '#/components/examples/CreateCampaign400Error'
                   description: example
+              schema:
+                $ref: '#/components/schemas/CampaignErrorResponse'
           description: Bad Request
       summary: Create Campaign
       tags:
@@ -17416,7 +17615,7 @@ paths:
             application/xml:
               examples:
                 example:
-                  $ref: '#/components/examples/CampaignImportResponse'
+                  $ref: '#/components/examples/CreateCampaignImportResponse'
               schema:
                 $ref: '#/components/schemas/LongCodeImportCampaignResponse'
           description: Created
@@ -17442,13 +17641,7 @@ paths:
       operationId: GetImportedCampaign
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: The campaign id.
-          example: CA114BN
-          in: path
-          name: campaignId
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/CampaignIdPathParam'
       responses:
         '200':
           content:
@@ -17479,14 +17672,7 @@ paths:
       operationId: deleteCampaign
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: campaign ID
-          example: null
-          in: path
-          name: campaignId
-          required: true
-          schema:
-            default: null
-            type: string
+        - $ref: '#/components/parameters/CampaignIdPathParam'
       responses:
         '204':
           description: No Content
@@ -17495,8 +17681,10 @@ paths:
             application/xml:
               examples:
                 example:
-                  $ref: '#/components/examples/Campaign404Error'
+                  $ref: '#/components/examples/Campaign403Error'
                   description: example
+              schema:
+                $ref: '#/components/schemas/CampaignErrorResponse'
           description: Forbidden
         '404':
           content:
@@ -17505,6 +17693,8 @@ paths:
                 example:
                   $ref: '#/components/examples/CampaignNotFound404Error'
                   description: example
+              schema:
+                $ref: '#/components/schemas/CampaignErrorResponse'
           description: Not Found
       summary: Delete Campaign
       tags:
@@ -17514,14 +17704,7 @@ paths:
       operationId: fetchCampaign
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: ''
-          example: null
-          in: path
-          name: campaignId
-          required: true
-          schema:
-            default: null
-            type: string
+        - $ref: '#/components/parameters/CampaignIdPathParam'
       responses:
         '200':
           content:
@@ -17538,6 +17721,8 @@ paths:
                 example:
                   $ref: '#/components/examples/CampaignNotFound404Error'
                   description: example
+              schema:
+                $ref: '#/components/schemas/CampaignErrorResponse'
           description: Not Found
       summary: Fetch Campaign
       tags:
@@ -17572,8 +17757,45 @@ paths:
                 example:
                   $ref: '#/components/examples/CreateCampaign400Error'
                   description: example
+              schema:
+                $ref: '#/components/schemas/CampaignErrorResponse'
           description: Bad Request
       summary: Update Campaign
+      tags:
+        - 10DLC
+  /accounts/{accountId}/campaignManagement/10dlc/campaigns/{campaignId}/revet:
+    put:
+      description: >-
+        The PUT method is used to send a request to TCR for reverification of
+        DCA2 declined campaign
+      operationId: revetCampaign
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/CampaignIdPathParam'
+      responses:
+        '204':
+          description: No Content
+        '403':
+          content:
+            application/xml:
+              examples:
+                example:
+                  $ref: '#/components/examples/Campaign403Error'
+                  description: example
+              schema:
+                $ref: '#/components/schemas/CampaignErrorResponse'
+          description: Forbidden
+        '404':
+          content:
+            application/xml:
+              examples:
+                example:
+                  $ref: '#/components/examples/CampaignNotFound404Error'
+                  description: example
+              schema:
+                $ref: '#/components/schemas/CampaignErrorResponse'
+          description: Not Found
+      summary: Revet Campaign
       tags:
         - 10DLC
   /accounts/{accountId}/csrs:
@@ -19879,28 +20101,30 @@ paths:
           Address, and Identifier are required. Default value of
           PreferredLanguage is 'en'. Non-PIDF-LO: CallbackNumber is required.
           Identifier can only contain alphanumeric characters and must be
-          between 6 and 30 characters. PIDF-LO: PIDFLOEnabled is required and
+          between 4 and 30 characters. PIDF-LO: PIDFLOEnabled is required and
           must be 'true'. Identifier can only contain alphanumeric characters
           and must be between 1 and 30 characters.</p><h5>7. PIDF-LO and SIMPLE
           AEUI. PIDF-LO and Non-PIDF-LO endpoint-deletion
           order</h5><p>AlternateEndUserIdentifiers, AlternateEndUserIdentifier,
           and Identifier are required. DeleteTNSpecificE911Address is required
           and must be 'true'. Non-PIDF-LO: CallbackNumber is required.
-          Identifier can only contain alphanumeric characters 6 and 30
+          Identifier can only contain alphanumeric characters 4 and 30
           characters. PIDF-LO: PIDFLOEnabled is required and must be 'true'.
           Identifier can only contain alphanumeric characters and must be
           between 1 and 30 characters.</p><h5>8. PIDF-LO. address-provisioning
-          order</h5><p>AdditionalAddresses and Address are required.</p><h5>9.
-          PIDF-LO. address-editing order</h5><p>Address and LocationId are
-          required. Allows a user to update all address fields except PlusFour
-          and Country.</p><h5>10. PIDF-LO. address-deletion
+          order</h5><p>AdditionalAddresses and Address are required. If a
+          LocationId specified matches an existing record, the current address
+          will be overwritten with the new values.</p><h5>9. PIDF-LO.
+          address-editing order</h5><p>Address and LocationId are required.
+          Allows a user to update all address fields except PlusFour and
+          Country.</p><h5>10. PIDF-LO. address-deletion
           order</h5><p>AdditionalAddresses, Address, and LocationId are
           required. DeleteTNSpecificE911Address is required and must be
           'true'.</p><h5>11. SIMPLE AEUI. Non-PIDF-LO endpoint-provisioning
           order</h5><p>AlternateEndUserIdentifiers, AlternateEndUserIdentifier,
           Address, CallbackNumber, and Identifier are required Identifier can
           only contain alphanumeric characters, must contain at least one
-          letter, and must be between 6 and 30 characters.</p>
+          letter, and must be between 4 and 30 characters.</p>
       responses:
         '201':
           content:
@@ -23568,6 +23792,37 @@ paths:
 
         Query parameter or header documentType can be used to specify type of
         document on upload.
+
+        <p>When uploading documents using the /loas resource, you must specify
+        the MIME type of the document being upload using the Content-Type HTTP
+        header.</p>
+
+        <p>The LOA document must be uploaded using one of the following MIME
+        types:</p>
+
+        <ul>
+
+        <li>application/pdf</li>
+
+        <li>text/plain</li>
+
+        <li>image/jpeg</li>
+
+        <li>image/png</li>
+
+        <li>image/tiff</li>
+
+        <li>text/csv</li>
+
+        <li>application/vnd.ms-excel</li>
+
+        <li>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</li>
+
+        <li>application/msword</li>
+
+        <li>application/vnd.openxmlformats-officedocument.wordprocessingml.document</li>
+
+        </ul>
       operationId: CreateImportTnOrderLoas
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
@@ -28699,6 +28954,39 @@ paths:
 
         </code>
 
+        <p>When uploading documents using the /loas resource, you must specify
+        the MIME type of the document being upload using the Content-Type HTTP
+        header.</p>
+
+        <p><b>Information for non-toll free port-in customers:</b></p>
+
+        <p>The LOA document must be uploaded using one of the following MIME
+        types:</p>
+
+        <ul>
+
+        <li>application/pdf</li>
+
+        <li>text/plain</li>
+
+        <li>image/jpeg</li>
+
+        <li>image/png</li>
+
+        <li>image/tiff</li>
+
+        <li>text/csv</li>
+
+        <li>application/vnd.ms-excel</li>
+
+        <li>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</li>
+
+        <li>application/msword</li>
+
+        <li>application/vnd.openxmlformats-officedocument.wordprocessingml.document</li>
+
+        </ul>
+
         <p><b>Information for toll free port-in customers:</b></p>
 
         <p>If you are porting toll free numbers and either of the following are
@@ -32661,8 +32949,8 @@ paths:
       operationId: getAllShortCodesByAccount
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
-        - $ref: '#/components/parameters/shortCodePageQueryParam'
-        - $ref: '#/components/parameters/shortCodePageSizeQueryParam'
+        - $ref: '#/components/parameters/shortCodeOffsetQueryParam'
+        - $ref: '#/components/parameters/shortCodeLimitQueryParam'
       responses:
         '200':
           $ref: '#/components/responses/shortCodeGetAllShortCodesByAccountResponse'
@@ -32682,7 +32970,7 @@ paths:
           $ref: '#/components/responses/shortCode500'
       summary: Retrieve short code numbers for that account identifier.
       tags:
-        - Short codes
+        - Short Codes
   /accounts/{accountId}/shortcodes/{shortCode}/{country}:
     get:
       description: >-
@@ -32715,7 +33003,7 @@ paths:
         Retrieve short code details for that account identifier, short code
         number, and country.
       tags:
-        - Short codes
+        - Short Codes
   /accounts/{accountId}/shortcodes/{shortCode}/{country}/history:
     get:
       description: >-
@@ -32726,8 +33014,10 @@ paths:
         - $ref: '#/components/parameters/AccountIdPathParam'
         - $ref: '#/components/parameters/shortCodePathParam'
         - $ref: '#/components/parameters/shortCodeCountryPathParam'
-        - $ref: '#/components/parameters/shortCodePageQueryParam'
-        - $ref: '#/components/parameters/shortCodePageSizeQueryParam'
+        - $ref: '#/components/parameters/shortCodeOffsetQueryParam'
+        - $ref: '#/components/parameters/shortCodeLimitQueryParam'
+        - $ref: '#/components/parameters/shortCodeHistoryShortCodeSortParam'
+        - $ref: '#/components/parameters/shortCodeHistoryVersionSortParam'
       responses:
         '200':
           $ref: >-
@@ -32748,7 +33038,7 @@ paths:
           $ref: '#/components/responses/shortCode500'
       summary: Retrieve short code history for an account, short code, and country.
       tags:
-        - Short codes
+        - Short Codes
   /accounts/{accountId}/sipcredentials:
     get:
       description: Retrieve all SIP credentials for the account
@@ -42110,6 +42400,7 @@ tags:
       description: Reports guide
       url: /docs/numbers/guides/setup-reports/accountReports/
     name: Reports
+  - name: Short Codes
   - externalDocs:
       description: Sip Registrar guide
       url: /docs/account/sipRegistrar/#create-sip-credentials
@@ -42125,4 +42416,3 @@ tags:
   - name: Tns
   - name: Admin Data
   - name: Tn Vendor Assignment
-  - name: Short codes
