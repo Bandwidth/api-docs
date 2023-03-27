@@ -129,6 +129,12 @@ module.exports = {
     //     additionalLanguages: ['java'],  // Breaks if you try to add more than 1 language. And still breaks redoc :(((((
     // },
   },
+  scripts: [
+    {
+      src: 'https://zna4mkbqfujeowh1i-voxbone.siteintercept.qualtrics.com/SIE/?Q_ZID=ZN_a4MKBQfuJeoWH1I',
+      async: true
+    }
+  ],
   presets: [
     [
       "@docusaurus/preset-classic",
