@@ -589,6 +589,39 @@ components:
             <BusinessIdentity>DirectCustomer</BusinessIdentity>
           </CampaignSettings>
         </CampaignSettingsResponse>
+    ImportVoiceTnOrders:
+      description: List all import voice tn orders response
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <ImportVoiceTnOrders>
+          <TotalCount>2</TotalCount>
+          <ImportVoiceTnOrderSummary>
+            <ImportVoiceTnOrderSummary>
+              <accountId>14</accountId>
+              <CountOfTNs>1</CountOfTNs>
+              <CustomerOrderId>CustomerOrderId</CustomerOrderId>
+              <userId>systemUser</userId>
+              <lastModifiedDate>2019-01-24T11:08:09.770Z</lastModifiedDate>
+              <OrderDate>2019-01-24T11:08:09.770Z</OrderDate>
+              <OrderType>import_tn_orders</OrderType>
+              <OrderStatus>COMPLETE</OrderStatus>
+              <OrderId>211a103c-5f9c-4117-8833-c574bdc390fd</OrderId>
+            </ImportVoiceTnOrderSummary>
+          </ImportVoiceTnOrderSummary>
+          <ImportVoiceTnOrderSummary>
+            <ImportVoiceTnOrderSummary>
+              <accountId>14</accountId>
+              <CountOfTNs>2</CountOfTNs>
+              <CustomerOrderId>CustomerOrderId</CustomerOrderId>
+              <userId>systemUser</userId>
+              <lastModifiedDate>2019-01-24T10:43:16.934Z</lastModifiedDate>
+              <OrderDate>2019-01-24T10:43:16.934Z</OrderDate>
+              <OrderType>import_tn_orders</OrderType>
+              <OrderStatus>PARTIAL</OrderStatus>
+              <OrderId>8dc32f09-2329-4c73-b702-526f46b02712</OrderId>
+            </ImportVoiceTnOrderSummary>
+          </ImportVoiceTnOrderSummary>
+        </ImportVoiceTnOrders>
     MyBrandRequest:
       value: |-
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -638,6 +671,16 @@ components:
           </CampaignSettings>
         </CampaignSettingsResponse>
   parameters:
+    AccountIDQueryParam:
+      description: >
+        This is the account that the searched-for order will be contributing
+        to.  Specifying this parameter will restrict the search to imported
+        voice orders within the specified account.
+      example: 5000125
+      in: query
+      name: accountID
+      schema:
+        type: integer
     AccountIdPathParam:
       description: User's account ID
       example: '1234567'
@@ -652,6 +695,35 @@ components:
       in: path
       name: campaignId
       required: true
+      schema:
+        type: string
+    CreatedDateFromQueryParam:
+      description: >-
+        Checks the order's creation date against this value. Orders that have a
+        creation date after this date will be included. Format is yyyy-MM-dd
+      example: '2013-10-22'
+      in: query
+      name: createdDateFrom
+      schema:
+        format: date
+        type: string
+    CreatedDateToQueryParam:
+      description: >-
+        Checks the order's creation date against this value. Orders that have a
+        creation date before this date will be included. Format is yyyy-MM-dd
+      example: '2013-10-25'
+      in: query
+      name: createdDateTo
+      schema:
+        format: date
+        type: string
+    CustomerOrderIdQueryParam:
+      description: >-
+        The Customer Order ID is an ID assigned by the account owner to provide
+        a reference number for the importVoiceTnOrder.
+      example: ABCCorp12345
+      in: query
+      name: customerOrderId
       schema:
         type: string
     DomainNamePathParam:
@@ -676,6 +748,28 @@ components:
       name: key
       required: true
       schema:
+        type: string
+    ModifiedDateFromQueryParam:
+      description: >-
+        For Date-based searches, the starting date of a date range (inclusive)
+        that will be used to find Import Tn Orders that were modified within the
+        date range. It is in the form yyyy-MM-dd.
+      example: '2013-10-22'
+      in: query
+      name: modifiedDateFrom
+      schema:
+        format: date
+        type: string
+    ModifiedDateToQueryParam:
+      description: >-
+        For Date-based searches, the ending date of a date range (inclusive)
+        that will be used to find Import Tn Orders that were modified within the
+        date range. It is in the form yyyy-MM-dd.
+      example: '2013-10-25'
+      in: query
+      name: modifiedDateTo
+      schema:
+        format: date
         type: string
     OrderIdPathParam:
       description: ID of order to retrieve
@@ -714,6 +808,13 @@ components:
       schema:
         format: int32
         type: integer
+    SipPeerIdQueryParam:
+      description: A Sip Peer Id that is referenced in the order
+      example: 50139
+      in: query
+      name: sipPeerId
+      schema:
+        type: integer
     SiteIdPathParam:
       description: Site ID of the Sip Peer
       example: '407'
@@ -742,6 +843,13 @@ components:
       in: path
       name: taskId
       required: true
+      schema:
+        type: string
+    TnQueryParam:
+      description: A Telephone Number (TN) that is referenced in the order
+      example: '9199918388'
+      in: query
+      name: tn
       schema:
         type: string
     UserIdPathParam:
@@ -821,6 +929,18 @@ components:
         type: string
   requestBodies: {}
   responses:
+    ImportVoiceTnOrdersResponse:
+      content:
+        application/xml:
+          examples:
+            listAllImportVoiceTnOrders:
+              $ref: '#/components/examples/ImportVoiceTnOrders'
+      description: >
+        The descriptive payload for the importTnOrders query provides
+        information about the orders found by the query, including the data
+        associated with the order, the state of the order, and a list of the
+        successfully imported Telephone Numbers, and descriptions of any
+        encountered errors.
     shortCode400:
       content:
         application/json:
@@ -6488,7 +6608,7 @@ components:
             activation time other than the 11:30 AM ET default. The desired
             activation time can then be specified in the time portion of the
             `RequestedFocDate`. This field will be ignored if set for port-ins
-            with the `MANUAL_TOLLFREE`, `MANUAL_ON_NET`, and `MANUALOFFNET` port
+            with the `MANUAL_TOLLFREE`, `MANUAL_ON_NET`, or `MANUALOFFNET` port
             types, as all manual port-ins are activated at 11:30 AM ET.
           type: boolean
         WirelessInfo:
@@ -22866,69 +22986,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
         - $ref: '#/components/parameters/StatusQueryParam'
-        - description: A Telephone Number (TN) that is referenced in the order
-          example: '9199918388'
-          in: query
-          name: tn
-          required: true
-          schema:
-            type: string
-        - description: >-
-            The Customer Order ID is an ID assigned by the account owner to
-            provide a reference number for the importVoiceTnOrder.
-          example: ABCCorp12345
-          in: query
-          name: customerOrderId
-          required: true
-          schema:
-            type: string
-        - description: >-
-            Checks the order's creation date against this value. Orders that
-            have a creation date after this date will be included. Format is
-            yyyy-MM-dd
-          example: '2013-10-22'
-          in: query
-          name: createdDateFrom
-          required: false
-          schema:
-            type: string
-        - description: >-
-            Checks the order's creation date against this value. Orders that
-            have a creation date before this date will be included. Format is
-            yyyy-MM-dd
-          example: '2013-10-25'
-          in: query
-          name: createdDateTo
-          required: false
-          schema:
-            type: string
-        - description: >-
-            For Date-based searches, the starting date of a date range
-            (inclusive) that will be used to find Import Tn Orders that were
-            modified within the date range. It is in the form yyyy-MM-dd.
-          example: '2013-10-22'
-          in: query
-          name: modifiedDateFrom
-          required: false
-          schema:
-            type: string
-        - description: >-
-            For Date-based searches, the ending date of a date range (inclusive)
-            that will be used to find Import Tn Orders that were modified within
-            the date range. It is in the form yyyy-MM-dd.
-          example: '2013-10-25'
-          in: query
-          name: modifiedDateTo
-          required: false
-          schema:
-            type: string
-        - description: A Sip Peer Id that is referenced in the order
-          example: '50139'
-          in: query
-          name: sipPeerId
-          required: false
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/TnQueryParam'
+        - $ref: '#/components/parameters/CustomerOrderIdQueryParam'
+        - $ref: '#/components/parameters/CreatedDateFromQueryParam'
+        - $ref: '#/components/parameters/CreatedDateToQueryParam'
+        - $ref: '#/components/parameters/ModifiedDateFromQueryParam'
+        - $ref: '#/components/parameters/ModifiedDateToQueryParam'
+        - $ref: '#/components/parameters/SipPeerIdQueryParam'
       responses:
         '200':
           content:
@@ -31554,63 +31618,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
         - $ref: '#/components/parameters/StatusQueryParam'
-        - description: A Telephone Number (TN) that is referenced in the order
-          example: '9199918388'
-          in: query
-          name: tn
-          required: true
-          schema:
-            type: string
-        - description: >-
-            The Customer Order Id is an Id assigned by the account owner to
-            provide a reference number for the Remove Imported Tn Order
-          example: ABCCorp12345
-          in: query
-          name: customerOrderId
-          required: true
-          schema:
-            type: string
-        - description: >-
-            Checks the order's creation date against this value. Orders that
-            have a creation date after this date will be included. Format is
-            yyyy-MM-dd
-          example: '2022-04-19'
-          in: query
-          name: createdDateFrom
-          required: false
-          schema:
-            type: string
-        - description: >-
-            Checks the order's creation date against this value. Orders that
-            have a creation date before this date will be included. Format is
-            yyyy-MM-dd
-          example: '2022-04-19'
-          in: query
-          name: createdDateTo
-          required: false
-          schema:
-            type: string
-        - description: >-
-            For Date-based searches, the starting date of a date range
-            (inclusive) that will be used to find Remove Imported Voice Tn
-            Orders that were modified within the date range. It is in the form
-            yyyy-MM-dd
-          example: '2022-04-19'
-          in: query
-          name: modifiedDateFrom
-          required: false
-          schema:
-            type: string
-        - description: >-
-            For Date-based searches, the ending date of a date range (inclusive)
-            that will be used to find Remove Imported Voice Tn Orders that were
-            modified within the date range. It is in the form yyyy-MM-dd
-          example: '2022-04-19'
-          in: query
-          name: modifiedDateTo
-          required: false
-          schema:
-            type: string
+        - $ref: '#/components/parameters/TnQueryParam'
+        - $ref: '#/components/parameters/CustomerOrderIdQueryParam'
+        - $ref: '#/components/parameters/CreatedDateFromQueryParam'
+        - $ref: '#/components/parameters/CreatedDateToQueryParam'
+        - $ref: '#/components/parameters/ModifiedDateFromQueryParam'
+        - $ref: '#/components/parameters/ModifiedDateToQueryParam'
+        - $ref: '#/components/parameters/SipPeerIdQueryParam'
       responses:
         '200':
           content:
@@ -40703,6 +40717,26 @@ paths:
       summary: Retrieve Covered Rate Centers
       tags:
         - Rate Centers
+  /importTnOrders/voice:
+    get:
+      description: Retrieves all importvoicetnorders requests.
+      operationId: listImportVoiceTnOrders
+      parameters:
+        - $ref: '#/components/parameters/StatusQueryParam'
+        - $ref: '#/components/parameters/TnQueryParam'
+        - $ref: '#/components/parameters/AccountIDQueryParam'
+        - $ref: '#/components/parameters/CustomerOrderIdQueryParam'
+        - $ref: '#/components/parameters/CreatedDateFromQueryParam'
+        - $ref: '#/components/parameters/CreatedDateToQueryParam'
+        - $ref: '#/components/parameters/ModifiedDateFromQueryParam'
+        - $ref: '#/components/parameters/ModifiedDateToQueryParam'
+        - $ref: '#/components/parameters/SipPeerIdQueryParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/ImportVoiceTnOrdersResponse'
+      summary: List All Import Voice TN Orders
+      tags:
+        - Import Hosted Voice Tn
   /rateCenters:
     get:
       description: >-
