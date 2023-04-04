@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Active Call Info API
+  title: Call Verification
   description: >-
     The Bandwidth Call Verification API can be used to retrieve fraud and
     spoofing risk scores for specific phone calls that are
@@ -14,10 +14,10 @@ info:
 servers:
   - url: https://call-verification.bandwidth.com/api/v1
 paths:
-  /activeCalls/{activeCallId}:
+  /accounts/{accountId}/activeCalls/{activeCallId}:
     get:
       tags:
-        - Active Calls
+        - ActiveCalls
       summary: Retrieve the risk scores for a specific phone call
       description: >-
         Retrieve fraud and spoofing risk scores for a specific phone call that
@@ -31,8 +31,10 @@ paths:
         number.
 
 
-        Currently this API endpoint only supports inbound phone calls, but it
-        may support other types of calls in the future.
+        Currently this API endpoint only supports inbound phone calls to phone
+        numbers that have the call verifiaction feature
+
+        enabled, but it may support other types of calls in the future.
 
 
         **Note**: This information is generated after a call is answered and is
@@ -41,8 +43,9 @@ paths:
         to query this information before the score has been generated or after
         the 30 minute cache period expires, the API
 
-        will return an HTTP 404.
+        may return an HTTP 404.
       parameters:
+        - $ref: '#/components/parameters/accountId'
         - $ref: '#/components/parameters/activeCallId'
       responses:
         '200':
@@ -59,6 +62,12 @@ paths:
           $ref: '#/components/responses/internalServerErrorResponse'
 components:
   parameters:
+    accountId:
+      name: accountId
+      schema:
+        $ref: '#/components/schemas/AccountId'
+      in: path
+      required: true
     activeCallId:
       name: activeCallId
       schema:
@@ -118,6 +127,12 @@ components:
             internalServerErrorExample:
               $ref: '#/components/examples/internalServerErrorErrorExample'
   schemas:
+    AccountId:
+      type: number
+      description: >-
+        The ID of the Bandwidth Dashboard account that the called number of the
+        phone call is assigned to
+      example: 9903248
     ActiveCallId:
       type: string
       description: >-
@@ -147,6 +162,7 @@ components:
 
             being spoofed (with 0 being the lowest possible risk and 100 being
             the highest possible risk).
+          example: 9.83
         fraudRisk:
           type: number
           description: >-
@@ -154,11 +170,13 @@ components:
             phone call is spam or is otherwise coming
 
             from a fraudulent source.
+          example: 72
     ApiError:
       type: object
       properties:
         error:
           type: string
+          example: Internal Server Error
   examples:
     unauthorizedErrorExample:
       summary: Unauthorized
@@ -180,3 +198,19 @@ components:
       summary: Internal Server Error
       value:
         error: Internal Server Error
+  securitySchemes:
+    Basic:
+      type: http
+      scheme: basic
+      description: >-
+        Basic authentication is a simple authentication scheme built into the
+        HTTP protocol. To use it, send your HTTP requests with an Authorization
+        header that contains the word Basic followed by a space and a
+        base64-encoded string `username:password`.
+
+
+        Example: `Authorization: Basic ZGVtbZpwQDU1dzByZA==`
+security:
+  - Basic: []
+tags:
+  - name: ActiveCalls
