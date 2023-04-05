@@ -3,164 +3,164 @@
 name: PR Publish Docsite
 
 on:
-    pull_request:
-        branches:
-            - "main"
-        paths:
-            - "site/**"
-    workflow_dispatch:
+  pull_request:
+    branches:
+      - "main"
+    paths:
+      - "site/**"
+  workflow_dispatch:
 
 concurrency:
-    group: ${{ github.workflow }}-${{ github.head_ref }}
-    cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
 
 jobs:
-    cypress:
-        name: Cypress Tests
-        if: github.event.pull_request.draft == false
-        runs-on: ${{ matrix.os }}
-        container:
-            image: cypress/browsers:node16.13.2-chrome97-ff96
-            options: --user 1001 --shm-size=2g
-        strategy:
-            fail-fast: false
-            matrix:
-                os: [ ubuntu-latest ]
-                browser: [ chrome ]
-        steps:
-            - name: Setup Node
-              uses: actions/setup-node@v3
-              with:
-                  node-version: 16
+  cypress:
+    name: Cypress Tests
+    if: github.event.pull_request.draft == false
+    runs-on: ${{ matrix.os }}
+    container:
+      image: cypress/browsers:node16.13.2-chrome97-ff96
+      options: --user 1001 --shm-size=2g
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        browser: [chrome]
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
 
-            - name: Checkout
-              uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
-            - name: Cypress run
-              uses: cypress-io/github-action@v4.2.0
-              timeout-minutes: 40
-              with:
-                  record: true
-                  browser: ${{ matrix.browser }}
-                  start: yarn start
-                  wait-on: http://localhost:3000
-                  wait-on-timeout: 180
-                  working-directory: ./site
-                  config-file: cypress.config.js
-              env:
-                  CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-                  CYPRESS_PROJECT_ID: ${{ secrets.PROJECT_ID }}
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  # overwrite commit message sent to Dashboard
-                  COMMIT_INFO_MESSAGE: ${{github.event.pull_request.title}}
-                  # re-enable PR comment bot
-                  COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}
+      - name: Cypress run
+        uses: cypress-io/github-action@v4.2.0
+        timeout-minutes: 40
+        with:
+          record: true
+          browser: ${{ matrix.browser }}
+          start: yarn start
+          wait-on: http://localhost:3000
+          wait-on-timeout: 180
+          working-directory: ./site
+          config-file: cypress.config.js
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_PROJECT_ID: ${{ secrets.PROJECT_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # overwrite commit message sent to Dashboard
+          COMMIT_INFO_MESSAGE: ${{github.event.pull_request.title}}
+          # re-enable PR comment bot
+          COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}
 
-    publish:
-        name: Publish Temp Docsite
-        runs-on: ubuntu-latest
-        outputs:
-            domain: ${{steps.distribution.outputs.distribution-domain}}
-            id: ${{steps.distribution.outputs.distribution-id}}
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v3
+  publish:
+    name: Publish Temp Docsite
+    runs-on: ubuntu-latest
+    outputs:
+      domain: ${{steps.distribution.outputs.distribution-domain}}
+      id: ${{steps.distribution.outputs.distribution-id}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
-            - name: Setup Node
-              uses: actions/setup-node@v3
-              with:
-                  node-version: 16
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
 
-            - name: Set Environment Variables
-              run: |
-                  BRANCH_NAME=${GITHUB_HEAD_REF#refs/heads/}
-                  BRANCH_NAME=$(echo "$BRANCH_NAME" | tr '[:upper:]' '[:lower:]')
-                  BRANCH_NAME=$(echo "$BRANCH_NAME" | sed -e "s/[^a-z0-9]/-/g")
-                  echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+      - name: Set Environment Variables
+        run: |
+          BRANCH_NAME=${GITHUB_HEAD_REF#refs/heads/}
+          BRANCH_NAME=$(echo "$BRANCH_NAME" | tr '[:upper:]' '[:lower:]')
+          BRANCH_NAME=$(echo "$BRANCH_NAME" | sed -e "s/[^a-z0-9]/-/g")
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
-            - name: Configure AWS Credentials
-              uses: aws-actions/configure-aws-credentials@v1
-              with:
-                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-                  aws-region: us-east-1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
 
-            - name: Generate Static Site
-              run: |
-                  cd site
-                  yarn install --pure-lockfile
-                  npm run build
-              env:
-                  GOOGLE_ANALYTICS_TRACKING_ID: "12345"
-                  GTAG_TRACKING_ID: "12345"
+      - name: Generate Static Site
+        run: |
+          cd site
+          yarn install --pure-lockfile
+          npm run build
+        env:
+          GOOGLE_ANALYTICS_TRACKING_ID: "12345"
+          GTAG_TRACKING_ID: "12345"
 
-            - name: Sync Zip to Bucket
-              run: |
-                  aws s3 sync ./site/build s3://staging-dev-docsite/$BRANCH_NAME --acl public-read
+      - name: Sync Zip to Bucket
+        run: |
+          aws s3 sync ./site/build s3://staging-dev-docsite/$BRANCH_NAME --acl public-read
 
-            - name: Invalidate CF Cache
-              run: |
-                  aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID}} --paths "/" "/*"
+      - name: Invalidate CF Cache
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID}} --paths "/" "/*"
 
-            - name: Comment on PR
-              uses: actions/github-script@v3
-              with:
-                  github-token: ${{ secrets.GITHUB_TOKEN }}
-                  script: |
-                      github.issues.createComment({
-                        issue_number: context.issue.number,
-                        owner: context.repo.owner,
-                        repo: context.repo.repo,
-                        body: 'http://${{ env.BRANCH_NAME }}.staging-dev.bandwidth.com/'
-                      })
+      - name: Comment on PR
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'http://${{ env.BRANCH_NAME }}.staging-dev.bandwidth.com/'
+            })
 
-    alert_if_failure:
-        name: Alert for failure
-        needs: [ cypress, publish ]
-        if: failure() && !github.event.pull_request.draft
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v3
+  alert_if_failure:
+    name: Alert for failure
+    needs: [cypress, publish]
+    if: failure() && !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
-            - name: Get Branch Name
-              run: |
-                  echo "BRANCH_NAME=${GITHUB_HEAD_REF#refs/heads/}" >> $GITHUB_ENV
+      - name: Get Branch Name
+        run: |
+          echo "BRANCH_NAME=${GITHUB_HEAD_REF#refs/heads/}" >> $GITHUB_ENV
 
-            - name: Check for Corresponding api-specs PR
-              run: |
-                  response=$(curl \
-                    -H "Accept: application/vnd.github.v3+json" \
-                    -u ${{ secrets.DX_GITHUB_USERNAME }}:${{ secrets.DX_GITHUB_TOKEN }} \
-                    https://api.github.com/repos/Bandwidth/api-specs/pulls?head=Bandwidth:$BRANCH_NAME)
+      - name: Check for Corresponding api-specs PR
+        run: |
+          response=$(curl \
+            -H "Accept: application/vnd.github.v3+json" \
+            -u ${{ secrets.DX_GITHUB_USERNAME }}:${{ secrets.DX_GITHUB_TOKEN }} \
+            https://api.github.com/repos/Bandwidth/api-specs/pulls?head=Bandwidth:$BRANCH_NAME)
 
-                  url=$(echo $response | jq '.[0].url')
-                  number=$(echo $response | jq '.[0].number')
+          url=$(echo $response | jq '.[0].url')
+          number=$(echo $response | jq '.[0].number')
 
-                  if [ -z $number ]; then
-                    echo "No Corresponding PR found on api-specs";
-                  else
-                    echo "URL=$url" >> $GITHUB_ENV;
-                    echo "SPECS_PR_NUMBER=$number" >> $GITHUB_ENV;
-                    echo "RESULT=true" >> $GITHUB_ENV;
-                  fi
+          if [ -z $number ]; then
+            echo "No Corresponding PR found on api-specs";
+          else
+            echo "URL=$url" >> $GITHUB_ENV;
+            echo "SPECS_PR_NUMBER=$number" >> $GITHUB_ENV;
+            echo "RESULT=true" >> $GITHUB_ENV;
+          fi
 
-            - name: Get Docs PR Number
-              if: ${{ env.RESULT == 'true' }}
-              run: |
-                  echo "DOCS_PR_NUMBER=$(hub pr list -h ${{ env.BRANCH_NAME }} -f %I)" >> $GITHUB_ENV
-              env:
-                  GITHUB_TOKEN: ${{ secrets.DX_GITHUB_TOKEN }}
+      - name: Get Docs PR Number
+        if: ${{ env.RESULT == 'true' }}
+        run: |
+          echo "DOCS_PR_NUMBER=$(hub pr list -h ${{ env.BRANCH_NAME }} -f %I)" >> $GITHUB_ENV
+        env:
+          GITHUB_TOKEN: ${{ secrets.DX_GITHUB_TOKEN }}
 
-            - name: Comment on PR
-              if: ${{ env.RESULT == 'true' }}
-              uses: actions/github-script@v3
-              with:
-                  github-token: ${{ secrets.GITHUB_TOKEN }}
-                  script: |
-                      github.issues.createComment({
-                        issue_number: '${{ env.SPECS_PR_NUMBER }}',
-                        owner: 'Bandwidth',
-                        repo: 'api-specs',
-                        body: 'http://$BUCKET_NAME.staging-dev.bandwidth.com/'
-                      })
+      - name: Comment on PR
+        if: ${{ env.RESULT == 'true' }}
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.issues.createComment({
+              issue_number: '${{ env.SPECS_PR_NUMBER }}',
+              owner: 'Bandwidth',
+              repo: 'api-specs',
+              body: 'http://$BUCKET_NAME.staging-dev.bandwidth.com/'
+            })
