@@ -1,3 +1,4 @@
+require("dotenv").config();
 const YAML = require("yaml");
 const fs = require("fs");
 const path = require("path");
@@ -152,11 +153,11 @@ module.exports = {
           customCss: require.resolve("./src/css/main.scss"),
         },
         googleAnalytics: {
-          trackingId: process.env.GOOGLE_ANALYTICS_TRACKING_ID,
+          trackingID: process.env.GOOGLE_ANALYTICS_TRACKING_ID,
           anonymizeIP: false,
         },
         gtag: {
-          trackingId: process.env.GTAG_TRACKING_ID,
+          trackingID: process.env.GTAG_TRACKING_ID,
           anonymizeIP: false,
         },
       },
