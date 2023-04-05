@@ -17,6 +17,7 @@ concurrency:
 jobs:
   cypress:
     name: Cypress Tests
+    if: github.event.pull_request.draft == false
     runs-on: ${{ matrix.os }}
     container:
       image: cypress/browsers:node16.13.2-chrome97-ff96
@@ -54,10 +55,11 @@ jobs:
           COMMIT_INFO_MESSAGE: ${{github.event.pull_request.title}}
           # re-enable PR comment bot
           COMMIT_INFO_SHA: ${{github.event.pull_request.head.sha}}
+          GOOGLE_ANALYTICS_TRACKING_ID: "12345"
+          GTAG_TRACKING_ID: "12345"
 
   publish:
     name: Publish Temp Docsite
-    needs: cypress
     runs-on: ubuntu-latest
     outputs:
       domain: ${{steps.distribution.outputs.distribution-domain}}
@@ -90,6 +92,9 @@ jobs:
           cd site
           yarn install --pure-lockfile
           npm run build
+        env:
+          GOOGLE_ANALYTICS_TRACKING_ID: "12345"
+          GTAG_TRACKING_ID: "12345"
 
       - name: Sync Zip to Bucket
         run: |
