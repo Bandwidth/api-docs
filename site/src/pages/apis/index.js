@@ -9,7 +9,7 @@ const apiList = [
         link: '/apis/voice/'
     },
     {
-        title: 'Active Call Info API',
+        title: 'Call Verification API',
         Svg: require('@site/static/img/api-icons/voice.svg').default,
         link: '/apis/active-call-info'
     },

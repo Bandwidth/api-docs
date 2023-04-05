@@ -11,6 +11,7 @@ const phoneNumberLookupSpec = fs.readFileSync(
   "utf-8"
 );
 const voiceSpec = fs.readFileSync("./specs/voice.yml", "utf-8");
+const activeCallInfoSpec = fs.readFileSync('./specs/active-call-info.yml', 'utf-8');
 const messagingSpec = fs.readFileSync("./specs/messaging.yml", "utf-8");
 const webRtcSpec = fs.readFileSync("./specs/webrtc.yml", "utf-8");
 const multiFactorAuthSpec = fs.readFileSync(
@@ -169,6 +170,8 @@ module.exports = {
     phoneNumberLookupSpecLink: `${customConfig.phoneNumberLookupSpecLink}`,
     voiceSpec: YAML.parse(voiceSpec),
     voiceSpecLink: `${customConfig.voiceSpecLink}`,
+    activeCallInfoSpec: YAML.parse(activeCallInfoSpec),
+    activeCallInfoSpecLink: `${customConfig.activeCallInfoSpecLink}`,
     messagingSpec: YAML.parse(messagingSpec),
     messagingSpecLink: `${customConfig.messagingSpecLink}`,
     messagingInternationalSpec: JSON.parse(messagingInternationalSpec),
