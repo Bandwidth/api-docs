@@ -152,11 +152,11 @@ module.exports = {
           customCss: require.resolve("./src/css/main.scss"),
         },
         googleAnalytics: {
-          trackingId: process.env["GOOGLE_ANALYTICS_TRACKING_ID"],
+          trackingId: process.env.GOOGLE_ANALYTICS_TRACKING_ID,
           anonymizeIP: false,
         },
         gtag: {
-          trackingId: process.env["GTAG_TRACKING_ID"],
+          trackingId: process.env.GTAG_TRACKING_ID,
           anonymizeIP: false,
         },
       },
