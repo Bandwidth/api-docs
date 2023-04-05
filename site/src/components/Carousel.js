@@ -118,14 +118,14 @@ export default function Carousel({itemList, title}) {
         
         return (
             <div className="slide" style={slideStyle}>
-                <div className="item" style={itemStyle} data-cy="item">
-                    <div className="image" style={imageStyle} data-cy="image"></div>
-                    <div className="categories" style={categoriesStyle} data-cy="categories">
+                <div className="slide-item" style={itemStyle} data-cy="item">
+                    <div className="slide-image" style={imageStyle} data-cy="image"></div>
+                    <div className="slide-categories" style={categoriesStyle} data-cy="categories">
                         {categories.map((category, idx) => (
                             <a href={categoryLinks[idx]} key={idx}>{category}</a>
                         ))}
                     </div>
-                    <div className="post" style={postStyle} data-cy="post">
+                    <div className="slide-post" style={postStyle} data-cy="post">
                         <a href={postLink}>{postTitle}</a>
                     </div>
                 </div>
