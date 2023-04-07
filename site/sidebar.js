@@ -173,6 +173,7 @@ module.exports = {
             "voice/bxml/startStream",
             "voice/bxml/stopStream",
             "voice/bxml/startTranscription",
+            "voice/bxml/stopTranscription",
             "voice/bxml/tag",
           ],
         },
