@@ -1,0 +1,236 @@
+---
+id: startTranscription
+title: Start Transcription
+slug: /voice/bxml/startTranscription
+description: A general overview of Bandwidth's startTranscription BXML Verb
+keywords:
+  - bandwidth
+  - voice
+  - bxml
+  - start
+  - transcribing
+hide_title: false
+image: ../../static/img/bandwidth-logo.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+The StartTranscription verb allows a segment of a call to be transcribed and for the developing transcription to be sent off to another destination for additional processing.
+
+When used on a call, live transcription updates for one or both sides (tracks) of the call will be sent to the specified destination. The transcription will continue until the call ends or the [`<StopTranscription>`][1] verb is used. A total of 4 concurrent track transcriptions are allowed on a call. A `<StartTranscription>` request that uses `both` tracks will count as 2 concurrent transcriptions.
+A call has only two tracks, which are named after the direction of the media from the perspective of the Programmable Voice platform:
+- `inbound`: media received by Programmable Voice from the call executing the BXML;
+- `outbound`: media sent by Programmable Voice to the call executing the BXML.
+
+Note that this has no correlation to the direction of the call itself. For example, if either an inbound or outbound call is being transcribed and executes a `<SpeakSentence>`, the `inbound` track will be the callee's audio and the `outbound` track will be the text-to-speech audio.
+## Text Content
+
+There is no text content available to be set for the `<StartTranscription>` verb.
+
+## Attributes
+
+| Attribute                | Description                                                                                                                                                                                                                        |
+|:-------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| name                     | (optional) A name to refer to this transcription by. Used when sending [`<StopTranscription>`][1]. If not provided, it will default to the generated transcription id as sent in the [`Transcription Stream Started`][2] webhook.                                             |
+| tracks                   | (optional) The part of the call to send a transcription from. `inbound`, `outbound` or `both`. Default is `inbound`.                                                                                                                    |
+| destination              | (required) A websocket URI to send the transcription to. A transcription of the specified tracks will be sent via websocket to this URL as a series of JSON messages. See below for more details on the websocket packet format. |
+| transcriptionEventUrl    | (optional) URL to send the associated Webhook events to during this transcription stream's lifetime. Does not accept BXML. May be a relative URL.                                         |
+| transcriptionEventMethod | (optional) The HTTP method to use for the request to `transcriptionEventUrl`. GET or POST. Default value is POST.                                                                                                  |
+| username                 | (optional) The username to send in the HTTP request to `transcriptionEventUrl`. If specified, the URLs must be TLS-encrypted (i.e., `https`).                                           |
+| password                 | (optional) The password to send in the HTTP request to `transcriptionEventUrl`. If specified, the URLs must be TLS-encrypted (i.e., `https`).                                           |
+
+If the `transcriptionEventUrl` attribute is specified, then the [Transcription Stream Started][2], [Transcription Stream Rejected][3] and [Transcription Stream Stopped][4] events will be sent to the URL when the transcription starts, if there is an error starting the transcription and when the transcription ends respectively. BXML returned in response to this callback will be ignored.
+
+:::note
+While multiple transcription streams for the same call are allowed, each transcription stream MUST have a unique name. Attempting to start a transcription on the same call with the name of an already existing transcription will result in a [Transcription Stream Rejected][3] event.
+:::
+
+## Webhooks Received
+
+| Webhooks                   | Can reply with more BXML |
+|:---------------------------|:-------------------------|
+| [Transcription Stream Started][2]  | No                       |
+| [Transcription Stream Rejected][3] | No                       |
+| [Transcription Stream Stopped][4]  | No                       |
+
+## Nested Tags
+
+You may specify up to 12 `<StreamParam/>` elements nested within a `<StartTranscription>` tag. These elements define optional user specified parameters that will be sent to the destination URL when the transcription stream is first started.
+
+### StreamParam Attributes
+
+| Attribute | Description                                                    |
+|:----------|:---------------------------------------------------------------|
+| name      | (required) The name of this parameter, up to 256 characters.   |
+| value     | (required) The value of this parameter, up to 2048 characters. |
+
+## Websocket Packet Format
+
+At the destination end, the websocket will receive messages containing JSON for the duration of the transcription stream. There will be an initial `start` message when the connection is first established. This will be followed by zero or more `transcription` messages containing transcription updates for the tracks being streamed. Finally, when a transcription stream is stopped, a `stop` message will be sent.
+
+### Start and Stop Message Parameters
+
+| Parameter    | Description |
+|:-------------|:------------|
+| eventType    | What type of message this is, one of `start`, or `stop` |
+| metadata     | Details about the transcription stream this message is for. See further details below. |
+| streamParams | (optional) (`start` message only) If any `<StreamParam/>` elements were specified in the `<StartTranscription>` request, they will be copied here as a map of `name : value` pairs |
+
+#### Metadata Parameters
+
+| Parameter                     | Description |
+|:------------------------------|:------------|
+| accountId                     | The user account associated with the call |
+| callId                        | The call id associated with the transcription stream |
+| streamId                      | The unique id of the transcription stream |
+| streamName                    | The user supplied name of the transcription stream |
+| tracks                        | A list of one or more tracks being transcribed in this stream |
+| tracks.name                   | The name of the track being transcribed, will be used to identify which transcription updates belong to which track |
+
+### Media Message Parameters
+
+| Parameter | Description            |
+|:----------|:-----------------------|
+| eventType | Will always be `transcription` |
+| track     | The name of the track this transcription update is for, will be one of the names specified in the `start` message |
+| startTime   | The time at which this segment started |
+| endTime   | The time at which this segment ended |
+| isPartial   | Indicates if the segment is complete |
+| language   | The detected language of the segment |
+| alternatives   | The list of possible transcriptions of this segment |
+| alternatives.transcript   | The transcription of this segment as a flattened string |
+| alternatives.items   | The list of items making up this alternative |
+| alternatives.items.content   | A word or punctuation |
+| alternatives.items.startTime   | The time at which this item started |
+| alternatives.items.endTime   | The time at which this item ended |
+| alternatives.items.confidence   | The confidence score associated with a word or phrase in your transcript. |
+| alternatives.items.stable   | Indicates whether the specified item is stable ( true) or if it may change when the segment is complete (false). |
+| alternatives.items.type   | Either `PRONUNCIATION` or `PUNCTUATION` |
+
+## Examples
+
+### A `start` Websocket Message
+
+```json
+{
+  "eventType": "start",
+  "metadata": {
+    "accountId": "5555555",
+    "callId": "c-2a913f94-7fa91773-a426-4118-8b8b-b691ab0a0ae1",
+    "streamId": "s-2a913f94-93e372e2-60da-4c89-beb0-0d3a219b287c",
+    "streamName": "live_audience",
+    "tracks": [
+      {
+        "name": "inbound",
+      },
+      {
+        "name": "outbound",
+      }
+    ]
+  },
+  "streamParams": {
+    "foo": "bar",
+    "foos": "bars"
+  }
+}
+```
+
+### A `transcription` Websocket Message
+```json
+{
+  "eventType": "transcription",
+  "track": "inbound",
+  "startTime": "2023-03-31T20:05.101Z",
+  "endTime": "2023-03-31T20:07.493Z",
+  "isPartial": false,
+  "language": "en-US",
+  "alternatives": [
+    {
+      "transcript": "hello world!",
+      "items": [
+        {
+          "content": "hello",
+          "startTime": "2023-03-31T20:05.101Z",
+          "endTime": "2023-03-31T20:06.285Z",
+          "confidence": 0.9,
+          "stable": true,
+          "type": "PRONUNCIATION"
+        },
+        {
+          "content": "world",
+          "startTime": "2023-03-31T20:06.984Z",
+          "endTime": "2023-03-31T20:07.493Z",
+          "confidence": 0.6,
+          "stable": true,
+          "type": "PRONUNCIATION"
+        },
+        {
+          "content": "!",
+          "startTime": "2023-03-31T20:07.493Z",
+          "endTime": "2023-03-31T20:07.493Z",
+          "confidence": 0.9,
+          "stable": false,
+          "type": "PUNCTUATION"
+        }
+      ]
+    },
+    {
+      "transcript": "hewro word!",
+      "items": [
+        {
+          "content": "hewro",
+          "startTime": "2023-03-31T20:05.101Z",
+          "endTime": "2023-03-31T20:06.285Z",
+          "confidence": 0.1,
+          "stable": true,
+          "type": "PRONUNCIATION"
+        },
+        {
+          "content": "word",
+          "startTime": "2023-03-31T20:06.984Z",
+          "endTime": "2023-03-31T20:07.493Z",
+          "confidence": 0.4,
+          "stable": true,
+          "type": "PRONUNCIATION"
+        },
+        {
+          "content": "!",
+          "startTime": "2023-03-31T20:07.493Z",
+          "endTime": "2023-03-31T20:07.493Z",
+          "confidence": 0.9,
+          "stable": false,
+          "type": "PUNCTUATION"
+        }
+      ]
+    }
+  ]
+}
+```
+
+### A `stop` Websocket Message
+
+```json
+{
+  "eventType": "stop",
+  "metadata": {
+    "accountId": "5555555",
+    "callId": "c-2a913f94-7fa91773-a426-4118-8b8b-b691ab0a0ae1",
+    "streamId": "s-2a913f94-93e372e2-60da-4c89-beb0-0d3a219b287c",
+    "streamName": "live_audience",
+    "tracks": [
+      {
+        "name": "inbound",
+      },
+      {
+        "name": "outbound",
+      }
+    ]
+  }
+}
+```
+
+[1]: /docs/voice/bxml/stopTranscription
+[2]: /docs/voice/webhooks/transcriptionStreamStarted
+[3]: /docs/voice/webhooks/transcriptionStreamRejected
+[4]: /docs/voice/webhooks/transcriptionStreamStopped
