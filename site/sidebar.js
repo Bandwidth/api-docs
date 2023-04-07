@@ -172,6 +172,7 @@ module.exports = {
             "voice/bxml/sendDtmf",
             "voice/bxml/startStream",
             "voice/bxml/stopStream",
+            "voice/bxml/startTranscription",
             "voice/bxml/tag",
           ],
         },
