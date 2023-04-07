@@ -32,33 +32,33 @@ There is no text content available to be set for the `<StartTranscription>` verb
 
 | Attribute                | Description                                                                                                                                                                                                                        |
 |:-------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| name                     | (optional) A name to refer to this transcription by. Used when sending [`<StopTranscription>`][1]. If not provided, it will default to the generated transcription id as sent in the [`Transcription Stream Started`][2] webhook.                                             |
+| name                     | (optional) A name to refer to this transcription by. Used when sending [`<StopTranscription>`][1]. If not provided, it will default to the generated transcription id as sent in the [`Real-Time Transcription Started`][2] webhook.                                             |
 | tracks                   | (optional) The part of the call to send a transcription from. `inbound`, `outbound` or `both`. Default is `inbound`.                                                                                                                    |
 | destination              | (required) A websocket URI to send the transcription to. A transcription of the specified tracks will be sent via websocket to this URL as a series of JSON messages. See below for more details on the websocket packet format. |
-| transcriptionEventUrl    | (optional) URL to send the associated Webhook events to during this transcription stream's lifetime. Does not accept BXML. May be a relative URL.                                         |
+| transcriptionEventUrl    | (optional) URL to send the associated Webhook events to during this real-time transcription's lifetime. Does not accept BXML. May be a relative URL.                                         |
 | transcriptionEventMethod | (optional) The HTTP method to use for the request to `transcriptionEventUrl`. GET or POST. Default value is POST.                                                                                                  |
 | username                 | (optional) The username to send in the HTTP request to `transcriptionEventUrl`. If specified, the URLs must be TLS-encrypted (i.e., `https`).                                           |
 | password                 | (optional) The password to send in the HTTP request to `transcriptionEventUrl`. If specified, the URLs must be TLS-encrypted (i.e., `https`).                                           |
 
-If the `transcriptionEventUrl` attribute is specified, then the [Transcription Stream Started][2], [Transcription Stream Rejected][3] and [Transcription Stream Stopped][4] events will be sent to the URL when the transcription starts, if there is an error starting the transcription and when the transcription ends respectively. BXML returned in response to this callback will be ignored.
+If the `transcriptionEventUrl` attribute is specified, then the [Real-Time Transcription Started][2], [Real-Time Transcription Rejected][3] and [Real-Time Transcription Stopped][4] events will be sent to the URL when the transcription starts, if there is an error starting the transcription and when the transcription ends respectively. BXML returned in response to this callback will be ignored.
 
 :::note
-While multiple transcription streams for the same call are allowed, each transcription stream MUST have a unique name. Attempting to start a transcription on the same call with the name of an already existing transcription will result in a [Transcription Stream Rejected][3] event.
+While multiple real-time transcriptions for the same call are allowed, each real-time transcription MUST have a unique name. Attempting to start a real-time transcription on the same call with the name of an already existing real-time transcription will result in a [Real-Time Transcription Rejected][3] event.
 :::
 
 ## Webhooks Received
 
 | Webhooks                   | Can reply with more BXML |
 |:---------------------------|:-------------------------|
-| [Transcription Stream Started][2]  | No                       |
-| [Transcription Stream Rejected][3] | No                       |
-| [Transcription Stream Stopped][4]  | No                       |
+| [Real-Time Transcription Started][2]  | No                       |
+| [Real-Time Transcription Rejected][3] | No                       |
+| [Real-Time Transcription Stopped][4]  | No                       |
 
 ## Nested Tags
 
-You may specify up to 12 `<StreamParam/>` elements nested within a `<StartTranscription>` tag. These elements define optional user specified parameters that will be sent to the destination URL when the transcription stream is first started.
+You may specify up to 12 `<CustomParam/>` elements nested within a `<StartTranscription>` tag. These elements define optional user specified parameters that will be sent to the destination URL when the real-time transcription is first started.
 
-### StreamParam Attributes
+### CustomParam Attributes
 
 | Attribute | Description                                                    |
 |:----------|:---------------------------------------------------------------|
@@ -67,25 +67,25 @@ You may specify up to 12 `<StreamParam/>` elements nested within a `<StartTransc
 
 ## Websocket Packet Format
 
-At the destination end, the websocket will receive messages containing JSON for the duration of the transcription stream. There will be an initial `start` message when the connection is first established. This will be followed by zero or more `transcription` messages containing transcription updates for the tracks being streamed. Finally, when a transcription stream is stopped, a `stop` message will be sent.
+At the destination end, the websocket will receive messages containing JSON for the duration of the real-time transcription. There will be an initial `start` message when the connection is first established. This will be followed by zero or more `transcription` messages containing transcription updates for the tracks being transcribed. Finally, when a real-time transcription is stopped, a `stop` message will be sent.
 
 ### Start and Stop Message Parameters
 
 | Parameter    | Description |
 |:-------------|:------------|
 | eventType    | What type of message this is, one of `start`, or `stop` |
-| metadata     | Details about the transcription stream this message is for. See further details below. |
-| streamParams | (optional) (`start` message only) If any `<StreamParam/>` elements were specified in the `<StartTranscription>` request, they will be copied here as a map of `name : value` pairs |
+| metadata     | Details about the real-time transcription this message is for. See further details below. |
+| customParams | (optional) (`start` message only) If any `<CustomParam/>` elements were specified in the `<StartTranscription>` request, they will be copied here as a map of `name : value` pairs |
 
 #### Metadata Parameters
 
 | Parameter                     | Description |
 |:------------------------------|:------------|
 | accountId                     | The user account associated with the call |
-| callId                        | The call id associated with the transcription stream |
-| streamId                      | The unique id of the transcription stream |
-| streamName                    | The user supplied name of the transcription stream |
-| tracks                        | A list of one or more tracks being transcribed in this stream |
+| callId                        | The call id associated with the real-time transcription |
+| realtimetranscriptionId                      | The unique id of the real-time transcription |
+| transcriptionName                    | The user supplied name of the real-time transcription |
+| tracks                        | A list of one or more tracks being transcribed in real-time |
 | tracks.name                   | The name of the track being transcribed, will be used to identify which transcription updates belong to which track |
 
 ### Media Message Parameters
@@ -118,8 +118,8 @@ At the destination end, the websocket will receive messages containing JSON for 
   "metadata": {
     "accountId": "5555555",
     "callId": "c-2a913f94-7fa91773-a426-4118-8b8b-b691ab0a0ae1",
-    "streamId": "s-2a913f94-93e372e2-60da-4c89-beb0-0d3a219b287c",
-    "streamName": "live_audience",
+    "realtimeTranscriptionId": "s-2a913f94-93e372e2-60da-4c89-beb0-0d3a219b287c",
+    "transcriptionName": "live_audience",
     "tracks": [
       {
         "name": "inbound",
@@ -129,7 +129,7 @@ At the destination end, the websocket will receive messages containing JSON for 
       }
     ]
   },
-  "streamParams": {
+  "customParams": {
     "foo": "bar",
     "foos": "bars"
   }
@@ -216,8 +216,8 @@ At the destination end, the websocket will receive messages containing JSON for 
   "metadata": {
     "accountId": "5555555",
     "callId": "c-2a913f94-7fa91773-a426-4118-8b8b-b691ab0a0ae1",
-    "streamId": "s-2a913f94-93e372e2-60da-4c89-beb0-0d3a219b287c",
-    "streamName": "live_audience",
+    "realtimeTranscriptionId": "s-2a913f94-93e372e2-60da-4c89-beb0-0d3a219b287c",
+    "transcriptionName": "live_audience",
     "tracks": [
       {
         "name": "inbound",
