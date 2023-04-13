@@ -302,6 +302,25 @@ components:
           $ref: '#/components/schemas/nullableString'
         webhookUrl:
           $ref: '#/components/schemas/webhookUrl'
+    tfvPostResponseBody:
+      type: object
+      properties:
+        accountId:
+          type: string
+          description: Bandwidth account ID
+          example: '9900910'
+        errors:
+          type: object
+          description: >-
+            Listing of errors from your request, relevant for a partial success
+            or complete failure
+          example:
+            type: bad request
+            description: cannot process request
+            errors:
+              useCase:
+                - useCase must not be blank
+                - useCase cannot be more than 500 characters
     tfvStatus:
       type: object
       properties:
@@ -349,39 +368,6 @@ components:
           type: string
         description:
           type: string
-      required:
-        - type
-        - description
-    badRequestError:
-      title: BadRequestError
-      type: object
-      properties:
-        type:
-          type: string
-          example: bad request
-        description:
-          type: string
-          example: cannot process request
-        errors:
-          type: object
-          description: >-
-            Each key of this errors object refers to a field of the submitted
-            object (using dot notation for nested objects), with the field being
-            a key to an array of one or more errors for that field.
-          example:
-            name:
-              - is required
-            email:
-              - is not a valid email address
-              - is longer than 100 characters
-          additionalProperties:
-            type: array
-            items:
-              type: string
-              example: is required
-            example:
-              - is not a valid email address
-              - is longer than 100 characters
       required:
         - type
         - description
@@ -442,6 +428,10 @@ components:
   responses:
     verifyPostResponse:
       description: Accepted
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/tfvPostResponseBody'
     verifyStatusResponse:
       description: OK
       content:
@@ -459,7 +449,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/badRequestError'
+            $ref: '#/components/schemas/verificationRequestError'
     unauthorizedResponse:
       description: Unauthorized
       content:
