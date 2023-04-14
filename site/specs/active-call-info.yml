@@ -10,7 +10,7 @@ info:
     name: Bandwidth
     url: https://support.bandwidth.com
     email: support@bandwidth.com
-  termsOfService: urn:tos
+  termsOfService: https://www.bandwidth.com/legal/terms-of-use-bandwidthcom-web-sites/
   version: 1.0.0
 servers:
   - url: https://call-verification.bandwidth.com/api/v1
@@ -92,7 +92,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/apiError'
+            $ref: '#/components/schemas/apiErrors'
           examples:
             unauthorizedExample:
               $ref: '#/components/examples/unauthorizedErrorExample'
@@ -101,7 +101,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/apiError'
+            $ref: '#/components/schemas/apiErrors'
           examples:
             badRequestExample:
               $ref: '#/components/examples/badRequestErrorExample'
@@ -110,7 +110,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/apiError'
+            $ref: '#/components/schemas/apiErrors'
           examples:
             methodNotAllowedExample:
               $ref: '#/components/examples/methodNotAllowedErrorExample'
@@ -119,7 +119,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/apiError'
+            $ref: '#/components/schemas/apiErrors'
           examples:
             forbiddenExample:
               $ref: '#/components/examples/forbiddenErrorExample'
@@ -128,7 +128,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/apiError'
+            $ref: '#/components/schemas/apiErrors'
           examples:
             notFoundExample:
               $ref: '#/components/examples/notFoundErrorExample'
@@ -137,7 +137,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/apiError'
+            $ref: '#/components/schemas/apiErrors'
           examples:
             tooManyRequestsExample:
               $ref: '#/components/examples/tooManyRequestsErrorExample'
@@ -146,7 +146,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/apiError'
+            $ref: '#/components/schemas/apiErrors'
           examples:
             internalServerErrorExample:
               $ref: '#/components/examples/internalServerErrorErrorExample'
@@ -172,8 +172,20 @@ components:
         All available information about a specific phone call that is currently
         active on the bandwidth network.
       properties:
-        riskScore:
-          $ref: '#/components/schemas/riskScore'
+        links:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/link'
+        data:
+          type: object
+          properties:
+            riskScore:
+              $ref: '#/components/schemas/riskScore'
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/apiError'
     riskScore:
       type: object
       description: The risk score for a specific phone call.
@@ -195,41 +207,167 @@ components:
 
             from a fraudulent source.
           example: 72
+    apiErrors:
+      type: object
+      properties:
+        links:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/link'
+        data:
+          type: object
+          nullable: true
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/apiError'
+    link:
+      type: object
+      properties:
+        href:
+          type: string
+          description: URI of the link.
+          example: >-
+            /accounts/1234567/activeCalls/MTU2MDI4ODE1XzgzMzQ4OTg4QDE5Mi4xNjguMTMyLjQx
+        rel:
+          type: string
+          description: Specifies the relationship between this link and the resource.
+          example: ActiveCallInfo
+        method:
+          type: string
+          description: HTTP method to be used.
+          example: GET
     apiError:
       type: object
       properties:
-        error:
+        type:
           type: string
-          example: Internal Server Error
+          description: >-
+            A short, human-readable summary of the problem that SHOULD NOT
+            change from occurrence to occurrence of the problem
+          example: request-error
+        description:
+          type: string
+          description: >-
+            A human-readable explanation that SHOULD be specific to this
+            occurrence of the problem.
+          example: There was an issue with a field in your request body
+        code:
+          type: integer
+          format: int32
+          description: >-
+            An application-specific error code for services with extensive error
+            scenarios to supplement `description`.
+          example: 1203
+        source:
+          $ref: '#/components/schemas/errorSource'
+    errorSource:
+      type: object
+      properties:
+        parameter:
+          type: string
+          description: A string indicating which URI query parameter caused the error.
+          example: someParameter
+        field:
+          type: string
+          description: A string indicating which request body field caused the error.
+          example: someField
+        header:
+          type: string
+          description: A string indicating which header field caused the error.
+          example: someHeader
+        reference:
+          type: string
+          description: >-
+            A string that references a resource ID or path to the resource (or
+            non-existent resource) causing the error.
+          example: /some/reference
+        method:
+          type: string
+          description: A string indicating which HTTP method caused the error.
+          example: POST
   examples:
     unauthorizedErrorExample:
       summary: Unauthorized
       value:
-        error: Unauthorized
+        data: null
+        links: null
+        errors:
+          - type: Unauthorized
+            code: 12401
+            description: You must be properly authenticated to access this resource
+            source:
+              method: GET
+              reference: >-
+                /accounts/1234567/activeCalls/MTU2MDI4ODE1XzgzMzQ4OTg4QDE5Mi4xNjguMTMyLjQx
     badRequestErrorExample:
       summary: Bad Request
       value:
-        error: Bad Request
+        data: null
+        links: null
+        errors:
+          - type: Bad Request
+            code: 12712
+            description: Malformed JSON
+            source:
+              method: POST
+              parameter: activeCallId
     methodNotAllowedErrorExample:
       summary: Method Not Allowed
       value:
-        error: Method Not Allowed
+        data: null
+        links: null
+        errors:
+          - type: Method Not Allowed
+            code: 12405
+            description: PATCH is not supported at this URI
+            source:
+              method: PATCH
     forbiddenErrorExample:
       summary: Forbidden
       value:
-        error: Forbidden
+        data: null
+        links: null
+        errors:
+          - type: Forbidden
+            code: 12403
+            description: You do not have access to this resource
+            source:
+              method: GET
+              reference: >-
+                /accounts/1234567/activeCalls/MTU2MDI4ODE1XzgzMzQ4OTg4QDE5Mi4xNjguMTMyLjQx
     notFoundErrorExample:
       summary: Not Found
       value:
-        error: Not Found
+        data: null
+        links: null
+        errors:
+          - type: Not Found
+            code: 12404
+            description: Resource not found
+            source:
+              method: GET
+              reference: >-
+                /accounts/1234567/activeCalls/MTU2MDI4ODE1XzgzMzQ4OTg4QDE5Mi4xNjguMTMyLjQx
     tooManyRequestsErrorExample:
       summary: Too Many Requests
       value:
-        error: Too Many Requests
+        data: null
+        links: null
+        errors:
+          - type: Too Many Requests
+            code: 12404
+            description: Rate Limit Exceeded.  Try again in 1 second
     internalServerErrorErrorExample:
       summary: Internal Server Error
       value:
-        error: Internal Server Error
+        data: null
+        links: null
+        errors:
+          - type: Internal Server Error
+            code: 12500
+            description: Encountered an unexpected error while processing your request
   securitySchemes:
     Basic:
       type: http
