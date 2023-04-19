@@ -30,11 +30,12 @@ This event may be sent to the url specified when sending a [`<StartTranscription
 | eventType               | The event type, value is `realtimeTranscriptionStarted` |
 | from                    | The provided identifier of the caller: can be a phone number in E.164 format (e.g. +15555555555) or one of `Private`, `Restricted`, `Unavailable`, or `Anonymous`. |
 | realtimeTranscription             | Details about the stream that was started |
-| realtimeTranscription.destination | The destination URL to which the stream is sending media |
 | realtimeTranscription.id          | The unique id of the stream |
 | realtimeTranscription.name        | The name of this stream. If the `name` attribute was specified in the [`StartStream`][1] verb, then this will be the value of that attribute, otherwise it will default to the stream id.
 | realtimeTranscription.startTime   | The approximate UTC date and time the stream was started |
 | realtimeTranscription.tracks      | The segments of the call that are being sent in the stream, values will be one or both of `inbound` and `outbound` |
+| realtimeTranscription.destination | (optional) The destination URL to which the stream is sending media |
+| realtimeTranscription.stabilized  | (optional) Whether to send transcription update events to the specified `destination` only after they have become stable. Requires `destination`.                                                                                            |
 | startTime               | Time the call was started, in ISO 8601 format. |
 | to                      | The phone number that received the call, in E.164 format (e.g. +15555555555). |
 | tag                     | (optional) The `tag` specified on call creation. If no `tag` was specified or it was previously cleared, this field will not be present. |
@@ -65,11 +66,40 @@ Content-Type: application/json
  "eventType"       : "realtimeTranscriptionStarted",
  "from"            : "+15551112222",
  "realtimeTranscription" : {
-    "destination" : "wss://websocket.myapp.example",
     "id"          : "s-95ac90b3-bfc81595-35fc-4b64-8265-fab6855b74a2",
     "name"        : "example_stream",
     "startTime"   : "2022-06-30T18:55:02.489Z",
     "tracks"      : ["inbound", "outbound"]
+ },
+ "startTime"       : "2022-06-30T18:54:59.175Z",
+ "to"              : "+15553334444"
+}
+```
+
+### Real-Time Transcription Started Event with Enqueued Time and Destination
+
+```json
+POST http://myapp.example/realtimeTranscriptionEvents
+Content-Type: application/json
+
+{
+ "accountId"       : "55555555",
+ "answerTime"      : "2022-06-30T18:55:02.080Z",
+ "applicationId"   : "7fc9698a-b04a-468b-9e8f-91238c0d0086",
+ "callId"          : "c-95ac912f-68aacdd7-4a8e-4223-a7fd-020e02fa6bf2",
+ "callUrl"         : "https://voice.bandwidth.com/api/v2/accounts/55555555/calls/c-95ac912f-68aacdd7-4a8e-4223-a7fd-020e02fa6bf2",
+ "direction"       : "outbound",
+ "enqueuedTime"    : "2022-06-30T18:54:59.172Z",
+ "eventTime"       : "2022-06-30T18:55:02.489Z",
+ "eventType"       : "realtimeTranscriptionStarted",
+ "from"            : "+15551112222",
+ "realtimeTranscription" : {
+    "id"          : "s-95ac90b3-bfc81595-35fc-4b64-8265-fab6855b74a2",
+    "name"        : "example_stream",
+    "startTime"   : "2022-06-30T18:55:02.489Z",
+    "tracks"      : ["inbound", "outbound"],
+    "destination" : "wss://websocket.myapp.example",
+    "stabilized"  : "true",
  },
  "startTime"       : "2022-06-30T18:54:59.175Z",
  "to"              : "+15553334444"

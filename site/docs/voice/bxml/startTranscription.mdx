@@ -16,9 +16,11 @@ image: ../../static/img/bandwidth-logo.png
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-The StartTranscription verb allows a segment of a call to be transcribed and for the developing transcription to be sent off to another destination for additional processing.
+The StartTranscription verb allows a segment of a call to be transcribed and optionally for the live transcription to be sent off to another destination for additional processing.
+The transcription will continue until the call ends or the [`<StopTranscription>`][1] verb is used.
+When a `destination` is specified, live transcription updates for one or both sides (tracks) of the call will be sent to the specified destination.
+A total of 4 concurrent track transcriptions are allowed on a call. A `<StartTranscription>` request that uses `both` tracks will count as 2 of the permitted 4 concurrent track transcriptions.
 
-When used on a call, live transcription updates for one or both sides (tracks) of the call will be sent to the specified destination. The transcription will continue until the call ends or the [`<StopTranscription>`][1] verb is used. A total of 4 concurrent track transcriptions are allowed on a call. A `<StartTranscription>` request that uses `both` tracks will count as 2 concurrent transcriptions.
 A call has only two tracks, which are named after the direction of the media from the perspective of the Programmable Voice platform:
 - `inbound`: media received by Programmable Voice from the call executing the BXML;
 - `outbound`: media sent by Programmable Voice to the call executing the BXML.
@@ -34,13 +36,15 @@ There is no text content available to be set for the `<StartTranscription>` verb
 |:-------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | name                     | (optional) A name to refer to this transcription by. Used when sending [`<StopTranscription>`][1]. If not provided, it will default to the generated transcription id as sent in the [`Real-Time Transcription Started`][2] webhook.                                             |
 | tracks                   | (optional) The part of the call to send a transcription from. `inbound`, `outbound` or `both`. Default is `inbound`.                                                                                                                    |
-| destination              | (required) A websocket URI to send the transcription to. A transcription of the specified tracks will be sent via websocket to this URL as a series of JSON messages. See below for more details on the websocket packet format. |
 | transcriptionEventUrl    | (optional) URL to send the associated Webhook events to during this real-time transcription's lifetime. Does not accept BXML. May be a relative URL.                                         |
 | transcriptionEventMethod | (optional) The HTTP method to use for the request to `transcriptionEventUrl`. GET or POST. Default value is POST.                                                                                                  |
-| username                 | (optional) The username to send in the HTTP request to `transcriptionEventUrl`. If specified, the URLs must be TLS-encrypted (i.e., `https`).                                           |
-| password                 | (optional) The password to send in the HTTP request to `transcriptionEventUrl`. If specified, the URLs must be TLS-encrypted (i.e., `https`).                                           |
+| username                 | (optional) The username to send in the HTTP request to `transcriptionEventUrl`. If specified, the `transcriptionEventUrl` must be TLS-encrypted (i.e., `https`).                                           |
+| password                 | (optional) The password to send in the HTTP request to `transcriptionEventUrl`. If specified, the `transcriptionEventUrl` must be TLS-encrypted (i.e., `https`).                                           |
+| destination              | (optional) A websocket URI to send the transcription to. A transcription of the specified tracks will be sent via websocket to this URL as a series of JSON messages. See below for more details on the websocket packet format. |
+| stabilized               | (optional) Whether to send transcription update events to the specified `destination` only after they have become stable. Requires `destination`.                                                                                            |
 
-If the `transcriptionEventUrl` attribute is specified, then the [Real-Time Transcription Started][2], [Real-Time Transcription Rejected][3] and [Real-Time Transcription Stopped][4] events will be sent to the URL when the transcription starts, if there is an error starting the transcription and when the transcription ends respectively. BXML returned in response to this callback will be ignored.
+If the `destination` and `transcriptionEventUrl` attributes are specified, then the [Real-Time Transcription Started][2], [Real-Time Transcription Rejected][3] and [Real-Time Transcription Stopped][4] events will be sent to the URL when the transcription starts, if there is an error starting the transcription and when the transcription ends respectively. BXML returned in response to this callback will be ignored.
+If the `transcriptionEventUrl` attribute is specified, then the [StartTranscription Available](5) event will be sent once the transcription has ended and the transcription is available at `/accounts/{accountId}/calls/{callId}/transcriptions/{transcriptionId}`. BXML returned in response to this callback will be ignored.
 
 :::note
 While multiple real-time transcriptions for the same call are allowed, each real-time transcription MUST have a unique name. Attempting to start a real-time transcription on the same call with the name of an already existing real-time transcription will result in a [Real-Time Transcription Rejected][3] event.
@@ -67,7 +71,7 @@ You may specify up to 12 `<CustomParam/>` elements nested within a `<StartTransc
 
 ## Websocket Packet Format
 
-At the destination end, the websocket will receive messages containing JSON for the duration of the real-time transcription. There will be an initial `start` message when the connection is first established. This will be followed by zero or more `transcription` messages containing transcription updates for the tracks being transcribed. Finally, when a real-time transcription is stopped, a `stop` message will be sent.
+If a `destination` is specified, it will be sent JSON messages for the duration of the real-time transcription. There will be an initial `start` message when the connection is first established. This will be followed by zero or more `transcription` messages containing transcription updates for the tracks being transcribed. Finally, when a real-time transcription is stopped, a `stop` message will be sent.
 
 ### Start and Stop Message Parameters
 
@@ -83,10 +87,11 @@ At the destination end, the websocket will receive messages containing JSON for 
 |:------------------------------|:------------|
 | accountId                     | The user account associated with the call |
 | callId                        | The call id associated with the real-time transcription |
-| realtimetranscriptionId                      | The unique id of the real-time transcription |
-| transcriptionName                    | The user supplied name of the real-time transcription |
+| realtimetranscriptionId       | The unique id of the real-time transcription |
+| transcriptionName             | The user supplied name of the real-time transcription |
 | tracks                        | A list of one or more tracks being transcribed in real-time |
 | tracks.name                   | The name of the track being transcribed, will be used to identify which transcription updates belong to which track |
+| stabilized                    | Whether transcription updates will be sent only after they have become stable or not |
 
 ### Media Message Parameters
 
@@ -105,7 +110,7 @@ At the destination end, the websocket will receive messages containing JSON for 
 | alternatives.items.startTime   | The time at which this item started |
 | alternatives.items.endTime   | The time at which this item ended |
 | alternatives.items.confidence   | The confidence score associated with a word or phrase in your transcript. |
-| alternatives.items.stable   | Indicates whether the specified item is stable ( true) or if it may change when the segment is complete (false). |
+| alternatives.items.stable   | Indicates whether the specified item is stable (true) or if it may change when the segment is complete (false). |
 | alternatives.items.type   | Either `PRONUNCIATION` or `PUNCTUATION` |
 
 ## Examples
@@ -234,3 +239,4 @@ At the destination end, the websocket will receive messages containing JSON for 
 [2]: /docs/voice/webhooks/realtimeTranscriptionStarted
 [3]: /docs/voice/webhooks/realtimeTranscriptionRejected
 [4]: /docs/voice/webhooks/realtimeTranscriptionStopped
+[5]: /docs/voice/webhooks/startTranscriptionAvailable
