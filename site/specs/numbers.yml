@@ -1354,6 +1354,29 @@ components:
               type: integer
           type: object
       type: object
+    ActivationRequirement:
+      properties:
+        CountryCodeA3:
+          type: string
+        PhoneNumberType:
+          $ref: '#/components/schemas/PhoneNumberType'
+        ProofOfAddressRequired:
+          type: boolean
+        ProofOfIdRequired:
+          type: boolean
+        TypeOfAddress:
+          $ref: '#/components/schemas/TypeOfAddress'
+      type: object
+    ActivationRequirementSearchResults:
+      properties:
+        ActivationRequirementResponse:
+          properties:
+            ActivationRequirements:
+              items:
+                $ref: '#/components/schemas/ActivationRequirement'
+              type: array
+          type: object
+      type: object
     ActivationStatus:
       properties:
         ActivationStatus:
@@ -8600,6 +8623,16 @@ components:
           description: Simple Telephone Number.
           type: string
       type: object
+    PhoneNumberType:
+      enum:
+        - GEOGRAPHIC
+        - NATIONAL
+        - MOBILE
+        - TOLL_FREE
+        - SHARED_COST
+        - SPECIAL
+      example: GEOGRAPHIC
+      type: string
     PidfloAddressDeleting911Order:
       properties:
         E911Order:
@@ -12756,6 +12789,13 @@ components:
         Ratio:
           type: integer
       type: object
+    TypeOfAddress:
+      enum:
+        - WORLDWIDE
+        - NATIONAL
+        - LOCAL
+      example: WORLDWIDE
+      type: string
     UcTrunkingCloudSettings:
       properties:
         BiDirectionalTrunks:
@@ -13814,6 +13854,68 @@ paths:
       summary: Retrieve account
       tags:
         - Account
+  /accounts/{accountId}/activationRequirements:
+    get:
+      description: >-
+        Some numbers have to be activated before the service can be enabled by
+        Bandwidth. Activating a number is done by providing an activation that
+        links to the number, and a proof of residency if required. This API
+        provides all countries and number types that need activation.
+      operationId: ListActivationRequirements
+      parameters:
+        - description: >-
+            Country code of the country in its ISO 3166-1 alpha-3 format. Note
+            that only one country code (i.e. USA, CAN, GBR etc.) is allowed when
+            configured by the user.
+          example: BEL
+          in: query
+          name: countryCodeA3
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <ActivationRequirementResponse>
+                      <ActivationRequirements>
+                        <ActivationRequirement>
+                          <CountryCodeA3>BEL</CountryCodeA3>
+                          <PhoneNumberType>GEOGRAPHIC</PhoneNumberType>
+                          <ProofOfIdRequired>true</ProofOfIdRequired>
+                          <ProofOfAddressRequired>false</ProofOfAddressRequired>
+                          <TypeOfAddress>WORLDWIDE</TypeOfAddress>
+                        </ActivationRequirement>
+                        <ActivationRequirement>
+                          <CountryCodeA3>DEU</CountryCodeA3>
+                          <PhoneNumberType>NATIONAL</PhoneNumberType>
+                          <ProofOfIdRequired>false</ProofOfIdRequired>
+                          <ProofOfAddressRequired>true</ProofOfAddressRequired>
+                          <TypeOfAddress>LOCAL</TypeOfAddress>
+                        </ActivationRequirement>
+                        <ActivationRequirement>
+                          <CountryCodeA3>FRA</CountryCodeA3>
+                          <PhoneNumberType>TOLL_FREE</PhoneNumberType>
+                          <ProofOfIdRequired>true</ProofOfIdRequired>
+                          <ProofOfAddressRequired>true</ProofOfAddressRequired>
+                          <TypeOfAddress>LOCAL</TypeOfAddress>
+                        </ActivationRequirement>
+                      </ActivationRequirements>
+                    </ActivationRequirementResponse>
+              schema:
+                $ref: '#/components/schemas/ActivationRequirementSearchResults'
+          description: >-
+            This response returns the list of cities, along with the Rate
+            Centers that serve those Activation Requirements.  If available is
+            specified then the number of TNs available in that city / RC
+            combination is also included.
+      summary: List Activation Requirements
+      tags:
+        - Compliance
   /accounts/{accountId}/addresses:
     get:
       description: GET is used to retrieve all addresses.
@@ -42101,6 +42203,7 @@ tags:
     name: Bulk Port-In
   - name: Callbacks
   - name: Cities
+  - name: Compliance
   - description: >-
       DLDA = Directory Listing and Directory Assistance. A DLDA resource
       associates a TN with a Street Address. This gets updated in a Network
