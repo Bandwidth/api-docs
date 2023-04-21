@@ -4197,9 +4197,7 @@ paths:
       description: >-
         Downloads the specified transcription.
 
-
-        If the transcribed recording was multi-channel, then there will be 2
-        transcripts.
+        If the recording was multi-channel, then there will be 2 transcripts.
 
         The caller/called party transcript will be the first item while
         [`<PlayAudio>`](/docs/voice/bxml/playAudio) and
@@ -4209,14 +4207,14 @@ paths:
         During a [`<Transfer>`](/docs/voice/bxml/transfer) the A-leg transcript
         will be the first item while the B-leg transcript will be the second
         item.
-      operationId: getCallTranscription
+      operationId: getRecordingTranscription
       parameters:
         - $ref: '#/components/parameters/accountId'
         - $ref: '#/components/parameters/callId'
         - $ref: '#/components/parameters/recordingId'
       responses:
         '200':
-          $ref: '#/components/responses/getCallTranscriptionResponse'
+          $ref: '#/components/responses/getRecordingTranscriptionResponse'
         '400':
           $ref: '#/components/responses/voiceBadRequestError'
         '401':
@@ -4233,188 +4231,6 @@ paths:
           $ref: '#/components/responses/voiceTooManyRequestsError'
         '500':
           $ref: '#/components/responses/voiceInternalServerError'
-      x-codeSamples:
-        - lang: cURL
-          source: >
-            curl
-            'https://voice.bandwidth.com/api/v2/accounts/12345/calls/c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d/recordings/r-d68201ef-d53e-4c6d-a743-1c1283909d41/transcription'
-            \
-                -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ='
-        - lang: C#
-          source: |
-            using System;
-            using System.Threading.Tasks;
-            using Bandwidth.Standard;
-            using Bandwidth.Standard.Exceptions;
-            using Bandwidth.Standard.Voice.Models;
-
-            class Program
-            {
-                static async Task Main(string[] args)
-                {
-                    var username = "api-username";
-                    var password = "api-pasword";
-                    var accountId = "12345";
-
-                    // Call id is returned after successfully creating a call.
-                    var callId = "c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d";
-                    // Recording id is returned after retrieving a recording from the call.
-                    var recordingId = "r-d68201ef-d53e-4c6d-a743-1c1283909d41";
-
-                    var client = new BandwidthClient.Builder()
-                        .VoiceBasicAuthCredentials(username, password)
-                        .Build();
-
-                    try
-                    {
-                        var response = await client.Voice.APIController.GetCallTranscriptionAsync(accountId, callId, recordingId);
-                        Console.WriteLine(response.Data);
-                    }
-                    catch (ApiException e)
-                    {
-                        Console.WriteLine(e.Message);
-                    }
-                }
-            }
-        - lang: Java
-          source: |
-            import com.bandwidth.BandwidthClient;
-            import com.bandwidth.http.response.ApiResponse;
-            import com.bandwidth.voice.models.TranscriptionResponse;
-
-            import java.util.concurrent.CompletableFuture;
-            import java.util.concurrent.ExecutionException;
-
-            public class Sample {
-                public static final String USERNAME = "api-username";
-                public static final String PASSWORD = "api-password";
-                public static final String ACCOUNT_ID = "12345";
-
-                public static void main(String[] args) {
-                    // Call id is returned after successfully creating a call.
-                    String callId = "c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d";
-                    // Recording id is returned after retrieving a recording from the call.
-                    String recordingId = "r-d68201ef-d53e-4c6d-a743-1c1283909d41";
-
-                    BandwidthClient client = new BandwidthClient.Builder()
-                            .voiceBasicAuthCredentials(USERNAME, PASSWORD)
-                            .build();
-
-                    try {
-                        CompletableFuture<ApiResponse<TranscriptionResponse>> completableFuture = client.getVoiceClient().getAPIController().getCallTranscriptionAsync(ACCOUNT_ID, callId, recordingId);
-                        System.out.println(completableFuture.get().getResult());
-                    } catch (InterruptedException | ExecutionException e) {
-                        System.out.println(e.getMessage());
-                    }
-                }
-            }
-        - lang: Node.js
-          source: |
-            import { Client, ApiController } from '@bandwidth/voice';
-
-            const BW_USERNAME = "api-username";
-            const BW_PASSWORD = "api-password";
-            const BW_ACCOUNT_ID = "12345";
-
-            const client = new Client({
-              basicAuthUserName: BW_USERNAME,
-              basicAuthPassword: BW_PASSWORD
-            });
-
-            const controller = new ApiController(client);
-
-            const accountId = BW_ACCOUNT_ID;
-
-            const callId = 'c-abc12345-6defabc1-2345-6def-abc1-23456defabc1';
-            const recordingId = 'r-abc12345-6def-abc1-2345-6defabc12345';
-
-            const getCallTranscription = async function() {
-              try {
-                  const response = await controller.getCallTranscription(accountId, callId, recordingId);
-                  console.log(response)
-              } catch(error) {
-                  console.error(error);
-              }
-            }
-
-            getCallTranscription();
-        - lang: PHP
-          source: |
-            <?php
-
-            require "vendor/autoload.php";
-
-            api-username = "api-username";
-            api-password = "api-pasword";
-            12345 = "12345";
-
-            $config = new BandwidthLib\Configuration(
-                array(
-                    'voiceBasicAuthUserName' => $BW_USERNAME,
-                    'voiceBasicAuthPassword' => $BW_PASSWORD,
-                )
-            );
-            $client = new BandwidthLib\BandwidthClient($config);
-
-            $voiceClient = $client->getVoice()->getClient();
-
-            $callId = "c-1234";
-            $recordingId = "r-1234";
-
-            try {
-                $response = $voiceClient->getCallTranscription($BW_ACCOUNT_ID, $callId, $recordingId);
-                print_r($response->getResult()->transcripts);
-            } catch (BandwidthLib\APIException $e) {
-                print_r($e->getResponseCode());
-            }
-        - lang: Python
-          source: |
-            from bandwidth.bandwidth_client import BandwidthClient
-            from bandwidth.exceptions.api_exception import APIException
-
-            import os
-
-            BW_USERNAME = "api-username"
-            BW_PASSWORD = "api-password"
-            BW_ACCOUNT_ID = "12345"
-
-            bandwidth_client = BandwidthClient(
-                voice_basic_auth_user_name=BW_USERNAME,
-                voice_basic_auth_password=BW_PASSWORD
-            )
-            voice_client = bandwidth_client.voice_client.client
-
-            call_id = "c-1234"
-            recording_id = "r-1234"
-
-            try:
-                response = voice_client.get_call_transcription(BW_ACCOUNT_ID, call_id, recording_id)
-                print(response.body.transcripts)
-            except APIException as e:
-                print(e.response_code)
-        - lang: Ruby
-          source: |
-            require 'bandwidth'
-              
-            include Bandwidth
-            include Bandwidth::Voice
-
-            bandwidth_client = Bandwidth::Client.new(
-                voice_basic_auth_user_name: "api-username",
-                voice_basic_auth_password: "api-password"
-            )
-
-            voice_client = bandwidth_client.voice_client.client
-
-            call_id = "c-1234"
-            recording_id = "r-1234"
-
-            begin
-                response = voice_client.get_call_transcription("12345", call_id, recording_id)
-                puts response.data.transcripts
-            rescue APIException => e
-                puts e.response_code
-            end
     post:
       tags:
         - Recordings
@@ -4918,6 +4734,251 @@ paths:
           $ref: '#/components/responses/voiceTooManyRequestsError'
         '500':
           $ref: '#/components/responses/voiceInternalServerError'
+  /accounts/{accountId}/calls/{callId}/transcriptions:
+    get:
+      tags:
+        - Transcriptions
+      summary: Enumerate transcriptions made with StartTranscription
+      description: >-
+        Enumerates the transcriptions created on this call via
+        [startTranscription](/docs/voice/bxml/startTranscription).
+      operationId: listTranscriptions
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/callId'
+      responses:
+        '200':
+          $ref: '#/components/responses/getCallTranscriptionsResponse'
+        '400':
+          $ref: '#/components/responses/voiceBadRequestError'
+        '401':
+          $ref: '#/components/responses/voiceUnauthorizedError'
+        '403':
+          $ref: '#/components/responses/voiceForbiddenError'
+        '404':
+          $ref: '#/components/responses/voiceNotFoundError'
+        '405':
+          $ref: '#/components/responses/voiceNotAllowedError'
+        '415':
+          $ref: '#/components/responses/voiceUnsupportedMediaTypeError'
+        '429':
+          $ref: '#/components/responses/voiceTooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/voiceInternalServerError'
+  /accounts/{accountId}/calls/{callId}/transcriptions/{transcriptionId}:
+    get:
+      tags:
+        - Transcriptions
+      summary: Retrieve a specific transcription
+      description: >-
+        Retrieve the specified transcription that was created on this call via
+        [startTranscription](/docs/voice/bxml/startTranscription).
+      operationId: getCallTranscription
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/callId'
+        - $ref: '#/components/parameters/transcriptionId'
+      responses:
+        '200':
+          $ref: '#/components/responses/getCallTranscriptionResponse'
+        '400':
+          $ref: '#/components/responses/voiceBadRequestError'
+        '401':
+          $ref: '#/components/responses/voiceUnauthorizedError'
+        '403':
+          $ref: '#/components/responses/voiceForbiddenError'
+        '404':
+          $ref: '#/components/responses/voiceNotFoundError'
+        '405':
+          $ref: '#/components/responses/voiceNotAllowedError'
+        '415':
+          $ref: '#/components/responses/voiceUnsupportedMediaTypeError'
+        '429':
+          $ref: '#/components/responses/voiceTooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/voiceInternalServerError'
+      x-codeSamples:
+        - lang: cURL
+          source: >
+            curl
+            'https://voice.bandwidth.com/api/v2/accounts/12345/calls/c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d/recordings/r-d68201ef-d53e-4c6d-a743-1c1283909d41/transcription'
+            \
+                -H 'Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ='
+        - lang: C#
+          source: |
+            using System;
+            using System.Threading.Tasks;
+            using Bandwidth.Standard;
+            using Bandwidth.Standard.Exceptions;
+            using Bandwidth.Standard.Voice.Models;
+
+            class Program
+            {
+                static async Task Main(string[] args)
+                {
+                    var username = "api-username";
+                    var password = "api-pasword";
+                    var accountId = "12345";
+
+                    // Call id is returned after successfully creating a call.
+                    var callId = "c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d";
+                    // Recording id is returned after retrieving a recording from the call.
+                    var recordingId = "r-d68201ef-d53e-4c6d-a743-1c1283909d41";
+
+                    var client = new BandwidthClient.Builder()
+                        .VoiceBasicAuthCredentials(username, password)
+                        .Build();
+
+                    try
+                    {
+                        var response = await client.Voice.APIController.GetCallTranscriptionAsync(accountId, callId, recordingId);
+                        Console.WriteLine(response.Data);
+                    }
+                    catch (ApiException e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+            }
+        - lang: Java
+          source: |
+            import com.bandwidth.BandwidthClient;
+            import com.bandwidth.http.response.ApiResponse;
+            import com.bandwidth.voice.models.TranscriptionResponse;
+
+            import java.util.concurrent.CompletableFuture;
+            import java.util.concurrent.ExecutionException;
+
+            public class Sample {
+                public static final String USERNAME = "api-username";
+                public static final String PASSWORD = "api-password";
+                public static final String ACCOUNT_ID = "12345";
+
+                public static void main(String[] args) {
+                    // Call id is returned after successfully creating a call.
+                    String callId = "c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d";
+                    // Recording id is returned after retrieving a recording from the call.
+                    String recordingId = "r-d68201ef-d53e-4c6d-a743-1c1283909d41";
+
+                    BandwidthClient client = new BandwidthClient.Builder()
+                            .voiceBasicAuthCredentials(USERNAME, PASSWORD)
+                            .build();
+
+                    try {
+                        CompletableFuture<ApiResponse<TranscriptionResponse>> completableFuture = client.getVoiceClient().getAPIController().getCallTranscriptionAsync(ACCOUNT_ID, callId, recordingId);
+                        System.out.println(completableFuture.get().getResult());
+                    } catch (InterruptedException | ExecutionException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }
+        - lang: Node.js
+          source: |
+            import { Client, ApiController } from '@bandwidth/voice';
+
+            const BW_USERNAME = "api-username";
+            const BW_PASSWORD = "api-password";
+            const BW_ACCOUNT_ID = "12345";
+
+            const client = new Client({
+              basicAuthUserName: BW_USERNAME,
+              basicAuthPassword: BW_PASSWORD
+            });
+
+            const controller = new ApiController(client);
+
+            const accountId = BW_ACCOUNT_ID;
+
+            const callId = 'c-abc12345-6defabc1-2345-6def-abc1-23456defabc1';
+            const recordingId = 'r-abc12345-6def-abc1-2345-6defabc12345';
+
+            const getCallTranscription = async function() {
+              try {
+                  const response = await controller.getCallTranscription(accountId, callId, recordingId);
+                  console.log(response)
+              } catch(error) {
+                  console.error(error);
+              }
+            }
+
+            getCallTranscription();
+        - lang: PHP
+          source: |
+            <?php
+
+            require "vendor/autoload.php";
+
+            api-username = "api-username";
+            api-password = "api-pasword";
+            12345 = "12345";
+
+            $config = new BandwidthLib\Configuration(
+                array(
+                    'voiceBasicAuthUserName' => $BW_USERNAME,
+                    'voiceBasicAuthPassword' => $BW_PASSWORD,
+                )
+            );
+            $client = new BandwidthLib\BandwidthClient($config);
+
+            $voiceClient = $client->getVoice()->getClient();
+
+            $callId = "c-1234";
+            $recordingId = "r-1234";
+
+            try {
+                $response = $voiceClient->getCallTranscription($BW_ACCOUNT_ID, $callId, $recordingId);
+                print_r($response->getResult()->transcripts);
+            } catch (BandwidthLib\APIException $e) {
+                print_r($e->getResponseCode());
+            }
+        - lang: Python
+          source: |
+            from bandwidth.bandwidth_client import BandwidthClient
+            from bandwidth.exceptions.api_exception import APIException
+
+            import os
+
+            BW_USERNAME = "api-username"
+            BW_PASSWORD = "api-password"
+            BW_ACCOUNT_ID = "12345"
+
+            bandwidth_client = BandwidthClient(
+                voice_basic_auth_user_name=BW_USERNAME,
+                voice_basic_auth_password=BW_PASSWORD
+            )
+            voice_client = bandwidth_client.voice_client.client
+
+            call_id = "c-1234"
+            recording_id = "r-1234"
+
+            try:
+                response = voice_client.get_call_transcription(BW_ACCOUNT_ID, call_id, recording_id)
+                print(response.body.transcripts)
+            except APIException as e:
+                print(e.response_code)
+        - lang: Ruby
+          source: |
+            require 'bandwidth'
+              
+            include Bandwidth
+            include Bandwidth::Voice
+
+            bandwidth_client = Bandwidth::Client.new(
+                voice_basic_auth_user_name: "api-username",
+                voice_basic_auth_password: "api-password"
+            )
+
+            voice_client = bandwidth_client.voice_client.client
+
+            call_id = "c-1234"
+            recording_id = "r-1234"
+
+            begin
+                response = voice_client.get_call_transcription("12345", call_id, recording_id)
+                puts response.data.transcripts
+            rescue APIException => e
+                puts e.response_code
+            end
 components:
   schemas:
     callbackMethodEnum:
@@ -5640,7 +5701,7 @@ components:
         mediaUrl:
           $ref: '#/components/schemas/mediaUrl'
         transcription:
-          $ref: '#/components/schemas/transcriptionMetadata'
+          $ref: '#/components/schemas/recordingTranscriptionMetadata'
     conference:
       type: object
       properties:
@@ -6076,14 +6137,78 @@ components:
             Current supported languages are English, French, and Spanish.
           default: false
           example: true
-    transcriptionList:
+    recordingTranscriptions:
       type: object
       properties:
         transcripts:
           type: array
           items:
-            $ref: '#/components/schemas/transcription'
-    transcriptionMetadata:
+            $ref: '#/components/schemas/recordingTranscription'
+    callTranscriptionMetadataList:
+      type: array
+      items:
+        $ref: '#/components/schemas/callTranscriptionMetadata'
+    callTranscriptionMetadata:
+      type: object
+      properties:
+        transcriptionId:
+          type: string
+          description: The programmable voice API transcription ID.
+          example: t-3f758f24-c7a2fc78-7c91-401a-8b2e-e542f9c40d6b
+        transcriptionUrl:
+          type: string
+          description: >-
+            A URL that may be used to retrieve the transcription itself. This
+            points to the
+
+            [Get Call
+            Transcription](/apis/voice/#operation/getCallTranscription)
+            endpoint.
+          example: >-
+            https://voice.bandwidth.com/api/v2/accounts/9900000/calls/c-fef240ff-5cfc9091-8069-4863-a8c0-a4dcbbf1f1a4/transcriptions/t-3f758f24-c7a2fc78-7c91-401a-8b2e-e542f9c40d6b
+    callTranscription:
+      type: object
+      properties:
+        detectedLanguage:
+          type: string
+          enum:
+            - de-DE
+            - en-AU
+            - en-GB
+            - en-US
+            - es-US
+            - fr-CA
+            - fr-FR
+            - hi-IN
+            - it-IT
+            - ja-JP
+            - ko-KR
+            - pt-BR
+            - th-TH
+            - zh-CN
+          description: The detected language for this transcription.
+          example: en-US
+        track:
+          type: string
+          enum:
+            - inbound
+            - outbound
+          description: Which `track` this transcription is derived from.
+          example: inbound
+        text:
+          type: string
+          description: The transcription itself.
+          example: Hello World! This is an example.
+        confidence:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: >-
+            How confident the transcription engine was in transcribing the
+            associated audio (from `0` to `1`).
+          example: 0.9
+    recordingTranscriptionMetadata:
       nullable: true
       type: object
       description: If the recording was transcribed, metadata about the transcription
@@ -6745,7 +6870,7 @@ components:
         tag:
           $ref: '#/components/schemas/tag'
         transcription:
-          $ref: '#/components/schemas/transcription'
+          $ref: '#/components/schemas/recordingTranscription'
         transferCallerId:
           $ref: '#/components/schemas/transferCallerId'
         transferTo:
@@ -7121,7 +7246,7 @@ components:
             Always present. Indicates the last telephone number that the call
             was diverted from.
           example: '+15558884444'
-    transcription:
+    recordingTranscription:
       type: object
       properties:
         text:
@@ -7196,6 +7321,14 @@ components:
         type: string
       description: Programmable Voice API Conference Member ID
       example: c-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85
+    transcriptionId:
+      name: transcriptionId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Programmable Voice API Transcription ID.
+      example: t-15ac29a2-1331029c-2cb0-4a07-b215-b22865662d85
     to:
       name: to
       in: query
@@ -7412,12 +7545,24 @@ components:
           schema:
             type: string
             format: binary
-    getCallTranscriptionResponse:
-      description: Transcription found
+    getRecordingTranscriptionResponse:
+      description: Transcription found.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/transcriptionList'
+            $ref: '#/components/schemas/recordingTranscriptions'
+    getCallTranscriptionsResponse:
+      description: Transcription found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/callTranscriptionMetadataList'
+    getCallTranscriptionResponse:
+      description: Transcription found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/callTranscription'
     listConferencesResponse:
       description: Conferences retrieved successfully
       content:
@@ -7640,3 +7785,4 @@ tags:
   - name: Conferences
   - name: Recordings
   - name: Statistics
+  - name: Transcriptions
