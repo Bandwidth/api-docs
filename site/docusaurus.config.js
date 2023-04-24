@@ -1,3 +1,4 @@
+require("dotenv").config();
 const YAML = require("yaml");
 const fs = require("fs");
 const path = require("path");
@@ -132,9 +133,9 @@ module.exports = {
   },
   scripts: [
     {
-      src: 'https://zna4mkbqfujeowh1i-voxbone.siteintercept.qualtrics.com/SIE/?Q_ZID=ZN_a4MKBQfuJeoWH1I',
-      async: true
-    }
+      src: "https://zna4mkbqfujeowh1i-voxbone.siteintercept.qualtrics.com/SIE/?Q_ZID=ZN_a4MKBQfuJeoWH1I",
+      async: true,
+    },
   ],
   presets: [
     [
@@ -153,11 +154,11 @@ module.exports = {
           customCss: require.resolve("./src/css/main.scss"),
         },
         googleAnalytics: {
-          trackingID: "UA-62651840-1",
+          trackingID: process.env.GOOGLE_ANALYTICS_TRACKING_ID,
           anonymizeIP: false,
         },
         gtag: {
-          trackingID: "G-DGM69FKK2K",
+          trackingID: process.env.GTAG_TRACKING_ID,
           anonymizeIP: false,
         },
       },
