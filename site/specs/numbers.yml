@@ -1,4 +1,32 @@
 components:
+  callbacks:
+    tfVerificationStatus:
+      '{$request.body#/webhookUrl}':
+        post:
+          description: Toll free verification callbacks for the request.
+          operationId: tfvRequest
+          requestBody:
+            $ref: '#/components/requestBodies/verificationWebhookRequest'
+          responses:
+            '204':
+              description: No content
+            '400':
+              $ref: '#/components/responses/tfvBadRequestResponse'
+            '401':
+              $ref: '#/components/responses/tfvUnauthorizedResponse'
+            '403':
+              $ref: '#/components/responses/tfvForbiddenResponse'
+            '404':
+              $ref: '#/components/responses/tfvNotFoundResponse'
+            '405':
+              $ref: '#/components/responses/tfvNotAllowedResponse'
+            '429':
+              $ref: '#/components/responses/tfvTooManyRequestsResponse'
+            '500':
+              $ref: '#/components/responses/tfvServerErrorResponse'
+            '503':
+              $ref: '#/components/responses/tfvServiceUnavailableResponse'
+          summary: Toll free verification callback
   examples:
     Brand400Error:
       value: |-
@@ -662,7 +690,7 @@ components:
                 <OrderType>remove_imported_voice_tn_orders</OrderType>
                 <OrderStatus>COMPLETE</OrderStatus>
                 <OrderId>e694bd1c-3ee3-4f39-9b7e-279a75d2843d</OrderId>
-            </RemoveImportedVoiceTnOrderSummary>           
+            </RemoveImportedVoiceTnOrderSummary>
             <RemoveImportedVoiceTnOrderSummary>
                 <accountId>12346163</accountId>
                 <CountOfTNs>1</CountOfTNs>
@@ -673,7 +701,7 @@ components:
                 <OrderType>remove_imported_voice_tn_orders</OrderType>
                 <OrderStatus>COMPLETE</OrderStatus>
                 <OrderId>492b8ef2-a7e4-4390-943e-87525d8b068d</OrderId>
-            </RemoveImportedVoiceTnOrderSummary>            
+            </RemoveImportedVoiceTnOrderSummary>
             <RemoveImportedVoiceTnOrderSummary>
                 <accountId>12346163</accountId>
                 <CountOfTNs>1</CountOfTNs>
@@ -844,6 +872,14 @@ components:
       required: true
       schema:
         type: string
+    PhoneNumberPathParam:
+      description: Valid telephone number in E.164 format
+      example: '+19194445555'
+      in: path
+      name: phoneNumber
+      required: true
+      schema:
+        $ref: '#/components/schemas/phoneNumber'
     RoleIdPathParam:
       description: Role Id
       example: testRole
@@ -978,7 +1014,24 @@ components:
       required: true
       schema:
         type: string
-  requestBodies: {}
+  requestBodies:
+    verificationRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/verificationRequest'
+      description: Submit a request for verification of a toll-free phone number.
+      required: true
+    verificationWebhookRequest:
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/verificationWebhookRequest'
+              - $ref: '#/components/schemas/verificationUnverifiedWebhookRequest'
+              - $ref: '#/components/schemas/failureWebhookRequest'
+      description: Verification callback status of a toll-free phone number.
+      required: true
   responses:
     ImportVoiceTnOrdersResponse:
       content:
@@ -1112,6 +1165,108 @@ components:
       description: >-
         The short code number history details have been successfully retrieved
         and displayed.
+    tfvBadRequestResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Cannot process request.
+                type: cannot process request
+          schema:
+            $ref: '#/components/schemas/tfvError'
+      description: Bad request, can not process the request.
+    tfvForbiddenResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Client is not authorized for the action.
+                type: forbidden
+          schema:
+            $ref: '#/components/schemas/tfvError'
+      description: Client is not authorized for the action.
+    tfvNotAllowedResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Method is not allowed.
+                type: Method Not Allowed
+          schema:
+            $ref: '#/components/schemas/tfvError'
+      description: Method is not allowed.
+    tfvNotFoundResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Cannot find the requested resource.
+                type: Not Found
+          schema:
+            $ref: '#/components/schemas/tfvError'
+      description: Cannot find the requested resource.
+    tfvServerErrorResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Internal Server Error.
+                type: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/tfvError'
+      description: Internal Server Error.
+    tfvServiceUnavailableResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Service Unavailable Error.
+                type: Service Unavailable
+          schema:
+            $ref: '#/components/schemas/tfvError'
+      description: Service Unavailable Error.
+    tfvTooManyRequestsResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Throttling error. Too many requests.
+                type: Too Many Requests
+          schema:
+            $ref: '#/components/schemas/tfvError'
+      description: Throttling error. Too many requests.
+    tfvUnauthorizedResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Client is providing incorrect or invalid credentials.
+                type: unauthorized
+          schema:
+            $ref: '#/components/schemas/tfvError'
+      description: Client is providing incorrect or invalid credentials.
+    useCasesResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/useCases'
+      description: OK
+    verifyPostResponse:
+      description: Accepted
+    verifyStatusResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/tfvStatus'
+      description: OK
   schemas:
     A2pClass:
       properties:
@@ -12987,6 +13142,110 @@ components:
         SipSigPort:
           $ref: '#/components/schemas/SipSigPort'
       type: object
+    accountId:
+      description: User's account ID
+      example: '1234567'
+      type: string
+    address:
+      nullable: false
+      properties:
+        addr1:
+          maxLength: 500
+          minLength: 0
+          nullable: false
+          type: string
+        addr2:
+          maxLength: 500
+          minLength: 0
+          nullable: true
+          type: string
+        city:
+          maxLength: 500
+          minLength: 0
+          nullable: false
+          type: string
+        name:
+          maxLength: 500
+          minLength: 0
+          nullable: false
+          type: string
+        state:
+          example: NC
+          maxLength: 500
+          minLength: 2
+          nullable: false
+          type: string
+        url:
+          example: https://www.example.com/path/to/resource
+          maxLength: 500
+          minLength: 3
+          nullable: false
+          pattern: >-
+            ^$|(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,253}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#()?&//=]*)
+          type: string
+        zip:
+          example: '27606'
+          maxLength: 10
+          minLength: 5
+          nullable: false
+          pattern: ^\d{5}(-\d{4})?$
+          type: string
+      required:
+        - name
+        - addr1
+        - city
+        - state
+        - zip
+        - url
+      type: object
+    contact:
+      nullable: false
+      properties:
+        email:
+          $ref: '#/components/schemas/email'
+        firstName:
+          maxLength: 500
+          minLength: 0
+          nullable: false
+          type: string
+        lastName:
+          maxLength: 500
+          minLength: 0
+          nullable: false
+          type: string
+        phoneNumber:
+          $ref: '#/components/schemas/phoneNumber'
+      required:
+        - firstName
+        - lastName
+        - email
+        - phoneNumber
+      type: object
+    denialReasonDescription:
+      description: Denial reason explanation
+      example: Disallowed Content - Gambling
+      type: string
+    denialStatusCode:
+      description: Reason code for denial
+      example: 511
+      type: integer
+    email:
+      example: foo@bar.com
+      maxLength: 500
+      minLength: 3
+      nullable: false
+      pattern: >-
+        ^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$
+      type: string
+    failureWebhookRequest:
+      properties:
+        accountId:
+          $ref: '#/components/schemas/accountId'
+        isBadRequest:
+          $ref: '#/components/schemas/tfvCallbackIsBadRequest'
+        phoneNumber:
+          $ref: '#/components/schemas/phoneNumber'
+      type: object
     fileListResponse:
       properties:
         fileListResponse:
@@ -13091,6 +13350,28 @@ components:
           description: Bandwidth user ID.
           type: string
       type: object
+    optInWorkflow:
+      nullable: false
+      properties:
+        description:
+          maxLength: 500
+          minLength: 0
+          nullable: false
+          type: string
+        imageUrls:
+          items:
+            example: https://www.example.com/path/to/resource
+            maxLength: 500
+            minLength: 3
+            nullable: false
+            pattern: >-
+              ^$|(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,253}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#()?&//=]*)
+            type: string
+          type: array
+      required:
+        - description
+        - imageUrls
+      type: object
     orderMetadata:
       properties:
         BackOrderRequested:
@@ -13146,6 +13427,14 @@ components:
       type: object
       xml:
         name: Order
+    phoneNumber:
+      description: Toll-free telephone number in E.164 format
+      example: '+18005555555'
+      maxLength: 17
+      minLength: 2
+      nullable: false
+      pattern: ^\+\d{1,16}$
+      type: string
     shortCode:
       description: Short code registration.
       properties:
@@ -13711,6 +14000,137 @@ components:
       type: object
       xml:
         name: TelephoneNumberDetail
+    tfvCallbackIsBadRequest:
+      description: TRUE or FALSE
+      example: true
+      type: boolean
+    tfvCallbackStatus:
+      enum:
+        - VERIFIED
+        - UNVERIFIED
+        - PENDING
+      example: VERIFIED
+      type: string
+    tfvError:
+      description: A generic error object.
+      properties:
+        description:
+          example: cannot find requested resource
+          type: string
+        type:
+          example: not found
+          type: string
+      type: object
+    tfvStatus:
+      properties:
+        isVerified:
+          description: Telephone number in request is toll-free verified
+          example: true
+          type: boolean
+      type: object
+    tfvUnverifiedStatus:
+      default: UNVERIFIED
+      type: string
+    useCase:
+      example: 2FA
+      type: string
+    useCases:
+      example:
+        - 2FA
+        - App Notifications
+        - Appointments
+        - Auctions
+        - Auto Repair Services
+        - Bank Transfers
+        - Billing
+        - Booking Confirmations
+        - Business Updates
+        - COVID-19 Alerts
+      items:
+        type: string
+      type: array
+    verificationRequest:
+      properties:
+        additionalInformation:
+          maxLength: 500
+          minLength: 0
+          nullable: true
+          type: string
+        businessAddress:
+          $ref: '#/components/schemas/address'
+        businessContact:
+          $ref: '#/components/schemas/contact'
+        isvReseller:
+          maxLength: 500
+          minLength: 0
+          nullable: true
+          type: string
+        messageVolume:
+          example: 10000
+          type: integer
+        optInWorkflow:
+          $ref: '#/components/schemas/optInWorkflow'
+        phoneNumbers:
+          items:
+            $ref: '#/components/schemas/phoneNumber'
+          maxItems: 10
+          minItems: 1
+          type: array
+        productionMessageContent:
+          maxLength: 500
+          minLength: 0
+          nullable: false
+          type: string
+        useCase:
+          $ref: '#/components/schemas/useCase'
+        useCaseSummary:
+          maxLength: 500
+          minLength: 0
+          nullable: false
+          type: string
+        webhookUrl:
+          $ref: '#/components/schemas/webhookUrl'
+      required:
+        - businessAddress
+        - businessContact
+        - messageVolume
+        - phoneNumbers
+        - useCase
+        - useCaseSummary
+        - productionMessageContent
+        - optInWorkflow
+      type: object
+    verificationUnverifiedWebhookRequest:
+      properties:
+        accountId:
+          $ref: '#/components/schemas/accountId'
+        denialReasonDescription:
+          $ref: '#/components/schemas/denialReasonDescription'
+        denialStatusCode:
+          $ref: '#/components/schemas/denialStatusCode'
+        phoneNumber:
+          $ref: '#/components/schemas/phoneNumber'
+        status:
+          $ref: '#/components/schemas/tfvUnverifiedStatus'
+      type: object
+    verificationWebhookRequest:
+      properties:
+        accountId:
+          $ref: '#/components/schemas/accountId'
+        phoneNumber:
+          $ref: '#/components/schemas/phoneNumber'
+        status:
+          $ref: '#/components/schemas/tfvCallbackStatus'
+      type: object
+    webhookUrl:
+      description: webhook to listen to status updates from Bandwidth
+      example: https://www.example.com/path/to/resource
+      maxLength: 500
+      minLength: 3
+      nullable: true
+      pattern: >-
+        ^$|(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,253}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#()?&//=]*)
+      type: string
   securitySchemes:
     httpBasic:
       type: http
@@ -27546,6 +27966,37 @@ paths:
       summary: Fetch Telephone Number order tn quantity
       tags:
         - Orders
+  /accounts/{accountId}/phoneNumbers/{phoneNumber}/tollFreeVerification:
+    get:
+      description: >-
+        This endpoint will provide verification status for a phone number that
+        is provisioned to your account.
+      operationId: getVerificationStatus
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/PhoneNumberPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/verifyStatusResponse'
+        '400':
+          $ref: '#/components/responses/tfvBadRequestResponse'
+        '401':
+          $ref: '#/components/responses/tfvUnauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/tfvForbiddenResponse'
+        '404':
+          $ref: '#/components/responses/tfvNotFoundResponse'
+        '405':
+          $ref: '#/components/responses/tfvNotAllowedResponse'
+        '429':
+          $ref: '#/components/responses/tfvTooManyRequestsResponse'
+        '500':
+          $ref: '#/components/responses/tfvServerErrorResponse'
+        '503':
+          $ref: '#/components/responses/tfvServiceUnavailableResponse'
+      summary: Get the verification status of a toll-free phone number
+      tags:
+        - Toll-Free Verification
   /accounts/{accountId}/portins:
     get:
       description: >-
@@ -39373,6 +39824,37 @@ paths:
       summary: Patch toll-free porting validation
       tags:
         - Porting
+  /accounts/{accountId}/tollFreeVerification:
+    post:
+      callbacks:
+        tfVerificationStatus:
+          $ref: '#/components/callbacks/tfVerificationStatus'
+      description: Submit a request for verification of a toll-free phone number.
+      operationId: requestVerification
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+      requestBody:
+        $ref: '#/components/requestBodies/verificationRequest'
+      responses:
+        '202':
+          $ref: '#/components/responses/verifyPostResponse'
+        '400':
+          $ref: '#/components/responses/tfvBadRequestResponse'
+        '401':
+          $ref: '#/components/responses/tfvUnauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/tfvForbiddenResponse'
+        '405':
+          $ref: '#/components/responses/tfvNotAllowedResponse'
+        '429':
+          $ref: '#/components/responses/tfvTooManyRequestsResponse'
+        '500':
+          $ref: '#/components/responses/tfvServerErrorResponse'
+        '503':
+          $ref: '#/components/responses/tfvServiceUnavailableResponse'
+      summary: Submit a toll-free verification request
+      tags:
+        - Toll-Free Verification
   /accounts/{accountId}/totalSeats:
     get:
       description: Retrieves the total number of seats on account
@@ -42076,6 +42558,32 @@ paths:
       summary: Retrieve tn details
       tags:
         - Tns
+  /tollFreeVerification/useCases:
+    get:
+      description: Provides a list of valid toll-free use cases
+      operationId: listUseCases
+      responses:
+        '200':
+          $ref: '#/components/responses/useCasesResponse'
+        '400':
+          $ref: '#/components/responses/tfvBadRequestResponse'
+        '401':
+          $ref: '#/components/responses/tfvUnauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/tfvForbiddenResponse'
+        '404':
+          $ref: '#/components/responses/tfvNotFoundResponse'
+        '405':
+          $ref: '#/components/responses/tfvNotAllowedResponse'
+        '429':
+          $ref: '#/components/responses/tfvTooManyRequestsResponse'
+        '500':
+          $ref: '#/components/responses/tfvServerErrorResponse'
+        '503':
+          $ref: '#/components/responses/tfvServiceUnavailableResponse'
+      summary: List valid use cases for toll-free traffic
+      tags:
+        - Toll-Free Verification
 security:
   - httpBasic: []
 servers:
@@ -42171,3 +42679,5 @@ tags:
   - name: Tns
   - name: Admin Data
   - name: Tn Vendor Assignment
+  - description: Toll-Free Verification API guide
+    name: Toll-Free Verification
