@@ -1294,7 +1294,9 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/tfvStatus'
+            oneOf:
+              - $ref: '#/components/schemas/tfvWorkflowStatus'
+              - $ref: '#/components/schemas/tfvWorkflowStatusFromCache'
       description: OK
   schemas:
     A2pClass:
@@ -14162,15 +14164,55 @@ components:
           type: string
       type: object
     tfvStatus:
-      properties:
-        isVerified:
-          description: Telephone number in request is toll-free verified
-          example: true
-          type: boolean
-      type: object
+      enum:
+        - VERIFIED
+        - UNVERIFIED
+        - PENDING
+        - PARTIALLY_VERIFIED
+        - INVALID_STATUS
+        - Verification - Requested
+        - Verification Requested
+        - Waiting For Customer
+        - Waiting for Support
+        - In Progress
+        - Resolved - Verified
+        - Resolved - Not Verified
+      example: VERIFIED
+      type: string
     tfvUnverifiedStatus:
       default: UNVERIFIED
       type: string
+    tfvWorkflowStatus:
+      properties:
+        phoneNumber:
+          $ref: '#/components/schemas/tfPhoneNumber'
+        status:
+          $ref: '#/components/schemas/tfvStatus'
+      type: object
+    tfvWorkflowStatusFromCache:
+      properties:
+        declineReasonDescription:
+          example: Some decline reason here
+          type: string
+        phoneNumber:
+          $ref: '#/components/schemas/tfPhoneNumber'
+        resubmitAllowed:
+          example: true
+          type: boolean
+        status:
+          $ref: '#/components/schemas/tfvStatus'
+        ticketNumber:
+          example: GWF-1234567
+          type: string
+        verificationRequestId:
+          example: abc-d8569gh
+          type: string
+        webhookUrl:
+          example: https://your_url.com/webhookService
+          pattern: >-
+            ^$|(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,253}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#()?&//=]*)
+          type: string
+      type: object
     useCase:
       example: 2FA
       maxLength: 500
