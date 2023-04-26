@@ -949,6 +949,14 @@ components:
       required: true
       schema:
         type: string
+    WebhookSubscriptionIdPathParam:
+      description: Webhook subscription ID
+      example: 7bt57JcsVYJrN9K1OcV1Nu
+      in: path
+      name: id
+      required: true
+      schema:
+        type: string
     shortCodeCountryPathParam:
       description: The short code number country.
       example: USA
@@ -1034,6 +1042,39 @@ components:
               - $ref: '#/components/schemas/failureWebhookRequest'
       description: Verification callback status of a toll-free phone number.
       required: true
+    webhookSubscriptionRequest:
+      properties:
+        accountId:
+          type: string
+        basicAuthentication:
+          properties:
+            password:
+              maxLength: 200
+              type: string
+            username:
+              maxLength: 100
+              type: string
+          required:
+            - username
+            - password
+          type: object
+        callbackUrl:
+          $ref: '#/components/schemas/webhookUrl'
+        createdDate:
+          format: date-time
+          type: string
+        id:
+          type: string
+        modifiedDate:
+          format: date-time
+          type: string
+        type:
+          enum:
+            - TOLLFREE_VERIFICATION_STATUS
+          type: string
+      required:
+        - callbackUrl
+      type: object
     zipWhipTfvWebhookRequest:
       content:
         application/json:
@@ -1297,6 +1338,26 @@ components:
             oneOf:
               - $ref: '#/components/schemas/tfvWorkflowStatus'
               - $ref: '#/components/schemas/tfvWorkflowStatusFromCache'
+      description: OK
+    webhookSubscriptionCreated:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/requestBodies/webhookSubscriptionRequest'
+      description: Created
+    webhookSubscriptionDeleted:
+      description: Deleted
+    webhookSubscriptionUpdated:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/requestBodies/webhookSubscriptionRequest'
+      description: OK
+    webhookSubscriptionsList:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/webhookSubscriptionsApiPage'
       description: OK
   schemas:
     A2pClass:
@@ -14308,8 +14369,24 @@ components:
         status:
           $ref: '#/components/schemas/tfvCallbackStatus'
       type: object
+    webhookSubscriptionsApiPage:
+      description: >-
+        Object that returns the full list of webhook subscriptions for an
+        account.
+      properties:
+        data:
+          items:
+            $ref: '#/components/requestBodies/webhookSubscriptionRequest'
+          type: array
+        type: object
     webhookUrl:
-      description: webhook to listen to status updates from Bandwidth
+      description: >-
+        Callback URL to receive status updates from Bandwidth. When this value
+        is registered with a validation request, it will be used for that
+        request (only) and it cannot be updated after submission. To register a
+        callback for all status updates, which can be updated through the API,
+        register a webhook subscription (which can also include basic
+        authentication credentials).
       example: https://www.example.com/path/to/resource
       maxLength: 2000
       minLength: 0
@@ -40039,6 +40116,127 @@ paths:
         '503':
           $ref: '#/components/responses/tfvServiceUnavailableResponse'
       summary: Submit a toll-free verification request
+      tags:
+        - Toll-Free Verification
+  /accounts/{accountId}/tollFreeVerification/subscriptions/{id}:
+    delete:
+      description: Delete a webhook subscription by ID.
+      operationId: createWebhookSubscription
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/WebhookSubscriptionIdPathParam'
+      responses:
+        '204':
+          $ref: '#/components/responses/webhookSubscriptionDeleted'
+        '400':
+          $ref: '#/components/responses/tfvBadRequestResponse'
+        '401':
+          $ref: '#/components/responses/tfvUnauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/tfvForbiddenResponse'
+        '404':
+          $ref: '#/components/responses/tfvNotFoundResponse'
+        '405':
+          $ref: '#/components/responses/tfvNotAllowedResponse'
+        '429':
+          $ref: '#/components/responses/tfvTooManyRequestsResponse'
+        '500':
+          $ref: '#/components/responses/tfvServerErrorResponse'
+        '503':
+          $ref: '#/components/responses/tfvServiceUnavailableResponse'
+      summary: Delete a webhook subscription
+      tags:
+        - Toll-Free Verification
+    put:
+      description: Update an existing webhook subscription.
+      operationId: updateWebhookSubscription
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/WebhookSubscriptionIdPathParam'
+      requestBody:
+        $ref: '#/components/requestBodies/webhookSubscriptionRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/webhookSubscriptionUpdated'
+        '400':
+          $ref: '#/components/responses/tfvBadRequestResponse'
+        '401':
+          $ref: '#/components/responses/tfvUnauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/tfvForbiddenResponse'
+        '404':
+          $ref: '#/components/responses/tfvNotFoundResponse'
+        '405':
+          $ref: '#/components/responses/tfvNotAllowedResponse'
+        '429':
+          $ref: '#/components/responses/tfvTooManyRequestsResponse'
+        '500':
+          $ref: '#/components/responses/tfvServerErrorResponse'
+        '503':
+          $ref: '#/components/responses/tfvServiceUnavailableResponse'
+      summary: Update an existing webhook subscription
+      tags:
+        - Toll-Free Verification
+  /accounts/{accountId}/tollFreeVerification/webhooks/subscriptions:
+    get:
+      description: >-
+        Provides a list of webhook subscriptions registered for status updates
+        of toll-free verifications that are submitted under this account.
+      operationId: listWebhookSubscriptions
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/webhookSubscriptionsList'
+        '400':
+          $ref: '#/components/responses/tfvPostBadRequestResponse'
+        '401':
+          $ref: '#/components/responses/tfvUnauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/tfvForbiddenResponse'
+        '405':
+          $ref: '#/components/responses/tfvNotAllowedResponse'
+        '429':
+          $ref: '#/components/responses/tfvTooManyRequestsResponse'
+        '500':
+          $ref: '#/components/responses/tfvServerErrorResponse'
+        '503':
+          $ref: '#/components/responses/tfvServiceUnavailableResponse'
+      summary: List all webhook subscriptions registered for this account
+      tags:
+        - Toll-Free Verification
+    post:
+      description: >-
+        Create a new webhook subscription (this webhook will be called for every
+        update on every submission; is is also possible to register a one-time
+        callback URL as part of a submission itself). The returned subscription
+        object will contain an ID that can be used to modify or delete the
+        subscription at a later time.
+      operationId: createWebhookSubscription
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+      requestBody:
+        $ref: '#/components/requestBodies/webhookSubscriptionRequest'
+      responses:
+        '201':
+          $ref: '#/components/responses/webhookSubscriptionCreated'
+        '400':
+          $ref: '#/components/responses/tfvBadRequestResponse'
+        '401':
+          $ref: '#/components/responses/tfvUnauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/tfvForbiddenResponse'
+        '404':
+          $ref: '#/components/responses/tfvNotFoundResponse'
+        '405':
+          $ref: '#/components/responses/tfvNotAllowedResponse'
+        '429':
+          $ref: '#/components/responses/tfvTooManyRequestsResponse'
+        '500':
+          $ref: '#/components/responses/tfvServerErrorResponse'
+        '503':
+          $ref: '#/components/responses/tfvServiceUnavailableResponse'
+      summary: Create a new webhook subscription
       tags:
         - Toll-Free Verification
   /accounts/{accountId}/totalSeats:
