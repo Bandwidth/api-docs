@@ -38,7 +38,6 @@ const identitySpec = fs.readFileSync(
 );
 const identityspecLink = "";
 const insightsSpec = fs.readFileSync("./specs/insights.yml", "utf-8");
-const pipedream = "https://eowxoldwz4d7syt.m.pipedream.net";
 
 module.exports = {
   title: "Bandwidth API Docs",
@@ -197,8 +196,6 @@ module.exports = {
     blogPosts: blogPosts,
 
     ltsVersions: ltsVersions,
-
-    pipedream: pipedream,
 
     // CSS Colors
     bwBlue: "#079CEE",
