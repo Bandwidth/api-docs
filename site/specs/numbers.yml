@@ -13754,10 +13754,6 @@ components:
     shortCodeData:
       description: Short code details representation.
       properties:
-        accountId:
-          description: Account ID.
-          example: '123123'
-          type: string
         carrierStatuses:
           description: >-
             List of objects each providing the registration status for an
@@ -35051,7 +35047,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/OrderTelephoneNumbersResponse'
           description: A successful result that contains the response data
-      summary: Retrieve Order TNs of Site (US&C)
+      summary: Retrieve Order TNs of Site
       tags:
         - Tns
   /accounts/{accountId}/sites/{siteId}/portins:
@@ -37538,7 +37534,7 @@ paths:
         - Tns
   /accounts/{accountId}/sites/{siteId}/sippeers/{sippeerId}/tns/{tn}:
     get:
-      description: Retrieve information about telephone number on Sip Peer
+      description: Retrieve information about telephone number on Sip Peer.
       operationId: ReadSipPeerTn
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
@@ -37587,7 +37583,9 @@ paths:
       tags:
         - Tns
     put:
-      description: Update settings for a TN allocated to their account
+      description: >-
+        Update settings for a TN allocated to their account.  The TnAttributes
+        element is configurable only for NANPA numbers.
       operationId: UpdateSipPeerTnSettings
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
@@ -37720,6 +37718,8 @@ paths:
               enum:
                 - CNAM
                 - LIDB
+                - DLDA
+                - DA
               type: string
             type: array
       responses:
@@ -37732,9 +37732,11 @@ paths:
                     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                     <SipPeerTelephoneNumbersCountResponse>
                        <SipPeerTelephoneNumbersCount>
-                          <SipPeerTelephoneNumbersCount>4</SipPeerTelephoneNumbersCount>
-                          <CnamCount>4</CnamCount>
-                          <LidbCount>0</LidbCount>
+                          <SipPeerTelephoneNumbersCount>10004</SipPeerTelephoneNumbersCount>
+                          <CnamTelephoneNumbersCount>4</CnamTelephoneNumbersCount>
+                          <LidbTelephoneNumbersCount>0</LidbTelephoneNumbersCount>
+                          <DldaTelephoneNumbersCount>9999</DldaTelephoneNumbersCount>
+                          <DaTelephoneNumbersCount>0</DaTelephoneNumbersCount>
                        </SipPeerTelephoneNumbersCount>
                     </SipPeerTelephoneNumbersCountResponse>
               schema:
@@ -41848,9 +41850,9 @@ paths:
       description: >-
         Retrieve information about one or more Telephone Numbers (TNs), where
         the TNs are chosen based on the search parameters provided in the API
-        Call.<br><br> Only US and Canada numbers are returned for these query
-        parameters- city, host, lata, npa, npaNxx, npaNxxX, rateCenter, state,
-        tier.
+        Call. Only NANPA phone numbers are returned for these query parameters-
+        city, tier, lata, state, ratecenter, npaNxx, npaNxxx,
+        service=E911|Hosted_E911.
       operationId: ListTnsByGet
       parameters:
         - description: >-
@@ -41880,17 +41882,6 @@ paths:
           required: false
           schema:
             type: integer
-        - description: >-
-            The geographic city most likely to serve the Telephone Number. City
-            and other geographic data is determined statistically, and is not as
-            reliable as Rate Center information for pinpointing the service
-            location of a TN.
-          example: CARY
-          in: query
-          name: city
-          required: false
-          schema:
-            type: string
         - description: A E.164 TN.
           example: '+19199918388'
           in: query
@@ -41907,62 +41898,59 @@ paths:
           required: false
           schema:
             type: string
-        - description: >-
-            The LATA (Local Access Transport Area) that the TN is served from,
-            typically 3 digits (5 in FLA).
-          example: 423
-          in: query
-          name: lata
-          required: false
-          schema:
-            type: integer
-        - description: The first 3 digits of a 10 Digit NA Telephone Number, the Area Code.
-          example: '919'
-          in: query
-          name: npa
-          required: false
-          schema:
-            type: string
-        - description: The first 6 digits of a 10 Digit NA Telephone Number.
-          example: '919991'
-          in: query
-          name: npaNxx
-          required: false
-          schema:
-            type: string
-        - description: The first 7 digits of a 10 Digit NA Telephone Number.
-          example: '9199918'
-          in: query
-          name: npaNxxX
-          required: false
-          schema:
-            type: string
         - description: A service type value to filter the TNs returned in the payload.
-          example: E911
+          example: Voice
           in: query
           name: service
           required: false
           schema:
             enum:
-              - E911
               - Voice
+              - Hosted_Voice
+              - Messaging
+              - Hosted_Messaging
+              - E911
               - Hosted_E911
             type: string
         - description: >-
-            The Rate Center designation that the number is served from. If not
-            combined with a State search the results will span states.
-          example: RALEIGH
+            Country code of the country in its ISO 3166-1 alpha-3 format. Note
+            that only one country code (i.e. USA, CAN, GBR etc.) is allowed when
+            configured by the user.The system defaults country code to search
+            for inservice numbers in all countries.
+          example: GBR
           in: query
-          name: rateCenter
+          name: countryCodeA3
           required: false
           schema:
             type: string
         - description: >-
-            A 2 character State or Province designation - TX for Texas for
-            example.
-          example: TX
+            The phone number type - all returned TNs will be of the entered
+            phone number type and country code. Typically phone number type can
+            be one of GEOGRAPHIC, NATIONAL, MOBILE, TOLL_FREE, SHARED_COST,
+            SPECIAL. The system defaults to return phone numbers of all types
+            when the query parameter is not passed. The countryCodeA3 is a
+            required parameter with phone number type.
+          example: NATIONAL
           in: query
-          name: state
+          name: phoneNumberType
+          required: false
+          schema:
+            type: string
+        - description: >-
+            An Area Code search filter - all returned TNs will be in the entered
+            Area and Country Code. Area code is a 3 digit value for NANPA
+            countries, and a 1 to 6 digit value for other countries. The
+            countryCodeA3 is a required parameter with area code.
+          example: 919
+          in: query
+          name: areacode
+          required: false
+          schema:
+            type: integer
+        - description: The name of the city.
+          example: RALEIGH
+          in: query
+          name: city
           required: false
           schema:
             type: string
@@ -41973,6 +41961,57 @@ paths:
           example: 5
           in: query
           name: tier
+          required: false
+          schema:
+            type: integer
+        - description: >-
+            A Rate Center search filter - all returned TNs will be in the
+            entered Rate Center.  Typically this is a 3 or 5 digit value.
+          example: 435
+          in: query
+          name: lata
+          required: false
+          schema:
+            type: integer
+        - description: >-
+            A State search filter - all returned TNs will be in the entered
+            State.  This is a 2-character State or Province abbreviation.
+          example: TX
+          in: query
+          name: state
+          required: false
+          schema:
+            type: string
+        - description: >-
+            A Rate Center search filter - all returned TNs will be in the
+            entered Rate Center.  This `ratecenter` must be combined with a
+            `state` in the query.  If State is not included in the query then
+            the query will fail.
+          example: PLANO
+          in: query
+          name: ratecenter
+          required: false
+          schema:
+            type: string
+        - description: >-
+            <p>The 6-digit prefix associated with the TN.</p><ul><li>Allowed
+            number ranges for NPA are [2-9] for the first digit and [0-9] for
+            both the second and third digits.</li><li>Allowed number ranges for
+            NXX are [2-9] for the first digit and [0-9] for both the second and
+            third digits.</li></ul>
+          in: query
+          name: npaNxx
+          required: false
+          schema:
+            type: integer
+        - description: >-
+            <p>The 7-digit prefix associated with the TN.</p><ul><li>Allowed
+            number ranges for NPA are [2-9] for the first digit and [0-9] for
+            both the second and third digits.</li><li>Allowed number ranges for
+            NXXX are [2-9] for the first digit and [0-9] the rest of the (X)
+            digits.</li></ul>
+          in: query
+          name: npaNxxx
           required: false
           schema:
             type: integer
@@ -42067,10 +42106,8 @@ paths:
                 $ref: '#/components/schemas/TelephoneNumbersHistoryResponse'
           description: >-
             The descriptive payload for the TNs query provides information about
-            the TN(s) that were found in the Query. Information about the City,
-            State, LATA, Rate Center, Tier, Vendor, Status, Owning Account and
-            Last Modified Date is provided for each TN in the payload. Links to
-            assist in pagination are also provided.
+            the TN(s) that were found in the Query. Links to assist in
+            pagination are also provided.
         '400':
           content:
             application/xml:
@@ -42096,9 +42133,27 @@ paths:
     post:
       description: >-
         Retrieve information about one or more Telephone Numbers (TNs), where
-        the TNs are specified in POST body.
+        the TNs are specified in POST body. CountryCodeA3, PhoneNumberType,
+        City, Tier, VendorId, VendorName are returned for all TNs. LATA,
+        RateCenter, State, and E911 are returned only for NANPA TNs, These are
+        not applicable for non-NANPA tns. Only NANPA phone numbers are returned
+        for these query parameters- service=E911, service=Hosted_E911.
       operationId: ListTnsByPost
-      parameters: []
+      parameters:
+        - description: A service type value to filter the TNs returned in the payload.
+          example: Voice
+          in: query
+          name: service
+          required: false
+          schema:
+            enum:
+              - Voice
+              - Hosted_Voice
+              - Messaging
+              - Hosted_Messaging
+              - E911
+              - Hosted_E911
+            type: string
       requestBody:
         content:
           application/xml:
@@ -42221,13 +42276,10 @@ paths:
                 $ref: '#/components/schemas/TelephoneNumbersHistoryResponse'
           description: >-
             The descriptive payload for the TNs query provides information about
-            the TN(s) that were found in the Query. Information about the City,
-            State, LATA, Rate Center, Tier, Vendor, Status, Owning Account and
-            Last Modified Date is provided for each TN in the payload. The
-            Payload also can contain <ErrorList> where invalid or non-existing 
-            on account(s) TNs are specified. Aging numbers will be displayed if
-            user has access to the previous accountId. Pagination doesn't work
-            in this case.
+            the TN(s) that were found in the Query. The Payload also can contain
+            <ErrorList> where invalid or non-existing  on account(s) TNs are
+            specified. Aging numbers will be displayed if user has access to the
+            previous accountId. Pagination doesn't work in this case.
         '400':
           content:
             application/xml:
@@ -42291,12 +42343,14 @@ paths:
             is "protected" only the account owning the TN can order it,
             otherwise it should be generally available.</li><li>Aging: The TN is
             disconnected by the customer owning the TN. At this time, the TN
-            will go into aging for some period of time (typically 30 days) and
-            the customer owning the TN can order it again. If the allotted time
-            has passed and the TN is not ordered by the owning customer, the TN
-            will go back to Available.</li><li>PortInPendingFoc: TN is in FOC
-            and waiting for the FOC date.</li><li>Reserved: A TN is reserved by
-            a customer to order at a later time.</li></ul>
+            will go into aging for some period of time and the customer owning
+            the TN can order it again. If the allotted time has passed and the
+            TN is not ordered by the owning customer, the TN will go back to
+            Available.</li><li>PortInPendingFoc: TN is in process of porting and
+            waiting for the porting completion date. The term FOC is short for
+            Firm Order Commitment and applies to NANPA number
+            ports.</li><li>Reserved: A TN is reserved by a customer to order at
+            a later time.</li></ul>
       summary: Retrieve tn
       tags:
         - Tns
@@ -42355,7 +42409,7 @@ paths:
           description: >-
             Bad Request - failed to get available NnRoutes information for the
             current phone number.
-      summary: Retrieve routes for that tn (US&C)
+      summary: Retrieve routes for that tn (NANPA)
       tags:
         - Tns
   /tns/{tn}/e911:
@@ -42396,7 +42450,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TnE911AddressResponse'
           description: The e911 address have been successfully retrieved and displayed
-      summary: Retrieve e911 for that tn (US&C)
+      summary: Retrieve e911 for that tn (NANPA)
       tags:
         - Tns
   /tns/{tn}/lata:
@@ -42427,7 +42481,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TelephoneNumberLataResponse'
           description: The lata have been successfully retrieved.
-      summary: Retrieve lata for that tn (US&C)
+      summary: Retrieve lata for that tn (NANPA)
       tags:
         - Tns
   /tns/{tn}/lca:
@@ -42476,7 +42530,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/NpaNxxRcLcaSearchResult'
           description: The LCAs have been successfully retrieved and displayed.
-      summary: Retrieve LCA for that tn (US&C)
+      summary: Retrieve LCA for that tn (NANPA)
       tags:
         - Tns
   /tns/{tn}/ratecenter:
@@ -42509,7 +42563,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TelephoneNumberRateCenterResponse'
           description: The rate centers have been successfully retrieved and displayed.
-      summary: Retrieve rate center for that tn (US&C)
+      summary: Retrieve rate center for that tn (NANPA)
       tags:
         - Tns
   /tns/{tn}/sippeers:
@@ -42575,8 +42629,10 @@ paths:
   /tns/{tn}/tndetails:
     get:
       description: >-
-        Retrieves detailed information about the phone number. TnAttributes -
-        Does this telephone number is protected or not.
+        Retrieves detailed information about the phone number. CountryCodeA3,
+        PhoneNumberType, City, Tier, VendorId, VendorName are returned for all
+        TNs. LATA, RateCenter, State, and E911 are returned only for NANPA TNs,
+        These are not applicable for non-NANPA tns.
       operationId: RetrieveTnDetails
       parameters:
         - description: ''
@@ -42924,8 +42980,7 @@ paths:
                 $ref: '#/components/schemas/TelephoneNumberDetailHistoryResponse'
           description: >-
             OK - the detailed information about the phone number has been
-            successfully retrieved and displayed.<br>TnAttributes is not
-            required in the response.
+            successfully retrieved and displayed.
         '400':
           content:
             application/xml:
