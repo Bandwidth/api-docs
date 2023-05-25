@@ -11620,7 +11620,7 @@ components:
     TelephoneNumber:
       properties:
         TelephoneNumber:
-          description: Simple Telephone Number.
+          description: E.164 Telephone Number.
           type: string
       type: object
     TelephoneNumberAvailableNnRoutes:
@@ -24916,18 +24916,24 @@ paths:
     get:
       description: >-
         Retrieves a list of in-service phone numbers associated with the account
-        ID
+        ID<br><br> Only inservice NANPA phone numbers are returned for these
+        query parameters- city, tier, lata, state, ratecenter, npaNxx, npaNxxx.
       operationId: ReadInserviceTns
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: The `page` to fetch in a paginated collection
-          example: 1
+        - description: >-
+            An ID of the first element in a page.  This value will indicate the
+            first value, not the page number, of the initial entry in the page
+            being requested.<br> For this enpoint the id value represents the
+            first in-service number displayed on the page. The initial page is
+            tagged with the ID `1` as a convention.
+          example: '+14352154855'
           in: query
           name: page
           required: false
           schema:
             default: 1
-            type: integer
+            type: string
         - description: The number of TNs to retrieve
           example: 300
           in: query
@@ -24937,20 +24943,54 @@ paths:
             default: 300
             type: integer
         - description: >-
+            Country code of the country in its ISO 3166-1 alpha-3 format. Note
+            that only one country code (i.e. USA, CAN, GBR etc.) is allowed when
+            configured by the user.The system defaults country code to search
+            for inservice numbers in all countries.
+          example: GBR
+          in: query
+          name: countryCodeA3
+          required: false
+          schema:
+            type: string
+        - description: >-
+            The phone number type - all returned TNs will be of the entered
+            phone number type and country code. Typically phone number type can
+            be one of GEOGRAPHIC, NATIONAL, MOBILE, TOLL_FREE, SHARED_COST,
+            SPECIAL. The system defaults to return phone numbers of all types
+            when the query parameter is not passed. The countryCodeA3 is a
+            required parameter with phone number type.
+          example: NATIONAL
+          in: query
+          name: phoneNumberType
+          required: false
+          schema:
+            type: string
+        - description: >-
             An Area Code search filter - all returned TNs will be in the entered
-            Area Code
+            Area and Country Code. Area code is a 3 digit value for NANPA
+            countries, and a 1 to 6 digit value for other countries. The
+            countryCodeA3 is a required parameter with area code.
           example: 919
           in: query
           name: areacode
           required: false
           schema:
             type: integer
-        - description: >-
-            An NPA NXX search filter - all returned TNs will be in the entered
-            NPA NXX dial plan
-          example: 919859
+        - description: The name of the city.
+          example: RALEIGH
           in: query
-          name: npanxx
+          name: city
+          required: false
+          schema:
+            type: string
+        - description: >-
+            A service tier indicating the the vendor class that the TN is
+            associated with.  Tier indicates whether the TN is on-net, domestic
+            offnet, Canadian, etc.
+          example: 5
+          in: query
+          name: tier
           required: false
           schema:
             type: integer
@@ -24984,6 +25024,28 @@ paths:
           schema:
             type: string
         - description: >-
+            <p>The 6-digit prefix associated with the TN.</p><ul><li>Allowed
+            number ranges for NPA are [2-9] for the first digit and [0-9] for
+            both the second and third digits.</li><li>Allowed number ranges for
+            NXX are [2-9] for the first digit and [0-9] for both the second and
+            third digits.</li></ul>
+          in: query
+          name: npaNxx
+          required: false
+          schema:
+            type: integer
+        - description: >-
+            <p>The 7-digit prefix associated with the TN.</p><ul><li>Allowed
+            number ranges for NPA are [2-9] for the first digit and [0-9] for
+            both the second and third digits.</li><li>Allowed number ranges for
+            NXXX are [2-9] for the first digit and [0-9] the rest of the (X)
+            digits.</li></ul>
+          in: query
+          name: npaNxxx
+          required: false
+          schema:
+            type: integer
+        - description: >-
             The starting date of a date range that will filter numbers based on
             activation or other change date.
           example: yy-mm-dd
@@ -25014,25 +25076,26 @@ paths:
                        <TotalCount>59</TotalCount>
                        <Links>
                           <first>( a link goes here )</first>
+                          <next>( a link goes here )</next>
                        </Links>
                        <TelephoneNumbers>
                           <Count>59</Count>
-                          <TelephoneNumber>8043024183</TelephoneNumber>
-                          <TelephoneNumber>8042121778</TelephoneNumber>
-                          <TelephoneNumber>8042146066</TelephoneNumber>
-                          <TelephoneNumber>8043814903</TelephoneNumber>
-                          <TelephoneNumber>8043814905</TelephoneNumber>
-                          <TelephoneNumber>8043814864</TelephoneNumber>
-                          <TelephoneNumber>8043326094</TelephoneNumber>
-                          <TelephoneNumber>8042121771</TelephoneNumber>
-                          <TelephoneNumber>8043024182</TelephoneNumber>
+                          <TelephoneNumber>+18043024183</TelephoneNumber>
+                          <TelephoneNumber>+18042121778</TelephoneNumber>
+                          <TelephoneNumber>+18042146066</TelephoneNumber>
+                          <TelephoneNumber>+18043814903</TelephoneNumber>
+                          <TelephoneNumber>+18043814905</TelephoneNumber>
+                          <TelephoneNumber>+18043814864</TelephoneNumber>
+                          <TelephoneNumber>+18043326094</TelephoneNumber>
+                          <TelephoneNumber>+18042121771</TelephoneNumber>
+                          <TelephoneNumber>+18043024182</TelephoneNumber>
                           <!-- SNIP -->
-                          <TelephoneNumber>8043814900</TelephoneNumber>
-                          <TelephoneNumber>8047672642</TelephoneNumber>
-                          <TelephoneNumber>8043024368</TelephoneNumber>
-                          <TelephoneNumber>8042147950</TelephoneNumber>
-                          <TelephoneNumber>8043169931</TelephoneNumber>
-                          <TelephoneNumber>8043325302</TelephoneNumber>
+                          <TelephoneNumber>+18043814900</TelephoneNumber>
+                          <TelephoneNumber>+18047672642</TelephoneNumber>
+                          <TelephoneNumber>+18043024368</TelephoneNumber>
+                          <TelephoneNumber>+18042147950</TelephoneNumber>
+                          <TelephoneNumber>+18043169931</TelephoneNumber>
+                          <TelephoneNumber>+18043325302</TelephoneNumber>
                        </TelephoneNumbers>
                     </TNs>
               schema:
@@ -25082,7 +25145,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
         - description: The telephone number to check
-          example: '8043024183'
+          example: '+18043024183'
           in: path
           name: tn
           required: true
@@ -34707,7 +34770,8 @@ paths:
     get:
       description: >-
         Retrieves all the telephone numbers currently in-service for the given
-        Site
+        Site<br><br> Only inservice NANPA phone numbers are returned for these
+        query parameters- city, tier, lata, state, ratecenter, npaNxx, npaNxxx.
       operationId: RetrieveSiteInserviceNumbers
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
@@ -34719,9 +34783,12 @@ paths:
           schema:
             type: string
         - description: >-
-            The first in-service number displayed on the page. "1" is used as a
-            convention for the first number on the list.
-          example: 5555551845
+            An ID of the first element in a page.  This value will indicate the
+            first value, not the page number, of the initial entry in the page
+            being requested.<br> For this enpoint the id value represents the
+            first in-service number displayed on the page. The initial page is
+            tagged with the ID `1` as a convention.
+          example: '+15555551845'
           in: query
           name: page
           required: false
@@ -34736,62 +34803,109 @@ paths:
           schema:
             default: 300
             type: integer
-        - description: A maximum five-digit number
-          example: 371
+        - description: >-
+            Country code of the country in its ISO 3166-1 alpha-3 format. Note
+            that only one country code (i.e. USA, CAN, GBR etc.) is allowed when
+            configured by the user.The system defaults country code to search
+            for inservice numbers in all countries.
+          example: GBR
           in: query
-          name: lata
-          required: false
-          schema:
-            type: integer
-        - description: ''
-          example: 1
-          in: query
-          name: tier
-          required: false
-          schema:
-            type: integer
-        - description: ''
-          example: ST GEORGE
-          in: query
-          name: rateCenter
+          name: countryCodeA3
           required: false
           schema:
             type: string
-        - description: ''
-          example: Raleigh
+        - description: >-
+            The phone number type - all returned TNs will be of the entered
+            phone number type and country code. Typically phone number type can
+            be one of GEOGRAPHIC, NATIONAL, MOBILE, TOLL_FREE, SHARED_COST,
+            SPECIAL. The system defaults to return phone numbers of all types
+            when the query parameter is not passed. The countryCodeA3 is a
+            required parameter with phone number type.
+          example: NATIONAL
+          in: query
+          name: phoneNumberType
+          required: false
+          schema:
+            type: string
+        - description: >-
+            An Area Code search filter - all returned TNs will be in the entered
+            Area and Country Code. Area code is a 3 digit value for NANPA
+            countries, and a 1 to 6 digit value for other countries. The
+            countryCodeA3 is a required parameter with area code.
+          example: 919
+          in: query
+          name: areacode
+          required: false
+          schema:
+            type: integer
+        - description: The name of the city.
+          example: RALEIGH
           in: query
           name: city
           required: false
           schema:
             type: string
-        - description: A two-letter representation of the State
-          example: NC
+        - description: >-
+            A service tier indicating the the vendor class that the TN is
+            associated with.  Tier indicates whether the TN is on-net, domestic
+            offnet, Canadian, etc.
+          example: 5
+          in: query
+          name: tier
+          required: false
+          schema:
+            type: integer
+        - description: >-
+            A Rate Center search filter - all returned TNs will be in the
+            entered Rate Center.  Typically this is a 3 or 5 digit value.
+          example: 435
+          in: query
+          name: lata
+          required: false
+          schema:
+            type: integer
+        - description: >-
+            A State search filter - all returned TNs will be in the entered
+            State.  This is a 2-character State or Province abbreviation.
+          example: TX
           in: query
           name: state
           required: false
           schema:
             type: string
-        - description: ''
-          example: '435'
+        - description: >-
+            A Rate Center search filter - all returned TNs will be in the
+            entered Rate Center.  This `ratecenter` must be combined with a
+            `state` in the query.  If State is not included in the query then
+            the query will fail.
+          example: PLANO
           in: query
-          name: areaCode
+          name: ratecenter
           required: false
           schema:
             type: string
-        - description: ''
-          example: '435215'
+        - description: >-
+            <p>The 6-digit prefix associated with the TN.</p><ul><li>Allowed
+            number ranges for NPA are [2-9] for the first digit and [0-9] for
+            both the second and third digits.</li><li>Allowed number ranges for
+            NXX are [2-9] for the first digit and [0-9] for both the second and
+            third digits.</li></ul>
           in: query
           name: npaNxx
           required: false
           schema:
-            type: string
-        - description: ''
-          example: '4352154'
+            type: integer
+        - description: >-
+            <p>The 7-digit prefix associated with the TN.</p><ul><li>Allowed
+            number ranges for NPA are [2-9] for the first digit and [0-9] for
+            both the second and third digits.</li><li>Allowed number ranges for
+            NXXX are [2-9] for the first digit and [0-9] the rest of the (X)
+            digits.</li></ul>
           in: query
           name: npaNxxx
           required: false
           schema:
-            type: string
+            type: integer
         - description: Startdate and Enddate must be together
           example: 12-01-01
           in: query
@@ -34826,9 +34940,9 @@ paths:
                        </Links>
                        <TelephoneNumbers>
                           <Count>3</Count>
-                          <TelephoneNumber>4352154855</TelephoneNumber>
+                          <TelephoneNumber>+14352154855</TelephoneNumber>
                           <!-- SNIP -->
-                          <TelephoneNumber>4352161523</TelephoneNumber>
+                          <TelephoneNumber>+14352161523</TelephoneNumber>
                        </TelephoneNumbers>
                     </TNs>
               schema:
