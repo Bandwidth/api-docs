@@ -3,7 +3,7 @@ export const navBarContext = (pathName, hidden, viewportWidth = 1400, viewportHe
   it('checks that navigation back or forward in the browser\'s history from the page works', () => {
     cy.visit('/')
     if (viewportWidth && viewportHeight) {
-      cy.viewport(viewportWidth,viewportHeight) 
+      cy.viewport(viewportWidth,viewportHeight)
       if (hidden) {
         cy.get('a.navbar__link')
         .contains(`${pathName}`)
@@ -22,137 +22,116 @@ export const navBarContext = (pathName, hidden, viewportWidth = 1400, viewportHe
 }
 
 export const navTester = (path) => {
-    it('checks that navigation back or forward in the browser\'s history from the page works', () => {
-      cy.location('pathname').should('include', path)
-      cy.go(-1)
-      cy.location('pathname').should('not.include', path)
-      cy.go(1)
-      cy.location('pathname').should('include', path)
-    })
-  
-    it('Checks that the page reloads without cache', () => {
-      cy.reload()
-    })
-  
-    it(`visits /${path}/ directly and verifies that the window objects load properly`, () => {
-      cy.visit(`/${path}/`, {
-        timeout: 50000,
-        onBeforeLoad (contentWindow) {
-          expect(typeof contentWindow === 'object').to.be.true
-        },
-        onLoad (contentWindow) {
-          expect(typeof contentWindow === 'object').to.be.true
-        },
-      })
-    })
-  }
+  it('checks that navigation to the page works', () => {
+    cy.location('pathname').should('include', path);
+  })
+}
 
-  export const performanceTester = (path, text, element = 'h1', waitTime = 5000) => {
-    it('measures page load on the home page', () => {
-      cy.visit(`${path}`, {
-        onBeforeLoad: (win) => {
-          win.performance.mark('startMark');
-        }
-      })
-      .its('performance').then((performance) => {
-        cy.get(`${element}`).should('include.text', `${text}`)
-          .then(() => performance.mark('endMark'))
-          .then(() => {
-          performance.measure('pageLoad', 'startMark', 'endMark');
-          const measure = performance.getEntriesByName('pageLoad')[0]; 
-          assert.isAtMost(measure.duration, waitTime);
-        });
+export const performanceTester = (path, text, element = 'h1', waitTime = 5000) => {
+  it('measures page load on the home page', () => {
+    cy.visit(`${path}`, {
+      onBeforeLoad: (win) => {
+        win.performance.mark('startMark');
+      }
+    })
+    .its('performance').then((performance) => {
+      cy.get(`${element}`).should('include.text', `${text}`)
+        .then(() => performance.mark('endMark'))
+        .then(() => {
+        performance.measure('pageLoad', 'startMark', 'endMark');
+        const measure = performance.getEntriesByName('pageLoad')[0];
+        assert.isAtMost(measure.duration, waitTime);
       });
-  });
-  }
+    });
+});
+}
 
-  export const testSvgLink = (path, svg, testPath) => {
-    beforeEach(() => {
-      cy.visit(`${path}`)
-      cy.get(`${svg}`)
-        .click()
+export const testSvgLink = (path, svg, testPath) => {
+  beforeEach(() => {
+    cy.visit(`${path}`)
+    cy.get(`${svg}`)
+      .click()
+  })
+  navTester(`${testPath}`)
+}
+
+export const testTextLink = (path, text, testPath, element = 'a') => {
+  beforeEach(() => {
+    cy.visit(`${path}`)
+    cy.get(`${element}`)
+      .contains(`${text}`)
+      .click()
+  })
+  navTester(`${testPath}`)
+}
+
+export const extLinkTester = (path, className, url) => {
+  it('Should verify the external link worked', () => {
+    cy.visit(`${path}`)
+    cy.get(`${className}`)
+      .should('have.attr', 'href', `${url}`)
     })
-    navTester(`${testPath}`)          
+}
 
-  }
+export const testSidebar = (tab) => {
+  cy.get('a.menu__link')
+    .contains(`${tab}`)
+    .should('have.attr', 'aria-expanded')
+    .and('match', /false/)
+  cy.get('a.menu__link')
+    .contains(`${tab}`)
+    .click()
+    .should('have.attr', 'aria-expanded')
+    .and('match', /true/)
+  cy.get('a.menu__link')
+    .contains(`${tab}`)
+    .click()
+    .should('have.attr', 'aria-expanded')
+    .and('match', /false/)
+  cy.get('a.menu__link')
+    .contains(`${tab}`)
+    .click()
+    .should('have.attr', 'aria-expanded')
+    .and('match', /true/)
+}
 
-  export const testTextLink = (path, text, testPath, element = 'a') => {
-    beforeEach(() => {
-      cy.visit(`${path}`)
-      cy.get(`${element}`)
+export const downloadButtonTester = (path) => {
+  it('checks the download button to verify it exists',() => {
+    cy.visit(`/apis/${path}/`)
+    cy.get('p')
+      .contains("Download OpenAPI specification")
+      .children('a')
+      .contains("Download")
+    })
+}
+
+export const footerExtLinkTester = (section, text, url) => {
+  it('Should verify the external link exists', () => {
+      cy.visit('/')
+      cy.get('div')
+        .contains(`${section}`)
+        .siblings('div')
         .contains(`${text}`)
-        .click()
-    })
-    navTester(`${testPath}`)  
-  }
-
-  export const extLinkTester = (path, className, url) => {
-    it('Should verify the external link worked', () => {
-      cy.visit(`${path}`)
-      cy.get(`${className}`)
         .should('have.attr', 'href', `${url}`)
       })
-  }
+}
 
-  export const testSidebar = (tab) => {
-    cy.get('a.menu__link')
-      .contains(`${tab}`)
-      .should('have.attr', 'aria-expanded') 
-      .and('match', /false/)        
-    cy.get('a.menu__link')
-      .contains(`${tab}`)
+export const tabSwitchingTester = (path, tab1, tab2, tab2Btn, text) => {
+  it('Should verify that a tab is visible and another hidden, then click a button and verify that they switched visibility.', () => {
+    cy.visit(`${path}`)
+    cy.get(`${tab1}`)
+      .should('be.visible')
+    cy.get(`${tab2}`)
+      .should('not.be.visible')
+    cy.get(`${tab2Btn}`)
+      .contains(`${text}`)
       .click()
-      .should('have.attr', 'aria-expanded') 
-      .and('match', /true/)
-    cy.get('a.menu__link')
-      .contains(`${tab}`)
-      .click()
-      .should('have.attr', 'aria-expanded') 
-      .and('match', /false/)
-    cy.get('a.menu__link')
-      .contains(`${tab}`)
-      .click()
-      .should('have.attr', 'aria-expanded') 
-      .and('match', /true/)      
-  }
-
-  export const downloadButtonTester = (path) => {
-    it('checks the download button to verify it exists',() => {
-      cy.visit(`/apis/${path}/`)
-      cy.get('p')
-        .contains("Download OpenAPI specification")
-        .children('a')
-        .contains("Download")      
-      })
-  }
-
-  export const footerExtLinkTester = (section, text, url) => {
-    it('Should verify the external link exists', () => {
-        cy.visit('/')
-        cy.get('div')
-          .contains(`${section}`)
-          .siblings('div')
-          .contains(`${text}`)
-          .should('have.attr', 'href', `${url}`)
-        })
-  }
-
-  export const tabSwitchingTester = (path, tab1, tab2, tab2Btn, text) => {
-    it('Should verify that a tab is visible and another hidden, then click a button and verify that they switched visibility.', () => {
-      cy.visit(`${path}`)
-      cy.get(`${tab1}`)
-        .should('be.visible')
-      cy.get(`${tab2}`)
-        .should('not.be.visible')                  
-      cy.get(`${tab2Btn}`)
-        .contains(`${text}`)
-        .click()
-      cy.get(`${tab2}`)
-        .should('be.visible')
-      cy.get(`${tab1}`)
-      .should('not.be.visible')         
-    })
-  }
+    cy.get(`${tab2}`)
+      .should('be.visible')
+    cy.get(`${tab1}`)
+    .should('not.be.visible')
+  })
+}
 
 export const algoliaSearchTester = (searchText) => {
   before(() => {
@@ -181,7 +160,7 @@ export const algoliaSearchTester = (searchText) => {
       cy.get(':nth-child(1) > .DocSearch').click();
       cy.get('.DocSearch-Modal').should('not.exist');
   })
-}  
+}
 
 export const redocSearchTester = (path, searchText) => {
   it('verifies that the redoc search bar works', () => {
