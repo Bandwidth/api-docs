@@ -59,6 +59,11 @@ const apiList = [
         Svg: require('@site/static/img/api-icons/insights.svg').default,
         link: '/apis/insights/'
     },
+    {
+        title: 'Integrations API',
+        Svg: require('@site/static/img/api-icons/integrations.svg').default,
+        link: '/apis/integrations/'
+    },
     /* TODO ONEID-1304
     {
         title: 'Identity Providers',
