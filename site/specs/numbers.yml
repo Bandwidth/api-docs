@@ -676,6 +676,28 @@ components:
           <Website>www.my.website.com</Website>
           <IsMain>true</IsMain>
         </Brand>
+    OutboundFromNumbersActionResponseDELETEExample:
+      value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<OutboundFromNumbersActionResponse>\n\t<SuccessCount>9</SuccessCount>                          \n\t<OutboundFromNumbersResponses>\n\t\t<OutboundFromNumberResponse>\n\t\t\t<OutboundFromNumber>+449911123457</OutboundFromNumber>\n\t\t\t<Response>Not Found</Response>\n\t\t</OutboundFromNumberResponse>\n\t</OutboundFromNumbersResponses>\n</OutboundFromNumbersActionResponse>"
+    OutboundFromNumbersActionResponsePOSTExample:
+      value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<OutboundFromNumbersActionResponse>\n\t<SuccessCount>10</SuccessCount>                          \n\t<OutboundFromNumbersResponses>\n\t\t<OutboundFromNumberResponse>\n\t\t\t<OutboundFromNumber>++449911123457</OutboundFromNumber>\n\t\t\t<Response>Invalid Number Format</Response>\n\t\t</OutboundFromNumberResponse>\n\t\t<OutboundFromNumberResponse>\n\t\t\t<OutboundFromNumber>+16175551214</OutboundFromNumber>\n\t\t\t<Response>Number is already associated with location 'locations_name' [ID: locations_id]</Response>\n\t\t</OutboundFromNumberResponse>\n\t</OutboundFromNumbersResponses>\n</OutboundFromNumbersActionResponse>"
+    OutboundFromNumbersRequestExample:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <OutboundFromNumbersRequest>
+          <OutboundFromNumbers>
+            <OutboundFromNumber>+16175551212</OutboundFromNumber>
+            <OutboundFromNumber>+16175551213</OutboundFromNumber>        
+          </OutboundFromNumbers>
+        </OutboundFromNumbersRequest>
+    OutboundFromNumbersResponseExample:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <OutboundFromNumbersResponse>
+          <OutboundFromNumbers>
+            <OutboundFromNumber>+16175551212</OutboundFromNumber>
+            <OutboundFromNumber>+16175551213</OutboundFromNumber>        
+          </OutboundFromNumbers>
+        </OutboundFromNumbersResponse>
     RemoveImportedVoiceTnOrders:
       description: List all remove imported voice tn orders response
       value: |-
@@ -1025,6 +1047,15 @@ components:
       schema:
         type: string
   requestBodies:
+    OutboundFromNumbersRequest:
+      content:
+        application/xml:
+          examples:
+            accountGlobalServicesRequestExample:
+              $ref: '#/components/examples/OutboundFromNumbersRequestExample'
+          schema:
+            $ref: '#/components/schemas/OutboundFromNumbers'
+      description: OK
     verificationRequest:
       content:
         application/json:
@@ -1091,6 +1122,28 @@ components:
         associated with the order, the state of the order, and a list of the
         successfully imported Telephone Numbers, and descriptions of any
         encountered errors.
+    OutboundFromNumbersActionResponse:
+      content:
+        application/json:
+          examples:
+            delete:
+              $ref: >-
+                #/components/examples/OutboundFromNumbersActionResponseDELETEExample
+            post:
+              $ref: >-
+                #/components/examples/OutboundFromNumbersActionResponsePOSTExample
+          schema:
+            $ref: '#/components/schemas/OutboundFromNumbersRequestResponse'
+      description: OK
+    OutboundFromNumbersResponse:
+      content:
+        application/xml:
+          examples:
+            accountGlobalServicesResponseExample:
+              $ref: '#/components/examples/OutboundFromNumbersResponseExample'
+          schema:
+            $ref: '#/components/schemas/OutboundFromNumbers'
+      description: OK
     removeImportedVoiceTnOrdersResponse:
       content:
         application/xml:
@@ -8821,6 +8874,37 @@ components:
           items:
             $ref: '#/components/schemas/OriginationRoutePayload'
           type: array
+      type: object
+    OutboundFromNumber:
+      properties:
+        Id:
+          type: string
+        Number:
+          type: string
+      type: object
+    OutboundFromNumberValidation:
+      properties:
+        OutboundFromNumber:
+          $ref: '#/components/schemas/OutboundFromNumber'
+        Reason:
+          type: string
+      type: object
+    OutboundFromNumbers:
+      properties:
+        OutboundFromNumbers:
+          items:
+            $ref: '#/components/schemas/OutboundFromNumber'
+          maxItems: 50
+          type: array
+      type: object
+    OutboundFromNumbersRequestResponse:
+      properties:
+        OutboundFromNumbersActions:
+          items:
+            $ref: '#/components/schemas/OutboundFromNumberValidation'
+          type: array
+        SuccessCount:
+          type: string
       type: object
     PaginationLinks:
       properties:
@@ -35889,6 +35973,98 @@ paths:
                 $ref: '#/components/schemas/SipPeerResponseConflict'
           description: Address couldn't be geocoded perfectly and needs some changes
       summary: Update Sip Peer
+      tags:
+        - SipPeer Management
+  /accounts/{accountId}/sites/{siteId}/sippeers/{sipPeerId}/OutboundFromNumbers:
+    delete:
+      description: Delete Outbound From Numbers from SIP Peer
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/SiteIdPathParam'
+        - description: ID of the Sip Peer to delete Outbound From Numbers from.
+          example: '500017'
+          in: path
+          name: sipPeerId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/requestBodies/OutboundFromNumbersRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/OutboundFromNumbersActionResponse'
+        '400':
+          $ref: '#/components/schemas/ResponseStatus'
+      summary: >-
+        Provide a list of Outbound From Numbers which should be deleted from
+        this SIP Peer.
+      tags:
+        - SipPeer Management
+    get:
+      description: >-
+        Retrieve list of Outbound From Numbers associated with SIP Peer
+        location. If none exist, then an empty list is returned.
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/SiteIdPathParam'
+        - description: ID of the Sip Peer to update
+          example: '500017'
+          in: path
+          name: sipPeerId
+          required: true
+          schema:
+            type: string
+        - description: >-
+            Retrievals must be paginated, using page and size indicators.  The
+            page parameter contains the page number, e.g. "1" in the case of the
+            first page
+          example: 1
+          in: query
+          name: page
+          required: true
+          schema:
+            type: string
+        - description: >-
+            The size parameter indicates the number of Outbound From Numbers to
+            return in the payload
+          example: 10
+          in: query
+          name: size
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          $ref: '#/components/responses/OutboundFromNumbersResponse'
+      summary: Retrieve list of Outbound From Numbers associated with SIP Peer location
+      tags:
+        - SipPeer Management
+    post:
+      description: Submit a list of new Outbound From Numbers.
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/SiteIdPathParam'
+        - description: ID of the Sip Peer to associate Outbound From Numbers.
+          example: '500017'
+          in: path
+          name: sipPeerId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/requestBodies/OutboundFromNumbersRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/OutboundFromNumbersActionResponse'
+        '400':
+          $ref: '#/components/schemas/ResponseStatus'
+      summary: Associates a list of Outbound From Numbers with a SIP Peer location
       tags:
         - SipPeer Management
   /accounts/{accountId}/sites/{siteId}/sippeers/{sipPeerId}/movetns:
