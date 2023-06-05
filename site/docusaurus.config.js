@@ -13,6 +13,7 @@ const phoneNumberLookupSpec = fs.readFileSync(
 );
 const voiceSpec = fs.readFileSync("./specs/voice.yml", "utf-8");
 const activeCallInfoSpec = fs.readFileSync('./specs/active-call-info.yml', 'utf-8');
+const aiBridgeSpec = fs.readFileSync("./specs/ai-bridge.yml", 'utf-8');
 const messagingSpec = fs.readFileSync("./specs/messaging.yml", "utf-8");
 const webRtcSpec = fs.readFileSync("./specs/webrtc.yml", "utf-8");
 const multiFactorAuthSpec = fs.readFileSync(
@@ -152,14 +153,14 @@ module.exports = {
         theme: {
           customCss: require.resolve("./src/css/main.scss"),
         },
-        googleAnalytics: {
-          trackingID: process.env.GOOGLE_ANALYTICS_TRACKING_ID,
-          anonymizeIP: false,
-        },
-        gtag: {
-          trackingID: process.env.GTAG_TRACKING_ID,
-          anonymizeIP: false,
-        },
+        // googleAnalytics: {
+        //   trackingID: process.env.GOOGLE_ANALYTICS_TRACKING_ID,
+        //   anonymizeIP: false,
+        // },
+        // gtag: {
+        //   trackingID: process.env.GTAG_TRACKING_ID,
+        //   anonymizeIP: false,
+        // },
       },
     ],
   ],
@@ -172,6 +173,8 @@ module.exports = {
     voiceSpecLink: `${customConfig.voiceSpecLink}`,
     activeCallInfoSpec: YAML.parse(activeCallInfoSpec),
     activeCallInfoSpecLink: `${customConfig.activeCallInfoSpecLink}`,
+    aiBridgeSpec: YAML.parse(aiBridgeSpec),
+    aiBridgeSpecLink: `${customConfig.aiBridgeSpecLink}`,
     messagingSpec: YAML.parse(messagingSpec),
     messagingSpecLink: `${customConfig.messagingSpecLink}`,
     messagingInternationalSpec: JSON.parse(messagingInternationalSpec),

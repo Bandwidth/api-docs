@@ -59,6 +59,11 @@ const apiList = [
         Svg: require('@site/static/img/api-icons/insights.svg').default,
         link: '/apis/insights/'
     },
+    {
+        title: 'Ai Bridge API',
+        Svg: require('@site/static/img/api-icons/voice.svg').default,
+        link: '/apis/ai-bridge/'
+    },
     /* TODO ONEID-1304
     {
         title: 'Identity Providers',
