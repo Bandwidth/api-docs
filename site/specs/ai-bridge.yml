@@ -6,7 +6,7 @@ info:
     the Bandwidth AI Bridge product.
   contact:
     name: Bandwidth
-    url: https://support.bandwidth.com/TODO
+    url: https://support.bandwidth.com/todo
     email: test@support.bandwidth.com
   termsOfService: https://www.bandwidth.com/legal/terms-of-use-bandwidthcom-web-sites/
   version: 1.0.0
@@ -30,6 +30,12 @@ paths:
           $ref: '#/components/responses/unauthorizedError'
         '403':
           $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/notAllowedError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
         5XX:
           $ref: '#/components/responses/internalServerError'
     post:
@@ -40,6 +46,8 @@ paths:
         - $ref: '#/components/parameters/accountId'
       requestBody:
         $ref: '#/components/requestBodies/providerPostRequest'
+      tags:
+        - Providers
       responses:
         '200':
           $ref: '#/components/responses/createProviderResponse'
@@ -51,6 +59,10 @@ paths:
           $ref: '#/components/responses/forbiddenError'
         '404':
           $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/notAllowedError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
         5XX:
           $ref: '#/components/responses/internalServerError'
   /accounts/{accountId}/aibridge/providers/{providerId}:
@@ -74,8 +86,14 @@ paths:
           $ref: '#/components/responses/forbiddenError'
         '404':
           $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/notAllowedError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
         5XX:
           $ref: '#/components/responses/internalServerError'
+      tags:
+        - Providers
     put:
       summary: Replace a Provider
       operationId: replaceProvider
@@ -85,6 +103,8 @@ paths:
         - $ref: '#/components/parameters/providerId'
       requestBody:
         $ref: '#/components/requestBodies/providerPutRequest'
+      tags:
+        - Providers
       responses:
         '200':
           $ref: '#/components/responses/replaceProvidersResponse'
@@ -96,6 +116,10 @@ paths:
           $ref: '#/components/responses/forbiddenError'
         '404':
           $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/notAllowedError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
         5XX:
           $ref: '#/components/responses/internalServerError'
     patch:
@@ -107,6 +131,8 @@ paths:
         - $ref: '#/components/parameters/providerId'
       requestBody:
         $ref: '#/components/requestBodies/providerPatchRequest'
+      tags:
+        - Providers
       responses:
         '200':
           $ref: '#/components/responses/modifyProvidersResponse'
@@ -118,6 +144,10 @@ paths:
           $ref: '#/components/responses/forbiddenError'
         '404':
           $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/notAllowedError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
         5XX:
           $ref: '#/components/responses/internalServerError'
     delete:
@@ -138,8 +168,14 @@ paths:
           $ref: '#/components/responses/forbiddenError'
         '404':
           $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/notAllowedError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
         5XX:
           $ref: '#/components/responses/internalServerError'
+      tags:
+        - Providers
 components:
   parameters:
     accountId:
@@ -237,6 +273,24 @@ components:
           examples:
             notFoundErrorExample:
               $ref: '#/components/examples/notFoundErrorExample'
+    notAllowedError:
+      description: Method Not Allowed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/methodNotAllowedError'
+          examples:
+            notAllowedErrorExample:
+              $ref: '#/components/examples/notAllowedErrorExample'
+    tooManyRequestsError:
+      description: Too Many Requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/tooManyRequestsError'
+          examples:
+            tooManyRequestsErrorExample:
+              $ref: '#/components/examples/tooManyRequestsErrorExample'
     internalServerError:
       description: An internal server error.
       content:
@@ -272,7 +326,6 @@ components:
         phone call is assigned to.
       example:
         type: integer
-        example: 1234567
     providersResponse:
       type: object
       description: All available information about a specific configured provider.
@@ -448,6 +501,34 @@ components:
       required:
         - errorCode
         - errorMsg
+    methodNotAllowedError:
+      type: object
+      properties:
+        errorCode:
+          type: integer
+          description: The error code
+          example: 405
+        errorMsg:
+          type: string
+          description: The error message
+          example: Method not allowed
+      required:
+        - errorCode
+        - errorMsg
+    tooManyRequestsError:
+      type: object
+      properties:
+        errorCode:
+          type: integer
+          description: The error code
+          example: 429
+        errorMsg:
+          type: string
+          description: The error message
+          example: Too many requests
+      required:
+        - errorCode
+        - errorMsg
     internalServerError:
       type: object
       properties:
@@ -533,9 +614,9 @@ components:
           type: string
           description: The type of provider, such as 'google', 'aws', or 'cognigy'.
           enum:
-            - google
-            - aws
-            - cognigy
+            - GOOGLE
+            - AWS
+            - COGNIGY
     replaceProviderResponseData:
       type: object
       properties:
@@ -555,9 +636,9 @@ components:
           type: string
           description: The new type of the updated provider, such as 'google' or 'aws'.
           enum:
-            - google
-            - aws
-            - cognigy
+            - GOOGLE
+            - AWS
+            - COGNIGY
     updateProviderResponseData:
       type: object
       properties:
@@ -577,9 +658,9 @@ components:
           type: string
           description: The new type of the updated provider, such as 'google' or 'aws'.
           enum:
-            - google
-            - aws
-            - cognigy
+            - GOOGLE
+            - AWS
+            - COGNIGY
     updateProvider:
       type: object
       properties:
@@ -704,6 +785,30 @@ components:
             type: resource-not-found
             description: The resource specified cannot be found.
             code: 50420
+    notAllowedErrorExample:
+      summary: An example of a Method Not Allowed error.
+      value:
+        links: null
+        data: null
+        errors:
+          - id: optional-error-id
+            type: method-not-allowed
+            description: >-
+              The HTTP request method is not supported for the requested
+              resource.
+            code: 405
+    tooManyRequestsErrorExample:
+      summary: An example of a Too Many Requests error.
+      value:
+        links: null
+        data: null
+        errors:
+          - id: optional-error-id
+            type: too-many-requests
+            description: >-
+              The user has sent too many requests in a given amount of time
+              (rate limiting).
+            code: 429
     internalServerErrorExample:
       summary: An example of a generic Internal Server Error.
       value:
