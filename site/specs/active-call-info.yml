@@ -1,0 +1,402 @@
+openapi: 3.0.3
+info:
+  title: Call Verification
+  description: >-
+    The Bandwidth Call Verification API can be used to retrieve fraud and
+    spoofing risk scores for specific phone calls that are
+
+    currently active on the Bandwidth network.
+  contact:
+    name: Bandwidth
+    url: https://support.bandwidth.com
+    email: support@bandwidth.com
+  termsOfService: https://www.bandwidth.com/legal/terms-of-use-bandwidthcom-web-sites/
+  version: 1.0.0
+servers:
+  - url: https://call-verification.bandwidth.com/api/v1
+paths:
+  /accounts/{accountId}/activeCalls/{activeCallId}:
+    get:
+      tags:
+        - ActiveCalls
+      summary: Retrieve the risk scores for a specific phone call
+      description: >-
+        Retrieve fraud and spoofing risk scores for a specific phone call that
+        is currently active on the Bandwidth network.
+
+
+        The fraud and spoofing scores returned by this API endpoint indicate how
+        likely it is that the given phone call is 
+
+        fraudulent or that the given phone call is coming from a spoofed phone
+        number.
+
+
+        Currently this API endpoint only supports inbound phone calls to phone
+        numbers that have the call verification feature
+
+        enabled, but it may support other types of calls in the future.
+
+
+        **Note**: This information is generated after a call is answered and is
+        cached for only 30 minutes.  If you attempt
+
+        to query this information before the score has been generated or after
+        the 30 minute cache period expires, the API
+
+        may return an HTTP 404.
+      operationId: getRiskScore
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/activeCallId'
+      responses:
+        '200':
+          $ref: '#/components/responses/scoresResponse'
+        '400':
+          $ref: '#/components/responses/badRequestResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/forbiddenResponse'
+        '404':
+          $ref: '#/components/responses/notFoundResponse'
+        '405':
+          $ref: '#/components/responses/methodNotAllowedResponse'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsResponse'
+        '500':
+          $ref: '#/components/responses/internalServerErrorResponse'
+components:
+  parameters:
+    accountId:
+      name: accountId
+      schema:
+        $ref: '#/components/schemas/accountId'
+      in: path
+      required: true
+    activeCallId:
+      name: activeCallId
+      schema:
+        $ref: '#/components/schemas/activeCallId'
+      in: path
+      required: true
+  responses:
+    scoresResponse:
+      description: Ok.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/activeCallInfo'
+    unauthorizedResponse:
+      description: Unauthorized.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/apiErrors'
+          examples:
+            unauthorizedExample:
+              $ref: '#/components/examples/unauthorizedErrorExample'
+    badRequestResponse:
+      description: Bad Request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/apiErrors'
+          examples:
+            badRequestExample:
+              $ref: '#/components/examples/badRequestErrorExample'
+    methodNotAllowedResponse:
+      description: Method Not Allowed.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/apiErrors'
+          examples:
+            methodNotAllowedExample:
+              $ref: '#/components/examples/methodNotAllowedErrorExample'
+    forbiddenResponse:
+      description: Forbidden.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/apiErrors'
+          examples:
+            forbiddenExample:
+              $ref: '#/components/examples/forbiddenErrorExample'
+    notFoundResponse:
+      description: Not Found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/apiErrors'
+          examples:
+            notFoundExample:
+              $ref: '#/components/examples/notFoundErrorExample'
+    tooManyRequestsResponse:
+      description: Too Many Requests.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/apiErrors'
+          examples:
+            tooManyRequestsExample:
+              $ref: '#/components/examples/tooManyRequestsErrorExample'
+    internalServerErrorResponse:
+      description: Internal Server Error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/apiErrors'
+          examples:
+            internalServerErrorExample:
+              $ref: '#/components/examples/internalServerErrorErrorExample'
+  schemas:
+    accountId:
+      type: number
+      description: >-
+        The ID of the Bandwidth Dashboard account that the called number of the
+        phone call is assigned to.
+      example: 9903248
+    activeCallId:
+      type: string
+      description: >-
+        The unique Bandwidth-generated identifier of a phone call provided by
+        Bandwidth in the SIP invite for that call.
+
+        Typically this value is provided in an X header in the SIP invite such
+        as X-Customer-Ixn.
+      example: MTU2MDI4ODE1XzgzMzQ4OTg4QDE5Mi4xNjguMTMyLjQx
+    activeCallInfo:
+      type: object
+      description: >-
+        All available information about a specific phone call that is currently
+        active on the bandwidth network.
+      properties:
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              href:
+                type: string
+                description: URI of the link.
+                example: >-
+                  /accounts/9903248/activeCalls/MTU2MDI4ODE1XzgzMzQ4OTg4QDE5Mi4xNjguMTMyLjQx
+              rel:
+                type: string
+                description: Specifies the relationship between this link and the resource.
+                example: ActiveCallInfo
+              method:
+                type: string
+                description: HTTP method to be used.
+                example: GET
+            example:
+              href: >-
+                /accounts/9903248/activeCalls/MTU2MDI4ODE1XzgzMzQ4OTg4QDE5Mi4xNjguMTMyLjQx
+              rel: ActiveCallInfo
+              method: GET
+          example:
+            - href: >-
+                /accounts/9903248/activeCalls/MTU2MDI4ODE1XzgzMzQ4OTg4QDE5Mi4xNjguMTMyLjQx
+              rel: ActiveCallInfo
+              method: GET
+        data:
+          type: object
+          properties:
+            riskScore:
+              $ref: '#/components/schemas/riskScore'
+          example:
+            riskScore:
+              spoofingRisk: 9.83
+              fraudRisk: 72
+        errors:
+          type: array
+          nullable: true
+          items: {}
+          example: []
+    riskScore:
+      type: object
+      description: The risk score for a specific phone call.
+      properties:
+        spoofingRisk:
+          type: number
+          description: >-
+            A number between 0 and 100 that indicates the likelihood that the
+            calling number on active phone call is 
+
+            being spoofed (with 0 being the lowest possible risk and 100 being
+            the highest possible risk).
+          example: 9.83
+        fraudRisk:
+          type: number
+          description: >-
+            A number between 0 and 100 that indicates the level of risk that a
+            phone call is spam or is otherwise coming
+
+            from a fraudulent source.
+          example: 72
+    apiErrors:
+      type: object
+      properties:
+        links:
+          type: array
+          nullable: true
+          items: {}
+          example: []
+        data:
+          type: object
+          nullable: true
+          example: {}
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                description: >-
+                  A short, human-readable summary of the problem that SHOULD NOT
+                  change from occurrence to occurrence of the problem.
+                example: request-error
+              description:
+                type: string
+                description: >-
+                  A human-readable explanation that SHOULD be specific to this
+                  occurrence of the problem.
+                example: There was an issue with a field in your request body
+              code:
+                type: integer
+                format: int32
+                description: >-
+                  An application-specific error code for services with extensive
+                  error scenarios to supplement `description`.
+                example: 1203
+              source:
+                type: object
+                properties:
+                  parameter:
+                    type: string
+                    description: >-
+                      A string indicating which URI query parameter caused the
+                      error.
+                    example: activeCallId
+                  reference:
+                    type: string
+                    description: >-
+                      A string that references a resource ID or path to the
+                      resource (or non-existent resource) causing the error.
+                    example: >-
+                      /accounts/9903248/activeCalls/MTU2MDI4ODE1XzgzMzQ4OTg4QDE5Mi4xNjguMTMyLjQx
+                  method:
+                    type: string
+                    description: A string indicating which HTTP method caused the error.
+                    example: POST
+                example:
+                  method: GET
+                  reference: >-
+                    /accounts/9903248/activeCalls/MTU2MDI4ODE1XzgzMzQ4OTg4QDE5Mi4xNjguMTMyLjQx
+          example:
+            - type: Not Found
+              code: 12404
+              description: Resource not found.
+              source:
+                method: GET
+                reference: >-
+                  /accounts/9903248/activeCalls/MTU2MDI4ODE1XzgzMzQ4OTg4QDE5Mi4xNjguMTMyLjQx
+  examples:
+    unauthorizedErrorExample:
+      summary: Unauthorized
+      value:
+        data: {}
+        links: []
+        errors:
+          - type: Unauthorized
+            code: 12401
+            description: You must be properly authenticated to access this resource.
+            source:
+              method: GET
+              reference: >-
+                /accounts/9903248/activeCalls/MTU2MDI4ODE1XzgzMzQ4OTg4QDE5Mi4xNjguMTMyLjQx
+    badRequestErrorExample:
+      summary: Bad Request
+      value:
+        data: {}
+        links: []
+        errors:
+          - type: Bad Request
+            code: 12712
+            description: Malformed Call ID.
+            source:
+              method: POST
+              parameter: activeCallId
+    methodNotAllowedErrorExample:
+      summary: Method Not Allowed
+      value:
+        data: {}
+        links: []
+        errors:
+          - type: Method Not Allowed
+            code: 12405
+            description: PATCH is not supported at this URI.
+            source:
+              method: PATCH
+    forbiddenErrorExample:
+      summary: Forbidden
+      value:
+        data: {}
+        links: []
+        errors:
+          - type: Forbidden
+            code: 12403
+            description: You do not have access to this resource.
+            source:
+              method: GET
+              reference: >-
+                /accounts/9903248/activeCalls/MTU2MDI4ODE1XzgzMzQ4OTg4QDE5Mi4xNjguMTMyLjQx
+    notFoundErrorExample:
+      summary: Not Found
+      value:
+        data: {}
+        links: []
+        errors:
+          - type: Not Found
+            code: 12404
+            description: Resource not found.
+            source:
+              method: GET
+              reference: >-
+                /accounts/9903248/activeCalls/MTU2MDI4ODE1XzgzMzQ4OTg4QDE5Mi4xNjguMTMyLjQx
+    tooManyRequestsErrorExample:
+      summary: Too Many Requests
+      value:
+        data: {}
+        links: []
+        errors:
+          - type: Too Many Requests
+            code: 12404
+            description: Rate Limit Exceeded.  Try again in 1 second.
+    internalServerErrorErrorExample:
+      summary: Internal Server Error
+      value:
+        data: {}
+        links: []
+        errors:
+          - type: Internal Server Error
+            code: 12500
+            description: Encountered an unexpected error while processing your request.
+  securitySchemes:
+    Basic:
+      type: http
+      scheme: basic
+      description: >-
+        Basic authentication is a simple authentication scheme built into the
+        HTTP protocol. To use it, send your HTTP requests with an Authorization
+        header that contains the word Basic followed by a space and a
+        base64-encoded string `username:password`.
+
+
+        Example: `Authorization: Basic ZGVtbZpwQDU1dzByZA==`.
+security:
+  - Basic: []
+tags:
+  - name: ActiveCalls
