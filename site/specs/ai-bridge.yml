@@ -1,0 +1,718 @@
+openapi: 3.0.3
+info:
+  title: AI Bridge
+  description: >-
+    This AI Bridge API can be used to create and manage Providers and Bots for
+    the Bandwidth AI Bridge product.
+  contact:
+    name: Bandwidth
+    url: https://support.bandwidth.com/TODO
+    email: test@support.bandwidth.com
+  termsOfService: https://www.bandwidth.com/legal/terms-of-use-bandwidthcom-web-sites/
+  version: 1.0.0
+servers:
+  - url: TODO
+    description: Production
+paths:
+  /accounts/{accountId}/aibridge/providers:
+    get:
+      summary: List All Providers
+      operationId: listProviders
+      description: Retrieve a list of all Providers for a single account.
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+      responses:
+        '200':
+          $ref: '#/components/responses/listProvidersResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+    post:
+      summary: Add a Provider
+      operationId: addProvider
+      description: Create a configuration for an new Provider.
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+      requestBody:
+        $ref: '#/components/requestBodies/providerPostRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/createProviderResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+  /accounts/{accountId}/aibridge/providers/{providerId}:
+    get:
+      summary: Get a Provider by accountId and providerId
+      operationId: getProvider
+      description: >-
+        Get a provider which corresponds to a particular account and provider
+        Id.
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/providerId'
+      responses:
+        '200':
+          $ref: '#/components/responses/getProviderResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+    put:
+      summary: Replace a Provider
+      operationId: replaceProvider
+      description: Replace the configuration for an existing Provider.
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/providerId'
+      requestBody:
+        $ref: '#/components/requestBodies/providerPutRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/replaceProvidersResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+    patch:
+      summary: Update a Provider
+      operationId: updateProvider
+      description: Update an existing Provider.
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/providerId'
+      requestBody:
+        $ref: '#/components/requestBodies/providerPatchRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/modifyProvidersResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+    delete:
+      summary: Delete a Provider
+      operationId: deleteProvider
+      description: Delete an existing Provider
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/providerId'
+      responses:
+        '204':
+          $ref: '#/components/responses/deleteProviderResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
+components:
+  parameters:
+    accountId:
+      name: accountId
+      schema:
+        $ref: '#/components/schemas/accountId'
+      in: path
+      required: true
+    providerId:
+      name: providerId
+      in: path
+      description: The related provider id.
+      required: true
+      schema:
+        type: string
+        example: 255d53ae-9cd8-4eed-8e33-0464c728e02a
+    botId:
+      name: botId
+      in: path
+      description: The related bot id.
+      required: true
+      schema:
+        type: string
+        example: 255d53ae-9cd8-4eed-8e33-0464c728e02a
+  responses:
+    listProvidersResponse:
+      description: List of provider information for an account.
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              anyOf:
+                - $ref: '#/components/schemas/googleProviderResponseData'
+                - $ref: '#/components/schemas/awsProviderResponseData'
+                - $ref: '#/components/schemas/cognigyProviderResponseData'
+          examples:
+            googleProviderExample:
+              $ref: '#/components/examples/googleProviderExample'
+            awsProviderExample:
+              $ref: '#/components/examples/awsProviderExample'
+            cognigyProviderExample:
+              $ref: '#/components/examples/cognigyProviderExample'
+    getProviderResponse:
+      description: Information on a specific provider.
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/googleProviderResponseData'
+              - $ref: '#/components/schemas/awsProviderResponseData'
+              - $ref: '#/components/schemas/cognigyProviderResponseData'
+          examples:
+            googleProviderExample:
+              $ref: '#/components/examples/googleProviderExample'
+            awsProviderExample:
+              $ref: '#/components/examples/awsProviderExample'
+            cognigyProviderExample:
+              $ref: '#/components/examples/cognigyProviderExample'
+    createProviderResponse:
+      description: A JSON object containing the details of the newly created Provider.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/postProviderResponseData'
+    replaceProvidersResponse:
+      description: A JSON object containing the updated details of the Provider.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/replaceProviderResponseData'
+    modifyProvidersResponse:
+      description: A JSON object containing the updated details of the Provider.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/updateProviderResponseData'
+    deleteProviderResponse:
+      description: The provider was successfully deleted. No response body is returned.
+    badRequestError:
+      description: A bad request error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/badRequestError'
+          examples:
+            badRequestErrorExample:
+              $ref: '#/components/examples/badRequestErrorExample'
+    notFoundError:
+      description: A resource not found error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/notFoundError'
+          examples:
+            notFoundErrorExample:
+              $ref: '#/components/examples/notFoundErrorExample'
+    internalServerError:
+      description: An internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/internalServerError'
+          examples:
+            internalServerErrorExample:
+              $ref: '#/components/examples/internalServerErrorExample'
+    unauthorizedError:
+      description: Un unauthorized error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/authenticationError'
+          examples:
+            unauthorizedErrorExample:
+              $ref: '#/components/examples/unauthorizedErrorExample'
+    forbiddenError:
+      description: Un unauthorized error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/authorizationError'
+          examples:
+            unauthorizedErrorExample:
+              $ref: '#/components/examples/forbiddenErrorExample'
+  schemas:
+    accountId:
+      type: number
+      description: >-
+        The ID of the Bandwidth Dashboard account that the called number of the
+        phone call is assigned to.
+      example:
+        type: integer
+        example: 1234567
+    providersResponse:
+      type: object
+      description: All available information about a specific configured provider.
+      properties:
+        data:
+          type: object
+          properties:
+            schema:
+              $ref: '#/components/responses/getProviderResponse'
+          nullable: true
+    googleProviderResponseData:
+      title: Google Provider Response Data
+      type: object
+      description: Contains Provider information.
+      properties:
+        objects:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+        fields:
+          type: object
+          properties:
+            region:
+              type: string
+              description: A string representing the region.
+              example: us-east-1
+            location:
+              type: string
+              description: A string representing the location.
+              example: Raleigh
+            environment:
+              type: string
+              description: A string representing the environment.
+              example: Production
+            projectId:
+              type: string
+              description: A string representing the project ID.
+              example: my-project
+            agentId:
+              type: string
+              description: A string representing the agent ID.
+              example: my-agent
+              minLength: 1
+            sttOverrideConfig:
+              type: string
+              description: A string representing the STT override configuration.
+            sttOverrideStreamingConfig:
+              type: string
+              description: A string representing the STT override streaming configuration.
+              required:
+                - type
+                - fields
+        errors:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/badRequestError'
+            - $ref: '#/components/schemas/authenticationError'
+            - $ref: '#/components/schemas/authorizationError'
+            - $ref: '#/components/schemas/notFoundError'
+            - $ref: '#/components/schemas/internalServerError'
+    awsProviderResponseData:
+      title: AWS Provider Response Data
+      type: object
+      properties:
+        type:
+          type: string
+        fields:
+          type: object
+          properties:
+            region:
+              type: string
+              description: A string representing the region.
+              example: us-west-2
+            credentials:
+              type: string
+              description: A string representing the credentials.
+              example: ABCDEFG123456
+          required:
+            - type
+            - fields
+        errors:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/badRequestError'
+            - $ref: '#/components/schemas/authenticationError'
+            - $ref: '#/components/schemas/authorizationError'
+            - $ref: '#/components/schemas/notFoundError'
+            - $ref: '#/components/schemas/internalServerError'
+    cognigyProviderResponseData:
+      title: Cognigy Provider Response Data
+      type: object
+      properties:
+        type:
+          type: string
+        fields:
+          type: object
+          properties:
+            botEndpoint:
+              type: string
+              description: A string representing the Cognigy bot endpoint.
+              example: https://cognigy.ai/bots/mybot
+            credentials:
+              type: string
+              description: A string representing the Cognigy bot credentials.
+              example: ABCDEFG123456
+          required:
+            - type
+            - fields
+        errors:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/badRequestError'
+            - $ref: '#/components/schemas/authenticationError'
+            - $ref: '#/components/schemas/authorizationError'
+            - $ref: '#/components/schemas/notFoundError'
+            - $ref: '#/components/schemas/internalServerError'
+    badRequestError:
+      type: object
+      properties:
+        errorCode:
+          type: integer
+          description: The error code.
+          example: 400
+        errorMsg:
+          type: string
+          description: The error message.
+          example: Malformed request data
+      required:
+        - errorCode
+        - errorMsg
+    authenticationError:
+      type: object
+      properties:
+        errorCode:
+          type: integer
+          description: The error code.
+          example: 401
+        errorMsg:
+          type: string
+          description: The error message.
+          example: Invalid credentials
+      required:
+        - errorCode
+        - errorMsg
+    authorizationError:
+      type: object
+      properties:
+        errorCode:
+          type: integer
+          description: The error code.
+          example: 403
+        errorMsg:
+          type: string
+          description: The error message.
+          example: Insufficient privileges
+      required:
+        - errorCode
+        - errorMsg
+    notFoundError:
+      type: object
+      properties:
+        errorCode:
+          type: integer
+          description: The error code
+          example: 404
+        errorMsg:
+          type: string
+          description: The error message
+          example: Resource not found
+      required:
+        - errorCode
+        - errorMsg
+    internalServerError:
+      type: object
+      properties:
+        errorCode:
+          type: integer
+          description: The error code.
+          example: 500
+        errorMsg:
+          type: string
+          description: The error message.
+          example: Internal server error
+      required:
+        - errorCode
+        - errorMsg
+    createProvider:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Provider X
+          description: Description of Provider X.
+        credentials:
+          type: object
+          properties:
+            username:
+              type: string
+              example: johndoe
+            password:
+              type: string
+              example: p@ssw0rd
+          required:
+            - username
+            - password
+      x-createProviderExample:
+        name: Provider X
+        description: Description of Provider X.
+        credentials:
+          username: johndoe
+          password: p@ssw0rd
+    replaceProvider:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Provider X
+        description:
+          type: string
+          example: Description of Provider X.
+        credentials:
+          type: object
+          properties:
+            username:
+              type: string
+              example: johndoe
+            password:
+              type: string
+              example: p@ssw0rd
+          required:
+            - username
+            - credentials
+      x-replaceProviderExample:
+        name: Provider X (Updated)
+        description: Description of Provider X (Updated)
+        credentials:
+          username: johndoe
+          password: newp@ssword
+    postProviderResponseData:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the new Provider.
+          example: d1e921e4-a6ff-475b-8b20-d27b6f2bc6c9
+        name:
+          type: string
+          description: Name of the new Provider.
+          example: Provider X
+        description:
+          type: string
+          description: Description of the new Provider.
+          example: Configuration for Provider X
+        type:
+          type: string
+          description: The type of provider, such as 'google', 'aws', or 'cognigy'.
+          enum:
+            - google
+            - aws
+            - cognigy
+    replaceProviderResponseData:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The new unique identifier of the updated provider.
+          example: f8a7a66a-4f4e-4b27-b557-7f3948a3cd2e
+        name:
+          type: string
+          description: The new name of the updated provider.
+          example: Provider Y
+        description:
+          type: string
+          description: The new description of the updated provider.
+          example: Configuration for Provider Y
+        type:
+          type: string
+          description: The new type of the updated provider, such as 'google' or 'aws'.
+          enum:
+            - google
+            - aws
+            - cognigy
+    updateProviderResponseData:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the updated provider.
+          example: f8a7a66a-4f4e-4b27-b557-7f3948a3cd2e
+        name:
+          type: string
+          description: The new name of the updated provider.
+          example: Provider Y
+        description:
+          type: string
+          description: The new description of the updated provider.
+          example: Configuration for Provider Y
+        type:
+          type: string
+          description: The new type of the updated provider, such as 'google' or 'aws'.
+          enum:
+            - google
+            - aws
+            - cognigy
+    updateProvider:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Provider X
+        description:
+          type: string
+          example: Description of Provider X.
+      example:
+        name: Provider X (Updated)
+        description: Description of Provider X (Updated).
+        credentials:
+          username: johndoe
+          password: newp@ssword
+    cognigyResponse:
+      type: object
+      properties:
+        type:
+          type: string
+        fields:
+          type: object
+          properties:
+            ttsUrl:
+              type: string
+              description: A string representing the TTS URL.
+              example: http://example.com/tts
+            sttUrl:
+              type: string
+              description: A string representing the STT URL.
+              example: http://example.com/stt
+          required:
+            - type
+            - fields
+  requestBodies:
+    providerPostRequest:
+      description: Configuration details of the new Provider.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/createProvider'
+    providerPutRequest:
+      description: Updated configuration details for the Provider.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/replaceProvider'
+    providerPatchRequest:
+      description: Updated configuration details for the Provider.
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/updateProvider'
+  examples:
+    googleProviderExample:
+      summary: An example of a Google provider
+      value:
+        objects:
+          - type: GoogleType
+            Region: northamerica
+            Location: us-east-1
+            ProjectId: myproject
+            AgentId: myagent
+            SttOverrideConfig: null
+            SttOverrideStreamingConfig: null
+    awsProviderExample:
+      summary: An example of an AWS provider
+      value:
+        objects:
+          - type: AwsType
+            Region: us-west-1
+            Credentials:
+              accessKeyId: myaccesskey
+              secretAccessKey: mysecretkey
+    cognigyProviderExample:
+      summary: An example of a Cognigy provider
+      value:
+        objects:
+          - type: CognigyType
+            TtsUrl: https://example.com/tts
+            SttUrl: https://example.com/stt
+    badRequestErrorExample:
+      summary: An example of a generic Bad Request Error.
+      value:
+        links: null
+        data: null
+        errors:
+          - id: optional-error-id
+            type: bad-request
+            description: There was an issue with your request.
+            code: 205617
+    unauthorizedErrorExample:
+      summary: An example of a generic Unauthorized Error
+      value:
+        links: null
+        data: null
+        errors:
+          - id: optional-error-id
+            type: authentication-credentials
+            description: Invalid or missing credentials.
+            code: 206401
+    forbiddenErrorExample:
+      summary: An example of a generic Unauthorized Error.
+      value:
+        links: null
+        data: null
+        errors:
+          - id: optional-error-id
+            type: resource-permissions
+            description: User does not have permissions to access this resource.
+            code: 109107
+    notFoundErrorExample:
+      summary: An example of a generic Not Found Error.
+      value:
+        links: null
+        data: null
+        errors:
+          - id: optional-error-id
+            type: resource-not-found
+            description: The resource specified cannot be found.
+            code: 50420
+    internalServerErrorExample:
+      summary: An example of a generic Internal Server Error.
+      value:
+        links: null
+        data: null
+        errors:
+          - id: optional-error-id
+            type: internal-server-error
+            description: >-
+              Unexpected internal server error. Contact Bandwidth Customer
+              Support if this problem persists.
+            code: 32030
