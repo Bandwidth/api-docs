@@ -140,6 +140,7 @@ module.exports = {
             "voice/webhooks/realTimeTranscriptionStarted",
             "voice/webhooks/realTimeTranscriptionRejected",
             "voice/webhooks/realTimeTranscriptionStopped",
+            "voice/webhooks/realTimeTranscriptionAvailable",
             "voice/webhooks/recordComplete",
             "voice/webhooks/recordingAvailable",
             "voice/webhooks/redirect",
