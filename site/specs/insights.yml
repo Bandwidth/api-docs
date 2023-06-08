@@ -1,20 +1,108 @@
-openapi: 3.0.1
+openapi: 3.0.3
 info:
   title: Insights
   contact:
     name: Bandwidth
-  version: 0.1.2
+  version: 0.0.1
   description: |-
-    API that allows users to query call logs.
+    The API Specification for Bandwidth's Insights Platform.
 
     ## Base URL
 
-    `https://insights.bandwidth.com/api/v1`
+    `https://insights.bandwidth.com/api/v1-beta`
 servers:
-  - url: https://insights.bandwidth.com/api/v1
+  - url: https://insights.bandwidth.com/api/v1-beta
 tags:
-  - name: Voice
+  - name: Insights
 paths:
+  /reports/{reportType}:
+    post:
+      tags:
+        - Insights
+      description: Create a report.
+      operationId: createReport
+      summary: Create Report
+      parameters:
+        - $ref: '#/components/parameters/reportType'
+      requestBody:
+        required: true
+        description: Report Request Body
+        content:
+          application/json:
+            schema:
+              type: object
+              oneOf:
+                - $ref: '#/components/schemas/reportRequestBody'
+                - $ref: '#/components/schemas/call'
+      responses:
+        '202':
+          $ref: '#/components/responses/createReportResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/methodNotFoundError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+  /reports/{reportId}:
+    get:
+      tags:
+        - Insights
+      description: Retrieve a report's status.
+      operationId: getReportStatus
+      summary: Get Report Status
+      parameters:
+        - $ref: '#/components/parameters/reportId'
+      responses:
+        '200':
+          $ref: '#/components/responses/getReportStatusResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/methodNotFoundError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+  /reports/{reportId}/file:
+    get:
+      tags:
+        - Insights
+      description: Download a report.
+      operationId: getReport
+      summary: Get Report
+      parameters:
+        - $ref: '#/components/parameters/reportId'
+      responses:
+        '200':
+          $ref: '#/components/responses/getReportResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/methodNotFoundError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
   /voice/calls:
     get:
       tags:
@@ -83,6 +171,38 @@ paths:
           $ref: '#/components/responses/internalServerError'
 components:
   schemas:
+    reportRequestBody:
+      title: Report Request
+      type: object
+      properties:
+        accountId:
+          type: string
+          description: CRM ID
+          example: '1234567'
+        startDate:
+          type: string
+          description: Start Date
+          example: '2023-01-01'
+        endDate:
+          type: string
+          description: End Date
+          example: '2023-01-31'
+    report:
+      title: Report
+      type: object
+      properties:
+        reportId:
+          type: string
+          description: ID of the report.
+          example: 123456
+        parameters:
+          type: string
+          description: Parameters used to create the report.
+          example: accountId=12345&startDate=2023-01-01&endDate=2023-01-31
+        status:
+          type: string
+          description: Status of the report generation.
+          example: PROCESSING
     call:
       title: Call
       type: object
@@ -266,6 +386,30 @@ components:
           description: Specifies the relationship between this link and the resource.
           example: >-
             https://insights.bandwidth.com/api/v1/voice/calls?callResult=completed&offset=1&limit=1&sort=startTime:desc
+    createReportLink:
+      title: Link
+      type: object
+      properties:
+        href:
+          type: string
+          description: URI of the link.
+          example: reportStatus
+        rel:
+          type: string
+          description: Specifies the relationship between this link and the resource.
+          example: https://insights.bandwidth.com/api/v1-beta/reports/123456
+    reportStatusLink:
+      title: Link
+      type: object
+      properties:
+        href:
+          type: string
+          description: URI of the link.
+          example: reportDownload
+        rel:
+          type: string
+          description: Specifies the relationship between this link and the resource.
+          example: https://insights.bandwidth.com/api/v1-beta/reports/123456/file
     error:
       title: Error
       type: object
@@ -279,6 +423,26 @@ components:
       required:
         - description
   parameters:
+    reportType:
+      name: reportType
+      in: path
+      required: true
+      description: Type of the report.
+      schema:
+        type: string
+        example: voice
+        enum:
+          - voice
+          - messaging
+          - billing
+    reportId:
+      name: reportId
+      in: path
+      required: true
+      description: ID of the report.
+      schema:
+        type: string
+        example: 123456
     accountId:
       name: accountId
       in: query
@@ -424,6 +588,61 @@ components:
         minimum: 1
         maximum: 10000
   responses:
+    createReportResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              links:
+                type: array
+                items:
+                  $ref: '#/components/schemas/createReportLink'
+                nullable: false
+              data:
+                $ref: '#/components/schemas/report'
+              errors:
+                type: array
+                items:
+                  $ref: '#/components/schemas/error'
+                nullable: false
+                example: []
+            required:
+              - links
+              - data
+              - errors
+    getReportStatusResponse:
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              links:
+                type: array
+                items:
+                  $ref: '#/components/schemas/reportStatusLink'
+                nullable: false
+              data:
+                $ref: '#/components/schemas/report'
+              errors:
+                type: array
+                items:
+                  $ref: '#/components/schemas/error'
+                nullable: false
+                example: []
+            required:
+              - links
+              - data
+              - errors
+    getReportResponse:
+      description: OK
+      content:
+        application/octet-stream:
+          schema:
+            type: string
+            format: binary
     listCallsResponse:
       description: OK
       content:
