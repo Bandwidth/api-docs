@@ -1167,6 +1167,11 @@ components:
       schema:
         type: string
   requestBodies:
+    shortCodeJsonPatchShortCodeRequest:
+      content:
+        application/json-patch+json:
+          schema:
+            $ref: '#/components/schemas/jsonPatch'
     verificationRequest:
       content:
         application/json:
@@ -13833,6 +13838,36 @@ components:
               type: string
           type: object
       type: object
+    jsonPatch:
+      items:
+        $ref: '#/components/schemas/jsonPatchItem'
+      type: array
+    jsonPatchItem:
+      properties:
+        from:
+          description: Used when the operation is copy or move.
+          type: string
+        op:
+          enum:
+            - add
+            - remove
+            - replace
+            - copy
+            - move
+            - test
+          example: replace
+          type: string
+        path:
+          example: /state
+          type: string
+        value:
+          description: Used when the operation is add, replace, or test.
+          example: MAINTENANCE
+          type: object
+      required:
+        - op
+        - path
+      type: object
     lnpPortInfoForGivenStatus:
       properties:
         ActualFOCDate:
@@ -14018,31 +14053,14 @@ components:
             lease.
           example: true
           type: boolean
-        leaseEndsDate:
-          description: >-
-            Date the short code lease ends. Customer managed leases may not have
-            lease start and end dates. Date is inclusive as it relates to
-            expiration.
-          example: '2024-01-29'
-          format: date
-          type: string
-        leaseStartsDate:
-          description: >-
-            Date the short code lease starts. Customer managed leases may not
-            have lease start and end dates. Date is inclusive as it relates to
-            expiration.
-          example: '2023-01-28'
-          format: date
-          type: string
+        lease:
+          $ref: '#/components/schemas/shortCodeLeaseInfo'
         modifiedDateTime:
           example: '2022-11-15T18:39:04.505Z'
           format: date-time
           type: string
-        orderedDate:
-          description: Date the short code was registered.
-          example: '2023-01-30'
-          format: date
-          type: string
+        notes:
+          $ref: '#/components/schemas/shortCodeNotes'
         shortCode:
           description: The short code.
           example: '12345'
@@ -14146,33 +14164,24 @@ components:
             - CAN
           example: USA
           type: string
+        createdDateTime:
+          example: '2022-11-14T18:39:04.505Z'
+          format: date-time
+          type: string
         customerManagedLease:
           description: >-
             Flag indicating whether the customer is managing the short code
             lease.
           example: true
           type: boolean
-        leaseEndsDate:
-          description: >-
-            Date the short code lease ends. Customer managed leases may not have
-            lease start and end dates. Date is inclusive as it relates to
-            expiration.
-          example: '2024-01-29'
-          format: date
+        lease:
+          $ref: '#/components/schemas/shortCodeLeaseData'
+        modifiedDateTime:
+          example: '2022-11-15T18:39:04.505Z'
+          format: date-time
           type: string
-        leaseStartsDate:
-          description: >-
-            Date the short code lease starts. Customer managed leases may not
-            have lease start and end dates. Date is inclusive as it relates to
-            expiration.
-          example: '2023-01-28'
-          format: date
-          type: string
-        orderedDate:
-          description: Date the short code was registered.
-          example: '2023-01-30'
-          format: date
-          type: string
+        notes:
+          $ref: '#/components/schemas/shortCodeNotes'
         shortCode:
           description: The short code.
           example: '12345'
@@ -14286,26 +14295,14 @@ components:
             lease.
           example: true
           type: boolean
-        leaseEndsDate:
-          description: >-
-            Date the short code lease ends. Customer managed leases may not have
-            lease start and end dates. Date is inclusive as it relates to
-            expiration.
-          example: '2024-01-29'
-          format: date
-          type: string
-        leaseStartsDate:
-          description: >-
-            Date the short code lease starts. Customer managed leases may not
-            have lease start and end dates. Date is inclusive as it relates to
-            expiration.
-          example: '2023-01-28'
-          format: date
-          type: string
+        lease:
+          $ref: '#/components/schemas/shortCodeLeaseInfo'
         modifiedDateTime:
           example: '2022-11-15T18:39:04.505Z'
           format: date-time
           type: string
+        notes:
+          $ref: '#/components/schemas/shortCodeNotes'
         operation:
           description: Operation executed over the short code.
           enum:
@@ -14313,11 +14310,6 @@ components:
             - UPDATED
             - DELETED
           example: UPDATED
-          type: string
-        orderedDate:
-          description: Date the short code was registered.
-          example: '2023-01-30'
-          format: date
           type: string
         shortCode:
           description: The short code.
@@ -14377,6 +14369,86 @@ components:
         page:
           $ref: '#/components/schemas/shortCodePage'
       type: object
+    shortCodeLeaseData:
+      description: >-
+        The lease information for the short code number. This information only
+        applies to Bandwidth managed short code leases (customerManagedLease set
+        to false).
+      properties:
+        autoRenew:
+          description: Flag indicating whether the lease should auto-renew.
+          example: true
+          type: boolean
+        autoRenewMonths:
+          description: >-
+            The number of months for which to renew the release when it auto
+            renews. Valid values are 3, 6, and 12. The default value, if not
+            supplied on creation, will be 3.
+          enum:
+            - 3
+            - 6
+            - 12
+          example: 6
+          type: integer
+        contactEmail:
+          description: Email address used for all lease renewal notifications.
+          example: test@bandwidth.com
+          type: string
+        endDate:
+          description: >-
+            Lease end date. This date is inclusive, e.g. 2022-02-15 means that
+            the short code is valid through 2/15.
+          example: '2023-01-28'
+          format: date
+          type: string
+        startDate:
+          description: >-
+            Lease start date. This date is inclusive, e.g. 2022-02-07 means that
+            the short code is valid on 2/7.
+          example: '2023-01-28'
+          format: date
+          type: string
+      type: object
+    shortCodeLeaseInfo:
+      description: >-
+        The lease information for the short code number. This information only
+        applies to Bandwidth managed short code leases (customerManagedLease set
+        to false).
+      properties:
+        autoRenew:
+          description: Flag indicating whether the lease should auto-renew.
+          example: true
+          type: boolean
+        autoRenewMonths:
+          description: >-
+            The number of months for which to renew the release when it auto
+            renews. Valid values are 3, 6, and 12. The default value, if not
+            supplied on creation, will be 3.
+          enum:
+            - 3
+            - 6
+            - 12
+          example: 6
+          type: integer
+        contactEmail:
+          description: Email address used for all lease renewal notifications.
+          example: test@bandwidth.com
+          type: string
+        endDate:
+          description: >-
+            Lease end date. This date is inclusive, e.g. 2022-02-15 means that
+            the short code is valid through 2/15.
+          example: '2023-01-28'
+          format: date
+          type: string
+        startDate:
+          description: >-
+            Lease start date. This date is inclusive, e.g. 2022-02-07 means that
+            the short code is valid on 2/7.
+          example: '2023-01-28'
+          format: date
+          type: string
+      type: object
     shortCodePage:
       description: Pagination object that represents the current page.
       properties:
@@ -14415,33 +14487,24 @@ components:
           items:
             $ref: '#/components/schemas/shortCodeCarrierInfo'
           type: array
+        createdDateTime:
+          example: '2022-11-14T18:39:04.505Z'
+          format: date-time
+          type: string
         customerManagedLease:
           description: >-
             Flag indicating whether the customer is managing the short code
             lease.
           example: true
           type: boolean
-        leaseEndsDate:
-          description: >-
-            Date the short code lease ends. Customer managed leases may not have
-            lease start and end dates. Date is inclusive as it relates to
-            expiration.
-          example: '2024-01-29'
-          format: date
+        lease:
+          $ref: '#/components/schemas/shortCodeLeaseData'
+        modifiedDateTime:
+          example: '2022-11-15T18:39:04.505Z'
+          format: date-time
           type: string
-        leaseStartsDate:
-          description: >-
-            Date the short code lease starts. Customer managed leases may not
-            have lease start and end dates. Date is inclusive as it relates to
-            expiration.
-          example: '2023-01-28'
-          format: date
-          type: string
-        orderedDate:
-          description: Date the short code was registered.
-          example: '2023-01-30'
-          format: date
-          type: string
+        notes:
+          $ref: '#/components/schemas/shortCodeNotes'
         sipPeerId:
           description: SIP Peer ID from Iris.
           example: '123321'
@@ -33919,6 +33982,41 @@ paths:
         '500':
           $ref: '#/components/responses/shortCode500'
       summary: Retrieve short code details.
+      tags:
+        - Short Codes
+    patch:
+      description: >-
+        Update (field by field) an account's short code registration for a
+        country. This utilizes [Json Patch](https://jsonpatch.com/).
+      operationId: patchShortCodeLease
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/shortCodePathParam'
+        - $ref: '#/components/parameters/shortCodeCountryPathParam'
+      requestBody:
+        $ref: '#/components/requestBodies/shortCodeJsonPatchShortCodeRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/shortCodeUpdateShortCodeResponse'
+        '400':
+          $ref: '#/components/responses/shortCode400'
+        '401':
+          $ref: '#/components/responses/shortCode401'
+        '403':
+          $ref: '#/components/responses/shortCode403'
+        '404':
+          $ref: '#/components/responses/shortCode404'
+        '405':
+          $ref: '#/components/responses/shortCode405'
+        '409':
+          $ref: '#/components/responses/shortCode409'
+        '429':
+          $ref: '#/components/responses/shortCode429'
+        '500':
+          $ref: '#/components/responses/shortCode500'
+      summary: >-
+        Update the lease information of an account's short code registration for
+        a country.
       tags:
         - Short Codes
   /accounts/{accountId}/shortcodes/{shortCode}/{country}/history:
