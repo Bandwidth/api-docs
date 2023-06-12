@@ -16825,6 +16825,272 @@ paths:
       summary: Create bulk port-in order
       tags:
         - Bulk Port-In
+  /accounts/{accountId}/bulkPortins/{orderId}:
+    delete:
+      description: >-
+        Delete a bulk port-in order with child port-ins.  Deleting a bulk
+        port-in is allowed for 'DRAFT' state only.  Deleting a bulk port-in will
+        delete all DRAFT child port-ins associated with the bulk port-in.  When
+        the bulk port-in is deleted, any child port-in orders that are not in a
+        draft status are dissociated from the bulk port-in, but not deleted.
+        Please visit <a href='/docs/numbers/porting/port-ins/bulkPortIns'>Guides
+        and Tutorials</a>
+      operationId: DeleteBulkOrder
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: ''
+          in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Bulk Port-in order has been successfully deleted.
+        '400':
+          content:
+            application/xml:
+              examples:
+                example:
+                  description: example
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BulkPortinResponse>
+                        <BulkPortin>
+                            <Status>
+                                <Code>7709</Code>
+                                <Description>Bulk port-in with id d88763f4-8914-4301-bdca-6f409e4cd811 cannot be deleted since it is not in
+                                    draft status.
+                                </Description>
+                            </Status>
+                        </BulkPortin>
+                    </BulkPortinResponse>
+              schema:
+                $ref: '#/components/schemas/BulkPortinErrorResponse'
+          description: Bad request. Bulk Port-in order not in DRAFT state.
+        '404':
+          description: The indicated Bulk Port-in order could not be found.
+      summary: Delete bulk port-in order
+      tags:
+        - Bulk Port-In
+    get:
+      description: >-
+        Retrieves information associated with the bulk port-in order specified
+        by the orderId URI parameter. Please visit <a
+        href='/docs/numbers/porting/port-ins/bulkPortIns'>Guides and
+        Tutorials</a>
+      operationId: RetrieveBulkOrder
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: ''
+          in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  description: example
+                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BulkPortinResponse> \n\t<BulkPortin> \n\t\t<CustomerOrderId>Order Id for all child orders</CustomerOrderId>\n\t\t<RequestedFocDate>2021-06-30T00:00:00.000Z</RequestedFocDate>\n\t\t<SiteId>14020</SiteId> \n\t\t<PeerId>521434</PeerId> \n\t\t<ProcessingStatus>DRAFT</ProcessingStatus> \n\t\t<AccountId>9900572</AccountId> \n\t\t<TargetRespOrgId>JYT01</TargetRespOrgId> \n\t\t<CreatedByUser>testuser</CreatedByUser> \n\t\t<LastModifiedBy>testuser</LastModifiedBy> \n\t\t<LastModifiedDate>2021-06-21T19:42:34.760Z</LastModifiedDate>\n\t\t<OrderCreateDate>2021-06-21T19:42:34.760Z</OrderCreateDate> \n\t</BulkPortin> \n</BulkPortinResponse>"
+              schema:
+                $ref: '#/components/schemas/BulkPortinResponse'
+          description: >-
+            The information has been successfully retrieved and displayed in the
+            payload.
+        '404':
+          description: The indicated Bulk Port-in order could not be found.
+      summary: Retrieve bulk port-in order
+      tags:
+        - Bulk Port-In
+    patch:
+      description: >-
+        <p>It is possible to change ("SUPP" in LNP terms) an existing Bulk
+        Port-in order.  This is done via a PUT or PATCH on the existing
+        order-id.  Since the Bulk Port-in
+          order acts as a template for port-in orders in DRAFT status, any record can be changed at any time.  The PATCH replaces elements of the referenced Bulk Portin order, but it replaces only the records included in the request payload.  Other elements will remain untouched.</p><p>Changing the fields in a Bulk Port-in order causes the system to reapply all changed values to the child port-ins contained in the list of subtending port-in orders. Note that if the port-in orders contained within the Bulk Port are in DRAFT state, any field can be modified. If any child port-in order in the Bulk Port-in is in any other state, normal SUPP rules apply, and the list of appropriate fields is smaller.</p><p>Changing the ProcessingStatus to 'IN_PROGRESS' causes all child port-ins to begin processing. This is only valid if child port-ins exist for the bulk port-in.</p> <p>Please visit <a href='/docs/numbers/porting/port-ins/bulkPortIns'>Guides and Tutorials</a></p>
+      operationId: PatchBulkOrder
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: ''
+          in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/xml:
+            examples:
+              In progress:
+                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BulkPortin>\n\t<ProcessingStatus>IN_PROGRESS</ProcessingStatus>\n</BulkPortin>"
+              Simple Request:
+                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BulkPortin>\n\t<CustomerOrderId>Order Id for all child orders</CustomerOrderId>\n\t<RequestedFocDate>2021-06-30Z</RequestedFocDate>\n\t<TargetRespOrgId>JYT99</TargetRespOrgId>\n\t<SiteId>14020</SiteId>\n\t<PeerId delete=\"true\"/>\n</BulkPortin>"
+              Updated requested FOC date:
+                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BulkPortin>\n\t<RequestedFocDate>2021-06-22T11:30:00-04:00</RequestedFocDate>\n</BulkPortin>"
+            schema:
+              $ref: '#/components/schemas/BulkPortinPatchRequest'
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  description: example
+                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BulkPortinResponse>\n\t<BulkPortin>\n\t\t<CustomerOrderId>Order Id for all child orders</CustomerOrderId>\n\t\t<RequestedFocDate>2021-06-30T00:00:00.000Z</RequestedFocDate>\n\t\t<Subscriber>\n\t\t\t<SubscriberType>BUSINESS</SubscriberType>\n\t\t\t<BusinessName>Goina B Rich</BusinessName>\n\t\t\t<ServiceAddress>\n\t\t\t\t<HouseNumber>123</HouseNumber>\n\t\t\t\t<StreetName>Maple Ave</StreetName>\n\t\t\t\t<City>Hometown</City>\n\t\t\t\t<StateCode>MO</StateCode>\n\t\t\t\t<Zip>54923</Zip>\n\t\t\t\t<Country>United States</Country>\n\t\t\t\t<AddressType>Service</AddressType>\n\t\t\t</ServiceAddress>\n\t\t</Subscriber>\n\t\t<SiteId>14020</SiteId>\n\t\t<TargetRespOrgId>JYT01</TargetRespOrgId>\n\t\t<PeerId>521434</PeerId>\n\t\t<ProcessingStatus>DRAFT</ProcessingStatus>\n\t\t<AccountId>9900572</AccountId>\n\t\t<CreatedByUser>testuser</CreatedByUser>\n\t\t<LastModifiedBy>testuser</LastModifiedBy>\n\t\t<LastModifiedDate>2021-06-22T14:25:24.487Z</LastModifiedDate>\n\t\t<OrderCreateDate>2021-06-21T19:42:34.760Z</OrderCreateDate>\n\t</BulkPortin>\n</BulkPortinResponse>"
+              schema:
+                $ref: '#/components/schemas/BulkPortinResponse'
+          description: >-
+            The information has been successfully retrieved and displayed in the
+            payload.
+        '400':
+          content:
+            application/xml:
+              examples:
+                example:
+                  description: example
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BulkPortinResponse>
+                        <ResponseStatus>
+                            <Description>Please check your input parameters.</Description>
+                        </ResponseStatus>
+                        <PortinListErrors>
+                            <PortinErrors>
+                                <PortinOrderId>c358cb90-f1e6-4d72-92be-435411d50609</PortinOrderId>
+                                <Errors>
+                                    <Error>
+                                        <Description>The order cannot be modified because the order is awaiting a response from the losing carrier</Description>
+                                        <ErrorCode>7300</ErrorCode>
+                                    </Error>
+                                </Errors>
+                            </PortinErrors>
+                            <PortinErrors>
+                                <PortinOrderId>cb57e5a0-c70d-4f24-a450-bab62e908cc6</PortinOrderId>
+                                <Errors>
+                                    <Error>
+                                        <Description>Unable to modify processing status for AUTOMATED port type</Description>
+                                        <ErrorCode>7367</ErrorCode>
+                                    </Error>
+                                </Errors>
+                            </PortinErrors>
+                        </PortinListErrors>
+                    </BulkPortinResponse>
+              schema:
+                $ref: '#/components/schemas/BulkPortinPatchErrorResponse'
+          description: Bad request. Invalid input.
+        '404':
+          description: The indicated Bulk Port-in order could not be found.
+      summary: Patch bulk port-in order
+      tags:
+        - Bulk Port-In
+    put:
+      description: >-
+        The PUT operation is available only for bulk port-in orders that are not
+        yet associated with subtending orders. Since this only occurs for bulk
+        port-in orders that are in one of the draft states, there are few
+        restrictions on what may be included. As with the POST, any data
+        associated with the bulk port-in will cascade to subtending orders when
+        they are created. (Subtending orders are created after telephone numbers
+        are added to the bulk port-in using the /tnList endpoint.) The PUT
+        completely replaces the existing Bulk Portin order with the payload of
+        the PUT. Please visit <a
+        href='/docs/numbers/porting/port-ins/bulkPortIns'>Guides and
+        Tutorials</a>.
+      operationId: PutBulkOrder
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: ''
+          in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/xml:
+            examples:
+              example:
+                description: example
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <BulkPortin>
+                      <CustomerOrderId>Order Id for all child orders</CustomerOrderId>
+                      <RequestedFocDate>2021-06-30Z</RequestedFocDate>
+                      <Subscriber>
+                          <SubscriberType>BUSINESS</SubscriberType>
+                          <BusinessName>Goina B Rich</BusinessName>
+                          <ServiceAddress>
+                              <HouseNumber>123</HouseNumber>
+                              <StreetName>Maple Ave</StreetName>
+                              <City>Hometown</City>
+                              <StateCode>MO</StateCode>
+                              <Zip>54923</Zip>
+                          </ServiceAddress>
+                      </Subscriber>
+                      <TargetRespOrgId>JYT01</TargetRespOrgId>
+                      <SiteId>14020</SiteId>
+                      <PeerId>521434</PeerId>
+                  </BulkPortin>
+            schema:
+              $ref: '#/components/schemas/BulkPortinRequest'
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  description: example
+                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BulkPortinResponse> \n\t<BulkPortin> \n\t\t<CustomerOrderId>Order Id for all child orders</CustomerOrderId> \n\t\t<RequestedFocDate>2021-06-30T00:00:00.000Z</RequestedFocDate> \n\t\t<Subscriber> \n\t\t\t<SubscriberType>BUSINESS</SubscriberType> \n\t\t\t<BusinessName>Goina B Rich</BusinessName> \n\t\t\t<ServiceAddress> \n\t\t\t\t<HouseNumber>123</HouseNumber> \n\t\t\t\t<StreetName>Maple Ave</StreetName> \n\t\t\t\t<City>Hometown</City> \n\t\t\t\t<StateCode>MO</StateCode> \n\t\t\t\t<Zip>54923</Zip> \n\t\t\t\t<Country>United States</Country> \n\t\t\t\t<AddressType>Service</AddressType> \n\t\t\t</ServiceAddress> \n\t\t</Subscriber> \n\t\t<SiteId>14020</SiteId> \n\t\t<PeerId>521434</PeerId> \n\t\t<ProcessingStatus>DRAFT</ProcessingStatus> \n\t\t<AccountId>9900572</AccountId> \n\t\t<TargetRespOrgId>JYT01</TargetRespOrgId> \n\t\t<CreatedByUser>testuser</CreatedByUser> \n\t\t<LastModifiedBy>testuser</LastModifiedBy> \n\t\t<LastModifiedDate>2021-06-21T20:24:36.616Z</LastModifiedDate>\n\t\t<OrderCreateDate>2021-06-21T19:42:34.760Z</OrderCreateDate> \n\t</BulkPortin> \n</BulkPortinResponse>"
+              schema:
+                $ref: '#/components/schemas/BulkPortinResponse'
+          description: >-
+            The information has been successfully retrieved and displayed in the
+            payload.
+        '400':
+          content:
+            application/xml:
+              examples:
+                example:
+                  description: example
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BulkPortinResponse>
+                        <ResponseStatus>
+                            <Description>Please check your input parameters.</Description>
+                        </ResponseStatus>
+                        <PortinListErrors>
+                            <PortinErrors>
+                                <PortinOrderId>c358cb90-f1e6-4d72-92be-435411d50609</PortinOrderId>
+                                <Errors>
+                                    <Error>
+                                        <Description>The order cannot be modified because the order is awaiting a response from the losing carrier</Description>
+                                        <ErrorCode>7300</ErrorCode>
+                                    </Error>
+                                </Errors>
+                            </PortinErrors>
+                            <PortinErrors>
+                                <PortinOrderId>cb57e5a0-c70d-4f24-a450-bab62e908cc6</PortinOrderId>
+                                <Errors>
+                                    <Error>
+                                        <Description>Unable to modify processing status for AUTOMATED port type</Description>
+                                        <ErrorCode>7367</ErrorCode>
+                                    </Error>
+                                </Errors>
+                            </PortinErrors>
+                        </PortinListErrors>
+                    </BulkPortinResponse>
+              schema:
+                $ref: '#/components/schemas/BulkPortinPatchErrorResponse'
+          description: Bad request. Invalid input.
+        '404':
+          description: The indicated Bulk Port-in order could not be found.
+      summary: Update bulk port-in order
+      tags:
+        - Bulk Port-In
   /accounts/{accountId}/bulkPortins/{orderId}/history:
     get:
       description: >-
@@ -17631,272 +17897,6 @@ paths:
             country code prefix.The TN values should be 10-digit North American
             telephone numbers.
       summary: Update bulk port-in order tn list
-      tags:
-        - Bulk Port-In
-  /accounts/{accountId}/bulkPortins/{orderid}:
-    delete:
-      description: >-
-        Delete a bulk port-in order with child port-ins.  Deleting a bulk
-        port-in is allowed for 'DRAFT' state only.  Deleting a bulk port-in will
-        delete all DRAFT child port-ins associated with the bulk port-in.  When
-        the bulk port-in is deleted, any child port-in orders that are not in a
-        draft status are dissociated from the bulk port-in, but not deleted.
-        Please visit <a href='/docs/numbers/porting/port-ins/bulkPortIns'>Guides
-        and Tutorials</a>
-      operationId: DeleteBulkOrder
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: ''
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Bulk Port-in order has been successfully deleted.
-        '400':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <BulkPortinResponse>
-                        <BulkPortin>
-                            <Status>
-                                <Code>7709</Code>
-                                <Description>Bulk port-in with id d88763f4-8914-4301-bdca-6f409e4cd811 cannot be deleted since it is not in
-                                    draft status.
-                                </Description>
-                            </Status>
-                        </BulkPortin>
-                    </BulkPortinResponse>
-              schema:
-                $ref: '#/components/schemas/BulkPortinErrorResponse'
-          description: Bad request. Bulk Port-in order not in DRAFT state.
-        '404':
-          description: The indicated Bulk Port-in order could not be found.
-      summary: Delete bulk port-in order
-      tags:
-        - Bulk Port-In
-    get:
-      description: >-
-        Retrieves information associated with the bulk port-in order specified
-        by the orderId URI parameter. Please visit <a
-        href='/docs/numbers/porting/port-ins/bulkPortIns'>Guides and
-        Tutorials</a>
-      operationId: RetrieveBulkOrder
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: ''
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BulkPortinResponse> \n\t<BulkPortin> \n\t\t<CustomerOrderId>Order Id for all child orders</CustomerOrderId>\n\t\t<RequestedFocDate>2021-06-30T00:00:00.000Z</RequestedFocDate>\n\t\t<SiteId>14020</SiteId> \n\t\t<PeerId>521434</PeerId> \n\t\t<ProcessingStatus>DRAFT</ProcessingStatus> \n\t\t<AccountId>9900572</AccountId> \n\t\t<TargetRespOrgId>JYT01</TargetRespOrgId> \n\t\t<CreatedByUser>testuser</CreatedByUser> \n\t\t<LastModifiedBy>testuser</LastModifiedBy> \n\t\t<LastModifiedDate>2021-06-21T19:42:34.760Z</LastModifiedDate>\n\t\t<OrderCreateDate>2021-06-21T19:42:34.760Z</OrderCreateDate> \n\t</BulkPortin> \n</BulkPortinResponse>"
-              schema:
-                $ref: '#/components/schemas/BulkPortinResponse'
-          description: >-
-            The information has been successfully retrieved and displayed in the
-            payload.
-        '404':
-          description: The indicated Bulk Port-in order could not be found.
-      summary: Retrieve bulk port-in order
-      tags:
-        - Bulk Port-In
-    patch:
-      description: >-
-        <p>It is possible to change ("SUPP" in LNP terms) an existing Bulk
-        Port-in order.  This is done via a PUT or PATCH on the existing
-        order-id.  Since the Bulk Port-in
-          order acts as a template for port-in orders in DRAFT status, any record can be changed at any time.  The PATCH replaces elements of the referenced Bulk Portin order, but it replaces only the records included in the request payload.  Other elements will remain untouched.</p><p>Changing the fields in a Bulk Port-in order causes the system to reapply all changed values to the child port-ins contained in the list of subtending port-in orders. Note that if the port-in orders contained within the Bulk Port are in DRAFT state, any field can be modified. If any child port-in order in the Bulk Port-in is in any other state, normal SUPP rules apply, and the list of appropriate fields is smaller.</p><p>Changing the ProcessingStatus to 'IN_PROGRESS' causes all child port-ins to begin processing. This is only valid if child port-ins exist for the bulk port-in.</p> <p>Please visit <a href='/docs/numbers/porting/port-ins/bulkPortIns'>Guides and Tutorials</a></p>
-      operationId: PatchBulkOrder
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: ''
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/xml:
-            examples:
-              In progress:
-                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BulkPortin>\n\t<ProcessingStatus>IN_PROGRESS</ProcessingStatus>\n</BulkPortin>"
-              Simple Request:
-                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BulkPortin>\n\t<CustomerOrderId>Order Id for all child orders</CustomerOrderId>\n\t<RequestedFocDate>2021-06-30Z</RequestedFocDate>\n\t<TargetRespOrgId>JYT99</TargetRespOrgId>\n\t<SiteId>14020</SiteId>\n\t<PeerId delete=\"true\"/>\n</BulkPortin>"
-              Updated requested FOC date:
-                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BulkPortin>\n\t<RequestedFocDate>2021-06-22T11:30:00-04:00</RequestedFocDate>\n</BulkPortin>"
-            schema:
-              $ref: '#/components/schemas/BulkPortinPatchRequest'
-      responses:
-        '200':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BulkPortinResponse>\n\t<BulkPortin>\n\t\t<CustomerOrderId>Order Id for all child orders</CustomerOrderId>\n\t\t<RequestedFocDate>2021-06-30T00:00:00.000Z</RequestedFocDate>\n\t\t<Subscriber>\n\t\t\t<SubscriberType>BUSINESS</SubscriberType>\n\t\t\t<BusinessName>Goina B Rich</BusinessName>\n\t\t\t<ServiceAddress>\n\t\t\t\t<HouseNumber>123</HouseNumber>\n\t\t\t\t<StreetName>Maple Ave</StreetName>\n\t\t\t\t<City>Hometown</City>\n\t\t\t\t<StateCode>MO</StateCode>\n\t\t\t\t<Zip>54923</Zip>\n\t\t\t\t<Country>United States</Country>\n\t\t\t\t<AddressType>Service</AddressType>\n\t\t\t</ServiceAddress>\n\t\t</Subscriber>\n\t\t<SiteId>14020</SiteId>\n\t\t<TargetRespOrgId>JYT01</TargetRespOrgId>\n\t\t<PeerId>521434</PeerId>\n\t\t<ProcessingStatus>DRAFT</ProcessingStatus>\n\t\t<AccountId>9900572</AccountId>\n\t\t<CreatedByUser>testuser</CreatedByUser>\n\t\t<LastModifiedBy>testuser</LastModifiedBy>\n\t\t<LastModifiedDate>2021-06-22T14:25:24.487Z</LastModifiedDate>\n\t\t<OrderCreateDate>2021-06-21T19:42:34.760Z</OrderCreateDate>\n\t</BulkPortin>\n</BulkPortinResponse>"
-              schema:
-                $ref: '#/components/schemas/BulkPortinResponse'
-          description: >-
-            The information has been successfully retrieved and displayed in the
-            payload.
-        '400':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <BulkPortinResponse>
-                        <ResponseStatus>
-                            <Description>Please check your input parameters.</Description>
-                        </ResponseStatus>
-                        <PortinListErrors>
-                            <PortinErrors>
-                                <PortinOrderId>c358cb90-f1e6-4d72-92be-435411d50609</PortinOrderId>
-                                <Errors>
-                                    <Error>
-                                        <Description>The order cannot be modified because the order is awaiting a response from the losing carrier</Description>
-                                        <ErrorCode>7300</ErrorCode>
-                                    </Error>
-                                </Errors>
-                            </PortinErrors>
-                            <PortinErrors>
-                                <PortinOrderId>cb57e5a0-c70d-4f24-a450-bab62e908cc6</PortinOrderId>
-                                <Errors>
-                                    <Error>
-                                        <Description>Unable to modify processing status for AUTOMATED port type</Description>
-                                        <ErrorCode>7367</ErrorCode>
-                                    </Error>
-                                </Errors>
-                            </PortinErrors>
-                        </PortinListErrors>
-                    </BulkPortinResponse>
-              schema:
-                $ref: '#/components/schemas/BulkPortinPatchErrorResponse'
-          description: Bad request. Invalid input.
-        '404':
-          description: The indicated Bulk Port-in order could not be found.
-      summary: Patch bulk port-in order
-      tags:
-        - Bulk Port-In
-    put:
-      description: >-
-        The PUT operation is available only for bulk port-in orders that are not
-        yet associated with subtending orders. Since this only occurs for bulk
-        port-in orders that are in one of the draft states, there are few
-        restrictions on what may be included. As with the POST, any data
-        associated with the bulk port-in will cascade to subtending orders when
-        they are created. (Subtending orders are created after telephone numbers
-        are added to the bulk port-in using the /tnList endpoint.) The PUT
-        completely replaces the existing Bulk Portin order with the payload of
-        the PUT. Please visit <a
-        href='/docs/numbers/porting/port-ins/bulkPortIns'>Guides and
-        Tutorials</a>.
-      operationId: PutBulkOrder
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: ''
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/xml:
-            examples:
-              example:
-                description: example
-                value: |-
-                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                  <BulkPortin>
-                      <CustomerOrderId>Order Id for all child orders</CustomerOrderId>
-                      <RequestedFocDate>2021-06-30Z</RequestedFocDate>
-                      <Subscriber>
-                          <SubscriberType>BUSINESS</SubscriberType>
-                          <BusinessName>Goina B Rich</BusinessName>
-                          <ServiceAddress>
-                              <HouseNumber>123</HouseNumber>
-                              <StreetName>Maple Ave</StreetName>
-                              <City>Hometown</City>
-                              <StateCode>MO</StateCode>
-                              <Zip>54923</Zip>
-                          </ServiceAddress>
-                      </Subscriber>
-                      <TargetRespOrgId>JYT01</TargetRespOrgId>
-                      <SiteId>14020</SiteId>
-                      <PeerId>521434</PeerId>
-                  </BulkPortin>
-            schema:
-              $ref: '#/components/schemas/BulkPortinRequest'
-      responses:
-        '200':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BulkPortinResponse> \n\t<BulkPortin> \n\t\t<CustomerOrderId>Order Id for all child orders</CustomerOrderId> \n\t\t<RequestedFocDate>2021-06-30T00:00:00.000Z</RequestedFocDate> \n\t\t<Subscriber> \n\t\t\t<SubscriberType>BUSINESS</SubscriberType> \n\t\t\t<BusinessName>Goina B Rich</BusinessName> \n\t\t\t<ServiceAddress> \n\t\t\t\t<HouseNumber>123</HouseNumber> \n\t\t\t\t<StreetName>Maple Ave</StreetName> \n\t\t\t\t<City>Hometown</City> \n\t\t\t\t<StateCode>MO</StateCode> \n\t\t\t\t<Zip>54923</Zip> \n\t\t\t\t<Country>United States</Country> \n\t\t\t\t<AddressType>Service</AddressType> \n\t\t\t</ServiceAddress> \n\t\t</Subscriber> \n\t\t<SiteId>14020</SiteId> \n\t\t<PeerId>521434</PeerId> \n\t\t<ProcessingStatus>DRAFT</ProcessingStatus> \n\t\t<AccountId>9900572</AccountId> \n\t\t<TargetRespOrgId>JYT01</TargetRespOrgId> \n\t\t<CreatedByUser>testuser</CreatedByUser> \n\t\t<LastModifiedBy>testuser</LastModifiedBy> \n\t\t<LastModifiedDate>2021-06-21T20:24:36.616Z</LastModifiedDate>\n\t\t<OrderCreateDate>2021-06-21T19:42:34.760Z</OrderCreateDate> \n\t</BulkPortin> \n</BulkPortinResponse>"
-              schema:
-                $ref: '#/components/schemas/BulkPortinResponse'
-          description: >-
-            The information has been successfully retrieved and displayed in the
-            payload.
-        '400':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <BulkPortinResponse>
-                        <ResponseStatus>
-                            <Description>Please check your input parameters.</Description>
-                        </ResponseStatus>
-                        <PortinListErrors>
-                            <PortinErrors>
-                                <PortinOrderId>c358cb90-f1e6-4d72-92be-435411d50609</PortinOrderId>
-                                <Errors>
-                                    <Error>
-                                        <Description>The order cannot be modified because the order is awaiting a response from the losing carrier</Description>
-                                        <ErrorCode>7300</ErrorCode>
-                                    </Error>
-                                </Errors>
-                            </PortinErrors>
-                            <PortinErrors>
-                                <PortinOrderId>cb57e5a0-c70d-4f24-a450-bab62e908cc6</PortinOrderId>
-                                <Errors>
-                                    <Error>
-                                        <Description>Unable to modify processing status for AUTOMATED port type</Description>
-                                        <ErrorCode>7367</ErrorCode>
-                                    </Error>
-                                </Errors>
-                            </PortinErrors>
-                        </PortinListErrors>
-                    </BulkPortinResponse>
-              schema:
-                $ref: '#/components/schemas/BulkPortinPatchErrorResponse'
-          description: Bad request. Invalid input.
-        '404':
-          description: The indicated Bulk Port-in order could not be found.
-      summary: Update bulk port-in order
       tags:
         - Bulk Port-In
   /accounts/{accountId}/campaignManagement/10dlc:
