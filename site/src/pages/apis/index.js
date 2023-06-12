@@ -10,7 +10,7 @@ const apiList = [
     },
     {
         title: 'Call Verification API',
-        Svg: require('@site/static/img/api-icons/voice.svg').default,
+        Svg: require('@site/static/img/api-icons/verification.svg').default,
         link: '/apis/active-call-info/'
     },
     {
