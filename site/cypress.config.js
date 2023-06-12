@@ -7,7 +7,6 @@ module.exports = defineConfig({
     },
   baseUrl: 'http://localhost:3000'
   },
-  projectId: "oz7rpf",
   pageLoadTimeout: 60000,
   viewportWidth: 1440,
   viewportHeight: 900,
