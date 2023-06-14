@@ -7,7 +7,6 @@ module.exports = defineConfig({
     },
   baseUrl: 'https://dev.bandwidth.com/'
   },
-  projectId: "oz7rpf",
   pageLoadTimeout: 60000,
   viewportWidth: 1440,
   viewportHeight: 900,

@@ -12,6 +12,7 @@ const phoneNumberLookupSpec = fs.readFileSync(
   "utf-8"
 );
 const voiceSpec = fs.readFileSync("./specs/voice.yml", "utf-8");
+const activeCallInfoSpec = fs.readFileSync('./specs/active-call-info.yml', 'utf-8');
 const messagingSpec = fs.readFileSync("./specs/messaging.yml", "utf-8");
 const webRtcSpec = fs.readFileSync("./specs/webrtc.yml", "utf-8");
 const multiFactorAuthSpec = fs.readFileSync(
@@ -37,7 +38,6 @@ const identitySpec = fs.readFileSync(
 );
 const identityspecLink = "";
 const insightsSpec = fs.readFileSync("./specs/insights.yml", "utf-8");
-const pipedream = "https://eowxoldwz4d7syt.m.pipedream.net";
 
 module.exports = {
   title: "Bandwidth API Docs",
@@ -170,6 +170,8 @@ module.exports = {
     phoneNumberLookupSpecLink: `${customConfig.phoneNumberLookupSpecLink}`,
     voiceSpec: YAML.parse(voiceSpec),
     voiceSpecLink: `${customConfig.voiceSpecLink}`,
+    activeCallInfoSpec: YAML.parse(activeCallInfoSpec),
+    activeCallInfoSpecLink: `${customConfig.activeCallInfoSpecLink}`,
     messagingSpec: YAML.parse(messagingSpec),
     messagingSpecLink: `${customConfig.messagingSpecLink}`,
     messagingInternationalSpec: JSON.parse(messagingInternationalSpec),
@@ -194,8 +196,6 @@ module.exports = {
     blogPosts: blogPosts,
 
     ltsVersions: ltsVersions,
-
-    pipedream: pipedream,
 
     // CSS Colors
     bwBlue: "#079CEE",
