@@ -407,6 +407,24 @@ components:
             <Description>Account '9999999' already has existing 10DLC settings</Description>
           </ResponseStatus>
         </CampaignSettingsResponse>
+    CampaignTnsResponse:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <CampaignTnsResponse>
+          <TotalCount>1</TotalCount>
+          <TelephoneNumbers>
+            <TelephoneNumber>8888888888</TelephoneNumber>
+          </TelephoneNumbers>
+        </CampaignTnsResponse>
+    CampaignTnsResponse400Error:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <CampaignTnsResponse>
+          <ResponseStatus>
+            <ErrorCode>5081</ErrorCode>
+            <Description>Number Format 'wrong' is invalid.</Description>
+          </ResponseStatus>
+        </CampaignTnsResponse>
     CampaignUpdateRequest:
       value: |-
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -1473,6 +1491,12 @@ components:
       description: >-
         The short code number history details have been successfully retrieved
         and displayed.
+    shortCodeUpdateShortCodeResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/shortCode'
+      description: Updated short code data.
     tfvBadRequestResponse:
       content:
         application/json:
@@ -3990,6 +4014,27 @@ components:
           required:
             - BusinessIdentity
           type: object
+      type: object
+    CampaignTnsErrorResponse:
+      properties:
+        CampaignTnsResponse:
+          $ref: '#/components/schemas/ResponseStatus'
+      type: object
+    CampaignTnsResponse:
+      properties:
+        CampaignTnsResponse:
+          properties:
+            TelephoneNumbers:
+              items:
+                properties:
+                  TelephoneNumber:
+                    type: string
+                type: object
+              type: array
+            TotalCount:
+              type: number
+          type: object
+      title: CampaignTnsResponse
       type: object
     CitySearchAndOrder:
       allOf:
@@ -14397,6 +14442,10 @@ components:
           format: date
           type: string
       type: object
+    shortCodeNotes:
+      description: Internal notes.
+      example: Notes example
+      type: string
     shortCodePage:
       description: Pagination object that represents the current page.
       properties:
@@ -18774,6 +18823,53 @@ paths:
                 $ref: '#/components/schemas/CampaignErrorResponse'
           description: Not Found
       summary: Revet Campaign
+      tags:
+        - 10DLC
+  /accounts/{accountId}/campaignManagement/10dlc/campaigns/{campaignId}/tn:
+    get:
+      description: >-
+        This method returns a list of TNs that have been registered to a
+        campaign. The maximum number of TNs returned by this query is controlled
+        by the size parameter. The page parameter can be used to fetch
+        additional pages after the first.
+      operationId: getCampaignTns
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/CampaignIdPathParam'
+        - description: The page number of the results to return.
+          in: query
+          name: page
+          required: false
+          schema:
+            default: 0
+            type: number
+        - description: The maximum number of results to return.
+          in: query
+          name: size
+          required: false
+          schema:
+            default: 25
+            type: number
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  $ref: '#/components/examples/CampaignTnsResponse'
+              schema:
+                $ref: '#/components/schemas/CampaignTnsResponse'
+          description: OK
+        '400':
+          content:
+            application/xml:
+              examples:
+                example:
+                  $ref: '#/components/examples/CampaignTnsResponse400Error'
+              schema:
+                $ref: '#/components/schemas/CampaignTnsErrorResponse'
+          description: Bad Request
+      summary: Fetch Campaign TNs
       tags:
         - 10DLC
   /accounts/{accountId}/csrs:
