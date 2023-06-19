@@ -415,6 +415,84 @@ components:
             - fields
         example:
           $ref: '#/components/examples/cognigyProviderExample'
+    googleProviderRequestData:
+      title: Google Provider Request Data
+      type: object
+      description: Contains Provider information.
+      properties:
+        objects:
+          type: string
+          properties:
+            fields:
+              type: object
+              properties:
+                region:
+                  type: string
+                  description: A string representing the region.
+                  example: us-east-1
+                location:
+                  type: string
+                  description: A string representing the location.
+                  example: Raleigh
+                environment:
+                  type: string
+                  description: A string representing the environment.
+                  example: Production
+                projectId:
+                  type: string
+                  description: A string representing the project ID.
+                  example: my-project
+                agentId:
+                  type: string
+                  description: A string representing the agent ID.
+                  example: my-agent
+                  minLength: 1
+      example:
+        $ref: '#/components/examples/googleProviderExample'
+    awsProviderRequestData:
+      title: AWS Provider Response Data
+      type: object
+      properties:
+        type:
+          type: string
+        fields:
+          type: object
+          properties:
+            region:
+              type: string
+              description: A string representing the region.
+              example: us-west-2
+            credentials:
+              type: string
+              description: A string representing the credentials.
+              example: ABCDEFG123456
+          required:
+            - type
+            - fields
+          example:
+            $ref: '#/components/examples/awsProviderExample'
+    cognigyProviderRequestData:
+      title: Cognigy Provider Response Data
+      type: object
+      properties:
+        type:
+          type: string
+        fields:
+          type: object
+          properties:
+            botEndpoint:
+              type: string
+              description: A string representing the Cognigy bot endpoint.
+              example: https://cognigy.ai/bots/mybot
+            credentials:
+              type: string
+              description: A string representing the Cognigy bot credentials.
+              example: ABCDEFG123456
+          required:
+            - type
+            - fields
+        example:
+          $ref: '#/components/examples/cognigyProviderExample'
     badRequestError:
       type: object
       properties:
@@ -672,7 +750,10 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/createProvider'
+            oneOf:
+              - $ref: '#/components/schemas/googleProviderRequestData'
+              - $ref: '#/components/schemas/awsProviderRequestData'
+              - $ref: '#/components/schemas/cognigyProviderRequestData'
     providerPutRequest:
       description: Updated configuration details for the Provider.
       required: true
@@ -688,32 +769,53 @@ components:
           schema:
             $ref: '#/components/schemas/updateProvider'
   examples:
+    providerExample:
+      summary: A summary of a Provider
+      value:
+        schema:
+          oneOf:
+            - $ref: '#/components/schemas/googleProviderExample'
+            - $ref: '#/components/schemas/awsProviderExample'
+            - $ref: '#/components/schemas/cognigyProviderExample'
     googleProviderExample:
       summary: An example of a Google provider
       value:
         object:
-          type: GoogleType
-          region: northamerica
-          location: us-east-1
-          environment: Production
-          projectId: myproject
-          agentId: myagent
-          sttOverrideConfig: null
-          sttOverrideStreamingConfig: null
+          name: Google provider
+          displayName: Google Provider
+          type: GOOGLE
+          botUrl: http://google-bot-url
+          googleProvider:
+            region: northamerica
+            location: us-east-1
+            environment: Production
+            projectId: myproject
+            agentId: myagent
+            googleCredentials:
+              privateKey: samplekey
+              clientEmai: email
     awsProviderExample:
       summary: An example of an AWS provider
       value:
         data:
-          type: AwsType
-          Region: us-west-1
-          Credentials:
-            accessKeyId: myaccesskey
-            secretAccessKey: mysecretkey
+          name: AWS provider
+          displayName: AWS Provider
+          type: AWS
+          awsProvider:
+            botUrl: http://aws-bot-url
+            Region: us-west-1
+            awsCredentials:
+              accessKeyId: myaccesskey
+              secretAccessKey: mysecretkey
     cognigyProviderExample:
       summary: An example of a Cognigy provider
       value:
         objects:
-          - type: CognigyType
+          name: Cognigy provider
+          displayName: Cognigy Provider
+          type: COGNIGY
+          cognigyProvider:
+            botUrl: http://cognigy-bot-url
             TtsUrl: https://example.com/tts
             SttUrl: https://example.com/stt
     badRequestErrorExample:
