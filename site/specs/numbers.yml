@@ -1,4 +1,34 @@
 components:
+  callbacks:
+    tfVerificationStatus:
+      your_url.com/webhookService:
+        post:
+          description: >-
+            Unique webhook URL provided by customers to which Bandwidth sends a
+            POST request to notify customer regarding TFV status update.
+          operationId: tfvRequest
+          requestBody:
+            $ref: '#/components/requestBodies/verificationWebhookRequest'
+          responses:
+            '204':
+              description: No content
+            '400':
+              $ref: '#/components/responses/tfvBadRequestResponse'
+            '401':
+              $ref: '#/components/responses/tfvUnauthorizedResponse'
+            '403':
+              $ref: '#/components/responses/tfvForbiddenResponse'
+            '404':
+              $ref: '#/components/responses/tfvNotFoundResponse'
+            '405':
+              $ref: '#/components/responses/tfvNotAllowedResponse'
+            '429':
+              $ref: '#/components/responses/tfvTooManyRequestsResponse'
+            '500':
+              $ref: '#/components/responses/tfvServerErrorResponse'
+            '503':
+              $ref: '#/components/responses/tfvServiceUnavailableResponse'
+          summary: POST to customer's webhook URL about TFV status update
   examples:
     Brand400Error:
       value: |-
@@ -242,7 +272,7 @@ components:
               </TnVendorAssignments>
            </BulkTnVendorAssignmentPayload>
         </BulkTnVendorAssignmentTaskResponse>
-    Campaign404Error:
+    Campaign403Error:
       value: |-
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
         <CampaignsResponse>
@@ -284,6 +314,7 @@ components:
             <Description>Test 1</Description>
             <MessageClass>Campaign-E</MessageClass>
             <CreateDate>2021-03-18T12:50:45Z</CreateDate>
+            <SecondaryDcaSharingStatus>ACCEPTED</SecondaryDcaSharingStatus>
             <Status>ACTIVE</Status>
             <MnoStatusList>
               <MnoStatus>
@@ -376,6 +407,24 @@ components:
             <Description>Account '9999999' already has existing 10DLC settings</Description>
           </ResponseStatus>
         </CampaignSettingsResponse>
+    CampaignTnsResponse:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <CampaignTnsResponse>
+          <TotalCount>1</TotalCount>
+          <TelephoneNumbers>
+            <TelephoneNumber>8888888888</TelephoneNumber>
+          </TelephoneNumbers>
+        </CampaignTnsResponse>
+    CampaignTnsResponse400Error:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <CampaignTnsResponse>
+          <ResponseStatus>
+            <ErrorCode>5081</ErrorCode>
+            <Description>Number Format 'wrong' is invalid.</Description>
+          </ResponseStatus>
+        </CampaignTnsResponse>
     CampaignUpdateRequest:
       value: |-
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -495,6 +544,31 @@ components:
             </Error>
           </Errors>
         </CampaignResponse>
+    CreateCampaignImportResponse:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <LongCodeImportCampaignResponse>
+          <ImportedCampaign>
+            <CampaignId>CA114BN</CampaignId>
+            <Description>Test 1</Description>
+            <MessageClass>Campaign-E</MessageClass>
+            <CreateDate>2021-03-18T12:50:45Z</CreateDate>
+            <SecondaryDcaSharingStatus>PENDING</SecondaryDcaSharingStatus>
+            <Status>ACTIVE</Status>
+            <MnoStatusList>
+              <MnoStatus>
+                <MnoName>ATT</MnoName>
+                <MnoId>10017</MnoId>
+                <Status>APPROVED</Status>
+              </MnoStatus>
+              <MnoStatus>
+                <MnoName>TMO</MnoName>
+                <MnoId>10035</MnoId>
+                <Status>APPROVED</Status>
+              </MnoStatus>
+            </MnoStatusList>
+          </ImportedCampaign>
+        </LongCodeImportCampaignResponse>
     CreateCampaignRequest:
       value: |-
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -563,6 +637,39 @@ components:
             <BusinessIdentity>DirectCustomer</BusinessIdentity>
           </CampaignSettings>
         </CampaignSettingsResponse>
+    ImportVoiceTnOrders:
+      description: List all import voice tn orders response
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <ImportVoiceTnOrders>
+          <TotalCount>2</TotalCount>
+          <ImportVoiceTnOrderSummary>
+            <ImportVoiceTnOrderSummary>
+              <accountId>14</accountId>
+              <CountOfTNs>1</CountOfTNs>
+              <CustomerOrderId>CustomerOrderId</CustomerOrderId>
+              <userId>systemUser</userId>
+              <lastModifiedDate>2019-01-24T11:08:09.770Z</lastModifiedDate>
+              <OrderDate>2019-01-24T11:08:09.770Z</OrderDate>
+              <OrderType>import_tn_orders</OrderType>
+              <OrderStatus>COMPLETE</OrderStatus>
+              <OrderId>211a103c-5f9c-4117-8833-c574bdc390fd</OrderId>
+            </ImportVoiceTnOrderSummary>
+          </ImportVoiceTnOrderSummary>
+          <ImportVoiceTnOrderSummary>
+            <ImportVoiceTnOrderSummary>
+              <accountId>14</accountId>
+              <CountOfTNs>2</CountOfTNs>
+              <CustomerOrderId>CustomerOrderId</CustomerOrderId>
+              <userId>systemUser</userId>
+              <lastModifiedDate>2019-01-24T10:43:16.934Z</lastModifiedDate>
+              <OrderDate>2019-01-24T10:43:16.934Z</OrderDate>
+              <OrderType>import_tn_orders</OrderType>
+              <OrderStatus>PARTIAL</OrderStatus>
+              <OrderId>8dc32f09-2329-4c73-b702-526f46b02712</OrderId>
+            </ImportVoiceTnOrderSummary>
+          </ImportVoiceTnOrderSummary>
+        </ImportVoiceTnOrders>
     MyBrandRequest:
       value: |-
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -587,6 +694,136 @@ components:
           <Website>www.my.website.com</Website>
           <IsMain>true</IsMain>
         </Brand>
+    RateCenterFindCoverage404Error:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <RateCenterCoverageResponse>
+          <Error>
+            <Description>Rate center coverage with id 999 was not found.</Description>
+            <ErrorCode>3940</ErrorCode>
+          </Error>
+        </RateCenterCoverageResponse>
+    RateCenterGetCoverage400Error:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <RateCenterCoveragesResponse>
+            <Error>
+              <Description>You must provide at least one parameter in order to search.</Description>
+              <ErrorCode>3924</ErrorCode>
+            </Error>
+          </RateCenterCoveragesResponse>
+    RateCenterGetCoverageResponseExample:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <RateCenterCoveragesResponse>
+          <RateCenterCoverages>
+            <VendorId>49</VendorId>
+            <Abbreviation>ALABASTER</Abbreviation>
+            <Region>AL</Region>
+            <TierId>1</TierId>
+            <SupportsLnp>true</SupportsLnp>
+            <SupportsNewTns>true</SupportsNewTns>
+          </RateCenterCoverages>
+        </RateCenterCoveragesResponse>
+    RateCenterPostCoverage400Error:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <RateCenterCoverageResponse>
+          <Error>
+            <Description>Offnet coverage must not have an LRN.</Description>
+            <ErrorCode>3913</ErrorCode>
+          </Error>
+        </RateCenterCoverageResponse>
+    RateCenterPostCoverage409Error:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <RateCenterCoverageResponse>
+          <Error>
+            <Description>Coverage already exists for FARMVILLE.NC with vendor ID 49</Description>
+            <ErrorCode>3923</ErrorCode>
+          </Error>
+        </RateCenterCoverageResponse>
+    RateCenterPostCoverageResponseExample:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <RateCenterCoverageResponse>
+          <RateCenterCoverage>
+            <VendorId>49</VendorId>
+            <Abbreviation>FARMVILLE</Abbreviation>
+            <Region>NC</Region>
+            <TierId>1</TierId>
+            <SupportsLnp>false</SupportsLnp>
+            <SupportsNewTns>true</SupportsNewTns>
+            <Lrn>2529690000</Lrn>
+            <Lata>951</Lata>
+          </RateCenterCoverage>
+        </RateCenterCoverageResponse>
+    RateCenterPutCoverageResponseExample:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <RateCenterCoverageResponse>
+          <RateCenterCoverage>
+            <VendorId>49</VendorId>
+            <Abbreviation>FARMVILLE</Abbreviation>
+            <Region>NC</Region>
+            <TierId>1</TierId>
+            <SupportsLnp>false</SupportsLnp>
+            <SupportsNewTns>true</SupportsNewTns>
+            <Lrn>2529690000</Lrn>
+            <Lata>951</Lata>
+          </RateCenterCoverage>
+        </RateCenterCoverageResponse>
+    RemoveImportedVoiceTnOrders:
+      description: List all remove imported voice tn orders response
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <RemoveImportedVoiceTnOrders>
+            <TotalCount>4</TotalCount>
+            <RemoveImportedVoiceTnOrderSummary>
+                <accountId>12346163</accountId>
+                <CountOfTNs>2</CountOfTNs>
+                <CustomerOrderId>getRemoveImportedTn3uCf6</CustomerOrderId>
+                <userId>systemUser</userId>
+                <lastModifiedDate>2023-03-30T21:51:58.901Z</lastModifiedDate>
+                <OrderDate>2023-03-30T21:51:58.850Z</OrderDate>
+                <OrderType>remove_imported_voice_tn_orders</OrderType>
+                <OrderStatus>COMPLETE</OrderStatus>
+                <OrderId>e694bd1c-3ee3-4f39-9b7e-279a75d2843d</OrderId>
+            </RemoveImportedVoiceTnOrderSummary>
+            <RemoveImportedVoiceTnOrderSummary>
+                <accountId>12346163</accountId>
+                <CountOfTNs>1</CountOfTNs>
+                <CustomerOrderId>getRemoveImportedTnmBwpt</CustomerOrderId>
+                <userId>systemUser</userId>
+                <lastModifiedDate>2023-03-30T21:51:09.921Z</lastModifiedDate>
+                <OrderDate>2023-03-30T21:51:09.870Z</OrderDate>
+                <OrderType>remove_imported_voice_tn_orders</OrderType>
+                <OrderStatus>COMPLETE</OrderStatus>
+                <OrderId>492b8ef2-a7e4-4390-943e-87525d8b068d</OrderId>
+            </RemoveImportedVoiceTnOrderSummary>
+            <RemoveImportedVoiceTnOrderSummary>
+                <accountId>12346163</accountId>
+                <CountOfTNs>1</CountOfTNs>
+                <CustomerOrderId>undefinedOrderId</CustomerOrderId>
+                <userId>systemUser</userId>
+                <lastModifiedDate>2023-03-30T21:50:50.874Z</lastModifiedDate>
+                <OrderDate>2023-03-30T21:50:50.861Z</OrderDate>
+                <OrderType>remove_imported_voice_tn_orders</OrderType>
+                <OrderStatus>FAILED</OrderStatus>
+                <OrderId>f5f8c253-a786-4f35-bac1-0bd93524b137</OrderId>
+            </RemoveImportedVoiceTnOrderSummary>
+            <RemoveImportedVoiceTnOrderSummary>
+                <accountId>12346163</accountId>
+                <CountOfTNs>1</CountOfTNs>
+                <CustomerOrderId>undefinedOrderId</CustomerOrderId>
+                <userId>systemUser</userId>
+                <lastModifiedDate>2023-03-30T21:50:50.659Z</lastModifiedDate>
+                <OrderDate>2023-03-30T21:50:50.613Z</OrderDate>
+                <OrderType>remove_imported_voice_tn_orders</OrderType>
+                <OrderStatus>COMPLETE</OrderStatus>
+                <OrderId>f28266b0-6fbb-497d-ac27-7db138386f4f</OrderId>
+            </RemoveImportedVoiceTnOrderSummary>
+        </RemoveImportedVoiceTnOrders>
     ResellerSetupRequest:
       value: |-
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -612,12 +849,59 @@ components:
           </CampaignSettings>
         </CampaignSettingsResponse>
   parameters:
+    AccountIDQueryParam:
+      description: >
+        This is the account that the searched-for order will be contributing
+        to.  Specifying this parameter will restrict the search to imported
+        voice orders within the specified account.
+      example: 5000125
+      in: query
+      name: accountID
+      schema:
+        type: integer
     AccountIdPathParam:
       description: User's account ID
       example: '1234567'
       in: path
       name: accountId
       required: true
+      schema:
+        type: string
+    CampaignIdPathParam:
+      description: User's campaign ID
+      example: CBA001
+      in: path
+      name: campaignId
+      required: true
+      schema:
+        type: string
+    CreatedDateFromQueryParam:
+      description: >-
+        Checks the order's creation date against this value. Orders that have a
+        creation date after this date will be included. Format is yyyy-MM-dd
+      example: '2013-10-22'
+      in: query
+      name: createdDateFrom
+      schema:
+        format: date
+        type: string
+    CreatedDateToQueryParam:
+      description: >-
+        Checks the order's creation date against this value. Orders that have a
+        creation date before this date will be included. Format is yyyy-MM-dd
+      example: '2013-10-25'
+      in: query
+      name: createdDateTo
+      schema:
+        format: date
+        type: string
+    CustomerOrderIdQueryParam:
+      description: >-
+        The Customer Order ID is an ID assigned by the account owner to provide
+        a reference number for the importVoiceTnOrder.
+      example: ABCCorp12345
+      in: query
+      name: customerOrderId
       schema:
         type: string
     DomainNamePathParam:
@@ -643,6 +927,28 @@ components:
       required: true
       schema:
         type: string
+    ModifiedDateFromQueryParam:
+      description: >-
+        For Date-based searches, the starting date of a date range (inclusive)
+        that will be used to find Import Tn Orders that were modified within the
+        date range. It is in the form yyyy-MM-dd.
+      example: '2013-10-22'
+      in: query
+      name: modifiedDateFrom
+      schema:
+        format: date
+        type: string
+    ModifiedDateToQueryParam:
+      description: >-
+        For Date-based searches, the ending date of a date range (inclusive)
+        that will be used to find Import Tn Orders that were modified within the
+        date range. It is in the form yyyy-MM-dd.
+      example: '2013-10-25'
+      in: query
+      name: modifiedDateTo
+      schema:
+        format: date
+        type: string
     OrderIdPathParam:
       description: ID of order to retrieve
       example: bf1305b8-8998-1111-2222-51ba3ce52d4e
@@ -665,6 +971,69 @@ components:
       required: true
       schema:
         type: string
+    RCAbbreviationOptional:
+      description: A rate center's abbreviation
+      example: ALABASTER
+      in: query
+      name: abbreviation
+      required: false
+      schema:
+        type: string
+    RCAbbreviationRequired:
+      description: A rate center's abbreviation
+      example: FARMVILLE
+      in: query
+      name: abbreviation
+      required: true
+      schema:
+        type: string
+    RCCoverageMatrixId:
+      description: A rate center's coverage matrix id
+      in: path
+      name: id
+      required: true
+      schema:
+        type: number
+    RCLataOptional:
+      description: Rate center LATA
+      example: 951
+      in: query
+      name: lata
+      required: false
+      schema:
+        type: number
+    RCRegionOptional:
+      description: A rate center's state
+      example: AL
+      in: query
+      name: region
+      required: false
+      schema:
+        type: string
+    RCRegionRequired:
+      description: A rate center's state
+      example: NC
+      in: query
+      name: region
+      required: true
+      schema:
+        type: string
+    RCVendorOptional:
+      description: Vendor id
+      example: 49
+      in: query
+      name: vendor
+      required: false
+      schema:
+        type: number
+    RCVendorRequired:
+      description: Vendor id
+      example: 49
+      in: query
+      name: vendor
+      required: true
+      schema:
+        type: number
     RoleIdPathParam:
       description: Role Id
       example: testRole
@@ -679,6 +1048,13 @@ components:
       required: true
       schema:
         format: int32
+        type: integer
+    SipPeerIdQueryParam:
+      description: A Sip Peer Id that is referenced in the order
+      example: 50139
+      in: query
+      name: sipPeerId
+      schema:
         type: integer
     SiteIdPathParam:
       description: Site ID of the Sip Peer
@@ -710,6 +1086,21 @@ components:
       required: true
       schema:
         type: string
+    TfPhoneNumberPathParam:
+      description: Valid Toll-Free telephone number in E.164 format
+      example: +18885555555s
+      in: path
+      name: phoneNumber
+      required: true
+      schema:
+        $ref: '#/components/schemas/tfPhoneNumber'
+    TnQueryParam:
+      description: A Telephone Number (TN) that is referenced in the order
+      example: '9199918388'
+      in: query
+      name: tn
+      schema:
+        type: string
     UserIdPathParam:
       description: User Id
       example: testUser
@@ -718,6 +1109,535 @@ components:
       required: true
       schema:
         type: string
+    WebhookSubscriptionIdPathParam:
+      description: Webhook subscription ID
+      example: 7bt57JcsVYJrN9K1OcV1Nu
+      in: path
+      name: id
+      required: true
+      schema:
+        type: string
+    shortCodeCountryPathParam:
+      description: The short code number country.
+      example: USA
+      in: path
+      name: country
+      required: true
+      schema:
+        items:
+          enum:
+            - USA
+            - CAN
+        type: string
+    shortCodeHistoryShortCodeSortParam:
+      description: Sorting parameters for `shortCode`
+      example:
+        sort: asc
+      explode: true
+      in: query
+      name: shortCode
+      properties:
+        sort:
+          enum:
+            - asc
+            - desc
+          type: string
+      required: false
+      style: deepObject
+    shortCodeHistoryVersionSortParam:
+      description: Sorting parameters for `version`
+      example:
+        sort: asc
+      explode: true
+      in: query
+      name: version
+      properties:
+        sort:
+          enum:
+            - asc
+            - desc
+          type: string
+      required: false
+      style: deepObject
+    shortCodeLimitQueryParam:
+      description: The number of entities to return based in the offset.
+      in: query
+      name: limit
+      required: false
+      schema:
+        default: 50
+        maximum: 250
+        type: integer
+    shortCodeOffsetQueryParam:
+      description: The offset number of the results to return.
+      in: query
+      name: offset
+      required: false
+      schema:
+        default: 0
+        type: integer
+    shortCodePathParam:
+      description: The short code number used in the request.
+      example: '123321'
+      in: path
+      name: shortCode
+      required: true
+      schema:
+        type: string
+  requestBodies:
+    shortCodeJsonPatchShortCodeRequest:
+      content:
+        application/json-patch+json:
+          schema:
+            $ref: '#/components/schemas/jsonPatch'
+    verificationRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/verificationRequest'
+      description: Submit a request for verification of a toll-free phone number.
+      required: true
+    verificationWebhookRequest:
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/verificationWebhookRequest'
+              - $ref: '#/components/schemas/verificationUnverifiedWebhookRequest'
+              - $ref: '#/components/schemas/failureWebhookRequest'
+      description: Verification callback status of a toll-free phone number.
+      required: true
+    webhookSubscriptionRequest:
+      content:
+        application/json:
+          schema:
+            properties:
+              basicAuthentication:
+                properties:
+                  password:
+                    maxLength: 200
+                    type: string
+                  username:
+                    maxLength: 100
+                    type: string
+                required:
+                  - username
+                  - password
+                type: object
+              callbackUrl:
+                $ref: '#/components/schemas/webhookUrl'
+            required:
+              - callbackUrl
+            type: object
+      description: >-
+        Information about a webhook that Bandwidth should send upon the
+        completion of TFV verification.
+      required: true
+    zipWhipTfvWebhookRequest:
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/TfvWaitingForSupportWebhook'
+              - $ref: '#/components/schemas/TfvResolvedVerifiedWebhook'
+              - $ref: '#/components/schemas/TfvResolvedNotVerifiedWebhook'
+      description: Webhook ZipWhip sends us with information regarding the TFV request.
+      required: true
+  responses:
+    ImportVoiceTnOrdersResponse:
+      content:
+        application/xml:
+          examples:
+            listAllImportVoiceTnOrders:
+              $ref: '#/components/examples/ImportVoiceTnOrders'
+      description: >
+        The descriptive payload for the importTnOrders query provides
+        information about the orders found by the query, including the data
+        associated with the order, the state of the order, and a list of the
+        successfully imported Telephone Numbers, and descriptions of any
+        encountered errors.
+    rateCenter401Error:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Client is providing incorrect or invalid credentials.
+                type: unauthorized
+          schema:
+            $ref: '#/components/schemas/RateCenterCoverageUnsuccessfulResponse'
+      description: Client is providing incorrect or invalid credentials.
+    rateCenter403Error:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Client does not have access rights to the content.
+                type: forbidden
+          schema:
+            $ref: '#/components/schemas/RateCenterCoverageUnsuccessfulResponse'
+      description: Client is providing incorrect or invalid credentials.
+    rateCenter429Error:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Too many requests.
+                type: too many requests
+          schema:
+            $ref: '#/components/schemas/RateCenterCoverageUnsuccessfulResponse'
+      description: Too many requests.
+    rateCenter500Error:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: The server has encountered an internal error.
+                type: internal server error
+          schema:
+            $ref: '#/components/schemas/RateCenterCoverageUnsuccessfulResponse'
+      description: The server has encountered an internal error.
+    rateCenterFindCoverageResponse404Error:
+      content:
+        application/xml:
+          examples:
+            unsuccessful404ErrorFindCoverageResponseExample:
+              $ref: '#/components/examples/RateCenterFindCoverage404Error'
+          schema:
+            $ref: '#/components/schemas/RateCenterCoverageUnsuccessfulResponse'
+      description: >-
+        Unsuccessful response because the rate center coverage entry could not
+        be found.
+    rateCenterGetCoverageResponse:
+      content:
+        application/xml:
+          examples:
+            successfulGetCoverageResponseExample:
+              $ref: '#/components/examples/RateCenterGetCoverageResponseExample'
+          schema:
+            $ref: '#/components/schemas/RateCenterCoverageSuccessfulResponseList'
+      description: Successful response with a rate center's coverage.
+    rateCenterGetCoverageResponse400Error:
+      content:
+        application/xml:
+          examples:
+            unsuccessful400ErrorGetCoverageResponseExample:
+              $ref: '#/components/examples/RateCenterGetCoverage400Error'
+          schema:
+            $ref: '#/components/schemas/RateCenterCoverageUnsuccessfulResponse'
+      description: >-
+        Unsucessful response of a rate center's coverage due to a validation
+        error. No search parameters were provided.
+    rateCenterPostCoverageResponse:
+      content:
+        application/xml:
+          examples:
+            successfulPostCoverageResponseExample:
+              $ref: '#/components/examples/RateCenterPostCoverageResponseExample'
+          schema:
+            $ref: '#/components/schemas/CoverageMatrixEntry'
+      description: Successful response with the generating matrix entry.
+    rateCenterPostCoverageResponse400Error:
+      content:
+        application/xml:
+          examples:
+            unsuccessful400ErrorPostCoverageResponseExample:
+              $ref: '#/components/examples/RateCenterPostCoverage400Error'
+          schema:
+            $ref: '#/components/schemas/RateCenterCoverageUnsuccessfulResponse'
+      description: >-
+        Unsuccessful response due to a validation error. A LRN was provided for
+        offnet coverage.
+    rateCenterPostCoverageResponse409Error:
+      content:
+        application/xml:
+          examples:
+            unsuccessful409ErrorPostCoverageResponseExample:
+              $ref: '#/components/examples/RateCenterPostCoverage409Error'
+          schema:
+            $ref: '#/components/schemas/RateCenterCoverageUnsuccessfulResponse'
+      description: >-
+        Unsuccessful response due to a validation error. This rate center
+        already exists.
+    rateCenterPutCoverageResponse:
+      content:
+        application/xml:
+          examples:
+            successfulPutCoverageResponseExample:
+              $ref: '#/components/examples/RateCenterPutCoverageResponseExample'
+          schema:
+            $ref: '#/components/schemas/CoverageMatrixEntry'
+      description: Successful response for the update of a coverage matrix entry.
+    removeImportedVoiceTnOrdersResponse:
+      content:
+        application/xml:
+          examples:
+            listAllRemoveImportedVoiceTnOrders:
+              $ref: '#/components/examples/RemoveImportedVoiceTnOrders'
+      description: >
+        The descriptive payload for the removeImportedVoiceTnOrders query
+        provides information about the orders found by the query, including the
+        data associated with the order, the state of the order, and a list of
+        the successfully removed Hosted Voice Telephone Numbers, and
+        descriptions of any encountered errors.
+    shortCode400:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Cannot process request.
+                type: cannot process request
+          schema:
+            $ref: '#/components/schemas/shortCodeError400'
+      description: Bad request, can not process the request.
+    shortCode401:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Client is providing incorrect or invalid credentials.
+                type: unauthorized
+          schema:
+            $ref: '#/components/schemas/shortCodeError'
+      description: Client is providing incorrect or invalid credentials.
+    shortCode403:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Client does not have access rights to the content.
+                type: forbidden
+          schema:
+            $ref: '#/components/schemas/shortCodeError'
+      description: Client is providing incorrect or invalid credentials.
+    shortCode404:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Cannot find requested resource.
+                type: not found
+          schema:
+            $ref: '#/components/schemas/shortCodeError'
+      description: The short code details not have been found.
+    shortCode405:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Request method 'POST' not supported.
+                type: method not supported
+          schema:
+            $ref: '#/components/schemas/shortCodeError'
+      description: Request method is not supported.
+    shortCode409:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Short code already exists.
+                type: conflict
+          schema:
+            $ref: '#/components/schemas/shortCodeError'
+      description: The short code already exists.
+    shortCode429:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Too many requests.
+                type: too many requests
+          schema:
+            $ref: '#/components/schemas/shortCodeError'
+      description: Too many requests.
+    shortCode500:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: The server has encountered an internal error.
+                type: internal server error
+          schema:
+            $ref: '#/components/schemas/shortCodeError'
+      description: The server has encountered an internal error.
+    shortCodeGetAllShortCodesByAccountResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/shortCodeApiPage'
+      description: Successful response with a paginated list of short codes.
+    shortCodeGetShortCodeByAccountIdCountryAndShortCodeResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/shortCode'
+      description: The short code details have been successfully retrieved and displayed.
+    shortCodeGetShortCodeHistoryAccountIdCountryAndShortCodeResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/shortCodeHistoryApiPage'
+      description: >-
+        The short code number history details have been successfully retrieved
+        and displayed.
+    shortCodeUpdateShortCodeResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/shortCode'
+      description: Updated short code data.
+    tfvBadRequestResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Cannot process request.
+                type: bad request
+          schema:
+            $ref: '#/components/schemas/tfvError'
+      description: Bad request, can not process the request.
+    tfvForbiddenResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Client is not authorized for the action.
+                type: forbidden
+          schema:
+            $ref: '#/components/schemas/tfvError'
+      description: Client is not authorized for the action.
+    tfvNotAllowedResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Method is not allowed.
+                type: Method Not Allowed
+          schema:
+            $ref: '#/components/schemas/tfvError'
+      description: Method is not allowed.
+    tfvNotFoundResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Cannot find the requested resource.
+                type: Not Found
+          schema:
+            $ref: '#/components/schemas/tfvError'
+      description: Cannot find the requested resource.
+    tfvPostBadRequestResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Cannot process request.
+                errors:
+                  email:
+                    - is not a valid email address
+                    - is longer than 100 characters
+                  name:
+                    - is required
+                type: bad request
+          schema:
+            $ref: '#/components/schemas/tfvPostBadRequestError'
+      description: Bad request, can not process the request.
+    tfvServerErrorResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Internal Server Error.
+                type: Internal Server Error
+          schema:
+            $ref: '#/components/schemas/tfvError'
+      description: Internal Server Error.
+    tfvServiceUnavailableResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Service Unavailable Error.
+                type: Service Unavailable
+          schema:
+            $ref: '#/components/schemas/tfvError'
+      description: Service Unavailable Error.
+    tfvTooManyRequestsResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Throttling error. Too many requests.
+                type: Too Many Requests
+          schema:
+            $ref: '#/components/schemas/tfvError'
+      description: Throttling error. Too many requests.
+    tfvUnauthorizedResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Client is providing incorrect or invalid credentials.
+                type: unauthorized
+          schema:
+            $ref: '#/components/schemas/tfvError'
+      description: Client is providing incorrect or invalid credentials.
+    useCasesResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/useCases'
+      description: OK
+    verifyPostResponse:
+      description: Accepted
+    verifyStatusResponse:
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/tfvWorkflowStatus'
+              - $ref: '#/components/schemas/tfvWorkflowStatusFromCache'
+      description: OK
+    webhookSubscriptionCreated:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/webhookSubscription'
+      description: Created
+    webhookSubscriptionDeleted:
+      description: Deleted
+    webhookSubscriptionUpdated:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/webhookSubscription'
+      description: OK
+    webhookSubscriptionsList:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/webhookSubscriptionsListBody'
+      description: OK
   schemas:
     A2pClass:
       properties:
@@ -2819,6 +3739,11 @@ components:
       maxLength: 50
       title: CallerName
       type: string
+    CampaignErrorResponse:
+      properties:
+        CampaignErrorResponse:
+          $ref: '#/components/schemas/ResponseStatus'
+      type: object
     CampaignRequest:
       properties:
         Campaign:
@@ -3090,6 +4015,27 @@ components:
             - BusinessIdentity
           type: object
       type: object
+    CampaignTnsErrorResponse:
+      properties:
+        CampaignTnsResponse:
+          $ref: '#/components/schemas/ResponseStatus'
+      type: object
+    CampaignTnsResponse:
+      properties:
+        CampaignTnsResponse:
+          properties:
+            TelephoneNumbers:
+              items:
+                properties:
+                  TelephoneNumber:
+                    type: string
+                type: object
+              type: array
+            TotalCount:
+              type: number
+          type: object
+      title: CampaignTnsResponse
+      type: object
     CitySearchAndOrder:
       allOf:
         - $ref: '#/components/schemas/orderMetadata'
@@ -3351,6 +4297,43 @@ components:
                 type: object
               type: array
           type: object
+    CoverageMatrixEntry:
+      properties:
+        Abbreviation:
+          description: A rate center's abbreviation.
+          example: FARMVILLE
+          type: string
+        Lata:
+          description: A rate center's LATA.
+          example: 951
+          type: number
+        Lrn:
+          description: A rate center's LRN.
+          example: '2529690000'
+          type: string
+        Region:
+          description: A rate center's state.
+          example: NC
+          type: string
+        SupportsLnp:
+          description: Whether a rate center supports LNP.
+          example: true
+          type: boolean
+        SupportsNewTns:
+          description: Whether a rate center supports new TNs.
+          example: true
+          type: boolean
+        TierId:
+          description: A rate center's tier ID.
+          example: 1
+          maximum: 6
+          minimum: 0
+          type: number
+        VendorId:
+          description: A rate center's vendor ID.
+          example: 49
+          type: number
+      type: object
     CoveredRateCenter:
       properties:
         Abbreviation:
@@ -6271,7 +7254,9 @@ components:
             The `Triggered` field must be set to `true` if you want an
             activation time other than the 11:30 AM ET default. The desired
             activation time can then be specified in the time portion of the
-            `RequestedFocDate`.
+            `RequestedFocDate`. This field will be ignored if set for port-ins
+            with the `MANUAL_TOLLFREE`, `MANUAL_ON_NET`, or `MANUALOFFNET` port
+            types, as all manual port-ins are activated at 11:30 AM ET.
           type: boolean
         WirelessInfo:
           description: Most common for telephone numbers that were formerly wireless.
@@ -8952,6 +9937,26 @@ components:
               type: integer
           type: object
       type: object
+    RateCenterCoverageSuccessfulResponseList:
+      description: A list of all coverage matrix entries returned by a GET endpoint.
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/CoverageMatrixEntry'
+          type: array
+      required:
+        - data
+      type: object
+    RateCenterCoverageUnsuccessfulResponse:
+      description: A generic error object for coverage matrix / rate center responses.
+      properties:
+        description:
+          example: Error Message
+          type: string
+        errorCode:
+          example: 3900
+          type: number
+      type: object
     RateCenterGroup:
       properties:
         City:
@@ -10138,8 +11143,6 @@ components:
           items:
             $ref: '#/components/schemas/Address'
           type: array
-        TerminationHosts:
-          $ref: '#/components/schemas/SipPeerTerminationHosts'
         TnCount:
           format: int32
           type: integer
@@ -11388,6 +12391,101 @@ components:
         TerminationSettings:
           $ref: '#/components/schemas/TerminationSettings'
       type: object
+    TfvResolvedNotVerifiedWebhook:
+      properties:
+        declineReasonDescription:
+          example: >-
+            Invalid Information - Can't Validate URL - Website is not accessible
+            / not available - Eligible for Resubmission
+          nullable: false
+          type: string
+        phoneNumber:
+          items:
+            $ref: '#/components/schemas/tfPhoneNumber'
+          maxItems: 10
+          minItems: 1
+          type: array
+        resubmitAllowed:
+          example: true
+          nullable: false
+          type: boolean
+        status:
+          example: Resolved - Not Verified
+          nullable: false
+          type: string
+        statusCode:
+          example: 123
+          nullable: false
+          type: integer
+        ticketNumber:
+          example: GWF-1234567
+          nullable: false
+          type: string
+        verificationRequestId:
+          example: abc-d8569gh
+          nullable: false
+          type: string
+      required:
+        - ticketNumber
+        - phoneNumber
+        - verificationRequestId
+        - status
+        - statusCode
+        - declineReasonDescription
+        - resubmitAllowed
+      type: object
+    TfvResolvedVerifiedWebhook:
+      properties:
+        phoneNumber:
+          items:
+            $ref: '#/components/schemas/tfPhoneNumber'
+          maxItems: 10
+          minItems: 1
+          type: array
+        status:
+          example: Resolved - Verified
+          nullable: false
+          type: string
+        ticketNumber:
+          example: GWF-1234567
+          nullable: false
+          type: string
+        verificationRequestId:
+          example: abc-d8569gh
+          nullable: false
+          type: string
+      required:
+        - ticketNumber
+        - phoneNumber
+        - verificationRequestId
+        - status
+      type: object
+    TfvWaitingForSupportWebhook:
+      properties:
+        phoneNumber:
+          items:
+            $ref: '#/components/schemas/tfPhoneNumber'
+          maxItems: 10
+          minItems: 1
+          type: array
+        status:
+          example: Waiting for Support
+          nullable: false
+          type: string
+        ticketNumber:
+          example: GWF-1234567
+          nullable: false
+          type: string
+        verificationRequestId:
+          example: abc-d8569gh
+          nullable: false
+          type: string
+      required:
+        - ticketNumber
+        - phoneNumber
+        - verificationRequestId
+        - status
+      type: object
     Tier:
       format: int32
       type: integer
@@ -11676,6 +12774,12 @@ components:
             - unchanged
             - systemDefault
           type: string
+        CallVerificationEnabled:
+          enum:
+            - '{custom value}'
+            - 'true'
+            - 'false'
+          type: string
         CallingNameDisplay:
           enum:
             - 'on'
@@ -11922,6 +13026,8 @@ components:
       properties:
         CallForward:
           $ref: '#/components/schemas/TelephoneNumber'
+        CallVerificationEnabled:
+          type: string
         CallingNameDisplay:
           type: string
         FinalDestinationURI:
@@ -12588,6 +13694,108 @@ components:
         SipSigPort:
           $ref: '#/components/schemas/SipSigPort'
       type: object
+    accountId:
+      description: User's account ID
+      example: '1234567'
+      type: string
+    address:
+      nullable: false
+      properties:
+        addr1:
+          maxLength: 500
+          minLength: 0
+          nullable: false
+          type: string
+        addr2:
+          maxLength: 500
+          minLength: 0
+          nullable: true
+          type: string
+        city:
+          maxLength: 500
+          minLength: 0
+          nullable: false
+          type: string
+        name:
+          maxLength: 500
+          minLength: 0
+          nullable: false
+          type: string
+        state:
+          example: NC
+          maxLength: 500
+          minLength: 0
+          nullable: false
+          type: string
+        url:
+          example: https://www.example.com/path/to/resource
+          maxLength: 500
+          minLength: 0
+          nullable: false
+          pattern: >-
+            ^$|(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,253}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#()?&//=]*)
+          type: string
+        zip:
+          example: '27606'
+          nullable: false
+          pattern: '[- A-Za-z0-9]{0,500}+'
+          type: string
+      required:
+        - name
+        - addr1
+        - city
+        - state
+        - zip
+        - url
+      type: object
+    contact:
+      nullable: false
+      properties:
+        email:
+          $ref: '#/components/schemas/email'
+        firstName:
+          maxLength: 500
+          minLength: 0
+          nullable: false
+          type: string
+        lastName:
+          maxLength: 500
+          minLength: 0
+          nullable: false
+          type: string
+        phoneNumber:
+          $ref: '#/components/schemas/tfPhoneNumber'
+      required:
+        - firstName
+        - lastName
+        - email
+        - phoneNumber
+      type: object
+    denialReasonDescription:
+      description: Denial reason explanation
+      example: Disallowed Content - Gambling
+      type: string
+    denialStatusCode:
+      description: Reason code for denial
+      example: 511
+      type: integer
+    email:
+      example: foo@bar.com
+      maxLength: 500
+      minLength: 0
+      nullable: false
+      pattern: >-
+        ^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$
+      type: string
+    failureWebhookRequest:
+      properties:
+        accountId:
+          $ref: '#/components/schemas/accountId'
+        isBadRequest:
+          $ref: '#/components/schemas/tfvCallbackIsBadRequest'
+        phoneNumber:
+          $ref: '#/components/schemas/tfPhoneNumber'
+      type: object
     fileListResponse:
       properties:
         fileListResponse:
@@ -12622,6 +13830,36 @@ components:
               description: Results of the attempt to fetch the list of files.
               type: string
           type: object
+      type: object
+    jsonPatch:
+      items:
+        $ref: '#/components/schemas/jsonPatchItem'
+      type: array
+    jsonPatchItem:
+      properties:
+        from:
+          description: Used when the operation is copy or move.
+          type: string
+        op:
+          enum:
+            - add
+            - remove
+            - replace
+            - copy
+            - move
+            - test
+          example: replace
+          type: string
+        path:
+          example: /state
+          type: string
+        value:
+          description: Used when the operation is add, replace, or test.
+          example: MAINTENANCE
+          type: object
+      required:
+        - op
+        - path
       type: object
     lnpPortInfoForGivenStatus:
       properties:
@@ -12692,6 +13930,28 @@ components:
           description: Bandwidth user ID.
           type: string
       type: object
+    optInWorkflow:
+      nullable: false
+      properties:
+        description:
+          maxLength: 500
+          minLength: 0
+          nullable: false
+          type: string
+        imageUrls:
+          items:
+            example: https://www.example.com/path/to/resource
+            maxLength: 500
+            minLength: 1
+            nullable: false
+            pattern: >-
+              ^$|(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,253}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#()?&//=]*)
+            type: string
+          type: array
+      required:
+        - description
+        - imageUrls
+      type: object
     orderMetadata:
       properties:
         BackOrderRequested:
@@ -12747,6 +14007,553 @@ components:
       type: object
       xml:
         name: Order
+    shortCode:
+      description: Short code registration.
+      properties:
+        accountId:
+          description: Account ID.
+          example: '123123'
+          type: string
+        carrierStatuses:
+          description: >-
+            List of objects each providing the registration status for an
+            individual carrier.
+          example:
+            - activatedDate: '2021-10-15'
+              carrierId: att
+              status: ACTIVE
+            - carrierId: tmobile
+              status: PENDING
+            - carrierId: verizon
+              status: INACTIVE
+          items:
+            $ref: '#/components/schemas/shortCodeCarrierInfo'
+          type: array
+        country:
+          description: The country the short code is registered in.
+          enum:
+            - USA
+            - CAN
+          example: USA
+          type: string
+        createdDateTime:
+          example: '2022-11-14T18:39:04.505Z'
+          format: date-time
+          type: string
+        customerManagedLease:
+          description: >-
+            Flag indicating whether the customer is managing the short code
+            lease.
+          example: true
+          type: boolean
+        lease:
+          $ref: '#/components/schemas/shortCodeLeaseInfo'
+        modifiedDateTime:
+          example: '2022-11-15T18:39:04.505Z'
+          format: date-time
+          type: string
+        notes:
+          $ref: '#/components/schemas/shortCodeNotes'
+        shortCode:
+          description: The short code.
+          example: '12345'
+          type: string
+        sipPeerId:
+          description: SIP Peer ID.
+          example: '123321'
+          type: string
+        siteId:
+          description: Sub-account ID.
+          example: '321321'
+          type: string
+        status:
+          description: >-
+            If at least one carrier status is ACTIVE or PENDING, the status will
+            be ACTIVE. If all carrier statues are INACTIVE, the status will be
+            INACTIVE.
+          enum:
+            - ACTIVE
+            - EXPIRED
+            - SUSPENDED
+            - INACTIVE
+          example: ACTIVE
+          type: string
+        type:
+          description: The lease type.
+          enum:
+            - RANDOM
+            - VANITY
+          example: RANDOM
+          type: string
+        version:
+          description: >-
+            A internal field that represents the current version of the short
+            code data.
+          example: 100
+          type: integer
+    shortCodeApiPage:
+      description: >-
+        Pagination object that represents the current page of short code
+        numbers.
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/shortCode'
+          type: array
+        errors:
+          example:
+            description: Client is providing incorrect or invalid credentials.
+            type: unauthorized
+          items:
+            $ref: '#/components/schemas/shortCodeError'
+          type: array
+        page:
+          $ref: '#/components/schemas/shortCodePage'
+      type: object
+    shortCodeCarrierInfo:
+      description: The registration status for each carrier.
+      properties:
+        activatedDate:
+          description: >-
+            The date the short code was activated for this carrier, this date
+            only will be defined when the status of the carrier becomes ACTIVE.
+          example: '2023-01-28'
+          format: date
+          type: string
+        carrierId:
+          description: Carrier identifier (possible values att, tmobile, and verizon).
+          example: tmobile
+          type: string
+        status:
+          enum:
+            - ACTIVE
+            - INACTIVE
+            - PENDING
+          example: ACTIVE
+          type: string
+      type: object
+    shortCodeData:
+      description: Short code details representation.
+      properties:
+        carrierStatuses:
+          description: >-
+            List of objects each providing the registration status for an
+            individual carrier.
+          example:
+            - activatedDate: '2021-10-15'
+              carrierId: att
+              status: ACTIVE
+            - carrierId: tmobile
+              status: PENDING
+            - carrierId: verizon
+              status: INACTIVE
+          items:
+            $ref: '#/components/schemas/shortCodeCarrierInfo'
+          type: array
+        country:
+          description: The country the short code is registered in.
+          enum:
+            - USA
+            - CAN
+          example: USA
+          type: string
+        createdDateTime:
+          example: '2022-11-14T18:39:04.505Z'
+          format: date-time
+          type: string
+        customerManagedLease:
+          description: >-
+            Flag indicating whether the customer is managing the short code
+            lease.
+          example: true
+          type: boolean
+        lease:
+          $ref: '#/components/schemas/shortCodeLeaseData'
+        modifiedDateTime:
+          example: '2022-11-15T18:39:04.505Z'
+          format: date-time
+          type: string
+        notes:
+          $ref: '#/components/schemas/shortCodeNotes'
+        shortCode:
+          description: The short code.
+          example: '12345'
+          type: string
+        sipPeerId:
+          description: SIP Peer ID from Iris.
+          example: '123321'
+          type: string
+        siteId:
+          description: Sub-account ID.
+          example: '321321'
+          type: string
+        status:
+          description: >-
+            If at least one carrier status is ACTIVE or PENDING, the status will
+            be ACTIVE. If all carrier statues are INACTIVE, the status will be
+            INACTIVE.
+          enum:
+            - ACTIVE
+            - EXPIRED
+            - SUSPENDED
+            - INACTIVE
+          example: ACTIVE
+          type: string
+        type:
+          description: The lease type.
+          enum:
+            - RANDOM
+            - VANITY
+          example: RANDOM
+          type: string
+        version:
+          description: >-
+            A field that represents the version of the short code data, when
+            updating a short code is necessary to supply the last version value
+            added by 1.
+          example: 100
+          type: integer
+      type: object
+    shortCodeError:
+      description: A generic error object.
+      properties:
+        description:
+          example: cannot find requested resource
+          type: string
+        type:
+          example: not found
+          type: string
+      type: object
+    shortCodeError400:
+      description: A specific error object for HTTP Status 400.
+      example:
+        description: Cannot process request.
+        errors:
+          accountId:
+            - is required
+            - can not be empty
+          shortCode:
+            - is required
+            - can not be empty
+        type: cannot process request
+      properties:
+        description:
+          example: Cannot process request.
+          type: string
+        errors:
+          $ref: '#/components/schemas/stringObjectMap'
+        type:
+          example: cannot process request
+          type: string
+      type: object
+    shortCodeHistory:
+      description: >-
+        Short code history details representation, each history element
+        represents an operation or an event that changed the state of the short
+        code.
+      properties:
+        accountId:
+          description: Account ID.
+          example: '123123'
+          type: string
+        carrierStatuses:
+          description: >-
+            List of objects each providing the registration status for each
+            carrier at the time the event occurred.
+          example:
+            - activatedDate: '2021-10-15'
+              carrierId: att
+              status: ACTIVE
+            - carrierId: tmobile
+              status: PENDING
+            - carrierId: verizon
+              status: INACTIVE
+          items:
+            $ref: '#/components/schemas/shortCodeCarrierInfo'
+          type: array
+        country:
+          description: The country the short code was registered in.
+          enum:
+            - USA
+            - CAN
+          example: USA
+          type: string
+        createdDateTime:
+          example: '2022-11-14T18:39:04.505Z'
+          format: date-time
+          type: string
+        customerManagedLease:
+          description: >-
+            Flag indicating whether the customer is managing the short code
+            lease.
+          example: true
+          type: boolean
+        lease:
+          $ref: '#/components/schemas/shortCodeLeaseInfo'
+        modifiedDateTime:
+          example: '2022-11-15T18:39:04.505Z'
+          format: date-time
+          type: string
+        notes:
+          $ref: '#/components/schemas/shortCodeNotes'
+        operation:
+          description: Operation executed over the short code.
+          enum:
+            - CREATED
+            - UPDATED
+            - DELETED
+          example: UPDATED
+          type: string
+        shortCode:
+          description: The short code.
+          example: '12345'
+          type: string
+        sipPeerId:
+          description: SIP Peer ID.
+          example: '123321'
+          type: string
+        siteId:
+          description: Sub-account ID.
+          example: '321321'
+          type: string
+        status:
+          description: >-
+            If at least one carrier status is ACTIVE or PENDING, the status will
+            be ACTIVE. If all carrier statues are INACTIVE, the status will be
+            INACTIVE.
+          enum:
+            - ACTIVE
+            - EXPIRED
+            - SUSPENDED
+            - INACTIVE
+          example: ACTIVE
+          type: string
+        type:
+          description: The lease type.
+          enum:
+            - RANDOM
+            - VANITY
+          example: RANDOM
+          type: string
+        user:
+          description: The customer user ID that initiated the operation.
+          example: systemUser
+          type: string
+        version:
+          description: A internal field that represents the version of the short code data.
+          example: 100
+          type: integer
+    shortCodeHistoryApiPage:
+      description: >-
+        Pagination object that represents the current page of short code number
+        history.
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/shortCodeHistory'
+          type: array
+        errors:
+          example:
+            description: Client is providing incorrect or invalid credentials.
+            type: unauthorized
+          items:
+            $ref: '#/components/schemas/shortCodeError'
+          type: array
+        page:
+          $ref: '#/components/schemas/shortCodePage'
+      type: object
+    shortCodeLeaseData:
+      description: >-
+        The lease information for the short code number. This information only
+        applies to Bandwidth managed short code leases (customerManagedLease set
+        to false).
+      properties:
+        autoRenew:
+          description: Flag indicating whether the lease should auto-renew.
+          example: true
+          type: boolean
+        autoRenewMonths:
+          description: >-
+            The number of months for which to renew the release when it auto
+            renews. Valid values are 3, 6, and 12. The default value, if not
+            supplied on creation, will be 3.
+          enum:
+            - 3
+            - 6
+            - 12
+          example: 6
+          type: integer
+        contactEmail:
+          description: Email address used for all lease renewal notifications.
+          example: test@bandwidth.com
+          type: string
+        endDate:
+          description: >-
+            Lease end date. This date is inclusive, e.g. 2022-02-15 means that
+            the short code is valid through 2/15.
+          example: '2023-01-28'
+          format: date
+          type: string
+        startDate:
+          description: >-
+            Lease start date. This date is inclusive, e.g. 2022-02-07 means that
+            the short code is valid on 2/7.
+          example: '2023-01-28'
+          format: date
+          type: string
+      type: object
+    shortCodeLeaseInfo:
+      description: >-
+        The lease information for the short code number. This information only
+        applies to Bandwidth managed short code leases (customerManagedLease set
+        to false).
+      properties:
+        autoRenew:
+          description: Flag indicating whether the lease should auto-renew.
+          example: true
+          type: boolean
+        autoRenewMonths:
+          description: >-
+            The number of months for which to renew the release when it auto
+            renews. Valid values are 3, 6, and 12. The default value, if not
+            supplied on creation, will be 3.
+          enum:
+            - 3
+            - 6
+            - 12
+          example: 6
+          type: integer
+        contactEmail:
+          description: Email address used for all lease renewal notifications.
+          example: test@bandwidth.com
+          type: string
+        endDate:
+          description: >-
+            Lease end date. This date is inclusive, e.g. 2022-02-15 means that
+            the short code is valid through 2/15.
+          example: '2023-01-28'
+          format: date
+          type: string
+        startDate:
+          description: >-
+            Lease start date. This date is inclusive, e.g. 2022-02-07 means that
+            the short code is valid on 2/7.
+          example: '2023-01-28'
+          format: date
+          type: string
+      type: object
+    shortCodeNotes:
+      description: Internal notes.
+      example: Notes example
+      type: string
+    shortCodePage:
+      description: Pagination object that represents the current page.
+      properties:
+        pageNumber:
+          description: The current page used in the request.
+          example: 1
+          type: integer
+        pageSize:
+          description: The current page size used in the request.
+          example: 50
+          type: integer
+        totalElements:
+          description: The total of objects that could be paginated.
+          example: 100
+          type: integer
+        totalPages:
+          description: The total of pages that could be paginated.
+          example: 100
+          type: integer
+      type: object
+    shortCodeUpdateData:
+      description: Short code update details representation.
+      properties:
+        carrierStatuses:
+          description: >-
+            List of objects each providing the registration status for an
+            individual carrier.
+          example:
+            - activatedDate: '2021-10-15'
+              carrierId: att
+              status: ACTIVE
+            - carrierId: tmobile
+              status: PENDING
+            - carrierId: verizon
+              status: INACTIVE
+          items:
+            $ref: '#/components/schemas/shortCodeCarrierInfo'
+          type: array
+        createdDateTime:
+          example: '2022-11-14T18:39:04.505Z'
+          format: date-time
+          type: string
+        customerManagedLease:
+          description: >-
+            Flag indicating whether the customer is managing the short code
+            lease.
+          example: true
+          type: boolean
+        lease:
+          $ref: '#/components/schemas/shortCodeLeaseData'
+        modifiedDateTime:
+          example: '2022-11-15T18:39:04.505Z'
+          format: date-time
+          type: string
+        notes:
+          $ref: '#/components/schemas/shortCodeNotes'
+        sipPeerId:
+          description: SIP Peer ID from Iris.
+          example: '123321'
+          type: string
+        siteId:
+          description: Sub-account ID.
+          example: '321321'
+          type: string
+        status:
+          description: >-
+            If at least one carrier status is ACTIVE or PENDING, the status will
+            be ACTIVE. If all carrier statues are INACTIVE, the status will be
+            INACTIVE.
+          enum:
+            - ACTIVE
+            - EXPIRED
+            - SUSPENDED
+            - INACTIVE
+          example: ACTIVE
+          type: string
+        type:
+          description: The lease type.
+          enum:
+            - RANDOM
+            - VANITY
+          example: RANDOM
+          type: string
+        version:
+          description: >-
+            A field that represents the version of the short code data, when
+            updating a short code is necessary to supply the last version value
+            added by 1.
+          example: 100
+          type: integer
+      type: object
+    stringObjectMap:
+      additionalProperties:
+        example:
+          - is required
+          - can not be empty
+        items:
+          example: is required
+          type: string
+        type: array
+      example:
+        accountId:
+          - is required
+          - can not be empty
+        shortCode:
+          - is required
+          - can not be empty
+      type: object
     telephoneNumberDetail:
       description: Returned when `enableTnDetail=True`
       properties:
@@ -12793,6 +14600,263 @@ components:
       type: object
       xml:
         name: TelephoneNumberDetail
+    tfPhoneNumber:
+      description: Toll-free telephone number in E.164 format
+      example: '+18005555555'
+      maxLength: 12
+      minLength: 12
+      nullable: false
+      pattern: ^\+1(800|833|844|855|866|877|888)[2-9]\d{6}$
+      type: string
+    tfvCallbackIsBadRequest:
+      description: TRUE or FALSE
+      example: true
+      type: boolean
+    tfvCallbackStatus:
+      enum:
+        - VERIFIED
+        - UNVERIFIED
+        - PENDING
+      example: VERIFIED
+      type: string
+    tfvError:
+      description: A generic error object.
+      properties:
+        description:
+          example: Error Message
+          type: string
+        type:
+          example: Error Type
+          type: string
+      type: object
+    tfvPostBadRequestError:
+      description: A generic error object.
+      properties:
+        description:
+          example: Error Message
+          type: string
+        errors:
+          description: >-
+            Each key of this errors object refers to a field of the submitted
+            object (using dot notation for nested objects), with the field being
+            a key to an array of one or more errors for that field.
+          example:
+            field: error message
+          type: object
+        type:
+          example: Error Type
+          type: string
+      type: object
+    tfvStatus:
+      enum:
+        - VERIFIED
+        - UNVERIFIED
+        - PENDING
+        - PARTIALLY_VERIFIED
+        - INVALID_STATUS
+        - Verification - Requested
+        - Verification Requested
+        - Waiting For Customer
+        - Waiting for Support
+        - In Progress
+        - Resolved - Verified
+        - Resolved - Not Verified
+      example: VERIFIED
+      type: string
+    tfvUnverifiedStatus:
+      default: UNVERIFIED
+      type: string
+    tfvWorkflowStatus:
+      properties:
+        phoneNumber:
+          $ref: '#/components/schemas/tfPhoneNumber'
+        status:
+          $ref: '#/components/schemas/tfvStatus'
+      type: object
+    tfvWorkflowStatusFromCache:
+      properties:
+        declineReasonDescription:
+          example: Some decline reason here
+          type: string
+        phoneNumber:
+          $ref: '#/components/schemas/tfPhoneNumber'
+        resubmitAllowed:
+          example: true
+          type: boolean
+        status:
+          $ref: '#/components/schemas/tfvStatus'
+        ticketNumber:
+          example: GWF-1234567
+          type: string
+        verificationRequestId:
+          example: abc-d8569gh
+          type: string
+      type: object
+    useCase:
+      example: 2FA
+      maxLength: 500
+      minLength: 0
+      type: string
+    useCases:
+      example:
+        - 2FA
+        - App Notifications
+        - Appointments
+        - Auctions
+        - Auto Repair Services
+        - Bank Transfers
+        - Billing
+        - Booking Confirmations
+        - Business Updates
+        - COVID-19 Alerts
+      items:
+        type: string
+      type: array
+    verificationRequest:
+      properties:
+        additionalInformation:
+          maxLength: 500
+          minLength: 0
+          nullable: true
+          type: string
+        businessAddress:
+          $ref: '#/components/schemas/address'
+        businessContact:
+          $ref: '#/components/schemas/contact'
+        isvReseller:
+          maxLength: 500
+          minLength: 0
+          nullable: true
+          type: string
+        messageVolume:
+          example: 10000
+          maximum: 10000000
+          minimum: 10
+          type: integer
+        optInWorkflow:
+          $ref: '#/components/schemas/optInWorkflow'
+        phoneNumbers:
+          items:
+            $ref: '#/components/schemas/tfPhoneNumber'
+          maxItems: 10
+          minItems: 1
+          type: array
+        productionMessageContent:
+          maxLength: 500
+          minLength: 0
+          nullable: false
+          type: string
+        useCase:
+          $ref: '#/components/schemas/useCase'
+        useCaseSummary:
+          maxLength: 500
+          minLength: 0
+          nullable: false
+          type: string
+      required:
+        - businessAddress
+        - businessContact
+        - messageVolume
+        - phoneNumbers
+        - useCase
+        - useCaseSummary
+        - productionMessageContent
+        - optInWorkflow
+      type: object
+    verificationUnverifiedWebhookRequest:
+      properties:
+        accountId:
+          $ref: '#/components/schemas/accountId'
+        denialReasonDescription:
+          $ref: '#/components/schemas/denialReasonDescription'
+        denialStatusCode:
+          $ref: '#/components/schemas/denialStatusCode'
+        phoneNumber:
+          $ref: '#/components/schemas/tfPhoneNumber'
+        status:
+          $ref: '#/components/schemas/tfvUnverifiedStatus'
+      type: object
+    verificationWebhookRequest:
+      properties:
+        accountId:
+          $ref: '#/components/schemas/accountId'
+        phoneNumber:
+          $ref: '#/components/schemas/tfPhoneNumber'
+        status:
+          $ref: '#/components/schemas/tfvCallbackStatus'
+      type: object
+    webhookSubscription:
+      description: >-
+        Information about a webhook that Bandwidth should send upon the
+        completion of TFV verification.
+      properties:
+        accountId:
+          example: '1234567'
+          type: string
+        basicAuthentication:
+          description: >-
+            Basic authentication credentials are not required, but if present,
+            both username and password must be provided.
+          properties:
+            password:
+              maxLength: 200
+              type: string
+            username:
+              maxLength: 100
+              type: string
+          required:
+            - username
+            - password
+          type: object
+        callbackUrl:
+          $ref: '#/components/schemas/webhookUrl'
+        createdDate:
+          example: '2023-05-15T13:56:39.965Z'
+          format: date-time
+          type: string
+        id:
+          example: 7hICGStfAfeGxEq3N0lQwO
+          type: string
+        modifiedDate:
+          example: '2023-05-15T13:56:39.965Z'
+          format: date-time
+          type: string
+        type:
+          description: >-
+            Currently only one type of webhook is supported for toll-free
+            verification, and that is the webhook for the status of a toll-free
+            verification request.
+          enum:
+            - TOLLFREE_VERIFICATION_STATUS
+          type: string
+      required:
+        - callbackUrl
+      type: object
+    webhookSubscriptionsListBody:
+      description: >-
+        A list of all webhook subscriptions registered for this account ID for
+        this particular feature (unpaginated).
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/webhookSubscription'
+          type: array
+      required:
+        - data
+      type: object
+    webhookUrl:
+      description: >-
+        Callback URL to receive status updates from Bandwidth. When a webhook
+        subscription is registered with Bandwidth under a given account ID, it
+        will be used to send status updates for all requests submitted under
+        that account ID.
+      example: https://www.example.com/path/to/resource
+      maxLength: 2000
+      minLength: 0
+      nullable: true
+      pattern: >-
+        ^$|(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,253}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#()?&//=]*)
+      type: string
   securitySchemes:
     httpBasic:
       type: http
@@ -14991,6 +17055,39 @@ paths:
 
         </code></p>
 
+        <p>When uploading documents using the /loas resource, you must specify
+        the MIME type of the document being upload using the Content-Type HTTP
+        header.</p>
+
+        <p><b>Information for non-toll free port-in customers:</b></p>
+
+        <p>The LOA document must be uploaded using one of the following MIME
+        types:</p>
+
+        <ul>
+
+        <li>application/pdf</li>
+
+        <li>text/plain</li>
+
+        <li>image/jpeg</li>
+
+        <li>image/png</li>
+
+        <li>image/tiff</li>
+
+        <li>text/csv</li>
+
+        <li>application/vnd.ms-excel</li>
+
+        <li>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</li>
+
+        <li>application/msword</li>
+
+        <li>application/vnd.openxmlformats-officedocument.wordprocessingml.document</li>
+
+        </ul>
+
         <p><b>Information for toll free port-in customers:</b></p>
 
         <p>If you are porting toll free numbers and either of the following are
@@ -16435,8 +18532,10 @@ paths:
             application/xml:
               examples:
                 example:
-                  $ref: '#/components/examples/Campaign404Error'
+                  $ref: '#/components/examples/CampaignNotFound404Error'
                   description: example
+              schema:
+                $ref: '#/components/schemas/CampaignErrorResponse'
           description: Not Found
       summary: Fetch Campaign List
       tags:
@@ -16471,6 +18570,8 @@ paths:
                 example:
                   $ref: '#/components/examples/CreateCampaign400Error'
                   description: example
+              schema:
+                $ref: '#/components/schemas/CampaignErrorResponse'
           description: Bad Request
       summary: Create Campaign
       tags:
@@ -16542,7 +18643,7 @@ paths:
             application/xml:
               examples:
                 example:
-                  $ref: '#/components/examples/CampaignImportResponse'
+                  $ref: '#/components/examples/CreateCampaignImportResponse'
               schema:
                 $ref: '#/components/schemas/LongCodeImportCampaignResponse'
           description: Created
@@ -16568,13 +18669,7 @@ paths:
       operationId: GetImportedCampaign
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: The campaign id.
-          example: CA114BN
-          in: path
-          name: campaignId
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/CampaignIdPathParam'
       responses:
         '200':
           content:
@@ -16605,14 +18700,7 @@ paths:
       operationId: deleteCampaign
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: campaign ID
-          example: null
-          in: path
-          name: campaignId
-          required: true
-          schema:
-            default: null
-            type: string
+        - $ref: '#/components/parameters/CampaignIdPathParam'
       responses:
         '204':
           description: No Content
@@ -16621,8 +18709,10 @@ paths:
             application/xml:
               examples:
                 example:
-                  $ref: '#/components/examples/Campaign404Error'
+                  $ref: '#/components/examples/Campaign403Error'
                   description: example
+              schema:
+                $ref: '#/components/schemas/CampaignErrorResponse'
           description: Forbidden
         '404':
           content:
@@ -16631,6 +18721,8 @@ paths:
                 example:
                   $ref: '#/components/examples/CampaignNotFound404Error'
                   description: example
+              schema:
+                $ref: '#/components/schemas/CampaignErrorResponse'
           description: Not Found
       summary: Delete Campaign
       tags:
@@ -16640,14 +18732,7 @@ paths:
       operationId: fetchCampaign
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: ''
-          example: null
-          in: path
-          name: campaignId
-          required: true
-          schema:
-            default: null
-            type: string
+        - $ref: '#/components/parameters/CampaignIdPathParam'
       responses:
         '200':
           content:
@@ -16664,6 +18749,8 @@ paths:
                 example:
                   $ref: '#/components/examples/CampaignNotFound404Error'
                   description: example
+              schema:
+                $ref: '#/components/schemas/CampaignErrorResponse'
           description: Not Found
       summary: Fetch Campaign
       tags:
@@ -16698,8 +18785,92 @@ paths:
                 example:
                   $ref: '#/components/examples/CreateCampaign400Error'
                   description: example
+              schema:
+                $ref: '#/components/schemas/CampaignErrorResponse'
           description: Bad Request
       summary: Update Campaign
+      tags:
+        - 10DLC
+  /accounts/{accountId}/campaignManagement/10dlc/campaigns/{campaignId}/revet:
+    put:
+      description: >-
+        The PUT method is used to send a request to TCR for reverification of
+        DCA2 declined campaign
+      operationId: revetCampaign
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/CampaignIdPathParam'
+      responses:
+        '204':
+          description: No Content
+        '403':
+          content:
+            application/xml:
+              examples:
+                example:
+                  $ref: '#/components/examples/Campaign403Error'
+                  description: example
+              schema:
+                $ref: '#/components/schemas/CampaignErrorResponse'
+          description: Forbidden
+        '404':
+          content:
+            application/xml:
+              examples:
+                example:
+                  $ref: '#/components/examples/CampaignNotFound404Error'
+                  description: example
+              schema:
+                $ref: '#/components/schemas/CampaignErrorResponse'
+          description: Not Found
+      summary: Revet Campaign
+      tags:
+        - 10DLC
+  /accounts/{accountId}/campaignManagement/10dlc/campaigns/{campaignId}/tn:
+    get:
+      description: >-
+        This method returns a list of TNs that have been registered to a
+        campaign. The maximum number of TNs returned by this query is controlled
+        by the size parameter. The page parameter can be used to fetch
+        additional pages after the first.
+      operationId: getCampaignTns
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/CampaignIdPathParam'
+        - description: The page number of the results to return.
+          in: query
+          name: page
+          required: false
+          schema:
+            default: 0
+            type: number
+        - description: The maximum number of results to return.
+          in: query
+          name: size
+          required: false
+          schema:
+            default: 25
+            type: number
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  $ref: '#/components/examples/CampaignTnsResponse'
+              schema:
+                $ref: '#/components/schemas/CampaignTnsResponse'
+          description: OK
+        '400':
+          content:
+            application/xml:
+              examples:
+                example:
+                  $ref: '#/components/examples/CampaignTnsResponse400Error'
+              schema:
+                $ref: '#/components/schemas/CampaignTnsErrorResponse'
+          description: Bad Request
+      summary: Fetch Campaign TNs
       tags:
         - 10DLC
   /accounts/{accountId}/csrs:
@@ -21809,7 +23980,7 @@ paths:
             are not actual TNs, and there are duplicates).</ul>
       summary: Check Tns hostability
       tags:
-        - Import Hosted Messaging Tn
+        - Hosted Messaging
   /accounts/{accountId}/importTnOrders:
     get:
       description: >
@@ -21940,7 +24111,7 @@ paths:
             encountered errors.
       summary: List Import Tn orders
       tags:
-        - Import Hosted Messaging Tn
+        - Hosted Messaging
     post:
       description: >-
         Creates an importTnOrders request to add numbers under the given site ID
@@ -22059,7 +24230,7 @@ paths:
             element.</p>
       summary: Import Tn order
       tags:
-        - Import Hosted Messaging Tn
+        - Hosted Messaging
   /accounts/{accountId}/importTnOrders/voice:
     get:
       description: >
@@ -22071,69 +24242,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
         - $ref: '#/components/parameters/StatusQueryParam'
-        - description: A Telephone Number (TN) that is referenced in the order
-          example: '9199918388'
-          in: query
-          name: tn
-          required: true
-          schema:
-            type: string
-        - description: >-
-            The Customer Order ID is an ID assigned by the account owner to
-            provide a reference number for the importVoiceTnOrder.
-          example: ABCCorp12345
-          in: query
-          name: customerOrderId
-          required: true
-          schema:
-            type: string
-        - description: >-
-            Checks the order's creation date against this value. Orders that
-            have a creation date after this date will be included. Format is
-            yyyy-MM-dd
-          example: '2013-10-22'
-          in: query
-          name: createdDateFrom
-          required: false
-          schema:
-            type: string
-        - description: >-
-            Checks the order's creation date against this value. Orders that
-            have a creation date before this date will be included. Format is
-            yyyy-MM-dd
-          example: '2013-10-25'
-          in: query
-          name: createdDateTo
-          required: false
-          schema:
-            type: string
-        - description: >-
-            For Date-based searches, the starting date of a date range
-            (inclusive) that will be used to find Import Tn Orders that were
-            modified within the date range. It is in the form yyyy-MM-dd.
-          example: '2013-10-22'
-          in: query
-          name: modifiedDateFrom
-          required: false
-          schema:
-            type: string
-        - description: >-
-            For Date-based searches, the ending date of a date range (inclusive)
-            that will be used to find Import Tn Orders that were modified within
-            the date range. It is in the form yyyy-MM-dd.
-          example: '2013-10-25'
-          in: query
-          name: modifiedDateTo
-          required: false
-          schema:
-            type: string
-        - description: A Sip Peer Id that is referenced in the order
-          example: '50139'
-          in: query
-          name: sipPeerId
-          required: false
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/TnQueryParam'
+        - $ref: '#/components/parameters/CustomerOrderIdQueryParam'
+        - $ref: '#/components/parameters/CreatedDateFromQueryParam'
+        - $ref: '#/components/parameters/CreatedDateToQueryParam'
+        - $ref: '#/components/parameters/ModifiedDateFromQueryParam'
+        - $ref: '#/components/parameters/ModifiedDateToQueryParam'
+        - $ref: '#/components/parameters/SipPeerIdQueryParam'
       responses:
         '200':
           content:
@@ -22177,7 +24292,7 @@ paths:
             encountered errors.
       summary: List Import Voice Tn orders
       tags:
-        - Import Hosted Voice Tn
+        - Hosted Voice
     post:
       description: >-
         Creates an ImportVoiceTnOrders request to add numbers under the given
@@ -22377,7 +24492,7 @@ paths:
                 </table>
       summary: Import Voice Tn order
       tags:
-        - Import Hosted Voice Tn
+        - Hosted Voice
   /accounts/{accountId}/importTnOrders/voice/{orderId}:
     get:
       description: Retrieve information about a importVoiceTnOrder with specified ID.
@@ -22476,7 +24591,7 @@ paths:
                 </table>
       summary: Fetch Import Voice Tn order status
       tags:
-        - Import Hosted Voice Tn
+        - Hosted Voice
   /accounts/{accountId}/importTnOrders/voice/{orderId}/history:
     get:
       description: Retrieves the history of the specified importVoiceTnOrder.
@@ -22519,7 +24634,7 @@ paths:
             payload.
       summary: Fetch Import Voice Tn order history
       tags:
-        - Import Hosted Voice Tn
+        - Hosted Voice
   /accounts/{accountId}/importTnOrders/{orderId}:
     get:
       description: Retrieve information about a importTnOrder with specified ID.
@@ -22587,7 +24702,7 @@ paths:
             payload.
       summary: Fetch Import Tn order status
       tags:
-        - Import Hosted Messaging Tn
+        - Hosted Messaging
   /accounts/{accountId}/importTnOrders/{orderId}/history:
     get:
       description: Retrieves the history of the specified importTnOrder.
@@ -22636,7 +24751,7 @@ paths:
             payload.
       summary: Fetch Import Tn order history
       tags:
-        - Import Hosted Messaging Tn
+        - Hosted Messaging
   /accounts/{accountId}/importTnOrders/{orderId}/loas:
     get:
       description: >-
@@ -22687,7 +24802,7 @@ paths:
             case where the list is empty.
       summary: Fetch Import Tn order loas
       tags:
-        - Import Hosted Messaging Tn
+        - Hosted Messaging
     post:
       description: >-
         POSTing to the /loas resource will enable the upload of the file.  The
@@ -22696,6 +24811,37 @@ paths:
 
         Query parameter or header documentType can be used to specify type of
         document on upload.
+
+        <p>When uploading documents using the /loas resource, you must specify
+        the MIME type of the document being upload using the Content-Type HTTP
+        header.</p>
+
+        <p>The LOA document must be uploaded using one of the following MIME
+        types:</p>
+
+        <ul>
+
+        <li>application/pdf</li>
+
+        <li>text/plain</li>
+
+        <li>image/jpeg</li>
+
+        <li>image/png</li>
+
+        <li>image/tiff</li>
+
+        <li>text/csv</li>
+
+        <li>application/vnd.ms-excel</li>
+
+        <li>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</li>
+
+        <li>application/msword</li>
+
+        <li>application/vnd.openxmlformats-officedocument.wordprocessingml.document</li>
+
+        </ul>
       operationId: CreateImportTnOrderLoas
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
@@ -22753,7 +24899,7 @@ paths:
           description: A 400 indicates that the requested upload failed.
       summary: Import Tn order loas
       tags:
-        - Import Hosted Messaging Tn
+        - Hosted Messaging
   /accounts/{accountId}/importTnOrders/{orderId}/loas/{fileId}:
     delete:
       description: Deletes the file associated with the order
@@ -22783,7 +24929,7 @@ paths:
             with the order id.
       summary: Removing Import Tn order loas file
       tags:
-        - Import Hosted Messaging Tn
+        - Hosted Messaging
     get:
       description: Retrieves the file associated with the order.
       operationId: ReadImportTnOrderLoasFile
@@ -22818,7 +24964,7 @@ paths:
             with the order id.
       summary: Fetch Import Tn order loas file
       tags:
-        - Import Hosted Messaging Tn
+        - Hosted Messaging
     put:
       description: >-
         A PUT on the filename will update / replace the identified file id.  The
@@ -22867,7 +25013,7 @@ paths:
           description: A 404 indicates that the file was not available for replacement.
       summary: Updating Import Tn order loas file
       tags:
-        - Import Hosted Messaging Tn
+        - Hosted Messaging
   /accounts/{accountId}/importTnOrders/{orderId}/loas/{fileId}/metadata:
     delete:
       description: Deletes the metadata previously associated with the identified file.
@@ -22899,7 +25045,7 @@ paths:
             with the order id.cd
       summary: Removing Import Tn order loas file metadata
       tags:
-        - Import Hosted Messaging Tn
+        - Hosted Messaging
     get:
       description: Retrieves the metadata associated with the file.
       operationId: ReadImportTnOrderLoasFileMetadata
@@ -22940,7 +25086,7 @@ paths:
             with the order id.
       summary: Fetch Import Tn order loas file metadata
       tags:
-        - Import Hosted Messaging Tn
+        - Hosted Messaging
     put:
       description: >-
         Associate metadata with the file named in the resource path.  This will
@@ -22989,7 +25135,7 @@ paths:
           description: Some error has occured as a result of the attempt.
       summary: Updating Import Tn order loas file metadata
       tags:
-        - Import Hosted Messaging Tn
+        - Hosted Messaging
   /accounts/{accountId}/importToAccount:
     get:
       description: >
@@ -27827,6 +29973,39 @@ paths:
 
         </code>
 
+        <p>When uploading documents using the /loas resource, you must specify
+        the MIME type of the document being upload using the Content-Type HTTP
+        header.</p>
+
+        <p><b>Information for non-toll free port-in customers:</b></p>
+
+        <p>The LOA document must be uploaded using one of the following MIME
+        types:</p>
+
+        <ul>
+
+        <li>application/pdf</li>
+
+        <li>text/plain</li>
+
+        <li>image/jpeg</li>
+
+        <li>image/png</li>
+
+        <li>image/tiff</li>
+
+        <li>text/csv</li>
+
+        <li>application/vnd.ms-excel</li>
+
+        <li>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</li>
+
+        <li>application/msword</li>
+
+        <li>application/vnd.openxmlformats-officedocument.wordprocessingml.document</li>
+
+        </ul>
+
         <p><b>Information for toll free port-in customers:</b></p>
 
         <p>If you are porting toll free numbers and either of the following are
@@ -30600,7 +32779,7 @@ paths:
             of any encountered errors
       summary: List Remove Imported Tn Orders
       tags:
-        - Import Hosted Messaging Tn
+        - Hosted Messaging
     post:
       description: >-
         Creates a Remove Imported Tn Orders request to remove imported telephone
@@ -30681,7 +32860,7 @@ paths:
             text and an error code will be provided in the ErrorList element
       summary: Create Remove Imported Tn Order
       tags:
-        - Import Hosted Messaging Tn
+        - Hosted Messaging
   /accounts/{accountId}/removeImportedTnOrders/voice:
     get:
       description: >-
@@ -30695,63 +32874,13 @@ paths:
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
         - $ref: '#/components/parameters/StatusQueryParam'
-        - description: A Telephone Number (TN) that is referenced in the order
-          example: '9199918388'
-          in: query
-          name: tn
-          required: true
-          schema:
-            type: string
-        - description: >-
-            The Customer Order Id is an Id assigned by the account owner to
-            provide a reference number for the Remove Imported Tn Order
-          example: ABCCorp12345
-          in: query
-          name: customerOrderId
-          required: true
-          schema:
-            type: string
-        - description: >-
-            Checks the order's creation date against this value. Orders that
-            have a creation date after this date will be included. Format is
-            yyyy-MM-dd
-          example: '2022-04-19'
-          in: query
-          name: createdDateFrom
-          required: false
-          schema:
-            type: string
-        - description: >-
-            Checks the order's creation date against this value. Orders that
-            have a creation date before this date will be included. Format is
-            yyyy-MM-dd
-          example: '2022-04-19'
-          in: query
-          name: createdDateTo
-          required: false
-          schema:
-            type: string
-        - description: >-
-            For Date-based searches, the starting date of a date range
-            (inclusive) that will be used to find Remove Imported Voice Tn
-            Orders that were modified within the date range. It is in the form
-            yyyy-MM-dd
-          example: '2022-04-19'
-          in: query
-          name: modifiedDateFrom
-          required: false
-          schema:
-            type: string
-        - description: >-
-            For Date-based searches, the ending date of a date range (inclusive)
-            that will be used to find Remove Imported Voice Tn Orders that were
-            modified within the date range. It is in the form yyyy-MM-dd
-          example: '2022-04-19'
-          in: query
-          name: modifiedDateTo
-          required: false
-          schema:
-            type: string
+        - $ref: '#/components/parameters/TnQueryParam'
+        - $ref: '#/components/parameters/CustomerOrderIdQueryParam'
+        - $ref: '#/components/parameters/CreatedDateFromQueryParam'
+        - $ref: '#/components/parameters/CreatedDateToQueryParam'
+        - $ref: '#/components/parameters/ModifiedDateFromQueryParam'
+        - $ref: '#/components/parameters/ModifiedDateToQueryParam'
+        - $ref: '#/components/parameters/SipPeerIdQueryParam'
       responses:
         '200':
           content:
@@ -30795,7 +32924,7 @@ paths:
             descriptions of any encountered errors
       summary: List Remove Imported Voice Tn Orders
       tags:
-        - Import Hosted Voice Tn
+        - Hosted Voice
     post:
       description: >-
         Creates a Remove Imported Voice Tn Orders request to remove imported
@@ -30974,7 +33103,7 @@ paths:
 
       summary: Create Remove Imported Voice Tn Order
       tags:
-        - Import Hosted Voice Tn
+        - Hosted Voice
   /accounts/{accountId}/removeImportedTnOrders/voice/{orderId}:
     get:
       description: >-
@@ -31050,7 +33179,7 @@ paths:
                 </table>
       summary: Retrieve Remove Imported Voice Tn Order
       tags:
-        - Import Hosted Voice Tn
+        - Hosted Voice
   /accounts/{accountId}/removeImportedTnOrders/voice/{orderId}/history:
     get:
       description: Retrieves the history of the specified Remove Imported Voice Tn Order
@@ -31093,7 +33222,7 @@ paths:
             payload
       summary: Retrieve Remove Imported Voice Tn Order history
       tags:
-        - Import Hosted Voice Tn
+        - Hosted Voice
   /accounts/{accountId}/removeImportedTnOrders/{orderId}:
     get:
       description: Retrieve information about a removeImportedTnOrder with specified ID
@@ -31162,7 +33291,7 @@ paths:
           description: Order id is not valid
       summary: Retrieve Remove Imported Tn Order
       tags:
-        - Import Hosted Messaging Tn
+        - Hosted Messaging
   /accounts/{accountId}/removeImportedTnOrders/{orderId}/history:
     get:
       description: Retrieves the history of the specified Remove Imported Tn Order
@@ -31227,7 +33356,7 @@ paths:
           description: Order id is not valid
       summary: Retrieve Remove Imported Tn Order history
       tags:
-        - Import Hosted Messaging Tn
+        - Hosted Messaging
   /accounts/{accountId}/reports:
     get:
       description: >-
@@ -33652,25 +35781,6 @@ paths:
                     - ENH_VERSTAT_AND_IDENTITY
                     - IDENTITY
                   type: string
-                TerminationHosts:
-                  description: >-
-                    These addresses, comprised of IP or Subnet(CIDR format) and
-                    optional Port, are used by the Bandwidth network to send
-                    calls to for Termination services. Maximum of 10 hosts - can
-                    be IP address or subnets. In case of subnet you should
-                    specify NetworkAddress of subnet as IP
-                  items:
-                    properties:
-                      TerminationHost:
-                        properties:
-                          CustomerTrafficAllowed:
-                            type: string
-                          HostName:
-                            type: string
-                          Port:
-                            type: string
-                        type: object
-                  type: array
                 VoiceHostGroups:
                   description: >-
                     The VoiceHostGroups element is comprised of one
@@ -37060,6 +39170,14 @@ paths:
         phone number in the option
         group</td></tr><tr><td>false</td><td>Explicitly disables Pindrop
         integration on each phone number in the option
+        group</td></tr></tbody></table><li>for Call Verification Enabled
+        attribute</li><table style="text-align: left; width: 80%;" border="1"
+        cellpadding="2" cellspacing="0"><tbody><tr><th>Action
+        value</th><th>Description of
+        action</th></tr><tr><td>true</td><td>Enables Call Verification on each
+        phone number in the option
+        group</td></tr><tr><td>false</td><td>Explicitly disables Call
+        Verification on each phone number in the option
         group</td></tr></tbody></table><li>for other attribute</li><ul><li
         type="square"> <i>systemDefault</i> - implies that the element profile
         value should be removed so that the TN changes back to the default
@@ -37139,6 +39257,12 @@ paths:
                         <PindropEnabled>true</PindropEnabled>
                         <TelephoneNumbers>
                           <TelephoneNumber>2018551026</TelephoneNumber>
+                        </TelephoneNumbers>
+                      </TnOptionGroup>
+                      <TnOptionGroup>
+                        <CallVerificationEnabled>true</CallVerificationEnabled>
+                        <TelephoneNumbers>
+                          <TelephoneNumber>2018551027</TelephoneNumber>
                         </TelephoneNumbers>
                       </TnOptionGroup>
                     </TnOptionGroups>
@@ -41066,6 +43190,350 @@ paths:
       summary: Retrieve tn details
       tags:
         - Tns
+  /v1/accounts/{accountId}/phoneNumbers/{phoneNumber}/tollFreeVerification:
+    get:
+      description: >-
+        This endpoint will provide verification status for a phone number that
+        is provisioned to your account.
+      operationId: getVerificationStatus
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/TfPhoneNumberPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/verifyStatusResponse'
+        '400':
+          $ref: '#/components/responses/tfvBadRequestResponse'
+        '401':
+          $ref: '#/components/responses/tfvUnauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/tfvForbiddenResponse'
+        '404':
+          $ref: '#/components/responses/tfvNotFoundResponse'
+        '405':
+          $ref: '#/components/responses/tfvNotAllowedResponse'
+        '429':
+          $ref: '#/components/responses/tfvTooManyRequestsResponse'
+        '500':
+          $ref: '#/components/responses/tfvServerErrorResponse'
+        '503':
+          $ref: '#/components/responses/tfvServiceUnavailableResponse'
+      summary: Get the verification status of a toll-free phone number
+      tags:
+        - Toll-Free Verification
+  /v1/accounts/{accountId}/shortcodes:
+    get:
+      description: Retrieves all the short codes registered with an account.
+      operationId: getAllShortCodesByAccount
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/shortCodeOffsetQueryParam'
+        - $ref: '#/components/parameters/shortCodeLimitQueryParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/shortCodeGetAllShortCodesByAccountResponse'
+        '400':
+          $ref: '#/components/responses/shortCode400'
+        '401':
+          $ref: '#/components/responses/shortCode401'
+        '403':
+          $ref: '#/components/responses/shortCode403'
+        '404':
+          $ref: '#/components/responses/shortCode404'
+        '405':
+          $ref: '#/components/responses/shortCode405'
+        '429':
+          $ref: '#/components/responses/shortCode429'
+        '500':
+          $ref: '#/components/responses/shortCode500'
+      summary: Retrieve short codes by account.
+      tags:
+        - Short Codes
+  /v1/accounts/{accountId}/shortcodes/{shortCode}/{country}:
+    get:
+      description: >-
+        Retrieve the details of an account's registration of a short code for a
+        single country.
+      operationId: getShortCodeByAccountIdCountryAndShortCode
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/shortCodePathParam'
+        - $ref: '#/components/parameters/shortCodeCountryPathParam'
+      responses:
+        '200':
+          $ref: >-
+            #/components/responses/shortCodeGetShortCodeByAccountIdCountryAndShortCodeResponse
+        '400':
+          $ref: '#/components/responses/shortCode400'
+        '401':
+          $ref: '#/components/responses/shortCode401'
+        '403':
+          $ref: '#/components/responses/shortCode403'
+        '404':
+          $ref: '#/components/responses/shortCode404'
+        '405':
+          $ref: '#/components/responses/shortCode405'
+        '429':
+          $ref: '#/components/responses/shortCode429'
+        '500':
+          $ref: '#/components/responses/shortCode500'
+      summary: Retrieve short code details.
+      tags:
+        - Short Codes
+    patch:
+      description: >-
+        Update (field by field) an account's short code registration for a
+        country. This utilizes [Json Patch](https://jsonpatch.com/).
+      operationId: patchShortCodeLease
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/shortCodePathParam'
+        - $ref: '#/components/parameters/shortCodeCountryPathParam'
+      requestBody:
+        $ref: '#/components/requestBodies/shortCodeJsonPatchShortCodeRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/shortCodeUpdateShortCodeResponse'
+        '400':
+          $ref: '#/components/responses/shortCode400'
+        '401':
+          $ref: '#/components/responses/shortCode401'
+        '403':
+          $ref: '#/components/responses/shortCode403'
+        '404':
+          $ref: '#/components/responses/shortCode404'
+        '405':
+          $ref: '#/components/responses/shortCode405'
+        '409':
+          $ref: '#/components/responses/shortCode409'
+        '429':
+          $ref: '#/components/responses/shortCode429'
+        '500':
+          $ref: '#/components/responses/shortCode500'
+      summary: >-
+        Update the lease information of an account's short code registration for
+        a country.
+      tags:
+        - Short Codes
+  /v1/accounts/{accountId}/shortcodes/{shortCode}/{country}/history:
+    get:
+      description: >-
+        Retrieves a complete history of all updates associated with an account's
+        registration of a short code for a single country.
+      operationId: getShortCodeHistoryAccountIdCountryAndShortCode
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/shortCodePathParam'
+        - $ref: '#/components/parameters/shortCodeCountryPathParam'
+        - $ref: '#/components/parameters/shortCodeOffsetQueryParam'
+        - $ref: '#/components/parameters/shortCodeLimitQueryParam'
+        - $ref: '#/components/parameters/shortCodeHistoryShortCodeSortParam'
+        - $ref: '#/components/parameters/shortCodeHistoryVersionSortParam'
+      responses:
+        '200':
+          $ref: >-
+            #/components/responses/shortCodeGetShortCodeHistoryAccountIdCountryAndShortCodeResponse
+        '400':
+          $ref: '#/components/responses/shortCode400'
+        '401':
+          $ref: '#/components/responses/shortCode401'
+        '403':
+          $ref: '#/components/responses/shortCode403'
+        '404':
+          $ref: '#/components/responses/shortCode404'
+        '405':
+          $ref: '#/components/responses/shortCode405'
+        '429':
+          $ref: '#/components/responses/shortCode429'
+        '500':
+          $ref: '#/components/responses/shortCode500'
+      summary: Retrieve short code history.
+      tags:
+        - Short Codes
+  /v1/accounts/{accountId}/tollFreeVerification:
+    post:
+      callbacks:
+        tfVerificationStatus:
+          $ref: '#/components/callbacks/tfVerificationStatus'
+      description: Submit a request for verification of a toll-free phone number.
+      operationId: requestVerification
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+      requestBody:
+        $ref: '#/components/requestBodies/verificationRequest'
+      responses:
+        '202':
+          $ref: '#/components/responses/verifyPostResponse'
+        '400':
+          $ref: '#/components/responses/tfvPostBadRequestResponse'
+        '401':
+          $ref: '#/components/responses/tfvUnauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/tfvForbiddenResponse'
+        '405':
+          $ref: '#/components/responses/tfvNotAllowedResponse'
+        '429':
+          $ref: '#/components/responses/tfvTooManyRequestsResponse'
+        '500':
+          $ref: '#/components/responses/tfvServerErrorResponse'
+        '503':
+          $ref: '#/components/responses/tfvServiceUnavailableResponse'
+      summary: Submit a toll-free verification request
+      tags:
+        - Toll-Free Verification
+  /v1/accounts/{accountId}/tollFreeVerification/webhooks/subscriptions:
+    get:
+      description: >-
+        Provides a list of webhook subscriptions that are registered to receive
+        status updates for the toll-free verification requests submitted under
+        this account (password will not be returned through this API; if
+        `basicAuthentication` is defined, the `password` property of that object
+        will be null).
+      operationId: listWebhookSubscriptions
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/webhookSubscriptionsList'
+        '400':
+          $ref: '#/components/responses/tfvPostBadRequestResponse'
+        '401':
+          $ref: '#/components/responses/tfvUnauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/tfvForbiddenResponse'
+        '405':
+          $ref: '#/components/responses/tfvNotAllowedResponse'
+        '429':
+          $ref: '#/components/responses/tfvTooManyRequestsResponse'
+        '500':
+          $ref: '#/components/responses/tfvServerErrorResponse'
+        '503':
+          $ref: '#/components/responses/tfvServiceUnavailableResponse'
+      summary: List all webhook subscriptions registered for this account
+      tags:
+        - Toll-Free Verification
+    post:
+      description: >-
+        Create a new webhook subscription (this webhook will be called for every
+        update on every submission). In addition to a `callbackUrl`, this
+        subscription can provide optional HTTP basic authentication credentials
+        (a username and a password). The returned subscription object will
+        contain an ID that can be used to modify or delete the subscription at a
+        later time.
+      operationId: createWebhookSubscription
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+      requestBody:
+        $ref: '#/components/requestBodies/webhookSubscriptionRequest'
+      responses:
+        '201':
+          $ref: '#/components/responses/webhookSubscriptionCreated'
+        '400':
+          $ref: '#/components/responses/tfvBadRequestResponse'
+        '401':
+          $ref: '#/components/responses/tfvUnauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/tfvForbiddenResponse'
+        '404':
+          $ref: '#/components/responses/tfvNotFoundResponse'
+        '405':
+          $ref: '#/components/responses/tfvNotAllowedResponse'
+        '429':
+          $ref: '#/components/responses/tfvTooManyRequestsResponse'
+        '500':
+          $ref: '#/components/responses/tfvServerErrorResponse'
+        '503':
+          $ref: '#/components/responses/tfvServiceUnavailableResponse'
+      summary: Create a new webhook subscription
+      tags:
+        - Toll-Free Verification
+  /v1/accounts/{accountId}/tollFreeVerification/webhooks/subscriptions/{id}:
+    delete:
+      description: Delete a webhook subscription by ID.
+      operationId: deleteWebhookSubscription
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/WebhookSubscriptionIdPathParam'
+      responses:
+        '204':
+          $ref: '#/components/responses/webhookSubscriptionDeleted'
+        '400':
+          $ref: '#/components/responses/tfvBadRequestResponse'
+        '401':
+          $ref: '#/components/responses/tfvUnauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/tfvForbiddenResponse'
+        '404':
+          $ref: '#/components/responses/tfvNotFoundResponse'
+        '405':
+          $ref: '#/components/responses/tfvNotAllowedResponse'
+        '429':
+          $ref: '#/components/responses/tfvTooManyRequestsResponse'
+        '500':
+          $ref: '#/components/responses/tfvServerErrorResponse'
+        '503':
+          $ref: '#/components/responses/tfvServiceUnavailableResponse'
+      summary: Delete a webhook subscription
+      tags:
+        - Toll-Free Verification
+    put:
+      description: >-
+        Update an existing webhook subscription (`callbackUrl` and
+        `basicAuthentication` can be updated).
+      operationId: updateWebhookSubscription
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/WebhookSubscriptionIdPathParam'
+      requestBody:
+        $ref: '#/components/requestBodies/webhookSubscriptionRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/webhookSubscriptionUpdated'
+        '400':
+          $ref: '#/components/responses/tfvBadRequestResponse'
+        '401':
+          $ref: '#/components/responses/tfvUnauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/tfvForbiddenResponse'
+        '404':
+          $ref: '#/components/responses/tfvNotFoundResponse'
+        '405':
+          $ref: '#/components/responses/tfvNotAllowedResponse'
+        '429':
+          $ref: '#/components/responses/tfvTooManyRequestsResponse'
+        '500':
+          $ref: '#/components/responses/tfvServerErrorResponse'
+        '503':
+          $ref: '#/components/responses/tfvServiceUnavailableResponse'
+      summary: Update an existing webhook subscription
+      tags:
+        - Toll-Free Verification
+  /v1/tollFreeVerification/useCases:
+    get:
+      description: Provides a list of valid toll-free use cases
+      operationId: listUseCases
+      responses:
+        '200':
+          $ref: '#/components/responses/useCasesResponse'
+        '400':
+          $ref: '#/components/responses/tfvBadRequestResponse'
+        '401':
+          $ref: '#/components/responses/tfvUnauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/tfvForbiddenResponse'
+        '404':
+          $ref: '#/components/responses/tfvNotFoundResponse'
+        '405':
+          $ref: '#/components/responses/tfvNotAllowedResponse'
+        '429':
+          $ref: '#/components/responses/tfvTooManyRequestsResponse'
+        '500':
+          $ref: '#/components/responses/tfvServerErrorResponse'
+        '503':
+          $ref: '#/components/responses/tfvServiceUnavailableResponse'
+      summary: List valid use cases for toll-free traffic
+      tags:
+        - Toll-Free Verification
 security:
   - httpBasic: []
 servers:
@@ -41122,9 +43590,9 @@ tags:
       url: /docs/emergency/dashboard/notifications/
     name: Emergency Notification
   - name: External Tn
+  - name: Hosted Messaging
+  - name: Hosted Voice
   - name: Import Tn to Account
-  - name: Import Hosted Messaging Tn
-  - name: Import Hosted Voice Tn
   - name: In-service Numbers
   - description: LIDB - Line Information DataBase
     externalDocs:
@@ -41145,6 +43613,7 @@ tags:
       description: Reports guide
       url: /docs/numbers/guides/setup-reports/accountReports/
     name: Reports
+  - name: Short Codes
   - externalDocs:
       description: Sip Registrar guide
       url: /docs/account/sipRegistrar/#create-sip-credentials
@@ -41160,3 +43629,5 @@ tags:
   - name: Tns
   - name: Admin Data
   - name: Tn Vendor Assignment
+  - description: Toll-Free Verification API guide
+    name: Toll-Free Verification
