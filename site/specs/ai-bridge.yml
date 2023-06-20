@@ -256,12 +256,29 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/replaceProviderResponseData'
+          examples:
+            googleProviderExample:
+              $ref: '#/components/examples/googleProviderResponseExample'
+            awsProviderExample:
+              $ref: '#/components/examples/awsProviderResponseExample'
+            cognigyProviderExample:
+              $ref: '#/components/examples/cognigyProviderResponseExample'
     updateProvidersResponse:
       description: A JSON object containing the updated details of the Provider.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/updateProviderResponseData'
+            oneOf:
+              - $ref: '#/components/schemas/googleProviderResponseData'
+              - $ref: '#/components/schemas/awsProviderResponseData'
+              - $ref: '#/components/schemas/cognigyProviderResponseData'
+          examples:
+            googleProviderExample:
+              $ref: '#/components/examples/googleProviderResponseExample'
+            awsProviderExample:
+              $ref: '#/components/examples/awsProviderResponseExample'
+            cognigyProviderExample:
+              $ref: '#/components/examples/cognigyProviderResponseExample'
     deleteProviderResponse:
       description: The provider was successfully deleted. No response body is returned.
     badRequestError:
@@ -725,31 +742,376 @@ components:
         description:
           type: string
           example: Description of Provider X.
-      example:
-        name: Provider X (Updated)
-        description: Description of Provider X (Updated).
-        credentials:
-          username: johndoe
-          password: newp@ssword
-    cognigyResponse:
-      type: object
-      properties:
         type:
           type: string
-        fields:
+          description: Type of provider.
+          enum:
+            - google
+            - cognigy
+            - aws
+        credentials:
+          oneOf:
+            - $ref: '#/components/schemas/googleProviderCredentials'
+            - $ref: '#/components/schemas/cognigyProviderCredentials'
+            - $ref: '#/components/schemas/awsProviderCredentials'
+        googleConfig:
+          $ref: '#/components/schemas/googleProviderRequestData'
+        cognigyConfig:
+          $ref: '#/components/schemas/cognigyProviderRequestData'
+        awsConfig:
+          $ref: '#/components/schemas/awsProviderRequestData'
+        cognigyResponse:
           type: object
           properties:
+            type:
+              type: string
+            fields:
+              type: object
+              properties:
+                ttsUrl:
+                  type: string
+                  description: A string representing the TTS URL.
+                  example: http://example.com/tts
+                sttUrl:
+                  type: string
+                  description: A string representing the STT URL.
+                  example: http://example.com/stt
+              required:
+                - type
+                - fields
+    googleProviderCredentials:
+      type: object
+      properties:
+        privateKey:
+          type: string
+          description: Private key for the Google account.
+        clientEmail:
+          type: string
+          description: Email address for the Google account.
+      required:
+        - privateKey
+        - clientEmail
+      example:
+        privateKey: abc123
+        clientEmail: johndoe@example.com
+    cognigyProviderCredentials:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Username for the Cognigy account.
+        password:
+          type: string
+          description: Password for the Cognigy account.
+      required:
+        - username
+        - password
+      example:
+        username: johndoe
+        password: newp@ssword
+    awsProviderCredentials:
+      type: object
+      properties:
+        accessKey:
+          type: string
+          description: Access key for the AWS account.
+        secretKey:
+          type: string
+          description: Secret key for the AWS account.
+      required:
+        - accessKey
+        - secretKey
+      example:
+        accessKey: abc123
+        secretKey: 456efg
+    updateGoogleProvider:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Provider X
+        description:
+          type: string
+          example: Description of Provider X.
+        type:
+          type: string
+          example: google
+        googleProvider:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 123
+            displayName:
+              type: string
+              example: Google Provider
+            accountId:
+              type: integer
+              example: 456
+            botUrl:
+              type: string
+              example: http://example.com/bot
+            region:
+              type: string
+              example: us-central1
+            location:
+              type: string
+              example: us-central1
+            environment:
+              type: string
+              example: prod
+            projectId:
+              type: string
+              example: my-project-id
+            agentId:
+              type: string
+              example: my-agent-id
+            credentials:
+              type: object
+              properties:
+                privateKey:
+                  type: string
+                clientEmail:
+                  type: string
+          example:
+            id: 123
+            displayName: Google Provider
+            accountId: 456
+            botUrl: http://example.com/bot
+            region: us-central1
+            location: us-central1
+            environment: prod
+            projectId: my-project-id
+            agentId: my-agent-id
+            credentials:
+              privateKey: abc123
+              clientEmail: johndoe@example.com
+      anyOf:
+        - required:
+            - name
+        - required:
+            - description
+        - required:
+            - type
+        - required:
+            - googleProvider
+        - required:
+            - name
+            - description
+        - required:
+            - name
+            - type
+        - required:
+            - name
+            - googleProvider
+        - required:
+            - description
+            - type
+        - required:
+            - description
+            - googleProvider
+        - required:
+            - type
+            - googleProvider
+        - required:
+            - name
+            - description
+            - type
+        - required:
+            - name
+            - description
+            - googleProvider
+        - required:
+            - name
+            - type
+            - googleProvider
+        - required:
+            - description
+            - type
+            - googleProvider
+        - required:
+            - name
+            - description
+            - type
+            - googleProvider
+      example:
+        name: Provider X (Updated)
+        googleProvider:
+          botUrl: http://example.com/bot
+    updateAwsProvider:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Provider X
+        description:
+          type: string
+          example: Description of Provider X.
+        type:
+          type: string
+          example: aws
+        awsProvider:
+          type: object
+          properties:
+            region:
+              type: string
+              example: us-east-1
+            credentials:
+              type: object
+              properties:
+                accessKey:
+                  type: string
+                secretKey:
+                  type: string
+          example:
+            region: us-east-1
+            credentials:
+              accessKey: abc123
+              secretKey: 456efg
+      anyOf:
+        - required:
+            - name
+        - required:
+            - description
+        - required:
+            - type
+        - required:
+            - awsProvider
+        - required:
+            - name
+            - description
+        - required:
+            - name
+            - type
+        - required:
+            - name
+            - awsProvider
+        - required:
+            - description
+            - type
+        - required:
+            - description
+            - awsProvider
+        - required:
+            - type
+            - awsProvider
+        - required:
+            - name
+            - description
+            - type
+        - required:
+            - name
+            - description
+            - awsProvider
+        - required:
+            - name
+            - type
+            - awsProvider
+        - required:
+            - description
+            - type
+            - awsProvider
+        - required:
+            - name
+            - description
+            - type
+            - awsProvider
+      example:
+        name: Provider X (Updated)
+        awsProvider:
+          region: us-east-1
+    updateCognigyProvider:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Provider X
+        description:
+          type: string
+          example: Description of Provider X.
+        type:
+          type: string
+          example: cognigy
+        cognigyProvider:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 456
+            displayName:
+              type: string
+              example: Cognigy Provider
+            accountId:
+              type: integer
+              example: 789
+            botUrl:
+              type: string
+              example: http://example.com/bot
             ttsUrl:
               type: string
-              description: A string representing the TTS URL.
               example: http://example.com/tts
             sttUrl:
               type: string
-              description: A string representing the STT URL.
               example: http://example.com/stt
-          required:
+          example:
+            id: 456
+            displayName: Cognigy Provider
+            accountId: 789
+            botUrl: http://example.com/bot
+            ttsUrl: http://example.com/tts
+            sttUrl: http://example.com/stt
+      anyOf:
+        - required:
+            - name
+        - required:
+            - description
+        - required:
             - type
-            - fields
+        - required:
+            - cognigyProvider
+        - required:
+            - name
+            - description
+        - required:
+            - name
+            - type
+        - required:
+            - name
+            - cognigyProvider
+        - required:
+            - description
+            - type
+        - required:
+            - description
+            - cognigyProvider
+        - required:
+            - type
+            - cognigyProvider
+        - required:
+            - name
+            - description
+            - type
+        - required:
+            - name
+            - description
+            - cognigyProvider
+        - required:
+            - name
+            - type
+            - cognigyProvider
+        - required:
+            - description
+            - type
+            - cognigyProvider
+        - required:
+            - name
+            - description
+            - type
+            - cognigyProvider
+      example:
+        name: Provider X (Updated)
+        cognigyProvider:
+          botUrl: http://example.com/bot
   requestBodies:
     providerPostRequest:
       content:
@@ -772,14 +1134,66 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/replaceProvider'
+            oneOf:
+              - $ref: '#/components/schemas/googleProviderRequestData'
+              - $ref: '#/components/schemas/awsProviderRequestData'
+              - $ref: '#/components/schemas/cognigyProviderRequestData'
+          examples:
+            googleProviderExample:
+              $ref: '#/components/examples/googleProviderExample'
+            awsProviderExample:
+              $ref: '#/components/examples/awsProviderExample'
+            cognigyProviderExample:
+              $ref: '#/components/examples/cognigyProviderExample'
     providerPatchRequest:
       description: Updated configuration details for the Provider.
       required: true
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/updateProvider'
+            oneOf:
+              - $ref: '#/components/schemas/updateGoogleProvider'
+              - $ref: '#/components/schemas/updateCognigyProvider'
+              - $ref: '#/components/schemas/updateAwsProvider'
+            properties:
+              googleProvider:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  displayName:
+                    type: string
+              cognigyProvider:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  ttsUrl:
+                    type: string
+              awsProvider:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  region:
+                    type: string
+          examples:
+            googleProvider:
+              value:
+                googleProvider:
+                  name: My Google Provider
+                  displayName: Updated Display Name
+            awsProvider:
+              value:
+                awsProvider:
+                  awsCredentials:
+                    accessKeyId: myaccesskey
+                    secretAccessKey: mysecretkey
+            cognigyProvider:
+              value:
+                cognigyProvider:
+                  name: My Cognigy Provider
+                  ttsUrl: http://example.com/new-tts
   examples:
     providerExample:
       summary: A summary of a Provider
