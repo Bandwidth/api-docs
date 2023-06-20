@@ -112,6 +112,11 @@ export default function Carousel({itemList, title}) {
             width: `${itemContentWidth}px`,
         }
 
+        var categoriesLinkStyle = {
+            fontSize: `0.8rem`,
+            lineHeight: `0.8rem`
+        }
+
         var postStyle = {
             width: `${itemContentWidth}px`,
         }
@@ -122,7 +127,7 @@ export default function Carousel({itemList, title}) {
                     <div className="slide-image" style={imageStyle} data-cy="image"></div>
                     <div className="slide-categories" style={categoriesStyle} data-cy="categories">
                         {categories.map((category, idx) => (
-                            <a href={categoryLinks[idx]} key={idx}>{category}</a>
+                            <a href={categoryLinks[idx]} style={categories.length > 3 ? categoriesLinkStyle : {}} key={idx}>{category}</a>
                         ))}
                     </div>
                     <div className="slide-post" style={postStyle} data-cy="post">
