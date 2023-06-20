@@ -40,33 +40,6 @@ paths:
           $ref: '#/components/responses/internalServerError'
       tags:
         - Providers
-    post:
-      summary: Add a Provider
-      operationId: createProvider
-      description: Create a configuration for an new Provider.
-      parameters:
-        - $ref: '#/components/parameters/accountId'
-      requestBody:
-        $ref: '#/components/requestBodies/providerPostRequest'
-      tags:
-        - Providers
-      responses:
-        '200':
-          $ref: '#/components/responses/createProviderResponse'
-        '400':
-          $ref: '#/components/responses/badRequestError'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
-        '405':
-          $ref: '#/components/responses/notAllowedError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestsError'
-        5XX:
-          $ref: '#/components/responses/internalServerError'
   /accounts/{accountId}/aibridge/providers/{providerId}:
     get:
       summary: Get a Provider by accountId and providerId
@@ -96,6 +69,33 @@ paths:
           $ref: '#/components/responses/internalServerError'
       tags:
         - Providers
+    post:
+      summary: Add a Provider
+      operationId: createProvider
+      description: Create a configuration for an new Provider.
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+      requestBody:
+        $ref: '#/components/requestBodies/providerPostRequest'
+      tags:
+        - Providers
+      responses:
+        '200':
+          $ref: '#/components/responses/createProviderResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/notAllowedError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
     put:
       summary: Replace a Provider
       operationId: replaceProvider
@@ -242,7 +242,10 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/postProviderResponseData'
+            oneOf:
+              - $ref: '#/components/schemas/googleProviderResponseData'
+              - $ref: '#/components/schemas/awsProviderResponseData'
+              - $ref: '#/components/schemas/cognigyProviderResponseData'
           examples:
             googleProviderExample:
               $ref: '#/components/examples/googleProviderResponseExample'
@@ -255,7 +258,10 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/replaceProviderResponseData'
+            oneOf:
+              - $ref: '#/components/schemas/googleProviderResponseData'
+              - $ref: '#/components/schemas/awsProviderResponseData'
+              - $ref: '#/components/schemas/cognigyProviderResponseData'
           examples:
             googleProviderExample:
               $ref: '#/components/examples/googleProviderResponseExample'
@@ -451,6 +457,13 @@ components:
           minLength: 1
         googleProviderCredentials:
           $ref: '#/components/schemas/googleProviderCredentials'
+      required:
+        - region
+        - location
+        - environment
+        - projectId
+        - agentId
+        - googleProviderCredentials
       example:
         $ref: '#/components/examples/googleProviderExample'
     awsProviderRequestData:
@@ -458,45 +471,45 @@ components:
       type: object
       description: Aws request example.
       properties:
-        type:
+        region:
           type: string
-        fields:
-          type: object
-          properties:
-            region:
-              type: string
-              description: A string representing the region.
-              example: us-west-2
-            awsProviderCredentials:
-              $ref: '#/components/schemas/awsProviderCredentials'
-          required:
-            - type
-            - fields
-          example:
-            $ref: '#/components/examples/awsProviderExample'
+          description: A string representing the region.
+          example: us-west-2
+        awsProviderCredentials:
+          $ref: '#/components/schemas/awsProviderCredentials'
+      required:
+        - region
+        - awsProviderCredentials
+      example:
+        $ref: '#/components/examples/awsProviderExample'
     cognigyProviderRequestData:
       title: Cognigy Provider Response Data
       type: object
       description: Cognigy request example
       properties:
-        type:
+        botUrl:
           type: string
-        fields:
-          type: object
-          properties:
-            botEndpoint:
-              type: string
-              description: A string representing the Cognigy bot endpoint.
-              example: https://cognigy.ai/bots/mybot
-            credentials:
-              type: string
-              description: A string representing the Cognigy bot credentials.
-              example: ABCDEFG123456
-          required:
-            - type
-            - fields
-        example:
-          $ref: '#/components/examples/cognigyProviderExample'
+          description: A string representing the Cognigy bot endpoint.
+          example: https://cognigy.ai/bots/mybot
+        sttUrl:
+          type: string
+          description: A string representing the speech to text url.
+          example: https://cognigy.ai/bots/mybot
+        ttsUrl:
+          type: string
+          description: A string representing the text to speech url.
+          example: https://cognigy.ai/bots/mybot
+        credentials:
+          type: string
+          description: A object representing the Cognigy bot credentials.
+          example: ABCDEFG123456
+      required:
+        - botEndpoint
+        - sttUrl
+        - ttsUrl
+        - credentials
+      example:
+        $ref: '#/components/examples/cognigyProviderExample'
     badRequestError:
       type: object
       properties:
