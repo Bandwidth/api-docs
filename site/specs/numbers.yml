@@ -16566,7 +16566,7 @@ paths:
         A maximum of 1,000 orders can be retrieved per request. If no date range
         or specific query parameter is provided, the order results will be
         limited to the last two years. Please visit <a
-        href='/docs/numbers/guides/porting/createBulkPortins'>Guides and
+        href='/docs/numbers/porting/port-ins/bulkPortIns'>Guides and
         Tutorials</a>
       operationId: ListBulkPortins
       parameters:
@@ -16740,7 +16740,7 @@ paths:
         of required fields in the child port-ins occurs when the bulk port-in is
         submitted (i.e. changed from a DRAFT status to IN_PROGRESS).
         </p><p>Please visit <a
-        href='/docs/numbers/guides/porting/createBulkPortins'>Guides and
+        href='/docs/numbers/porting/port-ins/bulkPortIns'>Guides and
         Tutorials</a></p>
       operationId: CreateBulkPortin
       parameters:
@@ -16874,12 +16874,278 @@ paths:
       summary: Create bulk port-in order
       tags:
         - Bulk Port-In
+  /accounts/{accountId}/bulkPortins/{orderId}:
+    delete:
+      description: >-
+        Delete a bulk port-in order with child port-ins.  Deleting a bulk
+        port-in is allowed for 'DRAFT' state only.  Deleting a bulk port-in will
+        delete all DRAFT child port-ins associated with the bulk port-in.  When
+        the bulk port-in is deleted, any child port-in orders that are not in a
+        draft status are dissociated from the bulk port-in, but not deleted.
+        Please visit <a href='/docs/numbers/porting/port-ins/bulkPortIns'>Guides
+        and Tutorials</a>
+      operationId: DeleteBulkOrder
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: ''
+          in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Bulk Port-in order has been successfully deleted.
+        '400':
+          content:
+            application/xml:
+              examples:
+                example:
+                  description: example
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BulkPortinResponse>
+                        <BulkPortin>
+                            <Status>
+                                <Code>7709</Code>
+                                <Description>Bulk port-in with id d88763f4-8914-4301-bdca-6f409e4cd811 cannot be deleted since it is not in
+                                    draft status.
+                                </Description>
+                            </Status>
+                        </BulkPortin>
+                    </BulkPortinResponse>
+              schema:
+                $ref: '#/components/schemas/BulkPortinErrorResponse'
+          description: Bad request. Bulk Port-in order not in DRAFT state.
+        '404':
+          description: The indicated Bulk Port-in order could not be found.
+      summary: Delete bulk port-in order
+      tags:
+        - Bulk Port-In
+    get:
+      description: >-
+        Retrieves information associated with the bulk port-in order specified
+        by the orderId URI parameter. Please visit <a
+        href='/docs/numbers/porting/port-ins/bulkPortIns'>Guides and
+        Tutorials</a>
+      operationId: RetrieveBulkOrder
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: ''
+          in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  description: example
+                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BulkPortinResponse> \n\t<BulkPortin> \n\t\t<CustomerOrderId>Order Id for all child orders</CustomerOrderId>\n\t\t<RequestedFocDate>2021-06-30T00:00:00.000Z</RequestedFocDate>\n\t\t<SiteId>14020</SiteId> \n\t\t<PeerId>521434</PeerId> \n\t\t<ProcessingStatus>DRAFT</ProcessingStatus> \n\t\t<AccountId>9900572</AccountId> \n\t\t<TargetRespOrgId>JYT01</TargetRespOrgId> \n\t\t<CreatedByUser>testuser</CreatedByUser> \n\t\t<LastModifiedBy>testuser</LastModifiedBy> \n\t\t<LastModifiedDate>2021-06-21T19:42:34.760Z</LastModifiedDate>\n\t\t<OrderCreateDate>2021-06-21T19:42:34.760Z</OrderCreateDate> \n\t</BulkPortin> \n</BulkPortinResponse>"
+              schema:
+                $ref: '#/components/schemas/BulkPortinResponse'
+          description: >-
+            The information has been successfully retrieved and displayed in the
+            payload.
+        '404':
+          description: The indicated Bulk Port-in order could not be found.
+      summary: Retrieve bulk port-in order
+      tags:
+        - Bulk Port-In
+    patch:
+      description: >-
+        <p>It is possible to change ("SUPP" in LNP terms) an existing Bulk
+        Port-in order.  This is done via a PUT or PATCH on the existing
+        order-id.  Since the Bulk Port-in
+          order acts as a template for port-in orders in DRAFT status, any record can be changed at any time.  The PATCH replaces elements of the referenced Bulk Portin order, but it replaces only the records included in the request payload.  Other elements will remain untouched.</p><p>Changing the fields in a Bulk Port-in order causes the system to reapply all changed values to the child port-ins contained in the list of subtending port-in orders. Note that if the port-in orders contained within the Bulk Port are in DRAFT state, any field can be modified. If any child port-in order in the Bulk Port-in is in any other state, normal SUPP rules apply, and the list of appropriate fields is smaller.</p><p>Changing the ProcessingStatus to 'IN_PROGRESS' causes all child port-ins to begin processing. This is only valid if child port-ins exist for the bulk port-in.</p> <p>Please visit <a href='/docs/numbers/porting/port-ins/bulkPortIns'>Guides and Tutorials</a></p>
+      operationId: PatchBulkOrder
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: ''
+          in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/xml:
+            examples:
+              In progress:
+                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BulkPortin>\n\t<ProcessingStatus>IN_PROGRESS</ProcessingStatus>\n</BulkPortin>"
+              Simple Request:
+                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BulkPortin>\n\t<CustomerOrderId>Order Id for all child orders</CustomerOrderId>\n\t<RequestedFocDate>2021-06-30Z</RequestedFocDate>\n\t<TargetRespOrgId>JYT99</TargetRespOrgId>\n\t<SiteId>14020</SiteId>\n\t<PeerId delete=\"true\"/>\n</BulkPortin>"
+              Updated requested FOC date:
+                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BulkPortin>\n\t<RequestedFocDate>2021-06-22T11:30:00-04:00</RequestedFocDate>\n</BulkPortin>"
+            schema:
+              $ref: '#/components/schemas/BulkPortinPatchRequest'
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  description: example
+                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BulkPortinResponse>\n\t<BulkPortin>\n\t\t<CustomerOrderId>Order Id for all child orders</CustomerOrderId>\n\t\t<RequestedFocDate>2021-06-30T00:00:00.000Z</RequestedFocDate>\n\t\t<Subscriber>\n\t\t\t<SubscriberType>BUSINESS</SubscriberType>\n\t\t\t<BusinessName>Goina B Rich</BusinessName>\n\t\t\t<ServiceAddress>\n\t\t\t\t<HouseNumber>123</HouseNumber>\n\t\t\t\t<StreetName>Maple Ave</StreetName>\n\t\t\t\t<City>Hometown</City>\n\t\t\t\t<StateCode>MO</StateCode>\n\t\t\t\t<Zip>54923</Zip>\n\t\t\t\t<Country>United States</Country>\n\t\t\t\t<AddressType>Service</AddressType>\n\t\t\t</ServiceAddress>\n\t\t</Subscriber>\n\t\t<SiteId>14020</SiteId>\n\t\t<TargetRespOrgId>JYT01</TargetRespOrgId>\n\t\t<PeerId>521434</PeerId>\n\t\t<ProcessingStatus>DRAFT</ProcessingStatus>\n\t\t<AccountId>9900572</AccountId>\n\t\t<CreatedByUser>testuser</CreatedByUser>\n\t\t<LastModifiedBy>testuser</LastModifiedBy>\n\t\t<LastModifiedDate>2021-06-22T14:25:24.487Z</LastModifiedDate>\n\t\t<OrderCreateDate>2021-06-21T19:42:34.760Z</OrderCreateDate>\n\t</BulkPortin>\n</BulkPortinResponse>"
+              schema:
+                $ref: '#/components/schemas/BulkPortinResponse'
+          description: >-
+            The information has been successfully retrieved and displayed in the
+            payload.
+        '400':
+          content:
+            application/xml:
+              examples:
+                example:
+                  description: example
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BulkPortinResponse>
+                        <ResponseStatus>
+                            <Description>Please check your input parameters.</Description>
+                        </ResponseStatus>
+                        <PortinListErrors>
+                            <PortinErrors>
+                                <PortinOrderId>c358cb90-f1e6-4d72-92be-435411d50609</PortinOrderId>
+                                <Errors>
+                                    <Error>
+                                        <Description>The order cannot be modified because the order is awaiting a response from the losing carrier</Description>
+                                        <ErrorCode>7300</ErrorCode>
+                                    </Error>
+                                </Errors>
+                            </PortinErrors>
+                            <PortinErrors>
+                                <PortinOrderId>cb57e5a0-c70d-4f24-a450-bab62e908cc6</PortinOrderId>
+                                <Errors>
+                                    <Error>
+                                        <Description>Unable to modify processing status for AUTOMATED port type</Description>
+                                        <ErrorCode>7367</ErrorCode>
+                                    </Error>
+                                </Errors>
+                            </PortinErrors>
+                        </PortinListErrors>
+                    </BulkPortinResponse>
+              schema:
+                $ref: '#/components/schemas/BulkPortinPatchErrorResponse'
+          description: Bad request. Invalid input.
+        '404':
+          description: The indicated Bulk Port-in order could not be found.
+      summary: Patch bulk port-in order
+      tags:
+        - Bulk Port-In
+    put:
+      description: >-
+        The PUT operation is available only for bulk port-in orders that are not
+        yet associated with subtending orders. Since this only occurs for bulk
+        port-in orders that are in one of the draft states, there are few
+        restrictions on what may be included. As with the POST, any data
+        associated with the bulk port-in will cascade to subtending orders when
+        they are created. (Subtending orders are created after telephone numbers
+        are added to the bulk port-in using the /tnList endpoint.) The PUT
+        completely replaces the existing Bulk Portin order with the payload of
+        the PUT. Please visit <a
+        href='/docs/numbers/porting/port-ins/bulkPortIns'>Guides and
+        Tutorials</a>.
+      operationId: PutBulkOrder
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: ''
+          in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/xml:
+            examples:
+              example:
+                description: example
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <BulkPortin>
+                      <CustomerOrderId>Order Id for all child orders</CustomerOrderId>
+                      <RequestedFocDate>2021-06-30Z</RequestedFocDate>
+                      <Subscriber>
+                          <SubscriberType>BUSINESS</SubscriberType>
+                          <BusinessName>Goina B Rich</BusinessName>
+                          <ServiceAddress>
+                              <HouseNumber>123</HouseNumber>
+                              <StreetName>Maple Ave</StreetName>
+                              <City>Hometown</City>
+                              <StateCode>MO</StateCode>
+                              <Zip>54923</Zip>
+                          </ServiceAddress>
+                      </Subscriber>
+                      <TargetRespOrgId>JYT01</TargetRespOrgId>
+                      <SiteId>14020</SiteId>
+                      <PeerId>521434</PeerId>
+                  </BulkPortin>
+            schema:
+              $ref: '#/components/schemas/BulkPortinRequest'
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  description: example
+                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BulkPortinResponse> \n\t<BulkPortin> \n\t\t<CustomerOrderId>Order Id for all child orders</CustomerOrderId> \n\t\t<RequestedFocDate>2021-06-30T00:00:00.000Z</RequestedFocDate> \n\t\t<Subscriber> \n\t\t\t<SubscriberType>BUSINESS</SubscriberType> \n\t\t\t<BusinessName>Goina B Rich</BusinessName> \n\t\t\t<ServiceAddress> \n\t\t\t\t<HouseNumber>123</HouseNumber> \n\t\t\t\t<StreetName>Maple Ave</StreetName> \n\t\t\t\t<City>Hometown</City> \n\t\t\t\t<StateCode>MO</StateCode> \n\t\t\t\t<Zip>54923</Zip> \n\t\t\t\t<Country>United States</Country> \n\t\t\t\t<AddressType>Service</AddressType> \n\t\t\t</ServiceAddress> \n\t\t</Subscriber> \n\t\t<SiteId>14020</SiteId> \n\t\t<PeerId>521434</PeerId> \n\t\t<ProcessingStatus>DRAFT</ProcessingStatus> \n\t\t<AccountId>9900572</AccountId> \n\t\t<TargetRespOrgId>JYT01</TargetRespOrgId> \n\t\t<CreatedByUser>testuser</CreatedByUser> \n\t\t<LastModifiedBy>testuser</LastModifiedBy> \n\t\t<LastModifiedDate>2021-06-21T20:24:36.616Z</LastModifiedDate>\n\t\t<OrderCreateDate>2021-06-21T19:42:34.760Z</OrderCreateDate> \n\t</BulkPortin> \n</BulkPortinResponse>"
+              schema:
+                $ref: '#/components/schemas/BulkPortinResponse'
+          description: >-
+            The information has been successfully retrieved and displayed in the
+            payload.
+        '400':
+          content:
+            application/xml:
+              examples:
+                example:
+                  description: example
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <BulkPortinResponse>
+                        <ResponseStatus>
+                            <Description>Please check your input parameters.</Description>
+                        </ResponseStatus>
+                        <PortinListErrors>
+                            <PortinErrors>
+                                <PortinOrderId>c358cb90-f1e6-4d72-92be-435411d50609</PortinOrderId>
+                                <Errors>
+                                    <Error>
+                                        <Description>The order cannot be modified because the order is awaiting a response from the losing carrier</Description>
+                                        <ErrorCode>7300</ErrorCode>
+                                    </Error>
+                                </Errors>
+                            </PortinErrors>
+                            <PortinErrors>
+                                <PortinOrderId>cb57e5a0-c70d-4f24-a450-bab62e908cc6</PortinOrderId>
+                                <Errors>
+                                    <Error>
+                                        <Description>Unable to modify processing status for AUTOMATED port type</Description>
+                                        <ErrorCode>7367</ErrorCode>
+                                    </Error>
+                                </Errors>
+                            </PortinErrors>
+                        </PortinListErrors>
+                    </BulkPortinResponse>
+              schema:
+                $ref: '#/components/schemas/BulkPortinPatchErrorResponse'
+          description: Bad request. Invalid input.
+        '404':
+          description: The indicated Bulk Port-in order could not be found.
+      summary: Update bulk port-in order
+      tags:
+        - Bulk Port-In
   /accounts/{accountId}/bulkPortins/{orderId}/history:
     get:
       description: >-
         Retrieves the history of the specified bulk port-in order. Obtaining
         history for a draft bulk port-in is not supported.</p><p>Please visit <a
-        href='/docs/numbers/guides/porting/createBulkPortins'>Guides and
+        href='/docs/numbers/porting/port-ins/bulkPortIns'>Guides and
         Tutorials</a></p>
       operationId: GetBulkHistory
       parameters:
@@ -17180,7 +17446,7 @@ paths:
     get:
       description: >-
         Retrieve all notes associated with the order. Please visit <a
-        href='/docs/numbers/guides/porting/createBulkPortins'>Guides and
+        href='/docs/numbers/porting/port-ins/bulkPortIns'>Guides and
         Tutorials</a>
       operationId: ListBulkNotes
       parameters:
@@ -17234,7 +17500,7 @@ paths:
         order causes a notification to be sent to Bandwidth Operations, so that
         they may assist as necessary. A note may be up to 500 characters in
         length. Please visit <a
-        href='/docs/numbers/guides/porting/createBulkPortins'>Guides and
+        href='/docs/numbers/porting/port-ins/bulkPortIns'>Guides and
         Tutorials</a>
       operationId: CreateBulkNote
       parameters:
@@ -17287,8 +17553,8 @@ paths:
     put:
       description: >-
         Update a specified note.  Notes may only be updated, not deleted. Please
-        visit <a href='/docs/numbers/guides/porting/createBulkPortins'>Guides
-        and Tutorials</a>
+        visit <a href='/docs/numbers/porting/port-ins/bulkPortIns'>Guides and
+        Tutorials</a>
       operationId: UpdateBulkNote
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
@@ -17346,7 +17612,7 @@ paths:
         Retrieves a list of Port-in Orders that are all associated with the
         identified Bulk Port-in.   This response is not paginated due to its
         inherently limited size. Please visit <a
-        href='/docs/numbers/guides/porting/createBulkPortins'>Guides and
+        href='/docs/numbers/porting/port-ins/bulkPortIns'>Guides and
         Tutorials</a>
       operationId: ListBulkChildOrders
       parameters:
@@ -17408,7 +17674,7 @@ paths:
         orders may only be added to a bulk port-in order while that bulk port-in
         order is still in a draft state.</p><p>Child port-in orders may be
         dissociated from the bulk port-in at any time. </p> <p>Please visit <a
-        href='/docs/numbers/guides/porting/createBulkPortins'>Guides and
+        href='/docs/numbers/porting/port-ins/bulkPortIns'>Guides and
         Tutorials</a></p>
       operationId: UpdateBulkChildList
       parameters:
@@ -17548,7 +17814,7 @@ paths:
                     </tr>
                 </tbody>
             </table>
-         <p>Please visit <a href='/docs/numbers/guides/porting/createBulkPortins'>Guides and Tutorials</a></p>
+         <p>Please visit <a href='/docs/numbers/porting/port-ins/bulkPortIns'>Guides and Tutorials</a></p>
       operationId: ListBulkTns
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
@@ -17621,7 +17887,7 @@ paths:
             non-portable telephone numbers and PUT the tnList again to restart the validation
             step.  The goal is to get to the VALID_DRAFT_TNS state, from which you can submit
             the bulk port-in order.</li></ul>
-         <p>Please visit <a href='/docs/numbers/guides/porting/createBulkPortins'>Guides and Tutorials</a></p>
+         <p>Please visit <a href='/docs/numbers/porting/port-ins/bulkPortIns'>Guides and Tutorials</a></p>
       operationId: UpdateBulkTnList
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
@@ -17680,273 +17946,6 @@ paths:
             country code prefix.The TN values should be 10-digit North American
             telephone numbers.
       summary: Update bulk port-in order tn list
-      tags:
-        - Bulk Port-In
-  /accounts/{accountId}/bulkPortins/{orderid}:
-    delete:
-      description: >-
-        Delete a bulk port-in order with child port-ins.  Deleting a bulk
-        port-in is allowed for 'DRAFT' state only.  Deleting a bulk port-in will
-        delete all DRAFT child port-ins associated with the bulk port-in.  When
-        the bulk port-in is deleted, any child port-in orders that are not in a
-        draft status are dissociated from the bulk port-in, but not deleted.
-        Please visit <a
-        href='/docs/numbers/guides/porting/createBulkPortins'>Guides and
-        Tutorials</a>
-      operationId: DeleteBulkOrder
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: ''
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Bulk Port-in order has been successfully deleted.
-        '400':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <BulkPortinResponse>
-                        <BulkPortin>
-                            <Status>
-                                <Code>7709</Code>
-                                <Description>Bulk port-in with id d88763f4-8914-4301-bdca-6f409e4cd811 cannot be deleted since it is not in
-                                    draft status.
-                                </Description>
-                            </Status>
-                        </BulkPortin>
-                    </BulkPortinResponse>
-              schema:
-                $ref: '#/components/schemas/BulkPortinErrorResponse'
-          description: Bad request. Bulk Port-in order not in DRAFT state.
-        '404':
-          description: The indicated Bulk Port-in order could not be found.
-      summary: Delete bulk port-in order
-      tags:
-        - Bulk Port-In
-    get:
-      description: >-
-        Retrieves information associated with the bulk port-in order specified
-        by the orderId URI parameter. Please visit <a
-        href='/docs/numbers/guides/porting/createBulkPortins'>Guides and
-        Tutorials</a>
-      operationId: RetrieveBulkOrder
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: ''
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BulkPortinResponse> \n\t<BulkPortin> \n\t\t<CustomerOrderId>Order Id for all child orders</CustomerOrderId>\n\t\t<RequestedFocDate>2021-06-30T00:00:00.000Z</RequestedFocDate>\n\t\t<SiteId>14020</SiteId> \n\t\t<PeerId>521434</PeerId> \n\t\t<ProcessingStatus>DRAFT</ProcessingStatus> \n\t\t<AccountId>9900572</AccountId> \n\t\t<TargetRespOrgId>JYT01</TargetRespOrgId> \n\t\t<CreatedByUser>testuser</CreatedByUser> \n\t\t<LastModifiedBy>testuser</LastModifiedBy> \n\t\t<LastModifiedDate>2021-06-21T19:42:34.760Z</LastModifiedDate>\n\t\t<OrderCreateDate>2021-06-21T19:42:34.760Z</OrderCreateDate> \n\t</BulkPortin> \n</BulkPortinResponse>"
-              schema:
-                $ref: '#/components/schemas/BulkPortinResponse'
-          description: >-
-            The information has been successfully retrieved and displayed in the
-            payload.
-        '404':
-          description: The indicated Bulk Port-in order could not be found.
-      summary: Retrieve bulk port-in order
-      tags:
-        - Bulk Port-In
-    patch:
-      description: >-
-        <p>It is possible to change ("SUPP" in LNP terms) an existing Bulk
-        Port-in order.  This is done via a PUT or PATCH on the existing
-        order-id.  Since the Bulk Port-in
-          order acts as a template for port-in orders in DRAFT status, any record can be changed at any time.  The PATCH replaces elements of the referenced Bulk Portin order, but it replaces only the records included in the request payload.  Other elements will remain untouched.</p><p>Changing the fields in a Bulk Port-in order causes the system to reapply all changed values to the child port-ins contained in the list of subtending port-in orders. Note that if the port-in orders contained within the Bulk Port are in DRAFT state, any field can be modified. If any child port-in order in the Bulk Port-in is in any other state, normal SUPP rules apply, and the list of appropriate fields is smaller.</p><p>Changing the ProcessingStatus to 'IN_PROGRESS' causes all child port-ins to begin processing. This is only valid if child port-ins exist for the bulk port-in.</p> <p>Please visit <a href='/docs/numbers/guides/porting/createBulkPortins'>Guides and Tutorials</a></p>
-      operationId: PatchBulkOrder
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: ''
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/xml:
-            examples:
-              In progress:
-                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BulkPortin>\n\t<ProcessingStatus>IN_PROGRESS</ProcessingStatus>\n</BulkPortin>"
-              Simple Request:
-                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BulkPortin>\n\t<CustomerOrderId>Order Id for all child orders</CustomerOrderId>\n\t<RequestedFocDate>2021-06-30Z</RequestedFocDate>\n\t<TargetRespOrgId>JYT99</TargetRespOrgId>\n\t<SiteId>14020</SiteId>\n\t<PeerId delete=\"true\"/>\n</BulkPortin>"
-              Updated requested FOC date:
-                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BulkPortin>\n\t<RequestedFocDate>2021-06-22T11:30:00-04:00</RequestedFocDate>\n</BulkPortin>"
-            schema:
-              $ref: '#/components/schemas/BulkPortinPatchRequest'
-      responses:
-        '200':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BulkPortinResponse>\n\t<BulkPortin>\n\t\t<CustomerOrderId>Order Id for all child orders</CustomerOrderId>\n\t\t<RequestedFocDate>2021-06-30T00:00:00.000Z</RequestedFocDate>\n\t\t<Subscriber>\n\t\t\t<SubscriberType>BUSINESS</SubscriberType>\n\t\t\t<BusinessName>Goina B Rich</BusinessName>\n\t\t\t<ServiceAddress>\n\t\t\t\t<HouseNumber>123</HouseNumber>\n\t\t\t\t<StreetName>Maple Ave</StreetName>\n\t\t\t\t<City>Hometown</City>\n\t\t\t\t<StateCode>MO</StateCode>\n\t\t\t\t<Zip>54923</Zip>\n\t\t\t\t<Country>United States</Country>\n\t\t\t\t<AddressType>Service</AddressType>\n\t\t\t</ServiceAddress>\n\t\t</Subscriber>\n\t\t<SiteId>14020</SiteId>\n\t\t<TargetRespOrgId>JYT01</TargetRespOrgId>\n\t\t<PeerId>521434</PeerId>\n\t\t<ProcessingStatus>DRAFT</ProcessingStatus>\n\t\t<AccountId>9900572</AccountId>\n\t\t<CreatedByUser>testuser</CreatedByUser>\n\t\t<LastModifiedBy>testuser</LastModifiedBy>\n\t\t<LastModifiedDate>2021-06-22T14:25:24.487Z</LastModifiedDate>\n\t\t<OrderCreateDate>2021-06-21T19:42:34.760Z</OrderCreateDate>\n\t</BulkPortin>\n</BulkPortinResponse>"
-              schema:
-                $ref: '#/components/schemas/BulkPortinResponse'
-          description: >-
-            The information has been successfully retrieved and displayed in the
-            payload.
-        '400':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <BulkPortinResponse>
-                        <ResponseStatus>
-                            <Description>Please check your input parameters.</Description>
-                        </ResponseStatus>
-                        <PortinListErrors>
-                            <PortinErrors>
-                                <PortinOrderId>c358cb90-f1e6-4d72-92be-435411d50609</PortinOrderId>
-                                <Errors>
-                                    <Error>
-                                        <Description>The order cannot be modified because the order is awaiting a response from the losing carrier</Description>
-                                        <ErrorCode>7300</ErrorCode>
-                                    </Error>
-                                </Errors>
-                            </PortinErrors>
-                            <PortinErrors>
-                                <PortinOrderId>cb57e5a0-c70d-4f24-a450-bab62e908cc6</PortinOrderId>
-                                <Errors>
-                                    <Error>
-                                        <Description>Unable to modify processing status for AUTOMATED port type</Description>
-                                        <ErrorCode>7367</ErrorCode>
-                                    </Error>
-                                </Errors>
-                            </PortinErrors>
-                        </PortinListErrors>
-                    </BulkPortinResponse>
-              schema:
-                $ref: '#/components/schemas/BulkPortinPatchErrorResponse'
-          description: Bad request. Invalid input.
-        '404':
-          description: The indicated Bulk Port-in order could not be found.
-      summary: Patch bulk port-in order
-      tags:
-        - Bulk Port-In
-    put:
-      description: >-
-        The PUT operation is available only for bulk port-in orders that are not
-        yet associated with subtending orders. Since this only occurs for bulk
-        port-in orders that are in one of the draft states, there are few
-        restrictions on what may be included. As with the POST, any data
-        associated with the bulk port-in will cascade to subtending orders when
-        they are created. (Subtending orders are created after telephone numbers
-        are added to the bulk port-in using the /tnList endpoint.) The PUT
-        completely replaces the existing Bulk Portin order with the payload of
-        the PUT. Please visit <a
-        href='/docs/numbers/guides/porting/createBulkPortins'>Guides and
-        Tutorials</a>.
-      operationId: PutBulkOrder
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: ''
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/xml:
-            examples:
-              example:
-                description: example
-                value: |-
-                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                  <BulkPortin>
-                      <CustomerOrderId>Order Id for all child orders</CustomerOrderId>
-                      <RequestedFocDate>2021-06-30Z</RequestedFocDate>
-                      <Subscriber>
-                          <SubscriberType>BUSINESS</SubscriberType>
-                          <BusinessName>Goina B Rich</BusinessName>
-                          <ServiceAddress>
-                              <HouseNumber>123</HouseNumber>
-                              <StreetName>Maple Ave</StreetName>
-                              <City>Hometown</City>
-                              <StateCode>MO</StateCode>
-                              <Zip>54923</Zip>
-                          </ServiceAddress>
-                      </Subscriber>
-                      <TargetRespOrgId>JYT01</TargetRespOrgId>
-                      <SiteId>14020</SiteId>
-                      <PeerId>521434</PeerId>
-                  </BulkPortin>
-            schema:
-              $ref: '#/components/schemas/BulkPortinRequest'
-      responses:
-        '200':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<BulkPortinResponse> \n\t<BulkPortin> \n\t\t<CustomerOrderId>Order Id for all child orders</CustomerOrderId> \n\t\t<RequestedFocDate>2021-06-30T00:00:00.000Z</RequestedFocDate> \n\t\t<Subscriber> \n\t\t\t<SubscriberType>BUSINESS</SubscriberType> \n\t\t\t<BusinessName>Goina B Rich</BusinessName> \n\t\t\t<ServiceAddress> \n\t\t\t\t<HouseNumber>123</HouseNumber> \n\t\t\t\t<StreetName>Maple Ave</StreetName> \n\t\t\t\t<City>Hometown</City> \n\t\t\t\t<StateCode>MO</StateCode> \n\t\t\t\t<Zip>54923</Zip> \n\t\t\t\t<Country>United States</Country> \n\t\t\t\t<AddressType>Service</AddressType> \n\t\t\t</ServiceAddress> \n\t\t</Subscriber> \n\t\t<SiteId>14020</SiteId> \n\t\t<PeerId>521434</PeerId> \n\t\t<ProcessingStatus>DRAFT</ProcessingStatus> \n\t\t<AccountId>9900572</AccountId> \n\t\t<TargetRespOrgId>JYT01</TargetRespOrgId> \n\t\t<CreatedByUser>testuser</CreatedByUser> \n\t\t<LastModifiedBy>testuser</LastModifiedBy> \n\t\t<LastModifiedDate>2021-06-21T20:24:36.616Z</LastModifiedDate>\n\t\t<OrderCreateDate>2021-06-21T19:42:34.760Z</OrderCreateDate> \n\t</BulkPortin> \n</BulkPortinResponse>"
-              schema:
-                $ref: '#/components/schemas/BulkPortinResponse'
-          description: >-
-            The information has been successfully retrieved and displayed in the
-            payload.
-        '400':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <BulkPortinResponse>
-                        <ResponseStatus>
-                            <Description>Please check your input parameters.</Description>
-                        </ResponseStatus>
-                        <PortinListErrors>
-                            <PortinErrors>
-                                <PortinOrderId>c358cb90-f1e6-4d72-92be-435411d50609</PortinOrderId>
-                                <Errors>
-                                    <Error>
-                                        <Description>The order cannot be modified because the order is awaiting a response from the losing carrier</Description>
-                                        <ErrorCode>7300</ErrorCode>
-                                    </Error>
-                                </Errors>
-                            </PortinErrors>
-                            <PortinErrors>
-                                <PortinOrderId>cb57e5a0-c70d-4f24-a450-bab62e908cc6</PortinOrderId>
-                                <Errors>
-                                    <Error>
-                                        <Description>Unable to modify processing status for AUTOMATED port type</Description>
-                                        <ErrorCode>7367</ErrorCode>
-                                    </Error>
-                                </Errors>
-                            </PortinErrors>
-                        </PortinListErrors>
-                    </BulkPortinResponse>
-              schema:
-                $ref: '#/components/schemas/BulkPortinPatchErrorResponse'
-          description: Bad request. Invalid input.
-        '404':
-          description: The indicated Bulk Port-in order could not be found.
-      summary: Update bulk port-in order
       tags:
         - Bulk Port-In
   /accounts/{accountId}/campaignManagement/10dlc:
@@ -18878,7 +18877,7 @@ paths:
       description: >-
         Retrieves the csr orders for the given account ID.
 
-        Please visit <a href='/docs/numbers/guides/porting/csrLookup'>Guides and
+        Please visit <a href='/docs/numbers/porting/port-ins/csrs'>Guides and
         Tutorials</a>
       operationId: ReadCsrOrders
       parameters:
@@ -25979,7 +25978,8 @@ paths:
         The fullcheck query parameter values control the components of the
         response payload that is returned.
 
-        <p>Please visit <a href='/docs/numbers/guides/porting/lnpChecker'>Guides
+        <p>Please visit <a
+        href='/docs/numbers/porting/port-ins/stand-alone-portins/lnpChecker'>Guides
         and Tutorials</a> to learn more.</p>
       operationId: RequestPortabilityInfo
       parameters:
@@ -26191,7 +26191,7 @@ paths:
         parameter (marked by <b class="required">*</b> below) is provided, the
         order results will be limited to the last two years. 
 
-        Please visit <a href='/docs/numbers/guides/porting/lsrOrders'>Guides and
+        Please visit <a href='/docs/numbers/porting/port-outs/lsrs'>Guides and
         Tutorials</a>
       operationId: ListLsrOrders
       parameters:
@@ -26352,7 +26352,7 @@ paths:
       description: >-
         A POST creates a LSR order request to initiate a port-out action. 
 
-        Please visit <a href='/docs/numbers/guides/porting/lsrOrders'>Guides and
+        Please visit <a href='/docs/numbers/porting/port-outs/lsrs'>Guides and
         Tutorials</a>
       operationId: CreateLsrOrder
       parameters:
@@ -26532,7 +26532,7 @@ paths:
       description: >-
         Retrieves the information associated with the specified LSR ID number. 
 
-        Please visit <a href='/docs/numbers/guides/porting/lsrOrders'>Guides and
+        Please visit <a href='/docs/numbers/porting/port-outs/lsrs'>Guides and
         Tutorials</a>
       operationId: ReadLsrOrder
       parameters:
@@ -26607,7 +26607,7 @@ paths:
       description: >-
         Updates the information associated with the specified LSR. 
 
-        Please visit <a href='/docs/numbers/guides/porting/lsrOrders'>Guides and
+        Please visit <a href='/docs/numbers/porting/port-outs/lsrs'>Guides and
         Tutorials</a>. This is also used to cancel an order, by changing the
         order status field to cancelled.  This is the only case where the status
         can be changed, and when this is done, all other fields are left as they
@@ -26795,7 +26795,7 @@ paths:
       description: >-
         Retrieves the history of the specified LSR order. 
 
-        Please visit <a href='/docs/numbers/guides/porting/lsrOrders'>Guides and
+        Please visit <a href='/docs/numbers/porting/port-outs/lsrs'>Guides and
         Tutorials</a>
       operationId: ReadLsrOrderHistory
       parameters:
@@ -26860,7 +26860,7 @@ paths:
       description: >-
         Retrieve all notes associated with the order. 
 
-        Please visit <a href='/docs/numbers/guides/porting/lsrOrders'>Guides and
+        Please visit <a href='/docs/numbers/porting/port-outs/lsrs'>Guides and
         Tutorials</a>
       operationId: ListLsrOrderNotes
       parameters:
@@ -26920,7 +26920,7 @@ paths:
         they may nassist as necessary. A note may be up to 500 characters in
         length. 
 
-        Please visit <a href='/docs/numbers/guides/porting/lsrOrders'>Guides and
+        Please visit <a href='/docs/numbers/porting/port-outs/lsrs'>Guides and
         Tutorials</a>
       operationId: CreateLsrOrderNote
       parameters:
@@ -26983,7 +26983,7 @@ paths:
       description: >-
         Update a specified note. Notes may only be updated, not deleted. 
 
-        Please visit <a href='/docs/numbers/guides/porting/lsrOrders'>Guides and
+        Please visit <a href='/docs/numbers/porting/port-outs/lsrs'>Guides and
         Tutorials</a>
       operationId: UpdateLsrOrderNote
       parameters:
@@ -28962,11 +28962,11 @@ paths:
       description: >-
         Creates a port-in order for the specified telephone number(s) and
         account number. <br/> Please visit <a
-        href='/docs/numbers/guides/porting/portingNumbers'>How to Create Port
-        in</a> guide. Also you can find more information about port types and
-        numbers portability on <a
-        href='/docs/numbers/guides/porting/lnpChecker'>How to check numbers
-        portability</a> guide
+        href='/docs/numbers/porting/port-ins/stand-alone-port-ins'>How to Create
+        Port in</a> guide. Also you can find more information about port types
+        and numbers portability on <a
+        href='/docs/numbers/porting/port-ins/stand-alone-portins/lnpChecker'>How
+        to check numbers portability</a> guide
       operationId: CreatePortin
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
@@ -29336,10 +29336,11 @@ paths:
         validation of the ListOfPhoneNumbers, if at least 1 PhoneNumber is
         provided.</li> <li>Submitting the parent bulk port-in will trigger the
         submission of child port-in orders.</li></ul> </p>Please visit <a
-        href='/docs/numbers/guides/porting/updatePortin'>How to Manage Port
-        in</a> guide. Also you can find more information about port types on <a
-        href='/docs/numbers/guides/porting/lnpChecker'>Port Types section of
-        this </a> guide
+        href='/docs/numbers/porting/port-ins/stand-alone-port-ins'>How to Manage
+        Port in</a> guide. Also you can find more information about port types
+        on <a
+        href='/docs/numbers/porting/port-ins/stand-alone-portins/lnpChecker'>Port
+        Types section of this </a> guide
       operationId: UpdatePortin
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
@@ -38896,7 +38897,7 @@ paths:
               type: string
             type: array
         - description: <b>*</b> A Telephone Number (TN) that is referenced in the order.
-          example: '9199918388'
+          example: '+19199918388'
           in: query
           name: tn
           required: false
@@ -39036,13 +39037,13 @@ paths:
                                    <NumberFormat>10digit</NumberFormat>
                                    <RPIDFormat>10digit</RPIDFormat>
                                    <RewriteUser>testUser1</RewriteUser>
-                                   <CallForward>6042661720</CallForward>
+                                   <CallForward>+16042661720</CallForward>
                                    <CallingNameDisplay>on</CallingNameDisplay>
                                    <Protected>true</Protected>
                                    <Sms>on</Sms>
                                    <FinalDestinationURI>sip:+12345678901@1.2.3.4:5060</FinalDestinationURI>
                                    <TelephoneNumbers>
-                                      <TelephoneNumber>2018551020</TelephoneNumber>
+                                      <TelephoneNumber>+12018551020</TelephoneNumber>
                                    </TelephoneNumbers>
                                 </TnOptionGroup>
                                 <TnOptionGroup>
@@ -39050,7 +39051,7 @@ paths:
                                    <Protected>false</Protected>
                                    <Sms>off</Sms>
                                    <TelephoneNumbers>
-                                      <TelephoneNumber>2018551025</TelephoneNumber>
+                                      <TelephoneNumber>+12018551025</TelephoneNumber>
                                    </TelephoneNumbers>
                                 </TnOptionGroup>
                              </TnOptionGroups>
@@ -39058,12 +39059,12 @@ paths:
                                 <Error>
                                    <Code>5076</Code>
                                    <Description>Telephone number is not available.</Description>
-                                   <TelephoneNumber>2018551025</TelephoneNumber>
+                                   <TelephoneNumber>+12018551025</TelephoneNumber>
                                 </Error>
                                 <Error>
                                    <Code>5076</Code>
                                    <Description>Telephone number is not available.</Description>
-                                   <TelephoneNumber>2018551020</TelephoneNumber>
+                                   <TelephoneNumber>+12018551020</TelephoneNumber>
                                 </Error>
                              </ErrorList>
                           </TnOptionOrder>
@@ -39078,19 +39079,19 @@ paths:
                                 <TnOptionGroup>
                                    <CallingNameDisplay>on</CallingNameDisplay>
                                    <TelephoneNumbers>
-                                      <TelephoneNumber>2174101601</TelephoneNumber>
+                                      <TelephoneNumber>+12174101601</TelephoneNumber>
                                    </TelephoneNumbers>
                                 </TnOptionGroup>
                                 <TnOptionGroup>
                                    <CallingNameDisplay>off</CallingNameDisplay>
                                    <TelephoneNumbers>
-                                      <TelephoneNumber>2174101602</TelephoneNumber>
+                                      <TelephoneNumber>+12174101602</TelephoneNumber>
                                    </TelephoneNumbers>
                                 </TnOptionGroup>
                                 <TnOptionGroup>
                                    <CallingNameDisplay>systemdefault</CallingNameDisplay>
                                    <TelephoneNumbers>
-                                      <TelephoneNumber>2174101603</TelephoneNumber>
+                                      <TelephoneNumber>+12174101603</TelephoneNumber>
                                    </TelephoneNumbers>
                                 </TnOptionGroup>
                              </TnOptionGroups>
@@ -39118,72 +39119,191 @@ paths:
       tags:
         - Tn Option
     post:
-      description: >-
-        Create TN Option order to assign line features to the telephone
-        number.<br><br>Attribute description:<ul><li>for A2pSettings
-        attribute</li><table style="text-align: left; width: 80%;" border="1"
-        cellpadding="2" cellspacing="0"><tbody><tr><th>Number
-        attribute</th><th>Action value</th><th>Description of
-        action</th></tr><tr><td>LongCode</td><td><i>systemDefault</i></td><td>Removes
-        the per-TN A2P attributes, and it reverts to the Location/SIP Peer
-        characteristics. Any values for Class or Campaign ID are not
-        valid</td></tr><tr><td>LongCode</td><td><i>asSpecified</i></td><td>Sets
-        the message class and campaign ID - this is the default if
-        unspecified</td></tr><tr><td>LongCode</td><td><i>off</i></td><td>Will
-        set the TN as a 'P' TN. Any values for Class or Campaign ID are not
-        valid</td></tr><tr><td>LongCode</td><td><i>delete</i></td><td>Will
-        delete the campaign ID from TN. Any values for Class or Campaign ID are
-        not valid</td></tr><tr><td>LongCode</td><td><i>unchanged</i></td><td>Do
-        nothing with respect to
-        A2P</td></tr><tr><td>TollFree</td><td><i>systemDefault</i></td><td>Removes
-        the per-TN A2P attributes, and it reverts to the Location/SIP Peer
-        characteristics. Any values for Class or Campaign ID are not
-        valid</td></tr><tr><td>TollFree</td><td><i>asSpecified</i></td><td>Sets
-        the message class and campaign ID - this is the default if
-        unspecified</td></tr><tr><td>TollFree</td><td><i>off</i></td><td>If the
-        Togglz value is set to 'on' this is invalid for Toll Free telephone
-        numbers. Any values for Class or Campaign ID in the payload are invalid.
-        If the Togglz value is set to off this behaves like and A2P TN, where
-        the characteristics of the TNs is set to
-        'P'</td></tr><tr><td>TollFree</td><td><i>unchanged</i></td><td>Do
-        nothing with respect to A2P</td></tr></tbody></table><li>for Origination
-        Route plan attribute</li><table style="text-align: left; width: 80%;"
-        border="1" cellpadding="2" cellspacing="0"><tbody><tr><th>Action
-        value</th><th>Description of
-        action</th></tr><tr><td>asSpecified</td><td>Creates/updates the
-        origination route plan for the TN with route plan details provided in
-        the request </td></tr><tr><td>off</td><td>Removes the origination route
-        plan for the TN. Route list is the request must be
-        empty</td></tr><tr><td>unchanged</td><td>Doesn't update/create the
-        origination route plan, even when route plan details exist in the
-        request</td></tr></tbody></table><ul><li> Origination route plan is
-        validated against CallForward and RewriteUser</li><ul><li
-        type="square">Route plan and CallForward cannot co-exist. Order is
-        accepted but will respond with error messages on GET.</li><li
-        type="square">Route plan and RewriteUser cannot co-exist. Order is
-        accepted but will respond with error messages on
-        GET.</li></ul></ul><li>for Pindrop Enabled attribute</li><table
-        style="text-align: left; width: 80%;" border="1" cellpadding="2"
-        cellspacing="0"><tbody><tr><th>Action value</th><th>Description of
-        action</th></tr><tr><td>true</td><td>Enables Pindrop integration on each
-        phone number in the option
-        group</td></tr><tr><td>false</td><td>Explicitly disables Pindrop
-        integration on each phone number in the option
-        group</td></tr></tbody></table><li>for Call Verification Enabled
-        attribute</li><table style="text-align: left; width: 80%;" border="1"
-        cellpadding="2" cellspacing="0"><tbody><tr><th>Action
-        value</th><th>Description of
-        action</th></tr><tr><td>true</td><td>Enables Call Verification on each
-        phone number in the option
-        group</td></tr><tr><td>false</td><td>Explicitly disables Call
-        Verification on each phone number in the option
-        group</td></tr></tbody></table><li>for other attribute</li><ul><li
-        type="square"> <i>systemDefault</i> - implies that the element profile
-        value should be removed so that the TN changes back to the default
-        system behavior;</li><li type="square"> <i>unchanged</i> - the value
-        should remain unchanged - implies a read before write model.</li><li
-        type="square"><u>Leaving the element out of the payload is equivalent to
-        <i>unchanged</i>.</u></li></ul></ul>
+      description: >
+        Create TN Option order to assign line features to the telephone number. 
+
+
+        The two data elements in the submission are -
+
+        <ul>
+          <li>TnOptionGroups - A list of TnOptionGroup objects, which contain list of telephone numbers and set of TN options you want to assign to all TNs in the list.</li>
+          <li>CustomerOrderId - Optional value for Id set by customer. Only alphanumeric values, dashes and spaces are allowed. Max length is 40 characters.</li>
+        </ul>
+
+        The valid attributes in TnOptionGroup object are:
+
+        <table style="text-align: left; width: 80%;" border="1" cellpadding="2"
+        cellspacing="0">
+          <thead>
+            <tr>
+              <th>Attribute</th>
+              <th>Product</th>
+              <th>Supported Countries</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>TelephoneNumbers</td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>PortOutPasscode</td>
+              <td>Numbers</td>
+              <td>NANPA</td>
+            </tr>
+            <tr>
+              <td>Protected</td>
+              <td>Numbers</td>
+              <td>NANPA</td>
+            </tr>
+            <tr>
+              <td>OriginationRoutePlan</td>
+              <td>Voice</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>RPIDFormat</td>
+              <td>Voice</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>RewriteUser</td>
+              <td>Voice</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>CallForward</td>
+              <td>Voice</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>FinalDestinationURI</td>
+              <td>Voice</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>PindropEnabled</td>
+              <td>Voice</td>
+              <td>NANPA</td>
+            </tr>
+            <tr>
+              <td>ESPID</td>
+              <td>Voice</td>
+              <td>NANPA</td>
+            </tr>
+            <tr>
+              <td>CallingNameDisplay</td>
+              <td>Voice</td>
+              <td>NANPA</td>
+            </tr>
+            <tr>
+              <td>Sms</td>
+              <td>Messaging</td>
+              <td>NANPA</td>
+            </tr>
+            <tr>
+              <td>A2pSettings</td>
+              <td>Messaging</td>
+              <td>NANPA</td>
+            </tr>
+            <tr>
+              <td>NNID</td>
+              <td>Messaging</td>
+              <td>NANPA</td>
+            </tr>
+          </tbody>
+        </table>
+
+
+        The values for each TnOptionGroup object attribute are:
+
+        <ul>
+          <li>for TelephoneNumbers attribute</li>
+            <ul>
+              <li>A list of TelephoneNumber as Array of strings</li>
+                <ul>
+                  <li>An E.164 formatted telephone number string. Assumes NANPA 10 digit format number if string is not E.164 formatted.</li>
+                </ul>
+            </ul>
+          <li>for PortOutPasscode attribute</li>
+            <ul>
+              <li>[ string | unchanged | systemDefault]</li>
+            </ul>
+          <li>for Protected attribute</li>
+            <ul>
+              <li>[ true | false | unchanged | systemDefault]</li>
+            </ul>
+          <li>for NumberFormat attribute</li>
+            <ul>
+              <li>[ 10digit | 11digit | e164 | unchanged | systemDefault ]</li>
+            </ul>
+          <li>for RPIDFormat attribute</li>
+            <ul>
+              <li>[ 10digit | 11digit | e164 | unchanged | systemDefault ]</li>
+            </ul>
+          <li>for RewriteUser attribute</li>
+            <ul>
+              <li>[ string | unchanged | systemDefault]</li>
+            </ul>
+          <li>for CallingNameDisplay attribute</li>
+            <ul>
+              <li>[ on | off | unchanged | systemDefault ]</li>
+            </ul>
+          <li>for Sms attribute</li>
+            <ul>
+              <li>[ on | off | unchanged]</li>
+            </ul>
+          <li>for NNID attribute</li>
+            <ul>
+              <li>[ integer | unchanged | systemDefault ]</li>
+            </ul>
+          <li>for ESPID attribute</li>
+            <ul>
+              <li>[ string | unchanged | systemDefault ]</li>
+            </ul>
+          <li>for CallForward attribute</li>
+            <ul>
+              <li>[ string | unchanged | systemDefault ]</li>
+                <ul>
+                  <li>An E.164 formatted telephone number string. Assumes NANPA 10 digit format number if string is not E.164 formatted.</li>
+                </ul>
+            </ul>
+          <li>for FinalDestinationURI attribute</li>
+            <ul>
+              <li> [ string | unchanged | systemDefault]</li>
+                <ul>
+                  <li>An E.164 formatted telephone number string. Assumes NANPA 10 digit format number if string is not E.164 formatted.</li>
+                  <li>a SIP URI ( without the sip: prefix )</li>
+                    <ul>
+                      <li>in the form address-string@host IP:port, where</li>
+                      <li>the host IP is an IPv4 address in the standard numerical n.n.n.n. form, and</li>
+                      <li>the port is numeric, and optional</li>
+                      <li>containing [a-z,A-Z,0-9], with ':', '.' and '@' to delimit the components of the overall string, and</li>
+                      <li>less than 60 characters long.</li>
+                    </ul>
+                </ul>
+            </ul>
+          <li>for all the above attribute</li>
+            <ul>
+              <li> <i>systemDefault</i> - implies that the element profile value should be removed so that the TN changes back to the default system behavior;</li>
+              <li> <i>unchanged</i> - the value should remain unchanged - implies a read before write model.</li>
+              <li><u>Leaving the element out of the payload is equivalent to <i>unchanged</i>.</u></li>
+            </ul>
+          <li>for A2pSettings attribute</li>
+            <table style="text-align: left; width: 80%;" border="1" cellpadding="2" cellspacing="0"><tbody><tr><th>Number attribute</th><th>Action value</th><th>Description of action</th></tr><tr><td>LongCode</td><td><i>systemDefault</i></td><td>Removes the per-TN A2P attributes, and it reverts to the Location/SIP Peer characteristics. Any values for Class or Campaign ID are not valid</td></tr><tr><td>LongCode</td><td><i>asSpecified</i></td><td>Sets the message class and campaign ID - this is the default if unspecified</td></tr><tr><td>LongCode</td><td><i>off</i></td><td>Will set the TN as a ''P'' TN. Any values for Class or Campaign ID are not valid</td></tr><tr><td>LongCode</td><td><i>delete</i></td><td>Will delete the campaign ID from TN. Any values for Class or Campaign ID are not valid</td></tr><tr><td>LongCode</td><td><i>unchanged</i></td><td>Do nothing with respect to A2P</td></tr><tr><td>TollFree</td><td><i>systemDefault</i></td><td>Removes the per-TN A2P attributes, and it reverts to the Location/SIP Peer characteristics. Any values for Class or Campaign ID are not valid</td></tr><tr><td>TollFree</td><td><i>asSpecified</i></td><td>Sets the message class and campaign ID - this is the default if unspecified</td></tr><tr><td>TollFree</td><td><i>off</i></td><td>If the Togglz value is set to ''on'' this is invalid for Toll Free telephone numbers. Any values for Class or Campaign ID in the payload are invalid. If the Togglz value is set to off this behaves like and A2P TN, where the characteristics of the TNs is set to ''P''</td></tr><tr><td>TollFree</td><td><i>unchanged</i></td><td>Do nothing with respect to A2P</td></tr></tbody></table>
+          <li>for Origination Route plan attribute</li>
+            <table style="text-align: left; width: 80%;" border="1" cellpadding="2" cellspacing="0"><tbody><tr><th>Action value</th><th>Description of action</th></tr><tr><td>asSpecified</td><td>Creates/updates the origination route plan for the TN with route plan details provided in the request </td></tr><tr><td>off</td><td>Removes the origination route plan for the TN. Route list is the request must be empty</td></tr><tr><td>unchanged</td><td>Doesn''t update/create the origination route plan, even when route plan details exist in the request</td></tr></tbody></table>
+            <ul>
+              <li> Origination route plan is validated against CallForward and RewriteUser</li>
+              <ul>
+                <li>Route plan and CallForward cannot co-exist. Order is accepted but will respond with error messages on GET.</li>
+                <li>Route plan and RewriteUser cannot co-exist. Order is accepted but will respond with error messages on GET.</li>
+              </ul>
+            </ul>
+          <li>for Pindrop Enabled attribute</li>
+            <table style="text-align: left; width: 80%;" border="1" cellpadding="2" cellspacing="0"><tbody><tr><th>Action value</th><th>Description of action</th></tr><tr><td>true</td><td>Enables Pindrop integration on each phone number in the option group</td></tr><tr><td>false</td><td>Explicitly disables Pindrop integration on each phone number in the option group</td></tr></tbody></table>
+        </ul>
       operationId: CreateTnOptionOrder
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
@@ -39201,7 +39321,7 @@ paths:
                         <NumberFormat>10digit</NumberFormat>
                         <RPIDFormat>10digit</RPIDFormat>
                         <RewriteUser>testUser1</RewriteUser>
-                        <CallForward>6042661720</CallForward>
+                        <CallForward>+16042661720</CallForward>
                         <CallingNameDisplay>on</CallingNameDisplay>
                         <PortOutPasscode>a1b2c3</PortOutPasscode>
                         <Protected>true</Protected>
@@ -39213,7 +39333,7 @@ paths:
                           <Action>asSpecified</Action>
                         </A2pSettings>
                         <TelephoneNumbers>
-                          <TelephoneNumber>2018551020</TelephoneNumber>
+                          <TelephoneNumber>+12018551020</TelephoneNumber>
                         </TelephoneNumbers>
                       </TnOptionGroup>
                       <TnOptionGroup>
@@ -39249,13 +39369,13 @@ paths:
                           <Action>asSpecified</Action>
                         </OriginationRoutePlan>
                         <TelephoneNumbers>
-                          <TelephoneNumber>2018551025</TelephoneNumber>
+                          <TelephoneNumber>+12018551025</TelephoneNumber>
                         </TelephoneNumbers>
                       </TnOptionGroup>
                       <TnOptionGroup>
                         <PindropEnabled>true</PindropEnabled>
                         <TelephoneNumbers>
-                          <TelephoneNumber>2018551026</TelephoneNumber>
+                          <TelephoneNumber>+12018551026</TelephoneNumber>
                         </TelephoneNumbers>
                       </TnOptionGroup>
                       <TnOptionGroup>
@@ -39289,12 +39409,12 @@ paths:
                             <NumberFormat>10digit</NumberFormat>
                             <RPIDFormat>10digit</RPIDFormat>
                             <RewriteUser>testUser1</RewriteUser>
-                            <CallForward>6042661720</CallForward>
+                            <CallForward>+16042661720</CallForward>
                             <CallingNameDisplay>on</CallingNameDisplay>
                             <Protected>true</Protected>
                             <Sms>on</Sms>
                             <TelephoneNumbers>
-                              <TelephoneNumber>2018551020</TelephoneNumber>
+                              <TelephoneNumber>+12018551020</TelephoneNumber>
                             </TelephoneNumbers>
                           </TnOptionGroup>
                           <TnOptionGroup>
@@ -39302,7 +39422,7 @@ paths:
                             <Protected>false</Protected>
                             <Sms>off</Sms>
                             <TelephoneNumbers>
-                              <TelephoneNumber>2018551025</TelephoneNumber>
+                              <TelephoneNumber>+12018551025</TelephoneNumber>
                             </TelephoneNumbers>
                           </TnOptionGroup>
                         </TnOptionGroups>
@@ -39384,27 +39504,27 @@ paths:
                           <CallingNameDisplay>on</CallingNameDisplay>
                           <Sms>on</Sms>
                           <TelephoneNumbers>
-                            <TelephoneNumber>2174101601</TelephoneNumber>
+                            <TelephoneNumber>+12174101601</TelephoneNumber>
                           </TelephoneNumbers>
                         </TnOptionGroup>
                         <TnOptionGroup>
                           <CallingNameDisplay>off</CallingNameDisplay>
                           <TelephoneNumbers>
-                            <TelephoneNumber>2174101602</TelephoneNumber>
+                            <TelephoneNumber>+12174101602</TelephoneNumber>
                           </TelephoneNumbers>
                           </TnOptionGroup>
                         <TnOptionGroup>
                           <CallingNameDisplay>systemdefault</CallingNameDisplay>
                           <FinalDestinationURI>sip:+12345678901@1.2.3.4:5060</FinalDestinationURI>
                           <TelephoneNumbers>
-                            <TelephoneNumber>2174101603</TelephoneNumber>
+                            <TelephoneNumber>+12174101603</TelephoneNumber>
                           </TelephoneNumbers>
                         </TnOptionGroup>
                       </TnOptionGroups>
                       <ErrorList/>
                       <Warnings>
                         <Warning>
-                          <TelephoneNumber>2174101601</TelephoneNumber>
+                          <TelephoneNumber>+12174101601</TelephoneNumber>
                           <Description>SMS is already Enabled or number is in processing.</Description>
                         </Warning>
                       </Warnings>
@@ -43554,7 +43674,7 @@ tags:
   - description: Manage bulk port-in orders
     externalDocs:
       description: Bulk port-in guide
-      url: /docs/numbers/guides/porting/createBulkPortins
+      url: /docs/numbers/porting/port-ins/bulkPortIns
     name: Bulk Port-In
   - name: Callbacks
   - name: Cities
@@ -43605,7 +43725,7 @@ tags:
   - description: ''
     externalDocs:
       description: Porting guide
-      url: /docs/numbers/guides/portingNumbers/
+      url: /docs/numbers/porting/
     name: Porting
   - name: Rate Centers
   - externalDocs:
