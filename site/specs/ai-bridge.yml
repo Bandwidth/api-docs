@@ -40,6 +40,33 @@ paths:
           $ref: '#/components/responses/internalServerError'
       tags:
         - Providers
+    post:
+      summary: Add a Provider
+      operationId: createProvider
+      description: Create a configuration for an new Provider.
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+      requestBody:
+        $ref: '#/components/requestBodies/providerPostRequest'
+      tags:
+        - Providers
+      responses:
+        '200':
+          $ref: '#/components/responses/createProviderResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/notAllowedError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
+        5XX:
+          $ref: '#/components/responses/internalServerError'
   /accounts/{accountId}/aibridge/providers/{providerId}:
     get:
       summary: Get a Provider by accountId and providerId
@@ -69,33 +96,6 @@ paths:
           $ref: '#/components/responses/internalServerError'
       tags:
         - Providers
-    post:
-      summary: Add a Provider
-      operationId: createProvider
-      description: Create a configuration for an new Provider.
-      parameters:
-        - $ref: '#/components/parameters/accountId'
-      requestBody:
-        $ref: '#/components/requestBodies/providerPostRequest'
-      tags:
-        - Providers
-      responses:
-        '200':
-          $ref: '#/components/responses/createProviderResponse'
-        '400':
-          $ref: '#/components/responses/badRequestError'
-        '401':
-          $ref: '#/components/responses/unauthorizedError'
-        '403':
-          $ref: '#/components/responses/forbiddenError'
-        '404':
-          $ref: '#/components/responses/notFoundError'
-        '405':
-          $ref: '#/components/responses/notAllowedError'
-        '429':
-          $ref: '#/components/responses/tooManyRequestsError'
-        5XX:
-          $ref: '#/components/responses/internalServerError'
     put:
       summary: Replace a Provider
       operationId: replaceProvider
@@ -498,7 +498,7 @@ components:
         ttsUrl:
           $ref: '#/components/schemas/ttsUrl'
       required:
-        - botEndpoint
+        - botUrl
         - sttUrl
         - ttsUrl
         - credentials
@@ -507,7 +507,7 @@ components:
     badRequestError:
       type: object
       properties:
-        errorCode:
+        code:
           type: integer
           description: The error code.
           example: 400
@@ -516,12 +516,12 @@ components:
           description: The error message.
           example: Malformed request data
       required:
-        - errorCode
+        - code
         - errorMsg
     authenticationError:
       type: object
       properties:
-        errorCode:
+        code:
           type: integer
           description: The error code.
           example: 401
@@ -530,12 +530,12 @@ components:
           description: The error message.
           example: Invalid credentials
       required:
-        - errorCode
+        - code
         - errorMsg
     authorizationError:
       type: object
       properties:
-        errorCode:
+        code:
           type: integer
           description: The error code.
           example: 403
@@ -544,12 +544,12 @@ components:
           description: The error message.
           example: Insufficient privileges
       required:
-        - errorCode
+        - code
         - errorMsg
     notFoundError:
       type: object
       properties:
-        errorCode:
+        code:
           type: integer
           description: The error code
           example: 404
@@ -558,12 +558,12 @@ components:
           description: The error message
           example: Resource not found
       required:
-        - errorCode
+        - code
         - errorMsg
     methodNotAllowedError:
       type: object
       properties:
-        errorCode:
+        code:
           type: integer
           description: The error code
           example: 405
@@ -572,12 +572,12 @@ components:
           description: The error message
           example: Method not allowed
       required:
-        - errorCode
+        - code
         - errorMsg
     tooManyRequestsError:
       type: object
       properties:
-        errorCode:
+        code:
           type: integer
           description: The error code
           example: 429
@@ -586,12 +586,12 @@ components:
           description: The error message
           example: Too many requests
       required:
-        - errorCode
+        - code
         - errorMsg
     internalServerError:
       type: object
       properties:
-        errorCode:
+        code:
           type: integer
           description: The error code.
           example: 500
@@ -600,7 +600,7 @@ components:
           description: The error message.
           example: Internal server error
       required:
-        - errorCode
+        - code
         - errorMsg
     postProviderResponseData:
       type: object
@@ -974,17 +974,13 @@ components:
                   - googleProvider -googleCredentials
             awsProvider:
               value:
-                type: string
-                awsProvider:
-                  awsCredentials:
-                    accessKeyId: myaccesskey
-                    secretAccessKey: mysecretkey
+                awsCredentials:
+                  accessKeyId: myaccesskey
+                  secretAccessKey: mysecretkey
             cognigyProvider:
               value:
-                type: string
-                cognigyProvider:
-                  name: My Cognigy Provider
-                  ttsUrl: http://example.com/new-tts
+                name: My Cognigy Provider
+                ttsUrl: http://example.com/new-tts
   examples:
     providerExample:
       summary: A summary of a Provider
@@ -997,21 +993,20 @@ components:
     googleProviderExample:
       summary: An example of a Google provider
       value:
+        name: Google provider
+        displayName: Google Provider
+        description: Google provider description
+        type: GOOGLE
+        botUrl: http://google-bot-url
         googleProvider:
-          name: Google provider
-          displayName: Google Provider
-          description: Google provider description
-          type: GOOGLE
-          botUrl: http://google-bot-url
-          googleProvider:
-            region: northamerica
-            location: us-east-1
-            environment: Production
-            projectId: myproject
-            agentId: myagent
-            googleCredentials:
-              privateKey: samplekey
-              clientEmail: email
+          region: northamerica
+          location: us-east-1
+          environment: Production
+          projectId: myproject
+          agentId: myagent
+          googleCredentials:
+            privateKey: samplekey
+            clientEmail: email
     googleProviderResponseExample:
       summary: An example of a Google provider
       value:
@@ -1030,52 +1025,48 @@ components:
     awsProviderExample:
       summary: An example of an AWS provider
       value:
-        data:
-          name: AWS provider
-          displayName: AWS Provider
-          description: AWS provider description
-          type: AWS
-          awsProvider:
-            botUrl: http://aws-bot-url
-            Region: us-west-1
-            awsCredentials:
-              accessKeyId: myaccesskey
-              secretAccessKey: mysecretkey
+        name: AWS provider
+        displayName: AWS Provider
+        description: AWS provider description
+        type: AWS
+        awsProvider:
+          botUrl: http://aws-bot-url
+          Region: us-west-1
+          awsCredentials:
+            accessKeyId: myaccesskey
+            secretAccessKey: mysecretkey
     awsProviderResponseExample:
       summary: An example of an AWS provider
       value:
-        data:
-          name: AWS provider
-          displayName: AWS Provider
-          description: AWS provider description
-          type: AWS
-          awsProvider:
-            botUrl: http://aws-bot-url
-            Region: us-west-1
+        name: AWS provider
+        displayName: AWS Provider
+        description: AWS provider description
+        type: AWS
+        awsProvider:
+          botUrl: http://aws-bot-url
+          Region: us-west-1
     cognigyProviderExample:
       summary: An example of a Cognigy provider
       value:
-        objects:
-          name: Cognigy provider
-          displayName: Cognigy Provider
-          description: Cognigy provider description
-          type: COGNIGY
-          cognigyProvider:
-            botUrl: http://cognigy-bot-url
-            TtsUrl: https://example.com/tts
-            SttUrl: https://example.com/stt
+        name: Cognigy provider
+        displayName: Cognigy Provider
+        description: Cognigy provider description
+        type: COGNIGY
+        cognigyProvider:
+          botUrl: http://cognigy-bot-url
+          TtsUrl: https://example.com/tts
+          SttUrl: https://example.com/stt
     cognigyProviderResponseExample:
       summary: An example of a Cognigy provider
       value:
-        objects:
-          name: Cognigy provider
-          displayName: Cognigy Provider
-          description: Cognigy provider description
-          type: COGNIGY
-          cognigyProvider:
-            botUrl: http://cognigy-bot-url
-            TtsUrl: https://example.com/tts
-            SttUrl: https://example.com/stt
+        name: Cognigy provider
+        displayName: Cognigy Provider
+        description: Cognigy provider description
+        type: COGNIGY
+        cognigyProvider:
+          botUrl: http://cognigy-bot-url
+          TtsUrl: https://example.com/tts
+          SttUrl: https://example.com/stt
     badRequestErrorExample:
       summary: An example of a generic Bad Request Error.
       value:
@@ -1152,3 +1143,22 @@ components:
               Unexpected internal server error. Contact Bandwidth Customer
               Support if this problem persists.
             code: 32030
+  securitySchemes:
+    Basic:
+      type: http
+      scheme: basic
+      description: >-
+        Basic authentication is a simple authentication scheme built into the
+        HTTP protocol. To use it, send your HTTP requests with an Authorization
+        header that contains the word Basic followed by a space and a
+        base64-encoded string `username:password`.
+
+
+        Example: `Authorization: Basic ZGVtbZpwQDU1dzByZA==`
+tags:
+  - name: Providers
+    description: Providers information
+    externalDocs:
+      url: TODO
+security:
+  - Basic: []
