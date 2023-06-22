@@ -79,3 +79,11 @@ context('Insights API SVG Link on API Reference Page', () => {
 context('Insights API Text Link on API Reference Page', () => {
   testTextLink('/apis/','Insights API', 'apis/insights')
 })
+
+context('Integrations API SVG Link on API Reference Page', () => {
+  testSvgLink('/apis/','svg[alt="Integrations API"]', 'apis/integrations')
+})
+
+context('Integrations API Text Link on API Reference Page', () => {
+  testTextLink('/apis/','Integrations API', 'apis/integrations')
+})

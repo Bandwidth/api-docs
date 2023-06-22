@@ -10,7 +10,7 @@ const apiList = [
     },
     {
         title: 'Call Verification API',
-        Svg: require('@site/static/img/api-icons/voice.svg').default,
+        Svg: require('@site/static/img/api-icons/verification.svg').default,
         link: '/apis/active-call-info/'
     },
     {
@@ -58,6 +58,11 @@ const apiList = [
         title: 'Insights API',
         Svg: require('@site/static/img/api-icons/insights.svg').default,
         link: '/apis/insights/'
+    },
+    {
+        title: 'Integrations API',
+        Svg: require('@site/static/img/api-icons/integrations.svg').default,
+        link: '/apis/integrations/'
     },
     /* TODO ONEID-1304
     {

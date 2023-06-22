@@ -38,6 +38,7 @@ const identitySpec = fs.readFileSync(
 );
 const identityspecLink = "";
 const insightsSpec = fs.readFileSync("./specs/insights.yml", "utf-8");
+const integrationsSpec = fs.readFileSync("./specs/integrations.yml", "utf-8");
 
 module.exports = {
   title: "Bandwidth API Docs",
@@ -192,6 +193,8 @@ module.exports = {
     identitySpecLink: `${customConfig.dashNotificationsSpecLink}`,
     insightsSpec: YAML.parse(insightsSpec),
     insightsSpecLink: `${customConfig.insightsSpecLink}`,
+    integrationsSpec: YAML.parse(integrationsSpec),
+    integrationsSpecLink: `${customConfig.integrationsSpecLink}`,
 
     blogPosts: blogPosts,
 
