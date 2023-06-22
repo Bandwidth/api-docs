@@ -1,0 +1,159 @@
+openapi: 3.0.1
+info:
+  description: |-
+    The API Specification for Bandwidth's Integrations Platform.
+
+    ## Base Path
+    <code>https://dashboard.bandwidth.com/api</code>
+  title: Integrations
+  termsOfService: https://www.bandwidth.com/legal/terms-of-use-bandwidthcom-web-sites/
+  version: 1.0.0
+  contact:
+    name: Bandwidth
+    url: https://support.bandwidth.com
+    email: support@bandwidth.com
+security:
+  - httpBasic: []
+servers:
+  - description: Production
+    url: https://dashboard.bandwidth.com/api
+    variables: {}
+tags:
+  - name: List Xcaas
+  - name: Get one xcaas by sip peer id
+paths:
+  /v1/accounts/{accountId}/integrations/xcaas:
+    get:
+      tags:
+        - List Xcaas
+      operationId: listXcaas
+      parameters:
+        - $ref: '#/components/parameters/accountIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/xcaasArray'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/methodNotAllowedError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: List xcaas based on account_id
+      description: List xcaas based on account_id
+  /v1/accounts/{accountId}/integrations/xcaas/sippeerid/{sipPeerId}:
+    get:
+      tags:
+        - Get one xcaas by sip peer id
+      operationId: getXcaasBySipPeerId
+      parameters:
+        - $ref: '#/components/parameters/accountIdPathParam'
+        - $ref: '#/components/parameters/sipPeerIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/xcaas'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/methodNotAllowedError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Get xcaas based on sip_peer_id
+      description: Get xcaas based on sip_peer_id
+components:
+  securitySchemes:
+    httpBasic:
+      type: http
+      scheme: basic
+  responses:
+    xcaas:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/xcaas'
+      description: OK
+    xcaasArray:
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/xcaas'
+      description: OK
+    badRequestError:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorDto'
+      description: Bad Request
+    unauthorizedError:
+      description: Unauthorized
+    forbiddenError:
+      description: Forbidden
+    notFoundError:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorDto'
+      description: Not Found
+    methodNotAllowedError:
+      description: Method not allowed.
+    tooManyRequestsError:
+      description: Too many requests.
+    internalServerError:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorDto'
+      description: Unpredictable error while processing the request.
+  parameters:
+    accountIdPathParam:
+      description: Customer ACCOUNT ID.
+      in: path
+      name: accountId
+      required: true
+      schema:
+        type: integer
+        format: int32
+    sipPeerIdPathParam:
+      description: Sip Peer Id.
+      in: path
+      name: sipPeerId
+      required: true
+      schema:
+        type: string
+  schemas:
+    xcaas:
+      type: object
+      properties:
+        xcaasName:
+          type: string
+          example: msteams_dr
+        xcaasDisplay:
+          type: string
+          example: Microsoft Teams Direct Routing
+    errorDto:
+      type: object
+      properties:
+        errorCode:
+          type: integer
+          format: int32
+          example: 500
+        message:
+          type: string
+          example: 'Unable to get customer with sanId: 123456'
