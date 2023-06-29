@@ -883,6 +883,7 @@ paths:
         - $ref: '#/components/parameters/errorCode'
         - $ref: '#/components/parameters/fromDateTime'
         - $ref: '#/components/parameters/toDateTime'
+        - $ref: '#/components/parameters/campaignId'
         - $ref: '#/components/parameters/sort'
         - $ref: '#/components/parameters/pageToken'
         - $ref: '#/components/parameters/limit'
@@ -1492,6 +1493,14 @@ components:
       example: 2022-09-14T18:20:16.000Z
       schema:
         type: string
+    campaignId:
+      in: query
+      name: campaignId
+      required: false
+      description: The campaign ID of the message.
+      example: CJEUMDK
+      schema:
+        type: string
     sort:
       in: query
       name: sort
@@ -1523,7 +1532,10 @@ components:
   schemas:
     priorityEnum:
       type: string
-      description: The priority specified by the user.
+      description: |-
+        The priority specified by the user.
+
+        Not supported on MMS.
       enum:
         - default
         - high
@@ -1658,6 +1670,11 @@ components:
           description: The campaign class of the message if it has one.
           nullable: true
           example: T
+        campaignId:
+          type: string
+          description: The campaign ID of the message if it has one.
+          nullable: true
+          example: CJEUMDK
     pageInfo:
       title: PageInfo
       type: object
@@ -1863,6 +1880,8 @@ components:
             automatically expire by. This must be a valid RFC-3339 value, e.g.,
             2021-03-14T01:59:26Z or 2021-03-13T20:59:26-05:00. Must be a
             date-time in the future.
+
+            Not supported on MMS.
           example: '2021-02-01T11:29:18-05:00'
     inboundMessageCallback:
       description: Inbound Message Callback
@@ -1882,68 +1901,71 @@ components:
           type: string
           example: Incoming message received
         message:
-          type: object
-          properties:
-            id:
-              type: string
-              example: 1661365814859loidf7mcwd4qacn7
-            owner:
-              type: string
-              example: '+15553332222'
-            applicationId:
-              type: string
-              example: 93de2206-9669-4e07-948d-329f4b722ee2
-            time:
-              type: string
-              format: date-time
-              example: 2016-09-14T18:20:16.000Z
-            segmentCount:
-              type: integer
-              example: 1
-            direction:
-              $ref: '#/components/schemas/messageDirectionEnum'
-            to:
-              uniqueItems: true
-              type: array
-              items:
-                type: string
-              example:
-                - '+15552223333'
-            from:
-              type: string
-              example: '+15553332222'
-            text:
-              type: string
-              example: Hello world
-            tag:
-              type: string
-              example: custom string
-            media:
-              type: array
-              items:
-                type: string
-                format: uri
-              example:
-                - https://dev.bandwidth.com/images/bandwidth-logo.png
-                - https://dev.bandwidth.com/images/github_logo.png
-            priority:
-              $ref: '#/components/schemas/priorityEnum'
-          required:
-            - id
-            - owner
-            - applicationId
-            - time
-            - segmentCount
-            - direction
-            - to
-            - from
-            - text
+          $ref: '#/components/schemas/inboundMessageCallbackMessage'
       required:
         - time
         - type
         - to
         - description
         - message
+    inboundMessageCallbackMessage:
+      description: Inbound Message Callback Message Schema
+      type: object
+      properties:
+        id:
+          type: string
+          example: 1661365814859loidf7mcwd4qacn7
+        owner:
+          type: string
+          example: '+15553332222'
+        applicationId:
+          type: string
+          example: 93de2206-9669-4e07-948d-329f4b722ee2
+        time:
+          type: string
+          format: date-time
+          example: 2016-09-14T18:20:16.000Z
+        segmentCount:
+          type: integer
+          example: 1
+        direction:
+          $ref: '#/components/schemas/messageDirectionEnum'
+        to:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+          example:
+            - '+15552223333'
+        from:
+          type: string
+          example: '+15553332222'
+        text:
+          type: string
+          example: Hello world
+        tag:
+          type: string
+          example: custom string
+        media:
+          type: array
+          items:
+            type: string
+            format: uri
+          example:
+            - https://dev.bandwidth.com/images/bandwidth-logo.png
+            - https://dev.bandwidth.com/images/github_logo.png
+        priority:
+          $ref: '#/components/schemas/priorityEnum'
+      required:
+        - id
+        - owner
+        - applicationId
+        - time
+        - segmentCount
+        - direction
+        - to
+        - from
+        - text
     messageSendingCallback:
       type: object
       description: Message Sending Callback
@@ -1962,70 +1984,73 @@ components:
           type: string
           example: Message is sending to carrier
         message:
-          type: object
-          properties:
-            id:
-              type: string
-              example: 1661365814859loidf7mcwd4qacn7
-            owner:
-              type: string
-              example: '+15553332222'
-            applicationId:
-              type: string
-              example: 93de2206-9669-4e07-948d-329f4b722ee2
-            time:
-              type: string
-              format: date-time
-              example: 2016-09-14T18:20:16.000Z
-            segmentCount:
-              type: integer
-              example: 1
-            direction:
-              $ref: '#/components/schemas/messageDirectionEnum'
-            to:
-              uniqueItems: true
-              type: array
-              items:
-                type: string
-              example:
-                - '+15552223333'
-            from:
-              type: string
-              example: '+15553332222'
-            text:
-              type: string
-              example: ''
-            tag:
-              type: string
-              example: custom string
-            media:
-              type: array
-              items:
-                type: string
-                format: uri
-              example:
-                - https://dev.bandwidth.com/images/bandwidth-logo.png
-                - https://dev.bandwidth.com/images/github_logo.png
-            priority:
-              $ref: '#/components/schemas/priorityEnum'
-          required:
-            - id
-            - owner
-            - applicationId
-            - time
-            - segmentCount
-            - direction
-            - to
-            - from
-            - text
-            - media
-            - priority
+          $ref: '#/components/schemas/messageSendingCallbackMessage'
       required:
         - time
         - type
         - to
         - description
         - message
+    messageSendingCallbackMessage:
+      description: Message Sending Callback Message Schema
+      type: object
+      properties:
+        id:
+          type: string
+          example: 1661365814859loidf7mcwd4qacn7
+        owner:
+          type: string
+          example: '+15553332222'
+        applicationId:
+          type: string
+          example: 93de2206-9669-4e07-948d-329f4b722ee2
+        time:
+          type: string
+          format: date-time
+          example: 2016-09-14T18:20:16.000Z
+        segmentCount:
+          type: integer
+          example: 1
+        direction:
+          $ref: '#/components/schemas/messageDirectionEnum'
+        to:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+          example:
+            - '+15552223333'
+        from:
+          type: string
+          example: '+15553332222'
+        text:
+          type: string
+          example: Hello world
+        tag:
+          type: string
+          example: custom string
+        media:
+          type: array
+          items:
+            type: string
+            format: uri
+          example:
+            - https://dev.bandwidth.com/images/bandwidth-logo.png
+            - https://dev.bandwidth.com/images/github_logo.png
+        priority:
+          $ref: '#/components/schemas/priorityEnum'
+      required:
+        - id
+        - owner
+        - applicationId
+        - time
+        - segmentCount
+        - direction
+        - to
+        - from
+        - text
+        - media
+        - priority
     messageDeliveredCallback:
       description: Message Delivered Callback
       type: object
@@ -2044,69 +2069,72 @@ components:
           type: string
           example: Message delivered to carrier.
         message:
-          type: object
-          properties:
-            id:
-              type: string
-              example: 1661365814859loidf7mcwd4qacn7
-            owner:
-              type: string
-              example: '+15553332222'
-            applicationId:
-              type: string
-              example: 93de2206-9669-4e07-948d-329f4b722ee2
-            time:
-              type: string
-              format: date-time
-              example: 2016-09-14T18:20:16.000Z
-            segmentCount:
-              type: integer
-              example: 1
-            direction:
-              $ref: '#/components/schemas/messageDirectionEnum'
-            to:
-              uniqueItems: true
-              type: array
-              items:
-                type: string
-              example:
-                - '+15552223333'
-            from:
-              type: string
-              example: '+15553332222'
-            text:
-              type: string
-              example: ''
-            tag:
-              type: string
-              example: custom string
-            media:
-              type: array
-              items:
-                type: string
-                format: uri
-              example:
-                - https://dev.bandwidth.com/images/bandwidth-logo.png
-                - https://dev.bandwidth.com/images/github_logo.png
-            priority:
-              $ref: '#/components/schemas/priorityEnum'
-          required:
-            - id
-            - owner
-            - applicationId
-            - time
-            - segmentCount
-            - direction
-            - to
-            - from
-            - text
-            - tag
+          $ref: '#/components/schemas/messageDeliveredCallbackMessage'
       required:
         - time
         - type
         - to
         - description
         - message
+    messageDeliveredCallbackMessage:
+      description: Message Delivered Callback Message Schema
+      type: object
+      properties:
+        id:
+          type: string
+          example: 1661365814859loidf7mcwd4qacn7
+        owner:
+          type: string
+          example: '+15553332222'
+        applicationId:
+          type: string
+          example: 93de2206-9669-4e07-948d-329f4b722ee2
+        time:
+          type: string
+          format: date-time
+          example: 2016-09-14T18:20:16.000Z
+        segmentCount:
+          type: integer
+          example: 1
+        direction:
+          $ref: '#/components/schemas/messageDirectionEnum'
+        to:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+          example:
+            - '+15552223333'
+        from:
+          type: string
+          example: '+15553332222'
+        text:
+          type: string
+          example: Hello world
+        tag:
+          type: string
+          example: custom string
+        media:
+          type: array
+          items:
+            type: string
+            format: uri
+          example:
+            - https://dev.bandwidth.com/images/bandwidth-logo.png
+            - https://dev.bandwidth.com/images/github_logo.png
+        priority:
+          $ref: '#/components/schemas/priorityEnum'
+      required:
+        - id
+        - owner
+        - applicationId
+        - time
+        - segmentCount
+        - direction
+        - to
+        - from
+        - text
+        - tag
     messageFailedCallback:
       description: Message Failed Callback
       type: object
@@ -2125,64 +2153,7 @@ components:
           type: string
           example: rejected-unallocated-from-number
         message:
-          type: object
-          properties:
-            id:
-              type: string
-              example: 1661365814859loidf7mcwd4qacn7
-            owner:
-              type: string
-              example: '+15553332222'
-            applicationId:
-              type: string
-              example: 93de2206-9669-4e07-948d-329f4b722ee2
-            time:
-              type: string
-              format: date-time
-              example: 2016-09-14T18:20:16.000Z
-            segmentCount:
-              type: integer
-              example: 1
-            direction:
-              $ref: '#/components/schemas/messageDirectionEnum'
-            to:
-              uniqueItems: true
-              type: array
-              items:
-                type: string
-              example:
-                - '+15552223333'
-            from:
-              type: string
-              example: '+15553332222'
-            text:
-              type: string
-              example: ''
-            tag:
-              type: string
-              example: custom string
-            media:
-              type: array
-              items:
-                type: string
-                format: uri
-              example:
-                - https://dev.bandwidth.com/images/bandwidth-logo.png
-                - https://dev.bandwidth.com/images/github_logo.png
-            priority:
-              $ref: '#/components/schemas/priorityEnum'
-          required:
-            - id
-            - owner
-            - applicationId
-            - time
-            - segmentCount
-            - direction
-            - to
-            - from
-            - text
-            - tag
-            - priority
+          $ref: '#/components/schemas/messageFailedCallbackMessage'
         errorCode:
           type: integer
           example: 9902
@@ -2193,6 +2164,66 @@ components:
         - description
         - message
         - errorCode
+    messageFailedCallbackMessage:
+      description: Message Failed Callback Message Schema
+      type: object
+      properties:
+        id:
+          type: string
+          example: 1661365814859loidf7mcwd4qacn7
+        owner:
+          type: string
+          example: '+15553332222'
+        applicationId:
+          type: string
+          example: 93de2206-9669-4e07-948d-329f4b722ee2
+        time:
+          type: string
+          format: date-time
+          example: 2016-09-14T18:20:16.000Z
+        segmentCount:
+          type: integer
+          example: 1
+        direction:
+          $ref: '#/components/schemas/messageDirectionEnum'
+        to:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+          example:
+            - '+15552223333'
+        from:
+          type: string
+          example: '+15553332222'
+        text:
+          type: string
+          example: Hello world
+        tag:
+          type: string
+          example: custom string
+        media:
+          type: array
+          items:
+            type: string
+            format: uri
+          example:
+            - https://dev.bandwidth.com/images/bandwidth-logo.png
+            - https://dev.bandwidth.com/images/github_logo.png
+        priority:
+          $ref: '#/components/schemas/priorityEnum'
+      required:
+        - id
+        - owner
+        - applicationId
+        - time
+        - segmentCount
+        - direction
+        - to
+        - from
+        - text
+        - tag
+        - priority
   requestBodies:
     createMessageRequest:
       content:

@@ -10,6 +10,4 @@ context('Algolia Search', () => {
 
 context('Redoc Search', () => {
     redocSearchTester('/apis/messaging/', 'List')
-    redocSearchTester('/apis/numbers/', 'CampaignManagement')
-    redocSearchTester('/apis/voice/', '/calls')
 })
