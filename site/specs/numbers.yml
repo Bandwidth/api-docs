@@ -1257,6 +1257,36 @@ components:
       required: true
       schema:
         type: string
+    areaCodeQueryParameter:
+      description: Area code of a phone number
+      example: 7
+      in: query
+      name: areaCode
+      required: false
+      schema:
+        type: string
+    countryCodeA3QueryParameter:
+      description: 3-letter, ISO 3166 country code
+      in: query
+      name: Country Code
+      required: true
+      schema:
+        type: string
+    phoneNumberTypeQueryParameter:
+      description: Phone number type
+      example: MOBILE
+      in: query
+      name: phoneNumberType
+      required: false
+      schema:
+        enum:
+          - GEOGRAPHIC
+          - SHARED_COST
+          - TOLL_FREE
+          - NATIONAL
+          - SPECIAL
+          - MOBILE
+        type: string
     shortCodeCountryPathParam:
       description: The short code number country.
       example: USA
@@ -1396,6 +1426,21 @@ components:
         associated with the order, the state of the order, and a list of the
         successfully imported Telephone Numbers, and descriptions of any
         encountered errors.
+    badRequestLosingCarriersResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              description: example
+              value:
+                data: null
+                errors: null
+                links: null
+          schema:
+            $ref: '#/components/schemas/portingLosingCarriesResponseSchema'
+      description: >-
+        Returned when an error with the structure or content of the request is
+        encountered
     bulkRateCenterGetResponse404Error:
       content:
         application/xml:
@@ -1447,6 +1492,39 @@ components:
       description: >-
         Successful response which starts the bulk upsert for provided rate
         centers.
+    listOfLosingCarriersResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                data:
+                  losingCarriers:
+                    - name: Losing Carrier 1
+                    - name: Losing Carrier 2
+                    - name: Losing Carrier 3
+                    - name: Losing Carrier 4
+                errors: null
+                links:
+                  - href: /portingLosingCarriers
+                    method: GET
+                    rel: self
+          schema:
+            $ref: '#/components/schemas/portingLosingCarriesResponseSchema'
+      description: A list of available carriers that can port out a phone number
+    noUpstreamServicesLosingCarriersResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              summary: example
+              value:
+                data: null
+                errors: null
+                links: null
+          schema:
+            $ref: '#/components/schemas/portingLosingCarriesResponseSchema'
+      description: Returned when upstream resources are not available
     rateCenter401Error:
       content:
         application/json:
@@ -1560,6 +1638,19 @@ components:
           schema:
             $ref: '#/components/schemas/CoverageMatrixEntry'
       description: Successful response for the update of a coverage matrix entry.
+    rateLimitedLosingCarriersResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              description: example
+              value:
+                data: null
+                errors: null
+                links: null
+          schema:
+            $ref: '#/components/schemas/portingLosingCarriesResponseSchema'
+      description: Returned when the endpoint rate limit threshold has been breached
     regionsFindCoverageResponse404Error:
       content:
         application/xml:
@@ -14331,6 +14422,56 @@ components:
       type: object
       xml:
         name: Order
+    portingLosingCarriesResponseSchema:
+      description: List of losing carriers for porting
+      properties:
+        data:
+          nullable: true
+          properties:
+            losingCarriers:
+              items:
+                properties:
+                  name:
+                    description: The name of the carrier
+                    example: Losing Carrier 1
+                    type: string
+                type: object
+              type: array
+          type: object
+        errors:
+          items:
+            properties:
+              code:
+                description: An error code identifying the error
+                type: string
+              description:
+                description: A description of the error
+                type: string
+              meta:
+                description: Additional information regarding the error
+                type: object
+            type: object
+          nullable: true
+          type: array
+        links:
+          items:
+            properties:
+              href:
+                description: The API endpoint URL
+                example: /portingLosingCarriers
+                type: string
+              method:
+                description: The HTTP method used to make the request
+                example: GET
+                type: string
+              rel:
+                description: The relationship of the endpoint to the request
+                example: self
+                type: string
+            type: object
+          nullable: true
+          type: array
+      type: object
     shortCode:
       description: Short code registration.
       properties:
@@ -42224,210 +42365,21 @@ paths:
         <p>Retrieves a list of losing carriers that a number can be ported from,
         given a countryCodeA3 and optional areaCode and phoneNumberType
         values.</p>
-      operationId: GET /portingLosingCarriers
+      operationId: portingLosingCarriers
       parameters:
-        - description: ISO 3166, 3 letter country code
-          example: GBR
-          in: query
-          name: countryCodeA3
-          required: true
-          schema:
-            type: string
-        - description: Phone number type
-          eample: MOBILE
-          in: query
-          name: phoneNumberType
-          required: false
-          schema:
-            enum:
-              - GEOGRAPHIC
-              - SHARED_COST
-              - TOLL_FREE
-              - NATIONAL
-              - SPECIAL
-              - MOBILE
-            type: string
-        - description: Area code of a phone number
-          example: 7
-          in: query
-          name: areaCode
-          required: false
-          schema:
-            type: string
+        - $ref: '#/components/parameters/countryCodeA3QueryParameter'
+        - $ref: '#/components/parameters/phoneNumberTypeQueryParameter'
+        - $ref: '#/components/parameters/areaCodeQueryParameter'
       responses:
         '200':
-          content:
-            application/json:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    {
-                      "links": [
-                        {
-                          "href": "/portingLosingCarriers",
-                          "rel": "self",
-                          "method": "GET"
-                        }
-                      ],
-                      "data": {
-                        "losingCarriers": [
-                          {
-                            "name": "Losing Carrier 1"
-                          },
-                          {
-                            "name": "Losing Carrier 2"
-                          },
-                          {
-                            "name": "Losing Carrier 3"
-                          },
-                          {
-                            "name": "Losing Carrier 4"
-                          }
-                        ]
-                      },
-                      "errors": []
-                    }
-              schema:
-                properties:
-                  data:
-                    properties:
-                      losingCarriers:
-                        items:
-                          properties:
-                            name:
-                              description: The name of the carrier
-                              example: Losing Carrier 1
-                              type: string
-                          type: object
-                        type: array
-                    type: object
-                  links:
-                    items:
-                      properties:
-                        href:
-                          description: The API endpoint URL
-                          example: /portingLosingCarriers
-                          type: string
-                        method:
-                          description: The HTTP method used to make the request
-                          example: GET
-                          type: string
-                        rel:
-                          description: The relationship of the endpoint to the request
-                          example: self
-                          type: string
-                      type: object
-                    type: array
-                type: object
-          description: A list of available carriers that can port out a phone number
+          $ref: '#/components/responses/listOfLosingCarriersResponse'
         '400':
-          content:
-            application/json:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    {
-                      "links": [],
-                      "data": null,
-                      "errors": [{
-                        "description": "'ABC' is not a valid ISO 3166, 3 letter country code",
-                        "code": "XYZA",
-                        "meta": {
-                          "countryCodeA3": "ABC",
-                        }
-                      }]
-                    }
-              schema:
-                properties:
-                  errors:
-                    items:
-                      properties:
-                        code:
-                          description: An error code identifying the error
-                          type: string
-                        description:
-                          description: A description of the error
-                          type: string
-                        meta:
-                          description: Additional information regarding the error
-                          type: string
-                      type: object
-                    type: array
-                type: object
-          description: >-
-            Returned when an error with the structure or content of the request
-            is encountered
+          $ref: '#/components/responses/badRequestLosingCarriersResponse'
         '429':
-          content:
-            application/json:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    {
-                      "links": [],
-                      "data": null,
-                      "errors": [{
-                        "description": "Rate limit exceeded for portingLosingCarriers",
-                        "code": "XYZA",
-                        "meta": null
-                      }]
-                    }
-              schema:
-                properties:
-                  errors:
-                    items:
-                      properties:
-                        code:
-                          description: An error code identifying the error
-                          type: string
-                        description:
-                          description: A description of the error
-                          type: string
-                        meta:
-                          description: Additional information regarding the error
-                          type: string
-                      type: object
-                    type: array
-                type: object
-          description: Returned when the endpoint rate limit threshold has been breached.
+          $ref: '#/components/responses/rateLimitedLosingCarriersResponse'
         '502':
-          content:
-            application/json:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    {
-                      "links": [],
-                      "data": null,
-                      "errors": [{
-                        "description": "An upstream resource is unavailable, try again later.",
-                        "code": "XYZA",
-                        "meta": null
-                      }]
-                    }
-              schema:
-                properties:
-                  errors:
-                    items:
-                      properties:
-                        code:
-                          description: An error code identifying the error
-                          type: string
-                        description:
-                          description: A description of the error
-                          type: string
-                        meta:
-                          description: Additional information regarding the error
-                          type: string
-                      type: object
-                    type: array
-                type: object
-          description: Returned when upstream resources are not available
-      summary: List of losing carriers for porting
+          $ref: '#/components/responses/noUpstreamServicesLosingCarriersResponse'
+      summary: Retrieves a list of losing carriers for porting global telephone numbers
       tags:
         - Porting
   /rateCenters:
