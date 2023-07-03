@@ -991,6 +991,18 @@ components:
       required: true
       schema:
         type: string
+    CountryCodeA3QueryParam:
+      description: >-
+        Country code of the country in its ISO 3166-1 alpha-3 format. Note that
+        only one country code (i.e. USA, CAN, GBR etc.) is allowed when
+        configured by the user. The system defaults country code to search
+        across all countries.
+      example: BEL
+      in: query
+      name: countryCodeA3
+      required: false
+      schema:
+        type: string
     CreatedDateFromQueryParam:
       description: >-
         Checks the order's creation date against this value. Orders that have a
@@ -1085,6 +1097,21 @@ components:
       in: path
       name: permissionId
       required: true
+      schema:
+        type: string
+    PhoneNumberTypeQueryParam:
+      description: >-
+        The phone number type - all returned data will be for the entered phone
+        number type and country code. Typically phone number type can be one of
+        GEOGRAPHIC, NATIONAL, MOBILE, TOLL_FREE, SHARED_COST. The system
+        defaults to search across all phone number types. Note that you can
+        specify multiple phone number types by repeating the query parameter
+        i.e. phoneNumberType=GEOGRAPHIC&phoneNumberType=NATIONAL. The
+        countryCodeA3 is a required parameter with phone number type.
+      example: BEL
+      in: query
+      name: phoneNumberType
+      required: false
       schema:
         type: string
     RCAbbreviationInPath:
@@ -2107,6 +2134,34 @@ components:
             TotalCount:
               format: int32
               type: integer
+          type: object
+      type: object
+    ActivationRequirement:
+      properties:
+        CountryCodeA3:
+          type: string
+        PhoneNumberType:
+          $ref: '#/components/schemas/PhoneNumberType'
+        ProofOfAddressRequired:
+          type: boolean
+        ProofOfIdRequired:
+          type: boolean
+        TypeOfAddress:
+          $ref: '#/components/schemas/TypeOfAddress'
+      type: object
+    ActivationRequirementErrorResponse:
+      properties:
+        ActivationRequirementResponse:
+          $ref: '#/components/schemas/ResponseStatus'
+      type: object
+    ActivationRequirementResponse:
+      properties:
+        ActivationRequirementResponse:
+          properties:
+            ActivationRequirements:
+              items:
+                $ref: '#/components/schemas/ActivationRequirement'
+              type: array
           type: object
       type: object
     ActivationStatus:
@@ -9491,6 +9546,15 @@ components:
           description: Simple Telephone Number.
           type: string
       type: object
+    PhoneNumberType:
+      enum:
+        - GEOGRAPHIC
+        - NATIONAL
+        - MOBILE
+        - TOLL_FREE
+        - SHARED_COST
+      example: GEOGRAPHIC
+      type: string
     PidfloAddressDeleting911Order:
       properties:
         E911Order:
@@ -13787,6 +13851,13 @@ components:
         Ratio:
           type: integer
       type: object
+    TypeOfAddress:
+      enum:
+        - WORLDWIDE
+        - NATIONAL
+        - LOCAL
+      example: WORLDWIDE
+      type: string
     UcTrunkingCloudSettings:
       properties:
         BiDirectionalTrunks:
@@ -15284,6 +15355,102 @@ paths:
       summary: Retrieve account
       tags:
         - Account
+  /accounts/{accountId}/activationRequirements:
+    get:
+      description: >-
+        Some numbers have to be activated before the service can be enabled by
+        Bandwidth. Activating a number is done by providing an activation that
+        links to the number, and a proof of residency if required. This API
+        provides all countries and number types that need activation.
+      operationId: ListActivationRequirements
+      parameters:
+        - $ref: '#/components/parameters/CountryCodeA3QueryParam'
+        - $ref: '#/components/parameters/PhoneNumberTypeQueryParam'
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <ActivationRequirementResponse>
+                      <ActivationRequirements>
+                        <ActivationRequirement>
+                          <CountryCodeA3>BEL</CountryCodeA3>
+                          <PhoneNumberType>GEOGRAPHIC</PhoneNumberType>
+                          <TypeOfAddress>WORLDWIDE</TypeOfAddress>
+                          <ProofOfAddressRequired>false</ProofOfAddressRequired>
+                          <ProofOfIdRequired>true</ProofOfIdRequired>
+                        </ActivationRequirement>
+                        <ActivationRequirement>
+                          <CountryCodeA3>ITA</CountryCodeA3>
+                          <PhoneNumberType>GEOGRAPHIC</PhoneNumberType>
+                          <TypeOfAddress>WORLDWIDE</TypeOfAddress>
+                          <ProofOfAddressRequired>false</ProofOfAddressRequired>
+                          <ProofOfIdRequired>true</ProofOfIdRequired>
+                        </ActivationRequirement>
+                        <ActivationRequirement>
+                          <CountryCodeA3>ZAF</CountryCodeA3>
+                          <PhoneNumberType>GEOGRAPHIC</PhoneNumberType>
+                          <TypeOfAddress>WORLDWIDE</TypeOfAddress>
+                          <ProofOfAddressRequired>false</ProofOfAddressRequired>
+                          <ProofOfIdRequired>true</ProofOfIdRequired>
+                        </ActivationRequirement>
+                        <ActivationRequirement>
+                          <CountryCodeA3>TUR</CountryCodeA3>
+                          <PhoneNumberType>GEOGRAPHIC</PhoneNumberType>
+                          <TypeOfAddress>WORLDWIDE</TypeOfAddress>
+                          <ProofOfAddressRequired>false</ProofOfAddressRequired>
+                          <ProofOfIdRequired>true</ProofOfIdRequired>
+                        </ActivationRequirement>
+                      </ActivationRequirements>
+                    </ActivationRequirementResponse>
+              schema:
+                $ref: '#/components/schemas/ActivationRequirementResponse'
+          description: >-
+            This response returns the list of cities, along with the Rate
+            Centers that serve those Activation Requirements.  If available is
+            specified then the number of TNs available in that city / RC
+            combination is also included.
+        '404':
+          content:
+            application/xml:
+              examples:
+                AccountNotFound:
+                  description: >-
+                    Below is an example of response API will produce when given
+                    account is not found or locked.
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <ActivationRequirementResponse>
+                        <ResponseStatus>
+                            <ErrorCode>4022</ErrorCode>
+                            <Description>Account '2' does not exist or is locked</Description>
+                        </ResponseStatus>
+                    </ActivationRequirementResponse>
+                GlobalServicesNotEnabled:
+                  description: >-
+                    Below is an example of response API will produce when Global
+                    Services are not enabled for an account.
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <ActivationRequirementResponse>
+                        <ResponseStatus>
+                            <ErrorCode>4026</ErrorCode>
+                            <Description>Global Services are currently disabled for the account. Please contact support if you believe Global Services should be enabled.</Description>
+                        </ResponseStatus>
+                    </ActivationRequirementResponse>
+              schema:
+                $ref: '#/components/schemas/ActivationRequirementErrorResponse'
+          description: >-
+            This error response is returned when Activation Requirements can not
+            be fetched for given customer/account because Global Services are
+            not enabled. In order to get activation requirement information,
+            Global Services setting must be enabled for the account.
+      summary: List Activation Requirements
+      tags:
+        - Compliance
   /accounts/{accountId}/addresses:
     get:
       description: GET is used to retrieve all addresses.
@@ -43883,6 +44050,7 @@ tags:
     name: Bulk Port-In
   - name: Callbacks
   - name: Cities
+  - name: Compliance
   - description: >-
       DLDA = Directory Listing and Directory Assistance. A DLDA resource
       associates a TN with a Street Address. This gets updated in a Network
