@@ -948,6 +948,34 @@ components:
             </Reseller>
           </CampaignSettings>
         </CampaignSettingsResponse>
+    countryCoverage400Error:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <CountryCoveragesResponse>
+            <Error>
+              <Description>You must provide at least one parameter in order to search.</Description>
+              <ErrorCode>3924</ErrorCode>
+            </Error>
+          </CountryCoveragesResponse>
+    countryCoverageResponseExample:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <CountryCoverageResponse>
+          <CountryCoverage> 
+            <CountryName>United States</CountryName>
+            <CountryCodeA3>USA</CountryCodeA3>
+            <PhoneNumberType>GEOGRAPHIC</PhoneNumberType>
+            <Cities>
+              <City>
+                <CityName>NEW YORK</CityName>
+                <AreaCodes>
+                  <AreaCode>201</AreaCode>
+                  <AreaCode>203</AreaCode>
+                </AreaCodes>
+              </City>
+            </Cities>
+          </CountryCoverage>
+        </CountryCoverageResponse>
   parameters:
     AccountIDQueryParam:
       description: >
@@ -1257,6 +1285,14 @@ components:
       required: true
       schema:
         type: string
+    countryCodeA3:
+      description: 3 character Country code.
+      example: CAN
+      in: query
+      name: countryCodeA3
+      required: true
+      schema:
+        type: string
     shortCodeCountryPathParam:
       description: The short code number country.
       example: USA
@@ -1447,6 +1483,70 @@ components:
       description: >-
         Successful response which starts the bulk upsert for provided rate
         centers.
+    countryCoverage401Error:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Client is providing incorrect or invalid credentials.
+                type: unauthorized
+          schema:
+            $ref: '#/components/schemas/countryCoverageUnsuccessfulResponse'
+      description: Client is providing incorrect or invalid credentials.
+    countryCoverage403Error:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Client does not have access rights to the content.
+                type: forbidden
+          schema:
+            $ref: '#/components/schemas/countryCoverageUnsuccessfulResponse'
+      description: Client does not have access rights to the content.
+    countryCoverage429Error:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: Too many requests.
+                type: too many requests
+          schema:
+            $ref: '#/components/schemas/countryCoverageUnsuccessfulResponse'
+      description: Too many requests.
+    countryCoverage500Error:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                description: The server has encountered an internal error.
+                type: internal server error
+          schema:
+            $ref: '#/components/schemas/countryCoverageUnsuccessfulResponse'
+      description: The server has encountered an internal error.
+    countryCoverageResponse400Error:
+      content:
+        application/xml:
+          examples:
+            unsuccessful400ErrorGetCoverageResponseExample:
+              $ref: '#/components/examples/countryCoverage400Error'
+          schema:
+            $ref: '#/components/schemas/countryCoverageUnsuccessfulResponse'
+      description: >-
+        Unsucessful response of a rate center's coverage due to a validation
+        error. No search parameters were provided.
+    getCountryCoverageResponse:
+      content:
+        application/xml:
+          examples:
+            successfulGetCoverageResponseExample:
+              $ref: '#/components/examples/countryCoverageResponseExample'
+          schema:
+            $ref: '#/components/schemas/countryCoverageList'
+      description: Successful response with a COuntries coverage.
     rateCenter401Error:
       content:
         application/json:
@@ -14072,6 +14172,21 @@ components:
         - zip
         - url
       type: object
+    areaCode:
+      description: Area Code
+      example: 201
+      type: integer
+    city:
+      properties:
+        AreaCodes:
+          items:
+            $ref: '#/components/schemas/areaCode'
+          type: array
+        CityName:
+          description: Name of the City
+          example: New York
+          type: string
+      type: object
     contact:
       nullable: false
       properties:
@@ -14094,6 +14209,43 @@ components:
         - lastName
         - email
         - phoneNumber
+      type: object
+    countryCoverageEntry:
+      properties:
+        Cities:
+          items:
+            $ref: '#/components/schemas/city'
+          type: array
+        CountryCodeA3:
+          description: 3 character country code.
+          example: USA
+          type: string
+        CountryName:
+          description: Name of the Country for which Coverage is being asked.
+          example: United States
+          type: string
+        PhoneNumberType:
+          description: Type of Phone Number
+          example: Geographic
+          type: string
+      type: object
+    countryCoverageList:
+      description: A list of country coverage entries.
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/countryCoverageEntry'
+          type: array
+      type: object
+    countryCoverageUnsuccessfulResponse:
+      description: A generic error object for Country coverage responses.
+      properties:
+        description:
+          example: Error Message
+          type: string
+        errorCode:
+          example: 3900
+          type: number
       type: object
     denialReasonDescription:
       description: Denial reason explanation
@@ -41881,6 +42033,30 @@ paths:
       summary: List Cities
       tags:
         - Cities
+  /coverage/countries:
+    get:
+      description: >-
+        The /coverage/countries resource returns countries, number types and
+        cities supported for any given country.
+      operationId: countryCoverage
+      parameters:
+        - $ref: '#/components/parameters/countryCodeA3'
+      responses:
+        '200':
+          $ref: '#/components/responses/getCountryCoverageResponse'
+        '400':
+          $ref: '#/components/responses/countryCoverageResponse400Error'
+        '401':
+          $ref: '#/components/responses/countryCoverage401Error'
+        '403':
+          $ref: '#/components/responses/countryCoverage403Error'
+        '429':
+          $ref: '#/components/responses/countryCoverage429Error'
+        '500':
+          $ref: '#/components/responses/countryCoverage500Error'
+      summary: Provides Country Coverage
+      tags:
+        - Coverage
   /coveredRateCenters:
     get:
       description: >-
