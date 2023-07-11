@@ -628,56 +628,6 @@ components:
           </Campaigns>
           <TotalCount>17</TotalCount>
         </CampaignsResponse>
-    CountryCoverageResponseErrorJson:
-      value:
-        responseStatus:
-          description: You must provide at least one parameter in order to search.
-          errorCode: 3924
-    CountryCoverageResponseErrorXml:
-      value: |-
-        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-        <CountryCoveragesResponse>
-          <ResonseStatus>
-            <ErrorCode>3924</ErrorCode>
-            <Description>You must provide at least one parameter in order to search.</Description>
-          </ResonseStatus>
-        </CountryCoveragesResponse>
-    CountryCoverageResponseJson:
-      value:
-        countryCoverages:
-          - cities:
-              - areaCodes:
-                  - 201
-                  - 303
-                cityName: NEW YORK
-            countryCodeA3: USA
-            phoneNumberType: GEOGRAPHIC
-          - countryCodeA3: USA
-            phoneNumberType: TOLL_FREE
-    CountryCoverageResponseXml:
-      value: |-
-        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-        <CountryCoverageResponse>
-          <CountryCoverages>
-            <CountryCoverage> 
-              <CountryCodeA3>USA</CountryCodeA3>
-              <PhoneNumberType>GEOGRAPHIC</PhoneNumberType>
-              <Cities>
-                <City>
-                  <CityName>NEW YORK</CityName>
-                  <AreaCodes>
-                    <AreaCode>201</AreaCode>
-                    <AreaCode>203</AreaCode>
-                  </AreaCodes>
-                </City>
-              </Cities>
-            </CountryCoverage>
-            <CountryCoverage> 
-              <CountryCodeA3>USA</CountryCodeA3>
-              <PhoneNumberType>TOLL_FREE</PhoneNumberType>
-            </CountryCoverage>
-          </CountryCoverages>
-        </CountryCoverageResponse>
     CreateCampaign400Error:
       value: |-
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -1468,32 +1418,20 @@ components:
     CountryCoverageResponse:
       content:
         application/json:
-          examples:
-            CountryCoverageResponseJson:
-              $ref: '#/components/examples/CountryCoverageResponseJson'
           schema:
-            $ref: '#/components/schemas/countryCoverageResponse'
+            $ref: '#/components/schemas/CountryCoverageResponse'
         application/xml:
-          examples:
-            CountryCoverageResponseXml:
-              $ref: '#/components/examples/CountryCoverageResponseXml'
           schema:
-            $ref: '#/components/schemas/countryCoverageResponse'
+            $ref: '#/components/schemas/CountryCoverageResponse'
       description: Successful response for country coverage.
     CountryCoverageResponseError:
       content:
         application/json:
-          examples:
-            CountryCoverageResponseErrorJson:
-              $ref: '#/components/examples/CountryCoverageResponseErrorJson'
           schema:
-            $ref: '#/components/schemas/countryCoverageResponseError'
+            $ref: '#/components/schemas/ResponseStatus'
         application/xml:
-          examples:
-            CoverageResponseErrorXml:
-              $ref: '#/components/examples/CountryCoverageResponseErrorXml'
           schema:
-            $ref: '#/components/schemas/countryCoverageResponseError'
+            $ref: '#/components/schemas/ResponseStatus'
       description: Unsucessful response for country coverage.
     ImportVoiceTnOrdersResponse:
       content:
@@ -2667,6 +2605,10 @@ components:
         ApplicationsSettings:
           $ref: '#/components/schemas/ApplicationsSettings'
       type: object
+    AreaCode:
+      description: Area Code
+      example: 201
+      type: integer
     AreaCodeSearchAndOrder:
       allOf:
         - $ref: '#/components/schemas/orderMetadata'
@@ -4450,6 +4392,22 @@ components:
           type: object
       title: CampaignTnsResponse
       type: object
+    City:
+      properties:
+        areaCodes:
+          items:
+            $ref: '#/components/schemas/AreaCode'
+          type: array
+          xml:
+            name: AreaCodes
+            wrapped: true
+        cityName:
+          description: Name of the City
+          example: New York
+          type: string
+          xml:
+            name: CityName
+      type: object
     CitySearchAndOrder:
       allOf:
         - $ref: '#/components/schemas/orderMetadata'
@@ -4711,6 +4669,38 @@ components:
                 type: object
               type: array
           type: object
+    CountryCoverage:
+      properties:
+        cities:
+          items:
+            $ref: '#/components/schemas/City'
+          type: array
+          xml:
+            name: Cities
+            wrapped: true
+        countryCodeA3:
+          description: 3 character country code.
+          example: USA
+          type: string
+          xml:
+            name: CountryCodeA3
+        phoneNumberType:
+          description: Type of Phone Number
+          example: Geographic
+          type: string
+          xml:
+            name: PhoneNumberType
+      type: object
+    CountryCoverageResponse:
+      properties:
+        countryCoverages:
+          items:
+            $ref: '#/components/schemas/CountryCoverage'
+          type: array
+          xml:
+            name: CountryCoverages
+            wrapped: true
+      type: object
     CoverageMatrixEntry:
       properties:
         Abbreviation:
@@ -10976,15 +10966,23 @@ components:
       type: object
     ResponseStatus:
       properties:
-        ResponseStatus:
+        responseStatus:
           properties:
-            Description:
+            description:
               description: 'Detailed explanation about error '
+              example: You must provide at least one parameter in order to search.
               type: string
-            ErrorCode:
+              xml:
+                name: Description
+            errorCode:
               description: Numeric designation of corresponding error
+              example: 3924
               type: integer
+              xml:
+                name: ErrorCode
           type: object
+          xml:
+            name: ResponseStatus
       type: object
     RogerTerminationSettings:
       properties:
@@ -14191,30 +14189,6 @@ components:
         - zip
         - url
       type: object
-    areaCode:
-      description: Area Code
-      example: 201
-      type: integer
-      xml:
-        name: AreaCode
-    city:
-      properties:
-        areaCodes:
-          items:
-            $ref: '#/components/schemas/areaCode'
-          type: array
-          xml:
-            name: AreaCodes
-            wrapped: true
-        cityName:
-          description: Name of the City
-          example: New York
-          type: string
-          xml:
-            name: CityName
-      type: object
-      xml:
-        name: City
     contact:
       nullable: false
       properties:
@@ -14238,49 +14212,6 @@ components:
         - email
         - phoneNumber
       type: object
-    countryCoverage:
-      properties:
-        cities:
-          items:
-            $ref: '#/components/schemas/city'
-          type: array
-          xml:
-            name: Cities
-            wrapped: true
-        countryCodeA3:
-          description: 3 character country code.
-          example: USA
-          type: string
-          xml:
-            name: CountryCodeA3
-        phoneNumberType:
-          description: Type of Phone Number
-          example: Geographic
-          type: string
-          xml:
-            name: PhoneNumberType
-      type: object
-      xml:
-        name: CountryCoverage
-    countryCoverageResponse:
-      properties:
-        CountryCoverages:
-          items:
-            $ref: '#/components/schemas/countryCoverage'
-          type: array
-          xml:
-            name: CountryCoverages
-            wrapped: true
-      type: object
-      xml:
-        name: CountryCoverageResponse
-    countryCoverageResponseError:
-      properties:
-        CountryCoverageResponse:
-          $ref: '#/components/schemas/ResponseStatus'
-      type: object
-      xml:
-        name: CountryCoverageResponseError
     denialReasonDescription:
       description: Denial reason explanation
       example: Disallowed Content - Gambling
