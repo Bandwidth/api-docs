@@ -628,6 +628,61 @@ components:
           </Campaigns>
           <TotalCount>17</TotalCount>
         </CampaignsResponse>
+    CountryCoverageResponseErrorJson:
+      value:
+        responseStatus:
+          description: You must provide at least one parameter in order to search.
+          errorCode: 3924
+    CountryCoverageResponseErrorXml:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <CountryCoveragesResponse>
+          <ResonseStatus>
+            <ErrorCode>3924</ErrorCode>
+            <Description>You must provide at least one parameter in order to search.</Description>
+          </ResonseStatus>
+        </CountryCoveragesResponse>
+    CountryCoverageResponseJson:
+      value:
+        countryCoverages:
+          - cities:
+              - areaCodes:
+                  - 201
+                  - 303
+                cityName: NEW YORK
+            countryCodeA3: USA
+            phoneNumberType: GEOGRAPHIC
+          - cities:
+              - areaCodes:
+                  - 201
+                  - 303
+                cityName: NEW YORK
+            countryCodeA3: USA
+            phoneNumberType: GEOGRAPHIC
+    CountryCoverageResponseXml:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <CountryCoverageResponse>
+          <CountryCoverages>
+            <CountryCoverage> 
+              <CountryCodeA3>USA</CountryCodeA3>
+              <PhoneNumberType>GEOGRAPHIC</PhoneNumberType>
+              <Cities>
+                <City>
+                  <CityName>NEW YORK</CityName>
+                  <AreaCodes>
+                    <AreaCode>201</AreaCode>
+                    <AreaCode>203</AreaCode>
+                  </AreaCodes>
+                </City>
+              </Cities>
+            </CountryCoverage>
+            <CountryCoverage> 
+              <CountryCodeA3>USA</CountryCodeA3>
+              <PhoneNumberType>TOLL_FREE</PhoneNumberType>
+            </CountryCoverage>
+          </CountryCoverages>
+        </CountryCoverageResponse>
     CreateCampaign400Error:
       value: |-
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -823,11 +878,11 @@ components:
       value: |-
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
         <RateCenterCoveragesResponse>
-            <Error>
-              <Description>You must provide at least one parameter in order to search.</Description>
-              <ErrorCode>3924</ErrorCode>
-            </Error>
-          </RateCenterCoveragesResponse>
+          <Error>
+            <Description>You must provide at least one parameter in order to search.</Description>
+            <ErrorCode>3924</ErrorCode>
+          </Error>
+        </RateCenterCoveragesResponse>
     RateCenterPostCoverage400Error:
       value: |-
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -1257,6 +1312,37 @@ components:
       required: true
       schema:
         type: string
+    city:
+      description: The name of the city.
+      example: RALEIGH
+      in: query
+      name: city
+      required: false
+      schema:
+        type: string
+    countryCodeA3:
+      description: >-
+        Country code of the country in its ISO 3166-1 alpha-3 format. Note that
+        only one country code (i.e. USA, CAN, GBR etc.) is allowed when
+        configured by the user.
+      example: CAN
+      in: query
+      name: countryCodeA3
+      required: true
+      schema:
+        type: string
+    phoneNumberType:
+      description: >-
+        Typically phone number type can be one of GEOGRAPHIC, NATIONAL, MOBILE,
+        TOLL_FREE, SHARED_COST, SPECIAL. The system defaults to return phone
+        numbers of all types when the query parameter is not passed. The
+        countryCodeA3 is a required parameter with phone number type.
+      example: GEOGRAPHIC
+      in: query
+      name: phoneNumberType
+      required: false
+      schema:
+        type: string
     shortCodeCountryPathParam:
       description: The short code number country.
       example: USA
@@ -1384,6 +1470,38 @@ components:
       description: Webhook ZipWhip sends us with information regarding the TFV request.
       required: true
   responses:
+    CountryCoverageResponse:
+      content:
+        application/json:
+          examples:
+            CountryCoverageResponseJson:
+              $ref: '#/components/examples/CountryCoverageResponseJson'
+          schema:
+            $ref: '#/components/schemas/CountryCoverageResponse'
+        application/xml:
+          examples:
+            CountryCoverageResponseXml:
+              $ref: '#/components/examples/CountryCoverageResponseXml'
+          schema:
+            $ref: '#/components/schemas/CountryCoverageResponse'
+      description: Successful response with a COuntries coverage.
+    CountryCoverageResponseError:
+      content:
+        application/json:
+          examples:
+            CountryCoverageResponseErrorJson:
+              $ref: '#/components/examples/CountryCoverageResponseErrorJson'
+          schema:
+            $ref: '#/components/schemas/CountryCoverageResponseError'
+        application/xml:
+          examples:
+            CoverageResponseErrorXml:
+              $ref: '#/components/examples/CountryCoverageResponseErrorXml'
+          schema:
+            $ref: '#/components/schemas/CountryCoverageResponseError'
+      description: >-
+        Unsucessful response of a rate center's coverage due to a validation
+        error. No search parameters were provided.
     ImportVoiceTnOrdersResponse:
       content:
         application/xml:
@@ -2556,6 +2674,12 @@ components:
         ApplicationsSettings:
           $ref: '#/components/schemas/ApplicationsSettings'
       type: object
+    AreaCode:
+      description: Area Code
+      example: 201
+      type: integer
+      xml:
+        name: AreaCode
     AreaCodeSearchAndOrder:
       allOf:
         - $ref: '#/components/schemas/orderMetadata'
@@ -4339,6 +4463,24 @@ components:
           type: object
       title: CampaignTnsResponse
       type: object
+    City:
+      properties:
+        AreaCodes:
+          items:
+            $ref: '#/components/schemas/AreaCode'
+          type: array
+          xml:
+            name: AreaCodes
+            wrapped: true
+        CityName:
+          description: Name of the City
+          example: New York
+          type: string
+          xml:
+            name: CityName
+      type: object
+      xml:
+        name: City
     CitySearchAndOrder:
       allOf:
         - $ref: '#/components/schemas/orderMetadata'
@@ -4600,6 +4742,47 @@ components:
                 type: object
               type: array
           type: object
+    CountryCoverage:
+      properties:
+        Cities:
+          items:
+            $ref: '#/components/schemas/City'
+          type: array
+          xml:
+            name: Cities
+            wrapped: true
+        CountryCodeA3:
+          description: 3 character country code.
+          example: USA
+          type: string
+          xml:
+            name: CountryCodeA3
+        PhoneNumberType:
+          description: Type of Phone Number
+          example: Geographic
+          type: string
+          xml:
+            name: PhoneNumberType
+      type: object
+      xml:
+        name: CountryCoverage
+    CountryCoverageResponse:
+      properties:
+        CountryCoverages:
+          items:
+            $ref: '#/components/schemas/CountryCoverage'
+          type: array
+          xml:
+            name: CountryCoverages
+            wrapped: true
+      type: object
+      xml:
+        name: CountryCoverageResponse
+    CountryCoverageResponseError:
+      properties:
+        CountryCoverageResponse:
+          $ref: '#/components/schemas/ResponseStatus'
+      type: object
     CoverageMatrixEntry:
       properties:
         Abbreviation:
@@ -11221,6 +11404,8 @@ components:
       properties:
         Address:
           $ref: '#/components/schemas/Address'
+        CallVerificationEnabled:
+          type: boolean
         CallingName:
           $ref: '#/components/schemas/SipPeerLineOptionDto'
         Description:
@@ -11236,6 +11421,8 @@ components:
           type: integer
         PeerName:
           type: string
+        PindropEnabled:
+          type: boolean
         PremiseTrunks:
           type: string
         Products:
@@ -11421,6 +11608,8 @@ components:
       properties:
         Address:
           $ref: '#/components/schemas/Address'
+        CallVerificationEnabled:
+          type: boolean
         CallingName:
           $ref: '#/components/schemas/SipPeerLineOptionDto'
         Description:
@@ -11433,6 +11622,8 @@ components:
           $ref: '#/components/schemas/OriginationRoutePlan'
         PeerName:
           type: string
+        PindropEnabled:
+          type: boolean
         PremiseTrunks:
           type: string
         Products:
@@ -36059,6 +36250,8 @@ paths:
                     - Zip
                     - AddressType
                   type: object
+                CallVerificationEnabled:
+                  type: boolean
                 CustomerTrafficAllowed:
                   description: >-
                     A TerminationHost can be configured to allow different
@@ -36091,6 +36284,8 @@ paths:
                   description: Mandatory name for the SIP Peer
                   maxLength: 10
                   type: string
+                PindropEnabled:
+                  type: boolean
                 Port:
                   description: >-
                     Optional Port Number for Voice and Termination hosts. This
@@ -36181,6 +36376,11 @@ paths:
               <li>13686 - Origination route plan action cannot be 'off' when creating a new SIP peer</li>
               <li>13687 - Voice hosts and host groups are not supported on this account, please add your hosts to the origination route plan for this SIP peer</li>
               <li>13688 - FinalDestinationUri is not supported on this account, to acheive the same thing, please add this URI to a fail-over group in the origination route plan for this SIP peer</li>
+              <li>13691 - CallVerificationEnabled must be a boolean: true or false</li>
+              <li>13692 - PindropEnabled must be a boolean: true or false</li>
+              <li>13693 - CallVerificationEnabled and PindropEnabled are mutually exclusive and may not be used together</li>
+              <li>13694 - CallVerificationEnabled is not allowed on this account</li>
+              <li>13695 - PindropEnabled is not allowed on this account</li>
               <li>5200 - Origination route plan is not enabled for the account</li>
               <li>5207 - Specified Route Plan Action was invalid, must be one of 'asSpecified', 'unchanged' or 'off'</li>
               <li>5218 - Origination route cannot have private IP endpoint: %s</li>
@@ -36516,6 +36716,11 @@ paths:
               <li>13686 - Origination route plan action cannot be 'off' when creating a new SIP peer</li>
               <li>13687 - Voice hosts and host groups are not supported on this account, please add your hosts to the origination route plan for this SIP peer</li>
               <li>13688 - FinalDestinationUri is not supported on this account, to acheive the same thing, please add this URI to a fail-over group in the origination route plan for this SIP peer</li>
+              <li>13691 - CallVerificationEnabled must be a boolean: true or false</li>
+              <li>13692 - PindropEnabled must be a boolean: true or false</li>
+              <li>13693 - CallVerificationEnabled and PindropEnabled are mutually exclusive and may not be used together</li>
+              <li>13694 - CallVerificationEnabled is not allowed on this account</li>
+              <li>13695 - PindropEnabled is not allowed on this account</li>
               <li>5200 - Origination route plan is not enabled for the account</li>
               <li>5207 - Specified Route Plan Action was invalid, must be one of 'asSpecified', 'unchanged' or 'off'</li>
               <li>5218 - Origination route cannot have private IP endpoint: %s</li>
@@ -41878,9 +42083,27 @@ paths:
             Centers that serve those Cities.  If 'available' is specified then
             the number of TNs available in that city / RC combination is also
             included.
-      summary: List Cities
+      summary: List Cities (NANPA)
       tags:
-        - Cities
+        - Coverage
+  /coverage/countries:
+    get:
+      description: >-
+        The /coverage/countries resource returns countries, number types and
+        cities supported for any given country.
+      operationId: countryCoverage
+      parameters:
+        - $ref: '#/components/parameters/countryCodeA3'
+        - $ref: '#/components/parameters/phoneNumberType'
+        - $ref: '#/components/parameters/city'
+      responses:
+        '200':
+          $ref: '#/components/responses/CountryCoverageResponse'
+        '400':
+          $ref: '#/components/responses/CountryCoverageResponseError'
+      summary: Provides Country Coverage
+      tags:
+        - Coverage
   /coveredRateCenters:
     get:
       description: >-
@@ -43882,7 +44105,7 @@ tags:
       url: /docs/numbers/porting/port-ins/bulkPortIns
     name: Bulk Port-In
   - name: Callbacks
-  - name: Cities
+  - name: Coverage
   - description: >-
       DLDA = Directory Listing and Directory Assistance. A DLDA resource
       associates a TN with a Street Address. This gets updated in a Network
