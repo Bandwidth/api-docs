@@ -1415,23 +1415,39 @@ components:
       description: Webhook ZipWhip sends us with information regarding the TFV request.
       required: true
   responses:
-    CountryCoverageResponse:
+    GetCountryCoverageResponse200:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/CountryCoverageResponse'
+            properties:
+              countryCoverages:
+                $ref: '#/components/schemas/countryCoverages'
+            type: object
         application/xml:
           schema:
-            $ref: '#/components/schemas/CountryCoverageResponse'
+            properties:
+              countryCoverages:
+                $ref: '#/components/schemas/countryCoverages'
+            type: object
+            xml:
+              name: CountryCoverageResponse
       description: Successful response for country coverage.
-    CountryCoverageResponseError:
+    GetCountryCoverageResponse400:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ResponseStatus'
+            properties:
+              responseStatus:
+                $ref: '#/components/schemas/responseStatus'
+            type: object
         application/xml:
           schema:
-            $ref: '#/components/schemas/ResponseStatus'
+            properties:
+              responseStatus:
+                $ref: '#/components/schemas/responseStatus'
+            type: object
+            xml:
+              name: CountryCoverageResponse
       description: Unsucessful response for country coverage.
     ImportVoiceTnOrdersResponse:
       content:
@@ -2605,10 +2621,6 @@ components:
         ApplicationsSettings:
           $ref: '#/components/schemas/ApplicationsSettings'
       type: object
-    AreaCode:
-      description: Area Code
-      example: 201
-      type: integer
     AreaCodeSearchAndOrder:
       allOf:
         - $ref: '#/components/schemas/orderMetadata'
@@ -4392,22 +4404,6 @@ components:
           type: object
       title: CampaignTnsResponse
       type: object
-    City:
-      properties:
-        areaCodes:
-          items:
-            $ref: '#/components/schemas/AreaCode'
-          type: array
-          xml:
-            name: AreaCodes
-            wrapped: true
-        cityName:
-          description: Name of the City
-          example: New York
-          type: string
-          xml:
-            name: CityName
-      type: object
     CitySearchAndOrder:
       allOf:
         - $ref: '#/components/schemas/orderMetadata'
@@ -4669,38 +4665,6 @@ components:
                 type: object
               type: array
           type: object
-    CountryCoverage:
-      properties:
-        cities:
-          items:
-            $ref: '#/components/schemas/City'
-          type: array
-          xml:
-            name: Cities
-            wrapped: true
-        countryCodeA3:
-          description: 3 character country code.
-          example: USA
-          type: string
-          xml:
-            name: CountryCodeA3
-        phoneNumberType:
-          description: Type of Phone Number
-          example: Geographic
-          type: string
-          xml:
-            name: PhoneNumberType
-      type: object
-    CountryCoverageResponse:
-      properties:
-        countryCoverages:
-          items:
-            $ref: '#/components/schemas/CountryCoverage'
-          type: array
-          xml:
-            name: CountryCoverages
-            wrapped: true
-      type: object
     CoverageMatrixEntry:
       properties:
         Abbreviation:
@@ -10966,23 +10930,15 @@ components:
       type: object
     ResponseStatus:
       properties:
-        responseStatus:
+        ResponseStatus:
           properties:
-            description:
+            Description:
               description: 'Detailed explanation about error '
-              example: You must provide at least one parameter in order to search.
               type: string
-              xml:
-                name: Description
-            errorCode:
+            ErrorCode:
               description: Numeric designation of corresponding error
-              example: 3924
               type: integer
-              xml:
-                name: ErrorCode
           type: object
-          xml:
-            name: ResponseStatus
       type: object
     RogerTerminationSettings:
       properties:
@@ -14189,6 +14145,30 @@ components:
         - zip
         - url
       type: object
+    areaCode:
+      description: Area Code
+      example: 201
+      type: integer
+      xml:
+        name: AreaCode
+    city:
+      properties:
+        areaCodes:
+          items:
+            $ref: '#/components/schemas/areaCode'
+          type: array
+          xml:
+            name: AreaCodes
+            wrapped: true
+        cityName:
+          description: Name of the City
+          example: New York
+          type: string
+          xml:
+            name: CityName
+      type: object
+      xml:
+        name: City
     contact:
       nullable: false
       properties:
@@ -14212,6 +14192,37 @@ components:
         - email
         - phoneNumber
       type: object
+    countryCoverage:
+      properties:
+        cities:
+          items:
+            $ref: '#/components/schemas/city'
+          type: array
+          xml:
+            name: Cities
+            wrapped: true
+        countryCodeA3:
+          description: 3 character country code.
+          example: USA
+          type: string
+          xml:
+            name: CountryCodeA3
+        phoneNumberType:
+          description: Type of Phone Number
+          example: Geographic
+          type: string
+          xml:
+            name: PhoneNumberType
+      type: object
+      xml:
+        name: CountryCoverage
+    countryCoverages:
+      items:
+        $ref: '#/components/schemas/countryCoverage'
+      type: array
+      xml:
+        name: CountryCoverages
+        wrapped: true
     denialReasonDescription:
       description: Denial reason explanation
       example: Disallowed Content - Gambling
@@ -14448,6 +14459,23 @@ components:
       type: object
       xml:
         name: Order
+    responseStatus:
+      properties:
+        description:
+          description: 'Detailed explanation about error '
+          example: You must provide at least one parameter in order to search.
+          type: string
+          xml:
+            name: Description
+        errorCode:
+          description: Numeric designation of corresponding error
+          example: 3924
+          type: integer
+          xml:
+            name: ErrorCode
+      type: object
+      xml:
+        name: ResponseStatus
     shortCode:
       description: Short code registration.
       properties:
@@ -42024,9 +42052,9 @@ paths:
         - $ref: '#/components/parameters/city'
       responses:
         '200':
-          $ref: '#/components/responses/CountryCoverageResponse'
+          $ref: '#/components/responses/GetCountryCoverageResponse200'
         '400':
-          $ref: '#/components/responses/CountryCoverageResponseError'
+          $ref: '#/components/responses/GetCountryCoverageResponse400'
       summary: Provides Country Coverage
       tags:
         - Coverage
