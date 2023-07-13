@@ -1257,37 +1257,6 @@ components:
       required: true
       schema:
         type: string
-    areaCodeQueryParameter:
-      description: Area code of a phone number
-      example: '07'
-      in: query
-      name: areaCode
-      required: false
-      schema:
-        type: string
-    countryCodeA3QueryParameter:
-      description: 3-letter, ISO 3166 country code
-      example: GBR
-      in: query
-      name: Country Code
-      required: true
-      schema:
-        type: string
-    phoneNumberTypeQueryParameter:
-      description: Phone number type
-      example: MOBILE
-      in: query
-      name: phoneNumberType
-      required: false
-      schema:
-        enum:
-          - GEOGRAPHIC
-          - SHARED_COST
-          - TOLL_FREE
-          - NATIONAL
-          - SPECIAL
-          - MOBILE
-        type: string
     shortCodeCountryPathParam:
       description: The short code number country.
       example: USA
@@ -1427,23 +1396,6 @@ components:
         associated with the order, the state of the order, and a list of the
         successfully imported Telephone Numbers, and descriptions of any
         encountered errors.
-    badRequestLosingCarriersResponse:
-      content:
-        application/json:
-          examples:
-            example:
-              description: example
-              value:
-                data: null
-                errors:
-                  code: 7XXX
-                  description: '''ABC'' is not a valid countryCodeA3 value'
-                links: null
-          schema:
-            $ref: '#/components/schemas/portingLosingCarriersResponseSchema'
-      description: >-
-        Returned when an error with the structure or content of the request is
-        encountered
     bulkRateCenterGetResponse404Error:
       content:
         application/xml:
@@ -1495,41 +1447,6 @@ components:
       description: >-
         Successful response which starts the bulk upsert for provided rate
         centers.
-    listOfLosingCarriersResponse:
-      content:
-        application/json:
-          examples:
-            example:
-              value:
-                data:
-                  losingCarriers:
-                    - name: Losing Carrier 1
-                    - name: Losing Carrier 2
-                    - name: Losing Carrier 3
-                    - name: Losing Carrier 4
-                errors: null
-                links:
-                  - href: /portingLosingCarriers
-                    method: GET
-                    rel: self
-          schema:
-            $ref: '#/components/schemas/portingLosingCarriersResponseSchema'
-      description: A list of available carriers that can port out a phone number
-    noUpstreamServicesLosingCarriersResponse:
-      content:
-        application/json:
-          examples:
-            example:
-              summary: example
-              value:
-                data: null
-                errors:
-                  code: 7XXX
-                  description: A downstream resource is unavailable
-                links: null
-          schema:
-            $ref: '#/components/schemas/portingLosingCarriersResponseSchema'
-      description: Returned when upstream resources are not available
     rateCenter401Error:
       content:
         application/json:
@@ -1643,21 +1560,6 @@ components:
           schema:
             $ref: '#/components/schemas/CoverageMatrixEntry'
       description: Successful response for the update of a coverage matrix entry.
-    rateLimitedLosingCarriersResponse:
-      content:
-        application/json:
-          examples:
-            example:
-              description: example
-              value:
-                data: null
-                errors:
-                  code: 7XXX
-                  description: The rate limit for this resource has been exceeded
-                links: null
-          schema:
-            $ref: '#/components/schemas/portingLosingCarriersResponseSchema'
-      description: Returned when the endpoint rate limit threshold has been breached
     regionsFindCoverageResponse404Error:
       content:
         application/xml:
@@ -14437,56 +14339,6 @@ components:
       type: object
       xml:
         name: Order
-    portingLosingCarriersResponseSchema:
-      description: List of losing carriers for porting
-      properties:
-        data:
-          nullable: true
-          properties:
-            losingCarriers:
-              items:
-                properties:
-                  name:
-                    description: The name of the carrier
-                    example: Losing Carrier 1
-                    type: string
-                type: object
-              type: array
-          type: object
-        errors:
-          items:
-            properties:
-              code:
-                description: An error code identifying the error
-                type: string
-              description:
-                description: A description of the error
-                type: string
-              meta:
-                description: Additional information regarding the error
-                type: object
-            type: object
-          nullable: true
-          type: array
-        links:
-          items:
-            properties:
-              href:
-                description: The API endpoint URL
-                example: /portingLosingCarriers
-                type: string
-              method:
-                description: The HTTP method used to make the request
-                example: GET
-                type: string
-              rel:
-                description: The relationship of the endpoint to the request
-                example: self
-                type: string
-            type: object
-          nullable: true
-          type: array
-      type: object
     shortCode:
       description: Short code registration.
       properties:
@@ -42388,31 +42240,6 @@ paths:
       summary: Retrieve Covered Rate Centers
       tags:
         - Rate Centers
-  /portingLosingCarriers:
-    get:
-      description: >
-        <p>Retrieve a list of losing carriers that a number can be ported from,
-        given a countryCodeA3 and optional areaCode and phoneNumberType
-        values.</p>
-      operationId: portingLosingCarriers
-      parameters:
-        - $ref: '#/components/parameters/countryCodeA3QueryParameter'
-        - $ref: '#/components/parameters/phoneNumberTypeQueryParameter'
-        - $ref: '#/components/parameters/areaCodeQueryParameter'
-      responses:
-        '200':
-          $ref: '#/components/responses/listOfLosingCarriersResponse'
-        '400':
-          $ref: '#/components/responses/badRequestLosingCarriersResponse'
-        '429':
-          $ref: '#/components/responses/rateLimitedLosingCarriersResponse'
-        '502':
-          $ref: '#/components/responses/noUpstreamServicesLosingCarriersResponse'
-      summary: >-
-        Retrieve a list of losing carriers for porting non-NANPA telephone
-        numbers
-      tags:
-        - Porting
   /rateCenters:
     get:
       description: >-
