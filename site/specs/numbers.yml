@@ -1273,22 +1273,6 @@ components:
       required: true
       schema:
         type: string
-    losingCarrierNameParameter:
-      example:
-        contains: Telecom
-        eq: British
-      explode: true
-      in: query
-      name: losingCarrierName
-      required: false
-      schema:
-        properties:
-          contains:
-            type: string
-          eq:
-            type: string
-        type: string
-      style: deepObject
     phoneNumberTypeQueryParameter:
       description: Phone number type
       example: MOBILE
@@ -1456,7 +1440,7 @@ components:
                   description: '''ABC'' is not a valid countryCodeA3 value'
                 links: null
           schema:
-            $ref: '#/components/schemas/portingLosingCarriesResponseSchema'
+            $ref: '#/components/schemas/portingLosingCarriersResponseSchema'
       description: >-
         Returned when an error with the structure or content of the request is
         encountered
@@ -1529,7 +1513,7 @@ components:
                     method: GET
                     rel: self
           schema:
-            $ref: '#/components/schemas/portingLosingCarriesResponseSchema'
+            $ref: '#/components/schemas/portingLosingCarriersResponseSchema'
       description: A list of available carriers that can port out a phone number
     noUpstreamServicesLosingCarriersResponse:
       content:
@@ -1541,10 +1525,10 @@ components:
                 data: null
                 errors:
                   code: 7XXX
-                  description: A downstream resource is unavailanle
+                  description: A downstream resource is unavailable
                 links: null
           schema:
-            $ref: '#/components/schemas/portingLosingCarriesResponseSchema'
+            $ref: '#/components/schemas/portingLosingCarriersResponseSchema'
       description: Returned when upstream resources are not available
     rateCenter401Error:
       content:
@@ -1672,7 +1656,7 @@ components:
                   description: The rate limit for this resource has been exceeded
                 links: null
           schema:
-            $ref: '#/components/schemas/portingLosingCarriesResponseSchema'
+            $ref: '#/components/schemas/portingLosingCarriersResponseSchema'
       description: Returned when the endpoint rate limit threshold has been breached
     regionsFindCoverageResponse404Error:
       content:
@@ -11335,6 +11319,8 @@ components:
       properties:
         Address:
           $ref: '#/components/schemas/Address'
+        CallVerificationEnabled:
+          type: boolean
         CallingName:
           $ref: '#/components/schemas/SipPeerLineOptionDto'
         Description:
@@ -11350,6 +11336,8 @@ components:
           type: integer
         PeerName:
           type: string
+        PindropEnabled:
+          type: boolean
         PremiseTrunks:
           type: string
         Products:
@@ -11535,6 +11523,8 @@ components:
       properties:
         Address:
           $ref: '#/components/schemas/Address'
+        CallVerificationEnabled:
+          type: boolean
         CallingName:
           $ref: '#/components/schemas/SipPeerLineOptionDto'
         Description:
@@ -11547,6 +11537,8 @@ components:
           $ref: '#/components/schemas/OriginationRoutePlan'
         PeerName:
           type: string
+        PindropEnabled:
+          type: boolean
         PremiseTrunks:
           type: string
         Products:
@@ -14445,7 +14437,7 @@ components:
       type: object
       xml:
         name: Order
-    portingLosingCarriesResponseSchema:
+    portingLosingCarriersResponseSchema:
       description: List of losing carriers for porting
       properties:
         data:
@@ -36223,6 +36215,8 @@ paths:
                     - Zip
                     - AddressType
                   type: object
+                CallVerificationEnabled:
+                  type: boolean
                 CustomerTrafficAllowed:
                   description: >-
                     A TerminationHost can be configured to allow different
@@ -36255,6 +36249,8 @@ paths:
                   description: Mandatory name for the SIP Peer
                   maxLength: 10
                   type: string
+                PindropEnabled:
+                  type: boolean
                 Port:
                   description: >-
                     Optional Port Number for Voice and Termination hosts. This
@@ -36345,6 +36341,11 @@ paths:
               <li>13686 - Origination route plan action cannot be 'off' when creating a new SIP peer</li>
               <li>13687 - Voice hosts and host groups are not supported on this account, please add your hosts to the origination route plan for this SIP peer</li>
               <li>13688 - FinalDestinationUri is not supported on this account, to acheive the same thing, please add this URI to a fail-over group in the origination route plan for this SIP peer</li>
+              <li>13691 - CallVerificationEnabled must be a boolean: true or false</li>
+              <li>13692 - PindropEnabled must be a boolean: true or false</li>
+              <li>13693 - CallVerificationEnabled and PindropEnabled are mutually exclusive and may not be used together</li>
+              <li>13694 - CallVerificationEnabled is not allowed on this account</li>
+              <li>13695 - PindropEnabled is not allowed on this account</li>
               <li>5200 - Origination route plan is not enabled for the account</li>
               <li>5207 - Specified Route Plan Action was invalid, must be one of 'asSpecified', 'unchanged' or 'off'</li>
               <li>5218 - Origination route cannot have private IP endpoint: %s</li>
@@ -36680,6 +36681,11 @@ paths:
               <li>13686 - Origination route plan action cannot be 'off' when creating a new SIP peer</li>
               <li>13687 - Voice hosts and host groups are not supported on this account, please add your hosts to the origination route plan for this SIP peer</li>
               <li>13688 - FinalDestinationUri is not supported on this account, to acheive the same thing, please add this URI to a fail-over group in the origination route plan for this SIP peer</li>
+              <li>13691 - CallVerificationEnabled must be a boolean: true or false</li>
+              <li>13692 - PindropEnabled must be a boolean: true or false</li>
+              <li>13693 - CallVerificationEnabled and PindropEnabled are mutually exclusive and may not be used together</li>
+              <li>13694 - CallVerificationEnabled is not allowed on this account</li>
+              <li>13695 - PindropEnabled is not allowed on this account</li>
               <li>5200 - Origination route plan is not enabled for the account</li>
               <li>5207 - Specified Route Plan Action was invalid, must be one of 'asSpecified', 'unchanged' or 'off'</li>
               <li>5218 - Origination route cannot have private IP endpoint: %s</li>
@@ -42393,7 +42399,6 @@ paths:
         - $ref: '#/components/parameters/countryCodeA3QueryParameter'
         - $ref: '#/components/parameters/phoneNumberTypeQueryParameter'
         - $ref: '#/components/parameters/areaCodeQueryParameter'
-        - $ref: '#/components/parameters/losingCarrierNameParameter'
       responses:
         '200':
           $ref: '#/components/responses/listOfLosingCarriersResponse'
