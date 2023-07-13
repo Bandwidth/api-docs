@@ -948,6 +948,68 @@ components:
             </Reseller>
           </CampaignSettings>
         </CampaignSettingsResponse>
+    badRequestErrorExample:
+      summary: An example of a generic Bad Request Error
+      value:
+        errors:
+          - code: 205617
+            description: There was an issue with your request.
+            id: optional-error-id
+            type: bad-request
+    forbiddenErrorExample:
+      summary: An example of a generic Unauthorized Error
+      value:
+        errors:
+          - code: 109107
+            description: User does not have permissions to access this resource.
+            id: optional-error-id
+            type: resource-permissions
+    internalServerErrorExample:
+      summary: An example of a generic Internal Server Error
+      value:
+        errors:
+          - code: 32030
+            description: >-
+              Unexpected internal server error. Contact Bandwidth Customer
+              Support if this problem persists.
+            id: optional-error-id
+            type: internal-server-error
+    notAllowedErrorExample:
+      summary: An example of a generic Not Allowed Error
+      value:
+        errors:
+          - code: 205621
+            description: The HTTP method used is not supported by this resource.
+            id: optional-error-id
+            meta:
+              method: TRACE
+            type: http-method-not-supported
+    notFoundErrorExample:
+      summary: An example of a generic Not Found Error
+      value:
+        errors:
+          - code: 50420
+            description: The resource specified cannot be found.
+            id: optional-error-id
+            type: resource-not-found
+    tooManyRequestsErrorExample:
+      summary: An example of a generic Too Many Requests Error
+      value:
+        errors:
+          - code: 32002
+            description: >-
+              Rate limit exceeded. Wait for the time specified in the
+              "Retry-After" header before sending another request.
+            id: optional-error-id
+            type: rate-limiting
+    unauthorizedErrorExample:
+      summary: An example of a generic Unauthorized Error
+      value:
+        errors:
+          - code: 206401
+            description: Invalid or missing credentials.
+            id: optional-error-id
+            type: authentication-credentials
   parameters:
     AccountIDQueryParam:
       description: >
@@ -1257,6 +1319,68 @@ components:
       required: true
       schema:
         type: string
+    addressId:
+      description: Address Id.
+      in: path
+      name: addressId
+      required: true
+      schema:
+        type: string
+    afterCursor:
+      description: Returns the page after the last record on the current page.
+      in: query
+      name: afterCursor
+      required: false
+      schema:
+        type: string
+    beforeCursor:
+      description: Returns the page before the first record on the current page.
+      in: query
+      name: beforeCursor
+      required: false
+      schema:
+        type: string
+    city:
+      description: >-
+        The city of the address. The system defaults to return all cities when
+        the query parameter is not passed. The countryCodeA3 is a required
+        parameter with city.
+      in: query
+      name: city
+      required: false
+      schema:
+        $ref: '#/components/schemas/city'
+    countryCodeA3:
+      description: Country code of the address in ISO 3166-1 alpha-3 format.
+      in: query
+      name: countryCodeA3
+      required: false
+      schema:
+        $ref: '#/components/schemas/countryCodeA3'
+    customerReference:
+      description: Customer reference.
+      in: query
+      name: customerReference
+      required: false
+      schema:
+        $ref: '#/components/schemas/customerReference'
+    limit:
+      description: Limit the number of returned records.
+      in: query
+      name: limit
+      required: false
+      schema:
+        type: string
+    postalCode:
+      description: >-
+        The postal code of the address. The system defaults to return all postal
+        codes when the query parameter is not passed. The countryCodeA3 is a
+        required parameter with postalCode.
+      in: query
+      name: postalCode
+      required: false
+      schema:
+        $ref: '#/components/schemas/postalCode'
     shortCodeCountryPathParam:
       description: The short code number country.
       example: USA
@@ -1325,11 +1449,23 @@ components:
       schema:
         type: string
   requestBodies:
+    addAddress:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/createAddressRequest'
+      description: Add address.
     shortCodeJsonPatchShortCodeRequest:
       content:
         application/json-patch+json:
           schema:
             $ref: '#/components/schemas/jsonPatch'
+    updateAddress:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/updateAddressRequest'
+      description: Update address.
     verificationRequest:
       content:
         application/json:
@@ -1396,6 +1532,21 @@ components:
         associated with the order, the state of the order, and a list of the
         successfully imported Telephone Numbers, and descriptions of any
         encountered errors.
+    addAddressResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/genericResponse'
+      description: Created.
+    badRequestError:
+      content:
+        application/json:
+          examples:
+            badRequestErrorExample:
+              $ref: '#/components/examples/badRequestErrorExample'
+          schema:
+            $ref: '#/components/schemas/genericError'
+      description: Bad Request.
     bulkRateCenterGetResponse404Error:
       content:
         application/xml:
@@ -1447,6 +1598,54 @@ components:
       description: >-
         Successful response which starts the bulk upsert for provided rate
         centers.
+    forbiddenError:
+      content:
+        application/json:
+          examples:
+            forbiddenErrorExample:
+              $ref: '#/components/examples/forbiddenErrorExample'
+          schema:
+            $ref: '#/components/schemas/genericError'
+      description: Forbidden.
+    getAddress:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/genericResponse'
+      description: OK.
+    internalServerError:
+      content:
+        application/json:
+          examples:
+            internalServerErrorExample:
+              $ref: '#/components/examples/internalServerErrorExample'
+          schema:
+            $ref: '#/components/schemas/genericError'
+      description: Internal Server Error.
+    listAddresses:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/listAddressesResponse'
+      description: OK.
+    notAllowedError:
+      content:
+        application/json:
+          examples:
+            notAllowedErrorExample:
+              $ref: '#/components/examples/notAllowedErrorExample'
+          schema:
+            $ref: '#/components/schemas/genericError'
+      description: Method Not Allowed.
+    notFoundError:
+      content:
+        application/json:
+          examples:
+            notFoundErrorExample:
+              $ref: '#/components/examples/notFoundErrorExample'
+          schema:
+            $ref: '#/components/schemas/genericError'
+      description: Not Found.
     rateCenter401Error:
       content:
         application/json:
@@ -1831,12 +2030,42 @@ components:
           schema:
             $ref: '#/components/schemas/tfvError'
       description: Client is providing incorrect or invalid credentials.
+    tooManyRequestsError:
+      content:
+        application/json:
+          examples:
+            tooManyRequestsErrorExample:
+              $ref: '#/components/examples/tooManyRequestsErrorExample'
+          schema:
+            $ref: '#/components/schemas/genericError'
+      description: Too Many Requests.
+    unauthorizedError:
+      content:
+        application/json:
+          examples:
+            unauthorizedErrorExample:
+              $ref: '#/components/examples/unauthorizedErrorExample'
+          schema:
+            $ref: '#/components/schemas/genericError'
+      description: Unauthorized.
+    updateAddress:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/genericResponse'
+      description: OK.
     useCasesResponse:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/useCases'
       description: OK
+    validateAddressResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/validateAddressResponse'
+      description: OK.
     verifyPostResponse:
       description: Accepted
     verifyStatusResponse:
@@ -14080,6 +14309,61 @@ components:
         - zip
         - url
       type: object
+    addressDescription:
+      description: A descriptive string that you create to describe the new address.
+      example: Home office, downstairs
+      title: Address Description
+      type: string
+    addressFields:
+      properties:
+        addressLine1:
+          description: The number and street address of the address.
+          example: 14111 NE 145th St
+          title: Address Line1
+          type: string
+        addressLine2:
+          description: The number and street address of the address.
+          example: Apt. 8
+          title: Address Line2
+          type: string
+        city:
+          $ref: '#/components/schemas/city'
+        postalCode:
+          $ref: '#/components/schemas/postalCode'
+        state:
+          description: The state or region of the address.
+          example: WA
+          title: State
+          type: string
+      title: Country Specific Address Fields
+      type: object
+    addressId:
+      description: Address Id
+      example: daa9dd0f-de97-4103-8530-b31bf4be8fc0
+      title: Address Id
+      type: string
+    addressResponse:
+      properties:
+        address:
+          properties:
+            addressDescription:
+              $ref: '#/components/schemas/addressDescription'
+            addressFields:
+              $ref: '#/components/schemas/addressFields'
+            countryCodeA3:
+              $ref: '#/components/schemas/countryCodeA3'
+            customerReference:
+              $ref: '#/components/schemas/customerReference'
+          type: object
+        excludedFeatures:
+          $ref: '#/components/schemas/excludedFeatures'
+      title: Address Response
+      type: object
+    city:
+      description: The city of the address.
+      example: Woodinville
+      title: City
+      type: string
     contact:
       nullable: false
       properties:
@@ -14103,6 +14387,36 @@ components:
         - email
         - phoneNumber
       type: object
+    countryCodeA3:
+      description: Country code of the address in ISO 3166-1 alpha-3 format.
+      example: USA
+      title: Country Code
+      type: string
+    createAddressRequest:
+      properties:
+        addressDescription:
+          $ref: '#/components/schemas/addressDescription'
+        addressFields:
+          $ref: '#/components/schemas/addressFields'
+        countryCodeA3:
+          $ref: '#/components/schemas/countryCodeA3'
+        customerReference:
+          $ref: '#/components/schemas/customerReference'
+      title: Create Address Request
+      type: object
+    createdDateTime:
+      description: The created date time in ISO 8601 format.
+      example: '2015-03-11T04:09:25.399Z'
+      type: string
+    customerReference:
+      description: >-
+        Customer reference. It can be used for your own reference, e.g. to
+        uniquely identify one of your customers.
+      example: home_office
+      maxLength: 64
+      minLength: 1
+      title: Customer Reference
+      type: string
     denialReasonDescription:
       description: Denial reason explanation
       example: Disallowed Content - Gambling
@@ -14119,6 +14433,90 @@ components:
       pattern: >-
         ^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$
       type: string
+    error:
+      properties:
+        code:
+          description: >-
+            An application-specific error code for services with extensive error
+            scenarios to supplement `description`.
+          example: 51130
+          format: int32
+          minimum: 4
+          type: integer
+        description:
+          description: >-
+            A human-readable explanation that SHOULD be specific to this
+            occurrence of the problem.
+          example: There was an issue with a field in your request body
+          type: string
+        id:
+          description: A unique identifier for this particular instance of this problem.
+          example: optional-error-id
+          type: string
+        source:
+          $ref: '#/components/schemas/errorSource'
+        type:
+          description: >-
+            A short, human-readable summary of the problem that SHOULD NOT
+            change from occurrence to occurrence of the problem.
+          example: REQUEST_ERROR
+          type: string
+      required:
+        - description
+      title: Error
+      type: object
+    errorSource:
+      properties:
+        field:
+          description: A string indicating which request body field caused the error.
+          example: someField
+          type: string
+        header:
+          description: A string indicating which header field caused the error.
+          example: someHeader
+          type: string
+        parameter:
+          description: A string indicating which URI query parameter caused the error.
+          example: someParameter
+          type: string
+        reference:
+          description: >-
+            A string that references a resource ID or path to the resource (or
+            non-existent resource) causing the error.
+          example: /some/reference
+          type: string
+      title: Error Source
+      type: object
+    excludedFeatures:
+      description: Excluded Features
+      items:
+        properties:
+          featureName:
+            description: A unique identifier for feature.
+            example: EMERGENCY
+            type: string
+          requiredCriteria:
+            items:
+              properties:
+                code:
+                  description: >-
+                    An application-specific error code for services with
+                    extensive error scenarios to supplement `description`.
+                  example: 1234
+                  format: int32
+                  minimum: 4
+                  type: integer
+                description:
+                  description: >-
+                    A human-readable explanation that SHOULD be specific to this
+                    occurrence of the problem.
+                  example: 'missing fields: addressLine2'
+                  type: string
+              type: object
+            type: array
+        type: object
+      title: Excluded Features
+      type: array
     failureWebhookRequest:
       properties:
         accountId:
@@ -14163,6 +14561,45 @@ components:
               type: string
           type: object
       type: object
+    genericError:
+      properties:
+        errors:
+          items:
+            $ref: '#/components/schemas/error'
+          nullable: true
+          type: array
+      required:
+        - errors
+      title: Generic Error
+      type: object
+    genericResponse:
+      properties:
+        data:
+          properties:
+            address:
+              properties:
+                addressDescription:
+                  $ref: '#/components/schemas/addressDescription'
+                addressFields:
+                  $ref: '#/components/schemas/addressFields'
+                addressId:
+                  $ref: '#/components/schemas/addressId'
+                countryCodeA3:
+                  $ref: '#/components/schemas/countryCodeA3'
+                createdDateTime:
+                  $ref: '#/components/schemas/createdDateTime'
+                customerReference:
+                  $ref: '#/components/schemas/customerReference'
+                updatedDateTime:
+                  $ref: '#/components/schemas/updatedDateTime'
+              type: object
+            excludedFeatures:
+              $ref: '#/components/schemas/excludedFeatures'
+          type: object
+        links:
+          $ref: '#/components/schemas/links'
+      title: Address Response
+      type: object
     jsonPatch:
       items:
         $ref: '#/components/schemas/jsonPatchItem'
@@ -14192,6 +14629,40 @@ components:
       required:
         - op
         - path
+      type: object
+    link:
+      properties:
+        href:
+          description: URI of the link.
+          example: /relative/uri
+          type: string
+        method:
+          description: HTTP method to be used.
+          example: GET
+          type: string
+        rel:
+          description: Specifies the relationship between this link and the resource.
+          example: RelatedResource
+          type: string
+      title: Link
+      type: object
+    links:
+      items:
+        $ref: '#/components/schemas/link'
+      title: Links
+      type: array
+    listAddressesResponse:
+      properties:
+        data:
+          properties:
+            addresses:
+              items:
+                $ref: '#/components/schemas/addressResponse'
+              type: array
+          type: object
+        links:
+          $ref: '#/components/schemas/links'
+      title: List Addresses Response
       type: object
     lnpPortInfoForGivenStatus:
       properties:
@@ -14339,6 +14810,11 @@ components:
       type: object
       xml:
         name: Order
+    postalCode:
+      description: The postal code of the address.
+      example: '98072'
+      title: Postal Code
+      type: string
     shortCode:
       description: Short code registration.
       properties:
@@ -15024,6 +15500,18 @@ components:
           example: abc-d8569gh
           type: string
       type: object
+    updateAddressRequest:
+      properties:
+        addressDescription:
+          $ref: '#/components/schemas/addressDescription'
+        customerReference:
+          $ref: '#/components/schemas/customerReference'
+      title: Update Address Request
+      type: object
+    updatedDateTime:
+      description: The updated date time in ISO 8601 format.
+      example: '2015-03-11T04:09:25.399Z'
+      type: string
     useCase:
       example: 2FA
       maxLength: 500
@@ -15044,6 +15532,28 @@ components:
       items:
         type: string
       type: array
+    validateAddressResponse:
+      properties:
+        data:
+          properties:
+            address:
+              properties:
+                addressDescription:
+                  $ref: '#/components/schemas/addressDescription'
+                addressFields:
+                  $ref: '#/components/schemas/addressFields'
+                countryCodeA3:
+                  $ref: '#/components/schemas/countryCodeA3'
+                customerReference:
+                  $ref: '#/components/schemas/customerReference'
+              type: object
+            excludedFeatures:
+              $ref: '#/components/schemas/excludedFeatures'
+          type: object
+        links:
+          $ref: '#/components/schemas/links'
+      title: Validate Address Response
+      type: object
     verificationRequest:
       properties:
         additionalInformation:
@@ -15294,112 +15804,143 @@ paths:
         - Account
   /accounts/{accountId}/addresses:
     get:
-      description: GET is used to retrieve all addresses.
-      operationId: GetAllAddresses
+      description: >-
+        List all addresses sorted by last updated time in reverse chronological
+        order.
+      operationId: listAddresses
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: >-
-            Search criterion for address by its locationid. Cannot be combined
-            with type. Always returns E911 addresses.
-          example: 47950147-9c58-407c-bcc4-e88743b20db5
-          in: query
-          name: e911locationid
-          required: false
-          schema:
-            type: string
-        - description: Search criterion for addresses by their type.
-          example: e911
-          in: query
-          name: type
-          required: true
-          schema:
-            type: string
-        - description: >-
-            An ID of the first element in a page.  This value will indicate the
-            first value, not the page number, of the initial entry in the page
-            being requested.<br> It can be an id of address. The initial page is
-            tagged with the ID `1`.
-          example: '3'
-          in: query
-          name: page
-          required: false
-          schema:
-            default: '1'
-            type: string
-        - description: The number of items to include in a page.
-          example: 5000
-          in: query
-          name: size
-          required: false
-          schema:
-            default: 500
-            type: integer
-        - description: The text to search simultaneously through e911locationIds.
-          example: name
-          in: query
-          name: suggestions
-          required: false
-          schema:
-            type: string
+        - $ref: '#/components/parameters/customerReference'
+        - $ref: '#/components/parameters/countryCodeA3'
+        - $ref: '#/components/parameters/city'
+        - $ref: '#/components/parameters/postalCode'
+        - $ref: '#/components/parameters/beforeCursor'
+        - $ref: '#/components/parameters/afterCursor'
+        - $ref: '#/components/parameters/limit'
       responses:
         '200':
-          content:
-            application/xml:
-              examples:
-                example:
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <AddressesResponse>
-                      <TotalCount>1</TotalCount>
-                      <Links>
-                        <first>Link=&lt;http://admin.localhost:8080/api/accounts/8000259/addresses?type=e911&amp;page=1&amp;size=500&gt;;rel="first";</first>
-                        <next>Link=&lt;http://localhost:8080/api/accounts/8000259/addresses?type=E911&amp;page=501&amp;size=500&gt;;rel="next";</next>
-                      </Links>
-                      <Addresses>
-                        <Address>
-                          <HouseNumber>207</HouseNumber>
-                          <HouseSuffix/>
-                          <PreDirectional/>
-                          <StreetName>Elmastar</StreetName>
-                          <StreetSuffix>AlternateStar</StreetSuffix>
-                          <PostDirectional/>
-                          <AddressLine2/>
-                          <City>Carpinteriaaly</City>
-                          <StateCode>NY</StateCode>
-                          <Zip>93019</Zip>
-                          <PlusFour/>
-                          <County/>
-                          <Country>United States</Country>
-                          <AddressType>E911</AddressType>
-                          <EndpointCount>2</EndpointCount>
-                          <ValidationStatus>VALID</ValidationStatus>
-                        </Address>
-                      </Addresses>
-                    </AddressesResponse>
-              schema:
-                $ref: '#/components/schemas/AddressesResponseWrapper'
-          description: >-
-            OK - the addresses retrieval request will return a list of all
-            addresses having specified type.
+          $ref: '#/components/responses/listAddresses'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
         '404':
-          content:
-            application/xml:
-              examples:
-                example:
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <AddressesResponse>
-                      <ResponseStatus>
-                        <Description>The resource does not exist</Description>
-                      </ResponseStatus>
-                    </AddressesResponse>
-              schema:
-                $ref: '#/components/schemas/AddressesResponseNotFound'
-          description: >-
-            Not Found - if the account specified does not exist or is locked or
-            there are no addresses for specified search criteria it will result
-            in a not found.
-      summary: Retrieve all addresses
+          $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/notAllowedError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: List Addresses
+      tags:
+        - Addresses
+    post:
+      description: Create an address.
+      operationId: addAddress
+      requestBody:
+        $ref: '#/components/requestBodies/addAddress'
+      responses:
+        '201':
+          $ref: '#/components/responses/addAddressResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/notAllowedError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Add Address
+      tags:
+        - Addresses
+  /accounts/{accountId}/addresses/validator:
+    post:
+      description: >-
+        Validates the address, without actually creating it. Returns a list of
+        features that will not work for entered address.
+      operationId: validateAddress
+      requestBody:
+        $ref: '#/components/requestBodies/addAddress'
+      responses:
+        '201':
+          $ref: '#/components/responses/validateAddressResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/notAllowedError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Validate Address
+      tags:
+        - Addresses
+  /accounts/{accountId}/addresses/{addressId}:
+    get:
+      description: Get an address.
+      operationId: getAddress
+      parameters:
+        - $ref: '#/components/parameters/addressId'
+      responses:
+        '200':
+          $ref: '#/components/responses/getAddress'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/notAllowedError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Get Address
+      tags:
+        - Addresses
+    patch:
+      description: Update an address.
+      operationId: updateAddress
+      parameters:
+        - $ref: '#/components/parameters/addressId'
+      requestBody:
+        $ref: '#/components/requestBodies/updateAddress'
+      responses:
+        '200':
+          $ref: '#/components/responses/updateAddress'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/notAllowedError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Update Address
       tags:
         - Addresses
   /accounts/{accountId}/aeuis:
@@ -20910,6 +21451,107 @@ paths:
       summary: Fetch DLDA order history
       tags:
         - DLDA
+  /accounts/{accountId}/e911Addresses:
+    get:
+      description: GET is used to retrieve all e911 addresses.
+      operationId: GetAllE911Addresses
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: Search criterion for e911 address by its locationid.
+          example: 47950147-9c58-407c-bcc4-e88743b20db5
+          in: query
+          name: e911locationid
+          required: false
+          schema:
+            type: string
+        - description: >-
+            An ID of the first element in a page.  This value will indicate the
+            first value, not the page number, of the initial entry in the page
+            being requested.<br> It can be an id of address. The initial page is
+            tagged with the ID `1`.
+          example: '3'
+          in: query
+          name: page
+          required: false
+          schema:
+            default: '1'
+            type: string
+        - description: The number of items to include in a page.
+          example: 5000
+          in: query
+          name: size
+          required: false
+          schema:
+            default: 500
+            type: integer
+        - description: The text to search simultaneously through e911locationIds.
+          example: name
+          in: query
+          name: suggestions
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <AddressesResponse>
+                      <TotalCount>1</TotalCount>
+                      <Links>
+                        <first>Link=&lt;http://admin.localhost:8080/api/accounts/8000259/addresses?page=1&amp;size=500&gt;;rel="first";</first>
+                        <next>Link=&lt;http://localhost:8080/api/accounts/8000259/addresses?page=501&amp;size=500&gt;;rel="next";</next>
+                      </Links>
+                      <Addresses>
+                        <Address>
+                          <HouseNumber>207</HouseNumber>
+                          <HouseSuffix/>
+                          <PreDirectional/>
+                          <StreetName>Elmastar</StreetName>
+                          <StreetSuffix>AlternateStar</StreetSuffix>
+                          <PostDirectional/>
+                          <AddressLine2/>
+                          <City>Carpinteriaaly</City>
+                          <StateCode>NY</StateCode>
+                          <Zip>93019</Zip>
+                          <PlusFour/>
+                          <County/>
+                          <Country>United States</Country>
+                          <AddressType>E911</AddressType>
+                          <EndpointCount>2</EndpointCount>
+                          <ValidationStatus>VALID</ValidationStatus>
+                        </Address>
+                      </Addresses>
+                    </AddressesResponse>
+              schema:
+                $ref: '#/components/schemas/AddressesResponseWrapper'
+          description: >-
+            OK - the addresses retrieval request will return a list of all
+            addresses having specified search criteria.
+        '404':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <AddressesResponse>
+                      <ResponseStatus>
+                        <Description>The resource does not exist</Description>
+                      </ResponseStatus>
+                    </AddressesResponse>
+              schema:
+                $ref: '#/components/schemas/AddressesResponseNotFound'
+          description: >-
+            Not Found - if the account specified does not exist or is locked or
+            there are no addresses for specified search criteria it will result
+            in a not found.
+      summary: Retrieve all E911 addresses (NANPA)
+      tags:
+        - Addresses
   /accounts/{accountId}/e911s:
     get:
       description: >-
@@ -24165,7 +24807,7 @@ paths:
           description: >-
             <p>Service unavailable - for some reason service is temporary
             unavailable.</p>
-      summary: Validate address
+      summary: Validate address (NANPA)
       tags:
         - Addresses
   /accounts/{accountId}/hosts:
