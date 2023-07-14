@@ -101,6 +101,12 @@ paths:
           $ref: '#/components/responses/listCallsResponse'
         '400':
           $ref: '#/components/responses/badRequestErrorResponse'
+        '403':
+          $ref: '#/components/responses/forbiddenErrorResponse'
+        '405':
+          $ref: '#/components/responses/notAllowedErrorResponse'
+        '500':
+          $ref: '#/components/responses/internalServerErrorResponse'
       security:
         - apiKey:
             - yourKey
@@ -358,26 +364,6 @@ components:
             - success
             - fail
             - error
-    externalApiResponseErrorMessage:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Status of the HTTP response from the API.
-          example: fail
-          enum:
-            - success
-            - fail
-            - error
-        errors:
-          type: array
-          description: A collection of errors with detailed information.
-          items:
-            $ref: '#/components/schemas/Errors'
-        links:
-          type: array
-          items:
-            $ref: '#/components/schemas/Link'
     Errors:
       type: object
       properties:
@@ -440,6 +426,54 @@ components:
           type: string
           description: The Round Trip Time or Post Dial Delay measured in milliseconds.
           example: '1'
+    externalApiResponseErrorMessage:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Status of the HTTP response from the API.
+          example: fail
+          enum:
+            - success
+            - fail
+            - error
+        errors:
+          type: array
+          description: A collection of errors with detailed information.
+          items:
+            $ref: '#/components/schemas/Errors'
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/Link'
+    forbiddenErrorResponseSchema:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: number
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
+    internalServerErrorResponseSchema:
+      type: object
+      properties:
+        globalMessages:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              code:
+                type: string
+              message:
+                type: string
   parameters:
     from:
       name: from
@@ -492,8 +526,8 @@ components:
             - ARG
             - ARM
             - ABW
-            - AUS
             - AUT
+            - AUS
             - AZE
             - BHS
             - BHR
@@ -811,6 +845,51 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/externalApiResponseErrorMessage'
+    forbiddenErrorResponse:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/forbiddenErrorResponseSchema'
+          examples:
+            genericError403Example:
+              value:
+                timestamp: 2022-05-19T09:25:20.991+0000
+                status: 403
+                error: Forbidden
+                message: Access Denied
+                path: /cdrs/calls
+    notAllowedErrorResponse:
+      description: Method Not Allowed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/externalApiResponseErrorMessage'
+          examples:
+            genericError405Example:
+              value:
+                status: fail
+                errors:
+                  - message: The method POST is not supported for this operation.
+                    code: API-020
+                links:
+                  - rel: self
+                    href: https://api.voxbone.com/cdrs/voice
+    internalServerErrorResponse:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/internalServerErrorResponseSchema'
+          examples:
+            genericError500Example:
+              value:
+                globalMessages:
+                  - type: ERROR
+                    code: ERR-0999
+                    message: >-
+                      A system error occurred. Retry again later or contact
+                      Voxbone support
   securitySchemes:
     apiKey:
       type: apiKey
