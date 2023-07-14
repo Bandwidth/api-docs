@@ -89,6 +89,7 @@ paths:
         - $ref: '#/components/parameters/id'
         - $ref: '#/components/parameters/countryCodeA3'
         - $ref: '#/components/parameters/e164'
+        - $ref: '#/components/parameters/eventType'
         - $ref: '#/components/parameters/callType'
         - $ref: '#/components/parameters/offset'
         - $ref: '#/components/parameters/limit'
@@ -101,6 +102,8 @@ paths:
           $ref: '#/components/responses/listCallsResponse'
         '400':
           $ref: '#/components/responses/badRequestErrorResponse'
+        '402':
+          $ref: '#/components/responses/paymentRequiredResponse'
         '403':
           $ref: '#/components/responses/forbiddenErrorResponse'
         '405':
@@ -765,6 +768,16 @@ components:
         type: array
         items:
           type: string
+    eventType:
+      name: eventType
+      in: query
+      description: The type of CDR event.
+      schema:
+        type: string
+        enum:
+          - IN_VOICE_END
+          - OUT_VOICE_END
+      example: IN_VOICE_END
     callType:
       name: callType
       in: query
@@ -862,7 +875,7 @@ components:
           schema:
             $ref: '#/components/schemas/forbiddenErrorResponseSchema'
           examples:
-            genericError403Example:
+            forbiddenErrorExample:
               value:
                 timestamp: 2022-05-19T09:25:20.991+0000
                 status: 403
@@ -876,7 +889,7 @@ components:
           schema:
             $ref: '#/components/schemas/externalApiResponseErrorMessage'
           examples:
-            genericError405Example:
+            notAllowedErrorExample:
               value:
                 status: fail
                 errors:
@@ -892,7 +905,7 @@ components:
           schema:
             $ref: '#/components/schemas/internalServerErrorResponseSchema'
           examples:
-            genericError500Example:
+            internalServerErrorExample:
               value:
                 globalMessages:
                   - type: ERROR
@@ -900,6 +913,24 @@ components:
                     message: >-
                       A system error occurred. Retry again later or contact
                       Voxbone support
+    paymentRequiredResponse:
+      description: Payment Required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/externalApiResponseErrorMessage'
+          examples:
+            notAllowedErrorExample:
+              value:
+                status: fail
+                errors:
+                  - message: >-
+                      Sorry you need to upgrade your CDR data retention to a
+                      paid tier to get access to our API.
+                    code: CDR-1015
+                links:
+                  - rel: self
+                    href: https://api.voxbone.com/cdrs/voice
   securitySchemes:
     apiKey:
       type: apiKey
