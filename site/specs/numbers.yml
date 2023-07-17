@@ -1357,6 +1357,13 @@ components:
       required: false
       schema:
         $ref: '#/components/schemas/countryCodeA3'
+    countryCodeA3Required:
+      description: Country code of the address in ISO 3166-1 alpha-3 format.
+      in: query
+      name: countryCodeA3
+      required: true
+      schema:
+        $ref: '#/components/schemas/countryCodeA3'
     customerReference:
       description: Customer reference.
       in: query
@@ -1449,7 +1456,7 @@ components:
       schema:
         type: string
   requestBodies:
-    addAddress:
+    addAddressRequest:
       content:
         application/json:
           schema:
@@ -1460,7 +1467,7 @@ components:
         application/json-patch+json:
           schema:
             $ref: '#/components/schemas/jsonPatch'
-    updateAddress:
+    updateAddressRequest:
       content:
         application/json:
           schema:
@@ -1607,7 +1614,13 @@ components:
           schema:
             $ref: '#/components/schemas/genericError'
       description: Forbidden.
-    getAddress:
+    getAddressFieldsResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/getAddressFieldsResponse'
+      description: OK.
+    getAddressResponse:
       content:
         application/json:
           schema:
@@ -2048,7 +2061,7 @@ components:
           schema:
             $ref: '#/components/schemas/genericError'
       description: Unauthorized.
-    updateAddress:
+    updateAddressResponse:
       content:
         application/json:
           schema:
@@ -14314,7 +14327,35 @@ components:
       example: Home office, downstairs
       title: Address Description
       type: string
+    addressFieldSchema:
+      properties:
+        fieldName:
+          description: The name of the address field
+          example: addressLine1
+          title: Field Name
+          type: string
+        maxLength:
+          description: The legth of the address field
+          example: addressLine1
+          title: Field Length
+          type: integer
+        required:
+          description: The address field is required or optional
+          example: true
+          title: Field Required
+          type: boolean
+        type:
+          description: The data type of the address field
+          example: string
+          title: Field Data Type
+          type: string
+      title: Country Specific Address Fields for USA
+      type: object
     addressFields:
+      oneOf:
+        - $ref: '#/components/schemas/addressFields-USA'
+        - $ref: '#/components/schemas/addressFields-GBR'
+    addressFields-GBR:
       properties:
         addressLine1:
           description: The number and street address of the address.
@@ -14335,7 +14376,30 @@ components:
           example: WA
           title: State
           type: string
-      title: Country Specific Address Fields
+      title: Country Specific Address Fields for GBR
+      type: object
+    addressFields-USA:
+      properties:
+        addressLine1:
+          description: The number and street address of the address.
+          example: 14111 NE 145th St
+          title: Address Line1
+          type: string
+        addressLine2:
+          description: The number and street address of the address.
+          example: Apt. 8
+          title: Address Line2
+          type: string
+        city:
+          $ref: '#/components/schemas/city'
+        postalCode:
+          $ref: '#/components/schemas/postalCode'
+        state:
+          description: The state or region of the address.
+          example: WA
+          title: State
+          type: string
+      title: Country Specific Address Fields for USA
       type: object
     addressId:
       description: Address Id
@@ -14599,6 +14663,19 @@ components:
         links:
           $ref: '#/components/schemas/links'
       title: Address Response
+      type: object
+    getAddressFieldsResponse:
+      properties:
+        data:
+          properties:
+            addressFields:
+              items:
+                $ref: '#/components/schemas/addressFieldSchema'
+              type: array
+          type: object
+        links:
+          $ref: '#/components/schemas/links'
+      title: Get Address Fields Response
       type: object
     jsonPatch:
       items:
@@ -15536,7 +15613,7 @@ components:
       properties:
         data:
           properties:
-            address:
+            addressFields:
               properties:
                 addressDescription:
                   $ref: '#/components/schemas/addressDescription'
@@ -15841,7 +15918,7 @@ paths:
       description: Create an address.
       operationId: addAddress
       requestBody:
-        $ref: '#/components/requestBodies/addAddress'
+        $ref: '#/components/requestBodies/addAddressRequest'
       responses:
         '201':
           $ref: '#/components/responses/addAddressResponse'
@@ -15862,6 +15939,32 @@ paths:
       summary: Add Address
       tags:
         - Addresses
+  /accounts/{accountId}/addresses/fields:
+    get:
+      description: Get address fields.
+      operationId: getAddressFields
+      parameters:
+        - $ref: '#/components/parameters/countryCodeA3Required'
+      responses:
+        '200':
+          $ref: '#/components/responses/getAddressFieldsResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '401':
+          $ref: '#/components/responses/unauthorizedError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+        '404':
+          $ref: '#/components/responses/notFoundError'
+        '405':
+          $ref: '#/components/responses/notAllowedError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/internalServerError'
+      summary: Get Address Fields
+      tags:
+        - Addresses
   /accounts/{accountId}/addresses/validator:
     post:
       description: >-
@@ -15869,7 +15972,7 @@ paths:
         features that will not work for entered address.
       operationId: validateAddress
       requestBody:
-        $ref: '#/components/requestBodies/addAddress'
+        $ref: '#/components/requestBodies/addAddressRequest'
       responses:
         '201':
           $ref: '#/components/responses/validateAddressResponse'
@@ -15898,7 +16001,7 @@ paths:
         - $ref: '#/components/parameters/addressId'
       responses:
         '200':
-          $ref: '#/components/responses/getAddress'
+          $ref: '#/components/responses/getAddressResponse'
         '400':
           $ref: '#/components/responses/badRequestError'
         '401':
@@ -15922,10 +16025,10 @@ paths:
       parameters:
         - $ref: '#/components/parameters/addressId'
       requestBody:
-        $ref: '#/components/requestBodies/updateAddress'
+        $ref: '#/components/requestBodies/updateAddressRequest'
       responses:
         '200':
-          $ref: '#/components/responses/updateAddress'
+          $ref: '#/components/responses/updateAddressResponse'
         '400':
           $ref: '#/components/responses/badRequestError'
         '401':
