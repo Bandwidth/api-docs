@@ -195,7 +195,7 @@ module.exports = {
             "voice/transferGuide",
             "voice/callInformationGuide",
             "voice/callQueueingGuide",
-            "voice/inAppCallingGuide",
+            "voice/inAppGuide",
             "voice/migrationGuide",
             "voice/cnamPerDipGuide",
           ],
