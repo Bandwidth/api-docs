@@ -266,7 +266,7 @@ module.exports = {
     },
     {
       type: "category",
-      label: "WebRTC",
+      label: "(Deprecated) WebRTC",
       items: [
         "webrtc/about",
         "webrtc/webhooks",
