@@ -7,9 +7,9 @@ module.exports = {
     },
     {
       type: "category",
-      label: "Category",
+      label: "Voice",
       items: [
-        "category/category-specific-guide",
+        "voice/inAppGuide",
       ]
     }
   ],
