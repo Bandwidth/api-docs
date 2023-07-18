@@ -1542,12 +1542,6 @@ components:
         associated with the order, the state of the order, and a list of the
         successfully imported Telephone Numbers, and descriptions of any
         encountered errors.
-    addAddressResponse:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/genericResponse'
-      description: Created.
     badRequestError:
       content:
         application/json:
@@ -1608,6 +1602,12 @@ components:
       description: >-
         Successful response which starts the bulk upsert for provided rate
         centers.
+    createAddressResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/updateAddressResponse'
+      description: Created.
     forbiddenError:
       content:
         application/json:
@@ -1627,7 +1627,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/genericResponse'
+            $ref: '#/components/schemas/genericAddressResponse'
       description: OK.
     internalServerError:
       content:
@@ -1638,7 +1638,7 @@ components:
           schema:
             $ref: '#/components/schemas/genericError'
       description: Internal Server Error.
-    listAddresses:
+    listAddressesResponse:
       content:
         application/json:
           schema:
@@ -2068,7 +2068,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/genericResponse'
+            $ref: '#/components/schemas/updateAddressResponse'
       description: OK.
     useCasesResponse:
       content:
@@ -14327,24 +14327,31 @@ components:
       type: object
     addressFieldSchema:
       properties:
+        changeable:
+          description: The address field value can be updated or not
+          example: false
+          title: Field Changeable
+          type: boolean
         controls:
-          properties:
-            feature:
-              description: The name of the feature that this address could be used for
-              enum:
-                - EMERGENCY
-                - PORTING
-                - REQUIREMENTS_PACKAGE
-              example: EMERGENCY
-              title: Feature Name
-              type: string
-            required:
-              description: The address field is required or optional for this feature
-              example: true
-              title: Field Required
-              type: boolean
-          title: Country and Feature Specific Address Fields
-          type: object
+          items:
+            properties:
+              feature:
+                description: The name of the feature that this address could be used for
+                enum:
+                  - EMERGENCY
+                  - PORTING
+                  - REQUIREMENTS_PACKAGE
+                example: EMERGENCY
+                title: Feature Name
+                type: string
+              required:
+                description: The address field is required or optional for this feature
+                example: true
+                title: Field Required
+                type: boolean
+            type: object
+          title: Feature Specific Requirements
+          type: array
         fieldName:
           description: The name of the address field
           example: addressLine1
@@ -14365,82 +14372,19 @@ components:
           example: string
           title: Field Data Type
           type: string
-      title: Country Specific Address Fields
-      type: object
-    addressFields:
-      oneOf:
-        - $ref: '#/components/schemas/addressFields-USA'
-        - $ref: '#/components/schemas/addressFields-GBR'
-        - $ref: '#/components/schemas/addressFields-FRA'
-    addressFields-FRA:
-      properties:
-        addressLine1:
-          description: The number and street address of the address.
-          example: 14111 NE 145th St
-          title: Address Line1
-          type: string
-        addressLine2:
-          description: The number and street address of the address.
-          example: Apt. 8
-          title: Address Line2
-          type: string
-        city:
-          $ref: '#/components/schemas/city'
-        postalCode:
-          $ref: '#/components/schemas/postalCode'
-        typeOfRoad:
-          description: The type of road of the address.
-          example: Avenue
-          title: Type of Road
-          type: string
-      title: Country Specific Address Fields for France
-      type: object
-    addressFields-GBR:
-      properties:
-        addressLine1:
-          description: The number and street address of the address.
-          example: 14111 NE 145th St
-          title: Address Line1
-          type: string
-        addressLine2:
-          description: The number and street address of the address.
-          example: Apt. 8
-          title: Address Line2
-          type: string
-        city:
-          $ref: '#/components/schemas/city'
-        postalCode:
-          $ref: '#/components/schemas/postalCode'
-      title: Country Specific Address Fields for Great Britain
-      type: object
-    addressFields-USA:
-      properties:
-        addressLine1:
-          description: The number and street address of the address.
-          example: 14111 NE 145th St
-          title: Address Line1
-          type: string
-        addressLine2:
-          description: The number and street address of the address.
-          example: Apt. 8
-          title: Address Line2
-          type: string
-        city:
-          $ref: '#/components/schemas/city'
-        postalCode:
-          $ref: '#/components/schemas/postalCode'
-        state:
-          description: The state or region of the address.
-          example: WA
-          title: State
-          type: string
-      title: Country Specific Address Fields for United States of America
+      title: Country Specific Address Fields Schema
       type: object
     addressId:
       description: Address Id
       example: daa9dd0f-de97-4103-8530-b31bf4be8fc0
       title: Address Id
       type: string
+    addressLinks:
+      items:
+        oneOf:
+          - $ref: '#/components/schemas/selfAddressLink'
+      title: Links
+      type: array
     addressNickname:
       description: A descriptive string that you create to describe the new address.
       example: Home office, downstairs
@@ -14448,20 +14392,38 @@ components:
       type: string
     addressResponse:
       properties:
-        address:
-          properties:
-            addressFields:
-              $ref: '#/components/schemas/addressFields'
-            addressNickname:
-              $ref: '#/components/schemas/addressNickname'
-            countryCodeA3:
-              $ref: '#/components/schemas/countryCodeA3'
-            customerReference:
-              $ref: '#/components/schemas/customerReference'
-          type: object
-        unsupportedFeatures:
-          $ref: '#/components/schemas/unsupportedFeatures'
-      title: Address Response
+        addressId:
+          $ref: '#/components/schemas/addressId'
+        addressLine1:
+          description: The number and street address of the address.
+          example: 14111 NE 145th St
+          title: Address Line1
+          type: string
+        addressLine2:
+          description: The number and street address of the address.
+          example: Apt. 8
+          title: Address Line2
+          type: string
+        addressNickname:
+          $ref: '#/components/schemas/addressNickname'
+        city:
+          $ref: '#/components/schemas/city'
+        countryCodeA3:
+          $ref: '#/components/schemas/countryCodeA3'
+        createdDateTime:
+          $ref: '#/components/schemas/createdDateTime'
+        customerReference:
+          $ref: '#/components/schemas/customerReference'
+        postalCode:
+          $ref: '#/components/schemas/postalCode'
+        state:
+          description: The state or region of the address.
+          example: WA
+          title: State
+          type: string
+        updatedDateTime:
+          $ref: '#/components/schemas/updatedDateTime'
+      title: '=Address Response'
       type: object
     city:
       description: The city of the address.
@@ -14498,15 +14460,32 @@ components:
       type: string
     createAddressRequest:
       properties:
-        addressFields:
-          $ref: '#/components/schemas/addressFields'
+        addressLine1:
+          description: The number and street address of the address.
+          example: 14111 NE 145th St
+          title: Address Line1
+          type: string
+        addressLine2:
+          description: The number and street address of the address.
+          example: Apt. 8
+          title: Address Line2
+          type: string
         addressNickname:
           $ref: '#/components/schemas/addressNickname'
+        city:
+          $ref: '#/components/schemas/city'
         countryCodeA3:
           $ref: '#/components/schemas/countryCodeA3'
         customerReference:
           $ref: '#/components/schemas/customerReference'
-      title: Create Address Request
+        postalCode:
+          $ref: '#/components/schemas/postalCode'
+        state:
+          description: The state or region of the address.
+          example: WA
+          title: State
+          type: string
+      title: '=Address Request'
       type: object
     createdDateTime:
       description: The created date time in ISO 8601 format.
@@ -14635,6 +14614,17 @@ components:
               type: string
           type: object
       type: object
+    genericAddressResponse:
+      properties:
+        data:
+          properties:
+            address:
+              $ref: '#/components/schemas/addressResponse'
+          type: object
+        links:
+          $ref: '#/components/schemas/addressLinks'
+      title: Address Response
+      type: object
     genericError:
       properties:
         errors:
@@ -14646,34 +14636,6 @@ components:
         - errors
       title: Generic Error
       type: object
-    genericResponse:
-      properties:
-        data:
-          properties:
-            address:
-              properties:
-                addressFields:
-                  $ref: '#/components/schemas/addressFields'
-                addressId:
-                  $ref: '#/components/schemas/addressId'
-                addressNickname:
-                  $ref: '#/components/schemas/addressNickname'
-                countryCodeA3:
-                  $ref: '#/components/schemas/countryCodeA3'
-                createdDateTime:
-                  $ref: '#/components/schemas/createdDateTime'
-                customerReference:
-                  $ref: '#/components/schemas/customerReference'
-                updatedDateTime:
-                  $ref: '#/components/schemas/updatedDateTime'
-              type: object
-            unsupportedFeatures:
-              $ref: '#/components/schemas/unsupportedFeatures'
-          type: object
-        links:
-          $ref: '#/components/schemas/links'
-      title: Address Response
-      type: object
     getAddressFieldsResponse:
       properties:
         data:
@@ -14683,8 +14645,6 @@ components:
                 $ref: '#/components/schemas/addressFieldSchema'
               type: array
           type: object
-        links:
-          $ref: '#/components/schemas/links'
       title: Get Address Fields Response
       type: object
     jsonPatch:
@@ -14717,25 +14677,12 @@ components:
         - op
         - path
       type: object
-    link:
-      properties:
-        href:
-          description: URI of the link.
-          example: /relative/uri
-          type: string
-        method:
-          description: HTTP method to be used.
-          example: GET
-          type: string
-        rel:
-          description: Specifies the relationship between this link and the resource.
-          example: RelatedResource
-          type: string
-      title: Link
-      type: object
-    links:
+    listAddressesLinks:
       items:
-        $ref: '#/components/schemas/link'
+        oneOf:
+          - $ref: '#/components/schemas/selfAddressLink'
+          - $ref: '#/components/schemas/listPrevPageAddressesLink'
+          - $ref: '#/components/schemas/listNextPageAddressesLink'
       title: Links
       type: array
     listAddressesResponse:
@@ -14748,8 +14695,40 @@ components:
               type: array
           type: object
         links:
-          $ref: '#/components/schemas/links'
+          $ref: '#/components/schemas/listAddressesLinks'
       title: List Addresses Response
+      type: object
+    listNextPageAddressesLink:
+      properties:
+        href:
+          description: URI of the link.
+          example: /accounts/{accountId}/addresses?afterCursor={cursorId}
+          type: string
+        method:
+          description: HTTP method to be used.
+          example: GET
+          type: string
+        rel:
+          description: Specifies the link to next page
+          example: RelatedResource
+          type: string
+      title: Address Link for Next Page
+      type: object
+    listPrevPageAddressesLink:
+      properties:
+        href:
+          description: URI of the link.
+          example: /accounts/{accountId}/addresses?beforeCursor={cursorId}
+          type: string
+        method:
+          description: HTTP method to be used.
+          example: GET
+          type: string
+        rel:
+          description: Specifies the link to previous page
+          example: RelatedResource
+          type: string
+      title: Address Link for Previous Page
       type: object
     lnpPortInfoForGivenStatus:
       properties:
@@ -14902,6 +14881,22 @@ components:
       example: '98072'
       title: Postal Code
       type: string
+    selfAddressLink:
+      properties:
+        href:
+          description: URI of the link.
+          example: /self/uri
+          type: string
+        method:
+          description: HTTP method to be used.
+          example: GET
+          type: string
+        rel:
+          description: Specifies the relationship between this link and the resource.
+          example: SelfResource
+          type: string
+      title: Self Address Link
+      type: object
     shortCode:
       description: Short code registration.
       properties:
@@ -15598,14 +15593,6 @@ components:
           requiredCriteria:
             items:
               properties:
-                code:
-                  description: >-
-                    An application-specific error code for services with
-                    extensive error scenarios to supplement `description`.
-                  example: 1234
-                  format: int32
-                  minimum: 4
-                  type: integer
                 description:
                   description: >-
                     A human-readable explanation that SHOULD be specific to this
@@ -15617,6 +15604,29 @@ components:
         type: object
       title: Excluded Features
       type: array
+    updateAddressLink:
+      properties:
+        href:
+          description: URI of the link.
+          example: /accounts/{accountId}/addresses/{addressId}
+          type: string
+        method:
+          description: HTTP method to be used.
+          example: GET
+          type: string
+        rel:
+          description: Specifies the link to get the updated or created address.
+          example: RelatedResource
+          type: string
+      title: Create Address Link
+      type: object
+    updateAddressLinks:
+      items:
+        oneOf:
+          - $ref: '#/components/schemas/selfAddressLink'
+          - $ref: '#/components/schemas/updateAddressLink'
+      title: Links
+      type: array
     updateAddressRequest:
       properties:
         addressNickname:
@@ -15624,6 +15634,17 @@ components:
         customerReference:
           $ref: '#/components/schemas/customerReference'
       title: Update Address Request
+      type: object
+    updateAddressResponse:
+      properties:
+        data:
+          properties:
+            address:
+              $ref: '#/components/schemas/addressResponse'
+          type: object
+        links:
+          $ref: '#/components/schemas/updateAddressLinks'
+      title: Validate Address Response
       type: object
     updatedDateTime:
       description: The updated date time in ISO 8601 format.
@@ -15649,26 +15670,38 @@ components:
       items:
         type: string
       type: array
+    validateAddressLink:
+      properties:
+        href:
+          description: URI of the link.
+          example: /accounts/{accountId}/addresses
+          type: string
+        method:
+          description: HTTP method to be used.
+          example: POST
+          type: string
+        rel:
+          description: Specifies the link to create the address.
+          example: RelatedResource
+          type: string
+      title: Validate Address Link
+      type: object
+    validateAddressLinks:
+      items:
+        oneOf:
+          - $ref: '#/components/schemas/selfAddressLink'
+          - $ref: '#/components/schemas/validateAddressLink'
+      title: Links
+      type: array
     validateAddressResponse:
       properties:
         data:
           properties:
-            addressFields:
-              properties:
-                addressFields:
-                  $ref: '#/components/schemas/addressFields'
-                addressNickname:
-                  $ref: '#/components/schemas/addressNickname'
-                countryCodeA3:
-                  $ref: '#/components/schemas/countryCodeA3'
-                customerReference:
-                  $ref: '#/components/schemas/customerReference'
-              type: object
             unsupportedFeatures:
               $ref: '#/components/schemas/unsupportedFeatures'
           type: object
         links:
-          $ref: '#/components/schemas/links'
+          $ref: '#/components/schemas/validateAddressLinks'
       title: Validate Address Response
       type: object
     verificationRequest:
@@ -15936,7 +15969,7 @@ paths:
         - $ref: '#/components/parameters/limit'
       responses:
         '200':
-          $ref: '#/components/responses/listAddresses'
+          $ref: '#/components/responses/listAddressesResponse'
         '400':
           $ref: '#/components/responses/badRequestError'
         '401':
@@ -15955,13 +15988,15 @@ paths:
       tags:
         - Addresses
     post:
-      description: Create an address.
+      description: >-
+        Create an address. Use GET /adddresses/fields for a full list of country
+        specific address fields.
       operationId: addAddress
       requestBody:
         $ref: '#/components/requestBodies/addAddressRequest'
       responses:
         '201':
-          $ref: '#/components/responses/addAddressResponse'
+          $ref: '#/components/responses/createAddressResponse'
         '400':
           $ref: '#/components/responses/badRequestError'
         '401':
@@ -15982,13 +16017,14 @@ paths:
   /accounts/{accountId}/addresses/validator:
     post:
       description: >-
-        Validates the address, without actually creating it. Returns a list of
-        features that will not work for entered address.
+        Returns features that will NOT work for the entered address. Please note
+        that if a feature is absent from unsupportedFeatures, it does not
+        guarantee that it will pass validation and can be used.
       operationId: validateAddress
       requestBody:
         $ref: '#/components/requestBodies/addAddressRequest'
       responses:
-        '201':
+        '200':
           $ref: '#/components/responses/validateAddressResponse'
         '400':
           $ref: '#/components/responses/badRequestError'
@@ -16034,7 +16070,9 @@ paths:
       tags:
         - Addresses
     patch:
-      description: Update an address.
+      description: >-
+        Update an address. Use GET /adddresses/fields for a full list of country
+        specific address fields that can be updated.
       operationId: updateAddress
       parameters:
         - $ref: '#/components/parameters/addressId'
@@ -41709,7 +41747,9 @@ paths:
         - Orders
   /addresses/fields:
     get:
-      description: Get address fields.
+      description: >-
+        Get a list of address fields that is supported per country and feature
+        specific requirements.
       operationId: getAddressFields
       parameters:
         - $ref: '#/components/parameters/countryCodeA3Required'
