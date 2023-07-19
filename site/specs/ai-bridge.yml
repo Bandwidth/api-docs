@@ -297,7 +297,7 @@ paths:
         - $ref: '#/components/parameters/accountId'
         - $ref: '#/components/parameters/botId'
       requestBody:
-        $ref: '#/components/requestBodies/googleBotPatchRequest'
+        $ref: '#/components/requestBodies/botPatchRequest'
       responses:
         '200':
           $ref: '#/components/responses/getBotResponse'
@@ -405,14 +405,10 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/botResponse'
+            $ref: '#/components/schemas/getBotResponse'
           examples:
-            googleBotExample:
-              $ref: '#/components/examples/googleBotGetResponseExample'
-            awsProviderExample:
-              $ref: '#/components/examples/awsBotGetResponseExample'
-            cognigyProviderExample:
-              $ref: '#/components/examples/cognigyBotGetResponseExample'
+            botExample:
+              $ref: '#/components/examples/botGetResponseExample'
     createProviderResponse:
       description: OK
       content:
@@ -433,12 +429,8 @@ components:
           schema:
             $ref: '#/components/schemas/createBotResponse'
           examples:
-            googleBotExample:
-              $ref: '#/components/examples/googleBotPostResponseExample'
-            awsBotExample:
-              $ref: '#/components/examples/awsBotPostResponseExample'
-            cognigyProviderExample:
-              $ref: '#/components/examples/cognigyBotPostResponseExample'
+            postBotResponse:
+              $ref: '#/components/examples/botPostResponseExample'
     replaceProvidersResponse:
       description: A JSON object containing the updated details of the Provider.
       content:
@@ -560,7 +552,7 @@ components:
         - links
         - data
         - errors
-    botResponse:
+    getBotResponse:
       title: Bot Response Payload
       type: object
       description: Response payload for bot information.
@@ -571,10 +563,7 @@ components:
             $ref: '#/components/schemas/link'
           nullable: true
         data:
-          oneOf:
-            - $ref: '#/components/schemas/googleBotResponseData'
-            - $ref: '#/components/schemas/awsBotResponseData'
-            - $ref: '#/components/schemas/cognigyBotResponseData'
+          $ref: '#/components/schemas/botResponseData'
         errors:
           type: array
           items:
@@ -619,10 +608,7 @@ components:
             $ref: '#/components/schemas/link'
           nullable: true
         data:
-          oneOf:
-            - $ref: '#/components/schemas/googleBotResponseData'
-            - $ref: '#/components/schemas/awsBotResponseData'
-            - $ref: '#/components/schemas/cognigyBotResponseData'
+          $ref: '#/components/schemas/botResponseData'
         errors:
           type: array
           items:
@@ -682,10 +668,7 @@ components:
             bots:
               type: array
               items:
-                anyOf:
-                  - $ref: '#/components/schemas/googleBotResponseData'
-                  - $ref: '#/components/schemas/awsBotResponseData'
-                  - $ref: '#/components/schemas/cognigyBotResponseData'
+                $ref: '#/components/schemas/botResponseData'
           nullable: true
         errors:
           type: array
@@ -732,6 +715,44 @@ components:
       nullable: true
       example:
         $ref: '#/components/examples/googleProviderExample'
+    botResponseData:
+      title: Bot properties
+      type: object
+      description: Contains Bot information.
+      properties:
+        id:
+          $ref: '#/components/schemas/id'
+        provider:
+          $ref: '#/components/schemas/provider'
+        displayName:
+          $ref: '#/components/schemas/displayName'
+        description:
+          $ref: '#/components/schemas/description'
+        botFailover:
+          $ref: '#/components/schemas/botFailover'
+        transferTarget:
+          $ref: '#/components/schemas/transferTarget'
+        sipHeadersToBot:
+          $ref: '#/components/schemas/sipHeadersToBot'
+        dtmfCollect:
+          $ref: '#/components/schemas/dtmfCollect'
+        dtmfCollectInterDigitTimeoutMS:
+          $ref: '#/components/schemas/dtmfCollectInterDigitTimeoutMS'
+        dtmfCollectMaxDigits:
+          $ref: '#/components/schemas/dtmfCollectMaxDigits'
+        dtmfCollectSubmitDigit:
+          $ref: '#/components/schemas/dtmfCollectSubmitDigit'
+        sttProvider:
+          oneOf:
+            - $ref: '#/components/schemas/googleSpeechToTextBot'
+            - $ref: '#/components/schemas/awsSpeechToTextBot'
+        ttsProvider:
+          oneOf:
+            - $ref: '#/components/schemas/googleTextToSpeechBot'
+            - $ref: '#/components/schemas/awsTextToSpeechBot'
+      nullable: true
+      example:
+        $ref: '#/components/examples/googleBotExample'
     googleBotResponseData:
       title: Google Bot
       type: object
@@ -745,14 +766,34 @@ components:
           $ref: '#/components/schemas/displayName'
         description:
           $ref: '#/components/schemas/description'
-        sttProvider:
-          $ref: '#/components/schemas/sttProvider'
-        ttsProvider:
-          $ref: '#/components/schemas/ttsProvider'
         botFailover:
           $ref: '#/components/schemas/botFailover'
         googleBot:
           $ref: '#/components/schemas/googleBot'
+        sttProvider:
+          oneOf:
+            - $ref: '#/components/schemas/googleBotData'
+            - $ref: '#/components/schemas/sttProvider'
+        ttsProvider:
+          $ref: '#/components/schemas/ttsProvider'
+      nullable: true
+      example:
+        $ref: '#/components/examples/googleBotExample'
+    googleBotData:
+      title: Google Bot
+      type: object
+      description: Contains Bot information.
+      properties:
+        id:
+          $ref: '#/components/schemas/id'
+        provider:
+          $ref: '#/components/schemas/provider'
+        displayName:
+          $ref: '#/components/schemas/displayName'
+        description:
+          $ref: '#/components/schemas/description'
+        botFailover:
+          $ref: '#/components/schemas/botFailover'
       nullable: true
       example:
         $ref: '#/components/examples/googleBotExample'
@@ -868,6 +909,57 @@ components:
         - description
         - type
         - googleProvider
+    botRequestData:
+      title: Google Bot Request Data
+      type: object
+      description: Bot request example.
+      properties:
+        id:
+          $ref: '#/components/schemas/id'
+        provider:
+          $ref: '#/components/schemas/provider'
+        displayName:
+          $ref: '#/components/schemas/displayName'
+        description:
+          $ref: '#/components/schemas/description'
+        botFailover:
+          $ref: '#/components/schemas/botFailover'
+        transferTarget:
+          $ref: '#/components/schemas/transferTarget'
+        sipHeadersToBot:
+          $ref: '#/components/schemas/sipHeadersToBot'
+        dtmfCollect:
+          $ref: '#/components/schemas/dtmfCollect'
+        dtmfCollectInterDigitTimeoutMS:
+          $ref: '#/components/schemas/dtmfCollectInterDigitTimeoutMS'
+        dtmfCollectMaxDigits:
+          $ref: '#/components/schemas/dtmfCollectMaxDigits'
+        dtmfCollectSubmitDigit:
+          $ref: '#/components/schemas/dtmfCollectSubmitDigit'
+        sttProvider:
+          oneOf:
+            - $ref: '#/components/schemas/googleSpeechToTextBot'
+            - $ref: '#/components/schemas/awsSpeechToTextBot'
+        ttsProvider:
+          oneOf:
+            - $ref: '#/components/schemas/googleTextToSpeechBot'
+            - $ref: '#/components/schemas/awsTextToSpeechBot'
+      example:
+        $ref: '#/components/examples/googleBotExample'
+      required:
+        - id
+        - provider
+        - displayName
+        - description
+        - botFailover
+        - transferTarget
+        - sipHeadersToBot
+        - dtmfCollect
+        - dtmfCollectInterDigitTimeoutMS
+        - dtmfCollectMaxDigits
+        - dtmfCollectSubmitDigit
+        - sttProvider
+        - ttsProvider
     googleBotRequestData:
       title: Google Bot Request Data
       type: object
@@ -1293,7 +1385,7 @@ components:
         - description
         - type
         - googleProvider
-    updateGoogleBot:
+    updateBot:
       type: object
       properties:
         id:
@@ -1304,14 +1396,28 @@ components:
           $ref: '#/components/schemas/displayName'
         description:
           $ref: '#/components/schemas/description'
-        sttProvider:
-          $ref: '#/components/schemas/sttProvider'
-        ttsProvider:
-          $ref: '#/components/schemas/ttsProvider'
         botFailover:
           $ref: '#/components/schemas/botFailover'
-        googleBot:
-          $ref: '#/components/schemas/googleBot'
+        transferTarget:
+          $ref: '#/components/schemas/transferTarget'
+        sipHeadersToBot:
+          $ref: '#/components/schemas/sipHeadersToBot'
+        dtmfCollect:
+          $ref: '#/components/schemas/dtmfCollect'
+        dtmfCollectInterDigitTimeoutMS:
+          $ref: '#/components/schemas/dtmfCollectInterDigitTimeoutMS'
+        dtmfCollectMaxDigits:
+          $ref: '#/components/schemas/dtmfCollectMaxDigits'
+        dtmfCollectSubmitDigit:
+          $ref: '#/components/schemas/dtmfCollectSubmitDigit'
+        sttProvider:
+          oneOf:
+            - $ref: '#/components/schemas/googleSpeechToTextBot'
+            - $ref: '#/components/schemas/awsSpeechToTextBot'
+        ttsProvider:
+          oneOf:
+            - $ref: '#/components/schemas/googleTextToSpeechBot'
+            - $ref: '#/components/schemas/awsTextToSpeechBot'
       required:
         - id
     updateAwsProvider:
@@ -1475,6 +1581,48 @@ components:
       type: string
       description: Defines the bot oauthTokenUrl
       example: '1234'
+    language:
+      type: string
+      description: >-
+        Defines the language of the bot conversation. The value is obtained from
+        the service provider
+      example: en-US
+    dtmfCollect:
+      type: boolean
+      description: Enables the DTMF digit collection.
+      example: true
+    dtmfCollectInterDigitTimeoutMS:
+      type: number
+      description: >-
+        Defines the timeout (in milliseconds) to wait for the user to press
+        another digit before it sends all the digits to the bot
+      example: 5
+    dtmfCollectMaxDigits:
+      type: number
+      description: >-
+        Defines the maximum number of DTMF digits expected to receive from the
+        user.
+      example: true
+    dtmfCollectSubmitDigit:
+      type: string
+      description: >-
+        Defines a special DTMF "submit" digit that when received from the user,
+        sends all the collected digits to the bot (as a DTMF message), without
+        waiting for the timeout to expire or for the maximum number of expected
+        digits.
+      example: true
+    transferTarget:
+      type: string
+      description: >-
+        URI to where the call should be transferred call to. Typically, the URI
+        is a "tel" or "sip" URI.
+      example: tel:+123456789
+    sipHeadersToBot:
+      type: object
+      description: >-
+        Enables the value of a specified header to be sent in the start message
+        to the bot, using a newly created or existing parameter name.
+      example: '{ "new-parameter-name": "<SIP header whose value to use>"}'
     googleProvider:
       required:
         - googleProvider
@@ -1518,15 +1666,63 @@ components:
         agentId:
           $ref: '#/components/schemas/agentId'
     googleBot:
+      oneOf:
+        - $ref: '#/components/schemas/googleSpeechToTextBot'
+        - $ref: '#/components/schemas/googleTextToSpeechBot'
+    googleSpeechToTextBot:
       required:
         - voiceName
-        - credentials
+        - language
       description: Google Bot is required
       properties:
         voiceName:
           $ref: '#/components/schemas/voiceName'
-        credentials:
-          $ref: '#/components/schemas/googleBotCredentials'
+        language:
+          $ref: '#/components/schemas/language'
+    googleTextToSpeechBot:
+      required:
+        - voiceName
+        - language
+      description: Google Bot is required
+      properties:
+        voiceName:
+          $ref: '#/components/schemas/voiceName'
+        language:
+          $ref: '#/components/schemas/language'
+    awsSpeechToTextBot:
+      required:
+        - voiceName
+      description: Google Bot is required
+      properties:
+        voiceName:
+          $ref: '#/components/schemas/voiceName'
+    awsTextToSpeechBot:
+      required:
+        - voiceName
+        - language
+      description: Google Bot is required
+      properties:
+        voiceName:
+          $ref: '#/components/schemas/voiceName'
+        language:
+          $ref: '#/components/schemas/language'
+    cognigySpeechToTextBot:
+      required:
+        - voiceName
+      description: Google Bot is required
+      properties:
+        voiceName:
+          $ref: '#/components/schemas/voiceName'
+    cognigyTextToSpeechBot:
+      required:
+        - voiceName
+        - language
+      description: Google Bot is required
+      properties:
+        voiceName:
+          $ref: '#/components/schemas/voiceName'
+        language:
+          $ref: '#/components/schemas/language'
     googleCredentials:
       required:
         - googleCredentials
@@ -1723,17 +1919,10 @@ components:
       content:
         application/json:
           schema:
-            oneOf:
-              - $ref: '#/components/schemas/googleBotRequestData'
-              - $ref: '#/components/schemas/awsBotRequestData'
-              - $ref: '#/components/schemas/cognigyBotRequestData'
+            $ref: '#/components/schemas/botRequestData'
           examples:
-            googleBotExample:
-              $ref: '#/components/examples/googleBotPostResponseExample'
-            awsBotExample:
-              $ref: '#/components/examples/awsBotPostResponseExample'
-            cognigyBotExample:
-              $ref: '#/components/examples/cognigyBotPostResponseExample'
+            botRequest:
+              $ref: '#/components/examples/botRequestExample'
     providerPutRequest:
       description: Updated configuration details for the Provider.
       required: true
@@ -1757,17 +1946,10 @@ components:
       content:
         application/json:
           schema:
-            oneOf:
-              - $ref: '#/components/schemas/googleBotRequestData'
-              - $ref: '#/components/schemas/awsProviderRequestData'
-              - $ref: '#/components/schemas/cognigyProviderRequestData'
+            $ref: '#/components/schemas/botRequestData'
           examples:
             googleProviderExample:
-              $ref: '#/components/examples/googleBotExample'
-            awsBotExample:
-              $ref: '#/components/examples/awsBotPostResponseExample'
-            cognigyBotExample:
-              $ref: '#/components/examples/cognigyBotPostResponseExample'
+              $ref: '#/components/examples/botRequestExample'
     providerPatchRequest:
       description: Updated configuration details for the Provider.
       required: true
@@ -1785,21 +1967,20 @@ components:
               $ref: '#/components/examples/awsProviderExample'
             cognigyProvider:
               $ref: '#/components/examples/cognigyProviderExample'
-    googleBotPatchRequest:
+    botPatchRequest:
       description: Updated configuration details for the Provider.
       required: true
       content:
         application/json:
           schema:
-            oneOf:
-              - $ref: '#/components/schemas/updateGoogleBot'
-              - $ref: '#/components/schemas/updateCognigyBot'
-              - $ref: '#/components/schemas/updateAwsBot'
+            $ref: '#/components/schemas/updateBot'
           examples:
             googleBot:
-              value:
-                name: bot
-                displayName: Updated Display Name
+              $ref: '#/components/examples/googleBotExample'
+            awsProvider:
+              $ref: '#/components/examples/awsBotExample'
+            cognigyProvider:
+              $ref: '#/components/examples/cognigyBotExample'
   examples:
     providerExample:
       summary: A summary of a Provider
@@ -1864,26 +2045,35 @@ components:
               provider: a6dj3e72-a850-4f38-98d4-5022cacd3f0f
               description: Bot description
               botUrl: http://google-bot-url
-              sttProvider: a6dj3e72-a850-4f38-98d4-5022cacd3f0f
-              ttsProvider: a6dj3e72-a850-4f38-98d4-5022cacd3f0f
-              botFailover: 919-111-2222
-              googleBot:
+              dtmfCollect: true
+              dtmfCollectInterDigitTimeoutMS: 0
+              dtmfCollectMaxDigits: 1
+              dtmfCollectSubmitDigit: 10
+              transferTarget: tel:+123456789
+              sipHeadersToBot:
+                new-parameter: <SIP header whose value to use>.<Index of header>
+              sttProvider:
+                language: en-US
                 voiceName: Jill
-                credentials:
-                  conversationProfileId: '1234'
+              ttsProvider:
+                voiceName: Jill
             - id: b64b5e72-a850-4f38-98d4-5022cacd3f0r
               displayName: Bot
               provider: a6dj3e72-a850-4f38-98d4-5022cacd3f0f
               description: Bot description
-              botUrl: http://cognigy-bot-url
-              sttProvider: a6dj3e72-a850-4f38-98d4-5022cacd3f0f
-              ttsProvider: a6dj3e72-a850-4f38-98d4-5022cacd3f0f
-              botFailover: 919-111-2222
-              cognigyBot:
-                token: replace
-                oauthTokenUrl: replace
-                botUrl: http://cognigy-bot-url
-                providerBotName: cognigy bot
+              botUrl: http://google-bot-url
+              dtmfCollect: false
+              dtmfCollectInterDigitTimeoutMS: 5
+              dtmfCollectMaxDigits: 2
+              dtmfCollectSubmitDigit: 3
+              transferTarget: tel:+123456789
+              sipHeadersToBot:
+                new-parameter: <SIP header whose value to use>.<Index of header>
+              sttProvider:
+                language: en-US
+                voiceName: Jill
+              ttsProvider:
+                voiceName: Jill
             - id: b64b5e72-a850-4f38-98d4-5022cacd3f0g
               displayName: Bot
               provider: a6dj3e72-a850-4f38-98d4-5022cacd3f0f
@@ -1914,6 +2104,51 @@ components:
           googleCredentials:
             privateKey: samplekey
             clientEmai: email
+    botResponseExample:
+      summary: An example of a Google provider
+      value:
+        links:
+          - href: /providers
+            rel: self
+            method: GET
+        data:
+          id: b64b5e72-a850-4f38-98d4-5022cacd3f0f
+          displayName: Bot
+          provider: a6dj3e72-a850-4f38-98d4-5022cacd3f0f
+          description: Bot description
+          botUrl: http://google-bot-url
+          dtmfCollect: true
+          dtmfCollectInterDigitTimeoutMS: 0
+          dtmfCollectMaxDigits: 1
+          dtmfCollectSubmitDigit: 10
+          transferTarget: tel:+123456789
+          sipHeadersToBot:
+            new-parameter: <SIP header whose value to use>.<Index of header>
+          sttProvider:
+            language: en-US
+            voiceName: Jill
+          ttsProvider:
+            voiceName: Jill
+    botRequestExample:
+      summary: An example of a Google provider
+      value:
+        id: b64b5e72-a850-4f38-98d4-5022cacd3f0f
+        displayName: Bot
+        provider: a6dj3e72-a850-4f38-98d4-5022cacd3f0f
+        description: Bot description
+        botUrl: http://google-bot-url
+        dtmfCollect: true
+        dtmfCollectInterDigitTimeoutMS: 0
+        dtmfCollectMaxDigits: 1
+        dtmfCollectSubmitDigit: 10
+        transferTarget: tel:+123456789
+        sipHeadersToBot:
+          new-parameter: <SIP header whose value to use>.<Index of header>
+        sttProvider:
+          language: en-US
+          voiceName: Jill
+        ttsProvider:
+          voiceName: Jill
     googleBotExample:
       summary: An example of a Google bot
       value:
@@ -1961,6 +2196,44 @@ components:
             environment: Production
             projectId: myproject
             agentId: myagent
+        errors: null
+    botGetResponseExample:
+      summary: An example of a Google bot
+      value:
+        links:
+          - href: /bots/b64b5e72-a850-4f38-98d4-5022cacd3f0f
+            rel: self
+            method: GET
+          - href: /bots
+            rel: create
+            method: POST
+          - href: /bots/b64b5e72-a850-4f38-98d4-5022cacd3f0f
+            rel: replace
+            method: PUT
+          - href: /bots/b64b5e72-a850-4f38-98d4-5022cacd3f0f
+            rel: update
+            method: PATCH
+          - href: /bots/b64b5e72-a850-4f38-98d4-5022cacd3f0f
+            rel: delete
+            method: DELETE
+        data:
+          id: b64b5e72-a850-4f38-98d4-5022cacd3f0f
+          displayName: Bot
+          provider: a6dj3e72-a850-4f38-98d4-5022cacd3f0f
+          description: Bot description
+          botUrl: http://google-bot-url
+          dtmfCollect: true
+          dtmfCollectInterDigitTimeoutMS: 5
+          dtmfCollectMaxDigits: 3
+          dtmfCollectSubmitDigit: 10
+          transferTarget: tel:+123456789
+          sipHeadersToBot:
+            new-parameter: <SIP header whose value to use>.<Index of header>
+          sttProvider:
+            language: en-US
+            voiceName: Jill
+          ttsProvider:
+            voiceName: Jill
         errors: null
     googleBotGetResponseExample:
       summary: An example of a Google bot
@@ -2018,7 +2291,7 @@ components:
             projectId: myproject
             agentId: myagent
         errors: null
-    googleBotPostResponseExample:
+    botPostResponseExample:
       summary: An example of a Google bot
       value:
         links:
@@ -2034,13 +2307,18 @@ components:
           provider: a6dj3e72-a850-4f38-98d4-5022cacd3f0f
           description: Bot description
           botUrl: http://google-bot-url
-          sttProvider: a6dj3e72-a850-4f38-98d4-5022cacd3f0f
-          ttsProvider: a6dj3e72-a850-4f38-98d4-5022cacd3f0f
-          botFailover: 919-111-2222
-          googleBot:
+          dtmfCollect: true
+          dtmfCollectInterDigitTimeoutMS: 0
+          dtmfCollectMaxDigits: 1
+          dtmfCollectSubmitDigit: 10
+          transferTarget: tel:+123456789
+          sipHeadersToBot:
+            new-parameter: <SIP header whose value to use>.<Index of header>
+          sttProvider:
+            language: en-US
             voiceName: Jill
-            credentials:
-              conversationProfileId: '1234'
+          ttsProvider:
+            voiceName: Jill
         errors: null
     googleProviderPutResponseExample:
       summary: An example of a Google provider
