@@ -101,8 +101,13 @@ module.exports = {
           position: "left",
           items: [
             {
+              to: "global-guides",
+              activeBasePath: "global-guides",
+              label: "Guides",
+            },
+            {
               to: "apis/global",
-              label: "Docs & API Reference",
+              label: "API Reference",
             },
           ],
         },
@@ -221,6 +226,16 @@ module.exports = {
         path: "migration-guides",
         routeBasePath: "migration-guides",
         sidebarPath: require.resolve("./sidebarsMigrationGuides.js"),
+        editUrl: "https://github.com/Bandwidth/api-docs/edit/main/site/",
+      },
+    ],
+    [
+      "@docusaurus/plugin-content-docs",
+      {
+        id: "global-guides",
+        path: "global-guides",
+        routeBasePath: "global-guides",
+        sidebarPath: require.resolve("./sidebarsGlobalGuides.js"),
         editUrl: "https://github.com/Bandwidth/api-docs/edit/main/site/",
       },
     ],
