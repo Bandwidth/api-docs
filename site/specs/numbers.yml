@@ -1606,7 +1606,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/updateAddressResponse'
+            $ref: '#/components/schemas/createUpdateAddressResponse'
       description: Created.
     forbiddenError:
       content:
@@ -2068,7 +2068,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/updateAddressResponse'
+            $ref: '#/components/schemas/createUpdateAddressResponse'
       description: OK.
     useCasesResponse:
       content:
@@ -14332,26 +14332,6 @@ components:
           example: false
           title: Field Changeable
           type: boolean
-        controls:
-          items:
-            properties:
-              feature:
-                description: The name of the feature that this address could be used for
-                enum:
-                  - EMERGENCY
-                  - PORTING
-                  - REQUIREMENTS_PACKAGE
-                example: EMERGENCY
-                title: Feature Name
-                type: string
-              required:
-                description: The address field is required or optional for this feature
-                example: true
-                title: Field Required
-                type: boolean
-            type: object
-          title: Feature Specific Requirements
-          type: array
         fieldName:
           description: The name of the address field
           example: addressLine1
@@ -14372,6 +14352,26 @@ components:
           example: string
           title: Field Data Type
           type: string
+        usedBy:
+          items:
+            properties:
+              feature:
+                description: The name of the feature that this address could be used for
+                enum:
+                  - EMERGENCY
+                  - PORTING
+                  - REQUIREMENTS_PACKAGE
+                example: EMERGENCY
+                title: Feature Name
+                type: string
+              required:
+                description: The address field is required or optional for this feature
+                example: true
+                title: Field Required
+                type: boolean
+            type: object
+          title: Feature Specific Requirements
+          type: array
       title: Country Specific Address Fields Schema
       type: object
     addressId:
@@ -14486,6 +14486,40 @@ components:
           title: State
           type: string
       title: '=Address Request'
+      type: object
+    createUpdateAddressLink:
+      properties:
+        href:
+          description: URI of the link.
+          example: /accounts/{accountId}/addresses/{addressId}
+          type: string
+        method:
+          description: HTTP method to be used.
+          example: GET
+          type: string
+        rel:
+          description: Specifies the link to get the updated or created address.
+          example: RelatedResource
+          type: string
+      title: Create Address Link
+      type: object
+    createUpdateAddressLinks:
+      items:
+        oneOf:
+          - $ref: '#/components/schemas/selfAddressLink'
+          - $ref: '#/components/schemas/createUpdateAddressLink'
+      title: Links
+      type: array
+    createUpdateAddressResponse:
+      properties:
+        data:
+          properties:
+            address:
+              $ref: '#/components/schemas/addressResponse'
+          type: object
+        links:
+          $ref: '#/components/schemas/createUpdateAddressLinks'
+      title: Update Address Response
       type: object
     createdDateTime:
       description: The created date time in ISO 8601 format.
@@ -15604,29 +15638,6 @@ components:
         type: object
       title: Excluded Features
       type: array
-    updateAddressLink:
-      properties:
-        href:
-          description: URI of the link.
-          example: /accounts/{accountId}/addresses/{addressId}
-          type: string
-        method:
-          description: HTTP method to be used.
-          example: GET
-          type: string
-        rel:
-          description: Specifies the link to get the updated or created address.
-          example: RelatedResource
-          type: string
-      title: Create Address Link
-      type: object
-    updateAddressLinks:
-      items:
-        oneOf:
-          - $ref: '#/components/schemas/selfAddressLink'
-          - $ref: '#/components/schemas/updateAddressLink'
-      title: Links
-      type: array
     updateAddressRequest:
       properties:
         addressNickname:
@@ -15634,17 +15645,6 @@ components:
         customerReference:
           $ref: '#/components/schemas/customerReference'
       title: Update Address Request
-      type: object
-    updateAddressResponse:
-      properties:
-        data:
-          properties:
-            address:
-              $ref: '#/components/schemas/addressResponse'
-          type: object
-        links:
-          $ref: '#/components/schemas/updateAddressLinks'
-      title: Validate Address Response
       type: object
     updatedDateTime:
       description: The updated date time in ISO 8601 format.
@@ -15697,6 +15697,8 @@ components:
       properties:
         data:
           properties:
+            address:
+              $ref: '#/components/schemas/createAddressRequest'
             unsupportedFeatures:
               $ref: '#/components/schemas/unsupportedFeatures'
           type: object
