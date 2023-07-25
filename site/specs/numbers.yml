@@ -948,6 +948,45 @@ components:
             </Reseller>
           </CampaignSettings>
         </CampaignSettingsResponse>
+    associatedOutboundNumbersRequestExample:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <AssociatedOutboundNumbers>
+          <AssociatedOutboundNumber>
+            <Number>+16175551212</Number>
+          </AssociatedOutboundNumber>
+          <AssociatedOutboundNumber>
+            <Number>+16175551213</Number>
+          </AssociatedOutboundNumber>     
+        </AssociatedOutboundNumbers>
+    associatedOutboundNumbersResponseGetExample:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <AssociatedOutboundNumbersResponse>
+          <TotalCount>2</TotalCount>
+          <AssociatedOutboundNumbers>
+            <AssociatedOutboundNumber>
+              <Number>+16175551212</Number>
+              <Id>123</Id>
+            </AssociatedOutboundNumber>            
+            <AssociatedOutboundNumber>
+              <Number>+16175551213</Number>
+              <Id>124</Id>
+            </AssociatedOutboundNumber>
+          </AssociatedOutboundNumbers>
+        </AssociatedOutboundNumbersResponse>
+    associatedOutboundNumbersResponsePostExample:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <AssociatedOutboundNumbersResponse>
+          <SuccessCount>2</SuccessCount>
+          <Errors>
+            <AssociatedOutboundNumber>
+              <Number>+16175551212</Number>
+              <ErrorReason>Invalid Number Format</ErrorReason>
+            </AssociatedOutboundNumber>
+          </Errors>
+        </AssociatedOutboundNumbersResponse>
     badRequestErrorExample:
       summary: An example of a generic Bad Request Error
       value:
@@ -1029,6 +1068,12 @@ components:
       required: true
       schema:
         type: string
+    AssociatedOutboundNumberIdParam:
+      in: path
+      name: associatedOutboundNumberId
+      required: true
+      schema:
+        type: integer
     BulkCoverageMatrixTaskId:
       description: Task id for a bulk coverage matrix update.
       in: path
@@ -1141,6 +1186,27 @@ components:
       required: true
       schema:
         type: string
+    PaginationPageQueryParam:
+      description: >-
+        Retrievals must be paginated, using page and size indicators.  The page
+        parameter contains the page number, e.g. "1" in the case of the first
+        page
+      example: 1
+      in: query
+      name: page
+      required: true
+      schema:
+        type: integer
+    PaginationSizeQueryParam:
+      description: >-
+        The size parameter indicates the number of Associated Outbound Numbers
+        to return in the payload
+      example: 10
+      in: query
+      name: size
+      required: true
+      schema:
+        type: integer
     PermissionIdPathParam:
       description: Permission Id
       example: testPermission
@@ -1465,6 +1531,17 @@ components:
           schema:
             $ref: '#/components/schemas/createAddressRequest'
       description: Add address.
+    associatedOutboundNumbersRequest:
+      content:
+        application/xml:
+          examples:
+            requestExample:
+              summary: An example request
+              value:
+                $ref: '#/components/examples/associatedOutboundNumbersRequestExample'
+          schema:
+            $ref: '#/components/schemas/associatedOutboundNumbers'
+      description: OK
     shortCodeJsonPatchShortCodeRequest:
       content:
         application/json-patch+json:
@@ -1542,6 +1619,59 @@ components:
         associated with the order, the state of the order, and a list of the
         successfully imported Telephone Numbers, and descriptions of any
         encountered errors.
+    associatedOutboundNumbers400Response:
+      content:
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/associatedOutboundNumbersErrorResponse'
+      description: Bad Request
+    associatedOutboundNumbers401Response:
+      content:
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/associatedOutboundNumbersErrorResponse'
+      description: Unauthorised
+    associatedOutboundNumbers403Response:
+      content:
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/associatedOutboundNumbersErrorResponse'
+      description: Forbidden
+    associatedOutboundNumbers404Response:
+      content:
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/associatedOutboundNumbersErrorResponse'
+      description: Not Found
+    associatedOutboundNumbers429Response:
+      content:
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/associatedOutboundNumbersErrorResponse'
+      description: Too Many Requests
+    associatedOutboundNumbers500Response:
+      content:
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/associatedOutboundNumbersErrorResponse'
+      description: Internal Server Error
+    associatedOutboundNumbersResponse:
+      content:
+        application/xml:
+          examples:
+            GetExample:
+              summary: An example GET response
+              value:
+                $ref: >-
+                  #/components/examples/associatedOutboundNumbersResponseGetExample
+            PostExample:
+              summary: An example POST response
+              value:
+                $ref: >-
+                  #/components/examples/associatedOutboundNumbersResponsePostExample
+          schema:
+            $ref: '#/components/schemas/associatedOutboundNumbersResponse'
+      description: OK
     badRequestError:
       content:
         application/json:
@@ -11466,6 +11596,8 @@ components:
       properties:
         Address:
           $ref: '#/components/schemas/Address'
+        BillingIdentifier:
+          type: string
         CallVerificationEnabled:
           type: boolean
         CallingName:
@@ -11670,6 +11802,8 @@ components:
       properties:
         Address:
           $ref: '#/components/schemas/Address'
+        BillingIdentifier:
+          type: string
         CallVerificationEnabled:
           type: boolean
         CallingName:
@@ -14425,6 +14559,65 @@ components:
           $ref: '#/components/schemas/updatedDateTime'
       title: '=Address Response'
       type: object
+    associatedOutboundNumber:
+      properties:
+        ErrorReason:
+          $ref: '#/components/schemas/associatedOutboundNumberErrorReason'
+        id:
+          type: integer
+        number:
+          description: |-
+            <p> An Associated Outbound Number should:
+              <ul>
+                <li> Be a valid phone number in E.164 format. For example: +18005550123.</li>
+                <li> Not be duplicated. An Associated Outbound Number is unique within an account.
+              </ul>
+            </p>
+          maxLength: 16
+          minLength: 3
+          type: string
+      type: object
+    associatedOutboundNumberErrorReason:
+      description: >-
+        <p> Describes the reason an associated outbound number has failed. This
+        could be due to validation or business logic.
+
+        <br>
+
+        Possible Error Reasons include:
+          <ul>
+            <li> Invalid number format. </li>
+            <li> Number is already associated with location ${location_name} [ID: ${location_id}]. </li>
+            <li> Associated Outbound Number not found with location [ID: ${location_id}]. </li>
+          </ul>
+        </p>
+      type: string
+    associatedOutboundNumbers:
+      items:
+        $ref: '#/components/schemas/associatedOutboundNumber'
+      maxItems: 250
+      type: array
+    associatedOutboundNumbersErrorResponse:
+      properties:
+        AssociatedOutboundNumbersResponse:
+          $ref: '#/components/schemas/ResponseStatus'
+      type: object
+    associatedOutboundNumbersResponse:
+      properties:
+        AssociatedOutboundNumbers:
+          $ref: '#/components/schemas/associatedOutboundNumbers'
+        Errors:
+          items:
+            properties:
+              AssociatedOutboundNumbers:
+                $ref: '#/components/schemas/associatedOutboundNumbers'
+            type: object
+          type: array
+        SuccessCount:
+          type: integer
+        TotalCount:
+          type: integer
+      type: object
     city:
       description: The city of the address.
       example: Woodinville
@@ -14517,6 +14710,11 @@ components:
             address:
               $ref: '#/components/schemas/addressResponse'
           type: object
+        errors:
+          example: []
+          items:
+            $ref: '#/components/schemas/genericError'
+          type: array
         links:
           $ref: '#/components/schemas/createUpdateAddressLinks'
       title: Update Address Response
@@ -14655,6 +14853,11 @@ components:
             address:
               $ref: '#/components/schemas/addressResponse'
           type: object
+        errors:
+          example: []
+          items:
+            $ref: '#/components/schemas/genericError'
+          type: array
         links:
           $ref: '#/components/schemas/addressLinks'
       title: Address Response
@@ -14679,6 +14882,11 @@ components:
                 $ref: '#/components/schemas/addressFieldSchema'
               type: array
           type: object
+        errors:
+          example: []
+          items:
+            $ref: '#/components/schemas/genericError'
+          type: array
       title: Get Address Fields Response
       type: object
     jsonPatch:
@@ -14728,6 +14936,11 @@ components:
                 $ref: '#/components/schemas/addressResponse'
               type: array
           type: object
+        errors:
+          example: []
+          items:
+            $ref: '#/components/schemas/genericError'
+          type: array
         links:
           $ref: '#/components/schemas/listAddressesLinks'
       title: List Addresses Response
@@ -14908,8 +15121,6 @@ components:
                   name: OrderCreateDate
             type: object
       type: object
-      xml:
-        name: Order
     postalCode:
       description: The postal code of the address.
       example: '98072'
@@ -15702,6 +15913,11 @@ components:
             unsupportedFeatures:
               $ref: '#/components/schemas/unsupportedFeatures'
           type: object
+        errors:
+          example: []
+          items:
+            $ref: '#/components/schemas/genericError'
+          type: array
         links:
           $ref: '#/components/schemas/validateAddressLinks'
       title: Validate Address Response
@@ -15880,7 +16096,7 @@ info:
 
     ## Base Path
 
-    <code>https://dashboard.bandwidth.com/api/</code>
+    <code>https://dashboard.bandwidth.com/api/v1/</code>
   title: Numbers
   version: 1.0.0
 openapi: 3.0.1
@@ -36639,6 +36855,7 @@ paths:
                              <PeerName>CNAM-TEST-778</PeerName>
                              <Description>description</Description>
                              <IsDefaultPeer>false</IsDefaultPeer>
+                             <BillingIdentifier>Customer-Name-00010/01</BillingIdentifier>
                              <VoiceHosts/>
                              <VoiceHostGroups/>
                              <TerminationHosts/>
@@ -36744,6 +36961,7 @@ paths:
                      <Description>description</Description>
                      <IsDefaultPeer>false</IsDefaultPeer>
                      <FinalDestinationUri>uri</FinalDestinationUri>
+                     <BillingIdentifier>Customer-Name-00010/01</BillingIdentifier>
                      <VoiceHostGroups>
                         <VoiceHostGroup>
                            <Host>
@@ -36776,6 +36994,7 @@ paths:
                      <Description>description</Description>
                      <IsDefaultPeer>false</IsDefaultPeer>
                      <FinalDestinationUri>uri</FinalDestinationUri>
+                     <BillingIdentifier>Customer-Name-00010/01</BillingIdentifier>
                      <VoiceHosts>
                         <Host>
                            <HostName>10.10.10.1</HostName>
@@ -36866,6 +37085,13 @@ paths:
                     - Zip
                     - AddressType
                   type: object
+                BillingIdentifier:
+                  description: >-
+                    An optional field that offers a convenient way to segment
+                    billing report for your customers. This same value can be
+                    used across multiple locations.
+                  maxLength: 50
+                  type: string
                 CallVerificationEnabled:
                   type: boolean
                 CustomerTrafficAllowed:
@@ -37008,6 +37234,7 @@ paths:
               <li>5251 - One of the provided origination route plan route names is too long, please ensure all names are less than 256 characters.</li>
               <li>5252 - The origination route name %s is invalid, please use only alphanumeric, whitespace, underscore, and/or dash characters</li>
               <li>5253 - Telephone number endpoints are not allowed on this account. Please contact Bandwidth support if you wish to add this feature to your account.</li>
+              <li>13691 - Billing Identifier '%s' is too long. Max length 50 characters</li>
             </ul>
         '409':
           content:
@@ -37132,6 +37359,7 @@ paths:
                           <PeerName>CNAM-TEST-778</PeerName>
                           <Description>description</Description>
                           <IsDefaultPeer>false</IsDefaultPeer>
+                          <BillingIdentifier>Customer-Name-00010/01</BillingIdentifier>
                           <VoiceHosts/>
                           <VoiceHostGroups/>
                           <TerminationHosts/>
@@ -37221,6 +37449,7 @@ paths:
                      <PeerName>name</PeerName>
                      <Description>description</Description>
                      <IsDefaultPeer>false</IsDefaultPeer>
+                     <BillingIdentifier>Customer-Name-00010/01</BillingIdentifier>
                      <VoiceHosts>
                         <Host>
                            <HostName>10.10.10.1</HostName>
@@ -37263,6 +37492,7 @@ paths:
                           <PeerName>CNAM-TEST-778</PeerName>
                           <Description>description</Description>
                           <IsDefaultPeer>false</IsDefaultPeer>
+                          <BillingIdentifier>Customer-Name-00010/01</BillingIdentifier>
                           <VoiceHosts/>
                           <VoiceHostGroups/>
                           <TerminationHosts/>
@@ -37348,6 +37578,7 @@ paths:
               <li>5251 - One of the provided origination route plan route names is too long, please ensure all names are less than 256 characters.</li>
               <li>5252 - The origination route name %s is invalid, please use only alphanumeric, whitespace, underscore, and/or dash characters</li>
               <li>5253 - Telephone number endpoints are not allowed on this account. Please contact Bandwidth support if you wish to add this feature to your account.</li>
+              <li>13691 - Billing  Identifier '%s' is too long. Max length 50 characters</li>
             </ul>
         '409':
           content:
@@ -37383,6 +37614,98 @@ paths:
                 $ref: '#/components/schemas/SipPeerResponseConflict'
           description: Address couldn't be geocoded perfectly and needs some changes
       summary: Update Sip Peer
+      tags:
+        - SipPeer Management
+  /accounts/{accountId}/sites/{siteId}/sippeers/{sipPeerId}/associatedOutboundNumbers:
+    get:
+      description: >-
+        Retrieve list of Associated Outbound Numbers associated with SIP Peer
+        location. If none exist, then an empty list is returned.
+      operationId: retrieveSipPeerAssociatedOutboundNumbers
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/SiteIdPathParam'
+        - $ref: '#/components/parameters/SipPeerIdPathParam'
+        - $ref: '#/components/parameters/PaginationPageQueryParam'
+        - $ref: '#/components/parameters/PaginationSizeQueryParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/associatedOutboundNumbersResponse'
+        '400':
+          $ref: '#/components/responses/associatedOutboundNumbers400Response'
+        '401':
+          $ref: '#/components/responses/associatedOutboundNumbers401Response'
+        '403':
+          $ref: '#/components/responses/associatedOutboundNumbers403Response'
+        '404':
+          $ref: '#/components/responses/associatedOutboundNumbers404Response'
+        '429':
+          $ref: '#/components/responses/associatedOutboundNumbers429Response'
+        '500':
+          $ref: '#/components/responses/associatedOutboundNumbers500Response'
+      summary: >-
+        Retrieve list of Associated Outbound Numbers associated with SIP Peer
+        location
+      tags:
+        - SipPeer Management
+    post:
+      description: Submit a list of new Associated Outbound Numbers.
+      operationId: uploadSipPeerAssociatedOutboundNumbers
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/SiteIdPathParam'
+        - $ref: '#/components/parameters/SipPeerIdPathParam'
+      requestBody:
+        $ref: '#/components/requestBodies/associatedOutboundNumbersRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/associatedOutboundNumbersResponse'
+        '400':
+          $ref: '#/components/responses/associatedOutboundNumbers400Response'
+        '401':
+          $ref: '#/components/responses/associatedOutboundNumbers401Response'
+        '403':
+          $ref: '#/components/responses/associatedOutboundNumbers403Response'
+        '404':
+          $ref: '#/components/responses/associatedOutboundNumbers404Response'
+        '429':
+          $ref: '#/components/responses/associatedOutboundNumbers429Response'
+        '500':
+          $ref: '#/components/responses/associatedOutboundNumbers500Response'
+      summary: >-
+        Associates a list of Associated Outbound Numbers with a SIP Peer
+        location
+      tags:
+        - SipPeer Management
+  /accounts/{accountId}/sites/{siteId}/sippeers/{sipPeerId}/associatedOutboundNumbers/{associatedOutboundNumberId}:
+    delete:
+      description: Delete Associated Outbound Number from SIP Peer
+      operationId: deleteSipPeerAssociatedOutboundNumbers
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/SiteIdPathParam'
+        - $ref: '#/components/parameters/SipPeerIdPathParam'
+        - $ref: '#/components/parameters/AssociatedOutboundNumberIdParam'
+      responses:
+        '200':
+          content:
+            application/xml: {}
+          description: The Outbound Number has been successfully deleted
+        '400':
+          $ref: '#/components/responses/associatedOutboundNumbers400Response'
+        '401':
+          $ref: '#/components/responses/associatedOutboundNumbers401Response'
+        '403':
+          $ref: '#/components/responses/associatedOutboundNumbers403Response'
+        '404':
+          $ref: '#/components/responses/associatedOutboundNumbers404Response'
+        '429':
+          $ref: '#/components/responses/associatedOutboundNumbers429Response'
+        '500':
+          $ref: '#/components/responses/associatedOutboundNumbers500Response'
+      summary: >-
+        Provide a Associated Outbound Number Id which should be deleted from
+        this SIP Peer.
       tags:
         - SipPeer Management
   /accounts/{accountId}/sites/{siteId}/sippeers/{sipPeerId}/movetns:
@@ -44711,7 +45034,7 @@ security:
   - httpBasic: []
 servers:
   - description: Production
-    url: https://dashboard.bandwidth.com/api
+    url: https://dashboard.bandwidth.com/api/v1
     variables: {}
 tags:
   - name: 10DLC
