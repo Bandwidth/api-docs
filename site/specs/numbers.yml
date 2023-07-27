@@ -948,6 +948,45 @@ components:
             </Reseller>
           </CampaignSettings>
         </CampaignSettingsResponse>
+    associatedOutboundNumbersRequestExample:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <AssociatedOutboundNumbers>
+          <AssociatedOutboundNumber>
+            <Number>+16175551212</Number>
+          </AssociatedOutboundNumber>
+          <AssociatedOutboundNumber>
+            <Number>+16175551213</Number>
+          </AssociatedOutboundNumber>     
+        </AssociatedOutboundNumbers>
+    associatedOutboundNumbersResponseGetExample:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <AssociatedOutboundNumbersResponse>
+          <TotalCount>2</TotalCount>
+          <AssociatedOutboundNumbers>
+            <AssociatedOutboundNumber>
+              <Number>+16175551212</Number>
+              <Id>123</Id>
+            </AssociatedOutboundNumber>            
+            <AssociatedOutboundNumber>
+              <Number>+16175551213</Number>
+              <Id>124</Id>
+            </AssociatedOutboundNumber>
+          </AssociatedOutboundNumbers>
+        </AssociatedOutboundNumbersResponse>
+    associatedOutboundNumbersResponsePostExample:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <AssociatedOutboundNumbersResponse>
+          <SuccessCount>2</SuccessCount>
+          <Errors>
+            <AssociatedOutboundNumber>
+              <Number>+16175551212</Number>
+              <ErrorReason>Invalid Number Format</ErrorReason>
+            </AssociatedOutboundNumber>
+          </Errors>
+        </AssociatedOutboundNumbersResponse>
   parameters:
     AccountIDQueryParam:
       description: >
@@ -967,6 +1006,12 @@ components:
       required: true
       schema:
         type: string
+    AssociatedOutboundNumberIdParam:
+      in: path
+      name: associatedOutboundNumberId
+      required: true
+      schema:
+        type: integer
     BulkCoverageMatrixTaskId:
       description: Task id for a bulk coverage matrix update.
       in: path
@@ -1079,6 +1124,27 @@ components:
       required: true
       schema:
         type: string
+    PaginationPageQueryParam:
+      description: >-
+        Retrievals must be paginated, using page and size indicators.  The page
+        parameter contains the page number, e.g. "1" in the case of the first
+        page
+      example: 1
+      in: query
+      name: page
+      required: true
+      schema:
+        type: integer
+    PaginationSizeQueryParam:
+      description: >-
+        The size parameter indicates the number of Associated Outbound Numbers
+        to return in the payload
+      example: 10
+      in: query
+      name: size
+      required: true
+      schema:
+        type: integer
     PermissionIdPathParam:
       description: Permission Id
       example: testPermission
@@ -1325,6 +1391,17 @@ components:
       schema:
         type: string
   requestBodies:
+    associatedOutboundNumbersRequest:
+      content:
+        application/xml:
+          examples:
+            requestExample:
+              summary: An example request
+              value:
+                $ref: '#/components/examples/associatedOutboundNumbersRequestExample'
+          schema:
+            $ref: '#/components/schemas/associatedOutboundNumbers'
+      description: OK
     shortCodeJsonPatchShortCodeRequest:
       content:
         application/json-patch+json:
@@ -1396,6 +1473,59 @@ components:
         associated with the order, the state of the order, and a list of the
         successfully imported Telephone Numbers, and descriptions of any
         encountered errors.
+    associatedOutboundNumbers400Response:
+      content:
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/associatedOutboundNumbersErrorResponse'
+      description: Bad Request
+    associatedOutboundNumbers401Response:
+      content:
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/associatedOutboundNumbersErrorResponse'
+      description: Unauthorised
+    associatedOutboundNumbers403Response:
+      content:
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/associatedOutboundNumbersErrorResponse'
+      description: Forbidden
+    associatedOutboundNumbers404Response:
+      content:
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/associatedOutboundNumbersErrorResponse'
+      description: Not Found
+    associatedOutboundNumbers429Response:
+      content:
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/associatedOutboundNumbersErrorResponse'
+      description: Too Many Requests
+    associatedOutboundNumbers500Response:
+      content:
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/associatedOutboundNumbersErrorResponse'
+      description: Internal Server Error
+    associatedOutboundNumbersResponse:
+      content:
+        application/xml:
+          examples:
+            GetExample:
+              summary: An example GET response
+              value:
+                $ref: >-
+                  #/components/examples/associatedOutboundNumbersResponseGetExample
+            PostExample:
+              summary: An example POST response
+              value:
+                $ref: >-
+                  #/components/examples/associatedOutboundNumbersResponsePostExample
+          schema:
+            $ref: '#/components/schemas/associatedOutboundNumbersResponse'
+      description: OK
     bulkRateCenterGetResponse404Error:
       content:
         application/xml:
@@ -9491,6 +9621,25 @@ components:
           description: Simple Telephone Number.
           type: string
       type: object
+    PhoneNumberType:
+      enum:
+        - GEOGRAPHIC
+        - NATIONAL
+        - MOBILE
+        - TOLL_FREE
+        - SHARED_COST
+      example: GEOGRAPHIC
+      type: string
+      xml:
+        name: PhoneNumberType
+    PhoneNumberTypeNANPA:
+      enum:
+        - GEOGRAPHIC
+        - TOLL_FREE
+      example: GEOGRAPHIC
+      type: string
+      xml:
+        name: PhoneNumberType
     PidfloAddressDeleting911Order:
       properties:
         E911Order:
@@ -10931,26 +11080,46 @@ components:
     SearchResult:
       oneOf:
         - properties:
-            ResultCount:
+            resultCount:
               format: int32
               type: integer
-            TelephoneNumberList:
+              xml:
+                name: ResultCount
+            telephoneNumberList:
               items:
                 $ref: '#/components/schemas/TelephoneNumber'
               type: array
+              xml:
+                name: TelephoneNumberList
+                wrapped: true
           type: object
         - properties:
             resultCount:
               format: int32
               type: integer
+              xml:
+                name: ResultCount
             telephoneNumberDetailList:
               items:
-                $ref: '#/components/schemas/telephoneNumberDetail'
+                $ref: '#/components/schemas/TelephoneNumberDetailNANPA'
               type: array
               xml:
                 name: TelephoneNumberDetailList
-            xml:
-              name: ResultCount
+                wrapped: true
+          type: object
+        - properties:
+            resultCount:
+              format: int32
+              type: integer
+              xml:
+                name: ResultCount
+            telephoneNumberDetailList:
+              items:
+                $ref: '#/components/schemas/TelephoneNumberDetailOther'
+              type: array
+              xml:
+                name: TelephoneNumberDetailList
+                wrapped: true
           type: object
       xml:
         name: SearchResult
@@ -11221,6 +11390,8 @@ components:
       properties:
         Address:
           $ref: '#/components/schemas/Address'
+        BillingIdentifier:
+          type: string
         CallVerificationEnabled:
           type: boolean
         CallingName:
@@ -11425,6 +11596,8 @@ components:
       properties:
         Address:
           $ref: '#/components/schemas/Address'
+        BillingIdentifier:
+          type: string
         CallVerificationEnabled:
           type: boolean
         CallingName:
@@ -12408,6 +12581,97 @@ components:
               $ref: '#/components/schemas/TelephoneNumberDetailHistoryPayload'
           type: object
       type: object
+    TelephoneNumberDetailNANPA:
+      description: Returned when `enableTnDetail=True` for NANPA numbers
+      properties:
+        LATA:
+          example: 426
+          type: number
+          xml:
+            name: LATA
+        city:
+          example: CARY-RESEARCH TRIANGLE PARK
+          type: string
+          xml:
+            name: City
+        countryCodeA3:
+          example: USA
+          type: string
+          xml:
+            name: CountryCodeA3
+        fullNumber:
+          example: 17722029845
+          type: string
+          xml:
+            name: FullNumber
+        phoneNumberType:
+          $ref: '#/components/schemas/PhoneNumberTypeNANPA'
+        rateCenter:
+          example: SEBASTIAN
+          type: string
+          xml:
+            name: RateCenter
+        state:
+          example: FL
+          type: string
+          xml:
+            name: State
+        tier:
+          example: 0
+          type: number
+          xml:
+            name: Tier
+        vendorId:
+          example: 49
+          type: number
+          xml:
+            name: VendorId
+        vendorName:
+          example: Bandwidth CLEC
+          type: string
+          xml:
+            name: VendorName
+      type: object
+      xml:
+        name: TelephoneNumberDetail
+    TelephoneNumberDetailOther:
+      description: Returned when `enableTnDetail=True`
+      properties:
+        areaCode:
+          example: 20
+          type: number
+          xml:
+            name: AreaCode
+        city:
+          example: AMSTERDAM
+          type: string
+          xml:
+            name: City
+        countryCodeA3:
+          example: NLD
+          type: string
+          xml:
+            name: CountryCodeA3
+        features:
+          items:
+            properties:
+              feature:
+                type: string
+                xml:
+                  name: Feature
+          type: array
+          xml:
+            name: Features
+        fullNumber:
+          example: 31208908115
+          type: string
+          xml:
+            name: FullNumber
+        phoneNumberType:
+          $ref: '#/components/schemas/PhoneNumberType'
+      type: object
+      xml:
+        name: TelephoneNumberDetail
     TelephoneNumberDetails:
       properties:
         Cities:
@@ -14080,6 +14344,65 @@ components:
         - zip
         - url
       type: object
+    associatedOutboundNumber:
+      properties:
+        ErrorReason:
+          $ref: '#/components/schemas/associatedOutboundNumberErrorReason'
+        id:
+          type: integer
+        number:
+          description: |-
+            <p> An Associated Outbound Number should:
+              <ul>
+                <li> Be a valid phone number in E.164 format. For example: +18005550123.</li>
+                <li> Not be duplicated. An Associated Outbound Number is unique within an account.
+              </ul>
+            </p>
+          maxLength: 16
+          minLength: 3
+          type: string
+      type: object
+    associatedOutboundNumberErrorReason:
+      description: >-
+        <p> Describes the reason an associated outbound number has failed. This
+        could be due to validation or business logic.
+
+        <br>
+
+        Possible Error Reasons include:
+          <ul>
+            <li> Invalid number format. </li>
+            <li> Number is already associated with location ${location_name} [ID: ${location_id}]. </li>
+            <li> Associated Outbound Number not found with location [ID: ${location_id}]. </li>
+          </ul>
+        </p>
+      type: string
+    associatedOutboundNumbers:
+      items:
+        $ref: '#/components/schemas/associatedOutboundNumber'
+      maxItems: 250
+      type: array
+    associatedOutboundNumbersErrorResponse:
+      properties:
+        AssociatedOutboundNumbersResponse:
+          $ref: '#/components/schemas/ResponseStatus'
+      type: object
+    associatedOutboundNumbersResponse:
+      properties:
+        AssociatedOutboundNumbers:
+          $ref: '#/components/schemas/associatedOutboundNumbers'
+        Errors:
+          items:
+            properties:
+              AssociatedOutboundNumbers:
+                $ref: '#/components/schemas/associatedOutboundNumbers'
+            type: object
+          type: array
+        SuccessCount:
+          type: integer
+        TotalCount:
+          type: integer
+      type: object
     contact:
       nullable: false
       properties:
@@ -14337,8 +14660,6 @@ components:
                   name: OrderCreateDate
             type: object
       type: object
-      xml:
-        name: Order
     shortCode:
       description: Short code registration.
       properties:
@@ -14886,52 +15207,6 @@ components:
           - is required
           - can not be empty
       type: object
-    telephoneNumberDetail:
-      description: Returned when `enableTnDetail=True`
-      properties:
-        city:
-          example: MICCO
-          type: string
-          xml:
-            name: City
-        fullNumber:
-          example: 7722029845
-          type: string
-          xml:
-            name: FullNumber
-        lata:
-          example: 46018
-          type: number
-          xml:
-            name: LATA
-        rateCenter:
-          example: SEBASTIAN
-          type: string
-          xml:
-            name: RateCenter
-        state:
-          example: FL
-          type: string
-          xml:
-            name: State
-        tier:
-          example: 0
-          type: number
-          xml:
-            name: Tier
-        vendorId:
-          example: 49
-          type: number
-          xml:
-            name: VendorId
-        vendorName:
-          example: Bandwidth CLEC
-          type: string
-          xml:
-            name: VendorName
-      type: object
-      xml:
-        name: TelephoneNumberDetail
     tfPhoneNumber:
       description: Toll-free telephone number in E.164 format
       example: '+18005555555'
@@ -15218,7 +15493,7 @@ info:
 
     ## Base Path
 
-    <code>https://dashboard.bandwidth.com/api/</code>
+    <code>https://dashboard.bandwidth.com/api/v1/</code>
   title: Numbers
   version: 1.0.0
 openapi: 3.0.1
@@ -16180,17 +16455,143 @@ paths:
                 $ref: >-
                   #/components/schemas/SearchResultForAvailableNpaNxxErrorWrapper
           description: There are no phone numbers within the specified scope.
-      summary: Retrieves available Npa-Nxx tns
+      summary: Retrieves available Npa-Nxx tns (NANPA)
       tags:
         - Available Tns
   /accounts/{accountId}/availableNumbers:
     get:
-      description: |-
+      description: >-
         Retrieves the phone numbers according to the input parameters.
-         <p>In this table are presented combinations of path parameters for different type of search:</p> <table><thead><tr><th>Search Type</th><th>Required Parameters</th><th>Combinational Parameters</th><th>Optional Parameters</th></tr></thead><tbody><tr><td>Area Code</td><td>areaCode</td><td>rateCenter (state required), city (state required), state, lata, zip</td><td>quantity, enableTNDetail, protected</td></tr><tr><td>NPA-NXX</td><td>npaNxx</td><td>rateCenter (state required), city (state required), state, lata, zip, orderBy</td><td>quantity, enableTNDetail, protected</td></tr><tr><td>NPA-NXX with Local Calling Area</td><td>npaNxx</td><td></td><td>quantity, LCA, enableTNDetail, protected</td></tr><tr><td>NPA-NXX-X</td><td>npaNxxx</td><td>rateCenter (state required), city (state required), state, lata, zip, orderBy</td><td>quantity, enableTNDetail, protected</td></tr><tr><td>NPA-NXX-X with Local Calling Area</td><td>npaNxxx</td><td>rateCenter (state required), city (state required), state, lata, zip</td><td>quantity, LCA, enableTNDetail, protected</td></tr><tr><td>RateCenter</td><td>rateCenter, state</td><td>city, areaCode/npaNxx/npaNxxx, lata, zip, orderBy</td><td>quantity, enableTNDetail, protected</td></tr><tr><td>RateCenter with Local Calling Area</td><td>rateCenter, state</td><td></td><td>quantity, LCA, enableTNDetail, protected</td></tr><tr><td>State</td><td>state</td><td>rateCenter, city, areaCode/npaNxx/npaNxxx, lata, zip</td><td>quantity, enableTNDetail, protected</td></tr><tr><td>City</td><td>state, city</td><td>rateCenter, state, areaCode/npaNxx/npaNxxx, lata, zip, orderBy</td><td>quantity, enableTNDetail, protected</td></tr><tr><td>Zip Code</td><td>zip</td><td>rateCenter (state required), city (state required), state, areaCode/npaNxx/npaNxxx, lata, orderBy</td><td>quantity, enableTNDetail, protected</td></tr><tr><td>LATA</td><td>lata</td><td>rateCenter (state required), city (state required), state, areaCode/npaNxx/npaNxxx, zip</td><td>quantity, enableTNDetail, protected</td></tr><tr><td>Local Vanity</td><td>localVanity</td><td>state, areaCode</td><td>endsIn, quantity, protected, enableTNdetails</td></tr><tr><td>TollFree Vanity</td><td>tollFreeVanity</td><td>orderBy</td><td>quantity</td></tr><tr><td>TollFree WildCard</td><td>tollFreeWildCardPattern</td><td>orderBy</td><td>quantity</td></tr></tbody></table>
+
+        In this table are presented combinations of path parameters for non US
+        and Canadian countries: 
+
+        | Search | Required Parameters | Combinational Parameters | Optional
+        Parameters |
+
+        |:-------|:--------------------|:-------------------------|:--------------------|
+
+        |Phone Number Type|phoneNumberType|areaCode, city, features|quantity,
+        enableTNDetail|
+
+        |Area Code|areaCode|phoneNumberType, city, features|quantity,
+        enableTNDetail|
+
+        |City|city|phoneNumberType, areaCode, features|quantity, enableTNDetail|
+
+        |Product Features|features|phoneNumberType, areaCode, city|quantity,
+        enableTNDetail|
+
+
+        In this table are presented combinations of path parameters for
+        different type of search when countryCodeA3 is configured, or defaulted,
+        to USA and/or CAN:
+
+        | Search | Required Parameters | Combinational Parameters | Optional
+        Parameters |
+
+        |:-------|:--------------------|:-------------------------|:--------------------|
+
+        |Area Code|areaCode|rateCenter (state required), city (state required),
+        state, lata, zip|quantity, enableTNDetail, protected|
+
+        |NPA-NXX|npaNxx|rateCenter (state required), city (state required),
+        state, lata, zip, orderBy|quantity, enableTNDetail, protected|
+
+        |NPA-NXX with Local Calling Area|npaNxx||quantity, LCA, enableTNDetail,
+        protected|
+
+        |NPA-NXX-X|npaNxxx|rateCenter (state required), city (state required),
+        state, lata, zip, orderBy|quantity, enableTNDetail, protected|
+
+        |NPA-NXX-X with Local Calling Area|npaNxxx|rateCenter (state required),
+        city (state required), state, lata, zip|quantity, LCA, enableTNDetail,
+        protected|
+
+        |RateCenter|rateCenter, state|city, areaCode/npaNxx/npaNxxx, lata, zip,
+        orderBy|quantity, enableTNDetail, protected|
+
+        |RateCenter with Local Calling Area|rateCenter, state||quantity, LCA,
+        enableTNDetail, protected|
+
+        |State|state|rateCenter, city, areaCode/npaNxx/npaNxxx, lata,
+        zip|quantity, enableTNDetail, protected|
+
+        |City|state, city|rateCenter, state, areaCode/npaNxx/npaNxxx, lata, zip,
+        orderBy|quantity, enableTNDetail, protected|
+
+        |Zip Code|zip|rateCenter (state required), city (state required), state,
+        areaCode/npaNxx/npaNxxx, lata, orderBy|quantity, enableTNDetail,
+        protected|
+
+        |LATA|lata|rateCenter (state required), city (state required), state,
+        areaCode/npaNxx/npaNxxx, zip|quantity, enableTNDetail, protected|
+
+        |Local Vanity|localVanity|state, areaCode|endsIn, quantity, protected,
+        enableTNdetails|
+
+        |TollFree Vanity|tollFreeVanity|orderBy|quantity|
+
+        |TollFree WildCard|tollFreeWildCardPattern|orderBy|quantity|
       operationId: GetAvailableTns
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: >-
+            <p>Country code of the country in its ISO 3166-1 alpha-3 format.
+            Note that only one country code (i.e. USA, CAN, GBR etc.) is allowed
+            when configured by the user.</p><br>The system defaults country code
+            to search for numbers in both United States and Canada (i.e.
+            USA,CAN).</br>
+          example: GBR
+          in: query
+          name: countryCodeA3
+          required: false
+          schema:
+            default: USA,CAN
+            type: string
+        - description: >-
+            <p>The phone number type, which can be one of GEOGRAPHIC, NATIONAL,
+            MOBILE, TOLL_FREE, SHARED_COST. The query can be used if you want to
+            only list phone numbers of a certain type. The system defaults to
+            return phone numbers of all types when the query parameter is not
+            passed. Note that you can specify multiple features by repeating the
+            query parameter i.e.
+            phoneNumberType=GEOGRAPHIC&phoneNumberType=NATIONAL.</p>
+          example: NATIONAL
+          in: query
+          name: phoneNumberType
+          required: false
+          schema:
+            type: string
+        - description: <p>The 1 to 6 digit area code associated with the TN.</ul>
+          example: 435
+          in: query
+          name: areaCode
+          required: false
+          schema:
+            type: integer
+        - description: <p>The name of the city.</p>
+          example: RALEIGH
+          in: query
+          name: city
+          required: false
+          schema:
+            type: string
+        - description: >-
+            <p>The product features supported by number such as VOICE,
+            VOICE_OUTBOUND_NATIONAL, VOICE_OUTBOUND_INTERNATIONAL,
+            VOICE_OUTBOUND_TOLLFREE, EMERGENCY, MESSAGING_SMS. The query can be
+            used if you want to only list phone numbers that support certain
+            features. The system defaults to return phone numbers of all
+            features when the query parameter is not passed. Note that you can
+            specify multiple features by repeating the query parameter i.e.
+            features=VOICE&features=EMERGENCY.</p>
+          example: VOICE
+          in: query
+          name: features
+          required: false
+          schema:
+            type: string
         - description: The desired quantity of requested numbers.
           example: 30
           in: query
@@ -16230,16 +16631,6 @@ paths:
             default: false
             type: boolean
         - description: >-
-            <p>The 3-digit area code associated with the TN.</p><ul><li>Allowed
-            number ranges are [2-9] for the first digit and [0-9] for both the
-            second and third digits.</li></ul>
-          example: 435
-          in: query
-          name: areaCode
-          required: false
-          schema:
-            type: integer
-        - description: >-
             <p>The 6-digit prefix associated with the TN.</p><ul><li>Allowed
             number ranges for NPA are [2-9] for the first digit and [0-9] for
             both the second and third digits.</li><li>Allowed number ranges for
@@ -16272,15 +16663,6 @@ paths:
           example: Cary
           in: query
           name: rateCenter
-          required: false
-          schema:
-            type: string
-        - description: >-
-            <p>The name of the city. <b>NOTE:</b> `State` becomes a required
-            parameter when searching by `city`.</p>
-          example: RALEIGH
-          in: query
-          name: city
           required: false
           schema:
             type: string
@@ -16336,15 +16718,77 @@ paths:
           content:
             application/xml:
               examples:
+                NANPA_enableTNDetail:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <SearchResult>
+                        <ResultCount>1151</ResultCount>
+                        <TelephoneNumberDetailList>
+                            <TelephoneNumberDetail>
+                                <CountryCodeA3>USA</CountryCodeA3>
+                                <PhoneNumberType>GEOGRAPHIC</PhoneNumberType>
+                                <City>CARY-RESEARCH TRIANGLE PARK</City>
+                                <LATA>426</LATA>
+                                <RateCenter>CARY-RTP</RateCenter>
+                                <State>NC</State>
+                                <FullNumber>+19193716651</FullNumber>
+                                <Tier>0</Tier>
+                                <VendorId>49</VendorId>
+                                <VendorName>Bandwidth CLEC</VendorName>
+                            </TelephoneNumberDetail>
+                            <!-- SNIP -->
+                            <TelephoneNumberDetail>
+                                <CountryCodeA3>USA</CountryCodeA3>
+                                <PhoneNumberType>GEOGRAPHIC</PhoneNumberType>
+                                <City>CARY-RESEARCH TRIANGLE PARK</City>
+                                <LATA>426</LATA>
+                                <RateCenter>CARY-RTP</RateCenter>
+                                <State>NC</State>
+                                <FullNumber>+19193716675</FullNumber>
+                                <Tier>0</Tier>
+                                <VendorId>49</VendorId>
+                                <VendorName>Bandwidth CLEC</VendorName>
+                            </TelephoneNumberDetail>
+                        </TelephoneNumberDetailList>
+                    </SearchResult>
+                Other_enableTNDetail:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <SearchResult>
+                        <ResultCount>1151</ResultCount>
+                        <TelephoneNumberDetailList>
+                            <TelephoneNumberDetail>
+                                <CountryCodeA3>NLD</CountryCodeA3>
+                                <PhoneNumberType>GEOGRAPHIC</PhoneNumberType>
+                                <City>AMSTERDAM</City>
+                                <AreaCode>20</AreaCode>
+                                <Features>
+                                  <Feature>VOICE</Feature>
+                                </Features>
+                                <FullNumber>+31208908115</FullNumber>
+                            </TelephoneNumberDetail>
+                            <!-- SNIP -->
+                            <TelephoneNumberDetail>
+                                <CountryCodeA3>NLD</CountryCodeA3>
+                                <PhoneNumberType>NATIONAL</PhoneNumberType>
+                                <City>AMSTERDAM</City>
+                                <AreaCode>20</AreaCode>
+                                <ProductFeatures>
+                                  <ProductFeature>VOICE</ProductFeature>
+                                </ProductFeatures>
+                                <FullNumber>+31208908116</FullNumber>
+                            </TelephoneNumberDetail>
+                        </TelephoneNumberDetailList>
+                    </SearchResult>
                 example:
                   value: |-
                     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                     <SearchResult>
                       <ResultCount>384</ResultCount>
                       <TelephoneNumberList>
-                        <TelephoneNumber>4354776112</TelephoneNumber>
+                        <TelephoneNumber>+14354776112</TelephoneNumber>
                         <!-- SNIP -->
-                        <TelephoneNumber>4357095160</TelephoneNumber>
+                        <TelephoneNumber>+14357095160</TelephoneNumber>
                       </TelephoneNumberList>
                     </SearchResult>
               schema:
@@ -35840,6 +36284,7 @@ paths:
                              <PeerName>CNAM-TEST-778</PeerName>
                              <Description>description</Description>
                              <IsDefaultPeer>false</IsDefaultPeer>
+                             <BillingIdentifier>Customer-Name-00010/01</BillingIdentifier>
                              <VoiceHosts/>
                              <VoiceHostGroups/>
                              <TerminationHosts/>
@@ -35945,6 +36390,7 @@ paths:
                      <Description>description</Description>
                      <IsDefaultPeer>false</IsDefaultPeer>
                      <FinalDestinationUri>uri</FinalDestinationUri>
+                     <BillingIdentifier>Customer-Name-00010/01</BillingIdentifier>
                      <VoiceHostGroups>
                         <VoiceHostGroup>
                            <Host>
@@ -35977,6 +36423,7 @@ paths:
                      <Description>description</Description>
                      <IsDefaultPeer>false</IsDefaultPeer>
                      <FinalDestinationUri>uri</FinalDestinationUri>
+                     <BillingIdentifier>Customer-Name-00010/01</BillingIdentifier>
                      <VoiceHosts>
                         <Host>
                            <HostName>10.10.10.1</HostName>
@@ -36067,6 +36514,13 @@ paths:
                     - Zip
                     - AddressType
                   type: object
+                BillingIdentifier:
+                  description: >-
+                    An optional field that offers a convenient way to segment
+                    billing report for your customers. This same value can be
+                    used across multiple locations.
+                  maxLength: 50
+                  type: string
                 CallVerificationEnabled:
                   type: boolean
                 CustomerTrafficAllowed:
@@ -36209,6 +36663,7 @@ paths:
               <li>5251 - One of the provided origination route plan route names is too long, please ensure all names are less than 256 characters.</li>
               <li>5252 - The origination route name %s is invalid, please use only alphanumeric, whitespace, underscore, and/or dash characters</li>
               <li>5253 - Telephone number endpoints are not allowed on this account. Please contact Bandwidth support if you wish to add this feature to your account.</li>
+              <li>13691 - Billing Identifier '%s' is too long. Max length 50 characters</li>
             </ul>
         '409':
           content:
@@ -36333,6 +36788,7 @@ paths:
                           <PeerName>CNAM-TEST-778</PeerName>
                           <Description>description</Description>
                           <IsDefaultPeer>false</IsDefaultPeer>
+                          <BillingIdentifier>Customer-Name-00010/01</BillingIdentifier>
                           <VoiceHosts/>
                           <VoiceHostGroups/>
                           <TerminationHosts/>
@@ -36422,6 +36878,7 @@ paths:
                      <PeerName>name</PeerName>
                      <Description>description</Description>
                      <IsDefaultPeer>false</IsDefaultPeer>
+                     <BillingIdentifier>Customer-Name-00010/01</BillingIdentifier>
                      <VoiceHosts>
                         <Host>
                            <HostName>10.10.10.1</HostName>
@@ -36464,6 +36921,7 @@ paths:
                           <PeerName>CNAM-TEST-778</PeerName>
                           <Description>description</Description>
                           <IsDefaultPeer>false</IsDefaultPeer>
+                          <BillingIdentifier>Customer-Name-00010/01</BillingIdentifier>
                           <VoiceHosts/>
                           <VoiceHostGroups/>
                           <TerminationHosts/>
@@ -36549,6 +37007,7 @@ paths:
               <li>5251 - One of the provided origination route plan route names is too long, please ensure all names are less than 256 characters.</li>
               <li>5252 - The origination route name %s is invalid, please use only alphanumeric, whitespace, underscore, and/or dash characters</li>
               <li>5253 - Telephone number endpoints are not allowed on this account. Please contact Bandwidth support if you wish to add this feature to your account.</li>
+              <li>13691 - Billing  Identifier '%s' is too long. Max length 50 characters</li>
             </ul>
         '409':
           content:
@@ -36584,6 +37043,98 @@ paths:
                 $ref: '#/components/schemas/SipPeerResponseConflict'
           description: Address couldn't be geocoded perfectly and needs some changes
       summary: Update Sip Peer
+      tags:
+        - SipPeer Management
+  /accounts/{accountId}/sites/{siteId}/sippeers/{sipPeerId}/associatedOutboundNumbers:
+    get:
+      description: >-
+        Retrieve list of Associated Outbound Numbers associated with SIP Peer
+        location. If none exist, then an empty list is returned.
+      operationId: retrieveSipPeerAssociatedOutboundNumbers
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/SiteIdPathParam'
+        - $ref: '#/components/parameters/SipPeerIdPathParam'
+        - $ref: '#/components/parameters/PaginationPageQueryParam'
+        - $ref: '#/components/parameters/PaginationSizeQueryParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/associatedOutboundNumbersResponse'
+        '400':
+          $ref: '#/components/responses/associatedOutboundNumbers400Response'
+        '401':
+          $ref: '#/components/responses/associatedOutboundNumbers401Response'
+        '403':
+          $ref: '#/components/responses/associatedOutboundNumbers403Response'
+        '404':
+          $ref: '#/components/responses/associatedOutboundNumbers404Response'
+        '429':
+          $ref: '#/components/responses/associatedOutboundNumbers429Response'
+        '500':
+          $ref: '#/components/responses/associatedOutboundNumbers500Response'
+      summary: >-
+        Retrieve list of Associated Outbound Numbers associated with SIP Peer
+        location
+      tags:
+        - SipPeer Management
+    post:
+      description: Submit a list of new Associated Outbound Numbers.
+      operationId: uploadSipPeerAssociatedOutboundNumbers
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/SiteIdPathParam'
+        - $ref: '#/components/parameters/SipPeerIdPathParam'
+      requestBody:
+        $ref: '#/components/requestBodies/associatedOutboundNumbersRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/associatedOutboundNumbersResponse'
+        '400':
+          $ref: '#/components/responses/associatedOutboundNumbers400Response'
+        '401':
+          $ref: '#/components/responses/associatedOutboundNumbers401Response'
+        '403':
+          $ref: '#/components/responses/associatedOutboundNumbers403Response'
+        '404':
+          $ref: '#/components/responses/associatedOutboundNumbers404Response'
+        '429':
+          $ref: '#/components/responses/associatedOutboundNumbers429Response'
+        '500':
+          $ref: '#/components/responses/associatedOutboundNumbers500Response'
+      summary: >-
+        Associates a list of Associated Outbound Numbers with a SIP Peer
+        location
+      tags:
+        - SipPeer Management
+  /accounts/{accountId}/sites/{siteId}/sippeers/{sipPeerId}/associatedOutboundNumbers/{associatedOutboundNumberId}:
+    delete:
+      description: Delete Associated Outbound Number from SIP Peer
+      operationId: deleteSipPeerAssociatedOutboundNumbers
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/SiteIdPathParam'
+        - $ref: '#/components/parameters/SipPeerIdPathParam'
+        - $ref: '#/components/parameters/AssociatedOutboundNumberIdParam'
+      responses:
+        '200':
+          content:
+            application/xml: {}
+          description: The Outbound Number has been successfully deleted
+        '400':
+          $ref: '#/components/responses/associatedOutboundNumbers400Response'
+        '401':
+          $ref: '#/components/responses/associatedOutboundNumbers401Response'
+        '403':
+          $ref: '#/components/responses/associatedOutboundNumbers403Response'
+        '404':
+          $ref: '#/components/responses/associatedOutboundNumbers404Response'
+        '429':
+          $ref: '#/components/responses/associatedOutboundNumbers429Response'
+        '500':
+          $ref: '#/components/responses/associatedOutboundNumbers500Response'
+      summary: >-
+        Provide a Associated Outbound Number Id which should be deleted from
+        this SIP Peer.
       tags:
         - SipPeer Management
   /accounts/{accountId}/sites/{siteId}/sippeers/{sipPeerId}/movetns:
@@ -43884,7 +44435,7 @@ security:
   - httpBasic: []
 servers:
   - description: Production
-    url: https://dashboard.bandwidth.com/api
+    url: https://dashboard.bandwidth.com/api/v1
     variables: {}
 tags:
   - name: 10DLC
