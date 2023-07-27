@@ -1,22 +1,18 @@
 
-export const navBarContext = (pathName, hidden, viewportWidth = 1400, viewportHeight = 900) => {
+export const navBarContext = (context, pathName, viewportWidth = 1400, viewportHeight = 900) => {
   it('checks that navigation back or forward in the browser\'s history from the page works', () => {
     cy.visit('/')
     if (viewportWidth && viewportHeight) {
       cy.viewport(viewportWidth,viewportHeight)
-      if (hidden) {
-        cy.get('a.navbar__link')
-        .contains(`${pathName}`)
-        .should('be.hidden')
-      }
-      else {
-        cy.get('ul.dropdown__menu > li')
-        .should('be.hidden')
-        .invoke('show')
-        .get('a.dropdown__link')
-        .contains(`${pathName}`)
-        .click({force: true})
-      }
+      cy.get('a.navbar__link')
+      .contains(context)
+      .siblings()
+      .children()
+      .should('be.hidden')
+      .invoke('show')
+      .children()
+      .contains(pathName)
+      .click({force: true})
     }
  })
 }
