@@ -7,23 +7,28 @@ context('The Home Page', () => {
 })
 
 context('Docs', () => {
-  navBarContext('Guides');
+  navBarContext('US & Canada', 'Guides');
   navTester('docs');
 })
 
 context('API Reference', () => {
-  navBarContext('API Reference');
+  navBarContext('US & Canada', 'API Reference');
   navTester('apis')
 })
 
 context('SDKs', () => {
-  navBarContext('SDKs');
+  navBarContext('US & Canada', 'SDKs');
   navTester('sdks')
 })
 
-context('Global Docs and API Ref', () => {
-  navBarContext('Docs & API Reference')
+context('Global API Ref', () => {
+  navBarContext('Global', 'API Reference')
   navTester('apis/global')
+})
+
+context('Global Docs', () => {
+  navBarContext('Global', 'Guides')
+  navTester('global-guides')
 })
 
 context('Bandwidth Sample', () => {
