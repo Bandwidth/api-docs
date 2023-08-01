@@ -1,0 +1,70 @@
+---
+id: inAppAuthGuide
+title: Authentication for Global In-App Calling
+slug: /voice/guides/inAppCalling/authentication
+description: Authentication In-App Calling (WebRTC)
+keywords:
+  - bandwidth
+  - voice
+hide_title: false
+image: '@site/static/img/bw-icon.svg'
+---
+## Retrieving an access token
+
+:::caution
+
+The token should be retrieved from a server running in a secure environment and securely provided to clients. Client-side javascript does not have a mechanism for hiding these credentials so **DO NOT** place these directly in your client-side code.
+
+Bandwidth accepts no responsibility for the loss of account credentials and any resulting network traffic, fraud, or undesired account access that results from failing to manage account access credentials in a completely secure manner.
+:::
+
+
+The process to retrieve an access token requires you to have your [WebRTC Credentials](./inAppGuide.mdx#generating-credentials-for-an-access-token) (ie. ClientID and ClientSecret), generated from the [Global Portal](https://login.voxbone.com/login). You will then be able to make a call to our token endpoint with these credentials.
+
+```mermaid
+sequenceDiagram
+    Application->>In-App Calling AuthServer: GET /api/v1/oauth2/token?scope=voice.webrtc <br> Headers: { Authorization: Basic PEJhc2ljIEF1dGggVXNlcm5hbWU+OjxCYXNpYyBBdXRoIFBhc3N3b3JkPg== }
+    In-App Calling AuthServer->>In-App Calling AuthServer: Validate credentials
+    In-App Calling AuthServer->>Application: 200 OK <br> {"access_token": "...", "access_token_id": "...", "token_type": "Bearer", "expires_in": 600}
+```
+### Request
+In order to retrieve the token, you will use Basic Authentication `ClientID:ClientSecret`. Below is a sample request:
+
+```sh
+curl --request POST \
+  --url https://id.voxbone.com/api/v1/oauth2/token \
+  --header 'Authorization: Basic PEJhc2ljIEF1dGggVXNlcm5hbWU+OjxCYXNpYyBBdXRoIFBhc3N3b3JkPg==' \
+  --header 'Content-Type: application/x-www-form-urlencoded' \
+  --data grant_type=client_credentials \
+  --data scope=voice.webrtc
+```
+Now that we've shown the request, let's break down the parts of the API call.
+
+- **url** `https://id.voxbone.com/api/v1/oauth2/token` - This is the In-App Calling AuthServers's `token_endpoint`.
+- **Headers**
+  - **Authorization** - Authentication is required. You **MUST** provide your `ClientID` and `ClientSecret` using a Base64-encoded header with the `Basic` authentication scheme. The header value before encoding should take the form `Basic <ClientID>:<ClientSecret>`.
+  - **Content-Type** - You **MUST** use `application/x-www-form-urlencoded`. This will URL encode (aka percent-encode) the parameters making them into `key=value` pairs which will be separated by an ampersand `&`.
+- **Body**
+  - `grant_type` Currently, we only support `client_credentials` OAuth2 `grant_type`.
+  - `scope` You **MUST** pass the value of `voice.webrtc` to have permissions for the WebRTC Gateway.
+
+### Response
+An example response is:
+```
+{
+	"access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImFsb2hvbW9yYSJ9.e30.kl3HYFQIcP4xZd78wUkdXxntxBu1d7b5ZCt99qVObC-gUZd5KSq2J7Q5rDb2LjP1_WVndcLQSqCoq3Anvp03hJWM6mamZL3dWHxjGLwkrIlzmNx9ZFGhTGIEsYLyaQqy8MonWYw2mJ4Z0APEfTVbTBHNIGrm_9GT6rIkdOwQFM-XgH1Tau4JbpFJun3n6o15WTgjzdEj9fIwd385CPwL-pAmOiozbYWUEzgqkXjSGHI11hiLDu-tv_8Ds06Cx4iCnL1F6_dFrnpD3CF0i6JJYVrvLmi6vgzoxp9YEIRBwaOZTSuYuYt03SQfbMZy8L2Z71sRKLLGt3TrxgtwyjefpQ",
+	"access_token_id": "a5xA3xMKEggGwvpSLtk2lRb",
+	"token_type": "Bearer",
+	"expires_in": 600
+}
+```
+
+Let's see what each item in the response object is meant for:
+- `access_token`: This is the JSON Web Token (JWT) that will be passed in the Authorization header of the requests to the In-App Calling API. **NOTE:** The example above does not contain a valid token and cannot be used to actually authenticate.
+- `access_token_id`: This will be the ID of the access token to prevent tokens from being re-used. It will be the same as the `jti` claim within the access token.
+- `token_type`: This is used to identify the type of token and also the prefix to be used in the Authorization header.
+- `expires_in`: This is the length of time, in seconds, before a token expires. In the example above the value is `600`. This means the token will be valid for 600 seconds (10 minutes) before it expires. You should use the token until 10-30 seconds before expiration, at which point you **MUST** request a new token in the same manner as described above.
+
+### Using the Access Token
+
+Once you have obtained the token you can perform authenticated requests to the WebRTC Gateway using the [Bandwidth WebRTC SDK](./inAppGuide.mdx#sdks).
