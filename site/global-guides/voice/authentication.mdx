@@ -32,18 +32,21 @@ In order to retrieve the token, you will use Basic Authentication `ClientID:Clie
 
 ```sh
 curl --request POST \
-  --url https://id.voxbone.com/api/v1/oauth2/token?scope=voice.webrtc \
+  --url https://id.voxbone.com/api/v1/oauth2/token \
   --header 'Authorization: Basic PEJhc2ljIEF1dGggVXNlcm5hbWU+OjxCYXNpYyBBdXRoIFBhc3N3b3JkPg==' \
   --header 'Content-Type: application/x-www-form-urlencoded' \
-  --data grant_type=client_credentials
+  --data grant_type=client_credentials \
+  --data scope=voice.webrtc
 ```
 Now that we've shown the request, let's break down the parts of the API call.
 
-- **url** `https://id.voxbone.com/api/v1/oauth2/token?scope=voice.webrtc` - This is the In-App Calling AuthServers's `token_endpoint`. **IMPORTANT**: There is a query parameter of `scope`. This is used to limit the permissions in the token. When you request a token with the scope parameter that token will **ONLY** be able to access resources that require the specifiied scopes. In our example, we are limiting the token's permissions to only the WebRTC Gateway. If you do not provide a scope, then the token will be minted for **ALL** scopes that are allowed by the credentials when they were created.
+- **url** `https://id.voxbone.com/api/v1/oauth2/token` - This is the In-App Calling AuthServers's `token_endpoint`.
 - **Headers**
   - **Authorization** - Authentication is required. You **MUST** provide your `ClientID` and `ClientSecret` using a Base64-encoded header with the `Basic` authentication scheme. The header value before encoding should take the form `Basic <ClientID>:<ClientSecret>`.
-  - **Content-Type** - For this request you **MUST** use `application/x-www-form-urlencoded`. This will URL encode (aka percent-encode) the parameters making them into `key=value` pairs which will be separated by an ampersand `&`.
-- **Body** - There is only one piece of data that must be transmitted in the form and that is the `grant_type`. Currently we only support `client_credentials` OAuth2 `grant_type`.
+  - **Content-Type** - You **MUST** use `application/x-www-form-urlencoded`. This will URL encode (aka percent-encode) the parameters making them into `key=value` pairs which will be separated by an ampersand `&`.
+- **Body**
+  - `grant_type` Currently, we only support `client_credentials` OAuth2 `grant_type`.
+  - `scope` You **MUST** pass the value of `voice.webrtc` to have permissions for the WebRTC Gateway.
 
 ### Response
 Am example response is:
@@ -60,7 +63,7 @@ Let's see what each item in the response object is meant for:
 - `access_token`: This is the JSON Web Token (JWT) that will be passed in the Authorization header of the requests to the In-App Calling API. **NOTE:** The example above does not contain a valid token and cannot be used to actually authenticate.
 - `access_token_id`: This will be the ID of the access token to prevent tokens from being re-used. It will be the same as the `jti` claim within the access token.
 - `token_type`: This is used to identify the type of token and also the prefix to be used in the Authorization header.
-- `expires_in`: This is the length of time, in seconds, before a token expires. In the example above the value is `600`. This means the token will be valid for 600 seconds (10 minutes) before it expires. You **SHOULD** use the token until 10-30 seconds before expiration, at which point you must request a new token in the same manner as described above.
+- `expires_in`: This is the length of time, in seconds, before a token expires. In the example above the value is `600`. This means the token will be valid for 600 seconds (10 minutes) before it expires. You should use the token until 10-30 seconds before expiration, at which point you **MUST** request a new token in the same manner as described above.
 
 ### Using the Access Token
 
