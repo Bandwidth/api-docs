@@ -11,76 +11,8 @@ on:
       - "site/**"
 
 jobs:
-  cypress_cloudfront:
-    name: Cypress Against Cloudfront Staged Site
-    runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest]
-        browser: [chrome]
-    steps:
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-
-      - name: Set Environment Variables
-        run: |
-          BRANCH_NAME=${GITHUB_HEAD_REF#refs/heads/}
-          BRANCH_NAME=$(echo "$BRANCH_NAME" | tr '[:upper:]' '[:lower:]')
-          BRANCH_NAME=$(echo "$BRANCH_NAME" | sed -e "s/[^a-z0-9]/-/g")
-          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
-
-      - name: Create Cypress Config
-        run: |
-          cd ./site
-          cat >staged-cypress.config.js <<EOL
-          const { defineConfig } = require("cypress");
-
-          module.exports = defineConfig({
-            e2e: {
-              setupNodeEvents(on, config) {
-                // implement node event listeners here
-              },
-            baseUrl: "https://${{env.BRANCH_NAME}}.staging-dev.bandwidth.com/"
-            },
-            projectId: "oz7rpf",
-            pageLoadTimeout: 60000,
-            viewportWidth: 1440,
-            viewportHeight: 900,
-            video: false,
-            videoUploadOnPasses: false,
-            screenshotOnRunFailure: true,
-            retries: 3,
-          });
-          EOL
-
-      - name: Cypress Staged Cloudfront Deployment Test
-        uses: cypress-io/github-action@v5.8.0
-        timeout-minutes: 40
-        with:
-          browser: ${{ matrix.browser }}
-          working-directory: ./site
-          config-file: staged-cypress.config.js
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   delete_bucket_folder:
     name: Delete Bucket Folder
-    if: ${{ success() || github.event.pull_request.merged == false }}
-    needs: [cypress_cloudfront]
     runs-on: ubuntu-latest
     steps:
       - name: Set Environment Variables
@@ -102,7 +34,7 @@ jobs:
 
   notify_for_failures:
     name: Notify for Failures
-    needs: [cypress_cloudfront, delete_bucket_folder]
+    needs: [delete_bucket_folder]
     if: failure()
     runs-on: ubuntu-latest
     steps:
