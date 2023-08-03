@@ -1257,37 +1257,6 @@ components:
       required: true
       schema:
         type: string
-    areaCodeQueryParameter:
-      description: Area code of a phone number
-      example: '07'
-      in: query
-      name: areaCode
-      required: false
-      schema:
-        type: string
-    countryCodeA3QueryParameter:
-      description: 3-letter, ISO 3166 country code
-      example: GBR
-      in: query
-      name: Country Code
-      required: true
-      schema:
-        type: string
-    phoneNumberTypeQueryParameter:
-      description: Phone number type
-      example: MOBILE
-      in: query
-      name: phoneNumberType
-      required: false
-      schema:
-        enum:
-          - GEOGRAPHIC
-          - SHARED_COST
-          - TOLL_FREE
-          - NATIONAL
-          - SPECIAL
-          - MOBILE
-        type: string
     shortCodeCountryPathParam:
       description: The short code number country.
       example: USA
@@ -1427,70 +1396,6 @@ components:
         associated with the order, the state of the order, and a list of the
         successfully imported Telephone Numbers, and descriptions of any
         encountered errors.
-    badRequestInvalidAreaCodeLosingCarriersResponse:
-      content:
-        application/json:
-          examples:
-            example:
-              description: example
-              value:
-                data: null
-                errors:
-                  code: 7675
-                  description: '''%s'' is not a valid areaCode value, it should be a number.'
-                links: null
-          schema:
-            $ref: '#/components/schemas/portingLosingCarriersResponseSchema'
-      description: Error returned when the area code is invalid
-    badRequestInvalidNumberTypeLosingCarriersResponse:
-      content:
-        application/json:
-          examples:
-            example:
-              description: example
-              value:
-                data: null
-                errors:
-                  code: 7674
-                  description: >-
-                    '%s' is not a valid numberType value, it should be one of
-                    the following: %2$s
-                links: null
-          schema:
-            $ref: '#/components/schemas/portingLosingCarriersResponseSchema'
-      description: Error returned when the number type is invalid
-    badRequestInvalidUriLosingCarriersResponse:
-      content:
-        application/json:
-          examples:
-            example:
-              description: example
-              value:
-                data: null
-                errors:
-                  code: 7677
-                  description: >-
-                    Error while building URI. Please try this request again
-                    later.
-                links: null
-          schema:
-            $ref: '#/components/schemas/portingLosingCarriersResponseSchema'
-      description: ERror returned when the URI is invalid or malformed
-    badRequestLosingInvlaidCountryCodeCarriersResponse:
-      content:
-        application/json:
-          examples:
-            example:
-              description: example
-              value:
-                data: null
-                errors:
-                  code: 7673
-                  description: '''%s'' is not a valid countryCodeA3 value'
-                links: null
-          schema:
-            $ref: '#/components/schemas/portingLosingCarriersResponseSchema'
-      description: Error returned when the country code is invalid
     bulkRateCenterGetResponse404Error:
       content:
         application/xml:
@@ -1542,44 +1447,6 @@ components:
       description: >-
         Successful response which starts the bulk upsert for provided rate
         centers.
-    listOfLosingCarriersResponse:
-      content:
-        application/json:
-          examples:
-            example:
-              value:
-                data:
-                  losingCarriers:
-                    - name: Losing Carrier 1
-                    - name: Losing Carrier 2
-                    - name: Losing Carrier 3
-                    - name: Losing Carrier 4
-                errors: null
-                links:
-                  - href: /portingLosingCarriers
-                    method: GET
-                    rel: self
-          schema:
-            $ref: '#/components/schemas/portingLosingCarriersResponseSchema'
-      description: A list of available carriers that can port out a phone number
-    noUpstreamServicesLosingCarriersResponse:
-      content:
-        application/json:
-          examples:
-            example:
-              summary: example
-              value:
-                data: null
-                errors:
-                  code: 7678
-                  description: >-
-                    We received an error while attempting to retrieve the losing
-                    carriers for your request. Please try this request again
-                    later.
-                links: null
-          schema:
-            $ref: '#/components/schemas/portingLosingCarriersResponseSchema'
-      description: Error returned when upstream services are unavailable
     rateCenter401Error:
       content:
         application/json:
@@ -14469,58 +14336,6 @@ components:
                 xml:
                   name: OrderCreateDate
             type: object
-      type: object
-      xml:
-        name: Order
-    portingLosingCarriersResponseSchema:
-      description: List of losing carriers for porting
-      properties:
-        data:
-          nullable: true
-          properties:
-            losingCarriers:
-              items:
-                properties:
-                  name:
-                    description: The name of the carrier
-                    example: Losing Carrier 1
-                    type: string
-                type: object
-              type: array
-          type: object
-        errors:
-          items:
-            properties:
-              code:
-                description: An error code identifying the error
-                type: string
-              description:
-                description: A description of the error
-                type: string
-              meta:
-                description: Additional information regarding the error
-                type: object
-            type: object
-          nullable: true
-          type: array
-        links:
-          items:
-            properties:
-              href:
-                description: The API endpoint URL
-                example: /portingLosingCarriers
-                type: string
-              method:
-                description: The HTTP method used to make the request
-                example: GET
-                type: string
-              rel:
-                description: The relationship of the endpoint to the request
-                example: self
-                type: string
-            type: object
-          nullable: true
-          type: array
       type: object
     shortCode:
       description: Short code registration.
@@ -29254,6 +29069,37 @@ paths:
       summary: Fetch Telephone Number order tn quantity
       tags:
         - Orders
+  /accounts/{accountId}/phoneNumbers/{phoneNumber}/tollFreeVerification:
+    get:
+      description: >-
+        This endpoint will provide verification status for a phone number that
+        is provisioned to your account.
+      operationId: getVerificationStatus
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/TfPhoneNumberPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/verifyStatusResponse'
+        '400':
+          $ref: '#/components/responses/tfvBadRequestResponse'
+        '401':
+          $ref: '#/components/responses/tfvUnauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/tfvForbiddenResponse'
+        '404':
+          $ref: '#/components/responses/tfvNotFoundResponse'
+        '405':
+          $ref: '#/components/responses/tfvNotAllowedResponse'
+        '429':
+          $ref: '#/components/responses/tfvTooManyRequestsResponse'
+        '500':
+          $ref: '#/components/responses/tfvServerErrorResponse'
+        '503':
+          $ref: '#/components/responses/tfvServiceUnavailableResponse'
+      summary: Get the verification status of a toll-free phone number
+      tags:
+        - Toll-Free Verification
   /accounts/{accountId}/portins:
     get:
       description: >-
@@ -34428,6 +34274,135 @@ paths:
       summary: Download Report Instance File
       tags:
         - Reports
+  /accounts/{accountId}/shortcodes:
+    get:
+      description: Retrieves all the short codes registered with an account.
+      operationId: getAllShortCodesByAccount
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/shortCodeOffsetQueryParam'
+        - $ref: '#/components/parameters/shortCodeLimitQueryParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/shortCodeGetAllShortCodesByAccountResponse'
+        '400':
+          $ref: '#/components/responses/shortCode400'
+        '401':
+          $ref: '#/components/responses/shortCode401'
+        '403':
+          $ref: '#/components/responses/shortCode403'
+        '404':
+          $ref: '#/components/responses/shortCode404'
+        '405':
+          $ref: '#/components/responses/shortCode405'
+        '429':
+          $ref: '#/components/responses/shortCode429'
+        '500':
+          $ref: '#/components/responses/shortCode500'
+      summary: Retrieve short codes by account.
+      tags:
+        - Short Codes
+  /accounts/{accountId}/shortcodes/{shortCode}/{country}:
+    get:
+      description: >-
+        Retrieve the details of an account's registration of a short code for a
+        single country.
+      operationId: getShortCodeByAccountIdCountryAndShortCode
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/shortCodePathParam'
+        - $ref: '#/components/parameters/shortCodeCountryPathParam'
+      responses:
+        '200':
+          $ref: >-
+            #/components/responses/shortCodeGetShortCodeByAccountIdCountryAndShortCodeResponse
+        '400':
+          $ref: '#/components/responses/shortCode400'
+        '401':
+          $ref: '#/components/responses/shortCode401'
+        '403':
+          $ref: '#/components/responses/shortCode403'
+        '404':
+          $ref: '#/components/responses/shortCode404'
+        '405':
+          $ref: '#/components/responses/shortCode405'
+        '429':
+          $ref: '#/components/responses/shortCode429'
+        '500':
+          $ref: '#/components/responses/shortCode500'
+      summary: Retrieve short code details.
+      tags:
+        - Short Codes
+    patch:
+      description: >-
+        Update (field by field) an account's short code registration for a
+        country. This utilizes [Json Patch](https://jsonpatch.com/).
+      operationId: patchShortCodeLease
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/shortCodePathParam'
+        - $ref: '#/components/parameters/shortCodeCountryPathParam'
+      requestBody:
+        $ref: '#/components/requestBodies/shortCodeJsonPatchShortCodeRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/shortCodeUpdateShortCodeResponse'
+        '400':
+          $ref: '#/components/responses/shortCode400'
+        '401':
+          $ref: '#/components/responses/shortCode401'
+        '403':
+          $ref: '#/components/responses/shortCode403'
+        '404':
+          $ref: '#/components/responses/shortCode404'
+        '405':
+          $ref: '#/components/responses/shortCode405'
+        '409':
+          $ref: '#/components/responses/shortCode409'
+        '429':
+          $ref: '#/components/responses/shortCode429'
+        '500':
+          $ref: '#/components/responses/shortCode500'
+      summary: >-
+        Update the lease information of an account's short code registration for
+        a country.
+      tags:
+        - Short Codes
+  /accounts/{accountId}/shortcodes/{shortCode}/{country}/history:
+    get:
+      description: >-
+        Retrieves a complete history of all updates associated with an account's
+        registration of a short code for a single country.
+      operationId: getShortCodeHistoryAccountIdCountryAndShortCode
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/shortCodePathParam'
+        - $ref: '#/components/parameters/shortCodeCountryPathParam'
+        - $ref: '#/components/parameters/shortCodeOffsetQueryParam'
+        - $ref: '#/components/parameters/shortCodeLimitQueryParam'
+        - $ref: '#/components/parameters/shortCodeHistoryShortCodeSortParam'
+        - $ref: '#/components/parameters/shortCodeHistoryVersionSortParam'
+      responses:
+        '200':
+          $ref: >-
+            #/components/responses/shortCodeGetShortCodeHistoryAccountIdCountryAndShortCodeResponse
+        '400':
+          $ref: '#/components/responses/shortCode400'
+        '401':
+          $ref: '#/components/responses/shortCode401'
+        '403':
+          $ref: '#/components/responses/shortCode403'
+        '404':
+          $ref: '#/components/responses/shortCode404'
+        '405':
+          $ref: '#/components/responses/shortCode405'
+        '429':
+          $ref: '#/components/responses/shortCode429'
+        '500':
+          $ref: '#/components/responses/shortCode500'
+      summary: Retrieve short code history.
+      tags:
+        - Short Codes
   /accounts/{accountId}/sipcredentials:
     get:
       description: Retrieve all SIP credentials for the account
@@ -41016,6 +40991,164 @@ paths:
       summary: Patch toll-free porting validation
       tags:
         - Porting
+  /accounts/{accountId}/tollFreeVerification:
+    post:
+      callbacks:
+        tfVerificationStatus:
+          $ref: '#/components/callbacks/tfVerificationStatus'
+      description: Submit a request for verification of a toll-free phone number.
+      operationId: requestVerification
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+      requestBody:
+        $ref: '#/components/requestBodies/verificationRequest'
+      responses:
+        '202':
+          $ref: '#/components/responses/verifyPostResponse'
+        '400':
+          $ref: '#/components/responses/tfvPostBadRequestResponse'
+        '401':
+          $ref: '#/components/responses/tfvUnauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/tfvForbiddenResponse'
+        '405':
+          $ref: '#/components/responses/tfvNotAllowedResponse'
+        '429':
+          $ref: '#/components/responses/tfvTooManyRequestsResponse'
+        '500':
+          $ref: '#/components/responses/tfvServerErrorResponse'
+        '503':
+          $ref: '#/components/responses/tfvServiceUnavailableResponse'
+      summary: Submit a toll-free verification request
+      tags:
+        - Toll-Free Verification
+  /accounts/{accountId}/tollFreeVerification/webhooks/subscriptions:
+    get:
+      description: >-
+        Provides a list of webhook subscriptions that are registered to receive
+        status updates for the toll-free verification requests submitted under
+        this account (password will not be returned through this API; if
+        `basicAuthentication` is defined, the `password` property of that object
+        will be null).
+      operationId: listWebhookSubscriptions
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/webhookSubscriptionsList'
+        '400':
+          $ref: '#/components/responses/tfvPostBadRequestResponse'
+        '401':
+          $ref: '#/components/responses/tfvUnauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/tfvForbiddenResponse'
+        '405':
+          $ref: '#/components/responses/tfvNotAllowedResponse'
+        '429':
+          $ref: '#/components/responses/tfvTooManyRequestsResponse'
+        '500':
+          $ref: '#/components/responses/tfvServerErrorResponse'
+        '503':
+          $ref: '#/components/responses/tfvServiceUnavailableResponse'
+      summary: List all webhook subscriptions registered for this account
+      tags:
+        - Toll-Free Verification
+    post:
+      description: >-
+        Create a new webhook subscription (this webhook will be called for every
+        update on every submission). In addition to a `callbackUrl`, this
+        subscription can provide optional HTTP basic authentication credentials
+        (a username and a password). The returned subscription object will
+        contain an ID that can be used to modify or delete the subscription at a
+        later time.
+      operationId: createWebhookSubscription
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+      requestBody:
+        $ref: '#/components/requestBodies/webhookSubscriptionRequest'
+      responses:
+        '201':
+          $ref: '#/components/responses/webhookSubscriptionCreated'
+        '400':
+          $ref: '#/components/responses/tfvBadRequestResponse'
+        '401':
+          $ref: '#/components/responses/tfvUnauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/tfvForbiddenResponse'
+        '404':
+          $ref: '#/components/responses/tfvNotFoundResponse'
+        '405':
+          $ref: '#/components/responses/tfvNotAllowedResponse'
+        '429':
+          $ref: '#/components/responses/tfvTooManyRequestsResponse'
+        '500':
+          $ref: '#/components/responses/tfvServerErrorResponse'
+        '503':
+          $ref: '#/components/responses/tfvServiceUnavailableResponse'
+      summary: Create a new webhook subscription
+      tags:
+        - Toll-Free Verification
+  /accounts/{accountId}/tollFreeVerification/webhooks/subscriptions/{id}:
+    delete:
+      description: Delete a webhook subscription by ID.
+      operationId: deleteWebhookSubscription
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/WebhookSubscriptionIdPathParam'
+      responses:
+        '204':
+          $ref: '#/components/responses/webhookSubscriptionDeleted'
+        '400':
+          $ref: '#/components/responses/tfvBadRequestResponse'
+        '401':
+          $ref: '#/components/responses/tfvUnauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/tfvForbiddenResponse'
+        '404':
+          $ref: '#/components/responses/tfvNotFoundResponse'
+        '405':
+          $ref: '#/components/responses/tfvNotAllowedResponse'
+        '429':
+          $ref: '#/components/responses/tfvTooManyRequestsResponse'
+        '500':
+          $ref: '#/components/responses/tfvServerErrorResponse'
+        '503':
+          $ref: '#/components/responses/tfvServiceUnavailableResponse'
+      summary: Delete a webhook subscription
+      tags:
+        - Toll-Free Verification
+    put:
+      description: >-
+        Update an existing webhook subscription (`callbackUrl` and
+        `basicAuthentication` can be updated).
+      operationId: updateWebhookSubscription
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/WebhookSubscriptionIdPathParam'
+      requestBody:
+        $ref: '#/components/requestBodies/webhookSubscriptionRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/webhookSubscriptionUpdated'
+        '400':
+          $ref: '#/components/responses/tfvBadRequestResponse'
+        '401':
+          $ref: '#/components/responses/tfvUnauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/tfvForbiddenResponse'
+        '404':
+          $ref: '#/components/responses/tfvNotFoundResponse'
+        '405':
+          $ref: '#/components/responses/tfvNotAllowedResponse'
+        '429':
+          $ref: '#/components/responses/tfvTooManyRequestsResponse'
+        '500':
+          $ref: '#/components/responses/tfvServerErrorResponse'
+        '503':
+          $ref: '#/components/responses/tfvServiceUnavailableResponse'
+      summary: Update an existing webhook subscription
+      tags:
+        - Toll-Free Verification
   /accounts/{accountId}/totalSeats:
     get:
       description: Retrieves the total number of seats on account
@@ -42423,38 +42556,6 @@ paths:
       summary: Retrieve Covered Rate Centers
       tags:
         - Rate Centers
-  /portingLosingCarriers:
-    get:
-      description: >
-        <p>Retrieve a list of losing carriers that a number can be ported from,
-        given a countryCodeA3 and optional areaCode and phoneNumberType
-        values.</p>
-      operationId: portingLosingCarriers
-      parameters:
-        - $ref: '#/components/parameters/countryCodeA3QueryParameter'
-        - $ref: '#/components/parameters/phoneNumberTypeQueryParameter'
-        - $ref: '#/components/parameters/areaCodeQueryParameter'
-      responses:
-        '200':
-          $ref: '#/components/responses/listOfLosingCarriersResponse'
-        '400':
-          oneOf:
-            - $ref: >-
-                #/components/responses/badRequestLosingInvlaidCountryCodeCarriersResponse
-            - $ref: >-
-                #/components/responses/badRequestInvalidNumberTypeLosingCarriersResponse
-            - $ref: >-
-                #/components/responses/badRequestInvalidAreaCodeLosingCarriersResponse
-            - $ref: >-
-                #/components/responses/badRequestInvalidUriLosingCarriersResponse
-        '429': null
-        '502':
-          $ref: '#/components/responses/noUpstreamServicesLosingCarriersResponse'
-      summary: >-
-        Retrieve a list of losing carriers for porting non-NANPA telephone
-        numbers
-      tags:
-        - Porting
   /rateCenters:
     get:
       description: >-
@@ -43751,325 +43852,7 @@ paths:
       summary: Retrieve tn details
       tags:
         - Tns
-  /v1/accounts/{accountId}/phoneNumbers/{phoneNumber}/tollFreeVerification:
-    get:
-      description: >-
-        This endpoint will provide verification status for a phone number that
-        is provisioned to your account.
-      operationId: getVerificationStatus
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - $ref: '#/components/parameters/TfPhoneNumberPathParam'
-      responses:
-        '200':
-          $ref: '#/components/responses/verifyStatusResponse'
-        '400':
-          $ref: '#/components/responses/tfvBadRequestResponse'
-        '401':
-          $ref: '#/components/responses/tfvUnauthorizedResponse'
-        '403':
-          $ref: '#/components/responses/tfvForbiddenResponse'
-        '404':
-          $ref: '#/components/responses/tfvNotFoundResponse'
-        '405':
-          $ref: '#/components/responses/tfvNotAllowedResponse'
-        '429':
-          $ref: '#/components/responses/tfvTooManyRequestsResponse'
-        '500':
-          $ref: '#/components/responses/tfvServerErrorResponse'
-        '503':
-          $ref: '#/components/responses/tfvServiceUnavailableResponse'
-      summary: Get the verification status of a toll-free phone number
-      tags:
-        - Toll-Free Verification
-  /v1/accounts/{accountId}/shortcodes:
-    get:
-      description: Retrieves all the short codes registered with an account.
-      operationId: getAllShortCodesByAccount
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - $ref: '#/components/parameters/shortCodeOffsetQueryParam'
-        - $ref: '#/components/parameters/shortCodeLimitQueryParam'
-      responses:
-        '200':
-          $ref: '#/components/responses/shortCodeGetAllShortCodesByAccountResponse'
-        '400':
-          $ref: '#/components/responses/shortCode400'
-        '401':
-          $ref: '#/components/responses/shortCode401'
-        '403':
-          $ref: '#/components/responses/shortCode403'
-        '404':
-          $ref: '#/components/responses/shortCode404'
-        '405':
-          $ref: '#/components/responses/shortCode405'
-        '429':
-          $ref: '#/components/responses/shortCode429'
-        '500':
-          $ref: '#/components/responses/shortCode500'
-      summary: Retrieve short codes by account.
-      tags:
-        - Short Codes
-  /v1/accounts/{accountId}/shortcodes/{shortCode}/{country}:
-    get:
-      description: >-
-        Retrieve the details of an account's registration of a short code for a
-        single country.
-      operationId: getShortCodeByAccountIdCountryAndShortCode
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - $ref: '#/components/parameters/shortCodePathParam'
-        - $ref: '#/components/parameters/shortCodeCountryPathParam'
-      responses:
-        '200':
-          $ref: >-
-            #/components/responses/shortCodeGetShortCodeByAccountIdCountryAndShortCodeResponse
-        '400':
-          $ref: '#/components/responses/shortCode400'
-        '401':
-          $ref: '#/components/responses/shortCode401'
-        '403':
-          $ref: '#/components/responses/shortCode403'
-        '404':
-          $ref: '#/components/responses/shortCode404'
-        '405':
-          $ref: '#/components/responses/shortCode405'
-        '429':
-          $ref: '#/components/responses/shortCode429'
-        '500':
-          $ref: '#/components/responses/shortCode500'
-      summary: Retrieve short code details.
-      tags:
-        - Short Codes
-    patch:
-      description: >-
-        Update (field by field) an account's short code registration for a
-        country. This utilizes [Json Patch](https://jsonpatch.com/).
-      operationId: patchShortCodeLease
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - $ref: '#/components/parameters/shortCodePathParam'
-        - $ref: '#/components/parameters/shortCodeCountryPathParam'
-      requestBody:
-        $ref: '#/components/requestBodies/shortCodeJsonPatchShortCodeRequest'
-      responses:
-        '200':
-          $ref: '#/components/responses/shortCodeUpdateShortCodeResponse'
-        '400':
-          $ref: '#/components/responses/shortCode400'
-        '401':
-          $ref: '#/components/responses/shortCode401'
-        '403':
-          $ref: '#/components/responses/shortCode403'
-        '404':
-          $ref: '#/components/responses/shortCode404'
-        '405':
-          $ref: '#/components/responses/shortCode405'
-        '409':
-          $ref: '#/components/responses/shortCode409'
-        '429':
-          $ref: '#/components/responses/shortCode429'
-        '500':
-          $ref: '#/components/responses/shortCode500'
-      summary: >-
-        Update the lease information of an account's short code registration for
-        a country.
-      tags:
-        - Short Codes
-  /v1/accounts/{accountId}/shortcodes/{shortCode}/{country}/history:
-    get:
-      description: >-
-        Retrieves a complete history of all updates associated with an account's
-        registration of a short code for a single country.
-      operationId: getShortCodeHistoryAccountIdCountryAndShortCode
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - $ref: '#/components/parameters/shortCodePathParam'
-        - $ref: '#/components/parameters/shortCodeCountryPathParam'
-        - $ref: '#/components/parameters/shortCodeOffsetQueryParam'
-        - $ref: '#/components/parameters/shortCodeLimitQueryParam'
-        - $ref: '#/components/parameters/shortCodeHistoryShortCodeSortParam'
-        - $ref: '#/components/parameters/shortCodeHistoryVersionSortParam'
-      responses:
-        '200':
-          $ref: >-
-            #/components/responses/shortCodeGetShortCodeHistoryAccountIdCountryAndShortCodeResponse
-        '400':
-          $ref: '#/components/responses/shortCode400'
-        '401':
-          $ref: '#/components/responses/shortCode401'
-        '403':
-          $ref: '#/components/responses/shortCode403'
-        '404':
-          $ref: '#/components/responses/shortCode404'
-        '405':
-          $ref: '#/components/responses/shortCode405'
-        '429':
-          $ref: '#/components/responses/shortCode429'
-        '500':
-          $ref: '#/components/responses/shortCode500'
-      summary: Retrieve short code history.
-      tags:
-        - Short Codes
-  /v1/accounts/{accountId}/tollFreeVerification:
-    post:
-      callbacks:
-        tfVerificationStatus:
-          $ref: '#/components/callbacks/tfVerificationStatus'
-      description: Submit a request for verification of a toll-free phone number.
-      operationId: requestVerification
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-      requestBody:
-        $ref: '#/components/requestBodies/verificationRequest'
-      responses:
-        '202':
-          $ref: '#/components/responses/verifyPostResponse'
-        '400':
-          $ref: '#/components/responses/tfvPostBadRequestResponse'
-        '401':
-          $ref: '#/components/responses/tfvUnauthorizedResponse'
-        '403':
-          $ref: '#/components/responses/tfvForbiddenResponse'
-        '405':
-          $ref: '#/components/responses/tfvNotAllowedResponse'
-        '429':
-          $ref: '#/components/responses/tfvTooManyRequestsResponse'
-        '500':
-          $ref: '#/components/responses/tfvServerErrorResponse'
-        '503':
-          $ref: '#/components/responses/tfvServiceUnavailableResponse'
-      summary: Submit a toll-free verification request
-      tags:
-        - Toll-Free Verification
-  /v1/accounts/{accountId}/tollFreeVerification/webhooks/subscriptions:
-    get:
-      description: >-
-        Provides a list of webhook subscriptions that are registered to receive
-        status updates for the toll-free verification requests submitted under
-        this account (password will not be returned through this API; if
-        `basicAuthentication` is defined, the `password` property of that object
-        will be null).
-      operationId: listWebhookSubscriptions
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-      responses:
-        '200':
-          $ref: '#/components/responses/webhookSubscriptionsList'
-        '400':
-          $ref: '#/components/responses/tfvPostBadRequestResponse'
-        '401':
-          $ref: '#/components/responses/tfvUnauthorizedResponse'
-        '403':
-          $ref: '#/components/responses/tfvForbiddenResponse'
-        '405':
-          $ref: '#/components/responses/tfvNotAllowedResponse'
-        '429':
-          $ref: '#/components/responses/tfvTooManyRequestsResponse'
-        '500':
-          $ref: '#/components/responses/tfvServerErrorResponse'
-        '503':
-          $ref: '#/components/responses/tfvServiceUnavailableResponse'
-      summary: List all webhook subscriptions registered for this account
-      tags:
-        - Toll-Free Verification
-    post:
-      description: >-
-        Create a new webhook subscription (this webhook will be called for every
-        update on every submission). In addition to a `callbackUrl`, this
-        subscription can provide optional HTTP basic authentication credentials
-        (a username and a password). The returned subscription object will
-        contain an ID that can be used to modify or delete the subscription at a
-        later time.
-      operationId: createWebhookSubscription
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-      requestBody:
-        $ref: '#/components/requestBodies/webhookSubscriptionRequest'
-      responses:
-        '201':
-          $ref: '#/components/responses/webhookSubscriptionCreated'
-        '400':
-          $ref: '#/components/responses/tfvBadRequestResponse'
-        '401':
-          $ref: '#/components/responses/tfvUnauthorizedResponse'
-        '403':
-          $ref: '#/components/responses/tfvForbiddenResponse'
-        '404':
-          $ref: '#/components/responses/tfvNotFoundResponse'
-        '405':
-          $ref: '#/components/responses/tfvNotAllowedResponse'
-        '429':
-          $ref: '#/components/responses/tfvTooManyRequestsResponse'
-        '500':
-          $ref: '#/components/responses/tfvServerErrorResponse'
-        '503':
-          $ref: '#/components/responses/tfvServiceUnavailableResponse'
-      summary: Create a new webhook subscription
-      tags:
-        - Toll-Free Verification
-  /v1/accounts/{accountId}/tollFreeVerification/webhooks/subscriptions/{id}:
-    delete:
-      description: Delete a webhook subscription by ID.
-      operationId: deleteWebhookSubscription
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - $ref: '#/components/parameters/WebhookSubscriptionIdPathParam'
-      responses:
-        '204':
-          $ref: '#/components/responses/webhookSubscriptionDeleted'
-        '400':
-          $ref: '#/components/responses/tfvBadRequestResponse'
-        '401':
-          $ref: '#/components/responses/tfvUnauthorizedResponse'
-        '403':
-          $ref: '#/components/responses/tfvForbiddenResponse'
-        '404':
-          $ref: '#/components/responses/tfvNotFoundResponse'
-        '405':
-          $ref: '#/components/responses/tfvNotAllowedResponse'
-        '429':
-          $ref: '#/components/responses/tfvTooManyRequestsResponse'
-        '500':
-          $ref: '#/components/responses/tfvServerErrorResponse'
-        '503':
-          $ref: '#/components/responses/tfvServiceUnavailableResponse'
-      summary: Delete a webhook subscription
-      tags:
-        - Toll-Free Verification
-    put:
-      description: >-
-        Update an existing webhook subscription (`callbackUrl` and
-        `basicAuthentication` can be updated).
-      operationId: updateWebhookSubscription
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - $ref: '#/components/parameters/WebhookSubscriptionIdPathParam'
-      requestBody:
-        $ref: '#/components/requestBodies/webhookSubscriptionRequest'
-      responses:
-        '200':
-          $ref: '#/components/responses/webhookSubscriptionUpdated'
-        '400':
-          $ref: '#/components/responses/tfvBadRequestResponse'
-        '401':
-          $ref: '#/components/responses/tfvUnauthorizedResponse'
-        '403':
-          $ref: '#/components/responses/tfvForbiddenResponse'
-        '404':
-          $ref: '#/components/responses/tfvNotFoundResponse'
-        '405':
-          $ref: '#/components/responses/tfvNotAllowedResponse'
-        '429':
-          $ref: '#/components/responses/tfvTooManyRequestsResponse'
-        '500':
-          $ref: '#/components/responses/tfvServerErrorResponse'
-        '503':
-          $ref: '#/components/responses/tfvServiceUnavailableResponse'
-      summary: Update an existing webhook subscription
-      tags:
-        - Toll-Free Verification
-  /v1/tollFreeVerification/useCases:
+  /tollFreeVerification/useCases:
     get:
       description: Provides a list of valid toll-free use cases
       operationId: listUseCases
