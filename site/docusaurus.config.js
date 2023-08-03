@@ -7,6 +7,7 @@ const customConfig = require("./custom.config.json");
 const blogPosts = require("./blogposts.config.json");
 const ltsVersions = require("./lts.config.json");
 const numbersSpec = fs.readFileSync("./specs/numbers.yml", "utf-8");
+const numbersSpec_v2 = fs.readFileSync("./specs/numbers_v2.yml", "utf-8");
 const phoneNumberLookupSpec = fs.readFileSync(
   "./specs/phone-number-lookup.yml",
   "utf-8"
@@ -171,6 +172,8 @@ module.exports = {
   customFields: {
     numbersSpec: YAML.parse(numbersSpec),
     numbersSpecLink: `${customConfig.numbersSpecLink}`,
+    numbersSpec_v2: YAML.parse(numbersSpec_v2),
+    numbersSpec_v2Link: `${customConfig.numbersSpec_v2Link}`,
     phoneNumberLookupSpec: YAML.parse(phoneNumberLookupSpec),
     phoneNumberLookupSpecLink: `${customConfig.phoneNumberLookupSpecLink}`,
     voiceSpec: YAML.parse(voiceSpec),
