@@ -7,8 +7,8 @@ import SpecVersionDropdown from '@site/src/components/SpecVersionDropdown';
 export default function ApiReferencePage() {
     const {siteConfig} = useDocusaurusContext();
     const options = [
-        {title: "V1", link: "/apis/numbers"},
-        {title: "V2", link: "/apis/numbers/v2"},
+        {title: "V1", link: "/apis/numbers/"},
+        {title: "V2", link: "/apis/numbers/v2/"},
     ];
     const version = "V2"
 
@@ -18,7 +18,7 @@ export default function ApiReferencePage() {
             description="Everything you'll need to start working with our Numbers API."
             keywords="Bandwidth,API,Numbers">
             <SpecVersionDropdown options={options} default={version} />
-            <ApiReference spec={siteConfig.customFields.numbersSpec_v2} color={siteConfig.customFields.numbersMaroon} downloadDefinitionUrl={siteConfig.customFields.numbersSpec_v2Link}/>
+            <ApiReference spec={siteConfig.customFields.numbersSpec_v2} color={siteConfig.customFields.numbersMaroon} hideDownloadButton={true} downloadDefinitionUrl={siteConfig.customFields.numbersSpec_v2Link}/>
         </Layout>
     );
 }
