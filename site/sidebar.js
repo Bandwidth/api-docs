@@ -65,7 +65,7 @@ module.exports = {
             },
           ],
         },
-        // "numbers/apiV2",
+        // "numbers/numbersApiV2",
         {
           type: "category",
           label: "Porting",
