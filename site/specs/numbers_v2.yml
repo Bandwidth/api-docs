@@ -1257,6 +1257,51 @@ components:
       required: true
       schema:
         type: string
+    areaCode:
+      description: >-
+        The area code of the phone number. The system defaults to return all
+        area codes when the query parameter is not passed. The countryCodeA3 is
+        a required parameter with areaCode.
+      example: 435
+      in: query
+      name: areaCode
+      required: false
+      schema:
+        type: integer
+    city:
+      description: >-
+        The name of the city. The system defaults to return all cities when the
+        query parameter is not passed. The countryCodeA3 is a required parameter
+        with city. Some phone number types like TOLL_FREE may not have any
+        associated cities.
+      example: RALEIGH
+      in: query
+      name: city
+      required: false
+      schema:
+        type: string
+    countryCodeA3Required:
+      description: >-
+        Country code in ISO 3166-1 alpha-3 format. Note that only one country
+        code (i.e. USA, CAN, GBR etc.) is allowed when configured by the user.
+      example: GBR
+      in: query
+      name: countryCodeA3
+      required: true
+      schema:
+        type: string
+    phoneNumberType:
+      description: >-
+        Typically phone number type can be one of GEOGRAPHIC, NATIONAL, MOBILE,
+        TOLL_FREE, SHARED_COST. The system defaults to return phone numbers of
+        all types when the query parameter is not passed. The countryCodeA3 is a
+        required parameter with phone number type.
+      example: GEOGRAPHIC
+      in: query
+      name: phoneNumberType
+      required: false
+      schema:
+        type: string
     shortCodeCountryPathParam:
       description: The short code number country.
       example: USA
@@ -4600,6 +4645,20 @@ components:
                 type: object
               type: array
           type: object
+    CountryCoverageResponseError:
+      properties:
+        responseStatus:
+          $ref: '#/components/schemas/responseStatus'
+      type: object
+      xml:
+        name: CountryCoverageResponse
+    CountryCoverageResponseSuccess:
+      properties:
+        countryCoverages:
+          $ref: '#/components/schemas/countryCoverages'
+      type: object
+      xml:
+        name: CountryCoverageResponse
     CoverageMatrixEntry:
       properties:
         Abbreviation:
@@ -14103,6 +14162,37 @@ components:
         - email
         - phoneNumber
       type: object
+    countryCoverage:
+      properties:
+        countryCodeA3:
+          description: Country code in ISO 3166-1 alpha-3 format
+          example: USA
+          type: string
+          xml:
+            name: CountryCodeA3
+        phoneNumberType:
+          description: Phone Number Type
+          example: GEOGRAPHIC
+          type: string
+          xml:
+            name: PhoneNumberType
+        regions:
+          items:
+            $ref: '#/components/schemas/region'
+          type: array
+          xml:
+            name: Regions
+            wrapped: true
+      type: object
+      xml:
+        name: CountryCoverage
+    countryCoverages:
+      items:
+        $ref: '#/components/schemas/countryCoverage'
+      type: array
+      xml:
+        name: CountryCoverages
+        wrapped: true
     denialReasonDescription:
       description: Denial reason explanation
       example: Disallowed Content - Gambling
@@ -14337,6 +14427,40 @@ components:
                   name: OrderCreateDate
             type: object
       type: object
+    region:
+      properties:
+        areaCode:
+          description: Area Code
+          example: 201
+          type: integer
+          xml:
+            name: AreaCode
+        cityName:
+          description: City Name
+          example: New York
+          type: string
+          xml:
+            name: CityName
+      type: object
+      xml:
+        name: Region
+    responseStatus:
+      properties:
+        description:
+          description: 'Detailed explanation about error '
+          example: You must provide at least one parameter in order to search.
+          type: string
+          xml:
+            name: Description
+        errorCode:
+          description: Numeric designation of corresponding error
+          example: 3924
+          type: integer
+          xml:
+            name: ErrorCode
+      type: object
+      xml:
+        name: ResponseStatus
     shortCode:
       description: Short code registration.
       properties:
@@ -42216,9 +42340,42 @@ paths:
             Centers that serve those Cities.  If 'available' is specified then
             the number of TNs available in that city / RC combination is also
             included.
-      summary: List Cities
+      summary: List Cities [NANPA]
       tags:
-        - Cities
+        - Coverage
+  /coverage/countries:
+    get:
+      description: >-
+        The /coverage/countries resource returns countries, number types and
+        cities supported for any given country.
+      operationId: countryCoverage
+      parameters:
+        - $ref: '#/components/parameters/countryCodeA3Required'
+        - $ref: '#/components/parameters/phoneNumberType'
+        - $ref: '#/components/parameters/city'
+        - $ref: '#/components/parameters/areaCode'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountryCoverageResponseSuccess'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CountryCoverageResponseSuccess'
+          description: Created
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountryCoverageResponseError'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/CountryCoverageResponseError'
+          description: Bad Request
+      summary: Retrieve Country Coverage
+      tags:
+        - Coverage
   /coveredRateCenters:
     get:
       description: >-
@@ -43902,7 +44059,7 @@ tags:
       url: /docs/numbers/porting/port-ins/bulkPortIns
     name: Bulk Port-In
   - name: Callbacks
-  - name: Cities
+  - name: Coverage
   - description: >-
       DLDA = Directory Listing and Directory Assistance. A DLDA resource
       associates a TN with a Street Address. This gets updated in a Network
