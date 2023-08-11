@@ -9374,6 +9374,51 @@ components:
         TotalCount:
           type: integer
       type: object
+    NANPATNDetail:
+      description: Returned when `enableTnDetail=True` for NANPA numbers
+      properties:
+        LATA:
+          example: 426
+          type: number
+          xml:
+            name: LATA
+        city:
+          $ref: '#/components/schemas/city'
+        countryCodeA3:
+          $ref: '#/components/schemas/countryCodeA3'
+        fullNumber:
+          example: 17722029845
+          type: string
+          xml:
+            name: FullNumber
+        phoneNumberType:
+          $ref: '#/components/schemas/phoneNumberType'
+        rateCenter:
+          example: SEBASTIAN
+          type: string
+          xml:
+            name: RateCenter
+        state:
+          example: FL
+          type: string
+          xml:
+            name: State
+        tier:
+          example: 0
+          type: number
+          xml:
+            name: Tier
+        vendorId:
+          example: 49
+          type: number
+          xml:
+            name: VendorId
+        vendorName:
+          example: Bandwidth CLEC
+          type: string
+          xml:
+            name: VendorName
+      type: object
     NNRoute:
       properties:
         DeliveryNetwork:
@@ -9878,6 +9923,28 @@ components:
           items:
             $ref: '#/components/schemas/OriginationRoutePayload'
           type: array
+      type: object
+    OtherTNDetail:
+      description: Returned when `enableTnDetail=True` for Other numbers
+      properties:
+        areaCode:
+          $ref: '#/components/schemas/areaCode'
+        city:
+          $ref: '#/components/schemas/city'
+        countryCodeA3:
+          $ref: '#/components/schemas/countryCodeA3'
+        fullNumber:
+          example: 31208908115
+          type: string
+          xml:
+            name: FullNumber
+        phoneNumberType:
+          $ref: '#/components/schemas/phoneNumberType'
+        tier:
+          example: 0
+          type: number
+          xml:
+            name: Tier
       type: object
     PaginationLinks:
       properties:
@@ -11336,46 +11403,33 @@ components:
       type: object
     SearchResult:
       oneOf:
-        - properties:
-            ResultCount:
-              format: int32
-              type: integer
-            TelephoneNumberList:
-              items:
-                $ref: '#/components/schemas/TelephoneNumber'
-              type: array
-          type: object
-        - properties:
-            resultCount:
-              format: int32
-              type: integer
-            telephoneNumberDetailList:
-              items:
-                $ref: '#/components/schemas/telephoneNumberDetail'
-              type: array
-              xml:
-                name: TelephoneNumberDetailList
-            xml:
-              name: ResultCount
-          type: object
+        - $ref: '#/components/schemas/TNDetailDisabled'
+        - $ref: '#/components/schemas/TNDetailEnabled'
       xml:
         name: SearchResult
     SearchResultError:
       properties:
-        Error:
+        error:
           properties:
-            Code:
+            code:
+              example: 4010
               type: integer
-            Description:
+              xml:
+                name: Code
+            description:
+              example: >-
+                One of more required search parameters are null or empty, please
+                refer to the api documentation
               type: string
+              xml:
+                name: Description
           type: object
+          xml:
+            name: Error
       title: SearchResult
       type: object
-    SearchResultErrorWrapper:
-      properties:
-        SearchResult:
-          $ref: '#/components/schemas/SearchResultError'
-      type: object
+      xml:
+        name: SearchResult
     SearchResultForAvailableNpaNxx:
       properties:
         AvailableNpaNxxList:
@@ -12624,6 +12678,43 @@ components:
                 $ref: '#/components/schemas/SubscriptionResponsePayload'
               type: array
           type: object
+      type: object
+    TNDetailDisabled:
+      properties:
+        resultCount:
+          example: 1
+          type: integer
+          xml:
+            name: ResultCount
+        telephoneNumberList:
+          items:
+            example: '+17722029845'
+            type: string
+            xml:
+              name: TelephoneNumber
+          type: array
+          xml:
+            name: TelephoneNumberList
+            wrapped: true
+      title: TN Detail Disabled
+      type: object
+    TNDetailEnabled:
+      properties:
+        resultCount:
+          example: 1
+          type: integer
+          xml:
+            name: ResultCount
+        telephoneNumberDetailList:
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/NANPATNDetail'
+              - $ref: '#/components/schemas/OtherTNDetail'
+          type: array
+          xml:
+            name: TelephoneNumberDetailList
+            wrapped: true
+      title: TN Detail Enabled
       type: object
     TNSipPeersResponse:
       properties:
@@ -15761,52 +15852,6 @@ components:
           - is required
           - can not be empty
       type: object
-    telephoneNumberDetail:
-      description: Returned when `enableTnDetail=True`
-      properties:
-        city:
-          example: MICCO
-          type: string
-          xml:
-            name: City
-        fullNumber:
-          example: 17722029845
-          type: string
-          xml:
-            name: FullNumber
-        lata:
-          example: 46018
-          type: number
-          xml:
-            name: LATA
-        rateCenter:
-          example: SEBASTIAN
-          type: string
-          xml:
-            name: RateCenter
-        state:
-          example: FL
-          type: string
-          xml:
-            name: State
-        tier:
-          example: 0
-          type: number
-          xml:
-            name: Tier
-        vendorId:
-          example: 49
-          type: number
-          xml:
-            name: VendorId
-        vendorName:
-          example: Bandwidth CLEC
-          type: string
-          xml:
-            name: VendorName
-      type: object
-      xml:
-        name: TelephoneNumberDetail
     tfPhoneNumber:
       description: Toll-free telephone number in E.164 format
       example: '+18005555555'
@@ -17167,17 +17212,117 @@ paths:
                 $ref: >-
                   #/components/schemas/SearchResultForAvailableNpaNxxErrorWrapper
           description: There are no phone numbers within the specified scope.
-      summary: Retrieves available Npa-Nxx tns
+      summary: Retrieves available Npa-Nxx tns [NANPA]
       tags:
         - Available Tns
   /accounts/{accountId}/availableNumbers:
     get:
-      description: |-
+      description: >-
         Retrieves the phone numbers according to the input parameters.
-         <p>In this table are presented combinations of path parameters for different type of search:</p> <table><thead><tr><th>Search Type</th><th>Required Parameters</th><th>Combinational Parameters</th><th>Optional Parameters</th></tr></thead><tbody><tr><td>Area Code</td><td>areaCode</td><td>rateCenter (state required), city (state required), state, lata, zip</td><td>quantity, enableTNDetail, protected</td></tr><tr><td>NPA-NXX</td><td>npaNxx</td><td>rateCenter (state required), city (state required), state, lata, zip, orderBy</td><td>quantity, enableTNDetail, protected</td></tr><tr><td>NPA-NXX with Local Calling Area</td><td>npaNxx</td><td></td><td>quantity, LCA, enableTNDetail, protected</td></tr><tr><td>NPA-NXX-X</td><td>npaNxxx</td><td>rateCenter (state required), city (state required), state, lata, zip, orderBy</td><td>quantity, enableTNDetail, protected</td></tr><tr><td>NPA-NXX-X with Local Calling Area</td><td>npaNxxx</td><td>rateCenter (state required), city (state required), state, lata, zip</td><td>quantity, LCA, enableTNDetail, protected</td></tr><tr><td>RateCenter</td><td>rateCenter, state</td><td>city, areaCode/npaNxx/npaNxxx, lata, zip, orderBy</td><td>quantity, enableTNDetail, protected</td></tr><tr><td>RateCenter with Local Calling Area</td><td>rateCenter, state</td><td></td><td>quantity, LCA, enableTNDetail, protected</td></tr><tr><td>State</td><td>state</td><td>rateCenter, city, areaCode/npaNxx/npaNxxx, lata, zip</td><td>quantity, enableTNDetail, protected</td></tr><tr><td>City</td><td>state, city</td><td>rateCenter, state, areaCode/npaNxx/npaNxxx, lata, zip, orderBy</td><td>quantity, enableTNDetail, protected</td></tr><tr><td>Zip Code</td><td>zip</td><td>rateCenter (state required), city (state required), state, areaCode/npaNxx/npaNxxx, lata, orderBy</td><td>quantity, enableTNDetail, protected</td></tr><tr><td>LATA</td><td>lata</td><td>rateCenter (state required), city (state required), state, areaCode/npaNxx/npaNxxx, zip</td><td>quantity, enableTNDetail, protected</td></tr><tr><td>Local Vanity</td><td>localVanity</td><td>state, areaCode</td><td>endsIn, quantity, protected, enableTNdetails</td></tr><tr><td>TollFree Vanity</td><td>tollFreeVanity</td><td>orderBy</td><td>quantity</td></tr><tr><td>TollFree WildCard</td><td>tollFreeWildCardPattern</td><td>orderBy</td><td>quantity</td></tr></tbody></table>
+
+        In this table are presented combinations of path parameters for non US
+        and Canadian countries: 
+
+        | Search | Required Parameters | Combinational Parameters | Optional
+        Parameters |
+
+        |:-------|:--------------------|:-------------------------|:--------------------|
+
+        |Phone Number Type|phoneNumberType|areaCode, city, features|quantity,
+        enableTNDetail|
+
+        |Area Code|areaCode|phoneNumberType, city, features|quantity,
+        enableTNDetail|
+
+        |City|city|phoneNumberType, areaCode, features|quantity, enableTNDetail|
+
+        |Product Features|features|phoneNumberType, areaCode, city|quantity,
+        enableTNDetail|
+
+        In this table are presented combinations of path parameters for
+        different type of search when countryCodeA3 is configured, or defaulted,
+        to USA and/or CAN:
+
+        | Search | Required Parameters | Combinational Parameters | Optional
+        Parameters |
+
+        |:-------|:--------------------|:-------------------------|:--------------------|
+
+        |Area Code|areaCode|rateCenter (state required), city (state required),
+        state, lata, zip|quantity, enableTNDetail, protected|
+
+        |NPA-NXX|npaNxx|rateCenter (state required), city (state required),
+        state, lata, zip, orderBy|quantity, enableTNDetail, protected|
+
+        |NPA-NXX with Local Calling Area|npaNxx||quantity, LCA, enableTNDetail,
+        protected|
+
+        |NPA-NXX-X|npaNxxx|rateCenter (state required), city (state required),
+        state, lata, zip, orderBy|quantity, enableTNDetail, protected|
+
+        |NPA-NXX-X with Local Calling Area|npaNxxx|rateCenter (state required),
+        city (state required), state, lata, zip|quantity, LCA, enableTNDetail,
+        protected|
+
+        |RateCenter|rateCenter, state|city, areaCode/npaNxx/npaNxxx, lata, zip,
+        orderBy|quantity, enableTNDetail, protected|
+
+        |RateCenter with Local Calling Area|rateCenter, state||quantity, LCA,
+        enableTNDetail, protected|
+
+        |State|state|rateCenter, city, areaCode/npaNxx/npaNxxx, lata,
+        zip|quantity, enableTNDetail, protected|
+
+        |City|state, city|rateCenter, state, areaCode/npaNxx/npaNxxx, lata, zip,
+        orderBy|quantity, enableTNDetail, protected|
+
+        |Zip Code|zip|rateCenter (state required), city (state required), state,
+        areaCode/npaNxx/npaNxxx, lata, orderBy|quantity, enableTNDetail,
+        protected|
+
+        |LATA|lata|rateCenter (state required), city (state required), state,
+        areaCode/npaNxx/npaNxxx, zip|quantity, enableTNDetail, protected|
+
+        |Local Vanity|localVanity|state, areaCode|endsIn, quantity, protected,
+        enableTNdetails|
+
+        |TollFree Vanity|tollFreeVanity|orderBy|quantity|
+
+        |TollFree WildCard|tollFreeWildCardPattern|orderBy|quantity|
       operationId: GetAvailableTns
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: >-
+            <p>Country code of the country in its ISO 3166-1 alpha-3 format.
+            Note that only one country code (i.e. USA, CAN, GBR etc.) is allowed
+            when configured by the user.</p><br>The system defaults country code
+            to search for numbers in both United States and Canada (i.e.
+            USA,CAN).</br>
+          example: GBR
+          in: query
+          name: countryCodeA3
+          required: false
+          schema:
+            default: USA,CAN
+            type: string
+        - $ref: '#/components/parameters/phoneNumberTypeQueryParam'
+        - $ref: '#/components/parameters/areaCodeQueryParam'
+        - $ref: '#/components/parameters/cityQueryParam'
+        - description: >-
+            <p>The product features supported by number such as VOICE,
+            VOICE_OUTBOUND_NATIONAL, VOICE_OUTBOUND_INTERNATIONAL,
+            VOICE_OUTBOUND_TOLLFREE, EMERGENCY, MESSAGING_SMS. The query can be
+            used if you want to only list phone numbers that support certain
+            features. The system defaults to return phone numbers of all
+            features when the query parameter is not passed. Note that you can
+            specify multiple features by repeating the query parameter i.e.
+            features=VOICE&features=EMERGENCY.</p>
+          example: VOICE
+          in: query
+          name: features
+          required: false
+          schema:
+            type: string
         - description: The desired quantity of requested numbers.
           example: 30
           in: query
@@ -17217,16 +17362,6 @@ paths:
             default: false
             type: boolean
         - description: >-
-            <p>The 3-digit area code associated with the TN.</p><ul><li>Allowed
-            number ranges are [2-9] for the first digit and [0-9] for both the
-            second and third digits.</li></ul>
-          example: 435
-          in: query
-          name: areaCode
-          required: false
-          schema:
-            type: integer
-        - description: >-
             <p>The 6-digit prefix associated with the TN.</p><ul><li>Allowed
             number ranges for NPA are [2-9] for the first digit and [0-9] for
             both the second and third digits.</li><li>Allowed number ranges for
@@ -17259,15 +17394,6 @@ paths:
           example: Cary
           in: query
           name: rateCenter
-          required: false
-          schema:
-            type: string
-        - description: >-
-            <p>The name of the city. <b>NOTE:</b> `State` becomes a required
-            parameter when searching by `city`.</p>
-          example: RALEIGH
-          in: query
-          name: city
           required: false
           schema:
             type: string
@@ -17321,27 +17447,157 @@ paths:
       responses:
         '200':
           content:
+            application/json:
+              examples:
+                NANPA TN Detail:
+                  value: |-
+                    {
+                      "resultCount": 2,
+                      "telephoneNumberDetailList": [
+                        {
+                          "countryCodeA3": "USA",
+                          "phoneNumberType": "GEOGRAPHIC",
+                          "city": "CARY-RESEARCH TRIANGLE PARK",
+                          "LATA": 426,
+                          "rateCenter": "CARY-RTP",
+                          "state": "NC",
+                          "fullNumber": "+19193716651",
+                          "tier": 0,
+                          "vendorId": 49,
+                          "vendorName": "Bandwidth CLEC"
+                        },
+                        {
+                          "countryCodeA3": "USA",
+                          "phoneNumberType": "GEOGRAPHIC",
+                          "city": "CARY-RESEARCH TRIANGLE PARK",
+                          "LATA": 426,
+                          "rateCenter": "CARY-RTP",
+                          "state": "NC",
+                          "fullNumber": "+19193716675",
+                          "tier": 0,
+                          "vendorId": 49,
+                          "vendorName": "Bandwidth CLEC"
+                        }
+                      ]
+                    }
+                Other TN Detail:
+                  value: |-
+                    {
+                      "resultCount": 2,
+                      "telephoneNumberDetailList": [
+                        {
+                          "countryCodeA3": "NLD",
+                          "phoneNumberType": "GEOGRAPHIC",
+                          "city": "AMSTERDAM",
+                          "areaCode": 20,
+                          "tier": 0,
+                          "fullNumber": "+131208908115"
+                        },
+                        {
+                          "countryCodeA3": "NLD",
+                          "phoneNumberType": "NATIONAL",
+                          "city": "AMSTERDAM",
+                          "areaCode": 20,
+                          "tier": 0,
+                          "fullNumber": "+131208908116"
+                        }
+                      ]
+                    }
+                TN Detail Disabled:
+                  value: |-
+                    {
+                      "resultCount": 2,
+                      "telephoneNumberList": [
+                        "+14354776112"
+                      ]
+                    }
+              schema:
+                $ref: '#/components/schemas/SearchResult'
             application/xml:
               examples:
-                example:
+                NANPA TN Detail:
                   value: |-
                     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                     <SearchResult>
-                      <ResultCount>384</ResultCount>
+                        <ResultCount>2</ResultCount>
+                        <TelephoneNumberDetailList>
+                            <TelephoneNumberDetail>
+                                <CountryCodeA3>USA</CountryCodeA3>
+                                <PhoneNumberType>GEOGRAPHIC</PhoneNumberType>
+                                <City>CARY-RESEARCH TRIANGLE PARK</City>
+                                <LATA>426</LATA>
+                                <RateCenter>CARY-RTP</RateCenter>
+                                <State>NC</State>
+                                <FullNumber>+19193716651</FullNumber>
+                                <Tier>0</Tier>
+                                <VendorId>49</VendorId>
+                                <VendorName>Bandwidth CLEC</VendorName>
+                            </TelephoneNumberDetail>
+                            <TelephoneNumberDetail>
+                                <CountryCodeA3>USA</CountryCodeA3>
+                                <PhoneNumberType>GEOGRAPHIC</PhoneNumberType>
+                                <City>CARY-RESEARCH TRIANGLE PARK</City>
+                                <LATA>426</LATA>
+                                <RateCenter>CARY-RTP</RateCenter>
+                                <State>NC</State>
+                                <FullNumber>+19193716675</FullNumber>
+                                <Tier>0</Tier>
+                                <VendorId>49</VendorId>
+                                <VendorName>Bandwidth CLEC</VendorName>
+                            </TelephoneNumberDetail>
+                        </TelephoneNumberDetailList>
+                    </SearchResult>
+                Other TN Detail:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <SearchResult>
+                        <ResultCount>2</ResultCount>
+                        <TelephoneNumberDetailList>
+                            <TelephoneNumberDetail>
+                                <CountryCodeA3>NLD</CountryCodeA3>
+                                <PhoneNumberType>GEOGRAPHIC</PhoneNumberType>
+                                <City>AMSTERDAM</City>
+                                <AreaCode>20</AreaCode>
+                                <Tier>0</Tier>
+                                <FullNumber>+31208908115</FullNumber>
+                            </TelephoneNumberDetail>
+                            <TelephoneNumberDetail>
+                                <CountryCodeA3>NLD</CountryCodeA3>
+                                <PhoneNumberType>NATIONAL</PhoneNumberType>
+                                <City>AMSTERDAM</City>
+                                <AreaCode>20</AreaCode>
+                                <Tier>0</Tier>
+                                <FullNumber>+31208908116</FullNumber>
+                            </TelephoneNumberDetail>
+                        </TelephoneNumberDetailList>
+                    </SearchResult>
+                TN Detail Disabled:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <SearchResult>
+                      <ResultCount>2</ResultCount>
                       <TelephoneNumberList>
                         <TelephoneNumber>+14354776112</TelephoneNumber>
-                        <!-- SNIP -->
                         <TelephoneNumber>+14357095160</TelephoneNumber>
                       </TelephoneNumberList>
                     </SearchResult>
               schema:
                 $ref: '#/components/schemas/SearchResult'
-          description: >-
-            <p>A list of available numbers is provided.  Additional information
-            is available if the queryParameter enableTNDetail is true. If no
-            numbers are available an empty SearchResult element is returned.</p>
+          description: Created
         '400':
           content:
+            application/json:
+              examples:
+                example:
+                  value: |-
+                    {
+                        "error": {
+                            "code": 4010,
+                            "description": "One of more required search parameters are null or empty, please refer to the api documentation"
+                        }
+                    }
+              schema:
+                $ref: '#/components/schemas/SearchResultError'
             application/xml:
               examples:
                 example:
@@ -17354,7 +17610,7 @@ paths:
                         </Error>
                       </SearchResult>
               schema:
-                $ref: '#/components/schemas/SearchResultErrorWrapper'
+                $ref: '#/components/schemas/SearchResultError'
           description: <p>Invalid/missing input parameter</p>
       summary: Retrieve available tns
       tags:
