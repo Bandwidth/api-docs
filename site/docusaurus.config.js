@@ -133,7 +133,7 @@ module.exports = {
       ],
     },
     // prism: {
-    //     additionalLanguages: ['java'],  // Breaks if you try to add more than 1 language. And still breaks redoc :(((((
+    //     additionalLanguages: ['java'],  // Breaks if you try to add more than 1 language. And still breaks redoc :((((
     // },
   },
   scripts: [
