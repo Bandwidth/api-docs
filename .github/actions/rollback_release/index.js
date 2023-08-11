@@ -29,13 +29,16 @@ async function rollbackRelease() {
   const goodRelease = cleanedData[1].name
   
   core.setOutput("goodRelease", goodRelease)
+
+  workflows = await octokit.request('GET /repos/Bandwidth/api-docs/actions/workflows')
+  publishId = workflows.data.workflows.find(x => x.name === 'Publish Docsite').id
   
   await octokit.request(`PATCH /repos/Bandwidth/api-docs/releases/${badReleaseId}`, {
     tag_name: badRelease,
     draft: true,
   })
   
-  await octokit.request('POST /repos/Bandwidth/api-docs/actions/workflows/3796239/dispatches', {
+  await octokit.request(`POST /repos/Bandwidth/api-docs/actions/workflows/${publishId}/dispatches`, {
     ref: goodRelease,
   })
 }
