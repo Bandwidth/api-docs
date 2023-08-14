@@ -2626,6 +2626,37 @@ components:
         AssociatedSipPeersResponse:
           $ref: '#/components/schemas/AssociatedSipPeersResponse'
       type: object
+    AutomatedNANPATollFreeLnpOrderRequest:
+      description: >-
+        Indicates that the port-in contains toll-free numbers and that Toll-Free
+        Automation is enabled. The numbers will be automatically validated and
+        submitted to our toll-free porting vendor, then the port will be
+        processed manually by Bandwidth’s Local Number Portability team.
+      properties:
+        LnpOrder:
+          allOf:
+            - $ref: '#/components/schemas/LnpOrderBasic'
+            - $ref: '#/components/schemas/LnpOrderAutomatedTollFreeFields'
+            - properties:
+                RequestedFocDate:
+                  description: >-
+                    Format: ISO8601 encoding such as “2013-05-10T15:14:22Z”, or
+                    "2019-10-31T17:15:00+04:00".<br/><br/>For all ports, if
+                    `RequestedFocDate` is specified, the date portion must
+                    be:<br/> - in the future<br/> - after the losing carrier's
+                    minimum number of days to port-out<br/> - not on a weekend
+                    or U.S. holiday<br/><br/>If `RequestedFocDate` is not
+                    specified, the next available FOC date meeting the criteria
+                    above will be used. If the Time portion of the
+                    `RequestedFocDate` is omitted the port-in order will be
+                    activated at the default activation time of 11:30 AM ET. If
+                    an activation time other than 11:30 AM ET is desired, that
+                    activation time should be included in the
+                    `RequestedFocDate`.
+                  type: string
+              type: object
+      title: Automated NANPA Toll-Free LNP Order Request
+      type: object
     AvailableNpaNxx:
       properties:
         City:
@@ -7194,6 +7225,42 @@ components:
         delete:
           type: boolean
       type: object
+    InternalNANPALnpOrderRequest:
+      properties:
+        LnpOrder:
+          allOf:
+            - $ref: '#/components/schemas/LnpOrderBasic'
+            - $ref: '#/components/schemas/LnpOrderAdditionalFields'
+            - properties:
+                NewBillingTelephoneNumber:
+                  description: >-
+                    This field is used to specify a new billing telephone number
+                    on the losing carrier account.<br/><br/>Cannot be the same
+                    as `BillingTelephoneNumber` or be present in the list of
+                    ported numbers.
+                  type: string
+                PartialPort:
+                  description: >-
+                    The `PartialPort` must be set to `true` if the intent is to
+                    **NOT** port all of the telephone numbers associated with
+                    the `BillingTelephoneNumber`.<br/><br/>If PartialPort is
+                    omitted or false, and the `ListOfPhoneNumbers` does not
+                    include all of the telephone numbers associated with the
+                    `BillingTelephoneNumber`, the port-in will be
+                    rejected.<br/><br/>PartialPort is applicable only to on-net
+                    port-types.
+                  type: string
+                TnAttributes:
+                  description: >-
+                    The `TnAttributes` field specifies line attributes that will
+                    apply to the ported in telephone numbers. If present,
+                    `TnAttributes` may have a value of `PROTECTED`.
+                  items:
+                    $ref: '#/components/schemas/TnAttribute'
+                  type: array
+              type: object
+      title: Internal NANPA LNP Order Request
+      type: object
     IrisStatus:
       properties:
         Code:
@@ -7488,6 +7555,69 @@ components:
           type: array
       title: Error
       type: object
+    LnpOrderAdditionalFields:
+      properties:
+        AlternateSpid:
+          description: >-
+            Even though the telephone numbers are being ported into Bandwidth’s
+            SPID, some of Bandwidth’s wholesale customers have an alternate SPID
+            that is used to identify the telephone number with that customer.
+          type: string
+        BillingTelephoneNumber:
+          description: >-
+            The `BillingTelephoneNumber` is the primary telephone number
+            associated with the invoice that the subscriber gets from the losing
+            carrier. For wireline port-in, the BillingTelephoneNumber is
+            typically the telephone number being ported in.
+          type: string
+        RequestedFocDate:
+          description: >-
+            Format: ISO8601 encoding such as “2013-05-10T15:14:22Z”, or
+            "2019-10-31T17:15:00+04:00".<br/><br/>For all ports, if
+            `RequestedFocDate` is specified, the date portion must be:<br/> - in
+            the future<br/> - after the losing carrier's minimum number of days
+            to port-out<br/> - not on a weekend or U.S. holiday<br/><br/>If
+            `RequestedFocDate` is not specified, the next available FOC date
+            meeting the criteria above will be used. If the Time portion of the
+            `RequestedFocDate` is omitted the port-in order will be activated at
+            the default activation time of 11:30 AM ET. If an activation time
+            other than 11:30 AM ET is desired, that activation time should be
+            included in the `RequestedFocDate`.
+          type: string
+        Subscriber:
+          oneOf:
+            - $ref: '#/components/schemas/SubscriberBusiness'
+            - $ref: '#/components/schemas/SubscriberResidential'
+        Triggered:
+          description: >-
+            The `Triggered` field must be set to `true` if you want an
+            activation time other than the 11:30 AM ET default. The desired
+            activation time can then be specified in the time portion of the
+            `RequestedFocDate`. This field will be ignored if set for port-ins
+            with the `MANUAL_TOLLFREE`, `MANUAL_ON_NET`, or `MANUALOFFNET` port
+            types, as all manual port-ins are activated at 11:30 AM ET.
+          type: boolean
+        WirelessInfo:
+          description: Most common for telephone numbers that were formerly wireless.
+          properties:
+            AccountNumber:
+              description: >-
+                The `AccountNumber` is sometimes required to authorize the
+                port-out from the losing carrier. This is most common for
+                telephone numbers that were formerly wireless.
+              type: string
+            PinNumber:
+              description: >-
+                The `PinNumber` is sometimes required to authorize the port-out
+                from the losing carrier. This is most common for telephone
+                numbers that were formerly wireless.
+              type: string
+          title: WirelessInfo
+          type: object
+      required:
+        - BillingTelephoneNumber
+        - Subscriber
+      type: object
     LnpOrderAdditionalModifiableFields:
       properties:
         AlternateSpid:
@@ -7507,6 +7637,117 @@ components:
         Triggered:
           description: May be included in the PUT payload as is, but cannot be changed.
           type: boolean
+      type: object
+    LnpOrderAutomatedTollFreeFields:
+      properties:
+        TargetRespOrgId:
+          description: >-
+            This is the RespOrg ID that you want the toll free numbers ported
+            to. Normally it will specify a Bandwidth RespOrg ID like JYT01, but
+            it could be something else for RespOrg Exception customers. This
+            field is mandatory for non-draft toll free port-in orders.
+          maxLength: 5
+          minLength: 5
+          type: string
+      required:
+        - TargetRespOrgId
+      type: object
+    LnpOrderBasic:
+      properties:
+        CustomerOrderId:
+          description: >-
+            The `CustomerOrderId` is an optional field that may be provided by
+            the customer and will remain with the order. The value is opaque to
+            Bandwidth.
+          format: Only alphanumeric values, dashes and spaces
+          maxLength: 40
+          type: string
+        ListOfPhoneNumbers:
+          description: >-
+            `ListOfPhoneNumbers` is an array of `PhoneNumber`. At least one
+            `PhoneNumber` must be provided.
+          items:
+            properties:
+              PhoneNumber:
+                description: >-
+                  One or more phone numbers is required. <br/>Use a
+                  `<PhoneNumber>` tag for each phone number in the
+                  `<ListOfPhoneNumbers>` list.
+                format: Ten digit phone number with no dots or dashes
+                type: string
+            type: object
+          type: array
+        LoaAuthorizingPerson:
+          description: >-
+            This is the first and last names of the person that has authorized
+            the port.
+          maxLength: 15
+          type: string
+        PeerId:
+          description: >-
+            `PeerId` specifies the numeric identifier of the SIP-peer (Location)
+            that the telephone numbers will be ported into.<br/><br/>You can
+            find the identifier for a SIP-peer (location) by using `GET
+            /accounts/id/sites/id/sippeers`, or by clicking on 'Accounts' on the
+            upper right of the [Bandwidth
+            Dashboard](Https://dashboard.bandwidth.com), then clicking
+            'Locations' on the navigation bar. The SIP-peer (location)
+            identifiers are listed next to each location name. If `PeerId` is
+            omitted, the SIP-peer (location) designated as the 'default
+            location' for that site (sub-account) will be used.
+          type: string
+        ProcessingStatus:
+          description: >-
+            Including `ProcessingStatus` with a value of DRAFT allows you to
+            create a port-in request, but not process the request. This is
+            useful if you wish to add items to the order over a period of time
+            and submit once you have the order setup the way you want. Note,
+            however, that draft orders that have not been updated in a couple of
+            days are automatically deleted. Removal of stagnant draft orders is
+            performed so that telephone numbers are not tied up in these orders,
+            preventing them from being included in other orders.<br/><br/>Very
+            little validation is performed while an order is in draft state.
+            Omitting `ProcessingStatus` causes the port-in to be validated and,
+            if correct, processed right away. The full validation is performed
+            on the order when you change the ProcessingStatus to 'SUBMITTED' by
+            performing a PUT request on the order. <br><br><p>All toll free
+            telephone numbers provided will be validated (even in draft state)
+            to ensure
+
+            that they are portable, and to allow you to separate telephone
+            numbers into separate port-ins
+
+            based on the RespOrg that they are being ported from.</p>
+          enum:
+            - DRAFT
+          type: string
+        RequestedFocDate:
+          description: >-
+            Format: ISO8601 encoding such as “2013-05-10T15:14:22Z”, or
+            "2019-10-31T17:15:00+04:00".<br/><br/>For all ports, if
+            `RequestedFocDate` is specified, the date portion must be:<br/> - in
+            the future<br/> - after the losing carrier's minimum number of days
+            to port-out<br/> - not on a weekend or U.S. holiday<br/><br/>If
+            `RequestedFocDate` is not specified, the next available FOC date
+            meeting the criteria above will be used. If the Time portion of the
+            `RequestedFocDate` is omitted the port-in order will be activated at
+            the default activation time of 11:30 AM ET. If an activation time
+            other than 11:30 AM ET is desired, that activation time should be
+            included in the `RequestedFocDate`.
+          type: string
+        SiteId:
+          description: >-
+            `SiteId` specifies the identifier of the site (sub-account) that the
+            telephone numbers will be ported into.<br/><br/>You can find the
+            identifier for a site (sub-account) by using `GET
+            /accounts/id/sites`, or by clicking on 'Manage sub-account' for the
+            desired sub-account on the main page of the Bandwidth Dashboard.
+          format: int32
+          type: integer
+      required:
+        - SiteId
+        - ListOfPhoneNumbers
+        - LoaAuthorizingPerson
       type: object
     LnpOrderBasicModifiableFields:
       properties:
@@ -8400,6 +8641,25 @@ components:
         SkipAck:
           type: boolean
       type: object
+    ManualNANPATollFreeLnpOrderRequest:
+      description: >-
+        Manual indicates that the port-in will be processed manually by
+        Bandwidth’s Local Number Portability team. Currently all toll free
+        port-ins are handled manually by Bandwidth’s Local Number Portability
+        team. But Bandwidth is in the process of automating portions of toll
+        free porting, with a goal of eventually automating the entire process.
+      properties:
+        LnpOrder:
+          allOf:
+            - $ref: '#/components/schemas/LnpOrderBasic'
+          properties:
+            Subscriber:
+              allOf:
+                - $ref: '#/components/schemas/SubscriberBusiness'
+              type: object
+          type: object
+      title: Manual NANPA Toll-Free LNP Order Request
+      type: object
     ManualPortOutRequest:
       properties:
         BulkPortOut:
@@ -9024,6 +9284,53 @@ components:
           title: Number Portability Response
           type: object
       title: Number Portability Response
+      type: object
+    OffNetNANPALnpOrderRequest:
+      properties:
+        LnpOrder:
+          allOf:
+            - $ref: '#/components/schemas/LnpOrderBasic'
+            - $ref: '#/components/schemas/LnpOrderAdditionalFields'
+      title: Off-net NANPA LNP Order Request
+      type: object
+    OnNetNANPALnpOrderRequest:
+      properties:
+        LnpOrder:
+          allOf:
+            - $ref: '#/components/schemas/LnpOrderBasic'
+            - $ref: '#/components/schemas/LnpOrderAdditionalFields'
+            - properties:
+                AutoActivation:
+                  description: ''
+                  type: string
+                NewBillingTelephoneNumber:
+                  description: >-
+                    This field is used to specify a new billing telephone number
+                    on the losing carrier account.<br/><br/>Cannot be the same
+                    as `BillingTelephoneNumber` or be present in the list of
+                    ported numbers.
+                  type: string
+                PartialPort:
+                  description: >-
+                    The `PartialPort` must be set to `true` if the intent is to
+                    **NOT** port all of the telephone numbers associated with
+                    the `BillingTelephoneNumber`.<br/><br/>If PartialPort is
+                    omitted or false, and the `ListOfPhoneNumbers` does not
+                    include all of the telephone numbers associated with the
+                    `BillingTelephoneNumber`, the port-in will be
+                    rejected.<br/><br/>PartialPort is applicable only to on-net
+                    port-types.
+                  type: string
+                TnAttributes:
+                  description: >-
+                    The `TnAttributes` field specifies line attributes that will
+                    apply to the ported in telephone numbers. If present,
+                    `TnAttributes` may have a value of `PROTECTED`.
+                  items:
+                    $ref: '#/components/schemas/TnAttribute'
+                  type: array
+              type: object
+      title: On-net NANPA LNP Order Request
       type: object
     OrderCreatedDate:
       description: Creation date of the order.
@@ -9719,6 +10026,16 @@ components:
             $ref: '#/components/schemas/TollFreeNumberRespOrg'
           type: array
       type: object
+    PortinCreateSubscriberServiceAddress:
+      allOf:
+        - $ref: '#/components/schemas/PortinSubscriberBasicServiceAddress'
+      required:
+        - HouseNumber
+        - StreetName
+        - City
+        - StateCode
+        - Zip
+      title: ServiceAddress
     PortinList:
       description: >-
         The list of child, or subtending, orders associated with a bulk
@@ -11796,6 +12113,23 @@ components:
             - generic
           type: string
       type: object
+    SubscriberBusiness:
+      properties:
+        BusinessName:
+          maxLength: 25
+          type: string
+        ServiceAddress:
+          $ref: '#/components/schemas/PortinCreateSubscriberServiceAddress'
+        SubscriberType:
+          enum:
+            - BUSINESS
+          type: string
+      required:
+        - SubscriberType
+        - ServiceAddress
+        - BusinessName
+      title: BUSINESS
+      type: object
     SubscriberPatch:
       properties:
         BusinessName:
@@ -11826,6 +12160,30 @@ components:
             - GENERIC
         delete:
           type: boolean
+      type: object
+    SubscriberResidential:
+      properties:
+        FirstName:
+          maxLength: 25
+          type: string
+        LastName:
+          maxLength: 25
+          type: string
+        MiddleInitial:
+          maxLength: 1
+          type: string
+        ServiceAddress:
+          $ref: '#/components/schemas/PortinCreateSubscriberServiceAddress'
+        SubscriberType:
+          enum:
+            - RESIDENTIAL
+          type: string
+      required:
+        - SubscriberType
+        - ServiceAddress
+        - FirstName
+        - LastName
+      title: RESIDENTIAL
       type: object
     SubscriberTypePatch:
       properties:
@@ -29039,6 +29397,19 @@ paths:
       operationId: CreatePortin
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
+      requestBody:
+        content:
+          application/xml:
+            examples:
+              Automated NANPA Toll-Free Port-in:
+                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrder>\n\t<CustomerOrderId>My order id</CustomerOrderId>\n\t<RequestedFocDate>2021-06-16Z</RequestedFocDate>\n\t<SiteId>2439</SiteId>\n\t<PeerId>23432</PeerId>\n\t<LoaAuthorizingPerson>The Authgal</LoaAuthorizingPerson>\n\t<TargetRespOrgId>JYT01</TargetRespOrgId>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>+18774809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n</LnpOrder>"
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/OnNetNANPALnpOrderRequest'
+                - $ref: '#/components/schemas/ManualNANPATollFreeLnpOrderRequest'
+                - $ref: '#/components/schemas/AutomatedNANPATollFreeLnpOrderRequest'
+                - $ref: '#/components/schemas/OffNetNANPALnpOrderRequest'
+                - $ref: '#/components/schemas/InternalNANPALnpOrderRequest'
       responses:
         '201':
           content:
