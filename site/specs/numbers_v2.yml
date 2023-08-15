@@ -8645,8 +8645,6 @@ components:
       properties:
         LnpOrder:
           allOf:
-            - $ref: '#/components/schemas/LnpOrderBasic'
-            - $ref: '#/components/schemas/LnpOrderAdditionalFields'
             - properties:
                 CustomerOrderId:
                   description: >-
@@ -8672,7 +8670,9 @@ components:
                     type: object
                   type: array
                 LosingCarrierName:
-                  description: todo
+                  description: >-
+                    `LosingCarrierName` specifies the name of the losing
+                    carrier 
                   type: string
                 PeerId:
                   description: >-
@@ -8750,6 +8750,65 @@ components:
                 - LosingCarrierName
               type: object
       title: Manual International LNP Order Request
+      type: object
+    ManualInternationalLnpOrderResponse:
+      properties:
+        LnpOrderResponse:
+          properties:
+            Errors:
+              properties:
+                Code:
+                  description: Numeric designation of corresponding error.
+                  type: integer
+                Description:
+                  description: Detailed explanation about error.
+                  type: string
+              type: object
+            ListOfPhoneNumbers:
+              description: >-
+                ListOfPhoneNumbers is an array of PhoneNumber. At least one
+                PhoneNumber must be provided for all port-types.
+              items:
+                $ref: '#/components/schemas/PhoneNumber'
+              type: array
+            OrderId:
+              description: Unique orderId that is used to manage the order.
+              type: string
+            PeerId:
+              description: >-
+                The numeric designation for the Location or SIP PEER ID that
+                applied to the Port-in Order. The SIP Peer ID is used to provide
+                a home within the location for the TN(s) that were ported in by
+                the Port-in Order
+              type: string
+            ProcessingStatus:
+              description: >-
+                The processing status of this order. Values may be: PROCESSING,
+                COMPLETED, FAILED. PROCESSING means that the system is still
+                processing the order. COMPLETED means that the order has been
+                successfully completed. FAILED means that errors occurred while
+                processing the order, and that the order did not make any
+                changes to the system.
+              enum:
+                - PENDING_DOCUMENTS
+              type: string
+            SiteId:
+              description: >-
+                The numeric designation for the Site ID that applied to the
+                Port-in Order. The SiteId is used to provide a home within the
+                account for the TN(s) that were ported in by the Port-in Order
+              type: string
+            Status:
+              properties:
+                Code:
+                  type: integer
+                Description:
+                  type: string
+              type: object
+            Subscriber:
+              $ref: '#/components/schemas/Subscriber'
+          type: object
+      title: International Manual LNP Order Response
       type: object
     ManualNANPATollFreeLnpOrderRequest:
       description: >-
@@ -29556,7 +29615,9 @@ paths:
                 On-net NANPA Port-in Order Response:
                   value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrderResponse>\n\t<OrderId>03f194d5-3932-4e9f-8ba1-03ef767985e5</OrderId>\n\t<Status>\n\t\t<Code>201</Code>\n\t\t<Description>Order request received. Please use the order id to check the status of your order later.</Description>\n\t</Status>\n\t<ProcessingStatus>PENDING_DOCUMENTS</ProcessingStatus>\n\t<RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>\n\t<LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>\n\t<Subscriber>\n\t\t<SubscriberType>BUSINESS</SubscriberType>\n\t\t<FirstName>First</FirstName>\n\t\t<LastName>Last</LastName>\n\t\t<ServiceAddress>\n\t\t\t<HouseNumber>11235</HouseNumber>\n\t\t\t<StreetName>Back</StreetName>\n\t\t\t<City>Denver</City>\n\t\t\t<StateCode>CO</StateCode>\n\t\t\t<Zip>27541</Zip>\n\t\t\t<County>Canyon</County>\n\t\t\t<Country>United States</Country>\n\t\t</ServiceAddress>\n\t</Subscriber>\n\t<WirelessInfo>\n\t\t<AccountNumber>771297665AABC</AccountNumber>\n\t\t<PinNumber>1234</PinNumber>\n\t</WirelessInfo>\n\t<TnAttributes>\n\t\t<TnAttribute>Protected</TnAttribute>\n\t\t<TnAttribute>External</TnAttribute>\n\t\t<TnAttribute>Imported</TnAttribute>\n\t</TnAttributes>\n\t<BillingTelephoneNumber>+19195551234</BillingTelephoneNumber>\n\t<NewBillingTelephoneNumber>+19175131245</NewBillingTelephoneNumber>\n\t<SiteId>    SITE ID     </SiteId>\n\t<PeerId>  SIPPEER ID    </PeerId>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>+19194809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n\t<CustomerOrderId>myOrder</CustomerOrderId>\n\t<Triggered>true</Triggered>\n\t<PartialPort>true</PartialPort>\n</LnpOrderResponse>"
               schema:
-                $ref: '#/components/schemas/LnpOrderResponse'
+                oneOf:
+                  - $ref: '#/components/schemas/LnpOrderResponse'
+                  - $ref: '#/components/schemas/ManualInternationalLnpOrderResponse'
           description: >-
             The order has been created and an order ID is specified in the
             payload and in the header.
