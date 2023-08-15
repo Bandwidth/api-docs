@@ -8641,6 +8641,116 @@ components:
         SkipAck:
           type: boolean
       type: object
+    ManualInternationalLnpOrderRequest:
+      properties:
+        LnpOrder:
+          allOf:
+            - $ref: '#/components/schemas/LnpOrderBasic'
+            - $ref: '#/components/schemas/LnpOrderAdditionalFields'
+            - properties:
+                CustomerOrderId:
+                  description: >-
+                    The `CustomerOrderId` is an optional field that may be
+                    provided by the customer and will remain with the order. The
+                    value is opaque to Bandwidth.
+                  format: Only alphanumeric values, dashes and spaces
+                  maxLength: 40
+                  type: string
+                ListOfPhoneNumbers:
+                  description: >-
+                    `ListOfPhoneNumbers` is an array of `PhoneNumber`. At least
+                    one `PhoneNumber` must be provided.
+                  items:
+                    properties:
+                      PhoneNumber:
+                        description: >-
+                          One or more phone numbers is required. <br/>Use a
+                          `<PhoneNumber>` tag for each phone number in the
+                          `<ListOfPhoneNumbers>` list.
+                        format: Ten digit phone number with no dots or dashes
+                        type: string
+                    type: object
+                  type: array
+                LosingCarrierName:
+                  description: todo
+                  type: string
+                PeerId:
+                  description: >-
+                    `PeerId` specifies the numeric identifier of the SIP-peer
+                    (Location) that the telephone numbers will be ported
+                    into.<br/><br/>You can find the identifier for a SIP-peer
+                    (location) by using `GET /accounts/id/sites/id/sippeers`, or
+                    by clicking on 'Accounts' on the upper right of the
+                    [Bandwidth Dashboard](Https://dashboard.bandwidth.com), then
+                    clicking 'Locations' on the navigation bar. The SIP-peer
+                    (location) identifiers are listed next to each location
+                    name. If `PeerId` is omitted, the SIP-peer (location)
+                    designated as the 'default location' for that site
+                    (sub-account) will be used.
+                  type: string
+                ProcessingStatus:
+                  description: >-
+                    Including `ProcessingStatus` with a value of DRAFT allows
+                    you to create a port-in request, but not process the
+                    request. This is useful if you wish to add items to the
+                    order over a period of time and submit once you have the
+                    order setup the way you want. Note, however, that draft
+                    orders that have not been updated in a couple of days are
+                    automatically deleted. Removal of stagnant draft orders is
+                    performed so that telephone numbers are not tied up in these
+                    orders, preventing them from being included in other
+                    orders.<br/><br/>Very little validation is performed while
+                    an order is in draft state. Omitting `ProcessingStatus`
+                    causes the port-in to be validated and, if correct,
+                    processed right away. The full validation is performed on
+                    the order when you change the ProcessingStatus to
+                    'SUBMITTED' by performing a PUT request on the order.
+                    <br><br><p>All toll free telephone numbers provided will be
+                    validated (even in draft state) to ensure
+
+                    that they are portable, and to allow you to separate
+                    telephone numbers into separate port-ins
+
+                    based on the RespOrg that they are being ported from.</p>
+                  enum:
+                    - DRAFT
+                  type: string
+                RequestedFocDate:
+                  description: >-
+                    Format: ISO8601 encoding such as "2019-10-31".<br/><br/>For
+                    international ports, if `RequestedFocDate` is specified the
+                    time portions will be ignored and the date portion must
+                    be:<br/> - in the future<br/> - not on a weekend.
+                  type: string
+                SiteId:
+                  description: >-
+                    `SiteId` specifies the identifier of the site (sub-account)
+                    that the telephone numbers will be ported into.<br/><br/>You
+                    can find the identifier for a site (sub-account) by using
+                    `GET /accounts/id/sites`, or by clicking on 'Manage
+                    sub-account' for the desired sub-account on the main page of
+                    the Bandwidth Dashboard.
+                  format: int32
+                  type: integer
+                Subscriber:
+                  oneOf:
+                    - $ref: '#/components/schemas/SubscriberBusiness'
+                    - $ref: '#/components/schemas/SubscriberResidential'
+                    - properties:
+                        VatNumber:
+                          description: >-
+                            The `VatNumber` is the value of the VAT number
+                            associated with the subscriber. This field is
+                            required for international port-ins.
+                          type: string
+                      type: object
+              required:
+                - SiteId
+                - ListOfPhoneNumbers
+                - LosingCarrierName
+              type: object
+      title: Manual International LNP Order Request
+      type: object
     ManualNANPATollFreeLnpOrderRequest:
       description: >-
         Manual indicates that the port-in will be processed manually by
@@ -17083,7 +17193,7 @@ paths:
           description: No results matching the specified query parameters were found.
       summary: List bulk port-in orders
       tags:
-        - Bulk Port-In (NANPA)
+        - Bulk Port-In
     post:
       description: >-
         <p>Creates a bulk port-in order to be used as a template for a
@@ -17239,7 +17349,7 @@ paths:
             </ul></p>
       summary: Create bulk port-in order
       tags:
-        - Bulk Port-In (NANPA)
+        - Bulk Port-In
   /accounts/{accountId}/bulkPortins/{orderId}:
     delete:
       description: >-
@@ -17287,7 +17397,7 @@ paths:
           description: The indicated Bulk Port-in order could not be found.
       summary: Delete bulk port-in order
       tags:
-        - Bulk Port-In (NANPA)
+        - Bulk Port-In
     get:
       description: >-
         Retrieves information associated with the bulk port-in order specified
@@ -17320,7 +17430,7 @@ paths:
           description: The indicated Bulk Port-in order could not be found.
       summary: Retrieve bulk port-in order
       tags:
-        - Bulk Port-In (NANPA)
+        - Bulk Port-In
     patch:
       description: >-
         <p>It is possible to change ("SUPP" in LNP terms) an existing Bulk
@@ -17401,7 +17511,7 @@ paths:
           description: The indicated Bulk Port-in order could not be found.
       summary: Patch bulk port-in order
       tags:
-        - Bulk Port-In (NANPA)
+        - Bulk Port-In
     put:
       description: >-
         The PUT operation is available only for bulk port-in orders that are not
@@ -17505,7 +17615,7 @@ paths:
           description: The indicated Bulk Port-in order could not be found.
       summary: Update bulk port-in order
       tags:
-        - Bulk Port-In (NANPA)
+        - Bulk Port-In
   /accounts/{accountId}/bulkPortins/{orderId}/history:
     get:
       description: >-
@@ -17593,7 +17703,7 @@ paths:
           description: NOT FOUND - the order id does not exist in the system
       summary: Retrieve bulk port-in order history
       tags:
-        - Bulk Port-In (NANPA)
+        - Bulk Port-In
   /accounts/{accountId}/bulkPortins/{orderId}/loas:
     get:
       description: >-
@@ -17645,7 +17755,7 @@ paths:
             case where the list is empty.
       summary: List bulk port-in order loa files
       tags:
-        - Bulk Port-In (NANPA)
+        - Bulk Port-In
     post:
       description: >-
         <p>POSTing to the /loas resource will enable the upload of the file. 
@@ -17807,7 +17917,7 @@ paths:
             documentType header.
       summary: Upload bulk port-in order loa file
       tags:
-        - Bulk Port-In (NANPA)
+        - Bulk Port-In
   /accounts/{accountId}/bulkPortins/{orderId}/notes:
     get:
       description: >-
@@ -17859,7 +17969,7 @@ paths:
             be used if the resource was addressed with an identifier
       summary: List bulk port-in order notes
       tags:
-        - Bulk Port-In (NANPA)
+        - Bulk Port-In
     post:
       description: >-
         Updates the Notes resource by adding a note. Adding a note to a port-in
@@ -17914,7 +18024,7 @@ paths:
             response.
       summary: Create bulk port-in order note
       tags:
-        - Bulk Port-In (NANPA)
+        - Bulk Port-In
   /accounts/{accountId}/bulkPortins/{orderId}/notes/{noteId}:
     put:
       description: >-
@@ -17971,7 +18081,7 @@ paths:
             response.
       summary: Update bulk port-in order note
       tags:
-        - Bulk Port-In (NANPA)
+        - Bulk Port-In
   /accounts/{accountId}/bulkPortins/{orderId}/portinList:
     get:
       description: >-
@@ -18027,7 +18137,7 @@ paths:
             no child port-in orders associated with the bulk port-in.
       summary: List bulk port-in child orders
       tags:
-        - Bulk Port-In (NANPA)
+        - Bulk Port-In
     put:
       description: >-
         <p>A PUT on a PortinList resource will cause replacement of the list of
@@ -18096,7 +18206,7 @@ paths:
             with the bulk order.
       summary: Update list of bulk port-in child orders
       tags:
-        - Bulk Port-In (NANPA)
+        - Bulk Port-In
   /accounts/{accountId}/bulkPortins/{orderId}/tnList:
     get:
       description: >-
@@ -18212,7 +18322,7 @@ paths:
             payload.
       summary: List bulk port-in order tns
       tags:
-        - Bulk Port-In (NANPA)
+        - Bulk Port-In
     put:
       description: >-
         <p>This operation is used to add telephone numbers to a draft bulk
@@ -18313,7 +18423,7 @@ paths:
             telephone numbers.
       summary: Update bulk port-in order tn list
       tags:
-        - Bulk Port-In (NANPA)
+        - Bulk Port-In
   /accounts/{accountId}/campaignManagement/10dlc:
     get:
       description: >-
@@ -19351,7 +19461,7 @@ paths:
           description: The response will include all CSR related data.
       summary: List CSR orders
       tags:
-        - Porting (NANPA)
+        - Porting
     post:
       description: Creates the csr order
       operationId: CreateCsrOrder
@@ -19406,7 +19516,7 @@ paths:
             request
       summary: Create CSR order
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/csrs/{orderId}:
     get:
       description: Retrieves the csr order for the given account ID by order id</a>
@@ -19462,7 +19572,7 @@ paths:
           description: The response will include all CSR related data.
       summary: Get CSR order
       tags:
-        - Porting (NANPA)
+        - Porting
     put:
       description: Update csr order
       operationId: UpdateCsrOrder
@@ -19547,7 +19657,7 @@ paths:
             request
       summary: Update CSR order
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/csrs/{orderId}/notes:
     get:
       description: 'Retrieve all notes associated with the CSRs order. '
@@ -19589,7 +19699,7 @@ paths:
             be used if the resource was addressed with an identifier
       summary: List CSRs order notes
       tags:
-        - Porting (NANPA)
+        - Porting
     post:
       description: |-
         Updates the Notes resource by adding a note. Adding a note to a CSRs 
@@ -19641,7 +19751,7 @@ paths:
             response.
       summary: Add CSRs order note
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/csrs/{orderId}/notes/{noteId}:
     put:
       description: Update a specified note.  Notes may only be updated, not deleted
@@ -19701,7 +19811,7 @@ paths:
             response.
       summary: Update CSRs order note
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/discnumbers:
     get:
       description: >-
@@ -26547,7 +26657,7 @@ paths:
             </ul>
       summary: Request portability information for a set of TNs
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/lsrorders:
     get:
       description: >-
@@ -26713,7 +26823,7 @@ paths:
             recognized are not considered errors, and are just ignored.
       summary: List LSR orders
       tags:
-        - Porting (NANPA)
+        - Porting
     post:
       description: >-
         A POST creates a LSR order request to initiate a port-out action. 
@@ -26892,7 +27002,7 @@ paths:
             Fror more info see LsrOrderErrors section in response.
       summary: Create LSR order - initiate a port-out action
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/lsrorders/{orderId}:
     get:
       description: >-
@@ -26968,7 +27078,7 @@ paths:
             payload.
       summary: Fetch LSR order status
       tags:
-        - Porting (NANPA)
+        - Porting
     put:
       description: >-
         Updates the information associated with the specified LSR. 
@@ -27220,7 +27330,7 @@ paths:
             NOT FOUND - the order id does not exist in the system
       summary: Fetch LSR order history
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/lsrorders/{orderId}/notes:
     get:
       description: >-
@@ -27278,7 +27388,7 @@ paths:
             be used if the resource was addressed with an identifier
       summary: Fetch LSR order notes
       tags:
-        - Porting (NANPA)
+        - Porting
     post:
       description: >-
         Updates the Notes resource by adding a note. Adding a note to a port-in
@@ -27343,7 +27453,7 @@ paths:
             response.
       summary: Create LSR order note
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/lsrorders/{orderId}/notes/{noteId}:
     put:
       description: >-
@@ -27410,7 +27520,7 @@ paths:
             response.
       summary: Update LSR order note
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/moveTns:
     get:
       description: >-
@@ -29384,7 +29494,7 @@ paths:
           description: The port-ins have been successfully retrieved.
       summary: List port-in orders
       tags:
-        - Porting (NANPA)
+        - Porting
     post:
       description: >
         Creates a port-in order for the specified telephone number(s) and
@@ -29433,6 +29543,7 @@ paths:
                 - $ref: '#/components/schemas/AutomatedNANPATollFreeLnpOrderRequest'
                 - $ref: '#/components/schemas/OffNetNANPALnpOrderRequest'
                 - $ref: '#/components/schemas/InternalNANPALnpOrderRequest'
+                - $ref: '#/components/schemas/ManualInternationalLnpOrderRequest'
       responses:
         '201':
           content:
@@ -29514,7 +29625,7 @@ paths:
           description: The order failed; one of the input parameters is invalid.
       summary: Create port-in order
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/portins/status:
     get:
       description: Gets Port In orders which were last modified in the specified date range
@@ -29547,7 +29658,7 @@ paths:
           description: ''
       summary: Get Port In Range
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/portins/totals:
     get:
       description: Retrieves the total count of port-ins.
@@ -29586,7 +29697,7 @@ paths:
             payload.
       summary: Retrieve total count of port-in orders
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/portins/{orderId}:
     delete:
       description: >-
@@ -29642,7 +29753,7 @@ paths:
             already processed, and therefore cannot be deleted.
       summary: Delete port-in order
       tags:
-        - Porting (NANPA)
+        - Porting
     get:
       description: >-
         Retrieves the information associated with the specified port-in ID
@@ -29794,7 +29905,7 @@ paths:
             payload.
       summary: Retrieve port-in order
       tags:
-        - Porting (NANPA), Porting (International)
+        - Porting
     put:
       description: >
         <p>It is possible to change ("SUPP" in LNP terms) an existing LNP order.
@@ -30088,7 +30199,7 @@ paths:
             submit this port-in detach it from the parent bulk port-in.
       summary: Update port-in order
       tags:
-        - Porting (NANPA), Porting (International)
+        - Porting
   /accounts/{accountId}/portins/{orderId}/activationStatus:
     get:
       description: >-
@@ -30164,7 +30275,7 @@ paths:
             been erased.</p>
       summary: Retrieve port-in order activation status
       tags:
-        - Porting (NANPA)
+        - Porting
     put:
       description: >
         Sets the activation time for the port-in order.  <br> <br>
@@ -30256,7 +30367,7 @@ paths:
           description: Order id was not found.
       summary: Update port-in order activation status
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/portins/{orderId}/areaCodes:
     get:
       description: >-
@@ -30293,7 +30404,7 @@ paths:
             payload.
       summary: List port-in area codes
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/portins/{orderId}/history:
     get:
       description: >-
@@ -30371,7 +30482,7 @@ paths:
           description: NOT FOUND - the order id does not exist in the system
       summary: Retrieve port-in order history
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/portins/{orderId}/loas:
     get:
       description: >-
@@ -30423,7 +30534,7 @@ paths:
             case where the list is empty.
       summary: List port-in loa files
       tags:
-        - Porting (NANPA)
+        - Porting
     post:
       description: >-
         POSTing to the /loas resource will enable the upload of the file.  The
@@ -30595,7 +30706,7 @@ paths:
             application/pdf or image/tiff formats.</p>
       summary: Upload port-in loa file
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/portins/{orderId}/loas/{fileid}:
     delete:
       description: Deletes the file associated with the order
@@ -30623,7 +30734,7 @@ paths:
             with the order id.
       summary: Delete port-in loa file
       tags:
-        - Porting (NANPA)
+        - Porting
     get:
       description: Retrieves the file associated with the order
       operationId: RetrievePortinLoaFile
@@ -30673,7 +30784,7 @@ paths:
             with the order id.
       summary: Retrieve port-in loa file
       tags:
-        - Porting (NANPA)
+        - Porting
     put:
       description: >-
         A PUT on the filename will update / replace the identified file id.  The
@@ -30751,7 +30862,7 @@ paths:
           description: A 404 indicates that the file was not available for replacement.
       summary: Update port-in loa file
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/portins/{orderId}/loas/{fileid}/metadata:
     delete:
       description: Deletes the metadata previously associated with the identified file.
@@ -30781,7 +30892,7 @@ paths:
             with the order id.
       summary: Delete port-in loa file metadata
       tags:
-        - Porting (NANPA)
+        - Porting
     get:
       description: Retrieves the metadata associated with the file.
       operationId: RetrievePortinLoaMetadata
@@ -30821,7 +30932,7 @@ paths:
             with the order id.
       summary: Retrieve port-in loa file metadata
       tags:
-        - Porting (NANPA)
+        - Porting
     put:
       description: >-
         Associate metadata with the file named in the resource path.  This will
@@ -30865,7 +30976,7 @@ paths:
           description: Some error has occured as a result of the attempt.
       summary: Update port-in loa file metadata
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/portins/{orderId}/notes:
     get:
       description: Retrieve all notes associated with the order. <br>
@@ -30916,7 +31027,7 @@ paths:
             be used if the resource was addressed with an identifier
       summary: List port-in order notes
       tags:
-        - Porting (NANPA)
+        - Porting
     post:
       description: >-
         Updates the Notes resource by adding a note. Adding a note to a port-in
@@ -30972,7 +31083,7 @@ paths:
             response.
       summary: Create port-in order note
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/portins/{orderId}/notes/{noteId}:
     put:
       description: Update a specified note.  Notes may only be updated, not deleted.
@@ -31026,7 +31137,7 @@ paths:
             response.
       summary: Update port-in order note
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/portins/{orderId}/npaNxx:
     get:
       description: >-
@@ -31063,7 +31174,7 @@ paths:
             payload.
       summary: List port-in npaNxx
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/portins/{orderId}/tns:
     get:
       description: >-
@@ -31098,7 +31209,7 @@ paths:
             in the payload.
       summary: List port-in tns
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/portins/{orderId}/totals:
     get:
       description: >-
@@ -31132,7 +31243,7 @@ paths:
             retrieved and displayed in the payload.
       summary: Retrieve port-in total count of tns
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/portouts:
     get:
       description: >-
@@ -31227,7 +31338,7 @@ paths:
             is omitted from the success output.
       summary: List port-out requests
       tags:
-        - Porting (NANPA)
+        - Porting
     post:
       description: >-
         Creates a port-out request.<br>In the payload, CallbackUrl and
@@ -31267,7 +31378,7 @@ paths:
           description: The port-out request has been successfully received.
       summary: Create port-out request
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/portouts/status:
     get:
       description: >-
@@ -31317,7 +31428,7 @@ paths:
           description: ''
       summary: Get Port Out Range
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/portouts/totals:
     get:
       description: Retrieves the total count of port-uts.
@@ -31356,7 +31467,7 @@ paths:
             payload.
       summary: Retrieve total count of port-in orders
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/portouts/{orderId}:
     delete:
       description: Cancel port-out request.
@@ -31379,7 +31490,7 @@ paths:
           description: ''
       summary: Cancel port-out request
       tags:
-        - Porting (NANPA)
+        - Porting
     get:
       description: >-
         Retrieves the information associated with the specified port-out ID
@@ -31422,7 +31533,7 @@ paths:
             is omitted from the success output.
       summary: Fetch port-out request status
       tags:
-        - Porting (NANPA)
+        - Porting
     put:
       description: >-
         Updates or cancels a port-out ID. The payload to this method is similar
@@ -31469,7 +31580,7 @@ paths:
           description: The update or cancellation was successful.
       summary: Update/cancel port-out request
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/products:
     get:
       description: |
@@ -36100,7 +36211,7 @@ paths:
           description: The port-ins have been successfully retrieved.
       summary: Retrieve Site Port-In orders
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/sites/{siteId}/sippeers:
     get:
       description: Retrieve information about a Sip Peer or set of Sip Peers on Site
@@ -39420,7 +39531,7 @@ paths:
             error code and text description.
       summary: Retrieve tn port-out passcode
       tags:
-        - Porting (NANPA)
+        - Porting
     post:
       description: >-
         Retrieve information about one or more Telephone Numbers (TNs), where
@@ -39511,7 +39622,7 @@ paths:
             Bad Request - when in the POST body specified more then
             {pagination.maxsize} TNs.
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/tnoptions:
     get:
       description: >-
@@ -40451,7 +40562,7 @@ paths:
           description: The accountId specified in the request URI is not found.
       summary: Retrieve toll-free porting validations
       tags:
-        - Porting (NANPA)
+        - Porting
     post:
       description: >-
         A list of toll free telephone numbers submitted to this endpoint will
@@ -40802,7 +40913,7 @@ paths:
             Query received vendor http response: xxx
       summary: Create toll-free porting validation
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/tollFreePortingValidations/{orderId}:
     get:
       description: Fetch a specified toll free porting validation order.
@@ -40984,7 +41095,7 @@ paths:
             discuss options.
       summary: Retrieve toll-free porting validation
       tags:
-        - Porting (NANPA)
+        - Porting
     patch:
       description: >-
         Cancel a toll free porting validation order in the PROCESSING state. 
@@ -41121,7 +41232,7 @@ paths:
             PROCESSING state.
       summary: Patch toll-free porting validation
       tags:
-        - Porting (NANPA)
+        - Porting
   /accounts/{accountId}/tollFreeVerification:
     post:
       callbacks:
@@ -44031,7 +44142,7 @@ tags:
     externalDocs:
       description: Bulk port-in guide
       url: /docs/numbers/porting/port-ins/bulkPortIns
-    name: Bulk Port-In (NANPA)
+    name: Bulk Port-In
   - name: Callbacks
   - name: Cities
   - description: >-
@@ -44082,7 +44193,7 @@ tags:
     externalDocs:
       description: Porting guide
       url: /docs/numbers/porting/
-    name: Porting (NANPA)
+    name: Porting
   - name: Rate Centers
   - externalDocs:
       description: Reports guide
