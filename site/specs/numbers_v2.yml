@@ -1398,7 +1398,7 @@ components:
         associated cities.
       explode: true
       in: query
-      name: city2
+      name: city
       required: false
       schema:
         properties:
@@ -2411,30 +2411,25 @@ components:
         TollFreeMMSAllowed:
           type: boolean
       type: object
-    AccountProduct:
+    AccountProductResponse:
       properties:
-        Features:
-          items:
-            properties:
-              Feature:
-                type: string
-            type: object
-          type: array
-        Name:
-          type: string
-      type: object
-    AccountProducts:
-      properties:
-        Product:
-          items:
-            $ref: '#/components/schemas/AccountProduct'
-          type: array
+        product:
+          oneOf:
+            - $ref: '#/components/schemas/product'
+            - $ref: '#/components/schemas/productWithCountrySettings'
       type: object
     AccountProductsResponse:
       properties:
-        Products:
-          $ref: '#/components/schemas/AccountProducts'
+        products:
+          items:
+            $ref: '#/components/schemas/productWithCountrySettings'
+          type: array
+          xml:
+            name: Products
+            wrapped: true
       type: object
+      xml:
+        name: AccountProductsResponse
     AccountResponse:
       properties:
         Account:
@@ -14741,6 +14736,45 @@ components:
       xml:
         name: CountryCoverages
         wrapped: true
+    countrySetting:
+      properties:
+        countryCodeA3:
+          $ref: '#/components/schemas/countryCodeA3'
+        features:
+          description: List of features configured for the specified countryCodeA3
+          items:
+            properties:
+              featureName:
+                description: Feature Name
+                example: ORDERING
+                type: string
+                xml:
+                  name: FeatureName
+              isDisabled:
+                description: Feature Status
+                example: true
+                type: boolean
+                xml:
+                  name: IsDisabled
+            type: object
+            xml:
+              name: Feature
+          type: array
+          xml:
+            name: Features
+            wrapped: true
+        phoneNumberType:
+          $ref: '#/components/schemas/phoneNumberType'
+      type: object
+      xml:
+        name: CountrySetting
+    countrySettings:
+      items:
+        $ref: '#/components/schemas/countrySetting'
+      type: array
+      xml:
+        name: CountrySettings
+        wrapped: true
     createAddressRequest:
       properties:
         addressLine1:
@@ -15265,6 +15299,52 @@ components:
       example: '98072'
       title: Postal Code
       type: string
+    product:
+      properties:
+        features:
+          items:
+            description: Feature Name
+            example: ORDERING
+            type: string
+            xml:
+              name: Feature
+          type: array
+          xml:
+            name: Features
+            wrapped: true
+        name:
+          description: Product Name
+          example: NumberManagement
+          type: string
+          xml:
+            name: Name
+      type: object
+      xml:
+        name: Product
+    productWithCountrySettings:
+      properties:
+        countrySettings:
+          $ref: '#/components/schemas/countrySettings'
+        features:
+          items:
+            description: Feature Name
+            example: ORDERING
+            type: string
+            xml:
+              name: Feature
+          type: array
+          xml:
+            name: Features
+            wrapped: true
+        name:
+          description: Product Name
+          example: NumberManagement
+          type: string
+          xml:
+            name: Name
+      type: object
+      xml:
+        name: Product
     region:
       properties:
         areaCode:
@@ -32697,10 +32777,81 @@ paths:
       responses:
         '200':
           content:
+            application/json:
+              examples:
+                example:
+                  value: |-
+                    {
+                      "products": [
+                        {
+                          "name": "Termination",
+                          "features": [
+                            "TermHttpVoice"
+                          ]
+                        },
+                        {
+                          "name": "TollFree"
+                        },
+                        {
+                          "name": "Origination",
+                          "features": [
+                            "CallForwarding",
+                            "DlDa",
+                            "CNAM"
+                          ]
+                        },
+                        {
+                          "name": "MESSAGING",
+                          "features": [
+                            "SMS",
+                            "MMS",
+                            "HTTPV2",
+                            "TollFree"
+                          ]
+                        },
+                        {
+                          "name": "NumberManagement",
+                          "features": [
+                            "ORDERING",
+                            "LNP",
+                            "TN_ASSIGNMENT",
+                            "RESERVATION",
+                            "LSR"
+                          ]
+                          "countrySettings": [
+                            {
+                              "countryCodeA3": "FRA",
+                              "phoneNumberType": "GEOGRAPHIC",
+                              "features": [
+                                {
+                                  "featureName": "LNP",
+                                  "isDisabled": true
+                                },
+                                {
+                                  "featureName": "ORDERING",
+                                  "isDisabled": true
+                                }
+                              ]
+                            },
+                            {
+                              "countryCodeA3": "DEU",
+                              "phoneNumberType": "NATIONAL",
+                              "features": [
+                                {
+                                  "featureName": "ORDERING",
+                                  "isDisabled": false
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+              schema:
+                $ref: '#/components/schemas/AccountProductsResponse'
             application/xml:
               examples:
                 example:
-                  description: example
                   value: |-
                     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                     <AccountProductsResponse>
@@ -32712,9 +32863,6 @@ paths:
                                 </Features>
                             </Product>
                             <Product>
-                                <Name>VirtualInventory</Name>
-                            </Product>
-                            <Product>
                                 <Name>TollFree</Name>
                             </Product>
                             <Product>
@@ -32723,7 +32871,6 @@ paths:
                                     <Feature>CallForwarding</Feature>
                                     <Feature>DlDa</Feature>
                                     <Feature>CNAM</Feature>
-                                    <Feature>OrigHttpVoice</Feature>
                                 </Features>
                             </Product>
                             <Product>
@@ -32731,7 +32878,6 @@ paths:
                                 <Features>
                                   <Feature>SMS</Feature>
                                   <Feature>MMS</Feature>
-                                  <Feature>HTTP</Feature>
                                   <Feature>HTTPV2</Feature>
                                   <Feature>TollFree</Feature>
                                 </Features>
@@ -32741,12 +32887,36 @@ paths:
                                 <Features>
                                   <Feature>ORDERING</Feature>
                                   <Feature>LNP</Feature>
-                                  <Feature>EXTERNAL_TNS</Feature>
-                                  <Feature>PROTECTED_TNS</Feature>
                                   <Feature>TN_ASSIGNMENT</Feature>
                                   <Feature>RESERVATION</Feature>
                                   <Feature>LSR</Feature>
                                 </Features>
+                                <CountrySettings>
+                                  <CountrySetting>
+                                    <CountryCodeA3>FRA</CountryCodeA3>
+                                    <PhoneNumberType>GEOGRAPHIC</PhoneNumberType>
+                                    <Features>
+                                      <Feature>
+                                        <FeatureName>LNP</FeatureName>
+                                        <IsDisabled>true</IsDisabled>
+                                      </Feature>
+                                      <Feature>
+                                        <FeatureName>ORDERING</FeatureName>
+                                        <IsDisabled>true</IsDisabled>
+                                      </Feature>
+                                    </Features>
+                                  </CountrySetting>
+                                  <CountrySetting>
+                                    <CountryCodeA3>DEU</CountryCodeA3>
+                                    <PhoneNumberType>NATIONAL</PhoneNumberType>
+                                    <Features>
+                                      <Feature>
+                                        <FeatureName>Ordering</FeatureName>
+                                        <IsDisabled>true</IsDisabled>
+                                      </Feature>
+                                    </Features>
+                                  </CountrySetting>
+                                </CountrySettings>
                             </Product>
                         </Products>
                     </AccountProductsResponse>
