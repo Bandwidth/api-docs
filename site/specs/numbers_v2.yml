@@ -948,6 +948,22 @@ components:
             </Reseller>
           </CampaignSettings>
         </CampaignSettingsResponse>
+    badRequestErrorExample:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <Error>
+            <Description>The specified countryCodeA3 OR areaCode OR numberType is not valid</Description>
+            <ErrorCode>7673</ErrorCode>
+            <ErrorCode>7674</ErrorCode>
+            <ErrorCode>7675</ErrorCode>
+          </Error>
+    internalServerErrorExample:
+      value: |-
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <Error>
+            <Description>Porting API is not available at the moment.</Description>
+            <ErrorCode>7678</ErrorCode>
+          </Error>
   parameters:
     AccountIDQueryParam:
       description: >
@@ -1257,6 +1273,37 @@ components:
       required: true
       schema:
         type: string
+    areaCodeQueryParameter:
+      description: Area code of a phone number
+      example: '07'
+      in: query
+      name: areaCode
+      required: false
+      schema:
+        type: string
+    countryCodeA3QueryParameter:
+      description: 3-letter, ISO 3166 country code
+      example: GBR
+      in: query
+      name: Country Code
+      required: true
+      schema:
+        type: string
+    phoneNumberTypeQueryParameter:
+      description: Phone number type
+      example: MOBILE
+      in: query
+      name: phoneNumberType
+      required: false
+      schema:
+        enum:
+          - GEOGRAPHIC
+          - SHARED_COST
+          - TOLL_FREE
+          - NATIONAL
+          - SPECIAL
+          - MOBILE
+        type: string
     shortCodeCountryPathParam:
       description: The short code number country.
       example: USA
@@ -1396,6 +1443,15 @@ components:
         associated with the order, the state of the order, and a list of the
         successfully imported Telephone Numbers, and descriptions of any
         encountered errors.
+    badRequestError:
+      content:
+        application/json:
+          examples:
+            badRequestErrorExample:
+              $ref: '#/components/examples/badRequestErrorExample'
+          schema:
+            $ref: '#/components/schemas/genericError'
+      description: Bad Request.
     bulkRateCenterGetResponse404Error:
       content:
         application/xml:
@@ -1447,6 +1503,35 @@ components:
       description: >-
         Successful response which starts the bulk upsert for provided rate
         centers.
+    internalServerError:
+      content:
+        application/json:
+          examples:
+            internalServerErrorExample:
+              $ref: '#/components/examples/internalServerErrorExample'
+          schema:
+            $ref: '#/components/schemas/genericError'
+      description: Internal Server Error.
+    listOfLosingCarriersResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                data:
+                  losingCarriers:
+                    - name: Losing Carrier 1
+                    - name: Losing Carrier 2
+                    - name: Losing Carrier 3
+                    - name: Losing Carrier 4
+                errors: null
+                links:
+                  - href: /portingLosingCarriers
+                    method: GET
+                    rel: self
+          schema:
+            $ref: '#/components/schemas/portingLosingCarriersResponseSchema'
+      description: A list of available carriers that can port out a phone number
     rateCenter401Error:
       content:
         application/json:
@@ -14163,6 +14248,16 @@ components:
               type: string
           type: object
       type: object
+    genericError:
+      description: A generic error object for porting/losingCarrier responses.
+      properties:
+        description:
+          example: Error Message
+          type: string
+        errorCode:
+          example: 7678
+          type: number
+      type: object
     jsonPatch:
       items:
         $ref: '#/components/schemas/jsonPatchItem'
@@ -14336,6 +14431,56 @@ components:
                 xml:
                   name: OrderCreateDate
             type: object
+      type: object
+    portingLosingCarriersResponseSchema:
+      description: List of losing carriers for porting
+      properties:
+        data:
+          nullable: true
+          properties:
+            losingCarriers:
+              items:
+                properties:
+                  name:
+                    description: The name of the carrier
+                    example: Losing Carrier 1
+                    type: string
+                type: object
+              type: array
+          type: object
+        errors:
+          items:
+            properties:
+              code:
+                description: An error code identifying the error
+                type: string
+              description:
+                description: A description of the error
+                type: string
+              meta:
+                description: Additional information regarding the error
+                type: object
+            type: object
+          nullable: true
+          type: array
+        links:
+          items:
+            properties:
+              href:
+                description: The API endpoint URL
+                example: /portingLosingCarriers
+                type: string
+              method:
+                description: The HTTP method used to make the request
+                example: GET
+                type: string
+              rel:
+                description: The relationship of the endpoint to the request
+                example: self
+                type: string
+            type: object
+          nullable: true
+          type: array
       type: object
     shortCode:
       description: Short code registration.
@@ -25564,48 +25709,6 @@ paths:
             The response provides a list of all of the orders in the date range
             that have been issued against the account.
       summary: List Import to Account orders
-      tags:
-        - Import Tn to Account
-    post:
-      description: >
-        Import a large number of previously ported or otherwise acquired numbers
-        into the account
-      operationId: CreateImportToAccountOrder
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-      requestBody:
-        content:
-          application/xml:
-            examples:
-              example:
-                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ImportToAccountNumberOrder>\n\t<ImportToAccountNumberOrderType>\n\t\t<NumberFormat>10D</NumberFormat>\n\t\t<TelephoneNumberList>\n\t\t\t<TelephoneNumber>+14158714244</TelephoneNumber>\n\t\t\t<TelephoneNumber>+16105330709</TelephoneNumber>\n\t\t</TelephoneNumberList>\n\t\t<BillingType>NOCHARGE</BillingType>\n\t\t<InitialStatus>Available</InitialStatus>\n\t\t<TnAttributes>\n\t\t\t<TnAttribute>Protected</TnAttribute>\n\t\t</TnAttributes>\n\t\t<VendorName>Level 3</VendorName>\n\t\t<BatchId>TestId1234</BatchId>\n\t\t<BatchSize>2</BatchSize>\n\t</ImportToAccountNumberOrderType>\n\t<SiteId>1</SiteId>\n\t<PeerId>12345</PeerId>\n\t</ImportToAccountNumberOrder>"
-            schema:
-              $ref: '#/components/schemas/ImportToAccountOrderRequest'
-      responses:
-        '201':
-          content:
-            application/xml:
-              examples:
-                example:
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ImportToAccountNumberOrderResponse>\n\t<OrderRequest>\n\t\t<id>c5986599-3a7c-4eed-a5c4-9121c17d54ab</id>\n\t\t<OrderCreateDate>2014-04-01T21:54:18.796Z</OrderCreateDate>\n\t\t<ImportToAccountNumberOrderType>\n\t\t\t<BatchId>SJM00001</BatchId>\n\t\t\t<BatchSize>2</BatchSize>\n\t\t\t<BillingType>NOCHARGE</BillingType>\n\t\t\t<NumberFormat>10D</NumberFormat>\n\t\t\t<InitialStatus>Available</InitialStatus>\n\t\t\t<TnAttributes>\n\t\t\t\t<TnAttribute>Protected</TnAttribute>\n\t\t\t</TnAttributes>\n\t\t\t<TelephoneNumberList>\n\t\t\t\t<TelephoneNumber>+14158714245</TelephoneNumber>\n\t\t\t\t<TelephoneNumber>+16105330710</TelephoneNumber>\n\t\t\t</TelephoneNumberList>\n\t\t\t<VendorName>Level 3</VendorName>\n\t\t</ImportToAccountNumberOrderType>\n\t\t<SiteId>743</SiteId>\n\t\t<PeerId>12345</PeerId>\n\t</OrderRequest>\n\t</ImportToAccountNumberOrderResponse>"
-              schema:
-                $ref: '#/components/schemas/ImportToAccountNumberOrderResponse'
-          description: >-
-            The order has been created and an order ID will be specified in the
-            payload and in the header.
-        '400':
-          content:
-            application/xml:
-              examples:
-                example:
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ImportToAccountNumberOrderResponse>\n\t <ErrorList>\n\t\t <Error>\n\t\t\t <Code>7309</Code>\n\t\t\t <Description>The site id was not supplied or is invalid.</Description>\n\t\t </Error>\n\t\t <Error>\n\t\t\t <Code>7312</Code>\n\t\t\t <Description>The sippeer id is invalid.</Description>\n\t\t </Error>\n\t </ErrorList>\n </ImportToAccountNumberOrderResponse>"
-              schema:
-                $ref: '#/components/schemas/ImportToAccountNumberOrderErrorResponse'
-          description: >-
-            The order failed; one of the input parameters is invalid. The error
-            text and an error code will be provided in the ErrorList
-            element.</p>
-      summary: Import to Account order
       tags:
         - Import Tn to Account
   /accounts/{accountId}/importToAccount/batches:
@@ -42556,6 +42659,27 @@ paths:
       summary: Retrieve Covered Rate Centers
       tags:
         - Rate Centers
+  /porting/losingCarriers:
+    get:
+      description: >
+        <p>List losing carriers that a non-NANPA number can be ported from,
+        given a countryCodeA3 and optional areaCode and phoneNumberType
+        values.</p>
+      operationId: portingLosingCarriers
+      parameters:
+        - $ref: '#/components/parameters/countryCodeA3QueryParameter'
+        - $ref: '#/components/parameters/phoneNumberTypeQueryParameter'
+        - $ref: '#/components/parameters/areaCodeQueryParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/listOfLosingCarriersResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '502':
+          $ref: '#/components/responses/internalServerError'
+      summary: List losing carriers for porting non-NANPA telephone numbers
+      tags:
+        - Porting
   /rateCenters:
     get:
       description: >-
