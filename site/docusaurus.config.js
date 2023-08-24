@@ -7,6 +7,7 @@ const customConfig = require("./custom.config.json");
 const blogPosts = require("./blogposts.config.json");
 const ltsVersions = require("./lts.config.json");
 const numbersSpec = fs.readFileSync("./specs/numbers.yml", "utf-8");
+const numbersSpec_v2 = fs.readFileSync("./specs/numbers_v2.yml", "utf-8");
 const phoneNumberLookupSpec = fs.readFileSync(
   "./specs/phone-number-lookup.yml",
   "utf-8"
@@ -101,8 +102,13 @@ module.exports = {
           position: "left",
           items: [
             {
+              to: "global-guides",
+              activeBasePath: "global-guides",
+              label: "Guides",
+            },
+            {
               to: "apis/global",
-              label: "Docs & API Reference",
+              label: "API Reference",
             },
           ],
         },
@@ -127,7 +133,7 @@ module.exports = {
       ],
     },
     // prism: {
-    //     additionalLanguages: ['java'],  // Breaks if you try to add more than 1 language. And still breaks redoc :(((((
+    //     additionalLanguages: ['java'],  // Breaks if you try to add more than 1 language. And still breaks redoc :((((
     // },
   },
   scripts: [
@@ -166,6 +172,8 @@ module.exports = {
   customFields: {
     numbersSpec: YAML.parse(numbersSpec),
     numbersSpecLink: `${customConfig.numbersSpecLink}`,
+    numbersSpec_v2: YAML.parse(numbersSpec_v2),
+    numbersSpec_v2Link: `${customConfig.numbersSpec_v2Link}`,
     phoneNumberLookupSpec: YAML.parse(phoneNumberLookupSpec),
     phoneNumberLookupSpecLink: `${customConfig.phoneNumberLookupSpecLink}`,
     voiceSpec: YAML.parse(voiceSpec),
@@ -224,6 +232,20 @@ module.exports = {
         editUrl: "https://github.com/Bandwidth/api-docs/edit/main/site/",
       },
     ],
+    [
+      "@docusaurus/plugin-content-docs",
+      {
+        id: "global-guides",
+        path: "global-guides",
+        routeBasePath: "global-guides",
+        sidebarPath: require.resolve("./sidebarsGlobalGuides.js"),
+        editUrl: "https://github.com/Bandwidth/api-docs/edit/main/site/",
+      },
+    ],
     "docusaurus-plugin-sass",
   ],
+  markdown: {
+    mermaid: true,
+  },
+  themes: ['@docusaurus/theme-mermaid'],
 };
