@@ -11168,6 +11168,35 @@ components:
               type: integer
           type: object
       type: object
+    Restriction:
+      properties:
+        CountryCodeA3:
+          type: string
+        RestrictionCategory:
+          type: string
+        RestrictionDescription:
+          type: string
+        RestrictionType:
+          $ref: '#/components/schemas/RestrictionType'
+      type: object
+    RestrictionResponse:
+      properties:
+        RestrictionResponse:
+          properties:
+            Restrictions:
+              items:
+                $ref: '#/components/schemas/Restriction'
+              type: array
+          type: object
+      type: object
+    RestrictionType:
+      enum:
+        - LEGAL
+        - PURCHASE
+        - SERVICE
+        - NRA
+      example: LEGAL
+      type: string
     RogerTerminationSettings:
       properties:
         SubnetAddressingAllowed:
@@ -43193,6 +43222,55 @@ paths:
       summary: List Rate Centers
       tags:
         - Rate Centers
+  /restrictions:
+    get:
+      description: >-
+        Information about how services work in various countries and which
+        restrictions and rules apply. Please consult this information before
+        buying and configuring your numbers.
+      operationId: ListRestrictions
+      parameters:
+        - $ref: '#/components/parameters/countryCodeA3RequiredQueryParam'
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <RestrictionResponse>
+                      <Restrictions>
+                        <Restriction>
+                          <CountryCodeA3>BEL</CountryCodeA3>
+                          <RestrictionType>LEGAL</RestrictionType>
+                          <RestrictionCategory>Number portability</RestrictionCategory>
+                          <RestrictionDescription>Lorem ipsum</RestrictionDescription>
+                        </Restriction>
+                        <Restriction>
+                          <CountryCodeA3>BEL</CountryCodeA3>
+                          <RestrictionType>PURCHASE</RestrictionType>
+                          <RestrictionCategory>Address or identification requirements</RestrictionCategory>
+                          <RestrictionDescription>Lorem ipsum</RestrictionDescription>
+                        </Restriction>
+                        <Restriction>
+                          <CountryCodeA3>BEL</CountryCodeA3>
+                          <RestrictionType>SERVICE</RestrictionType>
+                          <RestrictionCategory>Compatibility issues</RestrictionCategory>
+                          <RestrictionDescription>Lorem ipsum</RestrictionDescription>
+                        </Restriction>
+                      </Restrictions>
+                    </RestrictionResponse>
+              schema:
+                $ref: '#/components/schemas/RestrictionResponse'
+          description: >-
+            This response returns the list of cities, along with the Rate
+            Centers that serve those Restrictions.  If 'available' is specified
+            then the number of TNs available in that city / RC combination is
+            also included.
+      summary: List Restrictions
+      tags:
+        - Compliance
   /tns:
     get:
       description: >-
@@ -44374,6 +44452,7 @@ tags:
       url: /docs/numbers/porting/port-ins/bulkPortIns
     name: Bulk Port-In
   - name: Callbacks
+  - name: Compliance
   - name: Coverage
   - description: >-
       DLDA = Directory Listing and Directory Assistance. A DLDA resource
