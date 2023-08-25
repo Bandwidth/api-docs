@@ -1245,6 +1245,7 @@ components:
       schema:
         type: string
     SipPeerIdPathParam:
+      description: SipPeer ID, also known as Location
       in: path
       name: sipPeerId
       required: true
@@ -1252,14 +1253,33 @@ components:
         format: int32
         type: integer
     SipPeerIdQueryParam:
-      description: A Sip Peer Id that is referenced in the order
+      description: SipPeer ID, also known as Location
       example: 50139
       in: query
       name: sipPeerId
+      required: false
       schema:
         type: integer
+    SipPeerTnsPageQueryParam:
+      description: The number of the paged results to be displayed.
+      example: 4
+      in: query
+      name: page
+      required: false
+      schema:
+        default: 1
+        type: integer
+    SipPeerTnsSizeQueryParam:
+      description: The quantity of results displayed for each page.
+      example: 200
+      in: query
+      name: size
+      required: false
+      schema:
+        default: 5000
+        type: integer
     SiteIdPathParam:
-      description: Site ID of the Sip Peer
+      description: Site ID, also known as Sub-Account
       example: '407'
       in: path
       name: siteId
@@ -1486,6 +1506,20 @@ components:
             type: number
         type: object
       style: deepObject
+    pageQueryParam:
+      description: >-
+        An ID of the first element in a page.  This value will indicate the
+        first value, not the page number, of the initial entry in the page being
+        requested.<br> For this enpoint the id value represents the first
+        in-service number displayed on the page. The initial page is tagged with
+        the ID `1` as a convention.
+      in: query
+      name: page
+      required: false
+      schema:
+        default: 1
+        example: 1
+        type: integer
     phoneNumberTypeQueryParam:
       description: >-
         The type of phone number. The system defaults to return phone numbers of
@@ -1607,6 +1641,26 @@ components:
       required: true
       schema:
         type: string
+    sizeQueryParam:
+      description: The number of elements to retrieve
+      in: query
+      name: page
+      required: false
+      schema:
+        default: 300
+        example: 300
+        type: integer
+    tierQueryParam:
+      description: >-
+        A service tier indicating the the vendor class that the TN is associated
+        with.  Tier indicates whether the TN is on-net, domestic offnet,
+        Canadian, etc.
+      in: query
+      name: city
+      required: false
+      schema:
+        example: 5
+        type: integer
   requestBodies:
     addAddressRequest:
       content:
@@ -4397,6 +4451,17 @@ components:
             years.
           format: int64
           type: integer
+        NumberFormat:
+          default: E164
+          description: >-
+            Specifies whether numbers should be formatted in e164 format, or use
+            legacy formatting. If Legacy is chosen, numbers with country code
+            '+1' will be formatted as 10-digit and all other numbers will use
+            e164 formatting. Can be omitted and defaults to E164.
+          enum:
+            - LEGACY
+            - E164
+          type: string
         Status:
           type: string
         URL:
@@ -26345,40 +26410,63 @@ paths:
       description: >-
         Retrieves a list of in-service phone numbers associated with the account
         ID
+
+
+        In this table are presented capabilities that are not universally
+        available. The following request query parameters are only allowed for
+        numbers from specific region/country:
+
+        | Number Region | Request Query Parameter |
+
+        |:--------------|:------------------------|
+
+        |NANPA|city|
+
+        |NANPA|tier|
+
+        |NANPA|lata|
+
+        |NANPA|state|
+
+        |NANPA|ratecenter|
+
+        |NANPA|npaNxx|
+
+        |NANPA|npaNxxx|
+
+
+        When these query parameters are provided, only inservice the North
+        American Numbering Plan phone numbers from are returned.
       operationId: ReadInserviceTns
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: The `page` to fetch in a paginated collection
-          example: 1
-          in: query
-          name: page
-          required: false
-          schema:
-            default: 1
-            type: integer
-        - description: The number of TNs to retrieve
-          example: 300
-          in: query
-          name: size
-          required: false
-          schema:
-            default: 300
-            type: integer
+        - $ref: '#/components/parameters/pageQueryParam'
+        - $ref: '#/components/parameters/sizeQueryParam'
+        - $ref: '#/components/parameters/countryCodeA3QueryParam'
+        - $ref: '#/components/parameters/phoneNumberTypeQueryParam'
+        - $ref: '#/components/parameters/areaCodeQueryParam'
+        - $ref: '#/components/parameters/cityQueryParam'
+        - $ref: '#/components/parameters/tierQueryParam'
         - description: >-
-            An Area Code search filter - all returned TNs will be in the entered
-            Area Code
-          example: 919
-          in: query
-          name: areacode
-          required: false
-          schema:
-            type: integer
-        - description: >-
-            An NPA NXX search filter - all returned TNs will be in the entered
-            NPA NXX dial plan
+            <p>The 6-digit prefix associated with the TN.</p><ul><li>Allowed
+            number ranges for NPA are [2-9] for the first digit and [0-9] for
+            both the second and third digits.</li><li>Allowed number ranges for
+            NXX are [2-9] for the first digit and [0-9] for both the second and
+            third digits.</li></ul>
           example: 919859
           in: query
-          name: npanxx
+          name: npaNxx
+          required: false
+          schema:
+            type: integer
+        - description: >-
+            <p>The 7-digit prefix associated with the TN.</p><ul><li>Allowed
+            number ranges for NPA are [2-9] for the first digit and [0-9] for
+            both the second and third digits.</li><li>Allowed number ranges for
+            NXXX are [2-9] for the first digit and [0-9] the rest of the (X)
+            digits.</li></ul>
+          in: query
+          name: npaNxxx
           required: false
           schema:
             type: integer
@@ -26442,9 +26530,10 @@ paths:
                        <TotalCount>59</TotalCount>
                        <Links>
                           <first>( a link goes here )</first>
+                          <next>( a link goes here )</next>
                        </Links>
                        <TelephoneNumbers>
-                          <Count>59</Count>
+                          <Count>15</Count>
                           <TelephoneNumber>+18043024183</TelephoneNumber>
                           <TelephoneNumber>+18042121778</TelephoneNumber>
                           <TelephoneNumber>+18042146066</TelephoneNumber>
@@ -26454,7 +26543,6 @@ paths:
                           <TelephoneNumber>+18043326094</TelephoneNumber>
                           <TelephoneNumber>+18042121771</TelephoneNumber>
                           <TelephoneNumber>+18043024182</TelephoneNumber>
-                          <!-- SNIP -->
                           <TelephoneNumber>+18043814900</TelephoneNumber>
                           <TelephoneNumber>+18047672642</TelephoneNumber>
                           <TelephoneNumber>+18043024368</TelephoneNumber>
@@ -36303,87 +36391,93 @@ paths:
       description: >-
         Retrieves all the telephone numbers currently in-service for the given
         Site
+
+
+        In this table are presented capabilities that are not universally
+        available. The following request query parameters are only allowed for
+        numbers from specific region/country:
+
+        | Number Region | Request Query Parameter |
+
+        |:--------------|:------------------------|
+
+        |NANPA|city|
+
+        |NANPA|tier|
+
+        |NANPA|lata|
+
+        |NANPA|state|
+
+        |NANPA|ratecenter|
+
+        |NANPA|npaNxx|
+
+        |NANPA|npaNxxx|
+
+
+        When these query parameters are provided, only inservice the North
+        American Numbering Plan phone numbers from are returned.
       operationId: RetrieveSiteInserviceNumbers
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: ID of the Site to retrieve all INSERVICE numbers
-          example: '407'
-          in: path
-          name: siteId
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/SiteIdPathParam'
+        - $ref: '#/components/parameters/pageQueryParam'
+        - $ref: '#/components/parameters/sizeQueryParam'
+        - $ref: '#/components/parameters/countryCodeA3QueryParam'
+        - $ref: '#/components/parameters/phoneNumberTypeQueryParam'
+        - $ref: '#/components/parameters/areaCodeQueryParam'
+        - $ref: '#/components/parameters/cityQueryParam'
+        - $ref: '#/components/parameters/tierQueryParam'
         - description: >-
-            The first in-service number displayed on the page. "1" is used as a
-            convention for the first number on the list.
-          example: 15555551845
+            <p>The 6-digit prefix associated with the TN.</p><ul><li>Allowed
+            number ranges for NPA are [2-9] for the first digit and [0-9] for
+            both the second and third digits.</li><li>Allowed number ranges for
+            NXX are [2-9] for the first digit and [0-9] for both the second and
+            third digits.</li></ul>
+          example: 919859
           in: query
-          name: page
+          name: npaNxx
           required: false
           schema:
-            default: 1
             type: integer
-        - description: The count of in-service numbers displayed on the page.
-          example: 30
+        - description: >-
+            <p>The 7-digit prefix associated with the TN.</p><ul><li>Allowed
+            number ranges for NPA are [2-9] for the first digit and [0-9] for
+            both the second and third digits.</li><li>Allowed number ranges for
+            NXXX are [2-9] for the first digit and [0-9] the rest of the (X)
+            digits.</li></ul>
           in: query
-          name: size
+          name: npaNxxx
           required: false
           schema:
-            default: 300
             type: integer
-        - description: A maximum five-digit number
-          example: 371
+        - description: >-
+            A Rate Center search filter - all returned TNs will be in the
+            entered Rate Center.  Typically this is a 3 or 5 digit value.
+          example: 435
           in: query
           name: lata
           required: false
           schema:
             type: integer
-        - description: ''
-          example: 1
-          in: query
-          name: tier
-          required: false
-          schema:
-            type: integer
-        - description: ''
-          example: ST GEORGE
+        - description: >-
+            A Rate Center search filter - all returned TNs will be in the
+            entered Rate Center.  This `ratecenter` must be combined with a
+            `state` in the query.  If State is not included in the query then
+            the query will fail.
+          example: PLANO
           in: query
           name: rateCenter
           required: false
           schema:
             type: string
-        - description: ''
-          example: Raleigh
-          in: query
-          name: city
-          required: false
-          schema:
-            type: string
-        - description: A two-letter representation of the State
-          example: NC
+        - description: >-
+            A State search filter - all returned TNs will be in the entered
+            State.  This is a 2-character State or Province abbreviation.
+          example: TX
           in: query
           name: state
-          required: false
-          schema:
-            type: string
-        - description: ''
-          example: '435'
-          in: query
-          name: areaCode
-          required: false
-          schema:
-            type: string
-        - description: ''
-          example: '435215'
-          in: query
-          name: npaNxx
-          required: false
-          schema:
-            type: string
-        - description: ''
-          example: '4352154'
-          in: query
-          name: npaNxxx
           required: false
           schema:
             type: string
@@ -38918,6 +39012,8 @@ paths:
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
         - $ref: '#/components/parameters/SiteIdPathParam'
+        - $ref: '#/components/parameters/SipPeerTnsPageQueryParam'
+        - $ref: '#/components/parameters/SipPeerTnsSizeQueryParam'
         - description: ID of the Sip Peer to retrieve TNs information
           example: '500017'
           in: path
@@ -39309,6 +39405,7 @@ paths:
                                 <Username>iris</Username>
                               </BasicAuthentication>
                             </CallbackCredentials>
+                            <NumberFormat>E164</NumberFormat>
                           </CallbackSubscription>
                         </Subscription>
                         <Subscription>
@@ -39331,6 +39428,7 @@ paths:
                                 <Username>iris</Username>
                               </BasicAuthentication>
                             </CallbackCredentials>
+                            <NumberFormat>E164</NumberFormat>
                             </CallbackSubscription>
                         </Subscription>
                       </Subscriptions>
@@ -39464,6 +39562,7 @@ paths:
                         </BasicAuthentication>
                         <PublicKey>LS0tLS1CRUdJTiBDRVJUSU [...] kQgQ0VSVElGSUNBVEUtLS0tLQ0K</PublicKey>
                       </CallbackCredentials>
+                      <NumberFormat>E164</NumberFormat>
                     </CallbackSubscription>
                   </Subscription>
               eventEmailSubscription:
@@ -39493,6 +39592,7 @@ paths:
                         </BasicAuthentication>
                         <PublicKey>LS0tLS1CRUdJTiBDRVJUSU [...] kQgQ0VSVElGSUNBVEUtLS0tLQ0K</PublicKey>
                       </CallbackCredentials>
+                      <NumberFormat>E164</NumberFormat>
                     </CallbackSubscription>
                   </Subscription>
               orderEmailSubscription:
@@ -39620,6 +39720,7 @@ paths:
                             <URL>http://customer.com:8087/path/BandwidthHandler</URL>
                             <Expiry>+14283455101</Expiry>
                             <Status>200 OK</Status>
+                            <NumberFormat>E164</NumberFormat>
                           </CallbackSubscription>
                       </Subscription>
                     </SubscriptionsResponse>
@@ -39651,6 +39752,7 @@ paths:
                             <URL>http://customer.com:8087/path/BandwidthHandler</URL>
                             <Expiry>+14283455101</Expiry>
                             <Status>200 OK</Status>
+                            <NumberFormat>E164</NumberFormat>
                           </CallbackSubscription>
                       </Subscription>
                     </SubscriptionsResponse>
@@ -39716,6 +39818,7 @@ paths:
                         </BasicAuthentication>
                         <PublicKey>LS0tLS1CRUdJTiBDRVJUSU [...] kQgQ0VSVElGSUNBVEUtLS0tLQ0K</PublicKey>
                       </CallbackCredentials>
+                      <NumberFormat>E164</NumberFormat>
                     </CallbackSubscription>
                   </Subscription>
               eventEmailSubscription:
@@ -39745,6 +39848,7 @@ paths:
                         </BasicAuthentication>
                         <PublicKey>LS0tLS1CRUdJTiBDRVJUSU [...] kQgQ0VSVElGSUNBVEUtLS0tLQ0K</PublicKey>
                       </CallbackCredentials>
+                      <NumberFormat>E164</NumberFormat>
                     </CallbackSubscription>
                   </Subscription>
               orderEmailSubscription:
