@@ -1478,6 +1478,16 @@ components:
             minLength: 1
             type: string
         type: object
+    enddateQueryParam:
+      description: >-
+        The ending date of a search in yy-mm-dd format. startdate and enddate
+        <strong>must</strong> be used as a pair.
+      in: query
+      name: enddate
+      required: false
+      schema:
+        example: 23-10-31
+        type: string
     isHiddenQueryParam_eq:
       description: >-
         Returns hidden addresses when set to true. The system defaults to false
@@ -1510,9 +1520,7 @@ components:
       description: >-
         An ID of the first element in a page.  This value will indicate the
         first value, not the page number, of the initial entry in the page being
-        requested.<br> For this enpoint the id value represents the first
-        in-service number displayed on the page. The initial page is tagged with
-        the ID `1` as a convention.
+        requested. The initial page is tagged with the ID `1` as a convention.
       in: query
       name: page
       required: false
@@ -1649,6 +1657,16 @@ components:
       schema:
         example: 30
         type: integer
+    startdateQueryParam:
+      description: >-
+        The starting date of a search in yy-mm-dd format. startdate and enddate
+        <strong>must</strong> be used as a pair.
+      in: query
+      name: startdate
+      required: false
+      schema:
+        example: 22-10-31
+        type: string
     tierQueryParam:
       description: >-
         A service tier indicating the the vendor class that the TN is associated
@@ -20822,43 +20840,10 @@ paths:
       operationId: GetDisconnectedTns
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: >-
-            The first disconnected number on the desired page. `1` is used as a
-            convention for the first disconnected number in the collection.
-          in: query
-          name: page
-          required: true
-          schema:
-            default: '1'
-            type: string
-        - description: The number of records that should be returned by the query
-          example: 30
-          in: query
-          name: size
-          required: true
-          schema:
-            default: 300
-            maximum: 5000
-            minimum: 1
-            type: integer
-        - description: >-
-            The starting date of a search in yy-mm-dd format. startdate and
-            enddate <strong>must</strong> be used as a pair.
-          example: 22-10-31
-          in: query
-          name: startdate
-          required: false
-          schema:
-            type: string
-        - description: >-
-            The ending date of a search in yy-mm-dd format. startdate and
-            enddate <strong>must</strong> be used as a pair.
-          example: 22-11-31
-          in: query
-          name: enddate
-          required: false
-          schema:
-            type: string
+        - $ref: '#/components/parameters/pageQueryParam'
+        - $ref: '#/components/parameters/sizeQueryParam'
+        - $ref: '#/components/parameters/startdateQueryParam'
+        - $ref: '#/components/parameters/enddateQueryParam'
       responses:
         '200':
           content:
@@ -20887,24 +20872,8 @@ paths:
       operationId: GetTotalNumberDisconnects
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: >-
-            The starting date of a search in yy-mm-dd format. startdate and
-            enddate <strong>must</strong> be used as a pair.
-          example: 22-10-31
-          in: query
-          name: startdate
-          required: false
-          schema:
-            type: string
-        - description: >-
-            The end date of a search in yy-mm-dd format. startdate and enddate
-            <strong>must</strong> be used as a pair.
-          example: 22-11-31
-          in: query
-          name: enddate
-          required: false
-          schema:
-            type: string
+        - $ref: '#/components/parameters/startdateQueryParam'
+        - $ref: '#/components/parameters/enddateQueryParam'
       responses:
         '200':
           content:
@@ -20932,27 +20901,10 @@ paths:
       operationId: ReadDisconnectOrders
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: >-
-            The disconnect order-id of the first record on the page.   "1" is
-            used as a convention for the first disconnect order in the
-            collection
-          example: 59e69657-44d2-4e7e-90f8-777988be4aef
-          in: query
-          name: page
-          required: false
-          schema:
-            default: '1'
-            type: string
-        - description: The number of records that should be returned by the query
-          example: 30
-          in: query
-          name: size
-          required: false
-          schema:
-            default: 300
-            maximum: 5000
-            minimum: 1
-            type: integer
+        - $ref: '#/components/parameters/pageQueryParam'
+        - $ref: '#/components/parameters/sizeQueryParam'
+        - $ref: '#/components/parameters/startdateQueryParam'
+        - $ref: '#/components/parameters/enddateQueryParam'
         - description: The user ID associated with disconnected phone numbers
           example: jbm
           in: query
@@ -20964,24 +20916,6 @@ paths:
           example: complete
           in: query
           name: status
-          required: false
-          schema:
-            type: string
-        - description: >-
-            Retrieves all phone numbers disconnected after this date. The start
-            date also requires the end date to be specified.
-          example: 22-10-31
-          in: query
-          name: startdate
-          required: false
-          schema:
-            type: string
-        - description: >-
-            Retrieves all phone numbers disconnected before this date. The end
-            date also requires the start date to be specified.
-          example: 22-11-31
-          in: query
-          name: enddate
           required: false
           schema:
             type: string
@@ -26414,6 +26348,8 @@ paths:
         - $ref: '#/components/parameters/AccountIdPathParam'
         - $ref: '#/components/parameters/pageQueryParam'
         - $ref: '#/components/parameters/sizeQueryParam'
+        - $ref: '#/components/parameters/startdateQueryParam'
+        - $ref: '#/components/parameters/enddateQueryParam'
         - $ref: '#/components/parameters/countryCodeA3QueryParam'
         - $ref: '#/components/parameters/phoneNumberTypeQueryParam'
         - $ref: '#/components/parameters/areaCodeQueryParam'
@@ -26470,24 +26406,6 @@ paths:
           name: ratecenter
           required: false
           schema:
-            type: string
-        - description: >-
-            The starting date of a date range that will filter numbers based on
-            activation or other change date.
-          example: yy-mm-dd
-          in: query
-          name: startdate
-          required: false
-          schema:
-            format: date
-            type: string
-        - description: The ending date of a date range
-          example: yy-mm-dd
-          in: query
-          name: enddate
-          required: false
-          schema:
-            format: date
             type: string
       responses:
         '200':
@@ -28618,25 +28536,10 @@ paths:
       operationId: ListOrders
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: >-
-            All Order retrievals must be paginated, using page and size
-            indicators.  The page parameter contains the order-id that is to
-            start the page, or "1" in the case of the first page
-          example: cbdcfc94-81b1-4ce9-8b6d-f8d6b85381ba
-          in: query
-          name: page
-          required: true
-          schema:
-            type: string
-        - description: >-
-            The size parameter indicates the number of orders to return in the
-            payload
-          example: 20
-          in: query
-          name: size
-          required: true
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/pageQueryParam'
+        - $ref: '#/components/parameters/sizeQueryParam'
+        - $ref: '#/components/parameters/startdateQueryParam'
+        - $ref: '#/components/parameters/enddateQueryParam'
         - description: The order ID that the Customer / Account assigned to the Order
           example: ORD12345
           in: query
@@ -28657,26 +28560,6 @@ paths:
           name: userid
           required: false
           schema:
-            type: string
-        - description: >-
-            The first day of the search date range for a date-range-limited
-            search of net number orders. The format is YY-MM-DD
-          example: 13-12-15
-          in: query
-          name: startdate
-          required: false
-          schema:
-            format: date
-            type: string
-        - description: >-
-            The last day of the search date range for a date-range-limited
-            search of net number orders. The format is YY-MM-DD
-          example: 13-12-31
-          in: query
-          name: enddate
-          required: false
-          schema:
-            format: date
             type: string
       responses:
         '200':
@@ -36396,6 +36279,8 @@ paths:
         - $ref: '#/components/parameters/SiteIdPathParam'
         - $ref: '#/components/parameters/pageQueryParam'
         - $ref: '#/components/parameters/sizeQueryParam'
+        - $ref: '#/components/parameters/startdateQueryParam'
+        - $ref: '#/components/parameters/enddateQueryParam'
         - $ref: '#/components/parameters/countryCodeA3QueryParam'
         - $ref: '#/components/parameters/phoneNumberTypeQueryParam'
         - $ref: '#/components/parameters/areaCodeQueryParam'
@@ -36450,20 +36335,6 @@ paths:
           example: TX
           in: query
           name: state
-          required: false
-          schema:
-            type: string
-        - description: Startdate and Enddate must be together
-          example: 12-01-01
-          in: query
-          name: startdate
-          required: false
-          schema:
-            type: string
-        - description: Startdate and Enddate must be together
-          example: 14-01-01
-          in: query
-          name: enddate
           required: false
           schema:
             type: string
