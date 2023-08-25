@@ -1427,21 +1427,21 @@ components:
         associated with the order, the state of the order, and a list of the
         successfully imported Telephone Numbers, and descriptions of any
         encountered errors.
-    badRequestError:
+    badRequestLosingInvlaidCountryCodeCarriersResponse:
       content:
         application/json:
           examples:
             example:
-              value: |-
-                {
-                  "responseStatus" : {
-                    "errorCode" : 7673,
-                    "description" : "GB0 is not a valid countryCodeA3 value."
-                  }
-                }
+              description: example
+              value:
+                data: null
+                errors:
+                  code: 7673
+                  description: '''%s'' is not a valid countryCodeA3 value'
+                links: null
           schema:
-            $ref: '#/components/schemas/badRequestError'
-      description: Bad Request.
+            $ref: '#/components/schemas/portingLosingCarriersResponseSchema'
+      description: Error returned when the country code is invalid
     bulkRateCenterGetResponse404Error:
       content:
         application/xml:
@@ -1493,21 +1493,6 @@ components:
       description: >-
         Successful response which starts the bulk upsert for provided rate
         centers.
-    internalServerError:
-      content:
-        application/json:
-          examples:
-            example:
-              value: |-
-                {
-                  "responseStatus" : {
-                    "errorCode" : 7678,
-                    "description" : "We received an error while attempting to retrieve the losing carriers for your request. Please try this request again later."
-                  }
-                }
-          schema:
-            $ref: '#/components/schemas/internalServerError'
-      description: Internal Server Error.
     listOfLosingCarriersResponse:
       content:
         application/json:
@@ -1528,6 +1513,24 @@ components:
           schema:
             $ref: '#/components/schemas/portingLosingCarriersResponseSchema'
       description: A list of available carriers that can port out a phone number
+    noUpstreamServicesLosingCarriersResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              summary: example
+              value:
+                data: null
+                errors:
+                  code: 7678
+                  description: >-
+                    We received an error while attempting to retrieve the losing
+                    carriers for your request. Please try this request again
+                    later.
+                links: null
+          schema:
+            $ref: '#/components/schemas/portingLosingCarriersResponseSchema'
+      description: Error returned when upstream services are unavailable
     rateCenter401Error:
       content:
         application/json:
@@ -14161,16 +14164,6 @@ components:
         - zip
         - url
       type: object
-    badRequestError:
-      description: A generic error object for porting/losingCarrier responses.
-      properties:
-        description:
-          example: GB0 is not a valid countryCodeA3 value.
-          type: string
-        errorCode:
-          example: 7673
-          type: number
-      type: object
     contact:
       nullable: false
       properties:
@@ -14253,18 +14246,6 @@ components:
               description: Results of the attempt to fetch the list of files.
               type: string
           type: object
-      type: object
-    internalServerError:
-      description: A generic error object for porting/losingCarrier responses.
-      properties:
-        description:
-          example: >-
-            We received an error while attempting to retrieve the losing
-            carriers for your request. Please try this request again later.
-          type: string
-        errorCode:
-          example: 7678
-          type: number
       type: object
     jsonPatch:
       items:
@@ -42682,9 +42663,10 @@ paths:
         '200':
           $ref: '#/components/responses/listOfLosingCarriersResponse'
         '400':
-          $ref: '#/components/responses/badRequestError'
+          $ref: >-
+            #/components/responses/badRequestLosingInvlaidCountryCodeCarriersResponse
         '502':
-          $ref: '#/components/responses/internalServerError'
+          $ref: '#/components/responses/noUpstreamServicesLosingCarriersResponse'
       summary: List losing carriers for porting non-NANPA telephone numbers
       tags:
         - Porting
