@@ -716,7 +716,7 @@ components:
         description:
           $ref: '#/components/schemas/description'
         type:
-          $ref: '#/components/schemas/google-es'
+          $ref: '#/components/schemas/googleEs'
         displayName:
           $ref: '#/components/schemas/displayName'
         role:
@@ -741,7 +741,7 @@ components:
         description:
           $ref: '#/components/schemas/description'
         type:
-          $ref: '#/components/schemas/google-es'
+          $ref: '#/components/schemas/googleEs'
         displayName:
           $ref: '#/components/schemas/displayName'
         role:
@@ -942,7 +942,7 @@ components:
         description:
           $ref: '#/components/schemas/description'
         type:
-          $ref: '#/components/schemas/google-es'
+          $ref: '#/components/schemas/googleEs'
         displayName:
           $ref: '#/components/schemas/displayName'
         role:
@@ -1589,17 +1589,17 @@ components:
         - type
       description: A property to hold the type of a provider
       example: Google-ES
-    google-es:
+    googleEs:
       type: string
       required:
         - google
       description: google type for provider
       example: Google-ES
-    google-cx:
+    googleCx:
       type: string
       required:
-        - google-cx
-      description: google-cx type for provider
+        - googleCx
+      description: googleCx type for provider
       example: Google-CX
     aws:
       type: string
@@ -1628,7 +1628,7 @@ components:
       description: a name for the provider
       example: Provider description
     provider:
-      type: object
+      type: string
       description: A string representing the id of a previously setup provider.
       example: d1e921e4-a6ff-475b-8b20-d27b6f2bc6c9
     providerBotName:
@@ -1710,7 +1710,7 @@ components:
       type: boolean
       description: Enables the DTMF digit collection.
       example: true
-    dtmfCollectInterDigitTimeoutMS:
+    dtmfCollectInterDigitTimeoutMs:
       type: number
       description: >-
         Defines the timeout (in milliseconds) to wait for the user to press
@@ -1721,7 +1721,7 @@ components:
       description: >-
         Defines the maximum number of DTMF digits expected to receive from the
         user.
-      example: true
+      example: 10
     dtmfCollectSubmitDigit:
       type: string
       description: >-
@@ -1729,7 +1729,7 @@ components:
         sends all the collected digits to the bot (as a DTMF message), without
         waiting for the timeout to expire or for the maximum number of expected
         digits.
-      example: true
+      example: '#'
     transferTarget:
       type: string
       description: >-
@@ -1741,7 +1741,8 @@ components:
       description: >-
         Enables the value of a specified header to be sent in the start message
         to the bot, using a newly created or existing parameter name.
-      example: '{ "new-parameter-name": "<SIP header whose value to use>"}'
+      example:
+        new-parameter-name: <SIP header whose value to use>
     ttsEnhancedVoice:
       type: string
       description: Defines the AWS text-to-speech voice as Neural Voice or Standard Voice.
@@ -1988,6 +1989,11 @@ components:
       properties:
         cognigyCredentials:
           $ref: '#/components/schemas/cognigyProviderCredentials'
+    errors:
+      type: array
+      properties:
+        link:
+          $ref: '#/components/schemas/error'
     error:
       title: Error
       type: object
@@ -2051,6 +2057,11 @@ components:
         message:
           type: string
           example: An optional metadata field
+    links:
+      type: array
+      properties:
+        link:
+          $ref: '#/components/schemas/link'
     link:
       title: Link
       type: object
@@ -2067,6 +2078,23 @@ components:
           type: string
           description: HTTP method to be used.
           example: GET
+    totalCount:
+      type: integer
+    providers:
+      type: array
+      properties:
+        provider:
+          $ref: '#/components/schemas/provider'
+    bots:
+      type: array
+      properties:
+        provider:
+          $ref: '#/components/schemas/bots'
+    role:
+      type: array
+      properties:
+        role:
+          type: string
   requestBodies:
     providerPostRequest:
       content:
@@ -3056,6 +3084,7 @@ components:
           - id: optional-error-id
             type: bad-request
             description: There was an issue with your request.
+            errorCode: 400
     unauthorizedErrorExample:
       summary: An example of a generic Unauthorized Error
       value:
@@ -3065,6 +3094,7 @@ components:
           - id: optional-error-id
             type: authentication-credentials
             description: Invalid or missing credentials.
+            errorCode: 403
     forbiddenErrorExample:
       summary: An example of a generic Unauthorized Error.
       value:
@@ -3074,6 +3104,7 @@ components:
           - id: optional-error-id
             type: resource-permissions
             description: User does not have permissions to access this resource.
+            errorCode: 401
     notFoundErrorExample:
       summary: An example of a generic Not Found Error.
       value:
@@ -3083,6 +3114,7 @@ components:
           - id: optional-error-id
             type: resource-not-found
             description: The resource specified cannot be found.
+            errorCode: 404
     notAllowedErrorExample:
       summary: An example of a Method Not Allowed error.
       value:
@@ -3094,7 +3126,7 @@ components:
             description: >-
               The HTTP request method is not supported for the requested
               resource.
-            code: 405
+            errorCode: 405
     tooManyRequestsErrorExample:
       summary: An example of a Too Many Requests error.
       value:
@@ -3106,7 +3138,7 @@ components:
             description: >-
               The user has sent too many requests in a given amount of time
               (rate limiting).
-            code: 429
+            errorCode: 429
     internalServerErrorExample:
       summary: An example of a generic Internal Server Error.
       value:
@@ -3118,6 +3150,48 @@ components:
             description: >-
               Unexpected internal server error. Contact Bandwidth Customer
               Support if this problem persists.
+            errorCode: 500
+    totalCount:
+      summary: Total number of obects returned
+      value: integer
+    type:
+      summary: type of provider
+      value: string
+    providers:
+      summary: An array of AI ridge Integrations
+      value: array
+    bots:
+      summary: An array of bots
+      value: array
+    role:
+      summary: >-
+        An array of roles that say what function(s) an AIBridge Integration can
+        do.
+      value: array
+    errors:
+      summary: An array of errors
+      value: array
+    privateKey:
+      summary: An Google private key
+      value: string
+    clientEmail:
+      summary: A Google email
+      value: string
+    conversationProfileId:
+      summary: A Google Conversation Profile ID
+      value: string
+    username:
+      summary: A user name.
+      value: string
+    password:
+      summary: A password
+      value: string
+    accessKey:
+      summary: An AWS access key
+      value: string
+    secretKey:
+      summary: An AWS secret key
+      value: string
   securitySchemes:
     Basic:
       type: http
