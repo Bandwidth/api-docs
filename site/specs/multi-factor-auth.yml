@@ -291,29 +291,30 @@ paths:
                 print(e.response_code)
         - lang: Ruby
           source: |
-            require 'bandwidth'
+            require 'bandwidth-sdk'
 
-            include Bandwidth
-            include Bandwidth::MultiFactorAuth
+            Bandwidth.configure do |config|
+              config.username = "api-username"
+              config.password = "api-password"
+            end
 
-            bandwidth_client = Bandwidth::Client.new(
-                multi_factor_auth_basic_auth_user_name: "api-username",
-                multi_factor_auth_basic_auth_password: "api-password"
+            api_instance = Bandwidth::MFAApi.new
+            account_id = "12345"
+            code_request = Bandwidth::CodeRequest.new(
+              {
+                to: "+15553334444", 
+                from: "+15554443333",
+                application_id: "1234-qwer",
+                message: 'Your temporary {NAME} {SCOPE} code is {CODE}',
+                digits: 6
+              }
             )
-            auth_client = bandwidth_client.multi_factor_auth_client.mfa
 
-            body = TwoFactorCodeRequestSchema.new
-            body.application_id = "1234-qwer"
-            body.to = "+15553334444"
-            body.from = "+15554443333"
-            body.digits = 6
-            body.scope = "scope"
-            body.message = "Your temporary {NAME} {SCOPE} code is {CODE}"
             begin
-                result = auth_client.create_voice_two_factor("12345", body)
-                puts 'callId: ' + result.data.call_id
-            rescue APIException => e
-                puts e.response_code
+              result = api_instance.generate_voice_code(account_id, code_request)
+              p "callId: #{result.data.call_id}"
+            rescue Bandwidth::ApiError => e
+              puts "Error when calling MFAApi->generate_voice_code: #{e}"
             end
   /accounts/{accountId}/code/messaging:
     post:
@@ -591,29 +592,30 @@ paths:
                 print(e.response_code)
         - lang: Ruby
           source: |
-            require 'bandwidth'
+            require 'bandwidth-sdk'
 
-            include Bandwidth
-            include Bandwidth::MultiFactorAuth
+            Bandwidth.configure do |config|
+              config.username = "api-username"
+              config.password = "api-password"
+            end
 
-            bandwidth_client = Bandwidth::Client.new(
-                multi_factor_auth_basic_auth_user_name: "api-username",
-                multi_factor_auth_basic_auth_password: "api-password"
+            api_instance = Bandwidth::MFAApi.new
+            account_id = "12345"
+            code_request = Bandwidth::CodeRequest.new(
+              {
+                to: "+15553334444",
+                from: "+15554443333",
+                application_id: "1234-asdf",
+                message: 'Your temporary {NAME} {SCOPE} code is {CODE}',
+                digits: 6
+              }
             )
-            auth_client = bandwidth_client.multi_factor_auth_client.mfa
 
-            body = TwoFactorCodeRequestSchema.new
-            body.application_id = "1234-asdf"
-            body.to = "+15553334444"
-            body.from = "+15554443333"
-            body.digits = 6
-            body.scope = "scope"
-            body.message = "Your temporary {NAME} {SCOPE} code is {CODE}"
             begin
-                result = auth_client.create_messaging_two_factor("12345", body)
-                puts 'messageId: ' + result.data.message_id
-            rescue APIException => e
-                puts e.response_code
+              result = api_instance.generate_messaging_code(account_id, code_request)
+              p "messageId: #{result.data.message_id}"
+            rescue Bandwidth::ApiError => e
+              puts "Error when calling MFAApi->generate_messaging_code: #{e}"
             end
   /accounts/{accountId}/code/verify:
     post:
@@ -912,22 +914,47 @@ paths:
             include Bandwidth::MultiFactorAuth
 
             bandwidth_client = Bandwidth::Client.new(
-                multi_factor_auth_basic_auth_user_name: "api-username",
-                multi_factor_auth_basic_auth_password: "api-password"
+              multi_factor_auth_basic_auth_user_name: "api-username",
+              multi_factor_auth_basic_auth_password: "api-password"
             )
             auth_client = bandwidth_client.multi_factor_auth_client.mfa
 
             body = TwoFactorVerifyRequestSchema.new
             body.application_id = "1234-qwer"
             body.to = "+15553334444"
-            body.scope = "scope"
-            body.code = "123456"
+            body.scope = 'scope'
+            body.code = '123456'
             body.expiration_time_in_minutes = 3
             begin
-                result = auth_client.create_verify_two_factor("12345", body)
-                puts 'valid?: ' + result.data.valid
+              result = auth_client.create_verify_two_factor("12345", body)
+              puts "valid?: #{result.data.valid}"
             rescue APIException => e
-                puts e.response_code
+              puts e.response_code
+            end
+
+
+            require 'bandwidth-sdk'
+
+            Bandwidth.configure do |config|
+              config.username = ENV['BW_USERNAME']
+              config.password = ENV['BW_PASSWORD']
+            end
+
+            api_instance = Bandwidth::MFAApi.new
+            account_id = ENV['BW_ACCOUNT_ID']
+            verify_code_request = Bandwidth::VerifyCodeRequest.new(
+              {
+                to: ENV['USER_NUMBER'], 
+                expiration_time_in_minutes: 3,
+                code: '123456'
+              }
+            )
+
+            begin
+              result = api_instance.verify_code(account_id, verify_code_request)
+              p "valid?: #{result.data.valid}"
+            rescue Bandwidth::ApiError => e
+              puts "Error when calling MFAApi->verify_code: #{e}"
             end
 components:
   schemas:
