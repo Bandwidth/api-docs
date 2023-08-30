@@ -310,29 +310,29 @@ paths:
                 print(e.response_code)
         - lang: Ruby
           source: |
-            require 'bandwidth'
+            require 'bandwidth-sdk'
 
-            include Bandwidth
-            include Bandwidth::Voice
+            Bandwidth.configure do |config|
+              config.username = "api-username"
+              config.password = "api-password"
+            end
 
-            bandwidth_client = Bandwidth::Client.new(
-                voice_basic_auth_user_name: "api-username",
-                voice_basic_auth_password: "api-password"
+            api_instance = Bandwidth::CallsApi.new
+            account_id = "12345"
+            create_call = Bandwidth::CreateCall.new(
+              {
+                to: "+15553334444",
+                from: "+15554443333",
+                application_id: "1234-qwer",
+                answer_url: ENV['BASE_CALLBACK_URL']
+              }
             )
 
-            voice_client = bandwidth_client.voice_client.client
-
-            body = CreateCallRequest.new
-            body.from = "+15554443333"
-            body.to = "+15553334444"
-            body.answer_url = "http://www.myapp.com/hello"
-            body.application_id = "7fc9698a-b04a-468b-9e8f-91238c0d0086"
-
             begin
-                result = voice_client.create_call("12345", body)
-                puts result.data.call_id
-            rescue APIException => e
-                puts e.response_code
+              result = api_instance.create_call(account_id, create_call)
+              p result.call_id
+            rescue Bandwidth::ApiError => e
+              puts "Error when calling CallsApi->create_call: #{e}"
             end
   /accounts/{accountId}/calls/{callId}:
     get:
@@ -525,26 +525,22 @@ paths:
                 print(e.response_code)
         - lang: Ruby
           source: |
-            require 'bandwidth'
+            require 'bandwidth-sdk'
 
-            include Bandwidth
-            include Bandwidth::Voice
+            Bandwidth.configure do |config|
+              config.username = "api-username"
+              config.password = "api-password"
+            end
 
-            bandwidth_client = Bandwidth::Client.new(
-                voice_basic_auth_user_name: "api-username",
-                voice_basic_auth_password: "api-password"
-            )
-
-            voice_client = bandwidth_client.voice_client.client
-
-            call_id = "c-1234"
+            api_instance = Bandwidth::CallsApi.new
+            account_id = "12345"
+            call_id = ENV['CALL_ID']
 
             begin
-                #result = voice_client.get_call("12345", call_id)
-                #puts result.data.state
-                puts "Method broke"
-            rescue APIException => e
-                puts e.response_code
+              result = api_instance.get_call_state(account_id, call_id)
+              p result.state
+            rescue Bandwidth::ApiError => e
+              puts "Error when calling CallsApi->get_call_state: #{e}"
             end
     post:
       tags:
@@ -780,28 +776,22 @@ paths:
                 print(e.response_code)
         - lang: Ruby
           source: |
-            require 'bandwidth'
+            require 'bandwidth-sdk'
 
-            include Bandwidth
-            include Bandwidth::Voice
+            Bandwidth.configure do |config|
+              config.username = "api-username"
+              config.password = "api-password"
+            end
 
-            bandwidth_client = Bandwidth::Client.new(
-                voice_basic_auth_user_name: "api-username",
-                voice_basic_auth_password: "api-password"
-            )
-
-            voice_client = bandwidth_client.voice_client.client
-
-            body = ModifyCallRequest.new
-            body.redirect_url = "http://www.myapp.com/new"
-            body.state = "active"
-
-            call_id = "c-1234"
+            api_instance = Bandwidth::CallsApi.new
+            account_id = "12345"
+            call_id = ENV['CALL_ID']
+            update_call = Bandwidth::UpdateCall.new
 
             begin
-                voice_client.modify_call("12345", call_id, body)
-            rescue APIException => e
-                puts e.response_code
+              api_instance.update_call(account_id, call_id, update_call)
+            rescue Bandwidth::ApiError => e
+              puts "Error when calling CallsApi->update_call: #{e}"
             end
   /accounts/{accountId}/calls/{callId}/bxml:
     put:
@@ -1022,25 +1012,25 @@ paths:
                 print(e.response_code)
         - lang: Ruby
           source: |
-            require 'bandwidth'
+            require 'bandwidth-sdk'
 
-            include Bandwidth
-            include Bandwidth::Voice
+            Bandwidth.configure do |config|
+              config.username = "api-username"
+              config.password = "api-password"
+            end
 
-            bandwidth_client = Bandwidth::Client.new(
-                voice_basic_auth_user_name: "api-username",
-                voice_basic_auth_password: "api-password"
-            )
-
-            voice_client = bandwidth_client.voice_client.client
+            api_instance = Bandwidth::ConferencesApi.new
+            account_id = "12345"
+            opts = {
+              min_created_time: '2022-06-21T19:13:21Z',
+              page_size: 500
+            }
 
             begin
-                response = voice_client.get_conferences("12345")
-                if response.data.length > 0
-                    puts response.data[0].id
-                end
-            rescue APIException => e
-                puts e.response_code
+              result = api_instance.list_conferences(account_id, opts)
+              p result[0].id if response.length.positive?
+            rescue Bandwidth::ApiError => e
+              puts "Error when calling ConferencesApi->list_conferences: #{e}"
             end
   /accounts/{accountId}/conferences/{conferenceId}:
     get:
@@ -1234,25 +1224,22 @@ paths:
                 print(e.response_code)
         - lang: Ruby
           source: |
-            require 'bandwidth'
-              
-            include Bandwidth
-            include Bandwidth::Voice
+            require 'bandwidth-sdk'
 
-            bandwidth_client = Bandwidth::Client.new(
-                voice_basic_auth_user_name: "api-username",
-                voice_basic_auth_password: "api-password"
-            )
+            Bandwidth.configure do |config|
+              config.username = "api-username"
+              config.password = "api-password"
+            end
 
-            voice_client = bandwidth_client.voice_client.client
-
-            conference_id = "conf-1234"
+            api_instance = Bandwidth::ConferencesApi.new
+            account_id = "12345"
+            conference_id = ENV['CONFERENCE_ID']
 
             begin
-                response = voice_client.get_conference("12345", conference_id)
-                print(response.data.name)
-            rescue APIException => e
-                puts e.response_code
+              result = api_instance.get_conference(account_id, conference_id)
+              p result.name
+            rescue Bandwidth::ApiError => e
+              puts "Error when calling ConferencesApi->get_conference: #{e}"
             end
     post:
       tags:
@@ -1489,27 +1476,22 @@ paths:
                 print(e.response_code)
         - lang: Ruby
           source: |
-            require 'bandwidth'
+            require 'bandwidth-sdk'
 
-            include Bandwidth
-            include Bandwidth::Voice
+            Bandwidth.configure do |config|
+              config.username = "api-username"
+              config.password = "api-password"
+            end
 
-            bandwidth_client = Bandwidth::Client.new(
-                voice_basic_auth_user_name: "api-username",
-                voice_basic_auth_password: "api-password"
-            )
-
-            voice_client = bandwidth_client.voice_client.client
-
-            body = ModifyConferenceRequest.new
-            body.status = StatusEnum::ACTIVE
-
-            conference_id = "conf-1234"
+            api_instance = Bandwidth::ConferencesApi.new
+            account_id = "12345"
+            conference_id = ENV['CONFERENCE_ID']
+            update_conference = Bandwidth::UpdateConference.new
 
             begin
-                voice_client.modify_conference("12345", conference_id, body)
-            rescue APIException => e
-                puts e.response_code
+              api_instance.update_conference(account_id, conference_id, update_conference)
+            rescue Bandwidth::ApiError => e
+              puts "Error when calling ConferencesApi->update_conference: #{e}"
             end
   /accounts/{accountId}/conferences/{conferenceId}/bxml:
     put:
@@ -1740,26 +1722,23 @@ paths:
                 print(e.response_code)
         - lang: Ruby
           source: |
-            require 'bandwidth'
-              
-            include Bandwidth
-            include Bandwidth::Voice
+            require 'bandwidth-sdk'
 
-            bandwidth_client = Bandwidth::Client.new(
-                voice_basic_auth_user_name: "api-username",
-                voice_basic_auth_password: "api-password"
-            )
+            Bandwidth.configure do |config|
+              config.username = "api-username"
+              config.password = "api-password"
+            end
 
-            voice_client = bandwidth_client.voice_client.client
-
-            conference_id = "conf-1234"
-            member_id = "m-1234"
+            api_instance = Bandwidth::ConferencesApi.new
+            account_id = "12345"
+            conference_id = ENV['CONFERENCE_ID']
+            member_id = ENV['MEMBER_ID']
 
             begin
-                response = voice_client.get_conference_member("12345", conference_id, member_id)
-                puts response.data.member_url
-            rescue APIException => e
-                puts e.response_code
+              result = api_instance.get_conference_member(account_id, conference_id, member_id)
+              p result.member_url
+            rescue Bandwidth::ApiError => e
+              puts "Error when calling ConferencesApi->get_conference_member: #{e}"
             end
     put:
       tags:
@@ -2002,28 +1981,23 @@ paths:
                 print(e.response_code)
         - lang: Ruby
           source: |
-            require 'bandwidth'
+            require 'bandwidth-sdk'
 
-            include Bandwidth
-            include Bandwidth::Voice
+            Bandwidth.configure do |config|
+              config.username = "api-username"
+              config.password = "api-password"
+            end
 
-            bandwidth_client = Bandwidth::Client.new(
-                voice_basic_auth_user_name: "api-username",
-                voice_basic_auth_password: "api-password"
-            )
-
-            voice_client = bandwidth_client.voice_client.client
-
-            body = ConferenceMemberState.new
-            body.mute = true
-
-            conference_id = "conf-1234"
-            call_id = "c-1234"
+            api_instance = Bandwidth::ConferencesApi.new
+            account_id = "12345"
+            conference_id = ENV['CONFERENCE_ID']
+            member_id = ENV['MEMBER_ID']
+            update_conference_member = Bandwidth::UpdateConferenceMember.new
 
             begin
-                voice_client.modify_conference_member("12345", conference_id, call_id, body)
-            rescue APIException => e
-                puts e.response_code
+              api_instance.update_conference_member(account_id, conference_id, member_id, update_conference_member)
+            rescue Bandwidth::ApiError => e
+              puts "Error when calling ConferencesApi->update_conference_member: #{e}"
             end
   /accounts/{accountId}/conferences/{conferenceId}/recordings:
     get:
@@ -2222,27 +2196,22 @@ paths:
                 print(e.response_code)
         - lang: Ruby
           source: |
-            require 'bandwidth'
+            require 'bandwidth-sdk'
 
-            include Bandwidth
-            include Bandwidth::Voice
+            Bandwidth.configure do |config|
+              config.username = "api-username"
+              config.password = "api-password"
+            end
 
-            bandwidth_client = Bandwidth::Client.new(
-                voice_basic_auth_user_name: "api-username",
-                voice_basic_auth_password: "api-password"
-            )
-
-            voice_client = bandwidth_client.voice_client.client
-
-            conference_id = "conf-1234"
+            api_instance = Bandwidth::ConferencesApi.new
+            account_id = "12345"
+            conference_id = ENV['CONFERENCE_ID']
 
             begin
-                response = voice_client.get_conference_recordings("12345", conference_id)
-                if response.data.length > 0
-                    puts response.body[0].name
-                end
-            rescue APIException => e
-                puts e.response_code
+              result = api_instance.list_conference_recordings(account_id, conference_id)
+              p result[0].name if result.length.positive?
+            rescue Bandwidth::ApiError => e
+              puts "Error when calling ConferencesApi->list_conference_recordings: #{e}"
             end
   /accounts/{accountId}/conferences/{conferenceId}/recordings/{recordingId}:
     get:
@@ -2442,26 +2411,23 @@ paths:
                 print(e.response_code)
         - lang: Ruby
           source: |
-            require 'bandwidth'
+            require 'bandwidth-sdk'
 
-            include Bandwidth
-            include Bandwidth::Voice
+            Bandwidth.configure do |config|
+              config.username = "api-username"
+              config.password = "api-password"
+            end
 
-            bandwidth_client = Bandwidth::Client.new(
-                voice_basic_auth_user_name: "api-username",
-                voice_basic_auth_password: "api-password"
-            )
-
-            voice_client = bandwidth_client.voice_client.client
-
-            conference_id = "conf-1234"
-            recording_id = "r-1234"
+            api_instance = Bandwidth::ConferencesApi.new
+            account_id = "12345"
+            conference_id = ENV['CONFERENCE_ID']
+            recording_id = ENV['RECORDING_ID']
 
             begin
-                response = voice_client.get_conference_recording("12345", conference_id, recording_id)
-                puts response.body.application_id
-            rescue APIException => e
-                puts e.response_code
+              result = api_instance.get_conference_recording(account_id, conference_id, recording_id)
+              p result.application_id
+            rescue Bandwidth::ApiError => e
+              puts "Error when calling ConferencesApi->get_conference_recording: #{e}"
             end
   /accounts/{accountId}/conferences/{conferenceId}/recordings/{recordingId}/media:
     get:
@@ -2659,30 +2625,23 @@ paths:
                 print(e.response_code)
         - lang: Ruby
           source: |
-            require 'bandwidth'
+            require 'bandwidth-sdk'
 
-            include Bandwidth
-            include Bandwidth::Voice
+            Bandwidth.configure do |config|
+              config.username = "api-username"
+              config.password = "api-password"
+            end
 
-            BW_USERNAME = "api-username"
-            BW_PASSWORD = "api-password"
-            BW_ACCOUNT_ID = "12345"
-
-            bandwidth_client = Bandwidth::Client.new(
-                voice_basic_auth_user_name: BW_USERNAME,
-                voice_basic_auth_password: BW_PASSWORD
-            )
-
-            voice_client = bandwidth_client.voice_client.client
-
-            conference_id = "conf-1234"
-            recording_id = "r-1234"
+            api_instance = Bandwidth::ConferencesApi.new
+            account_id = "12345"
+            conference_id = ENV['CONFERENCE_ID']
+            recording_id = ENV['RECORDING_ID']
 
             begin
-                result = voice_client.get_download_conference_recording(BW_ACCOUNT_ID, conference_id, recording_id)
-                downloaded_recording = result.data
-            rescue APIException => e
-                puts e.response_code
+              result = api_instance.download_conference_recording(account_id, conference_id, recording_id)
+              p result
+            rescue Bandwidth::ApiError => e
+              puts "Error when calling ConferencesApi->download_conference_recording: #{e}"
             end
   /accounts/{accountId}/recordings:
     get:
@@ -2870,25 +2829,25 @@ paths:
                 print(e.response_code)
         - lang: Ruby
           source: |
-            require 'bandwidth'
+            require 'bandwidth-sdk'
 
-            include Bandwidth
-            include Bandwidth::Voice
+            Bandwidth.configure do |config|
+              config.username = "api-username"
+              config.password = "api-password"
+            end
 
-            bandwidth_client = Bandwidth::Client.new(
-                voice_basic_auth_user_name: "api-username",
-                voice_basic_auth_password: "api-password"
-            )
-
-            voice_client = bandwidth_client.voice_client.client
+            api_instance = Bandwidth::RecordingsApi.new
+            account_id = "12345"
+            opts = {
+              to: '%2b19195551234',
+              from: '%2b19195554321'
+            }
 
             begin
-                result = voice_client.get_query_call_recordings("12345")
-                if result.data.length > 0
-                    puts result.data[0].recording_id
-                end
-            rescue APIException => e
-                puts e.response_code
+              result = api_instance.list_account_call_recordings(account_id, opts)
+              p result[0].recording_id if result.length.positive?
+            rescue Bandwidth::ApiError => e
+              puts "Error when calling RecordingsApi->list_account_call_recordings: #{e}"
             end
   /accounts/{accountId}/calls/{callId}/recording:
     put:
@@ -3106,28 +3065,30 @@ paths:
             except APIException as e:
                 print(e.response_code)
         - lang: Ruby
-          source: |
-            require 'bandwidth'
+          source: >
+            require 'bandwidth-sdk'
 
-            include Bandwidth
-            include Bandwidth::Voice
 
-            bandwidth_client = Bandwidth::Client.new(
-                voice_basic_auth_user_name: "api-username",
-                voice_basic_auth_password: "api-password"
-            )
+            Bandwidth.configure do |config|
+              config.username = "api-username"
+              config.password = "api-password"
+            end
 
-            voice_client = bandwidth_client.voice_client.client
 
-            body = ModifyCallRecordingRequest.new
-            body.state = "paused"
+            api_instance = Bandwidth::RecordingsApi.new
 
-            call_id = "c-1234"
+            account_id = "12345"
+
+            call_id = ENV['CALL_ID']
+
+            update_call_recording = Bandwidth::UpdateCallRecording.new({ state:
+            Bandwidth::RecordingStateEnum::PAUSED })
+
 
             begin
-                voice_client.modify_call_recording_state("12345", call_id, body)
-            rescue APIException => e
-                puts e.response_code
+              api_instance.update_call_recording_state(account_id, call_id, update_call_recording)
+            rescue Bandwidth::ApiError => e
+              puts "Error when calling RecordingsApi->update_call_recording_state: #{e}"
             end
   /accounts/{accountId}/calls/{callId}/recordings:
     get:
@@ -3319,27 +3280,22 @@ paths:
                 print(e.response_code)
         - lang: Ruby
           source: |
-            require 'bandwidth'
+            require 'bandwidth-sdk'
 
-            include Bandwidth
-            include Bandwidth::Voice
+            Bandwidth.configure do |config|
+              config.username = "api-username"
+              config.password = "api-password"
+            end
 
-            bandwidth_client = Bandwidth::Client.new(
-                voice_basic_auth_user_name: "api-username",
-                voice_basic_auth_password: "api-password"
-            )
-
-            voice_client = bandwidth_client.voice_client.client
-
-            call_id = "c-1234"
+            api_instance = Bandwidth::RecordingsApi.new
+            account_id = "12345"
+            call_id = ENV['CALL_ID']
 
             begin
-                response = voice_client.get_call_recordings("12345", call_id)
-                if response.data.length > 0
-                    puts response.data[0].media_url
-                end
-            rescue APIException => e
-                puts e.response_code
+              result = api_instance.list_call_recordings(account_id, call_id)
+              p result[0].media_url if result.length.positive?
+            rescue Bandwidth::ApiError => e
+              puts "Error when calling RecordingsApi->list_call_recordings: #{e}"
             end
   /accounts/{accountId}/calls/{callId}/recordings/{recordingId}:
     get:
@@ -3532,26 +3488,23 @@ paths:
                 print(e.response_code)
         - lang: Ruby
           source: |
-            require 'bandwidth'
-              
-            include Bandwidth
-            include Bandwidth::Voice
+            require 'bandwidth-sdk'
 
-            bandwidth_client = Bandwidth::Client.new(
-                voice_basic_auth_user_name: "api-username",
-                voice_basic_auth_password: "api-password"
-            )
+            Bandwidth.configure do |config|
+              config.username = "api-username"
+              config.password = "api-password"
+            end
 
-            voice_client = bandwidth_client.voice_client.client
-
-            call_id = "c-1234"
-            recording_id = "r-1234"
+            api_instance = Bandwidth::RecordingsApi.new
+            account_id = "12345"
+            call_id = ENV['CALL_ID']
+            recording_id = ENV['RECORDING_ID']
 
             begin
-                response = voice_client.get_call_recording("12345", call_id, recording_id)
-                puts response.data.application_id
-            rescue APIException => e
-                puts e.response_code
+              result = api_instance.get_call_recording(account_id, call_id, recording_id)
+              p result.application_id
+            rescue Bandwidth::ApiError => e
+              puts "Error when calling RecordingsApi->get_call_recording: #{e}"
             end
     delete:
       tags:
@@ -3749,25 +3702,22 @@ paths:
                 print(e.response_code)
         - lang: Ruby
           source: |
-            require 'bandwidth'
-              
-            include Bandwidth
-            include Bandwidth::Voice
+            require 'bandwidth-sdk'
 
-            bandwidth_client = Bandwidth::Client.new(
-                voice_basic_auth_user_name: "api-username",
-                voice_basic_auth_password: "api-password"
-            )
+            Bandwidth.configure do |config|
+              config.username = "api-username"
+              config.password = "api-password"
+            end
 
-            voice_client = bandwidth_client.voice_client.client
-
-            call_id = "c-1234"
-            recording_id = "r-1234"
+            api_instance = Bandwidth::RecordingsApi.new
+            account_id = "12345"
+            call_id = ENV['CALL_ID']
+            recording_id = ENV['RECORDING_ID']
 
             begin
-                voice_client.delete_recording("12345", call_id, recording_id)
-            rescue APIException => e
-                puts e.response_code
+              api_instance.delete_recording(account_id, call_id, recording_id)
+            rescue Bandwidth::ApiError => e
+              puts "Error when calling RecordingsApi->delete_recording: #{e}"
             end
   /accounts/{accountId}/calls/{callId}/recordings/{recordingId}/media:
     get:
@@ -3956,30 +3906,23 @@ paths:
                 print(e.response_code)
         - lang: Ruby
           source: |
-            require 'bandwidth'
-              
-            include Bandwidth
-            include Bandwidth::Voice
+            require 'bandwidth-sdk'
 
-            BW_USERNAME = "api-username"
-            BW_PASSWORD = "api-password"
-            BW_ACCOUNT_ID = "12345"
+            Bandwidth.configure do |config|
+              config.username = "api-username"
+              config.password = "api-password"
+            end
 
-            bandwidth_client = Bandwidth::Client.new(
-                voice_basic_auth_user_name: BW_USERNAME,
-                voice_basic_auth_password: BW_PASSWORD
-            )
-
-            voice_client = bandwidth_client.voice_client.client
-
-            call_id = "c-1234"
-            recording_id = "r-1234"
+            api_instance = Bandwidth::RecordingsApi.new
+            account_id = "12345"
+            call_id = ENV['CALL_ID']
+            recording_id = ENV['RECORDING_ID']
 
             begin
-                result = voice_client.get_download_call_recording(BW_ACCOUNT_ID, call_id, recording_id)
-                downloaded_recording = result.data
-            rescue APIException => e
-                puts e.response_code
+              result = api_instance.download_call_recording(account_id, call_id, recording_id)
+              p result
+            rescue Bandwidth::ApiError => e
+              puts "Error when calling RecordingsApi->download_call_recording: #{e}"
             end
     delete:
       tags:
@@ -4169,25 +4112,22 @@ paths:
                 print(e.response_code)
         - lang: Ruby
           source: |
-            require 'bandwidth'
-              
-            include Bandwidth
-            include Bandwidth::Voice
+            require 'bandwidth-sdk'
 
-            bandwidth_client = Bandwidth::Client.new(
-                voice_basic_auth_user_name: "api-username",
-                voice_basic_auth_password: "api-password"
-            )
+            Bandwidth.configure do |config|
+              config.username = "api-username"
+              config.password = "api-password"
+            end
 
-            voice_client = bandwidth_client.voice_client.client
-
-            call_id = "c-1234"
-            recording_id = "r-1234"
+            api_instance = Bandwidth::RecordingsApi.new
+            account_id = "12345"
+            call_id = ENV['CALL_ID']
+            recording_id = ENV['RECORDING_ID']
 
             begin
-                voice_client.delete_recording_media("12345", call_id, recording_id)
-            rescue APIException => e
-                print(e.response_code)
+              api_instance.delete_recording_media(account_id, call_id, recording_id)
+            rescue Bandwidth::ApiError => e
+              puts "Error when calling RecordingsApi->delete_recording_media: #{e}"
             end
   /accounts/{accountId}/calls/{callId}/recordings/{recordingId}/transcription:
     get:
@@ -4394,26 +4334,23 @@ paths:
                 print(e.response_code)
         - lang: Ruby
           source: |
-            require 'bandwidth'
-              
-            include Bandwidth
-            include Bandwidth::Voice
+            require 'bandwidth-sdk'
 
-            bandwidth_client = Bandwidth::Client.new(
-                voice_basic_auth_user_name: "api-username",
-                voice_basic_auth_password: "api-password"
-            )
+            Bandwidth.configure do |config|
+              config.username = "api-username"
+              config.password = "api-password"
+            end
 
-            voice_client = bandwidth_client.voice_client.client
-
-            call_id = "c-1234"
-            recording_id = "r-1234"
+            api_instance = Bandwidth::RecordingsApi.new
+            account_id = "12345"
+            call_id = ENV['CALL_ID']
+            recording_id = ENV['RECORDING_ID']
 
             begin
-                response = voice_client.get_call_transcription("12345", call_id, recording_id)
-                puts response.data.transcripts
-            rescue APIException => e
-                puts e.response_code
+              result = api_instance.get_call_transcription(account_id, call_id, recording_id)
+              p result.transcripts
+            rescue Bandwidth::ApiError => e
+              puts "Error when calling RecordingsApi->get_call_transcription: #{e}"
             end
     post:
       tags:
@@ -4651,31 +4588,25 @@ paths:
             except APIException as e:
                 print(e.response_code)
         - lang: Ruby
-          source: |+
-            require 'bandwidth'
-              
-            include Bandwidth
-            include Bandwidth::Voice
+          source: |
+            require 'bandwidth-sdk'
 
-            bandwidth_client = Bandwidth::Client.new(
-                voice_basic_auth_user_name: "api-username",
-                voice_basic_auth_password: "api-password"
-            )
-
-            voice_client = bandwidth_client.voice_client.client
-
-            call_id = "c-1234"
-            recording_id = "r-1234"
-
-            body = TranscribeRecordingRequest.new
-            body.callback_url = "https://callback-url.com"
-
-            begin
-                voice_client.create_transcribe_call_recording("12345", call_id, recording_id, body)
-            rescue APIException => e
-                puts e.response_code
+            Bandwidth.configure do |config|
+              config.username = "api-username"
+              config.password = "api-password"
             end
 
+            api_instance = Bandwidth::RecordingsApi.new
+            account_id = "12345"
+            call_id = ENV['CALL_ID']
+            recording_id = ENV['RECORDING_ID']
+            transcribe_recording = Bandwidth::TranscribeRecording.new
+
+            begin
+              api_instance.transcribe_call_recording(account_id, call_id, recording_id, transcribe_recording)
+            rescue Bandwidth::ApiError => e
+              puts "Error when calling RecordingsApi->transcribe_call_recording: #{e}"
+            end
     delete:
       tags:
         - Recordings
@@ -4870,25 +4801,22 @@ paths:
                 print(e.response_code)
         - lang: Ruby
           source: |
-            require 'bandwidth'
-              
-            include Bandwidth
-            include Bandwidth::Voice
+            require 'bandwidth-sdk'
 
-            bandwidth_client = Bandwidth::Client.new(
-                voice_basic_auth_user_name: "api-username",
-                voice_basic_auth_password: "api-password"
-            )
+            Bandwidth.configure do |config|
+              config.username = "api-username"
+              config.password = "api-password"
+            end
 
-            voice_client = bandwidth_client.voice_client.client
-
-            call_id = "c-1234"
-            recording_id = "r-1234"
+            api_instance = Bandwidth::RecordingsApi.new
+            account_id = "12345"
+            call_id = ENV['CALL_ID']
+            recording_id = ENV['RECORDING_ID']
 
             begin
-                voice_client.delete_call_transcription("12345", call_id, recording_id)
-            rescue APIException => e
-                puts e.response_code
+              api_instance.delete_call_transcription(account_id, call_id, recording_id)
+            rescue Bandwidth::ApiError => e
+              puts "Error when calling RecordingsApi->delete_call_transcription: #{e}"
             end
   /accounts/{accountId}/statistics:
     get:

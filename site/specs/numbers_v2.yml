@@ -1196,6 +1196,24 @@ components:
       name: sipPeerId
       schema:
         type: integer
+    SipPeerTnsPageQueryParam:
+      description: The number of the paged results to be displayed.
+      example: 4
+      in: query
+      name: page
+      required: false
+      schema:
+        default: 1
+        type: integer
+    SipPeerTnsSizeQueryParam:
+      description: The quantity of results displayed for each page.
+      example: 200
+      in: query
+      name: size
+      required: false
+      schema:
+        default: 5000
+        type: integer
     SiteIdPathParam:
       description: Site ID of the Sip Peer
       example: '407'
@@ -1256,6 +1274,37 @@ components:
       name: id
       required: true
       schema:
+        type: string
+    areaCodeQueryParameter:
+      description: Area code of a phone number
+      example: '07'
+      in: query
+      name: areaCode
+      required: false
+      schema:
+        type: string
+    countryCodeA3QueryParameter:
+      description: 3-letter, ISO 3166 country code
+      example: GBR
+      in: query
+      name: Country Code
+      required: true
+      schema:
+        type: string
+    phoneNumberTypeQueryParameter:
+      description: Phone number type
+      example: MOBILE
+      in: query
+      name: phoneNumberType
+      required: false
+      schema:
+        enum:
+          - GEOGRAPHIC
+          - SHARED_COST
+          - TOLL_FREE
+          - NATIONAL
+          - SPECIAL
+          - MOBILE
         type: string
     shortCodeCountryPathParam:
       description: The short code number country.
@@ -1396,6 +1445,21 @@ components:
         associated with the order, the state of the order, and a list of the
         successfully imported Telephone Numbers, and descriptions of any
         encountered errors.
+    badRequestLosingInvlaidCountryCodeCarriersResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              description: example
+              value:
+                data: null
+                errors:
+                  code: 7673
+                  description: '''%s'' is not a valid countryCodeA3 value'
+                links: null
+          schema:
+            $ref: '#/components/schemas/portingLosingCarriersResponseSchema'
+      description: Error returned when the country code is invalid
     bulkRateCenterGetResponse404Error:
       content:
         application/xml:
@@ -1447,6 +1511,44 @@ components:
       description: >-
         Successful response which starts the bulk upsert for provided rate
         centers.
+    listOfLosingCarriersResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                data:
+                  losingCarriers:
+                    - name: Losing Carrier 1
+                    - name: Losing Carrier 2
+                    - name: Losing Carrier 3
+                    - name: Losing Carrier 4
+                errors: null
+                links:
+                  - href: /portingLosingCarriers
+                    method: GET
+                    rel: self
+          schema:
+            $ref: '#/components/schemas/portingLosingCarriersResponseSchema'
+      description: A list of available carriers that can port out a phone number
+    noUpstreamServicesLosingCarriersResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              summary: example
+              value:
+                data: null
+                errors:
+                  code: 7678
+                  description: >-
+                    We received an error while attempting to retrieve the losing
+                    carriers for your request. Please try this request again
+                    later.
+                links: null
+          schema:
+            $ref: '#/components/schemas/portingLosingCarriersResponseSchema'
+      description: Error returned when upstream services are unavailable
     rateCenter401Error:
       content:
         application/json:
@@ -4026,6 +4128,17 @@ components:
             years.
           format: int64
           type: integer
+        NumberFormat:
+          default: E164
+          description: >-
+            Specifies whether numbers should be formatted in e164 format, or use
+            legacy formatting. If Legacy is chosen, numbers with country code
+            '+1' will be formatted as 10-digit and all other numbers will use
+            e164 formatting. Can be omitted and defaults to E164.
+          enum:
+            - LEGACY
+            - E164
+          type: string
         Status:
           type: string
         URL:
@@ -14337,6 +14450,56 @@ components:
                   name: OrderCreateDate
             type: object
       type: object
+    portingLosingCarriersResponseSchema:
+      description: List of losing carriers for porting
+      properties:
+        data:
+          nullable: true
+          properties:
+            losingCarriers:
+              items:
+                properties:
+                  name:
+                    description: The name of the carrier
+                    example: Losing Carrier 1
+                    type: string
+                type: object
+              type: array
+          type: object
+        errors:
+          items:
+            properties:
+              code:
+                description: An error code identifying the error
+                type: string
+              description:
+                description: A description of the error
+                type: string
+              meta:
+                description: Additional information regarding the error
+                type: object
+            type: object
+          nullable: true
+          type: array
+        links:
+          items:
+            properties:
+              href:
+                description: The API endpoint URL
+                example: /porting/losingCarriers
+                type: string
+              method:
+                description: The HTTP method used to make the request
+                example: GET
+                type: string
+              rel:
+                description: The relationship of the endpoint to the request
+                example: self
+                type: string
+            type: object
+          nullable: true
+          type: array
+      type: object
     shortCode:
       description: Short code registration.
       properties:
@@ -15290,116 +15453,6 @@ paths:
       summary: Retrieve account
       tags:
         - Account
-  /accounts/{accountId}/addresses:
-    get:
-      description: GET is used to retrieve all addresses.
-      operationId: GetAllAddresses
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: >-
-            Search criterion for address by its locationid. Cannot be combined
-            with type. Always returns E911 addresses.
-          example: 47950147-9c58-407c-bcc4-e88743b20db5
-          in: query
-          name: e911locationid
-          required: false
-          schema:
-            type: string
-        - description: Search criterion for addresses by their type.
-          example: e911
-          in: query
-          name: type
-          required: true
-          schema:
-            type: string
-        - description: >-
-            An ID of the first element in a page.  This value will indicate the
-            first value, not the page number, of the initial entry in the page
-            being requested.<br> It can be an id of address. The initial page is
-            tagged with the ID `1`.
-          example: '3'
-          in: query
-          name: page
-          required: false
-          schema:
-            default: '1'
-            type: string
-        - description: The number of items to include in a page.
-          example: 5000
-          in: query
-          name: size
-          required: false
-          schema:
-            default: 500
-            type: integer
-        - description: The text to search simultaneously through e911locationIds.
-          example: name
-          in: query
-          name: suggestions
-          required: false
-          schema:
-            type: string
-      responses:
-        '200':
-          content:
-            application/xml:
-              examples:
-                example:
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <AddressesResponse>
-                      <TotalCount>1</TotalCount>
-                      <Links>
-                        <first>Link=&lt;http://admin.localhost:8080/api/accounts/8000259/addresses?type=e911&amp;page=1&amp;size=500&gt;;rel="first";</first>
-                        <next>Link=&lt;http://localhost:8080/api/accounts/8000259/addresses?type=E911&amp;page=501&amp;size=500&gt;;rel="next";</next>
-                      </Links>
-                      <Addresses>
-                        <Address>
-                          <HouseNumber>207</HouseNumber>
-                          <HouseSuffix/>
-                          <PreDirectional/>
-                          <StreetName>Elmastar</StreetName>
-                          <StreetSuffix>AlternateStar</StreetSuffix>
-                          <PostDirectional/>
-                          <AddressLine2/>
-                          <City>Carpinteriaaly</City>
-                          <StateCode>NY</StateCode>
-                          <Zip>93019</Zip>
-                          <PlusFour/>
-                          <County/>
-                          <Country>United States</Country>
-                          <AddressType>E911</AddressType>
-                          <EndpointCount>2</EndpointCount>
-                          <ValidationStatus>VALID</ValidationStatus>
-                        </Address>
-                      </Addresses>
-                    </AddressesResponse>
-              schema:
-                $ref: '#/components/schemas/AddressesResponseWrapper'
-          description: >-
-            OK - the addresses retrieval request will return a list of all
-            addresses having specified type.
-        '404':
-          content:
-            application/xml:
-              examples:
-                example:
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <AddressesResponse>
-                      <ResponseStatus>
-                        <Description>The resource does not exist</Description>
-                      </ResponseStatus>
-                    </AddressesResponse>
-              schema:
-                $ref: '#/components/schemas/AddressesResponseNotFound'
-          description: >-
-            Not Found - if the account specified does not exist or is locked or
-            there are no addresses for specified search criteria it will result
-            in a not found.
-      summary: Retrieve all addresses
-      tags:
-        - Addresses
   /accounts/{accountId}/aeuis:
     get:
       description: GET is used to retrieve all Alternate end user identifiers.
@@ -20908,6 +20961,116 @@ paths:
       summary: Fetch DLDA order history
       tags:
         - DLDA
+  /accounts/{accountId}/e911Addresses:
+    get:
+      description: GET is used to retrieve all addresses.
+      operationId: GetAllAddresses
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: >-
+            Search criterion for address by its locationid. Cannot be combined
+            with type. Always returns E911 addresses.
+          example: 47950147-9c58-407c-bcc4-e88743b20db5
+          in: query
+          name: e911locationid
+          required: false
+          schema:
+            type: string
+        - description: Search criterion for addresses by their type.
+          example: e911
+          in: query
+          name: type
+          required: true
+          schema:
+            type: string
+        - description: >-
+            An ID of the first element in a page.  This value will indicate the
+            first value, not the page number, of the initial entry in the page
+            being requested.<br> It can be an id of address. The initial page is
+            tagged with the ID `1`.
+          example: '3'
+          in: query
+          name: page
+          required: false
+          schema:
+            default: '1'
+            type: string
+        - description: The number of items to include in a page.
+          example: 5000
+          in: query
+          name: size
+          required: false
+          schema:
+            default: 500
+            type: integer
+        - description: The text to search simultaneously through e911locationIds.
+          example: name
+          in: query
+          name: suggestions
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <AddressesResponse>
+                      <TotalCount>1</TotalCount>
+                      <Links>
+                        <first>Link=&lt;http://admin.localhost:8080/api/accounts/8000259/addresses?type=e911&amp;page=1&amp;size=500&gt;;rel="first";</first>
+                        <next>Link=&lt;http://localhost:8080/api/accounts/8000259/addresses?type=E911&amp;page=501&amp;size=500&gt;;rel="next";</next>
+                      </Links>
+                      <Addresses>
+                        <Address>
+                          <HouseNumber>207</HouseNumber>
+                          <HouseSuffix/>
+                          <PreDirectional/>
+                          <StreetName>Elmastar</StreetName>
+                          <StreetSuffix>AlternateStar</StreetSuffix>
+                          <PostDirectional/>
+                          <AddressLine2/>
+                          <City>Carpinteriaaly</City>
+                          <StateCode>NY</StateCode>
+                          <Zip>93019</Zip>
+                          <PlusFour/>
+                          <County/>
+                          <Country>United States</Country>
+                          <AddressType>E911</AddressType>
+                          <EndpointCount>2</EndpointCount>
+                          <ValidationStatus>VALID</ValidationStatus>
+                        </Address>
+                      </Addresses>
+                    </AddressesResponse>
+              schema:
+                $ref: '#/components/schemas/AddressesResponseWrapper'
+          description: >-
+            OK - the addresses retrieval request will return a list of all
+            addresses having specified type.
+        '404':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <AddressesResponse>
+                      <ResponseStatus>
+                        <Description>The resource does not exist</Description>
+                      </ResponseStatus>
+                    </AddressesResponse>
+              schema:
+                $ref: '#/components/schemas/AddressesResponseNotFound'
+          description: >-
+            Not Found - if the account specified does not exist or is locked or
+            there are no addresses for specified search criteria it will result
+            in a not found.
+      summary: Retrieve all addresses
+      tags:
+        - Addresses
   /accounts/{accountId}/e911s:
     get:
       description: >-
@@ -25564,48 +25727,6 @@ paths:
             The response provides a list of all of the orders in the date range
             that have been issued against the account.
       summary: List Import to Account orders
-      tags:
-        - Import Tn to Account
-    post:
-      description: >
-        Import a large number of previously ported or otherwise acquired numbers
-        into the account
-      operationId: CreateImportToAccountOrder
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-      requestBody:
-        content:
-          application/xml:
-            examples:
-              example:
-                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ImportToAccountNumberOrder>\n\t<ImportToAccountNumberOrderType>\n\t\t<NumberFormat>10D</NumberFormat>\n\t\t<TelephoneNumberList>\n\t\t\t<TelephoneNumber>+14158714244</TelephoneNumber>\n\t\t\t<TelephoneNumber>+16105330709</TelephoneNumber>\n\t\t</TelephoneNumberList>\n\t\t<BillingType>NOCHARGE</BillingType>\n\t\t<InitialStatus>Available</InitialStatus>\n\t\t<TnAttributes>\n\t\t\t<TnAttribute>Protected</TnAttribute>\n\t\t</TnAttributes>\n\t\t<VendorName>Level 3</VendorName>\n\t\t<BatchId>TestId1234</BatchId>\n\t\t<BatchSize>2</BatchSize>\n\t</ImportToAccountNumberOrderType>\n\t<SiteId>1</SiteId>\n\t<PeerId>12345</PeerId>\n\t</ImportToAccountNumberOrder>"
-            schema:
-              $ref: '#/components/schemas/ImportToAccountOrderRequest'
-      responses:
-        '201':
-          content:
-            application/xml:
-              examples:
-                example:
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ImportToAccountNumberOrderResponse>\n\t<OrderRequest>\n\t\t<id>c5986599-3a7c-4eed-a5c4-9121c17d54ab</id>\n\t\t<OrderCreateDate>2014-04-01T21:54:18.796Z</OrderCreateDate>\n\t\t<ImportToAccountNumberOrderType>\n\t\t\t<BatchId>SJM00001</BatchId>\n\t\t\t<BatchSize>2</BatchSize>\n\t\t\t<BillingType>NOCHARGE</BillingType>\n\t\t\t<NumberFormat>10D</NumberFormat>\n\t\t\t<InitialStatus>Available</InitialStatus>\n\t\t\t<TnAttributes>\n\t\t\t\t<TnAttribute>Protected</TnAttribute>\n\t\t\t</TnAttributes>\n\t\t\t<TelephoneNumberList>\n\t\t\t\t<TelephoneNumber>+14158714245</TelephoneNumber>\n\t\t\t\t<TelephoneNumber>+16105330710</TelephoneNumber>\n\t\t\t</TelephoneNumberList>\n\t\t\t<VendorName>Level 3</VendorName>\n\t\t</ImportToAccountNumberOrderType>\n\t\t<SiteId>743</SiteId>\n\t\t<PeerId>12345</PeerId>\n\t</OrderRequest>\n\t</ImportToAccountNumberOrderResponse>"
-              schema:
-                $ref: '#/components/schemas/ImportToAccountNumberOrderResponse'
-          description: >-
-            The order has been created and an order ID will be specified in the
-            payload and in the header.
-        '400':
-          content:
-            application/xml:
-              examples:
-                example:
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ImportToAccountNumberOrderResponse>\n\t <ErrorList>\n\t\t <Error>\n\t\t\t <Code>7309</Code>\n\t\t\t <Description>The site id was not supplied or is invalid.</Description>\n\t\t </Error>\n\t\t <Error>\n\t\t\t <Code>7312</Code>\n\t\t\t <Description>The sippeer id is invalid.</Description>\n\t\t </Error>\n\t </ErrorList>\n </ImportToAccountNumberOrderResponse>"
-              schema:
-                $ref: '#/components/schemas/ImportToAccountNumberOrderErrorResponse'
-          description: >-
-            The order failed; one of the input parameters is invalid. The error
-            text and an error code will be provided in the ErrorList
-            element.</p>
-      summary: Import to Account order
       tags:
         - Import Tn to Account
   /accounts/{accountId}/importToAccount/batches:
@@ -38340,6 +38461,8 @@ paths:
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
         - $ref: '#/components/parameters/SiteIdPathParam'
+        - $ref: '#/components/parameters/SipPeerTnsPageQueryParam'
+        - $ref: '#/components/parameters/SipPeerTnsSizeQueryParam'
         - description: ID of the Sip Peer to retrieve TNs information
           example: '500017'
           in: path
@@ -38731,6 +38854,7 @@ paths:
                                 <Username>iris</Username>
                               </BasicAuthentication>
                             </CallbackCredentials>
+                            <NumberFormat>E164</NumberFormat>
                           </CallbackSubscription>
                         </Subscription>
                         <Subscription>
@@ -38753,6 +38877,7 @@ paths:
                                 <Username>iris</Username>
                               </BasicAuthentication>
                             </CallbackCredentials>
+                            <NumberFormat>E164</NumberFormat>
                             </CallbackSubscription>
                         </Subscription>
                       </Subscriptions>
@@ -38886,6 +39011,7 @@ paths:
                         </BasicAuthentication>
                         <PublicKey>LS0tLS1CRUdJTiBDRVJUSU [...] kQgQ0VSVElGSUNBVEUtLS0tLQ0K</PublicKey>
                       </CallbackCredentials>
+                      <NumberFormat>E164</NumberFormat>
                     </CallbackSubscription>
                   </Subscription>
               eventEmailSubscription:
@@ -38915,6 +39041,7 @@ paths:
                         </BasicAuthentication>
                         <PublicKey>LS0tLS1CRUdJTiBDRVJUSU [...] kQgQ0VSVElGSUNBVEUtLS0tLQ0K</PublicKey>
                       </CallbackCredentials>
+                      <NumberFormat>E164</NumberFormat>
                     </CallbackSubscription>
                   </Subscription>
               orderEmailSubscription:
@@ -39042,6 +39169,7 @@ paths:
                             <URL>http://customer.com:8087/path/BandwidthHandler</URL>
                             <Expiry>+14283455101</Expiry>
                             <Status>200 OK</Status>
+                            <NumberFormat>E164</NumberFormat>
                           </CallbackSubscription>
                       </Subscription>
                     </SubscriptionsResponse>
@@ -39073,6 +39201,7 @@ paths:
                             <URL>http://customer.com:8087/path/BandwidthHandler</URL>
                             <Expiry>+14283455101</Expiry>
                             <Status>200 OK</Status>
+                            <NumberFormat>E164</NumberFormat>
                           </CallbackSubscription>
                       </Subscription>
                     </SubscriptionsResponse>
@@ -39138,6 +39267,7 @@ paths:
                         </BasicAuthentication>
                         <PublicKey>LS0tLS1CRUdJTiBDRVJUSU [...] kQgQ0VSVElGSUNBVEUtLS0tLQ0K</PublicKey>
                       </CallbackCredentials>
+                      <NumberFormat>E164</NumberFormat>
                     </CallbackSubscription>
                   </Subscription>
               eventEmailSubscription:
@@ -39167,6 +39297,7 @@ paths:
                         </BasicAuthentication>
                         <PublicKey>LS0tLS1CRUdJTiBDRVJUSU [...] kQgQ0VSVElGSUNBVEUtLS0tLQ0K</PublicKey>
                       </CallbackCredentials>
+                      <NumberFormat>E164</NumberFormat>
                     </CallbackSubscription>
                   </Subscription>
               orderEmailSubscription:
@@ -42556,6 +42687,28 @@ paths:
       summary: Retrieve Covered Rate Centers
       tags:
         - Rate Centers
+  /porting/losingCarriers:
+    get:
+      description: >
+        <p>List losing carriers that a non-NANPA number can be ported from,
+        given a countryCodeA3 and optional areaCode and phoneNumberType
+        values.</p>
+      operationId: portingLosingCarriers
+      parameters:
+        - $ref: '#/components/parameters/countryCodeA3QueryParameter'
+        - $ref: '#/components/parameters/phoneNumberTypeQueryParameter'
+        - $ref: '#/components/parameters/areaCodeQueryParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/listOfLosingCarriersResponse'
+        '400':
+          $ref: >-
+            #/components/responses/badRequestLosingInvlaidCountryCodeCarriersResponse
+        '502':
+          $ref: '#/components/responses/noUpstreamServicesLosingCarriersResponse'
+      summary: List losing carriers for porting non-NANPA telephone numbers
+      tags:
+        - Porting
   /rateCenters:
     get:
       description: >-
