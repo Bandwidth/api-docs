@@ -109,7 +109,7 @@ paths:
         - Providers
       responses:
         '200':
-          $ref: '#/components/responses/getProviderResponse'
+          $ref: '#/components/responses/replaceProviderResponse'
         '400':
           $ref: '#/components/responses/badRequestError'
         '401':
@@ -137,7 +137,7 @@ paths:
         - Providers
       responses:
         '200':
-          $ref: '#/components/responses/createProviderResponse'
+          $ref: '#/components/responses/updateProviderResponse'
         '400':
           $ref: '#/components/responses/badRequestError'
         '401':
@@ -435,6 +435,39 @@ components:
           examples:
             postBotResponse:
               $ref: '#/components/examples/botPostResponseExample'
+    replaceProviderResponse:
+      description: A JSON object containing the updated details of the Provider.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/replaceProviderResponseData'
+          examples:
+            googleEsProviderExample:
+              $ref: '#/components/examples/googleEsProviderPutResponseExample'
+            googleCxProviderExample:
+              $ref: '#/components/examples/googleEsProviderPutResponseExample'
+            awsProviderExample:
+              $ref: '#/components/examples/awsProviderPutResponseExample'
+            cognigyProviderExample:
+              $ref: '#/components/examples/cognigyProviderPutResponseExample'
+    updateProviderResponse:
+      description: A JSON object containing the updated details of the Provider.
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/googleEsProviderResponseData'
+              - $ref: '#/components/schemas/awsProviderResponseData'
+              - $ref: '#/components/schemas/cognigyProviderResponseData'
+          examples:
+            googleEsProviderExample:
+              $ref: '#/components/examples/googleEsProviderPatchResponseExample'
+            googleCxProviderExample:
+              $ref: '#/components/examples/googleEsProviderPatchResponseExample'
+            awsProviderExample:
+              $ref: '#/components/examples/awsProviderPatchResponseExample'
+            cognigyProviderExample:
+              $ref: '#/components/examples/cognigyProviderPatchResponseExample'
     deleteProviderResponse:
       description: The provider was successfully deleted. No response body is returned.
     deleteBotResponse:
@@ -747,24 +780,6 @@ components:
       nullable: true
       example:
         $ref: '#/components/examples/googleBotExample'
-    googleBotData:
-      title: Google Bot
-      type: object
-      description: Contains Bot information.
-      properties:
-        id:
-          $ref: '#/components/schemas/id'
-        provider:
-          $ref: '#/components/schemas/provider'
-        displayName:
-          $ref: '#/components/schemas/displayName'
-        description:
-          $ref: '#/components/schemas/description'
-        botFailover:
-          $ref: '#/components/schemas/botFailover'
-      nullable: true
-      example:
-        $ref: '#/components/examples/googleBotExample'
     awsProviderResponseData:
       title: AWS Provider Response Data
       type: object
@@ -1060,29 +1075,85 @@ components:
       required:
         - errorCode
         - errorMsg
-    postBotResponseData:
+    replaceProviderResponseData:
       type: object
       properties:
         id:
           type: string
-          description: Unique identifier of the new Provider.
-          example: d1e921e4-a6ff-475b-8b20-d27b6f2bc6c9
+          description: The new unique identifier of the updated provider.
+          example: f8a7a66a-4f4e-4b27-b557-7f3948a3cd2e
         displayName:
           type: string
-          description: Name of the new Provider.
-          example: Provider X
+          description: The new name of the updated provider.
+          example: Provider Y
+        description:
+          type: string
+          description: The new description of the updated provider.
+          example: Configuration for Provider Y
         type:
           type: string
-          description: The type of provider, such as 'google', 'aws', or 'cognigy'.
+          description: The new type of the updated provider, such as 'google' or 'aws'.
           enum:
             - GOOGLE_ES
             - GOOGLE_CX
             - AWS
             - COGNIGY
+    updateProviderResponseData:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the updated provider.
+          example: f8a7a66a-4f4e-4b27-b557-7f3948a3cd2e
+        displayName:
+          type: string
+          description: The new name of the updated provider.
+          example: Provider Y
         description:
           type: string
-          description: Description of the new Provider.
-          example: Configuration for Provider X
+          description: The new description of the updated provider.
+          example: Configuration for Provider Y
+        type:
+          type: string
+          description: The new type of the updated provider, such as 'google' or 'aws'.
+          enum:
+            - GOOGLE_ES
+            - GOOGLE_CX
+            - AWS
+            - COGNIGY
+    updateProvider:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the updated provider.
+          example: f8a7a66a-4f4e-4b27-b557-7f3948a3cd2e
+        displayName:
+          type: string
+          description: The new name of the updated provider.
+          example: Provider Y
+        description:
+          type: string
+          description: The new description of the updated provider.
+          example: Configuration for Provider Y
+        type:
+          type: string
+          description: The new type of the updated provider, such as 'google' or 'aws'.
+          enum:
+            - GOOGLE_ES
+            - GOOGLE_CX
+            - AWS
+            - COGNIGY
+        credentials:
+          oneOf:
+            - $ref: '#/components/schemas/googleProviderCredentials'
+            - $ref: '#/components/schemas/awsProviderCredentials'
+        googleConfig:
+          $ref: '#/components/schemas/googleEsProviderRequestData'
+        cognigyConfig:
+          $ref: '#/components/schemas/cognigyProviderRequestData'
+        awsConfig:
+          $ref: '#/components/schemas/awsProviderRequestData'
     googleProviderCredentials:
       type: object
       properties:
@@ -1098,21 +1169,6 @@ components:
       example:
         privateKey: abc123
         clientEmail: johndoe@example.com
-    cognigyProviderCredentials:
-      type: object
-      properties:
-        username:
-          type: string
-          description: Username for the Cognigy account.
-        password:
-          type: string
-          description: Password for the Cognigy account.
-      required:
-        - username
-        - password
-      example:
-        username: johndoe
-        password: newp@ssword
     awsProviderCredentials:
       type: object
       properties:
@@ -1268,6 +1324,12 @@ components:
         - google
       description: google type for provider
       example: Google-ES
+    googleCx:
+      type: string
+      required:
+        - googleCx
+      description: googleCx type for provider
+      example: Google-CX
     aws:
       type: string
       required:
@@ -1482,10 +1544,6 @@ components:
           $ref: '#/components/schemas/agentId'
         googleCredentials:
           $ref: '#/components/schemas/googleProviderCredentials'
-    googleBot:
-      oneOf:
-        - $ref: '#/components/schemas/googleSpeechToTextBot'
-        - $ref: '#/components/schemas/googleTextToSpeechBot'
     googleSpeechToTextBot:
       required:
         - providerId
@@ -1530,13 +1588,6 @@ components:
           $ref: '#/components/schemas/language'
         ttsEnhancedVoice:
           $ref: '#/components/schemas/ttsEnhancedVoice'
-    googleCredentials:
-      required:
-        - googleCredentials
-      description: Google Provider Credentials are required
-      properties:
-        googleCredentials:
-          $ref: '#/components/schemas/googleProviderCredentials'
     awsProvider:
       required:
         - awsProvider
@@ -1547,19 +1598,6 @@ components:
           $ref: '#/components/schemas/region'
         awsCredentials:
           $ref: '#/components/schemas/awsProviderCredentials'
-    awsBot:
-      required:
-        - voiceName
-        - providerBotName
-        - botAlias
-      description: Google Bot is required
-      properties:
-        voiceName:
-          $ref: '#/components/schemas/voiceName'
-        providerBotName:
-          $ref: '#/components/schemas/providerBotName'
-        botAlias:
-          $ref: '#/components/schemas/botAlias'
     awsProviderResponse:
       required:
         - awsProvider
@@ -1577,22 +1615,6 @@ components:
       properties:
         botUrl:
           $ref: '#/components/schemas/botUrl'
-    cognigyBot:
-      required:
-        - botURL
-        - providerBotName
-        - token
-        - oauthTokenUrl
-      description: Google Bot is required
-      properties:
-        botUrl:
-          $ref: '#/components/schemas/botUrl'
-        providerBotName:
-          $ref: '#/components/schemas/providerBotName'
-        token:
-          $ref: '#/components/schemas/token'
-        oauthTokenUrl:
-          $ref: '#/components/schemas/oauthTokenUrl'
     error:
       title: Error
       type: object
@@ -1898,26 +1920,6 @@ components:
           googleCredentials:
             privateKey: samplekey
             clientEmai: email
-    botResponseExample:
-      summary: An example of a Bot Response
-      value:
-        links:
-          - href: /providers
-            rel: self
-            method: GET
-        data:
-          id: b64b5e72-a850-4f38-98d4-5022cacd3f0f
-          displayName: Bot
-          provider: a6dj3e72-a850-4f38-98d4-5022cacd3f0f
-          description: Bot description
-          dtmfCollect: true
-          dtmfCollectMaxDigits: 1
-          dtmfCollectSubmitDigit: '#'
-          transferTarget: tel:+19195554321
-          sttProvider:
-            language: en-US
-          ttsProvider:
-            voiceName: Jill
     botRequestExample:
       summary: An example of a Bot request
       value:
@@ -2162,6 +2164,37 @@ components:
             environment: Production
             projectId: myproject
         errors: []
+    googleCxProviderPutResponseExample:
+      summary: An example of a provider put response
+      value:
+        links:
+          - href: /providers/b64b5e72-a850-4f38-98d4-5022cacd3f0f
+            rel: self
+            method: GET
+          - href: /providers
+            rel: create
+            method: POST
+          - href: /providers/b64b5e72-a850-4f38-98d4-5022cacd3f0f
+            rel: replace
+            method: PUT
+          - href: /providers/b64b5e72-a850-4f38-98d4-5022cacd3f0f
+            rel: update
+            method: PATCH
+          - href: /providers/b64b5e72-a850-4f38-98d4-5022cacd3f0f
+            rel: delete
+            method: DELETE
+        data:
+          id: b64b5e72-a850-4f38-98d4-5022cacd3f0f
+          displayName: Google Provider
+          type: GOOGLE_CX
+          description: Google provider description
+          googleProvider:
+            region: northamerica
+            location: us-east-1
+            environment: Production
+            projectId: myproject
+            agentId: myagent
+        errors: []
     googleEsProviderPatchResponseExample:
       summary: An example of a provider patch response
       value:
@@ -2191,6 +2224,37 @@ components:
             location: us-east-1
             environment: Production
             projectId: myproject
+        errors: []
+    googleCxProviderPatchResponseExample:
+      summary: An example of a provider patch response
+      value:
+        links:
+          - href: /providers/b64b5e72-a850-4f38-98d4-5022cacd3f0f
+            rel: self
+            method: GET
+          - href: /providers
+            rel: create
+            method: POST
+          - href: /providers/b64b5e72-a850-4f38-98d4-5022cacd3f0f
+            rel: replace
+            method: PUT
+          - href: /providers/b64b5e72-a850-4f38-98d4-5022cacd3f0f
+            rel: update
+            method: PATCH
+          - href: /providers/b64b5e72-a850-4f38-98d4-5022cacd3f0f
+            rel: delete
+            method: DELETE
+        data:
+          id: b64b5e72-a850-4f38-98d4-5022cacd3f0f
+          displayName: Google Provider
+          type: GOOGLE_CX
+          description: Google provider description
+          googleProvider:
+            region: northamerica
+            location: us-east-1
+            environment: Production
+            projectId: myproject
+            agentId: myagent
         errors: []
     awsProviderExample:
       summary: An example of an AWS provider
@@ -2385,7 +2449,7 @@ components:
             botUrl: http://cognigy-bot-url
         errors: []
     cognigyProviderPutResponseExample:
-      summary: An example of a Cognigy provider
+      summary: An example of a Cognigy provider put response
       value:
         links:
           - href: /providers/b64b5e72-a850-4f38-98d4-5022cacd3f0f
