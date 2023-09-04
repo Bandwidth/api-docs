@@ -1445,6 +1445,21 @@ components:
         associated with the order, the state of the order, and a list of the
         successfully imported Telephone Numbers, and descriptions of any
         encountered errors.
+    badRequestInvalidCountryCodeRequiredDocumentResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              description: example
+              value:
+                data: null
+                errors:
+                  code: 7673
+                  description: '''%s'' is not a valid countryCodeA3 value'
+                links: null
+          schema:
+            $ref: '#/components/schemas/portingRequiredDocumentsResponseSchema'
+      description: Error returned when the country code is invalid
     badRequestLosingInvlaidCountryCodeCarriersResponse:
       content:
         application/json:
@@ -1561,7 +1576,7 @@ components:
                     method: GET
                     rel: self
           schema:
-            $ref: '#/components/schemas/portingLosingCarriersResponseSchema'
+            $ref: '#/components/schemas/portingRequiredDocumentsResponseSchema'
       description: >-
         A list of required documents that are required to port out a phone
         number
@@ -1582,6 +1597,24 @@ components:
                 links: null
           schema:
             $ref: '#/components/schemas/portingLosingCarriersResponseSchema'
+      description: Error returned when upstream services are unavailable
+    noUpstreamServicesRequiredDocumentResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              summary: example
+              value:
+                data: null
+                errors:
+                  code: 7678
+                  description: >-
+                    We received an error while attempting to retrieve the losing
+                    carriers for your request. Please try this request again
+                    later.
+                links: null
+          schema:
+            $ref: '#/components/schemas/portingRequiredDocumentsResponseSchema'
       description: Error returned when upstream services are unavailable
     rateCenter401Error:
       content:
@@ -14521,6 +14554,56 @@ components:
               href:
                 description: The API endpoint URL
                 example: /porting/losingCarriers
+                type: string
+              method:
+                description: The HTTP method used to make the request
+                example: GET
+                type: string
+              rel:
+                description: The relationship of the endpoint to the request
+                example: self
+                type: string
+            type: object
+          nullable: true
+          type: array
+      type: object
+    portingRequiredDocumentsResponseSchema:
+      description: List of required documents for porting
+      properties:
+        data:
+          nullable: true
+          properties:
+            losingCarriers:
+              items:
+                properties:
+                  name:
+                    description: Type of end user type
+                    example: Personal
+                    type: string
+                type: object
+              type: array
+          type: object
+        errors:
+          items:
+            properties:
+              code:
+                description: An error code identifying the error
+                type: string
+              description:
+                description: A description of the error
+                type: string
+              meta:
+                description: Additional information regarding the error
+                type: object
+            type: object
+          nullable: true
+          type: array
+        links:
+          items:
+            properties:
+              href:
+                description: The API endpoint URL
+                example: /porting/requiredDocuments
                 type: string
               method:
                 description: The HTTP method used to make the request
@@ -42760,9 +42843,9 @@ paths:
           $ref: '#/components/responses/listOfRequiredDocumentResponse'
         '400':
           $ref: >-
-            #/components/responses/badRequestLosingInvlaidCountryCodeCarriersResponse
+            #/components/responses/badRequestInvalidCountryCodeRequiredDocumentResponse
         '502':
-          $ref: '#/components/responses/noUpstreamServicesLosingCarriersResponse'
+          $ref: '#/components/responses/noUpstreamServicesRequiredDocumentResponse'
       summary: List required documetns needed to port a set of numbers
       tags:
         - Porting
