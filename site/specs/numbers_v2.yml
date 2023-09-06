@@ -1275,6 +1275,37 @@ components:
       required: true
       schema:
         type: string
+    areaCodeQueryParameter:
+      description: Area code of a phone number
+      example: '07'
+      in: query
+      name: areaCode
+      required: false
+      schema:
+        type: string
+    countryCodeA3QueryParameter:
+      description: 3-letter, ISO 3166 country code
+      example: GBR
+      in: query
+      name: Country Code
+      required: true
+      schema:
+        type: string
+    phoneNumberTypeQueryParameter:
+      description: Phone number type
+      example: MOBILE
+      in: query
+      name: phoneNumberType
+      required: false
+      schema:
+        enum:
+          - GEOGRAPHIC
+          - SHARED_COST
+          - TOLL_FREE
+          - NATIONAL
+          - SPECIAL
+          - MOBILE
+        type: string
     shortCodeCountryPathParam:
       description: The short code number country.
       example: USA
@@ -1414,6 +1445,21 @@ components:
         associated with the order, the state of the order, and a list of the
         successfully imported Telephone Numbers, and descriptions of any
         encountered errors.
+    badRequestLosingInvlaidCountryCodeCarriersResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              description: example
+              value:
+                data: null
+                errors:
+                  code: 7673
+                  description: '''%s'' is not a valid countryCodeA3 value'
+                links: null
+          schema:
+            $ref: '#/components/schemas/portingLosingCarriersResponseSchema'
+      description: Error returned when the country code is invalid
     bulkRateCenterGetResponse404Error:
       content:
         application/xml:
@@ -1465,6 +1511,44 @@ components:
       description: >-
         Successful response which starts the bulk upsert for provided rate
         centers.
+    listOfLosingCarriersResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              value:
+                data:
+                  losingCarriers:
+                    - name: Losing Carrier 1
+                    - name: Losing Carrier 2
+                    - name: Losing Carrier 3
+                    - name: Losing Carrier 4
+                errors: null
+                links:
+                  - href: /portingLosingCarriers
+                    method: GET
+                    rel: self
+          schema:
+            $ref: '#/components/schemas/portingLosingCarriersResponseSchema'
+      description: A list of available carriers that can port out a phone number
+    noUpstreamServicesLosingCarriersResponse:
+      content:
+        application/json:
+          examples:
+            example:
+              summary: example
+              value:
+                data: null
+                errors:
+                  code: 7678
+                  description: >-
+                    We received an error while attempting to retrieve the losing
+                    carriers for your request. Please try this request again
+                    later.
+                links: null
+          schema:
+            $ref: '#/components/schemas/portingLosingCarriersResponseSchema'
+      description: Error returned when upstream services are unavailable
     rateCenter401Error:
       content:
         application/json:
@@ -14366,6 +14450,56 @@ components:
                   name: OrderCreateDate
             type: object
       type: object
+    portingLosingCarriersResponseSchema:
+      description: List of losing carriers for porting
+      properties:
+        data:
+          nullable: true
+          properties:
+            losingCarriers:
+              items:
+                properties:
+                  name:
+                    description: The name of the carrier
+                    example: Losing Carrier 1
+                    type: string
+                type: object
+              type: array
+          type: object
+        errors:
+          items:
+            properties:
+              code:
+                description: An error code identifying the error
+                type: string
+              description:
+                description: A description of the error
+                type: string
+              meta:
+                description: Additional information regarding the error
+                type: object
+            type: object
+          nullable: true
+          type: array
+        links:
+          items:
+            properties:
+              href:
+                description: The API endpoint URL
+                example: /porting/losingCarriers
+                type: string
+              method:
+                description: The HTTP method used to make the request
+                example: GET
+                type: string
+              rel:
+                description: The relationship of the endpoint to the request
+                example: self
+                type: string
+            type: object
+          nullable: true
+          type: array
+      type: object
     shortCode:
       description: Short code registration.
       properties:
@@ -15225,8 +15359,11 @@ info:
     Bandwidth's Account and Number Management API
 
 
-    For the previous documentation visit
-    [v2.dev.bandwidth.com](https://v2.dev.bandwidth.com/numbers/apiReference.html).
+    ## Early Access Feature
+      
+    The V2 APIs are still in early access phase and are not ready for general
+    use. Please contact your Bandwidth Account Manager or Bandwidth Support to
+    request access to these APIs.
 
 
     ### Disclaimer
@@ -42553,6 +42690,28 @@ paths:
       summary: Retrieve Covered Rate Centers
       tags:
         - Rate Centers
+  /porting/losingCarriers:
+    get:
+      description: >
+        <p>List losing carriers that a non-NANPA number can be ported from,
+        given a countryCodeA3 and optional areaCode and phoneNumberType
+        values.</p>
+      operationId: portingLosingCarriers
+      parameters:
+        - $ref: '#/components/parameters/countryCodeA3QueryParameter'
+        - $ref: '#/components/parameters/phoneNumberTypeQueryParameter'
+        - $ref: '#/components/parameters/areaCodeQueryParameter'
+      responses:
+        '200':
+          $ref: '#/components/responses/listOfLosingCarriersResponse'
+        '400':
+          $ref: >-
+            #/components/responses/badRequestLosingInvlaidCountryCodeCarriersResponse
+        '502':
+          $ref: '#/components/responses/noUpstreamServicesLosingCarriersResponse'
+      summary: List losing carriers for porting non-NANPA telephone numbers
+      tags:
+        - Porting
   /rateCenters:
     get:
       description: >-
