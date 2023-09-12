@@ -48,7 +48,7 @@ When an order changes OR when numbers in customer account are impacted due to or
 | `Note` | `String` | Body of any note that was attached to the order, if applicable. |
 | `CompletedTelephoneNumbers` | List of `<TelephoneNumber>` | List of the completed telephone numbers for Port-in/Port-out/New Number/Disconnect orders in terminal state |
 | `LastModifiedDate` | `Date` | Date/Timestamp when the order was last modified. |
-| `ActualFocDate` | `Date` | Actual FOC date, provided only if the order is in "foc" status. |
+| `ActualFocDate` | `Date` | Actual FOC date, provided only if the order is a port-in transitioning to "FOC" status. |
 
 ### Example of an Order Notification
 
