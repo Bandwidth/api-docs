@@ -66,6 +66,6 @@ Content-Type: application/xml; charset=utf-8
         <TelephoneNumber> ... </TelephoneNumber>
     </CompletedTelephoneNumbers>
     <LastModifiedDate>2023-09-12T15:11:31.705Z</LastModifiedDate>
-    <ActualFocDate>2023-09-12T00:00:00Z</ActualFocDate></Notification>
+    <ActualFocDate>2023-09-12T00:00:00Z</ActualFocDate>
 </Notification>
 ```
