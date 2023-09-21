@@ -15,11 +15,11 @@ info:
 servers:
   - url: https://call-verification.bandwidth.com/api/v1
 paths:
-  /accounts/{accountId}/activeCalls/callId:
+  /accounts/{accountId}/activeCalls/callCapture:
     get:
       tags:
         - ActiveCalls
-      summary: Retrieve the call id or interaction id for a specific phone call
+      summary: Retrieve the risk scores for a specific phone call without callId
       description: >-
         As a Bandwidth customer who cannot consume or does not have access to
         the active call ID for looking up up my call
@@ -31,7 +31,10 @@ paths:
         With this api we can fetch callId or interactionId using the to and from
         number and a timestamp and some delta
 
-        amount around that time to lookup when the call happened.
+        amount around that time to lookup when the call happened and retrieve
+        fraud and spoofing risk scores for a 
+
+        specific phone call that is currently active on the Bandwidth network.
 
 
         This API provides customer-systems control over which portions of a call
@@ -59,7 +62,7 @@ paths:
         - $ref: '#/components/parameters/startUtc'
       responses:
         '200':
-          $ref: '#/components/responses/callIdResponse'
+          $ref: '#/components/responses/scoresResponseWithoutCallId'
         '400':
           $ref: '#/components/responses/badRequestResponse'
         '401':
@@ -164,12 +167,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/activeCallInfo'
-    callIdResponse:
+    scoresResponseWithoutCallId:
       description: Ok.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/callIdResponse'
+            $ref: '#/components/schemas/activeCallInfoWithoutCallId'
     unauthorizedResponse:
       description: Unauthorized.
       content:
@@ -234,13 +237,6 @@ components:
             internalServerErrorExample:
               $ref: '#/components/examples/internalServerErrorErrorExample'
   schemas:
-    callIdResponse:
-      type: object
-      properties:
-        data:
-          type: string
-          description: Call id or primary identifier of the call
-          example: db0f98b8-99d6-4b42-a13d-6a5d877b7a65
     accountId:
       type: number
       description: >-
@@ -286,6 +282,53 @@ components:
                 description: URI of the link.
                 example: >-
                   /accounts/9903248/activeCalls/MTU2MDI4ODE1XzgzMzQ4OTg4QDE5Mi4xNjguMTMyLjQx
+              rel:
+                type: string
+                description: Specifies the relationship between this link and the resource.
+                example: ActiveCallInfo
+              method:
+                type: string
+                description: HTTP method to be used.
+                example: GET
+            example:
+              href: >-
+                /accounts/9903248/activeCalls/MTU2MDI4ODE1XzgzMzQ4OTg4QDE5Mi4xNjguMTMyLjQx
+              rel: ActiveCallInfo
+              method: GET
+          example:
+            - href: >-
+                /accounts/9903248/activeCalls/MTU2MDI4ODE1XzgzMzQ4OTg4QDE5Mi4xNjguMTMyLjQx
+              rel: ActiveCallInfo
+              method: GET
+        data:
+          type: object
+          properties:
+            riskScore:
+              $ref: '#/components/schemas/riskScore'
+          example:
+            riskScore:
+              spoofingRisk: 9.83
+              fraudRisk: 72
+        errors:
+          type: array
+          nullable: true
+          items: {}
+          example: []
+    activeCallInfoWithoutCallId:
+      type: object
+      description: >-
+        All available information about a specific phone call that is currently
+        active on the bandwidth network.
+      properties:
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              href:
+                type: string
+                description: URI of the link.
+                example: /accounts/9903248/activeCalls/callCapture
               rel:
                 type: string
                 description: Specifies the relationship between this link and the resource.
