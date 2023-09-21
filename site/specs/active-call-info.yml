@@ -15,6 +15,65 @@ info:
 servers:
   - url: https://call-verification.bandwidth.com/api/v1
 paths:
+  /accounts/{accountId}/activeCalls/callId:
+    get:
+      tags:
+        - ActiveCalls
+      summary: Retrieve the call id or interaction id for a specific phone call
+      description: >-
+        As a Bandwidth customer who cannot consume or does not have access to
+        the active call ID for looking up up my call
+
+        scores in the call verification API, We need an alternate way of finding
+        the scores for a specific call.
+
+
+        With this api we can fetch callId or interactionId using the to and from
+        number and a timestamp and some delta
+
+        amount around that time to lookup when the call happened.
+
+
+        This API provides customer-systems control over which portions of a call
+        is
+
+        captured for analysis purposes. This allows customers to make sure only
+        appropriate portions of an
+
+        incoming call are analyzed and allows customers to implement Pause and
+        Resume functionality
+
+        needed in certain security contexts.
+
+
+        **Note**: The endpoint is available for use 90 days from the time a call
+        has entered into the system.     
+
+        After 90 days, the use of the /correlation_id for a call will return an
+        “HTTP 404 NotFound” response.
+      operationId: getCallId
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/source'
+        - $ref: '#/components/parameters/destination'
+        - $ref: '#/components/parameters/startUtc'
+      responses:
+        '200':
+          $ref: '#/components/responses/callIdResponse'
+        '400':
+          $ref: '#/components/responses/badRequestResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedResponse'
+        '403':
+          $ref: '#/components/responses/forbiddenResponse'
+        '404':
+          $ref: '#/components/responses/notFoundResponse'
+        '405':
+          $ref: '#/components/responses/methodNotAllowedResponse'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsResponse'
+        '500':
+          $ref: '#/components/responses/internalServerErrorResponse'
   /accounts/{accountId}/activeCalls/{activeCallId}:
     get:
       tags:
@@ -80,6 +139,24 @@ components:
         $ref: '#/components/schemas/activeCallId'
       in: path
       required: true
+    source:
+      name: source
+      schema:
+        $ref: '#/components/schemas/source'
+      in: query
+      required: true
+    destination:
+      name: destination
+      schema:
+        $ref: '#/components/schemas/destination'
+      in: query
+      required: true
+    startUtc:
+      name: startUtc
+      schema:
+        $ref: '#/components/schemas/startUtc'
+      in: query
+      required: true
   responses:
     scoresResponse:
       description: Ok.
@@ -87,6 +164,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/activeCallInfo'
+    callIdResponse:
+      description: Ok.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/callIdResponse'
     unauthorizedResponse:
       description: Unauthorized.
       content:
@@ -151,6 +234,13 @@ components:
             internalServerErrorExample:
               $ref: '#/components/examples/internalServerErrorErrorExample'
   schemas:
+    callIdResponse:
+      type: object
+      properties:
+        data:
+          type: string
+          description: Call id or primary identifier of the call
+          example: db0f98b8-99d6-4b42-a13d-6a5d877b7a65
     accountId:
       type: number
       description: >-
@@ -166,6 +256,20 @@ components:
         Typically this value is provided in an X header in the SIP invite such
         as X-Customer-Ixn.
       example: MTU2MDI4ODE1XzgzMzQ4OTg4QDE5Mi4xNjguMTMyLjQx
+    source:
+      type: number
+      description: Source phone number.
+      example: 17706308523
+    destination:
+      type: number
+      description: Destination phone number.
+      example: 17706308523
+    startUtc:
+      type: string
+      description: >-
+        Start time of the phone call.This field needs to be formatted in
+        ISO-8601
+      example: 2018-02-06T18:07:12.644Z
     activeCallInfo:
       type: object
       description: >-
