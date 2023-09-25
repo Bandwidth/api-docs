@@ -334,6 +334,52 @@ paths:
             rescue APIException => e
                 puts e.response_code
             end
+    get:
+      tags:
+        - Calls
+      summary: Get Calls
+      description: >-
+        Returns a max of 10000 calls, sorted by `createdTime` from oldest to
+        newest.
+
+
+        **NOTE:** If the number of calls in the account is bigger than
+        `pageSize`, a `Link` header (with format `<{url}>; rel="next"`) will be
+        returned in the response. The url can be used to retrieve the next page
+        of call records.
+
+        Also, call information is kept for 7 days after the calls are hung up.
+        If you attempt to retrieve information for a call that is older than 7
+        days, you will get an empty array [] in response.
+      operationId: listCalls
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/to'
+        - $ref: '#/components/parameters/from'
+        - $ref: '#/components/parameters/minStartTimeCalls'
+        - $ref: '#/components/parameters/maxStartTimeCalls'
+        - $ref: '#/components/parameters/disconnectCause'
+        - $ref: '#/components/parameters/pageSizeCalls'
+        - $ref: '#/components/parameters/pageToken'
+      responses:
+        '200':
+          $ref: '#/components/responses/listCallsResponse'
+        '400':
+          $ref: '#/components/responses/voiceBadRequestError'
+        '401':
+          $ref: '#/components/responses/voiceUnauthorizedError'
+        '403':
+          $ref: '#/components/responses/voiceForbiddenError'
+        '404':
+          $ref: '#/components/responses/voiceNotFoundError'
+        '405':
+          $ref: '#/components/responses/voiceNotAllowedError'
+        '415':
+          $ref: '#/components/responses/voiceUnsupportedMediaTypeError'
+        '429':
+          $ref: '#/components/responses/voiceTooManyRequestsError'
+        '500':
+          $ref: '#/components/responses/voiceInternalServerError'
   /accounts/{accountId}/calls/{callId}:
     get:
       tags:
@@ -7297,6 +7343,38 @@ components:
         default: 1000
       description: Specifies the max number of conferences that will be returned.
       example: 500
+    minStartTimeCalls:
+      name: minStartTime
+      in: query
+      required: false
+      schema:
+        type: string
+      description: >-
+        Filter results to calls which have a `startTime` after or including
+        `minStartTime` (in ISO8601 format).
+      example: '2022-06-21T19:13:21Z'
+    maxStartTimeCalls:
+      name: maxStartTime
+      in: query
+      required: false
+      schema:
+        type: string
+      description: >-
+        Filter results to calls which have a `startTime` before or including
+        `maxStartTime` (in ISO8601 format).
+      example: '2022-06-21T19:13:21Z'
+    pageSizeCalls:
+      name: pageSize
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 10000
+        default: 1000
+      description: Specifies the max number of calls that will be returned.
+      example: 500
     pageToken:
       name: pageToken
       in: query
@@ -7307,6 +7385,14 @@ components:
         Not intended for explicit use. To use pagination, follow the links in
         the `Link` header of the response, as indicated in the endpoint
         description.
+    disconnectCause:
+      name: disconnectCause
+      in: query
+      required: false
+      schema:
+        type: string
+      description: Filter results to calls with specified call Disconnect Cause.
+      example: hangup
   requestBodies:
     createCallRequest:
       description: JSON object containing information to create an outbound call
@@ -7406,6 +7492,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/callState'
+    listCallsResponse:
+      description: Calls retrieved successfully
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/callState'
     getStatisticsResponse:
       description: Statistics Found
       content:
