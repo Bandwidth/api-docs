@@ -1076,7 +1076,7 @@ components:
     CustomerOrderIdQueryParam:
       description: >-
         The Customer Order ID is an ID assigned by the account owner to provide
-        a reference number for the importVoiceTnOrder.
+        a reference number for the order.
       example: ABCCorp12345
       in: query
       name: customerOrderId
@@ -1251,14 +1251,6 @@ components:
       required: true
       schema:
         format: int32
-        type: integer
-    SipPeerIdQueryParam:
-      description: SipPeer ID, also known as Location
-      example: 50139
-      in: query
-      name: sipPeerId
-      required: false
-      schema:
         type: integer
     SipPeerTnsPageQueryParam:
       description: The number of the paged results to be displayed.
@@ -7226,8 +7218,6 @@ components:
           required:
             - TelephoneNumbers
             - SiteId
-            - Subscriber
-            - LoaAuthorizingPerson
           type: object
       title: ImportTnOrder
     ImportTnOrderResponse:
@@ -11946,8 +11936,6 @@ components:
       properties:
         Address:
           $ref: '#/components/schemas/Address'
-        BillingIdentifier:
-          type: string
         CallVerificationEnabled:
           type: boolean
         CallingName:
@@ -14995,7 +14983,7 @@ components:
             properties:
               featureName:
                 description: Feature Name
-                example: ORDERING
+                example: Ordering
                 type: string
                 xml:
                   name: FeatureName
@@ -15553,7 +15541,7 @@ components:
         features:
           items:
             description: Feature Name
-            example: ORDERING
+            example: Ordering
             type: string
             xml:
               name: Feature
@@ -15577,7 +15565,7 @@ components:
         features:
           items:
             description: Feature Name
-            example: ORDERING
+            example: Ordering
             type: string
             xml:
               name: Feature
@@ -25393,9 +25381,9 @@ paths:
   /accounts/{accountId}/importTnChecker:
     post:
       description: >-
-        <p>Request portability information on a set of TNs. SipPeerId is an
+        Request importability information on a set of TNs. SipPeerId is an
         optional value. If SipPeerId is not specified, the id of the default
-        Sip-Peer for the provided SiteId will be used.</p>
+        Sip-Peer for the provided SiteId will be used.
       operationId: CreateRequestImportTnChecker
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
@@ -25456,11 +25444,11 @@ paths:
                     <ImportTnCheckerResponse>
                     <Errors>
                       <Code>7201</Code>
-                        <Description>+161746052083 is not a valid NANPA telephone number.</Description>
+                        <Description>+161746052083 is not a valid NANP telephone number.</Description>
                       </Errors>
                       <Errors>
                         <Code>7201</Code>
-                        <Description>+161746052082 is not a valid NANPA telephone number.</Description>
+                        <Description>+161746052082 is not a valid NANP telephone number.</Description>
                       </Errors>
                     </ImportTnCheckerResponse>
               schema:
@@ -25471,84 +25459,37 @@ paths:
             empty.<li> List of TNs is more than 5000 TNs.<li> The account does
             not have the necessary (IMPORT_TNS) flag.<li> TNs are invalid (they
             are not actual TNs, and there are duplicates).</ul>
-      summary: Check Tns hostability
+      summary: Check Tns importability
       tags:
         - Hosted Messaging
-  /accounts/{accountId}/importTnOrders:
+  /accounts/{accountId}/importTnOrders/messaging:
     get:
       description: >
         Retrieves the importtnorders requests for the given account ID. A
         maximum of 1,000 orders can be retrieved per request. If no date range
-        or specific query parameter (marked by <b class="required">*</b> below)
-        is provided, the order results will be limited to the last two years.
-      operationId: ReadImportTnOrders
+        or required query parameter is provided, the order results will be
+        limited to the last two years.
+
+
+        In this table are presented capabilities that are not universally
+        available. The following request query parameters are only allowed for
+        numbers from specific region/country:
+
+        | Number Region | Request Query Parameter |
+
+        |:--------------|:------------------------|
+
+        |NANP|loaType|
+      operationId: ReadImportMessagingTnOrders
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: The status of the importTnOrder being searched for.
-          example: PARTIAL
-          in: query
-          name: status
-          required: false
-          schema:
-            items:
-              type: string
-            type: array
-        - description: A Telephone Number (TN) that is referenced in the order
-          example: '+19199918388'
-          in: query
-          name: tn
-          required: true
-          schema:
-            type: string
-        - description: >-
-            The Customer Order ID is an ID assigned by the account owner to
-            provide a reference number for the importTnOrder.
-          example: ABCCorp12345
-          in: query
-          name: customerOrderId
-          required: true
-          schema:
-            type: string
-        - description: >-
-            Checks the order's creation date against this value. Orders that
-            have a creation date after this date will be included. Format is
-            yyyy-MM-dd
-          example: '2013-10-22'
-          in: query
-          name: createdDateFrom
-          required: false
-          schema:
-            type: string
-        - description: >-
-            Checks the order's creation date against this value. Orders that
-            have a creation date before this date will be included. Format is
-            yyyy-MM-dd
-          example: '2013-10-25'
-          in: query
-          name: createdDateTo
-          required: false
-          schema:
-            type: string
-        - description: >-
-            For Date-based searches, the starting date of a date range
-            (inclusive) that will be used to find Import Tn Orders that were
-            modified within the date range. It is in the form yyyy-MM-dd.
-          example: '2013-10-22'
-          in: query
-          name: modifiedDateFrom
-          required: false
-          schema:
-            type: string
-        - description: >-
-            For Date-based searches, the ending date of a date range (inclusive)
-            that will be used to find Import Tn Orders that were modified within
-            the date range. It is in the form yyyy-MM-dd.
-          example: '2013-10-25'
-          in: query
-          name: modifiedDateTo
-          required: false
-          schema:
-            type: string
+        - $ref: '#/components/parameters/StatusQueryParam'
+        - $ref: '#/components/parameters/TnQueryParam'
+        - $ref: '#/components/parameters/CustomerOrderIdQueryParam'
+        - $ref: '#/components/parameters/CreatedDateFromQueryParam'
+        - $ref: '#/components/parameters/CreatedDateToQueryParam'
+        - $ref: '#/components/parameters/ModifiedDateFromQueryParam'
+        - $ref: '#/components/parameters/ModifiedDateToQueryParam'
         - description: Indentify the LoaType on TNs.
           example: SUBSCRIBER
           in: query
@@ -25602,7 +25543,7 @@ paths:
             associated with the order, the state of the order, and a list of the
             successfully imported Telephone Numbers, and descriptions of any
             encountered errors.
-      summary: List Import Tn orders
+      summary: List Import Messaging Tn orders
       tags:
         - Hosted Messaging
     post:
@@ -25615,7 +25556,21 @@ paths:
         the telephone numbers were successfully imported and  "PARTIAL" if some
         of the telephone numbers were imported. A failed order with will have a
         staus of "FAILED" and no telephone numbers would have been imported.
-      operationId: CreateImportTnOrder
+
+
+        The following request parameters are only required for numbers from
+        specific region/country:
+
+        | Number Region | Request Parameter |
+
+        |:--------------|:------------------------|
+
+        |NANP|LoaAuthorizingPerson|
+
+        |NANP|LoaType|
+
+        |NANP|Subscriber|
+      operationId: CreateImportMessagingTnOrder
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
       requestBody:
@@ -25626,28 +25581,28 @@ paths:
                 value: |-
                   <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                   <ImportTnOrder>
-                        <CustomerOrderId>ICPA123ABC</CustomerOrderId>
+                    <CustomerOrderId>ICPA123ABC</CustomerOrderId>
                     <SiteId>743</SiteId>
-                       <SipPeerId>303716</SipPeerId>
-                        <Subscriber>
-                              <Name>ABC Inc.</Name>
-                             <ServiceAddress>
-                                    <HouseNumber>11235</HouseNumber>
-                                    <StreetName>Back</StreetName>
-                                   <City>Denver</City>
-                                    <StateCode>CO</StateCode>
-                                    <Zip>27541</Zip>
-                                    <County>Canyon</County>
-                              </ServiceAddress>
-                        </Subscriber>
-                        <LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>
-                        <LoaType>CARRIER</LoaType>
-                        <TelephoneNumbers>
-                              <TelephoneNumber>+19199918388</TelephoneNumber>
-                              <TelephoneNumber>+14158714245</TelephoneNumber>
-                              <TelephoneNumber>+14352154439</TelephoneNumber>
-                              <TelephoneNumber>+14352154466</TelephoneNumber>
-                        </TelephoneNumbers>
+                    <SipPeerId>303716</SipPeerId>
+                    <Subscriber>
+                      <Name>ABC Inc.</Name>
+                      <ServiceAddress>
+                        <HouseNumber>11235</HouseNumber>
+                        <StreetName>Back</StreetName>
+                        <City>Denver</City>
+                        <StateCode>CO</StateCode>
+                        <Zip>27541</Zip>
+                        <County>Canyon</County>
+                      </ServiceAddress>
+                    </Subscriber>
+                    <LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>
+                    <LoaType>CARRIER</LoaType>
+                    <TelephoneNumbers>
+                      <TelephoneNumber>+19199918388</TelephoneNumber>
+                      <TelephoneNumber>+14158714245</TelephoneNumber>
+                      <TelephoneNumber>+14352154439</TelephoneNumber>
+                      <TelephoneNumber>+14352154466</TelephoneNumber>
+                    </TelephoneNumbers>
                   </ImportTnOrder>
             schema:
               $ref: '#/components/schemas/ImportTnOrderRequest'
@@ -25721,7 +25676,496 @@ paths:
             The order failed; one of the input parameters is invalid. The error
             text and an error code will be provided in the ErrorList
             element.</p>
-      summary: Import Tn order
+      summary: Import Messaging Tn order
+      tags:
+        - Hosted Messaging
+  /accounts/{accountId}/importTnOrders/messaging/{orderId}:
+    get:
+      description: Retrieve information about a importTnOrder with specified ID.
+      operationId: ReadImportMessagingTnOrder
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/OrderIdPathParam'
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <ImportTnOrder>
+                       <OrderCreateDate>2018-01-09T02:58:04.615Z</OrderCreateDate>
+                       <AccountId>9900012</AccountId>
+                       <CreatedByUser>sjm</CreatedByUser>
+                       <OrderId>bf1305b8-8998-1111-2222-51ba3ce52d4e</OrderId>
+                       <LastModifiedDate>2018-01-09T02:58:05.298Z</LastModifiedDate>
+                       <SiteId>65487</SiteId>
+                       <SipPeerId>885544</SipPeerId>
+                       <Subscriber>
+                         <Name>First</Name>
+                         <ServiceAddress>
+                           <HouseNumber>11235</HouseNumber>
+                           <StreetName>Back</StreetName>
+                           <City>Denver</City>
+                           <StateCode>CO</StateCode>
+                           <Zip>27541</Zip>
+                           <County>Canyon</County>
+                         </ServiceAddress>
+                       </Subscriber>
+                       <LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>
+                       <LoaType>CARRIER</LoaType>
+                       <TelephoneNumbers>
+                         <TelephoneNumber>+12106078250</TelephoneNumber>
+                         <TelephoneNumber>+12109678273</TelephoneNumber>
+                         <TelephoneNumber>+12109678331</TelephoneNumber>
+                         <TelephoneNumber>+12109678337</TelephoneNumber>
+                         <TelephoneNumber>+12266401468</TelephoneNumber>
+                       </TelephoneNumbers>
+                       <ProcessingStatus>PARTIAL</ProcessingStatus>
+                       <Errors>
+                         <Error>
+                           <Code>7518</Code>
+                           <Description>Telephone Number Not Active.</Description>
+                           <TelephoneNumbers>
+                             <TelephoneNumber>+12262665583</TelephoneNumber>
+                           </TelephoneNumbers>
+                         </Error>
+                       </Errors>
+                     </ImportTnOrder>
+              schema:
+                $ref: '#/components/schemas/ImportTnOrderResponse'
+          description: >-
+            The information has been successfully retrieved and displayed in the
+            payload.
+      summary: Fetch Import Messaging Tn order status
+      tags:
+        - Hosted Messaging
+  /accounts/{accountId}/importTnOrders/messaging/{orderId}/history:
+    get:
+      description: Retrieves the history of the specified importTnOrder.
+      operationId: ReadImportMessagingTnOrderHistory
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/OrderIdPathParam'
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <OrderHistoryWrapper>
+                       <OrderHistory>
+                         <OrderDate>2015-06-16T14:03:10.225Z</OrderDate>
+                         <Note>Import TN order is received.</Note>
+                         <Author>admin</Author>
+                         <Status>RECEIVED</Status>
+                       </OrderHistory>
+                       <OrderHistory>
+                         <OrderDate>2015-06-16T14:03:10.330Z</OrderDate>
+                         <Note>Import TN order is processing.</Note>
+                         <Author>admin</Author>
+                         <Status>PROCESSING</Status>
+                       </OrderHistory>
+                       <OrderHistory>
+                         <OrderDate>2015-06-16T14:03:10.789Z</OrderDate>
+                         <Note>Import TN order is partial.</Note>
+                         <Author>admin</Author>
+                         <Status>PARTIAL</Status>
+                       </OrderHistory>
+                     </OrderHistoryWrapper>
+              schema:
+                $ref: '#/components/schemas/OrderHistoryWrapper'
+          description: >-
+            The history has been successfully retrieved and displayed in the
+            payload.
+      summary: Fetch Import Messaging Tn order history
+      tags:
+        - Hosted Messaging
+  /accounts/{accountId}/importTnOrders/messaging/{orderId}/loas:
+    get:
+      description: >-
+        Retrieves the list of the loa (and other) files associated with the
+        order.
+      operationId: ReadImportMessagingTnOrderLoas
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: Import Messaging Tn order's ID
+          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4
+          in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+        - description: >-
+            if true it will return meta-data associated with the file used to
+            describe the file.
+          example: true
+          in: query
+          name: metadata
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <fileListResponse>
+                          <fileCount>1</fileCount>
+                          <fileData>
+                              <FileName>eeceff88-c11e-4bd8-86f3-8e3482888500-1624044440058.pdf</FileName>
+                              <FileMetaData>
+                                    <DocumentType>LOA</DocumentType>
+                              </FileMetaData>
+                          </fileData>
+                          <resultCode>0</resultCode>
+                          <resultMessage>LOA file list successfully returned</resultMessage>
+                    </fileListResponse>
+              schema:
+                $ref: '#/components/schemas/FileListResponse'
+          description: >-
+            The list of all files is being returned.  This response includes the
+            case where the list is empty.
+      summary: Fetch Import Messaging Tn order loas [NANP]
+      tags:
+        - Hosted Messaging
+    post:
+      description: >-
+        POSTing to the /loas resource will enable the upload of the file.  The
+        key attribute to the POST is ensuring that the headers are correctly set
+        to support the file upload.<br>
+
+        Query parameter or header documentType can be used to specify type of
+        document on upload.
+
+        <p>When uploading documents using the /loas resource, you must specify
+        the MIME type of the document being upload using the Content-Type HTTP
+        header.</p>
+
+        <p>The LOA document must be uploaded using one of the following MIME
+        types:</p>
+
+        <ul>
+
+        <li>application/pdf</li>
+
+        <li>text/plain</li>
+
+        <li>image/jpeg</li>
+
+        <li>image/png</li>
+
+        <li>image/tiff</li>
+
+        <li>text/csv</li>
+
+        <li>application/vnd.ms-excel</li>
+
+        <li>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</li>
+
+        <li>application/msword</li>
+
+        <li>application/vnd.openxmlformats-officedocument.wordprocessingml.document</li>
+
+        </ul>
+      operationId: CreateImportMessagingTnOrderLoas
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: Import Messaging Tn order's ID
+          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4
+          in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+        - description: >-
+            This query parameter allows you to include the document type
+            metadata
+
+            at the same time you upload the file.
+          example: LOA
+          in: query
+          name: documentType
+          required: false
+          schema:
+            enum:
+              - LOA
+              - INVOICE
+              - CSR
+              - OTHER
+            type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              format: binary
+              type: string
+      responses:
+        '201':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <fileUploadResponse>
+                          <filename>63097af1-37ae-432f-8a0d-9b0e6517a35b-1429550165581.pdf</filename>
+                          <resultCode>0</resultCode>
+                          <resultMessage>LOA file uploaded successfully for order 63097af1-37ae-432f-8a0d-9b0e6517a35b</resultMessage>
+                    </fileUploadResponse>
+              schema:
+                $ref: '#/components/schemas/FileUploadResponse'
+          description: >-
+            The 201 response indicates the successful creation of a file
+            resource containing the uploaded content.
+
+            The response header will include a link to the created file as a GET
+            on the identified resource.
+        '400':
+          description: A 400 indicates that the requested upload failed.
+      summary: Import Messaging Tn order loas [NANP]
+      tags:
+        - Hosted Messaging
+  /accounts/{accountId}/importTnOrders/messaging/{orderId}/loas/{fileId}:
+    delete:
+      description: Deletes the file associated with the order
+      operationId: DeleteImportMessagingTnOrderLoasFile
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: Import Messaging Tn order's ID
+          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4
+          in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+        - description: File id with format
+          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4.pdf
+          in: path
+          name: fileId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The 200 OK  indicates a successful deletion of the identified file.
+        '404':
+          description: >-
+            a 404 indicates that the indicated file was not found in conjunction
+            with the order id.
+      summary: Removing Import Messaging Tn order loas file [NANP]
+      tags:
+        - Hosted Messaging
+    get:
+      description: Retrieves the file associated with the order.
+      operationId: ReadImportMessagingTnOrderLoasFile
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: Import Messaging Tn order's ID
+          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4
+          in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+        - description: File id with format
+          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4.pdf
+          in: path
+          name: fileId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: >-
+            The 200 OK  indicates a successful download request.<br>
+
+            The response to the get on a filename will result in the file being
+            prepared and delivered in a manner consistent with browser
+            download.  The Response headers include the content-disposition
+            header describing the file download.
+        '404':
+          description: >-
+            a 404 indicates that the indicated file was not found in conjunction
+            with the order id.
+      summary: Fetch Import Messaging Tn order loas file [NANP]
+      tags:
+        - Hosted Messaging
+    put:
+      description: >-
+        A PUT on the filename will update / replace the identified file id.  The
+        format of the PUT is identical to that of the POST.
+      operationId: UpdateImportMessagingTnOrderLoasFile
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: Import Messaging Tn order's ID
+          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4
+          in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+        - description: File id with format
+          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4.pdf
+          in: path
+          name: fileId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <fileUploadResponse>
+                          <filename>63097af1-37ae-432f-8a0d-9b0e6517a35b-1429550165581.pdf</filename>
+                          <resultCode>0</resultCode>
+                          <resultMessage>LOA file uploaded successfully for order 63097af1-37ae-432f-8a0d-9b0e6517a35b</resultMessage>
+                    </fileUploadResponse>
+              schema:
+                $ref: '#/components/schemas/FileUploadResponse'
+          description: >-
+            The 200 response indicates the successful replacement of a file
+            resource containing the uploaded content.
+
+            The response header will include a link to the created file as a GET
+            on the identified resource.
+        '400':
+          description: A 400 indicates that the requested upload failed.
+        '404':
+          description: A 404 indicates that the file was not available for replacement.
+      summary: Updating Import Messaging Tn order loas file [NANP]
+      tags:
+        - Hosted Messaging
+  /accounts/{accountId}/importTnOrders/messaging/{orderId}/loas/{fileId}/metadata:
+    delete:
+      description: Deletes the metadata previously associated with the identified file.
+      operationId: RemoveImportMessagingTnOrderLoasFileMetadata
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: Import Messaging Tn order's ID
+          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4
+          in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+        - description: File id with format
+          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4.pdf
+          in: path
+          name: fileId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: >-
+            The 200 OK  indicates a successful deletion of the identified
+            metadata.
+        '404':
+          description: >-
+            A 404 indicates that the indicated file was not found in conjunction
+            with the order id.cd
+      summary: Removing Import Messaging Tn order loas file metadata [NANP]
+      tags:
+        - Hosted Messaging
+    get:
+      description: Retrieves the metadata associated with the file.
+      operationId: ReadImportMessagingTnOrderLoasFileMetadata
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: Import Messaging Tn order's ID
+          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4
+          in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+        - description: File id with format
+          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4.pdf
+          in: path
+          name: fileId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <FileMetaData>
+                         <DocumentName> [string] </DocumentName>
+                         <DocumentType> [LOA | INVOICE | CSR | OTHER] </DocumentType>
+                    </FileMetaData>
+              schema:
+                $ref: '#/components/schemas/FileMetaData'
+          description: The Metatdata has been successfully retrieved.
+        '404':
+          description: >-
+            a 404 indicates that the indicated file was not found in conjunction
+            with the order id.
+      summary: Fetch Import Messaging Tn order loas file metadata [NANP]
+      tags:
+        - Hosted Messaging
+    put:
+      description: >-
+        Associate metadata with the file named in the resource path.  This will
+        describe the file, and declare the data that is contained in the file,
+        selected from a list of [LOA | INVOICE | CSR | OTHER].
+      operationId: UpdateImportMessagingTnOrderLoasFileMetadata
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: Import Messaging Tn order's ID
+          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4
+          in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+        - description: File id with format
+          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4.pdf
+          in: path
+          name: fileId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/xml:
+            examples:
+              example:
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <FileMetaData>
+                       <DocumentName>fileName</DocumentName>
+                       <DocumentType>LOA</DocumentType>
+                  </FileMetaData>
+            schema:
+              $ref: '#/components/schemas/FileMetaDataRequest'
+      responses:
+        '200':
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/FileMetaData'
+          description: >-
+            Successful update of the metadata associated with the identified
+            file.
+        '400':
+          description: Some error has occured as a result of the attempt.
+      summary: Updating Import Messaging Tn order loas file metadata [NANP]
       tags:
         - Hosted Messaging
   /accounts/{accountId}/importTnOrders/voice:
@@ -25741,7 +26185,6 @@ paths:
         - $ref: '#/components/parameters/CreatedDateToQueryParam'
         - $ref: '#/components/parameters/ModifiedDateFromQueryParam'
         - $ref: '#/components/parameters/ModifiedDateToQueryParam'
-        - $ref: '#/components/parameters/SipPeerIdQueryParam'
       responses:
         '200':
           content:
@@ -25796,7 +26239,7 @@ paths:
         the telephone numbers were successfully imported and  "PARTIAL" if some
         of the telephone numbers were imported. A failed order with will have a
         staus of "FAILED" and no telephone numbers would have been imported.
-      operationId: CreateVoiceImportTnOrder
+      operationId: CreateImportVoiceTnOrder
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
       requestBody:
@@ -26106,8 +26549,8 @@ paths:
                           <Note>Import Voice TN order is received.</Note>
                           <Author>admin</Author>
                           <Status>RECEIVED</Status>
-                          </OrderHistory>
-                          <OrderHistory>
+                        </OrderHistory>
+                        <OrderHistory>
                           <OrderDate>2015-06-16T14:03:10.330Z</OrderDate>
                           <Note>Import TN order is processing.</Note>
                           <Author>admin</Author>
@@ -26128,507 +26571,6 @@ paths:
       summary: Fetch Import Voice Tn order history
       tags:
         - Hosted Voice
-  /accounts/{accountId}/importTnOrders/{orderId}:
-    get:
-      description: Retrieve information about a importTnOrder with specified ID.
-      operationId: ReadImportTnOrder
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: Import Tn order's ID
-          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          content:
-            application/xml:
-              examples:
-                example:
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <ImportTnOrder>
-                       <OrderCreateDate>2018-01-09T02:58:04.615Z</OrderCreateDate>
-                       <AccountId>9900012</AccountId>
-                       <CreatedByUser>sjm</CreatedByUser>
-                       <OrderId>bf1305b8-8998-1111-2222-51ba3ce52d4e</OrderId>
-                       <LastModifiedDate>2018-01-09T02:58:05.298Z</LastModifiedDate>
-                       <SiteId>65487</SiteId>
-                       <SipPeerId>885544</SipPeerId>
-                       <Subscriber>
-                         <Name>First</Name>
-                         <ServiceAddress>
-                           <HouseNumber>11235</HouseNumber>
-                           <StreetName>Back</StreetName>
-                           <City>Denver</City>
-                           <StateCode>CO</StateCode>
-                           <Zip>27541</Zip>
-                           <County>Canyon</County>
-                         </ServiceAddress>
-                       </Subscriber>
-                       <LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>
-                       <LoaType>CARRIER</LoaType>
-                       <TelephoneNumbers>
-                         <TelephoneNumber>+12106078250</TelephoneNumber>
-                         <TelephoneNumber>+12109678273</TelephoneNumber>
-                         <TelephoneNumber>+12109678331</TelephoneNumber>
-                         <TelephoneNumber>+12109678337</TelephoneNumber>
-                         <TelephoneNumber>+12266401468</TelephoneNumber>
-                       </TelephoneNumbers>
-                       <ProcessingStatus>PARTIAL</ProcessingStatus>
-                       <Errors>
-                         <Error>
-                           <Code>7518</Code>
-                           <Description>Telephone Number Not Active.</Description>
-                           <TelephoneNumbers>
-                             <TelephoneNumber>+12262665583</TelephoneNumber>
-                           </TelephoneNumbers>
-                         </Error>
-                       </Errors>
-                     </ImportTnOrder>
-              schema:
-                $ref: '#/components/schemas/ImportTnOrderResponse'
-          description: >-
-            The information has been successfully retrieved and displayed in the
-            payload.
-      summary: Fetch Import Tn order status
-      tags:
-        - Hosted Messaging
-  /accounts/{accountId}/importTnOrders/{orderId}/history:
-    get:
-      description: Retrieves the history of the specified importTnOrder.
-      operationId: ReadImportTnOrderHistory
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: Import Tn order's ID
-          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          content:
-            application/xml:
-              examples:
-                example:
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <OrderHistoryWrapper>
-                       <OrderHistory>
-                         <OrderDate>2015-06-16T14:03:10.225Z</OrderDate>
-                         <Note>Import TN order is received.</Note>
-                         <Author>admin</Author>
-                         <Status>RECEIVED</Status>
-                       </OrderHistory>
-                       <OrderHistory>
-                         <OrderDate>2015-06-16T14:03:10.330Z</OrderDate>
-                         <Note>Import TN order is processing.</Note>
-                         <Author>admin</Author>
-                         <Status>PROCESSING</Status>
-                       </OrderHistory>
-                       <OrderHistory>
-                         <OrderDate>2015-06-16T14:03:10.789Z</OrderDate>
-                         <Note>Import TN order is partial.</Note>
-                         <Author>admin</Author>
-                         <Status>PARTIAL</Status>
-                       </OrderHistory>
-                     </OrderHistoryWrapper>
-              schema:
-                $ref: '#/components/schemas/OrderHistoryWrapper'
-          description: >-
-            The history has been successfully retrieved and displayed in the
-            payload.
-      summary: Fetch Import Tn order history
-      tags:
-        - Hosted Messaging
-  /accounts/{accountId}/importTnOrders/{orderId}/loas:
-    get:
-      description: >-
-        Retrieves the list of the loa (and other) files associated with the
-        order.
-      operationId: ReadImportTnOrderLoas
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: Import Tn order's ID
-          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-        - description: >-
-            if true it will return meta-data associated with the file used to
-            describe the file.
-          example: true
-          in: query
-          name: metadata
-          required: false
-          schema:
-            type: boolean
-      responses:
-        '200':
-          content:
-            application/xml:
-              examples:
-                example:
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <fileListResponse>
-                          <fileCount>1</fileCount>
-                          <fileData>
-                              <FileName>eeceff88-c11e-4bd8-86f3-8e3482888500-1624044440058.pdf</FileName>
-                              <FileMetaData>
-                                    <DocumentType>LOA</DocumentType>
-                              </FileMetaData>
-                          </fileData>
-                          <resultCode>0</resultCode>
-                          <resultMessage>LOA file list successfully returned</resultMessage>
-                    </fileListResponse>
-              schema:
-                $ref: '#/components/schemas/FileListResponse'
-          description: >-
-            The list of all files is being returned.  This response includes the
-            case where the list is empty.
-      summary: Fetch Import Tn order loas
-      tags:
-        - Hosted Messaging
-    post:
-      description: >-
-        POSTing to the /loas resource will enable the upload of the file.  The
-        key attribute to the POST is ensuring that the headers are correctly set
-        to support the file upload.<br>
-
-        Query parameter or header documentType can be used to specify type of
-        document on upload.
-
-        <p>When uploading documents using the /loas resource, you must specify
-        the MIME type of the document being upload using the Content-Type HTTP
-        header.</p>
-
-        <p>The LOA document must be uploaded using one of the following MIME
-        types:</p>
-
-        <ul>
-
-        <li>application/pdf</li>
-
-        <li>text/plain</li>
-
-        <li>image/jpeg</li>
-
-        <li>image/png</li>
-
-        <li>image/tiff</li>
-
-        <li>text/csv</li>
-
-        <li>application/vnd.ms-excel</li>
-
-        <li>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</li>
-
-        <li>application/msword</li>
-
-        <li>application/vnd.openxmlformats-officedocument.wordprocessingml.document</li>
-
-        </ul>
-      operationId: CreateImportTnOrderLoas
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: Import Tn order's ID
-          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-        - description: >-
-            This query parameter allows you to include the document type
-            metadata
-
-            at the same time you upload the file.
-          example: LOA
-          in: query
-          name: documentType
-          required: false
-          schema:
-            enum:
-              - LOA
-              - INVOICE
-              - CSR
-              - OTHER
-            type: string
-      requestBody:
-        content:
-          '*/*':
-            schema:
-              format: binary
-              type: string
-      responses:
-        '201':
-          content:
-            application/xml:
-              examples:
-                example:
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <fileUploadResponse>
-                          <filename>63097af1-37ae-432f-8a0d-9b0e6517a35b-1429550165581.pdf</filename>
-                          <resultCode>0</resultCode>
-                          <resultMessage>LOA file uploaded successfully for order 63097af1-37ae-432f-8a0d-9b0e6517a35b</resultMessage>
-                    </fileUploadResponse>
-              schema:
-                $ref: '#/components/schemas/FileUploadResponse'
-          description: >-
-            The 201 response indicates the successful creation of a file
-            resource containing the uploaded content.
-
-            The response header will include a link to the created file as a GET
-            on the identified resource.
-        '400':
-          description: A 400 indicates that the requested upload failed.
-      summary: Import Tn order loas
-      tags:
-        - Hosted Messaging
-  /accounts/{accountId}/importTnOrders/{orderId}/loas/{fileId}:
-    delete:
-      description: Deletes the file associated with the order
-      operationId: DeleteImportTnOrderLoasFile
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: Import Tn order's ID
-          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-        - description: File id with format
-          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4.pdf
-          in: path
-          name: fileId
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: The 200 OK  indicates a successful deletion of the identified file.
-        '404':
-          description: >-
-            a 404 indicates that the indicated file was not found in conjunction
-            with the order id.
-      summary: Removing Import Tn order loas file
-      tags:
-        - Hosted Messaging
-    get:
-      description: Retrieves the file associated with the order.
-      operationId: ReadImportTnOrderLoasFile
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: Import Tn order's ID
-          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-        - description: File id with format
-          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4.pdf
-          in: path
-          name: fileId
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: >-
-            The 200 OK  indicates a successful download request.<br>
-
-            The response to the get on a filename will result in the file being
-            prepared and delivered in a manner consistent with browser
-            download.  The Response headers include the content-disposition
-            header describing the file download.
-        '404':
-          description: >-
-            a 404 indicates that the indicated file was not found in conjunction
-            with the order id.
-      summary: Fetch Import Tn order loas file
-      tags:
-        - Hosted Messaging
-    put:
-      description: >-
-        A PUT on the filename will update / replace the identified file id.  The
-        format of the PUT is identical to that of the POST.
-      operationId: UpdateImportTnOrderLoasFile
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: Import Tn order's ID
-          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-        - description: File id with format
-          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4.pdf
-          in: path
-          name: fileId
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          content:
-            application/xml:
-              examples:
-                example:
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <fileUploadResponse>
-                          <filename>63097af1-37ae-432f-8a0d-9b0e6517a35b-1429550165581.pdf</filename>
-                          <resultCode>0</resultCode>
-                          <resultMessage>LOA file uploaded successfully for order 63097af1-37ae-432f-8a0d-9b0e6517a35b</resultMessage>
-                    </fileUploadResponse>
-              schema:
-                $ref: '#/components/schemas/FileUploadResponse'
-          description: >-
-            The 200 response indicates the successful replacement of a file
-            resource containing the uploaded content.
-
-            The response header will include a link to the created file as a GET
-            on the identified resource.
-        '400':
-          description: A 400 indicates that the requested upload failed.
-        '404':
-          description: A 404 indicates that the file was not available for replacement.
-      summary: Updating Import Tn order loas file
-      tags:
-        - Hosted Messaging
-  /accounts/{accountId}/importTnOrders/{orderId}/loas/{fileId}/metadata:
-    delete:
-      description: Deletes the metadata previously associated with the identified file.
-      operationId: RemoveImportTnOrderLoasFileMetadata
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: Import Tn order's ID
-          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-        - description: File id with format
-          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4.pdf
-          in: path
-          name: fileId
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: >-
-            The 200 OK  indicates a successful deletion of the identified
-            metadata.
-        '404':
-          description: >-
-            A 404 indicates that the indicated file was not found in conjunction
-            with the order id.cd
-      summary: Removing Import Tn order loas file metadata
-      tags:
-        - Hosted Messaging
-    get:
-      description: Retrieves the metadata associated with the file.
-      operationId: ReadImportTnOrderLoasFileMetadata
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: Import Tn order's ID
-          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-        - description: File id with format
-          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4.pdf
-          in: path
-          name: fileId
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          content:
-            application/xml:
-              examples:
-                example:
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <FileMetaData>
-                         <DocumentName> [string] </DocumentName>
-                         <DocumentType> [LOA | INVOICE | CSR | OTHER] </DocumentType>
-                    </FileMetaData>
-              schema:
-                $ref: '#/components/schemas/FileMetaData'
-          description: The Metatdata has been successfully retrieved.
-        '404':
-          description: >-
-            a 404 indicates that the indicated file was not found in conjunction
-            with the order id.
-      summary: Fetch Import Tn order loas file metadata
-      tags:
-        - Hosted Messaging
-    put:
-      description: >-
-        Associate metadata with the file named in the resource path.  This will
-        describe the file, and declare the data that is contained in the file,
-        selected from a list of [LOA | INVOICE | CSR | OTHER].
-      operationId: UpdateImportTnOrderLoasFileMetadata
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: Import Tn order's ID
-          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-        - description: File id with format
-          example: 093a9f9b-1a78-4e47-b6e2-776a484596f4.pdf
-          in: path
-          name: fileId
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/xml:
-            examples:
-              example:
-                value: |-
-                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                  <FileMetaData>
-                       <DocumentName>fileName</DocumentName>
-                       <DocumentType>LOA</DocumentType>
-                  </FileMetaData>
-            schema:
-              $ref: '#/components/schemas/FileMetaDataRequest'
-      responses:
-        '200':
-          content:
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/FileMetaData'
-          description: >-
-            Successful update of the metadata associated with the identified
-            file.
-        '400':
-          description: Some error has occured as a result of the attempt.
-      summary: Updating Import Tn order loas file metadata
-      tags:
-        - Hosted Messaging
   /accounts/{accountId}/importToAccount:
     get:
       description: >
@@ -32715,8 +32657,11 @@ paths:
                         {
                           "name": "NumberManagement",
                           "features": [
-                            "ORDERING",
+                            "Ordering",
                             "LNP",
+                            "HostedTNS",
+                            "IMPORT_TNS",
+                            "HostedVoice",
                             "TN_ASSIGNMENT",
                             "RESERVATION",
                             "LSR"
@@ -32731,7 +32676,7 @@ paths:
                                   "isDisabled": true
                                 },
                                 {
-                                  "featureName": "ORDERING",
+                                  "featureName": "Ordering",
                                   "isDisabled": true
                                 }
                               ]
@@ -32741,7 +32686,19 @@ paths:
                               "phoneNumberType": "NATIONAL",
                               "features": [
                                 {
-                                  "featureName": "ORDERING",
+                                  "featureName": "HostedTNS",
+                                  "isDisabled": true
+                                },
+                                {
+                                  "featureName": "IMPORT_TNS",
+                                  "isDisabled": true
+                                },
+                                {
+                                  "featureName": "HostedVoice",
+                                  "isDisabled": true
+                                },
+                                {
+                                  "featureName": "Ordering",
                                   "isDisabled": false
                                 }
                               ]
@@ -32788,8 +32745,11 @@ paths:
                             <Product>
                                 <Name>NumberManagement</Name>
                                 <Features>
-                                  <Feature>ORDERING</Feature>
+                                  <Feature>Ordering</Feature>
                                   <Feature>LNP</Feature>
+                                  <Feature>HostedTNS</Feature>
+                                  <Feature>IMPORT_TNS</Feature>
+                                  <Feature>HostedVoice</Feature>
                                   <Feature>TN_ASSIGNMENT</Feature>
                                   <Feature>RESERVATION</Feature>
                                   <Feature>LSR</Feature>
@@ -32804,7 +32764,7 @@ paths:
                                         <IsDisabled>true</IsDisabled>
                                       </Feature>
                                       <Feature>
-                                        <FeatureName>ORDERING</FeatureName>
+                                        <FeatureName>Ordering</FeatureName>
                                         <IsDisabled>true</IsDisabled>
                                       </Feature>
                                     </Features>
@@ -32813,6 +32773,18 @@ paths:
                                     <CountryCodeA3>DEU</CountryCodeA3>
                                     <PhoneNumberType>NATIONAL</PhoneNumberType>
                                     <Features>
+                                      <Feature>
+                                        <FeatureName>HostedTNS</FeatureName>
+                                        <IsDisabled>true</IsDisabled>
+                                      </Feature>
+                                      <Feature>
+                                        <FeatureName>IMPORT_TNS</FeatureName>
+                                        <IsDisabled>true</IsDisabled>
+                                      </Feature>
+                                      <Feature>
+                                        <FeatureName>HostedVoice</FeatureName>
+                                        <IsDisabled>true</IsDisabled>
+                                      </Feature>
                                       <Feature>
                                         <FeatureName>Ordering</FeatureName>
                                         <IsDisabled>true</IsDisabled>
@@ -34437,11 +34409,11 @@ paths:
       summary: Update Realm
       tags:
         - Sip Registrar
-  /accounts/{accountId}/removeImportedTnOrders:
+  /accounts/{accountId}/removeImportedTnOrders/messaging:
     get:
       description: >-
-        Retrieves the Remove Imported Tn Orders requests for the given account
-        ID.
+        Retrieves the Remove Imported Messaging Tn Orders requests for the given
+        account ID.
 
         A maximum of 1,000 orders can be retrieved per request. If no date range
         or specific query parameter as required is provided, the order results
@@ -34449,76 +34421,13 @@ paths:
       operationId: ListRemoveImportedTnOrders
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: The status of the Remove Imported Tn Orders being searched for
-          example: PARTIAL
-          in: query
-          name: status
-          required: false
-          schema:
-            items:
-              enum:
-                - PROCESSING
-                - COMPLETE
-                - PARTIAL
-                - FAILED
-              type: string
-            type: array
-        - description: A Telephone Number (TN) that is referenced in the order
-          example: '+19199918388'
-          in: query
-          name: tn
-          required: true
-          schema:
-            type: string
-        - description: >-
-            The Customer Order Id is an Id assigned by the account owner to
-            provide a reference number for the Remove Imported Tn Order
-          example: ABCCorp12345
-          in: query
-          name: customerOrderId
-          required: true
-          schema:
-            type: string
-        - description: >-
-            Checks the order's creation date against this value. Orders that
-            have a creation date after this date will be included. Format is
-            yyyy-MM-dd
-          example: '2022-04-19'
-          in: query
-          name: createdDateFrom
-          required: false
-          schema:
-            type: string
-        - description: >-
-            Checks the order's creation date against this value. Orders that
-            have a creation date before this date will be included. Format is
-            yyyy-MM-dd
-          example: '2022-04-19'
-          in: query
-          name: createdDateTo
-          required: false
-          schema:
-            type: string
-        - description: >-
-            For Date-based searches, the starting date of a date range
-            (inclusive) that will be used to find Remove Imported Tn Orders that
-            were modified within the date range. It is in the form yyyy-MM-dd
-          example: '2022-04-19'
-          in: query
-          name: modifiedDateFrom
-          required: false
-          schema:
-            type: string
-        - description: >-
-            For Date-based searches, the ending date of a date range (inclusive)
-            that will be used to find Remove Imported Tn Orders that were
-            modified within the date range. It is in the form yyyy-MM-dd
-          example: '2022-04-19'
-          in: query
-          name: modifiedDateTo
-          required: false
-          schema:
-            type: string
+        - $ref: '#/components/parameters/StatusQueryParam'
+        - $ref: '#/components/parameters/TnQueryParam'
+        - $ref: '#/components/parameters/CustomerOrderIdQueryParam'
+        - $ref: '#/components/parameters/CreatedDateFromQueryParam'
+        - $ref: '#/components/parameters/CreatedDateToQueryParam'
+        - $ref: '#/components/parameters/ModifiedDateFromQueryParam'
+        - $ref: '#/components/parameters/ModifiedDateToQueryParam'
       responses:
         '200':
           content:
@@ -34555,23 +34464,24 @@ paths:
               schema:
                 $ref: '#/components/schemas/RemoveImportedTnOrders'
           description: >-
-            The descriptive payload for the Remove Imported Tn Orders query
-            provides information about the orders found by the query, including
-            the data associated with the order, the state of the order, and a
-            list of the successfully removed Telephone Numbers, and descriptions
-            of any encountered errors
-      summary: List Remove Imported Tn Orders
+            The descriptive payload for the Remove Imported Messaging Tn Orders
+            query provides information about the orders found by the query,
+            including the data associated with the order, the state of the
+            order, and a list of the successfully removed Telephone Numbers, and
+            descriptions of any encountered errors
+      summary: List Remove Imported Messaging Tn Orders
       tags:
         - Hosted Messaging
     post:
       description: >-
-        Creates a Remove Imported Tn Orders request to remove imported telephone
-        numbers from the given site ID and sippeer ID as specified in the body.
-        A successfully submitted order will have a status of "PROCESSING". A
-        successfully completed order will have a status of "COMPLETE" if all of
-        the telephone numbers were successfully removed and  "PARTIAL" if some
-        of the telephone numbers were removed. A failed order with will have a
-        status of "FAILED" and no telephone numbers would have been removed
+        Creates a Remove Imported Messaging Tn Orders request to remove imported
+        telephone numbers from the given site ID and sippeer ID as specified in
+        the body. A successfully submitted order will have a status of
+        "PROCESSING". A successfully completed order will have a status of
+        "COMPLETE" if all of the telephone numbers were successfully removed
+        and  "PARTIAL" if some of the telephone numbers were removed. A failed
+        order with will have a status of "FAILED" and no telephone numbers would
+        have been removed
       operationId: CreateRemoveImportedTnOrder
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
@@ -34641,7 +34551,136 @@ paths:
           description: >-
             The order failed. One of the input parameters is invalid. The error
             text and an error code will be provided in the ErrorList element
-      summary: Create Remove Imported Tn Order
+      summary: Create Remove Imported Messaging Tn Order
+      tags:
+        - Hosted Messaging
+  /accounts/{accountId}/removeImportedTnOrders/messaging/{orderId}:
+    get:
+      description: Retrieve information about a removeImportedTnOrder with specified ID
+      operationId: RetrieveRemoveImportedTnOrder
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - $ref: '#/components/parameters/OrderIdPathParam'
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <RemoveImportedTnOrder>
+                       <OrderCreateDate>2018-01-09T02:58:04.615Z</OrderCreateDate>
+                       <AccountId>9900012</AccountId>
+                       <CreatedByUser>sjm</CreatedByUser>
+                       <OrderId>bf1305b8-8998-1111-2222-51ba3ce52d4e</OrderId>
+                       <LastModifiedDate>2018-01-09T02:58:05.298Z</LastModifiedDate>
+                       <TelephoneNumbers>
+                          <TelephoneNumber>+12106078250</TelephoneNumber>
+                          <TelephoneNumber>+12109678273</TelephoneNumber>
+                          <TelephoneNumber>+12109678331</TelephoneNumber>
+                          <TelephoneNumber>+12109678337</TelephoneNumber>
+                          <TelephoneNumber>+12266401468</TelephoneNumber>
+                       </TelephoneNumbers>
+                       <ProcessingStatus>PARTIAL</ProcessingStatus>
+                       <Errors>
+                          <Error>
+                             <Code>7518</Code>
+                             <Description>Telephone Number Not Active.</Description>
+                             <TelephoneNumbers>
+                                <TelephoneNumber>+12262665583</TelephoneNumber>
+                             </TelephoneNumbers>
+                          </Error>
+                       </Errors>
+                    </RemoveImportedTnOrder>
+              schema:
+                $ref: '#/components/schemas/RemoveImportedTnOrdersResponse'
+          description: >-
+            The information has been successfully retrieved and displayed in the
+            payload
+        '400':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <RemoveImportedTnOrdersReportResponse>
+                       <ResponseStatus>
+                          <Description>The resource does not exist</Description>
+                       </ResponseStatus>
+                    </RemoveImportedTnOrdersReportResponse>
+              schema:
+                $ref: '#/components/schemas/RemoveImportedTnOrdersHistoryResponse'
+          description: Order id is not valid
+      summary: Retrieve Remove Imported Messaging Tn Order
+      tags:
+        - Hosted Messaging
+  /accounts/{accountId}/removeImportedTnOrders/messaging/{orderId}/history:
+    get:
+      description: >-
+        Retrieves the history of the specified Remove Imported Messaging Tn
+        Order
+      operationId: RetrieveRemoveImportedTnOrderHistory
+      parameters:
+        - $ref: '#/components/parameters/AccountIdPathParam'
+        - description: ID of `RemoveImportedTnOrder` to retrieve history
+          example: bf1305b8-8998-1111-2222-51ba3ce52d4e
+          in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <OrderHistoryWrapper>
+                       <OrderHistory>
+                          <OrderDate>2015-06-16T14:03:10.225Z</OrderDate>
+                          <Note>Remove Imported TN order is received.</Note>
+                          <Author>admin</Author>
+                          <Status>RECEIVED</Status>
+                       </OrderHistory>
+                       <OrderHistory>
+                          <OrderDate>2015-06-16T14:03:10.330Z</OrderDate>
+                          <Note>Remove Imported TN order is processing.</Note>
+                          <Author>admin</Author>
+                          <Status>PROCESSING</Status>
+                       </OrderHistory>
+                       <OrderHistory>
+                          <OrderDate>2015-06-16T14:03:10.789Z</OrderDate>
+                          <Note>Remove Imported TN order is partial.</Note>
+                          <Author>admin</Author>
+                          <Status>PARTIAL</Status>
+                       </OrderHistory>
+                    </OrderHistoryWrapper>
+              schema:
+                $ref: '#/components/schemas/OrderHistoryWrapper'
+          description: >-
+            The history has been successfully retrieved and displayed in the
+            payload
+        '400':
+          content:
+            application/xml:
+              examples:
+                example:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <RemoveImportedTnOrdersReportResponse>
+                       <ResponseStatus>
+                          <ErrorCode>1008</ErrorCode>
+                          <Description>'some_invalid_uuid' is not a valid UUID</Description>
+                       </ResponseStatus>
+                    </RemoveImportedTnOrdersReportResponse>
+              schema:
+                $ref: '#/components/schemas/RemoveImportedTnOrdersHistoryResponse'
+          description: Order id is not valid
+      summary: Retrieve Remove Imported Messaging Tn Order history
       tags:
         - Hosted Messaging
   /accounts/{accountId}/removeImportedTnOrders/voice:
@@ -34663,7 +34702,6 @@ paths:
         - $ref: '#/components/parameters/CreatedDateToQueryParam'
         - $ref: '#/components/parameters/ModifiedDateFromQueryParam'
         - $ref: '#/components/parameters/ModifiedDateToQueryParam'
-        - $ref: '#/components/parameters/SipPeerIdQueryParam'
       responses:
         '200':
           content:
@@ -35006,140 +35044,6 @@ paths:
       summary: Retrieve Remove Imported Voice Tn Order history
       tags:
         - Hosted Voice
-  /accounts/{accountId}/removeImportedTnOrders/{orderId}:
-    get:
-      description: Retrieve information about a removeImportedTnOrder with specified ID
-      operationId: RetrieveRemoveImportedTnOrder
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: ID of `RemoveImportedTnOrder` to retrieve
-          example: bf1305b8-8998-1111-2222-51ba3ce52d4e
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          content:
-            application/xml:
-              examples:
-                example:
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <RemoveImportedTnOrder>
-                       <OrderCreateDate>2018-01-09T02:58:04.615Z</OrderCreateDate>
-                       <AccountId>9900012</AccountId>
-                       <CreatedByUser>sjm</CreatedByUser>
-                       <OrderId>bf1305b8-8998-1111-2222-51ba3ce52d4e</OrderId>
-                       <LastModifiedDate>2018-01-09T02:58:05.298Z</LastModifiedDate>
-                       <TelephoneNumbers>
-                          <TelephoneNumber>+12106078250</TelephoneNumber>
-                          <TelephoneNumber>+12109678273</TelephoneNumber>
-                          <TelephoneNumber>+12109678331</TelephoneNumber>
-                          <TelephoneNumber>+12109678337</TelephoneNumber>
-                          <TelephoneNumber>+12266401468</TelephoneNumber>
-                       </TelephoneNumbers>
-                       <ProcessingStatus>PARTIAL</ProcessingStatus>
-                       <Errors>
-                          <Error>
-                             <Code>7518</Code>
-                             <Description>Telephone Number Not Active.</Description>
-                             <TelephoneNumbers>
-                                <TelephoneNumber>+12262665583</TelephoneNumber>
-                             </TelephoneNumbers>
-                          </Error>
-                       </Errors>
-                    </RemoveImportedTnOrder>
-              schema:
-                $ref: '#/components/schemas/RemoveImportedTnOrdersResponse'
-          description: >-
-            The information has been successfully retrieved and displayed in the
-            payload
-        '400':
-          content:
-            application/xml:
-              examples:
-                example:
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <RemoveImportedTnOrdersReportResponse>
-                       <ResponseStatus>
-                          <ErrorCode>1008</ErrorCode>
-                          <Description>'some_invalid_uuid' is not a valid UUID</Description>
-                       </ResponseStatus>
-                    </RemoveImportedTnOrdersReportResponse>
-              schema:
-                $ref: '#/components/schemas/RemoveImportedTnOrdersHistoryResponse'
-          description: Order id is not valid
-      summary: Retrieve Remove Imported Tn Order
-      tags:
-        - Hosted Messaging
-  /accounts/{accountId}/removeImportedTnOrders/{orderId}/history:
-    get:
-      description: Retrieves the history of the specified Remove Imported Tn Order
-      operationId: RetrieveRemoveImportedTnOrderHistory
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: ID of `RemoveImportedTnOrder` to retrieve history
-          example: bf1305b8-8998-1111-2222-51ba3ce52d4e
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          content:
-            application/xml:
-              examples:
-                example:
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <OrderHistoryWrapper>
-                       <OrderHistory>
-                          <OrderDate>2015-06-16T14:03:10.225Z</OrderDate>
-                          <Note>Remove Imported TN order is received.</Note>
-                          <Author>admin</Author>
-                          <Status>RECEIVED</Status>
-                       </OrderHistory>
-                       <OrderHistory>
-                          <OrderDate>2015-06-16T14:03:10.330Z</OrderDate>
-                          <Note>Remove Imported TN order is processing.</Note>
-                          <Author>admin</Author>
-                          <Status>PROCESSING</Status>
-                       </OrderHistory>
-                       <OrderHistory>
-                          <OrderDate>2015-06-16T14:03:10.789Z</OrderDate>
-                          <Note>Remove Imported TN order is partial.</Note>
-                          <Author>admin</Author>
-                          <Status>PARTIAL</Status>
-                       </OrderHistory>
-                    </OrderHistoryWrapper>
-              schema:
-                $ref: '#/components/schemas/OrderHistoryWrapper'
-          description: >-
-            The history has been successfully retrieved and displayed in the
-            payload
-        '400':
-          content:
-            application/xml:
-              examples:
-                example:
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <RemoveImportedTnOrdersReportResponse>
-                       <ResponseStatus>
-                          <ErrorCode>1008</ErrorCode>
-                          <Description>'some_invalid_uuid' is not a valid UUID</Description>
-                       </ResponseStatus>
-                    </RemoveImportedTnOrdersReportResponse>
-              schema:
-                $ref: '#/components/schemas/RemoveImportedTnOrdersHistoryResponse'
-          description: Order id is not valid
-      summary: Retrieve Remove Imported Tn Order history
-      tags:
-        - Hosted Messaging
   /accounts/{accountId}/reports:
     get:
       description: >-

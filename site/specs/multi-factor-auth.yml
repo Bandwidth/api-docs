@@ -101,52 +101,35 @@ paths:
                 }
             }
         - lang: Java
-          source: >
-            import com.bandwidth.BandwidthClient;
+          source: |
+            import com.bandwidth.sdk.ApiClient;
+            import com.bandwidth.sdk.ApiException;
+            import com.bandwidth.sdk.Configuration;
+            import com.bandwidth.sdk.auth.*;
+            import com.bandwidth.sdk.models.*;
+            import com.bandwidth.sdk.api.MfaApi;
 
-            import com.bandwidth.http.response.ApiResponse;
-
-            import
-            com.bandwidth.multifactorauth.models.TwoFactorCodeRequestSchema;
-
-            import com.bandwidth.multifactorauth.models.TwoFactorVoiceResponse;
-
-
-            import java.util.concurrent.CompletableFuture;
-
-            import java.util.concurrent.ExecutionException;
-
-
-            public class Sample {
-                public static final String USERNAME = "api-username";
-                public static final String PASSWORD = "api-password";
-                public static final String ACCOUNT_ID = "12345";
-                public static final String APPLICATION_ID = "1234-qwer";
-
+            public class Example {
                 public static void main(String[] args) {
-                    BandwidthClient client = new BandwidthClient.Builder()
-                            .multiFactorAuthBasicAuthCredentials(USERNAME, PASSWORD)
-                            .build();
+                    ApiClient defaultClient = Configuration.getDefaultApiClient();        
 
-                    String to = "+15553334444";
-                    String from = "+15554443333";
-                    String scope = "sample";
-                    int digits = 6;
-                    String message = "Your temporary {NAME} {SCOPE} code is {CODE}";
+                    // Configure HTTP basic authorization: Basic
+                    HttpBasicAuth Basic = (HttpBasicAuth) defaultClient.getAuthentication("Basic");
+                    Basic.setUsername("YOUR USERNAME");
+                    Basic.setPassword("YOUR PASSWORD");
 
-                    TwoFactorCodeRequestSchema request = new TwoFactorCodeRequestSchema();
-                    request.setApplicationId(APPLICATION_ID);
-                    request.setTo(to);
-                    request.setFrom(from);
-                    request.setScope(scope);
-                    request.setDigits(digits);
-                    request.setMessage(message);
-
+                    MfaApi apiInstance = new MfaApi(defaultClient);
+                    String accountId = "9900000"; // String | Your Bandwidth Account ID.
+                    CodeRequest codeRequest = new CodeRequest(); // CodeRequest | MFA code request body.
                     try {
-                        CompletableFuture<ApiResponse<TwoFactorVoiceResponse>> completableFuture = client.getMultiFactorAuthClient().getMFAController().createVoiceTwoFactorAsync(ACCOUNT_ID, request);
-                        System.out.println(completableFuture.get().getResult());
-                    } catch (InterruptedException | ExecutionException e) {
-                        System.out.println(e.getMessage());
+                        VoiceCodeResponse result = apiInstance.generateVoiceCode(accountId, codeRequest);
+                        System.out.println(result);
+                    } catch (ApiException e) {
+                        System.err.println("Exception when calling MfaApi#generateVoiceCode");
+                        System.err.println("Status code: " + e.getCode());
+                        System.err.println("Reason: " + e.getResponseBody());
+                        System.err.println("Response headers: " + e.getResponseHeaders());
+                        e.printStackTrace();
                     }
                 }
             }
@@ -291,29 +274,30 @@ paths:
                 print(e.response_code)
         - lang: Ruby
           source: |
-            require 'bandwidth'
+            require 'bandwidth-sdk'
 
-            include Bandwidth
-            include Bandwidth::MultiFactorAuth
+            Bandwidth.configure do |config|
+              config.username = 'api-username'
+              config.password = 'api-password'
+            end
 
-            bandwidth_client = Bandwidth::Client.new(
-                multi_factor_auth_basic_auth_user_name: "api-username",
-                multi_factor_auth_basic_auth_password: "api-password"
+            api_instance = Bandwidth::MFAApi.new
+            account_id = '12345'
+            code_request = Bandwidth::CodeRequest.new(
+              {
+                to: '+15553334444',
+                from: '+15554443333',
+                application_id: '1234-qwer',
+                message: 'Your temporary {NAME} {SCOPE} code is {CODE}',
+                digits: 6
+              }
             )
-            auth_client = bandwidth_client.multi_factor_auth_client.mfa
 
-            body = TwoFactorCodeRequestSchema.new
-            body.application_id = "1234-qwer"
-            body.to = "+15553334444"
-            body.from = "+15554443333"
-            body.digits = 6
-            body.scope = "scope"
-            body.message = "Your temporary {NAME} {SCOPE} code is {CODE}"
             begin
-                result = auth_client.create_voice_two_factor("12345", body)
-                puts 'callId: ' + result.data.call_id
-            rescue APIException => e
-                puts e.response_code
+              result = api_instance.generate_voice_code(account_id, code_request)
+              p "callId: #{result.call_id}"
+            rescue Bandwidth::ApiError => e
+              p "Error when calling MFAApi->generate_voice_code: #{e}"
             end
   /accounts/{accountId}/code/messaging:
     post:
@@ -401,53 +385,35 @@ paths:
                 }
             }
         - lang: Java
-          source: >
-            import com.bandwidth.BandwidthClient;
+          source: |
+            import com.bandwidth.sdk.ApiClient;
+            import com.bandwidth.sdk.ApiException;
+            import com.bandwidth.sdk.Configuration;
+            import com.bandwidth.sdk.auth.*;
+            import com.bandwidth.sdk.models.*;
+            import com.bandwidth.sdk.api.MfaApi;
 
-            import com.bandwidth.http.response.ApiResponse;
-
-            import
-            com.bandwidth.multifactorauth.models.TwoFactorCodeRequestSchema;
-
-            import
-            com.bandwidth.multifactorauth.models.TwoFactorMessagingResponse;
-
-
-            import java.util.concurrent.CompletableFuture;
-
-            import java.util.concurrent.ExecutionException;
-
-
-            public class Sample {
-                public static final String USERNAME = "api-username";
-                public static final String PASSWORD = "api-password";
-                public static final String ACCOUNT_ID = "12345";
-                public static final String APPLICATION_ID = "1234-asdf";
-
+            public class Example {
                 public static void main(String[] args) {
-                    BandwidthClient client = new BandwidthClient.Builder()
-                            .multiFactorAuthBasicAuthCredentials(USERNAME, PASSWORD)
-                            .build();
+                    ApiClient defaultClient = Configuration.getDefaultApiClient();        
 
-                    String to = "+15553334444";
-                    String from = "+15554443333";
-                    String scope = "sample";
-                    int digits = 6;
-                    String message = "Your temporary {NAME} {SCOPE} code is {CODE}";
+                    // Configure HTTP basic authorization: Basic
+                    HttpBasicAuth Basic = (HttpBasicAuth) defaultClient.getAuthentication("Basic");
+                    Basic.setUsername("YOUR USERNAME");
+                    Basic.setPassword("YOUR PASSWORD");
 
-                    TwoFactorCodeRequestSchema request = new TwoFactorCodeRequestSchema();
-                    request.setApplicationId(APPLICATION_ID);
-                    request.setTo(to);
-                    request.setFrom(from);
-                    request.setScope(scope);
-                    request.setDigits(digits);
-                    request.setMessage(message);
-
+                    MfaApi apiInstance = new MfaApi(defaultClient);
+                    String accountId = "9900000"; // String | Your Bandwidth Account ID.
+                    CodeRequest codeRequest = new CodeRequest(); // CodeRequest | MFA code request body.
                     try {
-                        CompletableFuture<ApiResponse<TwoFactorMessagingResponse>> completableFuture = client.getMultiFactorAuthClient().getMFAController().createMessagingTwoFactorAsync(ACCOUNT_ID, request);
-                        System.out.println(completableFuture.get().getResult());
-                    } catch (InterruptedException | ExecutionException e) {
-                        System.out.println(e.getMessage());
+                        MessagingCodeResponse result = apiInstance.generateMessagingCode(accountId, codeRequest);
+                        System.out.println(result);
+                    } catch (ApiException e) {
+                        System.err.println("Exception when calling MfaApi#generateMessagingCode");
+                        System.err.println("Status code: " + e.getCode());
+                        System.err.println("Reason: " + e.getResponseBody());
+                        System.err.println("Response headers: " + e.getResponseHeaders());
+                        e.printStackTrace();
                     }
                 }
             }
@@ -591,29 +557,30 @@ paths:
                 print(e.response_code)
         - lang: Ruby
           source: |
-            require 'bandwidth'
+            require 'bandwidth-sdk'
 
-            include Bandwidth
-            include Bandwidth::MultiFactorAuth
+            Bandwidth.configure do |config|
+              config.username = 'api-username'
+              config.password = 'api-password'
+            end
 
-            bandwidth_client = Bandwidth::Client.new(
-                multi_factor_auth_basic_auth_user_name: "api-username",
-                multi_factor_auth_basic_auth_password: "api-password"
+            api_instance = Bandwidth::MFAApi.new
+            account_id = '12345'
+            code_request = Bandwidth::CodeRequest.new(
+              {
+                to: '+15553334444',
+                from: '+15554443333',
+                application_id: '1234-asdf',
+                message: 'Your temporary {NAME} {SCOPE} code is {CODE}',
+                digits: 6
+              }
             )
-            auth_client = bandwidth_client.multi_factor_auth_client.mfa
 
-            body = TwoFactorCodeRequestSchema.new
-            body.application_id = "1234-asdf"
-            body.to = "+15553334444"
-            body.from = "+15554443333"
-            body.digits = 6
-            body.scope = "scope"
-            body.message = "Your temporary {NAME} {SCOPE} code is {CODE}"
             begin
-                result = auth_client.create_messaging_two_factor("12345", body)
-                puts 'messageId: ' + result.data.message_id
-            rescue APIException => e
-                puts e.response_code
+              result = api_instance.generate_messaging_code(account_id, code_request)
+              p "messageId: #{result.message_id}"
+            rescue Bandwidth::ApiError => e
+              p "Error when calling MFAApi->generate_messaging_code: #{e}"
             end
   /accounts/{accountId}/code/verify:
     post:
@@ -699,51 +666,35 @@ paths:
                 }
             }
         - lang: Java
-          source: >
-            import com.bandwidth.BandwidthClient;
+          source: |
+            import com.bandwidth.sdk.ApiClient;
+            import com.bandwidth.sdk.ApiException;
+            import com.bandwidth.sdk.Configuration;
+            import com.bandwidth.sdk.auth.*;
+            import com.bandwidth.sdk.models.*;
+            import com.bandwidth.sdk.api.MfaApi;
 
-            import com.bandwidth.http.response.ApiResponse;
-
-            import
-            com.bandwidth.multifactorauth.models.TwoFactorVerifyCodeResponse;
-
-            import
-            com.bandwidth.multifactorauth.models.TwoFactorVerifyRequestSchema;
-
-
-            import java.util.concurrent.CompletableFuture;
-
-            import java.util.concurrent.ExecutionException;
-
-
-            public class Sample {
-                public static final String USERNAME = "api-username";
-                public static final String PASSWORD = "api-password";
-                public static final String ACCOUNT_ID = "12345";
-                public static final String APPLICATION_ID = "1234-qwer";
-
+            public class Example {
                 public static void main(String[] args) {
-                    BandwidthClient client = new BandwidthClient.Builder()
-                            .multiFactorAuthBasicAuthCredentials(USERNAME, PASSWORD)
-                            .build();
+                    ApiClient defaultClient = Configuration.getDefaultApiClient();        
 
-                    String to = "+15553334444";
-                    String scope = "sample";
-                    String code = "159193";
-                    int expirationTimeInMinutes = 3;
+                    // Configure HTTP basic authorization: Basic
+                    HttpBasicAuth Basic = (HttpBasicAuth) defaultClient.getAuthentication("Basic");
+                    Basic.setUsername("YOUR USERNAME");
+                    Basic.setPassword("YOUR PASSWORD");
 
-                    TwoFactorVerifyRequestSchema request = new TwoFactorVerifyRequestSchema();
-                    request.setApplicationId(APPLICATION_ID);
-                    request.setTo(to);
-                    request.setScope(scope);
-                    request.setCode(code);
-                    request.setExpirationTimeInMinutes(expirationTimeInMinutes);
-
+                    MfaApi apiInstance = new MfaApi(defaultClient);
+                    String accountId = "9900000"; // String | Your Bandwidth Account ID.
+                    VerifyCodeRequest verifyCodeRequest = new VerifyCodeRequest(); // VerifyCodeRequest | MFA code verify request body.
                     try {
-                        CompletableFuture<ApiResponse<TwoFactorVerifyCodeResponse>> completableFuture = client.getMultiFactorAuthClient().getMFAController().createVerifyTwoFactorAsync(ACCOUNT_ID, request);
-                        System.out.println(completableFuture.get().getResult());
-                    } catch (InterruptedException | ExecutionException e) {
-                        System.out.println(e.getMessage());
+                        VerifyCodeResponse result = apiInstance.verifyCode(accountId, verifyCodeRequest);
+                        System.out.println(result);
+                    } catch (ApiException e) {
+                        System.err.println("Exception when calling MfaApi#verifyCode");
+                        System.err.println("Status code: " + e.getCode());
+                        System.err.println("Reason: " + e.getResponseBody());
+                        System.err.println("Response headers: " + e.getResponseHeaders());
+                        e.printStackTrace();
                     }
                 }
             }
@@ -906,28 +857,28 @@ paths:
                 print(e.response_code)
         - lang: Ruby
           source: |
-            require 'bandwidth'
+            require 'bandwidth-sdk'
 
-            include Bandwidth
-            include Bandwidth::MultiFactorAuth
+            Bandwidth.configure do |config|
+              config.username = 'api-username'
+              config.password = 'api-password'
+            end
 
-            bandwidth_client = Bandwidth::Client.new(
-                multi_factor_auth_basic_auth_user_name: "api-username",
-                multi_factor_auth_basic_auth_password: "api-password"
+            api_instance = Bandwidth::MFAApi.new
+            account_id = '12345'
+            verify_code_request = Bandwidth::VerifyCodeRequest.new(
+              {
+                to: '+15553334444',
+                expiration_time_in_minutes: 3,
+                code: '123456'
+              }
             )
-            auth_client = bandwidth_client.multi_factor_auth_client.mfa
 
-            body = TwoFactorVerifyRequestSchema.new
-            body.application_id = "1234-qwer"
-            body.to = "+15553334444"
-            body.scope = "scope"
-            body.code = "123456"
-            body.expiration_time_in_minutes = 3
             begin
-                result = auth_client.create_verify_two_factor("12345", body)
-                puts 'valid?: ' + result.data.valid
-            rescue APIException => e
-                puts e.response_code
+              result = api_instance.verify_code(account_id, verify_code_request)
+              p "valid?: #{result.valid}"
+            rescue Bandwidth::ApiError => e
+              p "Error when calling MFAApi->verify_code: #{e}"
             end
 components:
   schemas:
