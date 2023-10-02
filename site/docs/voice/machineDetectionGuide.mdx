@@ -219,50 +219,47 @@ class Program
 <TabItem value="ruby">
 
 ```ruby
-require 'bandwidth'
-
-include Bandwidth
-include Bandwidth::Voice
+require 'bandwidth-sdk'
 
 begin
-    BW_USERNAME = ENV.fetch('BW_USERNAME')
-    BW_PASSWORD = ENV.fetch('BW_PASSWORD')
-    BW_ACCOUNT_ID = ENV.fetch('BW_ACCOUNT_ID')
-    BW_VOICE_APPLICATION_ID = ENV.fetch('BW_VOICE_APPLICATION_ID')
-    BW_NUMBER = ENV.fetch('BW_NUMBER')
-    USER_NUMBER = ENV.fetch('USER_NUMBER')
-    BASE_CALLBACK_URL = ENV.fetch('BASE_CALLBACK_URL')
-
+  BW_USERNAME = ENV.fetch('BW_USERNAME')
+  BW_PASSWORD = ENV.fetch('BW_PASSWORD')
+  BW_ACCOUNT_ID = ENV.fetch('BW_ACCOUNT_ID')
+  BW_VOICE_APPLICATION_ID = ENV.fetch('BW_VOICE_APPLICATION_ID')
+  BW_NUMBER = ENV.fetch('BW_NUMBER')
+  USER_NUMBER = ENV.fetch('USER_NUMBER')
+  BASE_CALLBACK_URL = ENV.fetch('BASE_CALLBACK_URL')
 rescue
-    puts "Please set the environmental variables defined in the README"
-    exit(-1)
+  p 'Please set the environmental variables defined in the README'
+  exit(-1)
 end
 
-bandwidth_client = Bandwidth::Client.new(
-    voice_basic_auth_user_name: {BW_USERNAME},
-    voice_basic_auth_password: {BW_PASSWORD}
+Bandwidth.configure do |config|
+  config.username = BW_USERNAME
+  config.password = BW_PASSWORD
+end
+
+calls_api_instance = Bandwidth::CallsApi.new
+
+amd_config = Bandwidth::MachineDetectionConfiguration.new(
+  mode: Bandwidth::MachineDetectionModeEnum::ASYNC,
+  callback_url: BASE_CALLBACK_URL + '/machineDetection',
+  callback_method: Bandwidth::CallbackMethodEnum::POST
 )
 
-voice_client = bandwidth_client.voice_client.client
-
-amd = MachineDetectionConfiguration.new
-amd.mode = ModeEnum::ASYNC
-amd.callback_url = "http://example.com/machineDetectionCallback"
-amd.callback_method = AnswerMethodEnum::POST
-
-body = CreateCallRequest.new
-body.from = BW_NUMBER
-body.to = USER_NUMBER
-body.answer_url = BASE_CALLBACK_URL + "/answer"
-body.application_id = BW_VOICE_APPLICATION_ID
-body.machine_detection = amd
-#remember to add auth for your application if needed!
+call_body = Bandwidth::CreateCall.new(
+  application_id: BW_VOICE_APPLICATION_ID,
+  to: USER_NUMBER,
+  from: BW_NUMBER,
+  answer_url: BASE_CALLBACK_URL + '/answer',
+  machine_detection: amd_config
+)
 
 begin
-    result = voice_client.create_call(ENV['BW_ACCOUNT_ID'], body)
-    puts result.data.call_id
-rescue APIException => e
-    puts e.response_code
+  result = calls_api_instance.create_call(BW_ACCOUNT_ID, call_body)
+  p result.call_id
+rescue Bandwidth::ApiError => e
+  p e.code
 end
 ```
 
@@ -616,53 +613,51 @@ class Program
 <TabItem value="ruby">
 
 ```ruby
-require 'bandwidth'
-
-include Bandwidth
-include Bandwidth::Voice
+require 'bandwidth-sdk'
 
 begin
-    BW_USERNAME = ENV.fetch('BW_USERNAME')
-    BW_PASSWORD = ENV.fetch('BW_PASSWORD')
-    BW_ACCOUNT_ID = ENV.fetch('BW_ACCOUNT_ID')
-    BW_VOICE_APPLICATION_ID = ENV.fetch('BW_VOICE_APPLICATION_ID')
-    BW_NUMBER = ENV.fetch('BW_NUMBER')
-    USER_NUMBER = ENV.fetch('USER_NUMBER')
-    BASE_CALLBACK_URL = ENV.fetch('BASE_CALLBACK_URL')
-
+  BW_USERNAME = ENV.fetch('BW_USERNAME')
+  BW_PASSWORD = ENV.fetch('BW_PASSWORD')
+  BW_ACCOUNT_ID = ENV.fetch('BW_ACCOUNT_ID')
+  BW_VOICE_APPLICATION_ID = ENV.fetch('BW_VOICE_APPLICATION_ID')
+  BW_NUMBER = ENV.fetch('BW_NUMBER')
+  USER_NUMBER = ENV.fetch('USER_NUMBER')
+  BASE_CALLBACK_URL = ENV.fetch('BASE_CALLBACK_URL')
 rescue
-    puts "Please set the environmental variables defined in the README"
-    exit(-1)
+  p 'Please set the environmental variables defined in the README'
+  exit(-1)
 end
 
-bandwidth_client = Bandwidth::Client.new(
-    voice_basic_auth_user_name: {BW_USERNAME},
-    voice_basic_auth_password: {BW_PASSWORD}
+Bandwidth.configure do |config|
+  config.username = BW_USERNAME
+  config.password = BW_PASSWORD
+end
+
+calls_api_instance = Bandwidth::CallsApi.new
+
+amd_config = Bandwidth::MachineDetectionConfiguration.new(
+  mode: Bandwidth::MachineDetectionModeEnum::SYNC,
+  detection_timeout: 15.0,
+  silence_timeout: 5.0,
+  speech_threshold: 5.0,
+  speech_end_threshold: 1.0,
+  callback_url: BASE_CALLBACK_URL + '/machineDetection',
+  callback_method: Bandwidth::CallbackMethodEnum::POST
 )
 
-voice_client = bandwidth_client.voice_client.client
-
-amd = MachineDetectionConfiguration.new
-amd.mode = ModeEnum::SYNC
-amd.callback_method = AnswerMethodEnum::POST
-amd.detection_timeout = 15.0
-amd.silence_timeout = 5.0
-amd.speech_threshold = 5.0
-amd.speech_end_threshold = 1.0
-
-body = CreateCallRequest.new
-body.from = BW_NUMBER
-body.to = USER_NUMBER
-body.answer_url = BASE_CALLBACK_URL + "/answer"
-body.application_id = BW_VOICE_APPLICATION_ID
-body.machine_detection = amd
-#remember to add auth for your application if needed!
+call_body = Bandwidth::CreateCall.new(
+  application_id: BW_VOICE_APPLICATION_ID,
+  to: USER_NUMBER,
+  from: BW_NUMBER,
+  answer_url: BASE_CALLBACK_URL + '/answer',
+  machine_detection: amd_config
+)
 
 begin
-    result = voice_client.create_call(ENV['BW_ACCOUNT_ID'], body)
-    puts result.data.call_id
-rescue APIException => e
-    puts e.response_code
+  result = calls_api_instance.create_call(BW_ACCOUNT_ID, call_body)
+  p result.call_id
+rescue Bandwidth::ApiError => e
+  p e.code
 end
 ```
 
