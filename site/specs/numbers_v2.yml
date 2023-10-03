@@ -3096,7 +3096,7 @@ components:
         AssociatedSipPeersResponse:
           $ref: '#/components/schemas/AssociatedSipPeersResponse'
       type: object
-    AutomatedTollFreeLnpOrderRequest:
+    AutomatedNANPTollFreeLnpOrderRequest:
       description: >-
         Indicates that the port-in contains toll-free numbers and that Toll-Free
         Automation is enabled. The numbers will be automatically validated and
@@ -3107,7 +3107,25 @@ components:
           allOf:
             - $ref: '#/components/schemas/LnpOrderBasic'
             - $ref: '#/components/schemas/LnpOrderAutomatedTollFreeFields'
-      title: Automated Toll-Free
+            - properties:
+                RequestedFocDate:
+                  description: >-
+                    Format: ISO8601 encoding such as “2013-05-10T15:14:22Z”, or
+                    "2019-10-31T17:15:00+04:00".<br/><br/>For all ports, if
+                    `RequestedFocDate` is specified, the date portion must
+                    be:<br/> - in the future<br/> - after the losing carrier's
+                    minimum number of days to port-out<br/> - not on a weekend
+                    or U.S. holiday<br/><br/>If `RequestedFocDate` is not
+                    specified, the next available FOC date meeting the criteria
+                    above will be used. If the Time portion of the
+                    `RequestedFocDate` is omitted the port-in order will be
+                    activated at the default activation time of 11:30 AM ET. If
+                    an activation time other than 11:30 AM ET is desired, that
+                    activation time should be included in the
+                    `RequestedFocDate`.
+                  type: string
+              type: object
+      title: Automated NANP Toll-Free LNP Order Request
       type: object
     AvailableNpaNxx:
       properties:
@@ -7543,7 +7561,7 @@ components:
         delete:
           type: boolean
       type: object
-    InternalLnpOrderRequest:
+    InternalNANPLnpOrderRequest:
       properties:
         LnpOrder:
           allOf:
@@ -7577,7 +7595,7 @@ components:
                     $ref: '#/components/schemas/TnAttribute'
                   type: array
               type: object
-      title: Internal
+      title: Internal NANP LNP Order Request
       type: object
     IrisStatus:
       properties:
@@ -7888,6 +7906,20 @@ components:
             carrier. For wireline port-in, the BillingTelephoneNumber is
             typically the telephone number being ported in.
           type: string
+        RequestedFocDate:
+          description: >-
+            Format: ISO8601 encoding such as “2013-05-10T15:14:22Z”, or
+            "2019-10-31T17:15:00+04:00".<br/><br/>For all ports, if
+            `RequestedFocDate` is specified, the date portion must be:<br/> - in
+            the future<br/> - after the losing carrier's minimum number of days
+            to port-out<br/> - not on a weekend or U.S. holiday<br/><br/>If
+            `RequestedFocDate` is not specified, the next available FOC date
+            meeting the criteria above will be used. If the Time portion of the
+            `RequestedFocDate` is omitted the port-in order will be activated at
+            the default activation time of 11:30 AM ET. If an activation time
+            other than 11:30 AM ET is desired, that activation time should be
+            included in the `RequestedFocDate`.
+          type: string
         Subscriber:
           oneOf:
             - $ref: '#/components/schemas/SubscriberBusiness'
@@ -8154,13 +8186,7 @@ components:
             OrderId:
               type: string
             ProcessingStatus:
-              description: >-
-                The processing status of this order. Values may be: PROCESSING,
-                COMPLETED, FAILED. PROCESSING means that the system is still
-                processing the order. COMPLETED means that the order has been
-                successfully completed. FAILED means that errors occurred while
-                processing the order, and that the order did not make any
-                changes to the system.
+              description: The processing status of the order after it has been updated.
               enum:
                 - REQUESTED_SUPP
               type: string
@@ -8459,6 +8485,19 @@ components:
           maxLength: 5
           minLength: 5
           type: string
+      title: LnpOrderSupp
+      type: object
+    LnpOrderSuppGlobalManual:
+      allOf:
+        - $ref: '#/components/schemas/LnpOrderBasicModifiableFields'
+      properties:
+        LosingCarrierName:
+          description: The name of the losing carrier the telephone numbers belong to.
+          type: string
+        Subscriber:
+          oneOf:
+            - $ref: '#/components/schemas/ManualGlobalSubscriberResidential'
+            - $ref: '#/components/schemas/ManualGlobalSubscriberBusiness'
       title: LnpOrderSupp
       type: object
     LnpOrderSuppInternal:
@@ -8941,6 +8980,284 @@ components:
         SkipAck:
           type: boolean
       type: object
+    ManualGlobalLnpOrderPutResponse:
+      properties:
+        LnpOrderResponse:
+          properties:
+            OrderId:
+              type: string
+            ProcessingStatus:
+              enum:
+                - REQUESTED_SUPP
+              type: string
+            Status:
+              properties:
+                Code:
+                  type: integer
+                Description:
+                  type: string
+              type: object
+          type: object
+      type: object
+    ManualGlobalLnpOrderRequest:
+      properties:
+        LnpOrder:
+          allOf:
+            - properties:
+                CustomerOrderId:
+                  description: >-
+                    The `CustomerOrderId` is an optional field that may be
+                    provided by the customer and will remain with the order. The
+                    value is opaque to Bandwidth.
+                  format: Only alphanumeric values, dashes and spaces
+                  maxLength: 40
+                  type: string
+                ListOfPhoneNumbers:
+                  description: >-
+                    `ListOfPhoneNumbers` is an array of `PhoneNumber`. At least
+                    one `PhoneNumber` must be provided.
+                  items:
+                    properties:
+                      PhoneNumber:
+                        description: >-
+                          One or more phone numbers is required. <br/>Use a
+                          `<PhoneNumber>` tag for each phone number in the
+                          `<ListOfPhoneNumbers>` list.
+                        format: E164 phone number with no dots or dashes
+                        type: string
+                    type: object
+                  type: array
+                LosingCarrierName:
+                  description: >-
+                    `LosingCarrierName` specifies the name of the losing
+                    carrier 
+                  type: string
+                PeerId:
+                  description: >-
+                    `PeerId` specifies the numeric identifier of the SIP-peer
+                    (Location) that the telephone numbers will be ported
+                    into.<br/><br/>You can find the identifier for a SIP-peer
+                    (location) by using `GET /accounts/id/sites/id/sippeers`, or
+                    by clicking on 'Accounts' on the upper right of the
+                    [Bandwidth Dashboard](Https://dashboard.bandwidth.com), then
+                    clicking 'Locations' on the navigation bar. The SIP-peer
+                    (location) identifiers are listed next to each location
+                    name. If `PeerId` is omitted, the SIP-peer (location)
+                    designated as the 'default location' for that site
+                    (sub-account) will be used.
+                  type: string
+                ProcessingStatus:
+                  description: >-
+                    Including `ProcessingStatus` with a value of DRAFT allows
+                    you to create a port-in request, but not process the
+                    request. This is useful if you wish to add items to the
+                    order over a period of time and submit once you have the
+                    order setup the way you want. Note, however, that draft
+                    orders that have not been updated in a couple of days are
+                    automatically deleted. Removal of stagnant draft orders is
+                    performed so that telephone numbers are not tied up in these
+                    orders, preventing them from being included in other
+                    orders.<br/><br/>Very little validation is performed while
+                    an order is in draft state. Omitting `ProcessingStatus`
+                    causes the port-in to be validated and, if correct,
+                    processed right away. The full validation is performed on
+                    the order when you change the ProcessingStatus to
+                    'SUBMITTED' by performing a PUT request on the order.
+                    <br><br><p>All toll free telephone numbers provided will be
+                    validated (even in draft state) to ensure
+
+                    that they are portable, and to allow you to separate
+                    telephone numbers into separate port-ins
+
+                    based on the RespOrg that they are being ported from.</p>
+                  enum:
+                    - DRAFT
+                  type: string
+                RequestedFocDate:
+                  description: >-
+                    Format: ISO8601 encoding such as "2019-10-31".<br/><br/>For
+                    global ports, if `RequestedFocDate` is specified the time
+                    portions will be ignored and the date portion must be:<br/>
+                    - in the future<br/> - not on a weekend.
+                  type: string
+                SiteId:
+                  description: >-
+                    `SiteId` specifies the identifier of the site (sub-account)
+                    that the telephone numbers will be ported into.<br/><br/>You
+                    can find the identifier for a site (sub-account) by using
+                    `GET /accounts/id/sites`, or by clicking on 'Manage
+                    sub-account' for the desired sub-account on the main page of
+                    the Bandwidth Dashboard.
+                  format: int32
+                  type: integer
+                Subscriber:
+                  oneOf:
+                    - $ref: '#/components/schemas/ManualGlobalSubscriberResidential'
+                    - $ref: '#/components/schemas/ManualGlobalSubscriberBusiness'
+              required:
+                - SiteId
+                - ListOfPhoneNumbers
+                - LosingCarrierName
+              type: object
+      title: Manual Global LNP Order Request
+      type: object
+    ManualGlobalLnpOrderResponse:
+      properties:
+        LnpOrderResponse:
+          properties:
+            CountryCodeA3:
+              description: The ISO-3166 alpha 3 code of the country the numbers belong to.
+              type: string
+            Errors:
+              properties:
+                Code:
+                  description: Numeric designation of corresponding error.
+                  type: integer
+                Description:
+                  description: Detailed explanation about error.
+                  type: string
+              type: object
+            ListOfPhoneNumbers:
+              description: >-
+                ListOfPhoneNumbers is an array of PhoneNumber. At least one
+                PhoneNumber must be provided for all port-types.
+              items:
+                $ref: '#/components/schemas/PhoneNumber'
+              type: array
+            LosingCarrierName:
+              description: The name of the losing carrier the telephone numbers belong to.
+              type: string
+            OrderId:
+              description: Unique orderId that is used to manage the order.
+              type: string
+            PeerId:
+              description: >-
+                The numeric designation for the Location or SIP Peer ID that
+                applied to the Port-in Order. The SIP Peer ID is used to provide
+                a home within the location for the TN(s) that were ported in by
+                the Port-in Order
+              type: string
+            PhoneNumberType:
+              $ref: '#/components/schemas/phoneNumberType'
+            PortType:
+              description: Port type
+              enum:
+                - MANUAL
+              type: string
+            ProcessingStatus:
+              description: >-
+                The processing status of this order. PROCESSING means that the
+                system is still processing the order. COMPLETE means that the
+                order has been successfully completed. EXCEPTION means that
+                errors occurred while processing the order, and that the order
+                did not make any changes to the system.
+              enum:
+                - DRAFT
+                - PENDING_DOCUMENTS
+                - SUBMITTED
+                - FOC
+                - COMPLETE
+                - EXCEPTION
+                - REQUESTED_CANCEL
+                - CANCELLED
+                - REQUESTED_SUPP
+              type: string
+            SiteId:
+              description: >-
+                The numeric designation for the Site ID that applied to the
+                Port-in Order. The SiteId is used to provide a home within the
+                account for the TN(s) that were ported in by the Port-in Order
+              type: string
+            Status:
+              properties:
+                Code:
+                  type: integer
+                Description:
+                  type: string
+              type: object
+            Subscriber:
+              oneOf:
+                - $ref: '#/components/schemas/ManualGlobalSubscriberResidential'
+                - $ref: '#/components/schemas/ManualGlobalSubscriberBusiness'
+          type: object
+      title: Manual Global LNP Order Response
+      type: object
+    ManualGlobalSubscriberBusiness:
+      properties:
+        AddressId:
+          description: >-
+            UUID of the address created with the
+            `/accounts/{accountId}/addresses` API endpoint.
+          maxLength: 36
+          type: string
+        BusinessName:
+          maxLength: 25
+          type: string
+        SubscriberType:
+          enum:
+            - BUSINESS
+          type: string
+        VatNumber:
+          description: >-
+            The `VatNumber` is the value of the VAT number associated with the
+            subscriber. This field is required when porting numbers for a subset
+            of countries when the SubscriberType is `BUSINESS`.
+          maxLength: 36
+          type: string
+      required:
+        - SubscriberType
+        - AddressId
+        - BusinessName
+        - VatNumber
+      title: BUSINESS
+      type: object
+    ManualGlobalSubscriberResidential:
+      properties:
+        AddressId:
+          description: >-
+            UUID of the address created with the
+            `/accounts/{accountId}/addresses` API endpoint.
+          maxLength: 36
+          type: string
+        FirstName:
+          maxLength: 25
+          type: string
+        LastName:
+          maxLength: 25
+          type: string
+        MiddleInitial:
+          maxLength: 1
+          type: string
+        SubscriberType:
+          enum:
+            - RESIDENTIAL
+          type: string
+      required:
+        - SubscriberType
+        - AddressId
+        - FirstName
+        - LastName
+      title: RESIDENTIAL
+      type: object
+    ManualNANPTollFreeLnpOrderRequest:
+      description: >-
+        Manual indicates that the port-in will be processed manually by
+        Bandwidth’s Local Number Portability team. Currently all toll free
+        port-ins are handled manually by Bandwidth’s Local Number Portability
+        team. But Bandwidth is in the process of automating portions of toll
+        free porting, with a goal of eventually automating the entire process.
+      properties:
+        LnpOrder:
+          allOf:
+            - $ref: '#/components/schemas/LnpOrderBasic'
+          properties:
+            Subscriber:
+              allOf:
+                - $ref: '#/components/schemas/SubscriberBusiness'
+              type: object
+          type: object
+      title: Manual NANP Toll-Free LNP Order Request
+      type: object
     ManualPortOutRequest:
       properties:
         BulkPortOut:
@@ -8967,25 +9284,6 @@ components:
           type: string
         TelephoneNumberToPort:
           type: string
-      type: object
-    ManualTollFreeLnpOrderRequest:
-      description: >-
-        Manual indicates that the port-in will be processed manually by
-        Bandwidth’s Local Number Portability team. Currently all toll free
-        port-ins are handled manually by Bandwidth’s Local Number Portability
-        team. But Bandwidth is in the process of automating portions of toll
-        free porting, with a goal of eventually automating the entire process.
-      properties:
-        LnpOrder:
-          allOf:
-            - $ref: '#/components/schemas/LnpOrderBasic'
-          properties:
-            Subscriber:
-              allOf:
-                - $ref: '#/components/schemas/SubscriberBusiness'
-              type: object
-          type: object
-      title: Manual Toll-Free
       type: object
     ManuallyPortableTollFreeNumberList:
       properties:
@@ -9631,15 +9929,15 @@ components:
           type: object
       title: Number Portability Response
       type: object
-    OffNetLnpOrderRequest:
+    OffNetNANPLnpOrderRequest:
       properties:
         LnpOrder:
           allOf:
             - $ref: '#/components/schemas/LnpOrderBasic'
             - $ref: '#/components/schemas/LnpOrderAdditionalFields'
-      title: Off-net
+      title: Off-net NANP LNP Order Request
       type: object
-    OnNetLnpOrderRequest:
+    OnNetNANPLnpOrderRequest:
       properties:
         LnpOrder:
           allOf:
@@ -9676,7 +9974,7 @@ components:
                     $ref: '#/components/schemas/TnAttribute'
                   type: array
               type: object
-      title: On-net
+      title: On-net NANP LNP Order Request
       type: object
     OrderCreatedDate:
       description: Creation date of the order.
@@ -11842,6 +12140,8 @@ components:
       properties:
         Address:
           $ref: '#/components/schemas/Address'
+        BillingIdentifier:
+          type: string
         CallVerificationEnabled:
           type: boolean
         CallingName:
@@ -27596,7 +27896,7 @@ paths:
                           <AccountId>0</AccountId>
                           <CreatedByUser>team_ua</CreatedByUser>
                           <OrderStatus>FAILED</OrderStatus>
-                          <BillingTelephoneNumber>919238466</BillingTelephoneNumber>
+                          <BillingTelephoneNumber>+19192384661</BillingTelephoneNumber>
                           <Pon>ATT-011515-324234%$</Pon>
                           <AuthorizingPerson>Jim Hopkins</AuthorizingPerson>
                           <Subscriber>
@@ -30012,7 +30312,7 @@ paths:
           content:
             application/xml:
               examples:
-                Portins in FOC:
+                Portins containing NANP numbers:
                   description: List of portin orders with FOC processing status
                   value: |-
                     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -30060,7 +30360,35 @@ paths:
                             <PON>979E019287CDF6A1</PON>
                         </lnpPortInfoForGivenStatus>
                     </LNPResponseWrapper>
-                RespOrg exception toll-free portin order:
+                Portins containing non-NANP numbers:
+                  description: List containing a single portin order with global numbers
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <LNPResponseWrapper>
+                        <TotalCount>2</TotalCount>
+                        <Links>
+                            <first>Link=&lt;https://test.dashboard.bandwidth.com:443/v1.0/accounts/9900012/portins?page=1&amp;size=10&amp;date=2020-01-15&amp;status=foc&gt;;rel="first";</first>
+                        </Links>
+                        <lnpPortInfoForGivenStatus>
+                            <accountId>9900012</accountId>
+                            <CountOfTNs>1</CountOfTNs>
+                            <userId>gforrest</userId>
+                            <lastModifiedDate>2023-03-29T19:06:10.085Z</lastModifiedDate>
+                            <OrderDate>2023-03-29T19:06:10.085Z</OrderDate>
+                            <OrderId>b2190bcc-0272-4a51-ba56-7c3d628e8706</OrderId>
+                            <OrderType>port_in</OrderType>
+                            <ActualFOCDate>2023-04-01T01:00:00.000Z</ActualFOCDate>
+                            <CompanyName>WandEDemo</CompanyName>
+                            <LNPLosingCarrierId>1290</LNPLosingCarrierId>
+                            <LNPLosingCarrierName>SFR</LNPLosingCarrierName>
+                            <ProcessingStatus>SUBMITTED</ProcessingStatus>
+                            <RequestedFOCDate>2023-03-29</RequestedFOCDate>
+                            <VendorId>??</VendorId>
+                            <VendorName>??</VendorName>
+                            <PON>979E019287CDF6A1</PON>
+                        </lnpPortInfoForGivenStatus>
+                    </LNPResponseWrapper>
+                RespOrg exception toll-free order containing NANP numbers:
                   description: >-
                     List containing a single RespOrg exception toll-free portin
                     order
@@ -30097,7 +30425,7 @@ paths:
       tags:
         - Porting
     post:
-      description: >-
+      description: >
         Creates a port-in order for the specified telephone number(s) and
         account number. <br/> Please visit <a
         href='/docs/numbers/porting/port-ins/stand-alone-port-ins'>How to Create
@@ -30112,28 +30440,121 @@ paths:
         content:
           application/xml:
             examples:
-              Automated Toll-Free Port-in:
+              Automated NANP Toll-Free Port-in:
                 value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrder>\n\t<CustomerOrderId>My order id</CustomerOrderId>\n\t<RequestedFocDate>2021-06-16Z</RequestedFocDate>\n\t<SiteId>2439</SiteId>\n\t<PeerId>23432</PeerId>\n\t<LoaAuthorizingPerson>The Authgal</LoaAuthorizingPerson>\n\t<TargetRespOrgId>JYT01</TargetRespOrgId>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>+18774809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n</LnpOrder>"
-              Regular Port-in:
-                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrder>\n\t<RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>\n\t<AlternateSpid>X455</AlternateSpid>\n\t<BillingTelephoneNumber>+19195551234</BillingTelephoneNumber>\n\t<NewBillingTelephoneNumber>+19175131245</NewBillingTelephoneNumber>\n\t<SiteId>    SITE ID     </SiteId>\n\t<PeerId>  SIPPEER ID    </PeerId>\n\t<Subscriber>\n\t\t<SubscriberType>BUSINESS</SubscriberType>\n\t\t<FirstName>First</FirstName>\n\t\t<LastName>Last</LastName>\n\t\t<ServiceAddress>\n\t\t\t<HouseNumber>11235</HouseNumber>\n\t\t\t<StreetName>Back</StreetName>\n\t\t\t<City>Denver</City>\n\t\t\t<StateCode>CO</StateCode>\n\t\t\t<Zip>27541</Zip>\n\t\t\t<County>Canyon</County>\n\t\t</ServiceAddress>\n\t</Subscriber>\n\t<LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>\n\t<WirelessInfo>\n\t\t<AccountNumber>771297665AABC</AccountNumber>\n\t\t<PinNumber>1234</PinNumber>\n\t</WirelessInfo>\n\t<TnAttributes>\n\t\t<TnAttribute>Protected</TnAttribute>\n\t\t<TnAttribute>External</TnAttribute>\n\t\t<TnAttribute>Imported</TnAttribute>\n\t</TnAttributes>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>+19194809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n\t<CustomerOrderId>myOrder</CustomerOrderId>\n\t<Triggered>true</Triggered>\n\t<PartialPort>true</PartialPort>\n\t<ProcessingStatus>DRAFT</ProcessingStatus>\n</LnpOrder>"
+              Global Port-in, Business Subscriber:
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <LnpOrder>
+                    <RequestedFocDate>2023-09-01</RequestedFocDate>
+                    <SiteId>13078</SiteId>
+                    <PeerId>553906</PeerId>
+                    <LosingCarrierName>British Telecom</LosingCarrierName>
+                    <Subscriber>
+                      <SubscriberType>BUSINESS</SubscriberType>
+                      <CompanyName>Acme, Inc.</CompanyName>
+                      <VatNumber>IE1234567T</VatNumber>
+                      <AddressId>ba4bb1f3-4358-4a46-883f-6376539ff94e</AddressId>
+                    </Subscriber>
+                    <ListOfPhoneNumbers>
+                      <PhoneNumber>+3237470444</PhoneNumber>
+                    </ListOfPhoneNumbers>
+                    <CustomerOrderId>myOrder</CustomerOrderId>
+                  </LnpOrder>
+              Global Port-in, Residential Subscriber:
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <LnpOrder>
+                    <RequestedFocDate>2023-09-01</RequestedFocDate>
+                    <SiteId>13078</SiteId>
+                    <PeerId>553906</PeerId>
+                    <LosingCarrierName>British Telecom</LosingCarrierName>
+                    <Subscriber>
+                      <SubscriberType>RESIDENTIAL</SubscriberType>
+                      <FirstName>Jane</FirstName>
+                      <LastName>Doe</LastName>
+                      <MiddleInitial>M</MiddleInitial>
+                      <AddressId>ba4bb1f3-4358-4a46-883f-6376539ff94e</AddressId>
+                    </Subscriber>
+                    <ListOfPhoneNumbers>
+                      <PhoneNumber>+3237470444</PhoneNumber>
+                    </ListOfPhoneNumbers>
+                    <CustomerOrderId>myOrder</CustomerOrderId>
+                  </LnpOrder>
+              On-net NANP Port-in:
+                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrder>\n\t<RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>\n\t<AlternateSpid>X455</AlternateSpid>\n\t<BillingTelephoneNumber>+19195551234</BillingTelephoneNumber>\n\t<NewBillingTelephoneNumber>+19175131245</NewBillingTelephoneNumber>\n\t<SiteId>2439</SiteId>\n\t<PeerId>23432</PeerId>\n\t<Subscriber>\n\t\t<SubscriberType>BUSINESS</SubscriberType>\n\t\t<FirstName>First</FirstName>\n\t\t<LastName>Last</LastName>\n\t\t<ServiceAddress>\n\t\t\t<HouseNumber>11235</HouseNumber>\n\t\t\t<StreetName>Back</StreetName>\n\t\t\t<City>Denver</City>\n\t\t\t<StateCode>CO</StateCode>\n\t\t\t<Zip>27541</Zip>\n\t\t\t<County>Canyon</County>\n\t\t</ServiceAddress>\n\t</Subscriber>\n\t<LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>\n\t<WirelessInfo>\n\t\t<AccountNumber>771297665AABC</AccountNumber>\n\t\t<PinNumber>1234</PinNumber>\n\t</WirelessInfo>\n\t<TnAttributes>\n\t\t<TnAttribute>Protected</TnAttribute>\n\t\t<TnAttribute>External</TnAttribute>\n\t\t<TnAttribute>Imported</TnAttribute>\n\t</TnAttributes>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>+19194809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n\t<CustomerOrderId>myOrder</CustomerOrderId>\n\t<Triggered>true</Triggered>\n\t<PartialPort>true</PartialPort>\n\t<ProcessingStatus>DRAFT</ProcessingStatus>\n</LnpOrder>"
             schema:
               oneOf:
-                - $ref: '#/components/schemas/OnNetLnpOrderRequest'
-                - $ref: '#/components/schemas/ManualTollFreeLnpOrderRequest'
-                - $ref: '#/components/schemas/AutomatedTollFreeLnpOrderRequest'
-                - $ref: '#/components/schemas/OffNetLnpOrderRequest'
-                - $ref: '#/components/schemas/InternalLnpOrderRequest'
+                - $ref: '#/components/schemas/OnNetNANPLnpOrderRequest'
+                - $ref: '#/components/schemas/ManualNANPTollFreeLnpOrderRequest'
+                - $ref: '#/components/schemas/AutomatedNANPTollFreeLnpOrderRequest'
+                - $ref: '#/components/schemas/OffNetNANPLnpOrderRequest'
+                - $ref: '#/components/schemas/InternalNANPLnpOrderRequest'
+                - $ref: '#/components/schemas/ManualGlobalLnpOrderRequest'
       responses:
         '201':
           content:
             application/xml:
               examples:
-                Automated Toll-Free Order Response:
+                Automated NANP Toll-Free Port-in Order Response:
                   value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrderResponse>\n\t<OrderId>03f194d5-3932-4e9f-8ba1-03ef767985e5</OrderId>\n\t<Status>\n\t\t<Code>201</Code>\n\t\t<Description>Order request received. Please use the order id to check the status of your order later.</Description>\n\t</Status>\n\t<ProcessingStatus>VALIDATE_TFNS</ProcessingStatus>\n\t<RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>\n\t<LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>+18774809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n\t<TollFreeValidationStatus>PROCESSING</TollFreeValidationStatus>\n\t<TollFreePortType>PHASE_1_TOLLFREE</TollFreePortType>\n\t<TargetRespOrgId>JYT01</TargetRespOrgId>\n</LnpOrderResponse>"
-                Regular Order Response:
+                Global Port-in Order Response, Business Subscriber:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <LnpOrderResponse>
+                      <OrderId>03f194d5-3932-4e9f-8ba1-03ef767985e5</OrderId>
+                      <Status>
+                        <Code>201</Code>
+                        <Description>Order request received. Please use the order id to check the status of your order later.</Description>
+                      </Status>
+                      <RequestedFocDate>2023-09-01</RequestedFocDate>
+                      <LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>
+                      <Subscriber>
+                        <SubscriberType>BUSINESS</SubscriberType>
+                        <CompanyName>Acme, Inc.</CompanyName>
+                        <VatNumber>IE1234567T</VatNumber>
+                        <AddressId>ba4bb1f3-4358-4a46-883f-6376539ff94e</AddressId>
+                      </Subscriber>
+                      <SiteId>13078</SiteId>
+                      <PeerId>553906</PeerId>
+                      <LosingCarrierName>British Telecom</LosingCarrierName>
+                      <ListOfPhoneNumbers>
+                        <PhoneNumber>+3237470444</PhoneNumber>
+                      </ListOfPhoneNumbers>
+                      <CustomerOrderId>myOrder</CustomerOrderId>
+                    </LnpOrderResponse>
+                Global Port-in Order Response, Residential Subscriber:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <LnpOrderResponse>
+                      <OrderId>03f194d5-3932-4e9f-8ba1-03ef767985e5</OrderId>
+                      <Status>
+                        <Code>201</Code>
+                        <Description>Order request received. Please use the order id to check the status of your order later.</Description>
+                      </Status>
+                      <RequestedFocDate>2023-09-01</RequestedFocDate>
+                      <LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>
+                      <Subscriber>
+                        <SubscriberType>RESIDENTIAL</SubscriberType>
+                        <FirstName>Jane</FirstName>
+                        <LastName>Doe</LastName>
+                        <MiddleInitial>M</MiddleInitial>
+                        <AddressId>ba4bb1f3-4358-4a46-883f-6376539ff94e</AddressId>
+                      </Subscriber>
+                      <SiteId>13078</SiteId>
+                      <PeerId>553906</PeerId>
+                      <LosingCarrierName>British Telecom</LosingCarrierName>
+                      <ListOfPhoneNumbers>
+                        <PhoneNumber>+3237470444</PhoneNumber>
+                      </ListOfPhoneNumbers>
+                      <CustomerOrderId>myOrder</CustomerOrderId>
+                    </LnpOrderResponse>
+                On-net NANP Port-in Order Response:
                   value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrderResponse>\n\t<OrderId>03f194d5-3932-4e9f-8ba1-03ef767985e5</OrderId>\n\t<Status>\n\t\t<Code>201</Code>\n\t\t<Description>Order request received. Please use the order id to check the status of your order later.</Description>\n\t</Status>\n\t<ProcessingStatus>PENDING_DOCUMENTS</ProcessingStatus>\n\t<RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>\n\t<LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>\n\t<Subscriber>\n\t\t<SubscriberType>BUSINESS</SubscriberType>\n\t\t<FirstName>First</FirstName>\n\t\t<LastName>Last</LastName>\n\t\t<ServiceAddress>\n\t\t\t<HouseNumber>11235</HouseNumber>\n\t\t\t<StreetName>Back</StreetName>\n\t\t\t<City>Denver</City>\n\t\t\t<StateCode>CO</StateCode>\n\t\t\t<Zip>27541</Zip>\n\t\t\t<County>Canyon</County>\n\t\t\t<Country>United States</Country>\n\t\t</ServiceAddress>\n\t</Subscriber>\n\t<WirelessInfo>\n\t\t<AccountNumber>771297665AABC</AccountNumber>\n\t\t<PinNumber>1234</PinNumber>\n\t</WirelessInfo>\n\t<TnAttributes>\n\t\t<TnAttribute>Protected</TnAttribute>\n\t\t<TnAttribute>External</TnAttribute>\n\t\t<TnAttribute>Imported</TnAttribute>\n\t</TnAttributes>\n\t<BillingTelephoneNumber>+19195551234</BillingTelephoneNumber>\n\t<NewBillingTelephoneNumber>+19175131245</NewBillingTelephoneNumber>\n\t<SiteId>    SITE ID     </SiteId>\n\t<PeerId>  SIPPEER ID    </PeerId>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>+19194809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n\t<CustomerOrderId>myOrder</CustomerOrderId>\n\t<Triggered>true</Triggered>\n\t<PartialPort>true</PartialPort>\n</LnpOrderResponse>"
               schema:
-                $ref: '#/components/schemas/LnpOrderResponse'
+                oneOf:
+                  - $ref: '#/components/schemas/LnpOrderResponse'
+                  - $ref: '#/components/schemas/ManualGlobalLnpOrderResponse'
           description: >-
             The order has been created and an order ID is specified in the
             payload and in the header.
@@ -30351,6 +30772,40 @@ paths:
           content:
             application/xml:
               examples:
+                Manual Global Port-in in SUBMITTED state:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <LnpOrderResponse>
+                        <ProcessingStatus>SUBMITTED</ProcessingStatus>
+                        <RequestedFocDate>2023-06-30T00:00:00Z</RequestedFocDate>
+                        <Subscriber>
+                          <SubscriberType>BUSINESS</SubscriberType>
+                          <BusinessName>Acme, Inc</BusinessName>
+                          <VatNumber>IE1234567T</VatNumber>
+                          <AddressId>ba4bb1f3-4358-4a46-883f-6376539ff94e</AddressId>
+                        </Subscriber>
+                        <ListOfPhoneNumbers>
+                          <PhoneNumber>+441171261486</PhoneNumber>
+                          <PhoneNumber>+441171261487</PhoneNumber>
+                          <PhoneNumber>+441171261488</PhoneNumber>
+                          <PhoneNumber>+441171261489</PhoneNumber>
+                          <PhoneNumber>+441171261580</PhoneNumber>
+                        </ListOfPhoneNumbers>
+                        <AccountId>9912829</AccountId>
+                        <SiteId>13078</SiteId>
+                        <PeerId>553906</PeerId>
+                        <LosingCarrierName>British Telecom</LosingCarrierName>
+                        <VendorName>International porting vendor</VendorName>
+                        <OrderCreateDate>2023-06-23T20:02:20.042Z</OrderCreateDate>
+                        <LastModifiedDate>2023-06-23T20:02:21.000Z</LastModifiedDate>
+                        <userId>systemUser</userId>
+                        <LastModifiedBy>systemUser</LastModifiedBy>
+                        <CustomerOrderId>port-001</CustomerOrderId>
+                        <BillingType>PORTIN</BillingType>
+                        <PortType>MANUAL</PortType>
+                        <CountryCodeA3>GBR</CountryCodeA3>
+                        <PhoneNumberType>GEOGRAPHIC</PhoneNumberType>
+                    </LnpOrderResponse>
                 Port-in in CANCELLED state:
                   value: |-
                     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -30449,6 +30904,7 @@ paths:
                 oneOf:
                   - $ref: '#/components/schemas/LnpOrderResponse'
                   - $ref: '#/components/schemas/LnpOrderResponseAutomatedTollFree'
+                  - $ref: '#/components/schemas/ManualGlobalLnpOrderResponse'
           description: >-
             The information has been successfully retrieved and displayed in the
             payload.
@@ -30506,6 +30962,27 @@ paths:
                     </ListOfPhoneNumbers>
                     <LoaAuthorizingPerson>TestName TestLastName</LoaAuthorizingPerson>
                     <TargetRespOrgId>JYT01</TargetRespOrgId>
+                  </LnpOrderSupp>
+              Manual Global Request:
+                value: |-
+                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                  <LnpOrderSupp>
+                    <CustomerOrderId>port-001</CustomerOrderId>
+                    <RequestedFocDate>2023-09-01</RequestedFocDate>
+                    <SiteId>13078</SiteId>
+                    <PeerId>553906</PeerId>
+                    <ListOfPhoneNumbers>
+                      <PhoneNumber>+441171261486</PhoneNumber>
+                      <PhoneNumber>+441171261487</PhoneNumber>
+                      <PhoneNumber>+441171261488</PhoneNumber>
+                    </ListOfPhoneNumbers>
+                    <LosingCarrierName>British Telecom</LosingCarrierName>
+                    <Subscriber>
+                      <SubscriberType>BUSINESS</SubscriberType>
+                      <BusinessName>Acme, Inc.</BusinessName>
+                      <VatNumber>IE1234567T</VatNumber>
+                      <AddressId>ba4bb1f3-4358-4a46-883f-6376539ff94e</AddressId>
+                    </Subscriber>
                   </LnpOrderSupp>
               Regular Request:
                 value: |-
@@ -30580,12 +31057,17 @@ paths:
                 - properties:
                     LnpOrderSupp:
                       $ref: '#/components/schemas/LnpOrderSuppAutomatedOnNetWireless'
-                  title: Automated On-Net wireless to wireless
+                  title: Automated On-Net (wireless to wireless)
                   type: object
                 - properties:
                     LnpOrderSupp:
                       $ref: '#/components/schemas/LnpOrderSuppInternal'
                   title: Internal
+                  type: object
+                - properties:
+                    LnpOrderSupp:
+                      $ref: '#/components/schemas/LnpOrderSuppGlobalManual'
+                  title: Manual Global
                   type: object
       responses:
         '200':
@@ -30613,6 +31095,18 @@ paths:
                       <LoaAuthorizingPerson>TestName TestLastName</LoaAuthorizingPerson>
                       <TargetRespOrgId>JYT01</TargetRespOrgId>
                     </LnpOrderResponse>
+                Manual Global Response:
+                  value: |-
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <LnpOrderResponse>
+                      <OrderId>de654fe7-d4ba-4d67-9064-5caa2292b25b</OrderId>
+                      <Status>
+                        <Code>200</Code>
+                        <Description>Supp request received. Please use the order id to check the status of your order later.
+                        </Description>
+                      </Status>
+                      <ProcessingStatus>REQUESTED_SUPP</ProcessingStatus>
+                    </LnpOrderResponse>
                 Simple Order Response:
                   value: |-
                     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -30629,7 +31123,9 @@ paths:
                       <Triggered>false</Triggered>
                     </LnpOrderResponse>
               schema:
-                $ref: '#/components/schemas/LnpOrderPutResponse'
+                oneOf:
+                  - $ref: '#/components/schemas/LnpOrderPutResponse'
+                  - $ref: '#/components/schemas/ManualGlobalLnpOrderPutResponse'
           description: >-
             The order has been successfully updated.  The payload includes the
             fields that were included
@@ -43382,7 +43878,7 @@ paths:
     get:
       description: >
         <p>List losing carriers that a number can be ported from. This endpoint
-        is only relevant for non-NANPA number portin orders, which require a
+        is only relevant for non-NANP number portin orders, which require a
         losing carrier to be specified.</p>
       operationId: portingLosingCarriers
       parameters:
