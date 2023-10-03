@@ -87,19 +87,11 @@ Console.WriteLine(response.ToBXML());
 <TabItem value="ruby">
 
 ```ruby
-speak_sentence = Bandwidth::Voice::SpeakSentence.new({
-    :sentence => "Joining the conference now.",
-})
+speak_sentence = Bandwidth::Bxml::SpeakSentence.new('Joining the conference now.')
+conference = Bandwidth::Bxml::Conference.new('important-meeting')
+response = Bandwidth::Bxml::Response.new([speak_sentence, conference])
 
-conference = Bandwidth::Voice::Conference.new({
-    :conference_name => 'important-meeting'
-})
-
-response = Bandwidth::Voice::Response.new()
-response.push(speak_sentence)
-response.push(conference)
-
-puts response.to_bxml()
+p response.to_bxml
 ```
 
 </TabItem>
@@ -234,21 +226,13 @@ response.Add(conference);
 <TabItem value="ruby">
 
 ```ruby
-speak_sentence = Bandwidth::Voice::SpeakSentence.new({
-    :sentence => "Welcome. You are going to coach 2 calls, please wait."
+speak_sentence = Bandwidth::Bxml::SpeakSentence.new('Welcome. You are going to coach 2 calls, please wait')
+conference = Bandwidth::Bxml::Conference.new('my-first-conference', {
+  call_ids_to_coach: ["c-example-callid-1", "c-example-callid-2"]
 })
-conference = Bandwidth::Voice::Conference.new({
-    :conference_name => 'my-first-conference',
-    :call_ids_to_coach => "c-example-callid-1, c-example-callid-2",
-    #or
-    :call_ids_to_coach => ["c-example-callid-1", "c-example-callid-2"]
-})
+response = Bandwidth::Bxml::Response.new([speak_sentence, conference])
 
-response = Bandwidth::Voice::Response.new()
-response.push(speak_sentence)
-response.push(conference)
-
-puts response.to_bxml()
+p response.to_bxml
 ```
 
 </TabItem>
@@ -420,27 +404,21 @@ class Program
 </TabItem>
 <TabItem value="ruby1">
 
-```
-require 'bandwidth'
+```ruby
+require 'bandwidth-sdk'
 
-include Bandwidth
-include Bandwidth::Voice
+Bandwidth.configure do |config|
+  config.username = ENV.fetch('BW_USERNAME')
+  config.password = ENV.fetch('BW_PASSWORD')
+end
 
-bandwidth_client = Bandwidth::Client.new(
-    voice_basic_auth_user_name: {BW_USERNAME},
-    voice_basic_auth_password: {BW_PASSWORD}
-)
-
-voice_client = bandwidth_client.voice_client.client
-
-body = ModifyConferenceRequest.new
-body.status = StatusEnum::COMPLETED
-#remember to add auth for your application if needed!
+conferences_api_instance = Bandwidth::ConferencesApi.new
+body = Bandwidth::UpdateConference.new({ status: 'completed' })
 
 begin
-    voice_client.modify_conference({ACCOUNT_ID}, {CONFERENCE_ID}, body)
-rescue APIException => e
-    puts e.response_code
+  conferences_api_instance.update_conference(ENV.fetch('ACCOUNT_ID'), ENV.fetch('CONFERENCE_ID'), body)
+rescue Bandwidth::ApiError => e
+  p e.code
 end
 ```
 

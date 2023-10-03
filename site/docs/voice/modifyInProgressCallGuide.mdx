@@ -79,14 +79,10 @@ Console.WriteLine(response.ToBXML());
 <TabItem value="ruby">
 
 ```ruby
-pause = Bandwidth::Voice::Pause.new({
-    :duration => 60
-})
+pause = Bandwidth::Bxml::Pause.new({ duration: 60 })
+response = Bandwidth::Bxml::Response.new([pause])
 
-response = Bandwidth::Voice::Response.new()
-response.push(pause)
-
-puts response.to_bxml()
+p response.to_bxml
 ```
 
 </TabItem>
@@ -318,36 +314,38 @@ public ActionResult goodbyeMessage() {
 <TabItem value="ruby">
 
 ```ruby
-require 'bandwidth'
-
-include Bandwidth
-include Bandwidth::Voice
-
-ACCOUNT_ID = ENV['BW_ACCOUNT_ID']
-
-bandwidth_client = Bandwidth::Client.new(
-    voice_basic_auth_user_name: ENV['BW_USERNAME'],
-    voice_basic_auth_password: ENV['BW_PASSWORD']
-)
-
-bandwidth_client = Bandwidth::Client.new(
-    voice_basic_auth_user_name: "api-username",
-    voice_basic_auth_password: "api-password"
-)
-
-voice_client = bandwidth_client.voice_client.client
-
-body = ModifyCallRequest.new
-body.redirect_url = "/goodbyeMessage"
-body.state = "active"
-#remember to add auth for your application if needed!
-
-call_id = {CALL_ID}
+require 'bandwidth-sdk'
 
 begin
-    voice_client.modify_call(ACCOUNT_ID, call_id, body)
-rescue APIException => e
-    puts e.response_code
+  BW_USERNAME = ENV.fetch('BW_USERNAME')
+  BW_PASSWORD = ENV.fetch('BW_PASSWORD')
+  BW_ACCOUNT_ID = ENV.fetch('BW_ACCOUNT_ID')
+  BW_VOICE_APPLICATION_ID = ENV.fetch('BW_VOICE_APPLICATION_ID')
+  BW_NUMBER = ENV.fetch('BW_NUMBER')
+  USER_NUMBER = ENV.fetch('USER_NUMBER')
+  BASE_CALLBACK_URL = ENV.fetch('BASE_CALLBACK_URL')
+  CALL_ID = ENV.fetch('CALL_ID')
+rescue
+  p 'Please set the environmental variables defined in the README'
+  exit(-1)
+end
+
+Bandwidth.configure do |config|
+  config.username = BW_USERNAME
+  config.password = BW_PASSWORD
+end
+
+calls_api_instance = Bandwidth::CallsApi.new
+
+call_body = Bandwidth::UpdateCall.new(
+  state: 'active',
+  redirect_url: '/goodbyeMessage'
+)
+
+begin
+  calls_api_instance.update_call(ACCOUNT_ID, CALL_ID, call_body)
+rescue Bandwidth::ApiError => e
+  p e.code
 end
 ```
 
@@ -356,13 +354,12 @@ end
 ```ruby
 #Note: This application is pseudocoded. Your implementation will look different
 
-post '/goodbyeMessage' do:
-    speak_sentence = Bandwidth::Voice::SpeakSentence.new({
-        :sentence => "Thank you for holding! Goodbye!"
-    })
-    response = Bandwidth::Voice::Response.new()
-    response.push(speak_sentence)
-    return response.to_bxml()
+post '/goodbyeMessage' do
+  speak_sentence = Bandwidth::Bxml::SpeakSentence.new('Thank you for holding! Goodbye!')
+  response = Bandwidth::Bxml::Response.new([speak_sentence])
+
+  return response.to_bxml
+end
 
 ```
 

@@ -88,18 +88,11 @@ Console.WriteLine(response.ToBXML());
 <TabItem value="ruby">
 
 ```ruby
-phone_number = Bandwidth::Voice::PhoneNumber.new({
-    :number => "+11234567892"
-})
+phone_number = Bandwidth::Bxml::PhoneNumber.new('+11234567892')
+transfer = Bandwidth::Bxml::Transfer.new([phone_number])
+response = Bandwidth::Bxml::Response.new([transfer])
 
-transfer = Bandwidth::Voice::Transfer.new({
-    :phone_numbers => [phone_number]
-})
-
-response = Bandwidth::Voice::Response.new()
-response.push(transfer)
-
-puts response.to_bxml()
+p response.to_bxml
 ```
 
 </TabItem>
@@ -288,36 +281,21 @@ public ActionResult alert() {
 <TabItem value="ruby">
 
 ```ruby
-@POST '/incoming_calls' do:
-    speak_sentence = Bandwidth::Voice::SpeakSentence.new({
-        :sentence => "Thank you for calling Scrooge and Marley! Please hold while we connect you to an associate.",
-    })
+post '/incoming_calls' do
+  speak_sentence = Bandwidth::Bxml::SpeakSentence.new('Thank you for calling Scrooge and Marley! Please hold while we connect you to an associate.')
+  phone_number = Bandwidth::Bxml::PhoneNumber.new('+15555555554', { transfer_answer_url: '/announcement' })
+  transfer = Bandwidth::Bxml::Transfer.new([phone_number], { transfer_caller_id: '+15555555555' })
+  response = Bandwidth::Bxml::Response.new([speak_sentence, transfer])
 
-    phone_number = Bandwidth::Voice::PhoneNumber.new({
-        :number => "+15555555554",
-        :transfer_answer_url => "/announcement"
-    })
+  return response.to_bxml
+end
 
-    transfer = Bandwidth::Voice::Transfer.new({
-        :transfer_caller_id => "+15555555555",
-        :phone_numbers => [phone_number]
-    })
+post '/announcement' do
+  speak_sentence = Bandwidth::Bxml::SpeakSentence.new("Hey! There's a customer on the line.")
+  response = Bandwidth::Bxml::Response.new([speak_sentence])
 
-    response = Bandwidth::Voice::Response.new()
-    response.push(speak_sentence)
-    response.push(transfer)
-
-    puts response.to_bxml()
-    return response.to_bxml()
-
-@POST '/announcement' do:
-    speak_sentence = Bandwidth::Voice::SpeakSentence.new({
-        :sentence => "Hey! There's a customer on the line."
-    })
-    response = Bandwidth::Voice::Response.new()
-    response.push(speak_sentence)
-    puts response.to_bxml()
-    return response.to_bxml()
+  return response.to_bxml
+end
 ```
 
 </TabItem>
