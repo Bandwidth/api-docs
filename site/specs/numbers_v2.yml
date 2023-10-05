@@ -9205,7 +9205,7 @@ components:
           type: object
       title: Manual NANP Toll-Free LNP Order Request
       type: object
-    ManualPortOutRequest:
+    ManualPortOutRequestGlobal:
       properties:
         FocDate:
           format: date-time
@@ -9227,6 +9227,48 @@ components:
             xml:
               name: TelephoneNumberToPort
           type: array
+      type: object
+    ManualPortOutRequestNanp:
+      properties:
+        AccountNumber:
+          type: string
+        FocDate:
+          format: date-time
+          type: string
+        Immediately:
+          type: boolean
+        InternalPort:
+          type: boolean
+        NewNetworkSPID:
+          description: >-
+            The Service Provider ID of the carrier that the number is being
+            ported to.
+          type: string
+        OverrideValidation:
+          type: boolean
+        PON:
+          description: >-
+            This Bandwidth internal identifier associates the port-out order
+            with either an internal port-in or an LSR order, whichever caused
+            the port-out order to be created.
+          type: string
+        Pin:
+          description: >-
+            The personal identifier number the subscriber has associated with
+            his or her account with the carrier the number is being ported away
+            from.
+          type: string
+        SubscriberName:
+          type: string
+        TelephoneNumberList:
+          description: The list of telephone numbers to port-out.
+          items:
+            type: string
+            xml:
+              name: TelephoneNumberToPort
+          type: array
+        ZipCode:
+          type: string
       type: object
     ManuallyPortableTollFreeNumberList:
       properties:
@@ -10540,10 +10582,15 @@ components:
         PIDF-LO and SIMPLE AEUI. Mixed PIDF-LO AEUI and Non-PIDF-LO AEUI
         endpoint-provisioning order
       type: object
-    PortOutRequest:
+    PortOutRequestGlobal:
       properties:
-        PortOutRequest:
-          $ref: '#/components/schemas/ManualPortOutRequest'
+        PortOutRequestGlobal:
+          $ref: '#/components/schemas/ManualPortOutRequestGlobal'
+      type: object
+    PortOutRequestNanp:
+      properties:
+        PortOutRequestNanp:
+          $ref: '#/components/schemas/ManualPortOutRequestNanp'
       type: object
     PortOutResponse:
       properties:
@@ -10558,7 +10605,7 @@ components:
             POST.
           type: string
         PortOutRequest:
-          $ref: '#/components/schemas/ManualPortOutRequest'
+          $ref: '#/components/schemas/ManualPortOutRequestGlobal'
         ProcessingStatus:
           enum:
             - NEW
@@ -15312,6 +15359,9 @@ components:
         CountOfTNs:
           description: Total count of telephone numbers in order.
           type: integer
+        CountryCodeA3:
+          description: The country to which the telephone number belongs to.
+          type: string
         LNPLosingCarrierId:
           description: Internal use only
           type: string
@@ -32302,6 +32352,7 @@ paths:
                             <ProcessingStatus>NEW</ProcessingStatus>
                             <RequestedFOCDate>2014-08-02T12:34:37.000Z</RequestedFOCDate>
                             <VendorId>512E</VendorId>
+                            <CountryCodeA3>GBR</CountryCodeA3>
                         </lnpPortInfoForGivenStatus>
                     </LNPResponseWrapper>
               schema:
@@ -32331,7 +32382,9 @@ paths:
         content:
           application/xml:
             schema:
-              $ref: '#/components/schemas/PortOutRequest'
+              oneOf:
+                - $ref: '#/components/schemas/PortOutRequestGlobal'
+                - $ref: '#/components/schemas/PortOutRequestNanp'
       responses:
         '200':
           content:
@@ -32350,7 +32403,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/PortOutResponse'
           description: The port-out request has been successfully received.
-      summary: Create port-out request
+      summary: Create port-out request Global
       tags:
         - Porting
   /accounts/{accountId}/portouts/status:
@@ -32533,7 +32586,9 @@ paths:
         content:
           application/xml:
             schema:
-              $ref: '#/components/schemas/PortOutRequest'
+              oneOf:
+                - $ref: '#/components/schemas/PortOutRequestGlobal'
+                - $ref: '#/components/schemas/PortOutRequestNanp'
       responses:
         '200':
           content:
@@ -32552,7 +32607,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/PortOutResponse'
           description: The update or cancellation was successful.
-      summary: Update/cancel port-out request
+      summary: Update/cancel port-out request Global
       tags:
         - Porting
   /accounts/{accountId}/products:
