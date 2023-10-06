@@ -1862,6 +1862,12 @@ components:
           schema:
             $ref: '#/components/schemas/portingLosingCarriersResponseSchema'
       description: A list of available carriers that can port out a phone number
+    listOfReferenceDocumentsResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/portingReferenceDocumentsResponseSchema'
+      description: A list of required documents needed to port a set of numbers
     notAllowedError:
       content:
         application/json:
@@ -15524,6 +15530,89 @@ components:
         links:
           $ref: '#/components/schemas/selfLink'
       title: List Addresses Response
+      type: object
+    portingReferenceDocumentsResponseSchema:
+      properties:
+        data:
+          properties:
+            referenceDocuments:
+              items:
+                properties:
+                  business:
+                    items:
+                      properties:
+                        description:
+                          description: Description of the document.
+                          example: LOA Description
+                          title: Description of the document
+                          type: string
+                        requiredDocument:
+                          description: >-
+                            Determines whether the document is required or
+                            optional.
+                          example: true
+                          title: Document is required
+                          type: boolean
+                        supportedFileTypes:
+                          description: Supported File Types.
+                          example: '[pdf, jpeg]'
+                          title: Support file types
+                          type: array
+                        type:
+                          description: Type of the document.
+                          example: LOA
+                          title: Type of document
+                          type: string
+                      type: object
+                    type: array
+                  countryCodeA3:
+                    description: Country A3 code.
+                    example: GBR
+                    title: Country A3 code
+                    type: string
+                  phoneNumberType:
+                    description: Type of the phone number.
+                    example: GEOGRAPHIC
+                    title: Type of phone number
+                    type: string
+                  residential:
+                    items:
+                      properties:
+                        description:
+                          description: Description of the document.
+                          example: Last Invoice description
+                          title: Description of the document
+                          type: string
+                        requiredDocument:
+                          description: >-
+                            Determines whether the document is required or
+                            optional.
+                          example: true
+                          title: Document is required
+                          type: boolean
+                        supportedFileTypes:
+                          description: Supported File Types.
+                          example: '[csv, xls]'
+                          title: Support file types
+                          type: array
+                        type:
+                          description: Type of the document.
+                          example: COB
+                          title: Type of document
+                          type: string
+                      type: object
+                    type: array
+                type: object
+              type: array
+          type: object
+        errors:
+          example: []
+          items:
+            $ref: '#/components/schemas/error'
+          type: array
+        links:
+          $ref: '#/components/schemas/selfLink'
+      title: List Reference Documents
       type: object
     postalCode:
       description: The postal code of the address.
@@ -32365,48 +32454,6 @@ paths:
       summary: List port-out requests
       tags:
         - Porting
-    post:
-      description: >-
-        Creates a port-out request.<br>In the payload, CallbackUrl and
-        InternalPort are optional.<br>There are also multiple options for the
-        following:<table>    <tr>        <th>Option</th>       
-        <th>Choices</th>    </tr>    <tr>       
-        <td>Supplemental</td><td>NONE<br>CANCEL<br>UPDATE<br>OTHER<br></td>   
-        </tr>    <tr>       
-        <td>PortOutAction</td><td>NEW<br>SUPP<br>MODIFY<br>CANCEL<br></td>   
-        </tr>    <tr>        <td>InternalPort</td><td>true or false<br></td>   
-        </tr></table>
-      operationId: CreatePortOut
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-      requestBody:
-        content:
-          application/xml:
-            schema:
-              oneOf:
-                - $ref: '#/components/schemas/PortOutRequestGlobal'
-                - $ref: '#/components/schemas/PortOutRequestNanp'
-      responses:
-        '200':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <PortOutResponse>
-                       <Status>
-                          <Code>200</Code>
-                          <Description>Request is complete and results returned.</Description>
-                       </Status>
-                    </PortOutResponse>
-              schema:
-                $ref: '#/components/schemas/PortOutResponse'
-          description: The port-out request has been successfully received.
-      summary: Create port-out request
-      tags:
-        - Porting
   /accounts/{accountId}/portouts/status:
     get:
       description: >-
@@ -32497,28 +32544,6 @@ paths:
       tags:
         - Porting
   /accounts/{accountId}/portouts/{orderId}:
-    delete:
-      description: Cancel port-out request.
-      operationId: CancelPortOut
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: Port-out order id
-          example: ca8065d1-ec1a-43da-af40-1dcee43becb5
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          content:
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/PortOutResponse'
-          description: ''
-      summary: Cancel port-out request
-      tags:
-        - Porting
     get:
       description: >-
         Retrieves the information associated with the specified port-out ID
@@ -32560,55 +32585,6 @@ paths:
             the payload. Note: For users of Enterprise Telephony accounts, SPID
             is omitted from the success output.
       summary: Fetch port-out request status
-      tags:
-        - Porting
-    put:
-      description: >-
-        Updates or cancels a port-out ID. The payload to this method is similar
-        to the GET on /accounts/{accountid}/portouts.<br>In the payload,
-        CallbackUrl and InternalPort are optional additives.<br>There are also
-        multiple options for the following:<table>    <tr>       
-        <th>Option</th>        <th>Choices</th>    </tr>    <tr>       
-        <td>Supplemental</td><td>NONE<br>CANCEL<br>UPDATE<br>OTHER<br></td>   
-        </tr>    <tr>       
-        <td>PortOutAction</td><td>NEW<br>SUPP<br>MODIFY<br>CANCEL<br></td>   
-        </tr></table>
-      operationId: UpdatePortOut
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: Port-out order id
-          example: ca8065d1-ec1a-43da-af40-1dcee43becb5
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/xml:
-            schema:
-              oneOf:
-                - $ref: '#/components/schemas/PortOutRequestGlobal'
-                - $ref: '#/components/schemas/PortOutRequestNanp'
-      responses:
-        '200':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <PortOutResponse>
-                       <Status>
-                          <Code>200</Code>
-                          <Description>Request is complete and results returned.</Description>
-                       </Status>
-                    </PortOutResponse>
-              schema:
-                $ref: '#/components/schemas/PortOutResponse'
-          description: The update or cancellation was successful.
-      summary: Update/cancel port-out request
       tags:
         - Porting
   /accounts/{accountId}/products:
@@ -43892,6 +43868,27 @@ paths:
         '502':
           $ref: '#/components/responses/internalServerError'
       summary: List losing carriers
+      tags:
+        - Porting
+  /porting/referenceDocuments:
+    get:
+      description: >
+        <p>List reference documents needed to port a set of numbers given a
+        countryCodeA3 and phoneNumberType value.</p>
+      operationdId: portingReferenceDocuments
+      parameters:
+        - $ref: '#/components/parameters/countryCodeA3QueryParam_eq'
+        - $ref: '#/components/parameters/phoneNumberTypeQueryParam_eq'
+      responses:
+        '200':
+          $ref: '#/components/responses/listOfReferenceDocumentsResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
+        '502':
+          $ref: '#/components/responses/internalServerError'
+      summary: List reference documents needed to port a set of numbers
       tags:
         - Porting
   /rateCenters:
