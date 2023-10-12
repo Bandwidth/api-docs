@@ -1262,6 +1262,24 @@ components:
       name: sipPeerId
       schema:
         type: integer
+    SipPeerTnsPageQueryParam:
+      description: The number of the paged results to be displayed.
+      example: 4
+      in: query
+      name: page
+      required: false
+      schema:
+        default: 1
+        type: integer
+    SipPeerTnsSizeQueryParam:
+      description: The quantity of results displayed for each page.
+      example: 200
+      in: query
+      name: size
+      required: false
+      schema:
+        default: 5000
+        type: integer
     SiteIdPathParam:
       description: Site ID of the Sip Peer
       example: '407'
@@ -2756,7 +2774,7 @@ components:
         AssociatedSipPeersResponse:
           $ref: '#/components/schemas/AssociatedSipPeersResponse'
       type: object
-    AutomatedTollFreeLnpOrderRequest:
+    AutomatedNANPTollFreeLnpOrderRequest:
       description: >-
         Indicates that the port-in contains toll-free numbers and that Toll-Free
         Automation is enabled. The numbers will be automatically validated and
@@ -2767,7 +2785,25 @@ components:
           allOf:
             - $ref: '#/components/schemas/LnpOrderBasic'
             - $ref: '#/components/schemas/LnpOrderAutomatedTollFreeFields'
-      title: Automated Toll-Free
+            - properties:
+                RequestedFocDate:
+                  description: >-
+                    Format: ISO8601 encoding such as “2013-05-10T15:14:22Z”, or
+                    "2019-10-31T17:15:00+04:00".<br/><br/>For all ports, if
+                    `RequestedFocDate` is specified, the date portion must
+                    be:<br/> - in the future<br/> - after the losing carrier's
+                    minimum number of days to port-out<br/> - not on a weekend
+                    or U.S. holiday<br/><br/>If `RequestedFocDate` is not
+                    specified, the next available FOC date meeting the criteria
+                    above will be used. If the Time portion of the
+                    `RequestedFocDate` is omitted the port-in order will be
+                    activated at the default activation time of 11:30 AM ET. If
+                    an activation time other than 11:30 AM ET is desired, that
+                    activation time should be included in the
+                    `RequestedFocDate`.
+                  type: string
+              type: object
+      title: Automated NANP Toll-Free LNP Order Request
       type: object
     AvailableNpaNxx:
       properties:
@@ -4156,6 +4192,17 @@ components:
             years.
           format: int64
           type: integer
+        NumberFormat:
+          default: LEGACY
+          description: >-
+            Specifies whether numbers should be formatted in e164 format, or use
+            legacy formatting. If Legacy is chosen, numbers with country code
+            '+1' will be formatted as 10-digit and all other numbers will use
+            e164 formatting. Can be omitted and defaults to LEGACY.
+          enum:
+            - LEGACY
+            - E164
+          type: string
         Status:
           type: string
         URL:
@@ -7337,7 +7384,7 @@ components:
         delete:
           type: boolean
       type: object
-    InternalLnpOrderRequest:
+    InternalNANPLnpOrderRequest:
       properties:
         LnpOrder:
           allOf:
@@ -7371,7 +7418,7 @@ components:
                     $ref: '#/components/schemas/TnAttribute'
                   type: array
               type: object
-      title: Internal
+      title: Internal NANP LNP Order Request
       type: object
     IrisStatus:
       properties:
@@ -7682,6 +7729,20 @@ components:
             carrier. For wireline port-in, the BillingTelephoneNumber is
             typically the telephone number being ported in.
           type: string
+        RequestedFocDate:
+          description: >-
+            Format: ISO8601 encoding such as “2013-05-10T15:14:22Z”, or
+            "2019-10-31T17:15:00+04:00".<br/><br/>For all ports, if
+            `RequestedFocDate` is specified, the date portion must be:<br/> - in
+            the future<br/> - after the losing carrier's minimum number of days
+            to port-out<br/> - not on a weekend or U.S. holiday<br/><br/>If
+            `RequestedFocDate` is not specified, the next available FOC date
+            meeting the criteria above will be used. If the Time portion of the
+            `RequestedFocDate` is omitted the port-in order will be activated at
+            the default activation time of 11:30 AM ET. If an activation time
+            other than 11:30 AM ET is desired, that activation time should be
+            included in the `RequestedFocDate`.
+          type: string
         Subscriber:
           oneOf:
             - $ref: '#/components/schemas/SubscriberBusiness'
@@ -7986,6 +8047,22 @@ components:
                 toll free port-in orders.
               type: string
           type: object
+      type: object
+    LnpOrderRequest:
+      properties:
+        LnpOrder:
+          allOf:
+            - $ref: '#/components/schemas/LnpOrderBasic'
+            - properties:
+                RequestedFocDate:
+                  description: >-
+                    Format: ISO8601 encoding such as "2019-10-31".<br/><br/>For
+                    international ports, if `RequestedFocDate` is specified the
+                    time portions will be ignored and the date portion must
+                    be:<br/> - in the future<br/> - not on a weekend.
+                  type: string
+              type: object
+      title: LNP Order Request (Other)
       type: object
     LnpOrderResponse:
       properties:
@@ -8739,6 +8816,25 @@ components:
         SkipAck:
           type: boolean
       type: object
+    ManualNANPTollFreeLnpOrderRequest:
+      description: >-
+        Manual indicates that the port-in will be processed manually by
+        Bandwidth’s Local Number Portability team. Currently all toll free
+        port-ins are handled manually by Bandwidth’s Local Number Portability
+        team. But Bandwidth is in the process of automating portions of toll
+        free porting, with a goal of eventually automating the entire process.
+      properties:
+        LnpOrder:
+          allOf:
+            - $ref: '#/components/schemas/LnpOrderBasic'
+          properties:
+            Subscriber:
+              allOf:
+                - $ref: '#/components/schemas/SubscriberBusiness'
+              type: object
+          type: object
+      title: Manual NANP Toll-Free LNP Order Request
+      type: object
     ManualPortOutRequest:
       properties:
         BulkPortOut:
@@ -8765,25 +8861,6 @@ components:
           type: string
         TelephoneNumberToPort:
           type: string
-      type: object
-    ManualTollFreeLnpOrderRequest:
-      description: >-
-        Manual indicates that the port-in will be processed manually by
-        Bandwidth’s Local Number Portability team. Currently all toll free
-        port-ins are handled manually by Bandwidth’s Local Number Portability
-        team. But Bandwidth is in the process of automating portions of toll
-        free porting, with a goal of eventually automating the entire process.
-      properties:
-        LnpOrder:
-          allOf:
-            - $ref: '#/components/schemas/LnpOrderBasic'
-          properties:
-            Subscriber:
-              allOf:
-                - $ref: '#/components/schemas/SubscriberBusiness'
-              type: object
-          type: object
-      title: Manual Toll-Free
       type: object
     ManuallyPortableTollFreeNumberList:
       properties:
@@ -9383,15 +9460,15 @@ components:
           type: object
       title: Number Portability Response
       type: object
-    OffNetLnpOrderRequest:
+    OffNetNANPLnpOrderRequest:
       properties:
         LnpOrder:
           allOf:
             - $ref: '#/components/schemas/LnpOrderBasic'
             - $ref: '#/components/schemas/LnpOrderAdditionalFields'
-      title: Off-net
+      title: Off-net NANP LNP Order Request
       type: object
-    OnNetLnpOrderRequest:
+    OnNetNANPLnpOrderRequest:
       properties:
         LnpOrder:
           allOf:
@@ -9428,7 +9505,7 @@ components:
                     $ref: '#/components/schemas/TnAttribute'
                   type: array
               type: object
-      title: On-net
+      title: On-net NANP LNP Order Request
       type: object
     OrderCreatedDate:
       description: Creation date of the order.
@@ -15387,10 +15464,6 @@ components:
 info:
   description: >-
     Bandwidth's Account and Number Management API
-
-
-    For the previous documentation visit
-    [v2.dev.bandwidth.com](https://v2.dev.bandwidth.com/numbers/apiReference.html).
 
 
     ### Disclaimer
@@ -25759,48 +25832,6 @@ paths:
       summary: List Import to Account orders
       tags:
         - Import Tn to Account
-    post:
-      description: >
-        Import a large number of previously ported or otherwise acquired numbers
-        into the account
-      operationId: CreateImportToAccountOrder
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-      requestBody:
-        content:
-          application/xml:
-            examples:
-              example:
-                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ImportToAccountNumberOrder>\n\t<ImportToAccountNumberOrderType>\n\t\t<NumberFormat>10D</NumberFormat>\n\t\t<TelephoneNumberList>\n\t\t\t<TelephoneNumber>4158714244</TelephoneNumber>\n\t\t\t<TelephoneNumber>6105330709</TelephoneNumber>\n\t\t</TelephoneNumberList>\n\t\t<BillingType>NOCHARGE</BillingType>\n\t\t<InitialStatus>Available</InitialStatus>\n\t\t<TnAttributes>\n\t\t\t<TnAttribute>Protected</TnAttribute>\n\t\t</TnAttributes>\n\t\t<VendorName>Level 3</VendorName>\n\t\t<BatchId>TestId1234</BatchId>\n\t\t<BatchSize>2</BatchSize>\n\t</ImportToAccountNumberOrderType>\n\t<SiteId>1</SiteId>\n\t<PeerId>12345</PeerId>\n\t</ImportToAccountNumberOrder>"
-            schema:
-              $ref: '#/components/schemas/ImportToAccountOrderRequest'
-      responses:
-        '201':
-          content:
-            application/xml:
-              examples:
-                example:
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ImportToAccountNumberOrderResponse>\n\t<OrderRequest>\n\t\t<id>c5986599-3a7c-4eed-a5c4-9121c17d54ab</id>\n\t\t<OrderCreateDate>2014-04-01T21:54:18.796Z</OrderCreateDate>\n\t\t<ImportToAccountNumberOrderType>\n\t\t\t<BatchId>SJM00001</BatchId>\n\t\t\t<BatchSize>2</BatchSize>\n\t\t\t<BillingType>NOCHARGE</BillingType>\n\t\t\t<NumberFormat>10D</NumberFormat>\n\t\t\t<InitialStatus>Available</InitialStatus>\n\t\t\t<TnAttributes>\n\t\t\t\t<TnAttribute>Protected</TnAttribute>\n\t\t\t</TnAttributes>\n\t\t\t<TelephoneNumberList>\n\t\t\t\t<TelephoneNumber>4158714245</TelephoneNumber>\n\t\t\t\t<TelephoneNumber>6105330710</TelephoneNumber>\n\t\t\t</TelephoneNumberList>\n\t\t\t<VendorName>Level 3</VendorName>\n\t\t</ImportToAccountNumberOrderType>\n\t\t<SiteId>743</SiteId>\n\t\t<PeerId>12345</PeerId>\n\t</OrderRequest>\n\t</ImportToAccountNumberOrderResponse>"
-              schema:
-                $ref: '#/components/schemas/ImportToAccountNumberOrderResponse'
-          description: >-
-            The order has been created and an order ID will be specified in the
-            payload and in the header.
-        '400':
-          content:
-            application/xml:
-              examples:
-                example:
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<ImportToAccountNumberOrderResponse>\n\t <ErrorList>\n\t\t <Error>\n\t\t\t <Code>7309</Code>\n\t\t\t <Description>The site id was not supplied or is invalid.</Description>\n\t\t </Error>\n\t\t <Error>\n\t\t\t <Code>7312</Code>\n\t\t\t <Description>The sippeer id is invalid.</Description>\n\t\t </Error>\n\t </ErrorList>\n </ImportToAccountNumberOrderResponse>"
-              schema:
-                $ref: '#/components/schemas/ImportToAccountNumberOrderErrorResponse'
-          description: >-
-            The order failed; one of the input parameters is invalid. The error
-            text and an error code will be provided in the ErrorList
-            element.</p>
-      summary: Import to Account order
-      tags:
-        - Import Tn to Account
   /accounts/{accountId}/importToAccount/batches:
     get:
       description: >-
@@ -29428,7 +29459,7 @@ paths:
           content:
             application/xml:
               examples:
-                Portins in FOC:
+                Portins containing NANP numbers:
                   description: List of portin orders with FOC processing status
                   value: |-
                     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -29476,7 +29507,7 @@ paths:
                             <PON>979E019287CDF6A1</PON>
                         </lnpPortInfoForGivenStatus>
                     </LNPResponseWrapper>
-                RespOrg exception toll-free portin order:
+                RespOrg exception toll-free order containing NANP numbers:
                   description: >-
                     List containing a single RespOrg exception toll-free portin
                     order
@@ -29528,25 +29559,26 @@ paths:
         content:
           application/xml:
             examples:
-              Automated Toll-Free Port-in:
+              Automated NANP Toll-Free Port-in:
                 value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrder>\n\t<CustomerOrderId>My order id</CustomerOrderId>\n\t<RequestedFocDate>2021-06-16Z</RequestedFocDate>\n\t<SiteId>2439</SiteId>\n\t<PeerId>23432</PeerId>\n\t<LoaAuthorizingPerson>The Authgal</LoaAuthorizingPerson>\n\t<TargetRespOrgId>JYT01</TargetRespOrgId>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>8774809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n</LnpOrder>"
-              Regular Port-in:
+              On-net NANP Port-in:
                 value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrder>\n\t<RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>\n\t<AlternateSpid>X455</AlternateSpid>\n\t<BillingTelephoneNumber>9195551234</BillingTelephoneNumber>\n\t<NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>\n\t<SiteId>    SITE ID     </SiteId>\n\t<PeerId>  SIPPEER ID    </PeerId>\n\t<Subscriber>\n\t\t<SubscriberType>BUSINESS</SubscriberType>\n\t\t<FirstName>First</FirstName>\n\t\t<LastName>Last</LastName>\n\t\t<ServiceAddress>\n\t\t\t<HouseNumber>11235</HouseNumber>\n\t\t\t<StreetName>Back</StreetName>\n\t\t\t<City>Denver</City>\n\t\t\t<StateCode>CO</StateCode>\n\t\t\t<Zip>27541</Zip>\n\t\t\t<County>Canyon</County>\n\t\t</ServiceAddress>\n\t</Subscriber>\n\t<LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>\n\t<WirelessInfo>\n\t\t<AccountNumber>771297665AABC</AccountNumber>\n\t\t<PinNumber>1234</PinNumber>\n\t</WirelessInfo>\n\t<TnAttributes>\n\t\t<TnAttribute>Protected</TnAttribute>\n\t\t<TnAttribute>External</TnAttribute>\n\t\t<TnAttribute>Imported</TnAttribute>\n\t</TnAttributes>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>9194809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n\t<CustomerOrderId>myOrder</CustomerOrderId>\n\t<Triggered>true</Triggered>\n\t<PartialPort>true</PartialPort>\n\t<ProcessingStatus>DRAFT</ProcessingStatus>\n</LnpOrder>"
             schema:
               oneOf:
-                - $ref: '#/components/schemas/OnNetLnpOrderRequest'
-                - $ref: '#/components/schemas/ManualTollFreeLnpOrderRequest'
-                - $ref: '#/components/schemas/AutomatedTollFreeLnpOrderRequest'
-                - $ref: '#/components/schemas/OffNetLnpOrderRequest'
-                - $ref: '#/components/schemas/InternalLnpOrderRequest'
+                - $ref: '#/components/schemas/OnNetNANPLnpOrderRequest'
+                - $ref: '#/components/schemas/OffNetNANPLnpOrderRequest'
+                - $ref: '#/components/schemas/InternalNANPLnpOrderRequest'
+                - $ref: '#/components/schemas/ManualNANPTollFreeLnpOrderRequest'
+                - $ref: '#/components/schemas/AutomatedNANPTollFreeLnpOrderRequest'
+                - $ref: '#/components/schemas/LnpOrderRequest'
       responses:
         '201':
           content:
             application/xml:
               examples:
-                Automated Toll-Free Order Response:
+                Automated NANP Toll-Free Port-in Order Response:
                   value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrderResponse>\n\t<OrderId>03f194d5-3932-4e9f-8ba1-03ef767985e5</OrderId>\n\t<Status>\n\t\t<Code>201</Code>\n\t\t<Description>Order request received. Please use the order id to check the status of your order later.</Description>\n\t</Status>\n\t<ProcessingStatus>VALIDATE_TFNS</ProcessingStatus>\n\t<RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>\n\t<LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>8774809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n\t<TollFreeValidationStatus>PROCESSING</TollFreeValidationStatus>\n\t<TollFreePortType>PHASE_1_TOLLFREE</TollFreePortType>\n\t<TargetRespOrgId>JYT01</TargetRespOrgId>\n</LnpOrderResponse>"
-                Regular Order Response:
+                On-net NANP Port-in Order Response:
                   value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrderResponse>\n\t<OrderId>03f194d5-3932-4e9f-8ba1-03ef767985e5</OrderId>\n\t<Status>\n\t\t<Code>201</Code>\n\t\t<Description>Order request received. Please use the order id to check the status of your order later.</Description>\n\t</Status>\n\t<ProcessingStatus>PENDING_DOCUMENTS</ProcessingStatus>\n\t<RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>\n\t<LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>\n\t<Subscriber>\n\t\t<SubscriberType>BUSINESS</SubscriberType>\n\t\t<FirstName>First</FirstName>\n\t\t<LastName>Last</LastName>\n\t\t<ServiceAddress>\n\t\t\t<HouseNumber>11235</HouseNumber>\n\t\t\t<StreetName>Back</StreetName>\n\t\t\t<City>Denver</City>\n\t\t\t<StateCode>CO</StateCode>\n\t\t\t<Zip>27541</Zip>\n\t\t\t<County>Canyon</County>\n\t\t\t<Country>United States</Country>\n\t\t</ServiceAddress>\n\t</Subscriber>\n\t<WirelessInfo>\n\t\t<AccountNumber>771297665AABC</AccountNumber>\n\t\t<PinNumber>1234</PinNumber>\n\t</WirelessInfo>\n\t<TnAttributes>\n\t\t<TnAttribute>Protected</TnAttribute>\n\t\t<TnAttribute>External</TnAttribute>\n\t\t<TnAttribute>Imported</TnAttribute>\n\t</TnAttributes>\n\t<BillingTelephoneNumber>9195551234</BillingTelephoneNumber>\n\t<NewBillingTelephoneNumber>9175131245</NewBillingTelephoneNumber>\n\t<SiteId>    SITE ID     </SiteId>\n\t<PeerId>  SIPPEER ID    </PeerId>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>9194809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n\t<CustomerOrderId>myOrder</CustomerOrderId>\n\t<Triggered>true</Triggered>\n\t<PartialPort>true</PartialPort>\n</LnpOrderResponse>"
               schema:
                 $ref: '#/components/schemas/LnpOrderResponse'
@@ -38640,6 +38672,8 @@ paths:
       parameters:
         - $ref: '#/components/parameters/AccountIdPathParam'
         - $ref: '#/components/parameters/SiteIdPathParam'
+        - $ref: '#/components/parameters/SipPeerTnsPageQueryParam'
+        - $ref: '#/components/parameters/SipPeerTnsSizeQueryParam'
         - description: ID of the Sip Peer to retrieve TNs information
           example: '500017'
           in: path
@@ -39031,6 +39065,7 @@ paths:
                                 <Username>iris</Username>
                               </BasicAuthentication>
                             </CallbackCredentials>
+                            <NumberFormat>LEGACY</NumberFormat>
                           </CallbackSubscription>
                         </Subscription>
                         <Subscription>
@@ -39053,6 +39088,7 @@ paths:
                                 <Username>iris</Username>
                               </BasicAuthentication>
                             </CallbackCredentials>
+                            <NumberFormat>LEGACY</NumberFormat>
                             </CallbackSubscription>
                         </Subscription>
                       </Subscriptions>
@@ -39186,6 +39222,7 @@ paths:
                         </BasicAuthentication>
                         <PublicKey>LS0tLS1CRUdJTiBDRVJUSU [...] kQgQ0VSVElGSUNBVEUtLS0tLQ0K</PublicKey>
                       </CallbackCredentials>
+                      <NumberFormat>LEGACY</NumberFormat>
                     </CallbackSubscription>
                   </Subscription>
               eventEmailSubscription:
@@ -39215,6 +39252,7 @@ paths:
                         </BasicAuthentication>
                         <PublicKey>LS0tLS1CRUdJTiBDRVJUSU [...] kQgQ0VSVElGSUNBVEUtLS0tLQ0K</PublicKey>
                       </CallbackCredentials>
+                      <NumberFormat>LEGACY</NumberFormat>
                     </CallbackSubscription>
                   </Subscription>
               orderEmailSubscription:
@@ -39342,6 +39380,7 @@ paths:
                             <URL>http://customer.com:8087/path/BandwidthHandler</URL>
                             <Expiry>4283455101</Expiry>
                             <Status>200 OK</Status>
+                            <NumberFormat>LEGACY</NumberFormat>
                           </CallbackSubscription>
                       </Subscription>
                     </SubscriptionsResponse>
@@ -39373,6 +39412,7 @@ paths:
                             <URL>http://customer.com:8087/path/BandwidthHandler</URL>
                             <Expiry>4283455101</Expiry>
                             <Status>200 OK</Status>
+                            <NumberFormat>LEGACY</NumberFormat>
                           </CallbackSubscription>
                       </Subscription>
                     </SubscriptionsResponse>
@@ -39438,6 +39478,7 @@ paths:
                         </BasicAuthentication>
                         <PublicKey>LS0tLS1CRUdJTiBDRVJUSU [...] kQgQ0VSVElGSUNBVEUtLS0tLQ0K</PublicKey>
                       </CallbackCredentials>
+                      <NumberFormat>LEGACY</NumberFormat>
                     </CallbackSubscription>
                   </Subscription>
               eventEmailSubscription:
@@ -39467,6 +39508,7 @@ paths:
                         </BasicAuthentication>
                         <PublicKey>LS0tLS1CRUdJTiBDRVJUSU [...] kQgQ0VSVElGSUNBVEUtLS0tLQ0K</PublicKey>
                       </CallbackCredentials>
+                      <NumberFormat>LEGACY</NumberFormat>
                     </CallbackSubscription>
                   </Subscription>
               orderEmailSubscription:
