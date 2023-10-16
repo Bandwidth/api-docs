@@ -1862,6 +1862,12 @@ components:
           schema:
             $ref: '#/components/schemas/portingLosingCarriersResponseSchema'
       description: A list of available carriers that can port out a phone number
+    listOfReferenceDocumentsResponse:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/portingReferenceDocumentsResponseSchema'
+      description: A list of required documents needed to port a set of numbers
     notAllowedError:
       content:
         application/json:
@@ -4223,59 +4229,6 @@ components:
             TotalCount:
               type: integer
           type: object
-      type: object
-    BulkPortout:
-      properties:
-        AccountNumber:
-          type: string
-        CallbackUrl:
-          type: string
-        FocDate:
-          format: date-time
-          type: string
-        Immediately:
-          type: boolean
-        InternalPort:
-          type: boolean
-        NewNetworkSPID:
-          description: >-
-            The Service Provider ID of the carrier that the number is being
-            ported to.
-          type: string
-        OverrideValidation:
-          type: boolean
-        PON:
-          description: >-
-            This Bandwidth internal identifier associates the port-out order
-            with either an internal port-in or an LSR order, whichever caused
-            the port-out order to be created.
-          type: string
-        Pin:
-          description: >-
-            The personal identifier number the subscriber has associated with
-            his or her account with the carrier the number is being ported away
-            from.
-          type: string
-        SkipPortPsCheck:
-          type: boolean
-        SubscriberName:
-          type: string
-        Supplemental:
-          enum:
-            - NONE
-            - CANCEL
-            - UPDATE
-            - OTHER
-          type: string
-        TelephoneNumberList:
-          description: The list of telephone numbers to port-out.
-          items:
-            type: string
-            xml:
-              name: TelephoneNumberToPort
-          type: array
-        ZipCode:
-          type: string
       type: object
     BulkRateCenterPayload:
       description: >-
@@ -9258,16 +9211,52 @@ components:
           type: object
       title: Manual NANP Toll-Free LNP Order Request
       type: object
-    ManualPortOutRequest:
+    ManualPortOutRequestGlobal:
       properties:
-        BulkPortOut:
-          $ref: '#/components/schemas/BulkPortout'
         FocDate:
+          format: date-time
           type: string
+        Immediately:
+          type: boolean
+        InternalPort:
+          type: boolean
+        PON:
+          description: >-
+            Optional, This Bandwidth internal identifier associates the port-out
+            order with either an internal port-in or an LSR order, whichever
+            caused the port-out order to be created.
+          type: string
+        TelephoneNumberList:
+          description: The list of telephone numbers to port-out.
+          items:
+            type: string
+            xml:
+              name: TelephoneNumberToPort
+          type: array
+      type: object
+    ManualPortOutRequestNanp:
+      properties:
+        AccountNumber:
+          type: string
+        FocDate:
+          format: date-time
+          type: string
+        Immediately:
+          type: boolean
+        InternalPort:
+          type: boolean
         NewNetworkSPID:
           description: >-
             The Service Provider ID of the carrier that the number is being
             ported to.
+          type: string
+        OverrideValidation:
+          type: boolean
+        PON:
+          description: >-
+            This Bandwidth internal identifier associates the port-out order
+            with either an internal port-in or an LSR order, whichever caused
+            the port-out order to be created.
           type: string
         Pin:
           description: >-
@@ -9275,14 +9264,16 @@ components:
             his or her account with the carrier the number is being ported away
             from.
           type: string
-        PortOutAction:
-          enum:
-            - NEW
-            - SUPP
-            - MODIFY
-            - CANCEL
+        SubscriberName:
           type: string
-        TelephoneNumberToPort:
+        TelephoneNumberList:
+          description: The list of telephone numbers to port-out.
+          items:
+            type: string
+            xml:
+              name: TelephoneNumberToPort
+          type: array
+        ZipCode:
           type: string
       type: object
     ManuallyPortableTollFreeNumberList:
@@ -10597,10 +10588,15 @@ components:
         PIDF-LO and SIMPLE AEUI. Mixed PIDF-LO AEUI and Non-PIDF-LO AEUI
         endpoint-provisioning order
       type: object
-    PortOutRequest:
+    PortOutRequestGlobal:
       properties:
         PortOutRequest:
-          $ref: '#/components/schemas/ManualPortOutRequest'
+          $ref: '#/components/schemas/ManualPortOutRequestGlobal'
+      type: object
+    PortOutRequestNanp:
+      properties:
+        PortOutRequest:
+          $ref: '#/components/schemas/ManualPortOutRequestNanp'
       type: object
     PortOutResponse:
       properties:
@@ -10615,7 +10611,7 @@ components:
             POST.
           type: string
         PortOutRequest:
-          $ref: '#/components/schemas/ManualPortOutRequest'
+          $ref: '#/components/schemas/ManualPortOutRequestGlobal'
         ProcessingStatus:
           enum:
             - NEW
@@ -10629,6 +10625,7 @@ components:
             - EXCEPTION
             - SOA_PENDING
             - SOA_CONFLICT
+            - FOC
           type: string
         Status:
           $ref: '#/components/schemas/IrisStatus'
@@ -15369,6 +15366,9 @@ components:
         CountOfTNs:
           description: Total count of telephone numbers in order.
           type: integer
+        CountryCodeA3:
+          description: The country to which the telephone number belongs.
+          type: string
         LNPLosingCarrierId:
           description: Internal use only
           type: string
@@ -15530,6 +15530,89 @@ components:
         links:
           $ref: '#/components/schemas/selfLink'
       title: List Addresses Response
+      type: object
+    portingReferenceDocumentsResponseSchema:
+      properties:
+        data:
+          properties:
+            referenceDocuments:
+              items:
+                properties:
+                  business:
+                    items:
+                      properties:
+                        description:
+                          description: Description of the document.
+                          example: LOA Description
+                          title: Description of the document
+                          type: string
+                        requiredDocument:
+                          description: >-
+                            Determines whether the document is required or
+                            optional.
+                          example: true
+                          title: Document is required
+                          type: boolean
+                        supportedFileTypes:
+                          description: Supported File Types.
+                          example: '[pdf, jpeg]'
+                          title: Support file types
+                          type: array
+                        type:
+                          description: Type of the document.
+                          example: LOA
+                          title: Type of document
+                          type: string
+                      type: object
+                    type: array
+                  countryCodeA3:
+                    description: Country A3 code.
+                    example: GBR
+                    title: Country A3 code
+                    type: string
+                  phoneNumberType:
+                    description: Type of the phone number.
+                    example: GEOGRAPHIC
+                    title: Type of phone number
+                    type: string
+                  residential:
+                    items:
+                      properties:
+                        description:
+                          description: Description of the document.
+                          example: Last Invoice description
+                          title: Description of the document
+                          type: string
+                        requiredDocument:
+                          description: >-
+                            Determines whether the document is required or
+                            optional.
+                          example: true
+                          title: Document is required
+                          type: boolean
+                        supportedFileTypes:
+                          description: Supported File Types.
+                          example: '[csv, xls]'
+                          title: Support file types
+                          type: array
+                        type:
+                          description: Type of the document.
+                          example: COB
+                          title: Type of document
+                          type: string
+                      type: object
+                    type: array
+                type: object
+              type: array
+          type: object
+        errors:
+          example: []
+          items:
+            $ref: '#/components/schemas/error'
+          type: array
+        links:
+          $ref: '#/components/schemas/selfLink'
+      title: List Reference Documents
       type: object
     postalCode:
       description: The postal code of the address.
@@ -29217,6 +29300,7 @@ paths:
                           <Quantity>1</Quantity>
                       </AreaCodeSearchAndOrderType>
                       <PartialAllowed>true</PartialAllowed>
+                      <requirementsPackageId>123456789</requirementsPackageId>
                       <SiteId>743</SiteId>
                   </Order>
               CitySearchAndOrderType [NANPA]:
@@ -29233,6 +29317,7 @@ paths:
                           <State>NC</State>
                       </CitySearchAndOrderType>
                       <PartialAllowed>true</PartialAllowed>
+                      <requirementsPackageId>123456789</requirementsPackageId>
                       <SiteId>743</SiteId>
                   </Order>
               CombinedSearchAndOrderType (local vanity) [NANPA]:
@@ -29255,6 +29340,7 @@ paths:
                           <Quantity>1</Quantity>
                           <EndsIn>false</EndsIn>
                       </CombinedSearchAndOrderType>
+                      <requirementsPackageId>123456789</requirementsPackageId>
                       <SiteId>743</SiteId>
                   </Order>
               CombinedSearchAndOrderType (protected status) [NANPA]:
@@ -29278,6 +29364,7 @@ paths:
                               <TnAttribute>Imported</TnAttribute>
                       </TnAttributes>
                       <PartialAllowed>true</PartialAllowed>
+                      <requirementsPackageId>123456789</requirementsPackageId>
                       <SiteId>743</SiteId>
                   </Order>
               CombinedSearchAndOrderType [NANPA]:
@@ -29307,6 +29394,7 @@ paths:
                           <EnableLCA>false</EnableLCA>
                       </CombinedSearchAndOrderType>
                       <PartialAllowed>true</PartialAllowed>
+                      <requirementsPackageId>123456789</requirementsPackageId>
                       <SiteId>743</SiteId>
                   </Order>
               ExistingTelephoneNumberOrderType:
@@ -29331,6 +29419,7 @@ paths:
                               <ReservationId>[GUID]</ReservationId>
                           </ReservationIdList>
                       </ExistingTelephoneNumberOrderType>
+                      <requirementsPackageId>123456789</requirementsPackageId>
                       <SiteId>743</SiteId>
                   </Order>
               General:
@@ -29363,6 +29452,7 @@ paths:
                           <Lata>224</Lata>
                       </LATASearchAndOrderType>
                       <PartialAllowed>true</PartialAllowed>
+                      <requirementsPackageId>123456789</requirementsPackageId>
                       <SiteId>743</SiteId>
                   </Order>
               NPANXXSearchAndOrderType [NANPA]:
@@ -29391,6 +29481,7 @@ paths:
                           <Quantity>1</Quantity>
                       </NPANXXSearchAndOrderType>
                       <PartialAllowed>true</PartialAllowed>
+                      <requirementsPackageId>123456789</requirementsPackageId>
                       <SiteId>743</SiteId>
                   </Order>
               RateCenterSearchAndOrderType [NANPA]:
@@ -29407,6 +29498,7 @@ paths:
                           <Quantity>1</Quantity>
                       </RateCenterSearchAndOrderType>
                       <PartialAllowed>true</PartialAllowed>
+                      <requirementsPackageId>123456789</requirementsPackageId>
                       <SiteId>743</SiteId>
                   </Order>
               StateSearchAndOrderType [NANPA]:
@@ -29422,6 +29514,7 @@ paths:
                           <State>NC</State>
                       </StateSearchAndOrderType>
                       <PartialAllowed>true</PartialAllowed>
+                      <requirementsPackageId>123456789</requirementsPackageId>
                       <SiteId>743</SiteId>
                   </Order>
               TollFreeVanitySearchAndOrderType [NANPA]:
@@ -29440,6 +29533,7 @@ paths:
                           <TollFreeVanity>newcars</TollFreeVanity>
                       </TollFreeVanitySearchAndOrderType>
                       <PartialAllowed>true</PartialAllowed>
+                      <requirementsPackageId>123456789</requirementsPackageId>
                       <SiteId>743</SiteId>
                   </Order>
               TollFreeWildCharSearchAndOrderType [NANPA]:
@@ -29458,6 +29552,7 @@ paths:
                           <TollFreeWildCardPattern>8**</TollFreeWildCardPattern>
                       </TollFreeWildCharSearchAndOrderType>
                       <PartialAllowed>true</PartialAllowed>
+                      <requirementsPackageId>123456789</requirementsPackageId>
                       <SiteId>743</SiteId>
                   </Order>
               ZIPSearchAndOrderType [NANPA]:
@@ -29473,6 +29568,7 @@ paths:
                           <Zip>27606</Zip>
                       </ZIPSearchAndOrderType>
                       <PartialAllowed>true</PartialAllowed>
+                      <requirementsPackageId>123456789</requirementsPackageId>
                       <SiteId>743</SiteId>
                   </Order>
             schema:
@@ -29515,6 +29611,7 @@ paths:
                             </TnAttributes>
                             <PartialAllowed>true</PartialAllowed>
                             <SiteId>3013</SiteId>
+                            <requirementsPackageId>123456789</requirementsPackageId>
                         </Order>
                     </OrderResponse>
               schema:
@@ -29551,6 +29648,7 @@ paths:
                             </TnAttributes>
                             <PartialAllowed>true</PartialAllowed>
                             <SiteId>763</SiteId>
+                            <requirementsPackageId>123456789</requirementsPackageId>
                         </Order>
                     </OrderResponse>
               schema:
@@ -30441,7 +30539,7 @@ paths:
           application/xml:
             examples:
               Automated NANP Toll-Free Port-in:
-                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrder>\n\t<CustomerOrderId>My order id</CustomerOrderId>\n\t<RequestedFocDate>2021-06-16Z</RequestedFocDate>\n\t<SiteId>2439</SiteId>\n\t<PeerId>23432</PeerId>\n\t<LoaAuthorizingPerson>The Authgal</LoaAuthorizingPerson>\n\t<TargetRespOrgId>JYT01</TargetRespOrgId>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>+18774809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n</LnpOrder>"
+                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrder>\n\t<CustomerOrderId>My order id</CustomerOrderId>\n\t<RequestedFocDate>2021-06-16Z</RequestedFocDate>\n\t<SiteId>2439</SiteId>\n\t<PeerId>23432</PeerId>\n\t<LoaAuthorizingPerson>The Authgal</LoaAuthorizingPerson>\n\t<TargetRespOrgId>JYT01</TargetRespOrgId>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>+18774809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n<requirementsPackageId>123456789</requirementsPackageId>\n</LnpOrder>"
               Global Port-in, Business Subscriber:
                 value: |-
                   <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -30460,6 +30558,7 @@ paths:
                       <PhoneNumber>+3237470444</PhoneNumber>
                     </ListOfPhoneNumbers>
                     <CustomerOrderId>myOrder</CustomerOrderId>
+                    <requirementsPackageId>123456789</requirementsPackageId>
                   </LnpOrder>
               Global Port-in, Residential Subscriber:
                 value: |-
@@ -30480,9 +30579,10 @@ paths:
                       <PhoneNumber>+3237470444</PhoneNumber>
                     </ListOfPhoneNumbers>
                     <CustomerOrderId>myOrder</CustomerOrderId>
+                    <requirementsPackageId>123456789</requirementsPackageId>
                   </LnpOrder>
               On-net NANP Port-in:
-                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrder>\n\t<RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>\n\t<AlternateSpid>X455</AlternateSpid>\n\t<BillingTelephoneNumber>+19195551234</BillingTelephoneNumber>\n\t<NewBillingTelephoneNumber>+19175131245</NewBillingTelephoneNumber>\n\t<SiteId>2439</SiteId>\n\t<PeerId>23432</PeerId>\n\t<Subscriber>\n\t\t<SubscriberType>BUSINESS</SubscriberType>\n\t\t<FirstName>First</FirstName>\n\t\t<LastName>Last</LastName>\n\t\t<ServiceAddress>\n\t\t\t<HouseNumber>11235</HouseNumber>\n\t\t\t<StreetName>Back</StreetName>\n\t\t\t<City>Denver</City>\n\t\t\t<StateCode>CO</StateCode>\n\t\t\t<Zip>27541</Zip>\n\t\t\t<County>Canyon</County>\n\t\t</ServiceAddress>\n\t</Subscriber>\n\t<LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>\n\t<WirelessInfo>\n\t\t<AccountNumber>771297665AABC</AccountNumber>\n\t\t<PinNumber>1234</PinNumber>\n\t</WirelessInfo>\n\t<TnAttributes>\n\t\t<TnAttribute>Protected</TnAttribute>\n\t\t<TnAttribute>External</TnAttribute>\n\t\t<TnAttribute>Imported</TnAttribute>\n\t</TnAttributes>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>+19194809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n\t<CustomerOrderId>myOrder</CustomerOrderId>\n\t<Triggered>true</Triggered>\n\t<PartialPort>true</PartialPort>\n\t<ProcessingStatus>DRAFT</ProcessingStatus>\n</LnpOrder>"
+                value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrder>\n\t<RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>\n\t<AlternateSpid>X455</AlternateSpid>\n\t<BillingTelephoneNumber>+19195551234</BillingTelephoneNumber>\n\t<NewBillingTelephoneNumber>+19175131245</NewBillingTelephoneNumber>\n\t<SiteId>2439</SiteId>\n\t<PeerId>23432</PeerId>\n\t<Subscriber>\n\t\t<SubscriberType>BUSINESS</SubscriberType>\n\t\t<FirstName>First</FirstName>\n\t\t<LastName>Last</LastName>\n\t\t<ServiceAddress>\n\t\t\t<HouseNumber>11235</HouseNumber>\n\t\t\t<StreetName>Back</StreetName>\n\t\t\t<City>Denver</City>\n\t\t\t<StateCode>CO</StateCode>\n\t\t\t<Zip>27541</Zip>\n\t\t\t<County>Canyon</County>\n\t\t</ServiceAddress>\n\t</Subscriber>\n\t<LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>\n\t<WirelessInfo>\n\t\t<AccountNumber>771297665AABC</AccountNumber>\n\t\t<PinNumber>1234</PinNumber>\n\t</WirelessInfo>\n\t<TnAttributes>\n\t\t<TnAttribute>Protected</TnAttribute>\n\t\t<TnAttribute>External</TnAttribute>\n\t\t<TnAttribute>Imported</TnAttribute>\n\t</TnAttributes>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>+19194809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n\t<CustomerOrderId>myOrder</CustomerOrderId>\n\t<Triggered>true</Triggered>\n\t<PartialPort>true</PartialPort>\n\t<ProcessingStatus>DRAFT</ProcessingStatus>\n  <requirementsPackageId>123456789</requirementsPackageId>\n</LnpOrder>"
             schema:
               oneOf:
                 - $ref: '#/components/schemas/OnNetNANPLnpOrderRequest'
@@ -30497,7 +30597,7 @@ paths:
             application/xml:
               examples:
                 Automated NANP Toll-Free Port-in Order Response:
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrderResponse>\n\t<OrderId>03f194d5-3932-4e9f-8ba1-03ef767985e5</OrderId>\n\t<Status>\n\t\t<Code>201</Code>\n\t\t<Description>Order request received. Please use the order id to check the status of your order later.</Description>\n\t</Status>\n\t<ProcessingStatus>VALIDATE_TFNS</ProcessingStatus>\n\t<RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>\n\t<LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>+18774809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n\t<TollFreeValidationStatus>PROCESSING</TollFreeValidationStatus>\n\t<TollFreePortType>PHASE_1_TOLLFREE</TollFreePortType>\n\t<TargetRespOrgId>JYT01</TargetRespOrgId>\n</LnpOrderResponse>"
+                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrderResponse>\n\t<OrderId>03f194d5-3932-4e9f-8ba1-03ef767985e5</OrderId>\n\t<Status>\n\t\t<Code>201</Code>\n\t\t<Description>Order request received. Please use the order id to check the status of your order later.</Description>\n\t</Status>\n\t<ProcessingStatus>VALIDATE_TFNS</ProcessingStatus>\n\t<RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>\n\t<LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>+18774809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n\t<TollFreeValidationStatus>PROCESSING</TollFreeValidationStatus>\n\t<TollFreePortType>PHASE_1_TOLLFREE</TollFreePortType>\n\t<TargetRespOrgId>JYT01</TargetRespOrgId>\n    <requirementsPackageId>123456789</requirementsPackageId>\n</LnpOrderResponse>"
                 Global Port-in Order Response, Business Subscriber:
                   value: |-
                     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -30522,6 +30622,7 @@ paths:
                         <PhoneNumber>+3237470444</PhoneNumber>
                       </ListOfPhoneNumbers>
                       <CustomerOrderId>myOrder</CustomerOrderId>
+                    <requirementsPackageId>123456789</requirementsPackageId>
                     </LnpOrderResponse>
                 Global Port-in Order Response, Residential Subscriber:
                   value: |-
@@ -30548,9 +30649,10 @@ paths:
                         <PhoneNumber>+3237470444</PhoneNumber>
                       </ListOfPhoneNumbers>
                       <CustomerOrderId>myOrder</CustomerOrderId>
+                      <requirementsPackageId>123456789</requirementsPackageId>
                     </LnpOrderResponse>
                 On-net NANP Port-in Order Response:
-                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrderResponse>\n\t<OrderId>03f194d5-3932-4e9f-8ba1-03ef767985e5</OrderId>\n\t<Status>\n\t\t<Code>201</Code>\n\t\t<Description>Order request received. Please use the order id to check the status of your order later.</Description>\n\t</Status>\n\t<ProcessingStatus>PENDING_DOCUMENTS</ProcessingStatus>\n\t<RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>\n\t<LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>\n\t<Subscriber>\n\t\t<SubscriberType>BUSINESS</SubscriberType>\n\t\t<FirstName>First</FirstName>\n\t\t<LastName>Last</LastName>\n\t\t<ServiceAddress>\n\t\t\t<HouseNumber>11235</HouseNumber>\n\t\t\t<StreetName>Back</StreetName>\n\t\t\t<City>Denver</City>\n\t\t\t<StateCode>CO</StateCode>\n\t\t\t<Zip>27541</Zip>\n\t\t\t<County>Canyon</County>\n\t\t\t<Country>United States</Country>\n\t\t</ServiceAddress>\n\t</Subscriber>\n\t<WirelessInfo>\n\t\t<AccountNumber>771297665AABC</AccountNumber>\n\t\t<PinNumber>1234</PinNumber>\n\t</WirelessInfo>\n\t<TnAttributes>\n\t\t<TnAttribute>Protected</TnAttribute>\n\t\t<TnAttribute>External</TnAttribute>\n\t\t<TnAttribute>Imported</TnAttribute>\n\t</TnAttributes>\n\t<BillingTelephoneNumber>+19195551234</BillingTelephoneNumber>\n\t<NewBillingTelephoneNumber>+19175131245</NewBillingTelephoneNumber>\n\t<SiteId>    SITE ID     </SiteId>\n\t<PeerId>  SIPPEER ID    </PeerId>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>+19194809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n\t<CustomerOrderId>myOrder</CustomerOrderId>\n\t<Triggered>true</Triggered>\n\t<PartialPort>true</PartialPort>\n</LnpOrderResponse>"
+                  value: "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<LnpOrderResponse>\n\t<OrderId>03f194d5-3932-4e9f-8ba1-03ef767985e5</OrderId>\n\t<Status>\n\t\t<Code>201</Code>\n\t\t<Description>Order request received. Please use the order id to check the status of your order later.</Description>\n\t</Status>\n\t<ProcessingStatus>PENDING_DOCUMENTS</ProcessingStatus>\n\t<RequestedFocDate>2016-03-25T21:15:00.000Z</RequestedFocDate>\n\t<LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>\n\t<Subscriber>\n\t\t<SubscriberType>BUSINESS</SubscriberType>\n\t\t<FirstName>First</FirstName>\n\t\t<LastName>Last</LastName>\n\t\t<ServiceAddress>\n\t\t\t<HouseNumber>11235</HouseNumber>\n\t\t\t<StreetName>Back</StreetName>\n\t\t\t<City>Denver</City>\n\t\t\t<StateCode>CO</StateCode>\n\t\t\t<Zip>27541</Zip>\n\t\t\t<County>Canyon</County>\n\t\t\t<Country>United States</Country>\n\t\t</ServiceAddress>\n\t</Subscriber>\n\t<WirelessInfo>\n\t\t<AccountNumber>771297665AABC</AccountNumber>\n\t\t<PinNumber>1234</PinNumber>\n\t</WirelessInfo>\n\t<TnAttributes>\n\t\t<TnAttribute>Protected</TnAttribute>\n\t\t<TnAttribute>External</TnAttribute>\n\t\t<TnAttribute>Imported</TnAttribute>\n\t</TnAttributes>\n\t<BillingTelephoneNumber>+19195551234</BillingTelephoneNumber>\n\t<NewBillingTelephoneNumber>+19175131245</NewBillingTelephoneNumber>\n\t<SiteId>    SITE ID     </SiteId>\n\t<PeerId>  SIPPEER ID    </PeerId>\n\t<ListOfPhoneNumbers>\n\t\t<PhoneNumber>+19194809871</PhoneNumber>\n\t</ListOfPhoneNumbers>\n\t<CustomerOrderId>myOrder</CustomerOrderId>\n\t<Triggered>true</Triggered>\n\t<PartialPort>true</PartialPort>\n\t<requirementsPackageId>123456789</requirementsPackageId>\n</LnpOrderResponse>"
               schema:
                 oneOf:
                   - $ref: '#/components/schemas/LnpOrderResponse'
@@ -30585,6 +30687,10 @@ paths:
                       <Errors>
                         <Code>7398</Code>
                         <Description>Protected status is not available for numbers in off-net rate centers.</Description>
+                      </Errors>
+                      <Errors>
+                        <Code>1001</Code>
+                        <Description>requirementsPackageId is missing or invalid.</Description>
                       </Errors>
                       <ProcessingStatus>EXCEPTION</ProcessingStatus>
                       <LoaAuthorizingPerson>The Authguy</LoaAuthorizingPerson>
@@ -32359,6 +32465,7 @@ paths:
                             <ProcessingStatus>NEW</ProcessingStatus>
                             <RequestedFOCDate>2014-08-02T12:34:37.000Z</RequestedFOCDate>
                             <VendorId>512E</VendorId>
+                            <CountryCodeA3>GBR</CountryCodeA3>
                         </lnpPortInfoForGivenStatus>
                     </LNPResponseWrapper>
               schema:
@@ -32368,46 +32475,6 @@ paths:
             payload. Note: For users of Enterprise Telephony accounts, VendorId
             is omitted from the success output.
       summary: List port-out requests
-      tags:
-        - Porting
-    post:
-      description: >-
-        Creates a port-out request.<br>In the payload, CallbackUrl and
-        InternalPort are optional.<br>There are also multiple options for the
-        following:<table>    <tr>        <th>Option</th>       
-        <th>Choices</th>    </tr>    <tr>       
-        <td>Supplemental</td><td>NONE<br>CANCEL<br>UPDATE<br>OTHER<br></td>   
-        </tr>    <tr>       
-        <td>PortOutAction</td><td>NEW<br>SUPP<br>MODIFY<br>CANCEL<br></td>   
-        </tr>    <tr>        <td>InternalPort</td><td>true or false<br></td>   
-        </tr></table>
-      operationId: CreatePortOut
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-      requestBody:
-        content:
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/PortOutRequest'
-      responses:
-        '200':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <PortOutResponse>
-                       <Status>
-                          <Code>200</Code>
-                          <Description>Request is complete and results returned.</Description>
-                       </Status>
-                    </PortOutResponse>
-              schema:
-                $ref: '#/components/schemas/PortOutResponse'
-          description: The port-out request has been successfully received.
-      summary: Create port-out request
       tags:
         - Porting
   /accounts/{accountId}/portouts/status:
@@ -32500,28 +32567,6 @@ paths:
       tags:
         - Porting
   /accounts/{accountId}/portouts/{orderId}:
-    delete:
-      description: Cancel port-out request.
-      operationId: CancelPortOut
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: Port-out order id
-          example: ca8065d1-ec1a-43da-af40-1dcee43becb5
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          content:
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/PortOutResponse'
-          description: ''
-      summary: Cancel port-out request
-      tags:
-        - Porting
     get:
       description: >-
         Retrieves the information associated with the specified port-out ID
@@ -32563,53 +32608,6 @@ paths:
             the payload. Note: For users of Enterprise Telephony accounts, SPID
             is omitted from the success output.
       summary: Fetch port-out request status
-      tags:
-        - Porting
-    put:
-      description: >-
-        Updates or cancels a port-out ID. The payload to this method is similar
-        to the GET on /accounts/{accountid}/portouts.<br>In the payload,
-        CallbackUrl and InternalPort are optional additives.<br>There are also
-        multiple options for the following:<table>    <tr>       
-        <th>Option</th>        <th>Choices</th>    </tr>    <tr>       
-        <td>Supplemental</td><td>NONE<br>CANCEL<br>UPDATE<br>OTHER<br></td>   
-        </tr>    <tr>       
-        <td>PortOutAction</td><td>NEW<br>SUPP<br>MODIFY<br>CANCEL<br></td>   
-        </tr></table>
-      operationId: UpdatePortOut
-      parameters:
-        - $ref: '#/components/parameters/AccountIdPathParam'
-        - description: Port-out order id
-          example: ca8065d1-ec1a-43da-af40-1dcee43becb5
-          in: path
-          name: orderId
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/PortOutRequest'
-      responses:
-        '200':
-          content:
-            application/xml:
-              examples:
-                example:
-                  description: example
-                  value: |-
-                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                    <PortOutResponse>
-                       <Status>
-                          <Code>200</Code>
-                          <Description>Request is complete and results returned.</Description>
-                       </Status>
-                    </PortOutResponse>
-              schema:
-                $ref: '#/components/schemas/PortOutResponse'
-          description: The update or cancellation was successful.
-      summary: Update/cancel port-out request
       tags:
         - Porting
   /accounts/{accountId}/products:
@@ -43893,6 +43891,27 @@ paths:
         '502':
           $ref: '#/components/responses/internalServerError'
       summary: List losing carriers
+      tags:
+        - Porting
+  /porting/referenceDocuments:
+    get:
+      description: >
+        <p>List reference documents needed to port a set of numbers given a
+        countryCodeA3 and phoneNumberType value.</p>
+      operationdId: portingReferenceDocuments
+      parameters:
+        - $ref: '#/components/parameters/countryCodeA3QueryParam_eq'
+        - $ref: '#/components/parameters/phoneNumberTypeQueryParam_eq'
+      responses:
+        '200':
+          $ref: '#/components/responses/listOfReferenceDocumentsResponse'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsError'
+        '502':
+          $ref: '#/components/responses/internalServerError'
+      summary: List reference documents needed to port a set of numbers
       tags:
         - Porting
   /rateCenters:
