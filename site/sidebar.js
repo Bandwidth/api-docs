@@ -15,12 +15,20 @@ module.exports = {
         {
           type: "category",
           label: "Setup",
-          items: ["account/dashboard-setup", "account/programmatic-setup"],
+          items: [
+            "account/dashboard-setup", 
+            "account/programmatic-setup"
+          ],
         },
-        "account/applications",
-        "account/subscriptions",
-        "account/networkBridge",
-        "account/sipRegistrar",
+        {
+          type: "category",
+          label: "Guides and Tutorials",
+          items: [
+            "account/applications",
+            "account/subscriptions",
+            "account/sipRegistrar",
+          ],         
+        },
       ],
     },
     {
