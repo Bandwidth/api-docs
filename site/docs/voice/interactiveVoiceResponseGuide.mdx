@@ -160,34 +160,25 @@ public ActionResult digitsCallback() {
 <TabItem value="ruby">
 **Note: The endpoint headers are pseudocoded. Your implementation will look different
 
-```
-@POST '/gatherDigits' do:
-    speak_sentence = Bandwidth::Voice::SpeakSentence.new({
-        :sentence => "Input a digit to hear it read back to you."
-    })
+```ruby
+post '/gatherDigits' do
+  speak_sentence = Bandwidth::Bxml::SpeakSentence.new('Input a digit to hear it read back to you.')
+  gather = Bandwidth::Bxml::Gather.new([speak_sentence], {
+    gather_url: '/digitsCallback',
+    max_digits: 1,
+  })
+  response = Bandwidth::Bxml::Response.new([gather])
 
-    gather = Bandwidth::Voice::Gather.new({
-        :gather_url => "/digitsCallback",
-        :max_digits => 1,
-    })
+  return response.to_bxml
+end
 
-    response = Bandwidth::Voice::Response.new()
-    response.push(speak_sentence)
-    response.push(gather)
+post '/digitsCallback' do
+  data = JSON.parse(request.body.read)
+  speak_sentence = Bandwidth::Bxml::SpeakSentence.new(data['digits'])
+  response = Bandwidth::Bxml::Response.new([speak_sentence])
 
-    return response.to_bxml()
-
-@POST '/digitsCallback' do:
-    #NOTE: This section of the application may look different depending on how your endpoints receive callback events
-
-    callback_data = JSON.parse(request.body.read)
-    speak_sentence = Bandwidth::Voice::SpeakSentence.new({
-        :sentence => callback_data["digits"]
-    })
-    response = Bandwidth::Voice::Response.new()
-    response.push(speak_sentence)
-
-    return response.to_bxml()
+  return response.to_bxml
+end
 ```
 
 </TabItem>
@@ -453,39 +444,26 @@ public ActionResult gatherCallback() {
 **Note: This application is pseudocoded. Your implementation will look different
 
 ```ruby
-post '/gatherDigits' do:
-    speak_sentence_1 = Bandwidth::Voice::SpeakSentence.new({
-        :sentence => "Please listen to the menu of options."
-    })
+post '/gatherDigits' do
+  speak_sentence_1 = Bandwidth::Bxml::SpeakSentence.new('Please listen to the menu of options.')
+  play_audio_1 = Bandwidth::Bxml::PlayAudio.new('http://audio.test/englishMenuOptions.mp3')
+  play_audio_2 = Bandwidth::Bxml::PlayAudio.new('http://audio.test/spanishMenuOptions.mp3')
+  gather = Bandwidth::Bxml::Gather.new([speak_sentence_1, play_audio_1, play_audio_2], {
+    gather_url: '/gatherCallback',
+    repeat_count: 3
+  })
+  response = Bandwidth::Bxml::Response.new([gather])
 
-    play_audio_1 = Bandwidth::Voice::PlayAudio.new({
-        :url => "http://audio.test/englishMenuOptions.mp3"
-    })
-
-    play_audio_2 = Bandwidth::Voice::PlayAudio.new({
-        :url => "http://audio.test/spanishMenuOptions.mp3"
-    })
-
-    gather = Bandwidth::Voice::Gather.new({
-        :gather_url => "/gatherCallback",
-        :repeat_count => 3,
-        :nested_verbs => [speak_sentence_1, play_audio_1, play_audio_2]
-    })
-
-    response = Bandwidth::Voice::Response.new()
-    response.push(gather)
+  return response.to_bxml
+end
 
 get '/gatherCallback' do:
-    #NOTE: This section of the application may look different depending on how your endpoints receive callback events
+  data = JSON.parse(request.body.read)
+  speak_sentence = Bandwidth::Bxml::SpeakSentence.new(data['digits'])
+  response = Bandwidth::Bxml::Response.new([speak_sentence])
 
-    callback_data = JSON.parse(request.body.read)
-    speak_sentence = Bandwidth::Voice::SpeakSentence.new({
-        :sentence => callback_data["digits"]
-    })
-    response = Bandwidth::Voice::Response.new()
-    response.push(speak_sentence)
-
-    return response.to_bxml()
+  return response.to_bxml
+end
 ```
 
 </TabItem>
