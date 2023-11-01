@@ -10,6 +10,7 @@ module.exports = {
       label: "Voice",
       items: [
         "voice/inAppGuide",
+        "voice/inAppAuthGuide"
       ]
     }
   ]

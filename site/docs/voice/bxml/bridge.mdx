@@ -196,38 +196,23 @@ Console.WriteLine(response.ToBXML());
 
 First call (c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d):
 ```ruby
-speak_sentence = Bandwidth::Voice::SpeakSentence.new({
-    :sentence => "Wait until the second call answers."
-})
+speak_sentence = Bandwidth::Bxml::SpeakSentence.new('Wait until the second call answers.')
+pause = Bandwidth::Bxml::Pause.new({ duration: 60 })
+response = Bandwidth::Bxml::Response.new([speak_sentence, pause])
 
-pause = Bandwidth::Voice::Pause.new({
-    :duration => 60
-})
-
-response = Bandwidth::Voice::Response.new()
-response.push(speak_sentence)
-response.push(pause)
-
-puts response.to_bxml()
+p response.to_bxml
 ```
 
 Second call:
 ```ruby
-speak_sentence = Bandwidth::Voice::SpeakSentence.new({
-    :sentence => "The bridge will start now."
+speak_sentence = Bandwidth::Bxml::SpeakSentence.new('The bridge will start now.')
+bridge = Bandwidth::Bxml::Bridge.new('c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d', {
+  bridge_complete_url: 'https://bridge.url/nextBXMLForSecondCall',
+  bridge_target_complete_url: 'https://bridge.url/nextBXMLForFirstCall'
 })
+response = Bandwidth::Bxml::Response.new([speak_sentence, bridge])
 
-bridge = Bandwidth::Voice::Bridge.new({
-    :call_id => "c-c-95ac8d6e-1a31c52e-b38f-4198-93c1-51633ec68f8d",
-    :bridge_complete_url => "https://bridge.url/nextBXMLForSecondCall",
-    :bridge_target_complete_url => "https://bridge.url/nextBXMLForFirstCall"
-})
-
-response = Bandwidth::Voice::Response.new()
-response.push(speak_sentence)
-response.push(bridge)
-
-puts response.to_bxml()
+p response.to_bxml
 ```
 
 </TabItem>

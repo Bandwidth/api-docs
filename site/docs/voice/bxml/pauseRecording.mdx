@@ -89,12 +89,10 @@ Console.WriteLine(response.ToBXML());
 <TabItem value="ruby">
 
 ```ruby
-pause_recording = Bandwidth::Voice::PauseRecording.new()
+pause_recording = Bandwidth::Bxml::PauseRecording.new
+response = Bandwidth::Bxml::Response.new([pause_recording])
 
-response = Bandwidth::Voice::Response.new()
-response.push(pause_recording)
-
-puts response.to_bxml()
+p response.to_bxml
 ```
 
 </TabItem>
@@ -342,74 +340,39 @@ Console.WriteLine(response.ToBXML());
 <TabItem value="ruby">
 
 ```ruby
-speak_sentence_start = Bandwidth::Voice::SpeakSentence.new({
-    :sentence => "This call is being recorded. Please wait while we transfer you.",
-    :voice => "bridget"
+speak_sentence_start = Bandwidth::Bxml::SpeakSentence.new('This call is being recorded. Please wait while we transfer you.', {
+  voice: 'bridget'
 })
-
-start_recording = Bandwidth::Voice::StartRecording.new({
-    :recording_available_url => "https://myapp.com/noBXML"
+start_recording = Bandwidth::Bxml::StartRecording.new({ recording_available_url: 'https://myapp.com/noBXML' })
+phone_number = Bandwidth::Bxml::PhoneNumber.new('+15554567892')
+transfer = Bandwidth::Bxml::Transfer.new([phone_number])
+pause_recording = Bandwidth::Bxml::PauseRecording.new
+speak_sentence_gather = Bandwidth::Bxml::SpeakSentence.new('Press one if you want to be transferred to another number.', {
+  voice: 'kate'
 })
-
-phone_number = Bandwidth::Voice::PhoneNumber.new({
-    :number => "+15554567892"
+gather = Bandwidth::Bxml::Gather.new([speak_sentence_gather], {
+  gather_url: 'https://myapp.com/gatherCallbackBxml',
+  max_digits: 1,
+  first_digit_timeout: 10
 })
+response = Bandwidth::Bxml::Response.new([speak_sentence_start, start_recording, transfer, pause_recording, gather])
 
-transfer = Bandwidth::Voice::Transfer.new({
-    :phone_numbers => [phone_number]
-})
-
-pause_recording = Bandwidth::Voice::PauseRecording.new()
-
-speak_sentence_gather = Bandwidth::Voice::SpeakSentence.new({
-    :sentence => "Press one if you want to be transferred to another number.",
-    :voice => "kate"
-})
-
-gather = Bandwidth::Voice::Gather.new({
-    :gather_url => "https://myapp.com/gatherCallbackBxml",
-    :max_digits => 1,
-    :first_digit_timeout => 10,
-    :speak_sentence => speak_sentence_gather
-})
-
-response = Bandwidth::Voice::Response.new()
-response.push(speak_sentence_start)
-response.push(start_recording)
-response.push(transfer)
-response.push(pause_recording)
-response.push(gather)
-
-puts response.to_bxml()
+p response.to_bxml
 ```
 
 > BXML Response to the Gather Webhook
 
 ```ruby
-resume_recording = Bandwidth::Voice::ResumeRecording.new()
-
-phone_number = Bandwidth::Voice::PhoneNumber.new({
-    :number => "+15554567893"
+resume_recording = Bandwidth::Bxml::ResumeRecording.new
+phone_number = Bandwidth::Bxml::PhoneNumber.new('+15554567893')
+transfer = Bandwidth::Bxml::Transfer.new([phone_number])
+stop_recording = Bandwidth::Bxml::StopRecording.new
+speak_sentence_end = Bandwidth::Bxml::SpeakSentence.new('Thanks for your call. Have a nice day!', {
+  voice: 'bridget'
 })
+response = Bandwidth::Bxml::Response.new([resume_recording, transfer, stop_recording, speak_sentence_end])
 
-transfer = Bandwidth::Voice::Transfer.new({
-    :phone_numbers => [phone_number]
-})
-
-stop_recording = Bandwidth::Voice::StopRecording.new()
-
-speak_sentence_end = Bandwidth::Voice::SpeakSentence.new({
-    :sentence => "Thanks for your call. Have a nice day!",
-    :voice => "bridget"
-})
-
-response = Bandwidth::Voice::Response.new()
-response.push(resume_recording)
-response.push(transfer)
-response.push(stop_recording)
-response.push(speak_sentence_end)
-
-puts response.to_bxml()
+p response.to_bxml
 ```
 
 </TabItem>

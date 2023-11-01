@@ -7,6 +7,7 @@ const customConfig = require("./custom.config.json");
 const blogPosts = require("./blogposts.config.json");
 const ltsVersions = require("./lts.config.json");
 const numbersSpec = fs.readFileSync("./specs/numbers.yml", "utf-8");
+const numbersSpec_v2 = fs.readFileSync("./specs/numbers_v2.yml", "utf-8");
 const phoneNumberLookupSpec = fs.readFileSync(
   "./specs/phone-number-lookup.yml",
   "utf-8"
@@ -39,6 +40,8 @@ const identitySpec = fs.readFileSync(
 );
 const identityspecLink = "";
 const insightsSpec = fs.readFileSync("./specs/insights.yml", "utf-8");
+
+const emergencyProvisioningSpec = fs.readFileSync("./specs/emergency.yml", "utf-8");
 
 module.exports = {
   title: "Bandwidth API Docs",
@@ -133,7 +136,7 @@ module.exports = {
       ],
     },
     // prism: {
-    //     additionalLanguages: ['java'],  // Breaks if you try to add more than 1 language. And still breaks redoc :(((((
+    //     additionalLanguages: ['java'],  // Breaks if you try to add more than 1 language. And still breaks redoc :((((
     // },
   },
   scripts: [
@@ -172,6 +175,8 @@ module.exports = {
   customFields: {
     numbersSpec: YAML.parse(numbersSpec),
     numbersSpecLink: `${customConfig.numbersSpecLink}`,
+    numbersSpec_v2: YAML.parse(numbersSpec_v2),
+    numbersSpec_v2Link: `${customConfig.numbersSpec_v2Link}`,
     phoneNumberLookupSpec: YAML.parse(phoneNumberLookupSpec),
     phoneNumberLookupSpecLink: `${customConfig.phoneNumberLookupSpecLink}`,
     voiceSpec: YAML.parse(voiceSpec),
@@ -200,6 +205,8 @@ module.exports = {
     identitySpecLink: `${customConfig.dashNotificationsSpecLink}`,
     insightsSpec: YAML.parse(insightsSpec),
     insightsSpecLink: `${customConfig.insightsSpecLink}`,
+    emergencyProvisioningSpec: YAML.parse(emergencyProvisioningSpec),
+    emergencyProvisioningSpecLink: `${customConfig.emergencyProvisioningSpecLink}`,
 
     blogPosts: blogPosts,
 
@@ -244,4 +251,8 @@ module.exports = {
     ],
     "docusaurus-plugin-sass",
   ],
+  markdown: {
+    mermaid: true,
+  },
+  themes: ['@docusaurus/theme-mermaid'],
 };

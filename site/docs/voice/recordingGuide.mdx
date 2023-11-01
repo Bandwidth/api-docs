@@ -145,31 +145,23 @@ public ActionResult thankYou() {
 <TabItem value="ruby">
 
 ```ruby
-@POST '/record_name' do:
-    speak_sentence = Bandwidth::Voice::SpeakSentence.new({
-        :sentence => "Please say your name."
-    })
+post '/record_name' do
+  speak_sentence = Bandwidth::Bxml::SpeakSentence.new('Please say your name.')
+  record = Bandwidth::Bxml::Record.new({
+    record_complete_url: '/nextBXML',
+    max_duration: 10
+  })
+  response = Bandwidth::Bxml::Response.new([speak_sentence, record])
 
-    record = Bandwidth::Voice::Record.new({
-        :record_complete_url => "/nextBXML",
-        :max_duration => "10"
-    })
+  return response.to_bxml
+end
 
-    response = Bandwidth::Voice::Response.new()
-    response.push(speak_sentence)
-    response.push(record)
+post '/nextBXML' do
+  speak_sentence = Bandwidth::Bxml::SpeakSentence.new('Thank you.')
+  response = Bandwidth::Bxml::Response.new([speak_sentence])
 
-    return response.to_bxml()
-
-@POST '/nextBXML' do:
-    speak_sentence = Bandwidth::Voice::SpeakSentence.new({
-        :sentence => "Thank you."
-    })
-    response = Bandwidth::Voice::Response.new()
-    response.push(speak_sentence)
-
-    return response.to_bxml()
-
+  return response.to_bxml
+end
 ```
 
 </TabItem>
@@ -401,36 +393,31 @@ public ActionResult record_call() {
 <TabItem value="ruby">
 **Note: The endpoint headers are pseudocoded. Your implementation will look different
 
-```
-@POST '/secret_agent_endpoint' do:
-    start_recording = Bandwidth::Voice::StartRecording.new({
-        :recording_available_url => "https://myapp.test/noBXML"
-    })
-    intro_tts = Bandwidth::Voice::SpeakSentence.new({
-        :sentence => "Hello secret agent. What is your message?",
-    })
-    pause1 = Bandwidth::Voice::Pause.new({ :duration => 10 })
+```ruby
+post '/secret_agent_endpoint' do
+  start_recording = Bandwidth::Bxml::StartRecording.new({ recording_available_url: 'https://myapp.test/noBXML' })
+  speak_sentence_intro = Bandwidth::Bxml::SpeakSentence.new('Hello secret agent. What is your message?')
+  pause_1 = Bandwidth::Bxml::Pause.new({ duration: 10 })
+  pause_recording = Bandwidth::Bxml::PauseRecording.new
+  speak_sentence_passcode = Bandwidth::Bxml::SpeakSentence.new("Please say your secret passcode to send. Don't worry, the recording is paused!")
+  pause_2 = Bandwidth::Bxml::Pause.new({ duration: 5 })
+  resume_recording = Bandwidth::Bxml::ResumeRecording.new()
+  speak_sentence_goodbye = Bandwidth::Bxml::SpeakSentence.new('Thank you agent. Good luck on your mission!')
+  stop_recording = Bandwidth::Bxml::StopRecording.new()
+  response = Bandwidth::Bxml::Response.new([
+    start_recording,
+    speak_sentence_intro,
+    pause_1,
+    pause_recording,
+    speak_sentence_passcode,
+    pause_2,
+    resume_recording,
+    speak_sentence_goodbye,
+    stop_recording
+  ])
 
-    pause_recording = Bandwidth::Voice::PauseRecording.new()
-
-    passcode_tts = Bandwidth::Voice::SpeakSentence.new({
-        :sentence => "Please say your secret passcode to send. Don't worry, the recording is paused!",
-    })
-    pause2 = Bandwidth::Voice::Pause.new({ :duration => 5 })
-
-    resume_recording = Bandwidth::Voice::ResumeRecording.new()
-
-    goodbye_tts = Bandwidth::Voice::SpeakSentence.new({
-        :sentence => "Thank you agent. Good luck on your mission!",
-    })
-
-    stop_recording = Bandwidth::Voice::StopRecording.new()
-
-    response = Bandwidth::Voice::Response.new()
-    response.push(start_recording, intro_tts, pause1, pause_recording, passcode_tts,
-        pause2, resume_recording, goodbye_tts, stop_recording)
-
-    return response.to_bxml()
+  return response.to_bxml
+end
 ```
 
 </TabItem>
@@ -646,23 +633,31 @@ class Program
 <TabItem value="ruby1">
 
 ```ruby
-require 'bandwidth'
-
-include Bandwidth
-include Bandwidth::Voice
-
-bandwidth_client = Bandwidth::Client.new(
-    voice_basic_auth_user_name: {BW_USERNAME},
-    voice_basic_auth_password: {BW_PASSWORD}
-)
-
-voice_client = bandwidth_client.voice_client.client
+require 'bandwidth-sdk'
 
 begin
-    response = voice_client.get_call_recording({ACCOUNT_ID}, {CALL_ID}, {RECORDING_ID})
-    puts response.data.application_id
-rescue APIException => e
-    puts e.response_code
+  BW_USERNAME = ENV.fetch('BW_USERNAME')
+  BW_PASSWORD = ENV.fetch('BW_PASSWORD')
+  BW_ACCOUNT_ID = ENV.fetch('BW_ACCOUNT_ID')
+  CALL_ID = ENV.fetch('CALL_ID')
+  RECORDING_ID = ENV.fetch('RECORDING_ID')
+rescue
+  p 'Please set the environmental variables defined in the README'
+  exit(-1)
+end
+
+Bandwidth.configure do |config|
+  config.username = BW_USERNAME
+  config.password = BW_PASSWORD
+end
+
+recordings_api_instance = Bandwidth::RecordingsApi.new
+
+begin
+  response = calls_api_instance.get_call_recording(BW_ACCOUNT_ID, CALL_ID, RECORDING_ID)
+  p response.application_id
+rescue Bandwidth::ApiError => e
+  p e.code
 end
 
 ```
@@ -861,27 +856,32 @@ static async Task Main(string[] args) {
 <TabItem value="ruby2">
 
 ```ruby
-require 'bandwidth'
-
-include Bandwidth
-include Bandwidth::Voice
-
-bandwidth_client = Bandwidth::Client.new(
-    voice_basic_auth_user_name: {BW_USERNAME},
-    voice_basic_auth_password: {BW_PASSWORD}
-)
-
-voice_client = bandwidth_client.voice_client.client
-
-body = TranscribeRecordingRequest.new
-body.callback_url = "http://example.test/transcription"
-#remember to add auth for your application if needed!
+require 'bandwidth-sdk'
 
 begin
-    response = voice_client.create_transcribe_call_recording({ACCOUNT_ID}, {CALL_ID}, {RECORDING_ID}, body)
-    puts response.data.transcripts
-rescue APIException => e
-    puts e.response_code
+  BW_USERNAME = ENV.fetch('BW_USERNAME')
+  BW_PASSWORD = ENV.fetch('BW_PASSWORD')
+  BW_ACCOUNT_ID = ENV.fetch('BW_ACCOUNT_ID')
+  CALL_ID = ENV.fetch('CALL_ID')
+  RECORDING_ID = ENV.fetch('RECORDING_ID')
+rescue
+  p 'Please set the environmental variables defined in the README'
+  exit(-1)
+end
+
+Bandwidth.configure do |config|
+  config.username = BW_USERNAME
+  config.password = BW_PASSWORD
+end
+
+recordings_api_instance = Bandwidth::RecordingsApi.new
+
+body = Bandwidth::TranscribeRecording.new(callback_url: 'http://example.test/transcription')
+
+begin
+  recordings_api_instance.transcribe_call_recording(BW_ACCOUNT_ID, CALL_ID, RECORDING_ID, body)
+rescue Bandwidth::ApiError => e
+  p e.code
 end
 ```
 
@@ -1053,22 +1053,21 @@ public ActionResult alert() {
 <TabItem value="ruby">
 **Note: The endpoint headers are pseudocoded. Your implementation will look different
 
-```
-@POST '/incoming_calls' do:
+```ruby
+post '/incoming_calls' do
+  record = Bandwidth::Bxml::Record.new({
+    transcribe: true,
+    transcription_available_url: '/transcription_callback',
+    max_duration: 10
+  })
+  response = Bandwidth::Bxml::Response.new([record])
 
-    record = Bandwidth::Voice::Record.new({
-        :transcribe => true,
-        :transcription_available_url => "/transcription_callback",
-        :max_duration => "10"
-    })
+  return response.to_bxml
+end
 
-    response = Bandwidth::Voice::Response.new()
-    response.push(record)
-
-    return response.to_bxml()
-
-@POST '/transcription_callback' do:
-    puts "Oh! A transcription!".inspect
+post '/transcription_callback' do
+  # handle transcription callback
+end
 ```
 
 </TabItem>
@@ -1233,18 +1232,33 @@ static async Task Main(string[] args)
 <TabItem value="ruby3">
 
 ```ruby
-bandwidth_client = Bandwidth::Client.new(
-    voice_basic_auth_user_name: {BW_USERNAME},
-    voice_basic_auth_password: {BW_PASSWORD}
-)
-
-voice_client = bandwidth_client.voice_client.client
+require 'bandwidth-sdk'
 
 begin
-    response = voice_client.get_call_transcription({ACCOUNT_ID}, {CALL_ID}, {RECORDING_ID})
-    puts response.data.transcripts
-rescue APIException => e
-    puts e.response_code
+  BW_USERNAME = ENV.fetch('BW_USERNAME')
+  BW_PASSWORD = ENV.fetch('BW_PASSWORD')
+  BW_ACCOUNT_ID = ENV.fetch('BW_ACCOUNT_ID')
+  CALL_ID = ENV.fetch('CALL_ID')
+  RECORDING_ID = ENV.fetch('RECORDING_ID')
+rescue
+  p 'Please set the environmental variables defined in the README'
+  exit(-1)
+end
+
+Bandwidth.configure do |config|
+  config.username = BW_USERNAME
+  config.password = BW_PASSWORD
+end
+
+recordings_api_instance = Bandwidth::RecordingsApi.new
+
+body = Bandwidth::TranscribeRecording.new(callback_url: 'http://example.test/transcription')
+
+begin
+  response = recordings_api_instance.get_call_transcription(BW_ACCOUNT_ID, CALL_ID, RECORDING_ID)
+  p response.transcripts
+rescue Bandwidth::ApiError => e
+  p e.code
 end
 ```
 

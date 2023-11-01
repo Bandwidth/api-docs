@@ -18,7 +18,7 @@ module.exports = {
       label: "Java",
       items: [
           "java/java-migration-guides",
-          "java/v9-beta"
+          "java/v9"
       ]
     },
     {
@@ -26,7 +26,7 @@ module.exports = {
       label: "Ruby",
       items: [
           "ruby/ruby-migration-guides",
-          "ruby/v11-beta"
+          "ruby/v11"
       ]
     }
   ],

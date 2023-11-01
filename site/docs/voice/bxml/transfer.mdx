@@ -25,6 +25,7 @@ There is no text content available to be set for the `<Transfer>` verb.
 | Attribute | Description |
 |:----------|:------------|
 | transferCallerId | (optional) The caller ID to use when the call is transferred, if different. Must be in E.164 format (e.g. +15555555555) or be one of the following strings `Restricted`, `Anonymous`, `Private`, or `Unavailable`.<br/><br/> Note: Leave blank to pass along the number of the remote party. |
+| transferCallerDisplayName | (optional) The caller display name to use when the call is transferred. May not exceed 256 characters nor contain control characters such as new lines. |
 | callTimeout | (optional) The timeout (in seconds) for the callee to answer the call after it starts ringing. If the call does not start ringing within 30s, the call will be cancelled regardless of this value. Range: decimal values between 1 - 300.  Default value is 30 seconds. |
 | transferCompleteUrl | (optional) URL to send the [Transfer Complete](/docs/voice/webhooks/transferComplete/) event to and request new BXML. Optional but recommended. [See below](#transferCompleteUrl) for further details. May be a relative URL. |
 | transferCompleteMethod | (optional) The HTTP method to use for the request to `transferCompleteUrl`. GET or POST. Default value is POST. |
@@ -183,19 +184,13 @@ Console.WriteLine(response.ToBXML());
 <TabItem value="ruby">
 
 ```ruby
-phone_number = Bandwidth::Voice::PhoneNumber.new({
-    :number => "+11234567892"
+phone_number = Bandwidth::Bxml::PhoneNumber.new('+11234567892')
+transfer = Bandwidth::Bxml::Transfer.new([phone_number], {
+  transfer_caller_id: '+11234567891'
 })
+response = Bandwidth::Bxml::Response.new([transfer])
 
-transfer = Bandwidth::Voice::Transfer.new({
-    :transfer_caller_id => "+11234567891",
-    :phone_numbers => [phone_number]
-})
-
-response = Bandwidth::Voice::Response.new()
-response.push(transfer)
-
-puts response.to_bxml()
+p response.to_bxml
 ```
 
 </TabItem>
@@ -376,34 +371,23 @@ Console.WriteLine(response.ToBXML());
 <TabItem value="ruby">
 
 ```ruby
-speak_sentence = Bandwidth::Voice::SpeakSentence.new({
-    :sentence => "Transferring your call, please wait.",
-    :voice => "paul"
+speak_sentence = Bandwidth::Bxml::SpeakSentence.new('Transferring your call, please wait.', { voice: 'paul' })
+phone_number = Bandwidth::Bxml::PhoneNumber.new('+11234567892', {
+  transfer_answer_url: 'http://myapp.com/announcement'
 })
-
-phone_number = Bandwidth::Voice::PhoneNumber.new({
-    :number => "+11234567892",
-    :transfer_answer_url => "http://myapp.com/announcement"
+transfer = Bandwidth::Bxml::Transfer.new([phone_number], {
+  transfer_caller_id: '+11234567891'
 })
+response = Bandwidth::Bxml::Response.new([speak_sentence, transfer])
 
-transfer = Bandwidth::Voice::Transfer.new({
-    :transfer_caller_id => "+11234567891",
-    :phone_numbers => [phone_number]
-})
-
-response = Bandwidth::Voice::Response.new()
-response.push(speak_sentence)
-response.push(transfer)
-
-puts response.to_bxml()
+p response.to_bxml
 ```
 
 > The announcement BXML response from `http://myapp.com/announcement` is:
 
 ```ruby
-speak_sentence = Bandwidth::Voice::SpeakSentence.new({
-    :sentence => "A customer would like to speak to you.",
-    :voice => "paul"
+speak_sentence = Bandwidth::Bxml::SpeakSentence.new('A customer would like to speak to you.', {
+  voice: 'paul'
 })
 ```
 
@@ -589,23 +573,14 @@ Console.WriteLine(response.ToBXML());
 <TabItem value="ruby">
 
 ```ruby
-phone_number_1 = Bandwidth::Voice::PhoneNumber.new({
-    :number => "+15552221234"
+phone_number_1 = Bandwidth::Bxml::PhoneNumber.new('+15552221234')
+phone_number_2 = Bandwidth::Bxml::PhoneNumber.new('+15552221233')
+transfer = Bandwidth::Bxml::Transfer.new([phone_number_1, phone_number_2], {
+  transfer_caller_id: '+15552221235'
 })
+response = Bandwidth::Bxml::Response.new([transfer])
 
-phone_number_2 = Bandwidth::Voice::PhoneNumber.new({
-    :number => "+15552221233"
-})
-
-transfer = Bandwidth::Voice::Transfer.new({
-    :transfer_caller_id => "+15552221235",
-    :phone_numbers => [phone_number_1, phone_number_2]
-})
-
-response = Bandwidth::Voice::Response.new()
-response.push(transfer)
-
-puts response.to_bxml()
+p response.to_bxml
 ```
 
 </TabItem>
