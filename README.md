@@ -1,5 +1,9 @@
 # API-Docs
 
+<p align="center">⚠️ Deprecated ⚠️</p>
+
+As of October 19, 2023, the content of api-docs has been moved to an internal repository to reduce complexities in our CI/CD. This repository will be archived and no longer maintained. Please file a support ticket for any issues with [dev.bandwidth.com](https://dev.bandwidth.com).
+
 ## Table of Contents
 
   1. [API Docs Strategy Overview](#api-docs-strategy-overview)
